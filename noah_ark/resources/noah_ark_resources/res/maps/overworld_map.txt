@@ -1,0 +1,19 @@
+[HGESTRINGTABLE]
+
+width = "3"
+height = "3"
+
+start_map_x = "1"
+start_map_y = "1"
+
+map_0_0 = "res/maps/test_map_0_0.MAP"
+map_1_0 = "res/maps/test_map_1_0.MAP"
+map_2_0 = "res/maps/test_map_2_0.MAP"
+
+map_0_1 = "res/maps/test_map_0_1.MAP"
+map_1_1 = "res/maps/test_map_1_1.MAP"
+map_2_1 = "res/maps/test_map_2_1.MAP"
+
+map_0_2 = "res/maps/test_map_0_2.MAP"
+map_1_2 = "res/maps/test_map_1_2.MAP"
+map_2_2 = "res/maps/test_map_2_2.MAP"

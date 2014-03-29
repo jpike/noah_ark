@@ -64,14 +64,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>./src;($ProjectDir)src;$(HGE_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
+    <IncludePath>./src;($ProjectDir)src;$(HGE_DIR)\include;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <LibraryPath>$(HGE_DIR)\lib\vc;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>./src;($ProjectDir)src;$(HGE_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
+    <IncludePath>./src;($ProjectDir)src;$(HGE_DIR)\include;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>

@@ -1,4 +1,3 @@
-#include <boost/shared_ptr.hpp>
 #include <hgestrings.h>
 #include <string>
 #include "NoahArkGame.h"

@@ -44,7 +44,7 @@
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\noah_ark_library\src;$(CATCH_DIR);$(BOOST_DIR);$(HGE_DIR)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\noah_ark_library\src;$(CATCH_DIR);$(HGE_DIR)\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)noah_ark\library\noah_ark_library\bin\$(Configuration);$(HGE_DIR)\lib\vc;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -52,7 +52,7 @@
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\noah_ark_library\src;$(CATCH_DIR);$(BOOST_DIR);$(HGE_DIR)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\noah_ark_library\src;$(CATCH_DIR);$(HGE_DIR)\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)noah_ark\library\noah_ark_library\bin\$(Configuration);$(HGE_DIR)\lib\vc;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

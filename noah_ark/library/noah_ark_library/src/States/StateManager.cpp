@@ -22,3 +22,8 @@ void StateManager::SetCurrentState(const std::shared_ptr<IGameState>& newState)
 {
     m_currentState = newState;
 }
+
+bool StateManager::Update()
+{
+    return m_currentState->Update();
+}

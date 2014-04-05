@@ -6,7 +6,9 @@
 // STATIC MEMBER VARIABLES.
 std::unique_ptr<NoahArkGame> NoahArkGame::singleNoahArkGame = nullptr;
 
+///////////////////////////////////////////////////////////
 // STATIC METHODS.
+///////////////////////////////////////////////////////////
 
 int NoahArkGame::RunGame()
 {
@@ -56,21 +58,24 @@ int NoahArkGame::RunGame()
 
 bool NoahArkGame::UpdateGame()
 {
-    /// @todo Get singleton instance and update.
-    return false;
+    // UPDATE THE SINGLETON INSTANCE OF THE GAME.
+    return GetInstance().Update();
 }
 
 bool NoahArkGame::RenderGame()
 {
-    /// @todo Get singleton instance and render.
-    return false;
+    // RENDER THE SINGLETON INSTANCE OF THE GAME.
+    return GetInstance().Render();
 }
 
+///////////////////////////////////////////////////////////
 // INSTANCE METHODS.
+///////////////////////////////////////////////////////////
 
 NoahArkGame::NoahArkGame() : 
     m_pGameEngine(nullptr),
     m_resourceManager(),
+    m_graphicsSystem(),
     m_physicsSystem(),
     m_stateManager()
 {
@@ -107,7 +112,7 @@ bool NoahArkGame::Initialize()
     // SET THE INITIAL GAME STATE.
     /// @todo The state needs to be changed once all of the game states and finally implemented.
     ///       It should go to an "intro video" or "title screen" state initially.
-    std::shared_ptr<STATES::IGameState> overworldState(new STATES::OverworldState());
+    std::shared_ptr<STATES::IGameState> overworldState(new STATES::OverworldState(m_graphicsSystem));
     m_stateManager->SetCurrentState(overworldState);
 
     // ALL INITIALIZATION STEPS SUCCEEDED.
@@ -121,6 +126,9 @@ bool NoahArkGame::Shutdown()
 
     // SHUTDOWN THE PHYSICS SYSTEM.
     m_physicsSystem.reset();
+
+    // SHUTDOWN THE GRAPHICS SYSTEM.
+    m_graphicsSystem.reset();
 
     // SHUTDOWN THE RESOURCE MANAGER.
     m_resourceManager.reset();
@@ -190,16 +198,44 @@ bool NoahArkGame::InitializeSubsystems()
 {
     // INITIALIZE THE RESOURCE MANAGER.
     const char* RESOURCE_FILE_RELATIVE_PATH = "res/resources.txt";
-    m_resourceManager = std::shared_ptr<hgeResourceManager>(new hgeResourceManager(RESOURCE_FILE_RELATIVE_PATH));
+    m_resourceManager = std::make_shared<hgeResourceManager>(RESOURCE_FILE_RELATIVE_PATH);
+
+    // INITIALIZE THE GRAPHICS SYSTEM.
+    m_graphicsSystem = std::make_shared<GRAPHICS::GraphicsSystem>(m_resourceManager);
 
     // INITIALIZE THE PHYSICS SYSTEM.
-    m_physicsSystem = std::shared_ptr<PHYSICS::PhysicsSystem>(new PHYSICS::PhysicsSystem());
+    m_physicsSystem = std::make_shared<PHYSICS::PhysicsSystem>();
 
     // INITIALIZE THE STATE MANAGER.
-    m_stateManager = std::shared_ptr<STATES::StateManager>(new STATES::StateManager());
+    m_stateManager = std::make_shared<STATES::StateManager>();
     
     // RETURN THE RESULT OF INITIALIZATION.
     // This will always be true for now.
     bool allSubsystemsInitialized = true;
     return allSubsystemsInitialized;
+}
+
+
+bool NoahArkGame::Update()
+{
+    return m_stateManager->Update();
+}
+
+bool NoahArkGame::Render()
+{
+    // SETUP THE GAME ENGINE FOR RENDERING.
+    m_pGameEngine->Gfx_BeginScene();
+
+    /// @todo   Should this clear color be retrieved from the graphics system?
+    const DWORD BLACK_COLOR = 0;
+	m_pGameEngine->Gfx_Clear(BLACK_COLOR);
+
+    // RENDER THE GAME.
+    m_graphicsSystem->Render();
+
+    // FINISH RENDERING THE CURRENT SCENE.
+    m_pGameEngine->Gfx_EndScene();
+
+    // False is required to always be returned by HGE.
+    return false;
 }

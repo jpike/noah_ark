@@ -6,13 +6,14 @@
 namespace MAPS
 {
     ///////////////////////////////////////////////////////////
-    /// \brief  A 2D graphical tile intended to be used as a building block for tile maps.
+    /// @brief  A 2D graphical tile intended to be used as a building block for tile maps.
     ///////////////////////////////////////////////////////////
     class Tile
     {
     public:
-        /// @brief  Constructor.
-        explicit Tile();
+        /// @brief      Constructor.
+        /// @param[in]  sprite - The sprite resource used for rendering the tile.
+        explicit Tile(const std::shared_ptr<GRAPHICS::Sprite>& sprite);
         /// @brief      Copy constructor.
         /// @param[in]  tileToCopy - The tile to copy.
         explicit Tile(const Tile& tileToCopy);

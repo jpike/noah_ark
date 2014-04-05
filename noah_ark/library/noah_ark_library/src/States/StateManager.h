@@ -6,7 +6,7 @@
 namespace STATES
 {
     ///////////////////////////////////////////////////////////
-    /// \brief  Responsible for managing game states.
+    /// @brief  Responsible for managing game states.
     ///////////////////////////////////////////////////////////
     class StateManager
     {
@@ -23,6 +23,11 @@ namespace STATES
         /// @brief      Sets the current state being managed.
         /// @param[in]  newState - The new state to set.
         void SetCurrentState(const std::shared_ptr<IGameState>& newState);
+
+        /// @brief      Updates the current state for a single frame of the game.
+        /// @return     True if the game should terminate and no longer update;
+        ///             false if the game should continue updating.
+        bool Update();
 
     private:
         StateManager(const StateManager& managerToCopy);  ///< Private to disallow copying.

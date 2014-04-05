@@ -2,8 +2,8 @@
 
 using namespace MAPS;
 
-Tile::Tile() :
-    m_sprite()
+Tile::Tile(const std::shared_ptr<GRAPHICS::Sprite>& sprite) :
+    m_sprite(sprite)
 {
     // Nothing else to do.
 }

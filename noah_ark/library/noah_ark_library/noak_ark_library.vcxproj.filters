@@ -81,6 +81,9 @@
     <ClInclude Include="src\Graphics\IGraphicsComponent.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Graphics\Texture.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -106,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="src\Maps\OverworldMap.cpp">
       <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Texture.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

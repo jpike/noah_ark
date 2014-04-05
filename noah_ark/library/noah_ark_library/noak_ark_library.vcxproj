@@ -14,6 +14,7 @@
     <ClInclude Include="src\Graphics\GraphicsSystem.h" />
     <ClInclude Include="src\Graphics\IGraphicsComponent.h" />
     <ClInclude Include="src\Graphics\Sprite.h" />
+    <ClInclude Include="src\Graphics\Texture.h" />
     <ClInclude Include="src\Maps\OverworldMap.h" />
     <ClInclude Include="src\Maps\Tile.h" />
     <ClInclude Include="src\Maps\TileMap.h" />
@@ -26,6 +27,7 @@
   <ItemGroup>
     <ClCompile Include="src\Graphics\GraphicsSystem.cpp" />
     <ClCompile Include="src\Graphics\Sprite.cpp" />
+    <ClCompile Include="src\Graphics\Texture.cpp" />
     <ClCompile Include="src\Maps\OverworldMap.cpp" />
     <ClCompile Include="src\Maps\Tile.cpp" />
     <ClCompile Include="src\Maps\TileMap.cpp" />
@@ -64,14 +66,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>./src;($ProjectDir)src;$(HGE_DIR)\include;$(IncludePath)</IncludePath>
+    <IncludePath>./src;($ProjectDir)src;$(HGE_DIR)\include;$(TMX_PARSER_DIR);$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <LibraryPath>$(HGE_DIR)\lib\vc;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>./src;($ProjectDir)src;$(HGE_DIR)\include;$(IncludePath)</IncludePath>
+    <IncludePath>./src;($ProjectDir)src;$(HGE_DIR)\include;$(TMX_PARSER_DIR);$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>

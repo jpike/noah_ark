@@ -78,6 +78,9 @@
     <None Include="res\resources.txt" />
     <None Include="res\res_images.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\images\ground_tile_set.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

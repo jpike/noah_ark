@@ -3,11 +3,12 @@
 #include <hge.h>
 #include <hgeresource.h>
 #include <memory>
+#include "Graphics/GraphicsSystem.h"
 #include "Physics/PhysicsSystem.h"
 #include "States/StateManager.h"
 
 ///////////////////////////////////////////////////////////
-/// \brief  Encapsulates the logic for running the entire Noah's Ark game.
+/// @brief  Encapsulates the logic for running the entire Noah's Ark game.
 ///         Only one instance of the game should be created due to limitations
 ///         in the underlying game engine.
 ///////////////////////////////////////////////////////////
@@ -77,9 +78,19 @@ private:
     /// @return True if subsystem initialization succeeded and false otherwise.
     bool InitializeSubsystems();
 
+    // MAIN GAME LOOP HELPER FUNCTIONS.
+    /// @brief  Updates the game for a single frame.
+    /// @return True if the application should terminate and no longer update;
+    ///         false if the application should continue updating.
+    bool Update();
+    /// @brief  Renders a single frame of the game.
+    /// @return Always false.
+    bool Render();
+
     // MEMBER VARIABLES.
     HGE* m_pGameEngine;    ///< The underlying game engine.
     std::shared_ptr<hgeResourceManager> m_resourceManager;    ///< The resource manager.
+    std::shared_ptr<GRAPHICS::GraphicsSystem> m_graphicsSystem; ///< The graphics system.
     std::shared_ptr<PHYSICS::PhysicsSystem> m_physicsSystem;  ///< The physics system.
     std::shared_ptr<STATES::StateManager> m_stateManager; ///< The game state manager.
 };

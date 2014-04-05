@@ -2,7 +2,9 @@
 
 using namespace STATES;
 
-OverworldState::OverworldState()
+OverworldState::OverworldState(std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
+    m_graphicsSystem(graphicsSystem),
+    m_overworldMap(graphicsSystem)
 {
 
 }
@@ -10,4 +12,9 @@ OverworldState::OverworldState()
 OverworldState::~OverworldState()
 {
 
+}
+
+bool OverworldState::Update()
+{
+    return false;
 }

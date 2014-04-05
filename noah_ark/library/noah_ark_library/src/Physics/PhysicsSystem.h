@@ -4,7 +4,7 @@
 namespace PHYSICS
 {
     ///////////////////////////////////////////////////////////
-    /// \brief  Responsible for controlling game physics (mainly collisions).
+    /// @brief  Responsible for controlling game physics (mainly collisions).
     ///////////////////////////////////////////////////////////
     class PhysicsSystem
     {

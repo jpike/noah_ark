@@ -4,7 +4,7 @@
 namespace MATH
 {
     ///////////////////////////////////////////////////////////
-    /// \brief  A 2D mathematical vector.  It currently only has the minimal functionality needed,
+    /// @brief  A 2D mathematical vector.  It currently only has the minimal functionality needed,
     ///         so it cannot directly perform all common vector operations.
     ///
     ///         The ComponentType template parameter is intended to be replaced with
@@ -44,8 +44,10 @@ namespace MATH
     };
 
     // DEFINE COMMON VECTOR2 TYPES.
-    /// A vector composed of 2 unsigned integer components.
+    /// @brief  A vector composed of 2 unsigned integer components.
     typedef Vector2<unsigned int> Vector2ui;
+    /// @brief  A vector composed of 2 float components.
+    typedef Vector2<float> Vector2f;
 
     // CLASS IMPLEMENTATION.
 

@@ -10,7 +10,7 @@ Gameplay details are still being fleshed out, but some preliminary details are p
 
 ## Programming
 
-The game is being programmed using C++ and [Haaf's Game Engine 1.81](http://hge.relishgames.com) within a Visual Studio 2012 Express environment.  [Catch](https://github.com/philsquared/Catch) is being used for unit testing.
+The game is being programmed using C++ within a Visual Studio 2012 Express environment.  Doxygen is used to document the code.
 
 For projects exist within the Visual Studio solution:
 * noah_ark_game - The main game.  Uses the library to orchestrate running an actual game.
@@ -18,14 +18,16 @@ For projects exist within the Visual Studio solution:
 * noah_art_tester - A unit testing application intended for testing the library.
 * noah_ark_resources - A project to manage any non-code resources of the project (graphics, tile maps, audio, etc.).
 
+Several dependencies are used:
+* [Haaf's Game Engine 1.81](http://hge.relishgames.com) - The main game engine ([zlib/libpng license](http://hge.relishgames.com/license.html)).
+* [TmxParser](https://code.google.com/p/tmx-parser/) - Parsing tile maps made with Tiled ([New BSD license](https://code.google.com/p/tmx-parser/source/browse/trunk/LICENSE)).
+* [Catch](https://github.com/philsquared/Catch) - Unit testing ([Boost Software license](https://github.com/philsquared/Catch/blob/master/LICENSE_1_0.txt)).
+
 The dependencies described above are not included with this project and must be downloaded externally.  To build the solution, you'll need to have environment variables set to the following directories:
 
 * HGE_DIR - Set to the root directory for Haaf's Game Engine (with include and lib directories and hge.dll).
+* TMX_PARSER_DIR - Set to the root directory for tmx-parser (the directory with the .sln file).
 * CATCH_DIR - Set to the directory with Catch's catch.hpp file.
-
-Haaf's Game Engine is distributed under the [zlib/libpng license](http://hge.relishgames.com/license.html), and Catch is distributed under the [Boost Software license](https://github.com/philsquared/Catch/blob/master/LICENSE_1_0.txt).
-
-Doxygen is used to document the code.
 
 ## Graphics
 
@@ -34,6 +36,13 @@ The graphics plan to use a "Game Boy Color" style for the overall shape of sprit
 ## Audio
 
 Audio hasn't been planned yet.  However, the audio will likely be simple to match the graphical style.
+
+## Tile Maps
+
+[Tiled](http://www.mapeditor.org/) is used to make tile maps for the game.  This editor was chosen for the following reasons:
+* Relatively up-to-date with common features
+* Relatively up-to-date parsing libraries
+* XML output format that would allow easier creation of a custom parsing library if need
 
 ## Bugs/Want to Help?
 

@@ -70,4 +70,9 @@
       <Filter>Resources\Maps</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\images\ground_tile_set.png">
+      <Filter>Resources\Images</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

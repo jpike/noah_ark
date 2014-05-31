@@ -1,6 +1,13 @@
 #pragma once
+
 #include <memory>
+
+// This guard is needed to avoid issues where catch is already included.
+// Otherwise, we can't split up tests into multiple files.
+#ifndef CATCH_CONFIG_MAIN
 #include <catch.hpp>
+#endif
+
 #include "States/StateManager.h"
 #include "StatesTests/MockGameState.h"
 

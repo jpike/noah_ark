@@ -16,6 +16,7 @@
     <ClInclude Include="src\Graphics\Sprite.h" />
     <ClInclude Include="src\Graphics\Texture.h" />
     <ClInclude Include="src\Maps\OverworldMap.h" />
+    <ClInclude Include="src\Maps\OverworldMapSpecification.h" />
     <ClInclude Include="src\Maps\Tile.h" />
     <ClInclude Include="src\Maps\TileMap.h" />
     <ClInclude Include="src\Math\Vector2.h" />
@@ -23,17 +24,20 @@
     <ClInclude Include="src\States\IGameState.h" />
     <ClInclude Include="src\States\OverworldState.h" />
     <ClInclude Include="src\States\StateManager.h" />
+    <ClInclude Include="src\States\TileMapScrollingTestState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Graphics\GraphicsSystem.cpp" />
     <ClCompile Include="src\Graphics\Sprite.cpp" />
     <ClCompile Include="src\Graphics\Texture.cpp" />
     <ClCompile Include="src\Maps\OverworldMap.cpp" />
+    <ClCompile Include="src\Maps\OverworldMapSpecification.cpp" />
     <ClCompile Include="src\Maps\Tile.cpp" />
     <ClCompile Include="src\Maps\TileMap.cpp" />
     <ClCompile Include="src\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="src\States\OverworldState.cpp" />
     <ClCompile Include="src\States\StateManager.cpp" />
+    <ClCompile Include="src\States\TileMapScrollingTestState.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D615E35-8F41-44B6-BE1B-FED957017972}</ProjectGuid>

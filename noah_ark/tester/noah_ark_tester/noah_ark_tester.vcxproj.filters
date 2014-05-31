@@ -16,6 +16,9 @@
     <Filter Include="Header Files\StatesTests">
       <UniqueIdentifier>{33df51f5-532a-4db7-b2fe-d4d3cc0e5bc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\MapsTests">
+      <UniqueIdentifier>{019a74d1-b79e-4ad7-95dd-4b5ae35f0d08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -28,6 +31,9 @@
     </ClInclude>
     <ClInclude Include="src\StatesTests\MockGameState.h">
       <Filter>Header Files\StatesTests</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapsTests\OverworldMapSpecificationTests.h">
+      <Filter>Header Files\MapsTests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

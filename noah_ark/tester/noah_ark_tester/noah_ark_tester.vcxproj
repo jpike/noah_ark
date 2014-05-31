@@ -70,7 +70,9 @@
       <IgnoreSpecificDefaultLibraries>LIBC.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(HGE_DIR)\hge.dll" "$(TargetDir)"</Command>
+      <Command>xcopy /Y "$(HGE_DIR)\hge.dll" "$(TargetDir)"
+
+xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(TargetDir)res\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>
@@ -96,13 +98,16 @@
       <IgnoreSpecificDefaultLibraries>LIBC.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(HGE_DIR)\hge.dll" "$(TargetDir)"</Command>
+      <Command>xcopy /Y "$(HGE_DIR)\hge.dll" "$(TargetDir)"
+
+xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(TargetDir)res\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\MapsTests\OverworldMapSpecificationTests.h" />
     <ClInclude Include="src\StatesTests\MockGameState.h" />
     <ClInclude Include="src\StatesTests\StateManagerTests.h" />
   </ItemGroup>

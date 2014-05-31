@@ -16,10 +16,13 @@ namespace MAPS
     {
     public:
         /// @brief  Constructor.
-        /// @todo   Remove the graphics system parameter once properly loading the overworld map is supported.
-        explicit OverworldMap(std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
+        explicit OverworldMap();
         /// @brief  Destructor.
         ~OverworldMap();
+
+        /// @brief      Sets the current tile map displayed by the overworld.
+        /// @param[in]  tileMap - The new current tile map.
+        void SetCurrentTileMap(const std::shared_ptr<TileMap>& tileMap);
 
     private:
         OverworldMap(const OverworldMap& mapToCopy);  ///< Private to disallow copying.
@@ -30,5 +33,8 @@ namespace MAPS
         ///         For example, the map at (0,0) is the top-left map.  The map at (1,0) is right of the top-left map.
         ///         The map at (0,1) is below the top-left map.
         std::vector< std::vector< std::shared_ptr<TileMap> > > m_tileMaps;
+
+        /// @todo   Consider removing the above array and instead just using this initial map.
+        std::shared_ptr<TileMap> m_currentTileMap;
     };
 }

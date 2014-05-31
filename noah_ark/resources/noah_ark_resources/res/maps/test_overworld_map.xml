@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OverworldMap>
+	<WidthInTileMaps>3</WidthInTileMaps>
+	<HeightInTileMaps>3</HeightInTileMaps>
+	<!-- Chosen to be the center map of the overworld. -->
+	<StartingTileMapFilepath>res/maps/test_map_1_1.tmx</StartingTileMapFilepath>
+	<TileMaps>
+		<!-- ROW 0 -->
+		<Filepath>res/maps/test_map_0_0.tmx</Filepath>
+		<Filepath>res/maps/test_map_1_0.tmx</Filepath>
+		<Filepath>res/maps/test_map_2_0.tmx</Filepath>
+		<!-- ROW 1 -->
+		<Filepath>res/maps/test_map_0_1.tmx</Filepath>
+		<Filepath>res/maps/test_map_1_1.tmx</Filepath>
+		<Filepath>res/maps/test_map_2_1.tmx</Filepath>
+		<!-- ROW 2 -->
+		<Filepath>res/maps/test_map_0_2.tmx</Filepath>
+		<Filepath>res/maps/test_map_1_2.tmx</Filepath>
+		<Filepath>res/maps/test_map_2_2.tmx</Filepath>
+	</TileMaps>
+</OverworldMap>

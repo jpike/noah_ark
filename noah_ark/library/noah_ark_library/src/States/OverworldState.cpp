@@ -4,7 +4,7 @@ using namespace STATES;
 
 OverworldState::OverworldState(std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
     m_graphicsSystem(graphicsSystem),
-    m_overworldMap(graphicsSystem)
+    m_overworldMap()
 {
 
 }

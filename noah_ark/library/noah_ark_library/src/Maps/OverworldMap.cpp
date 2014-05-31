@@ -4,7 +4,7 @@
 
 using namespace MAPS;
 
-OverworldMap::OverworldMap(std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
+OverworldMap::OverworldMap() :
     m_tileMaps()
 {
     // Create an initial tile map for testing.
@@ -13,11 +13,11 @@ OverworldMap::OverworldMap(std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSy
     ///         manager to load an XML file that specifies the entire overworld map.
     ///         That class should load the overworld map to pass to this constructor.
     ///         Alternatively, individual tile maps could reference adjacent tile maps.
-    std::shared_ptr<Tmx::Map> initialTmxMap(new Tmx::Map());
+    /* std::shared_ptr<Tmx::Map> initialTmxMap(new Tmx::Map());
     initialTmxMap->ParseFile("res/maps/test_map_1_1.tmx");
     std::shared_ptr<TileMap> initialTileMap( new TileMap(initialTmxMap, graphicsSystem) );
     m_tileMaps.push_back( std::vector< std::shared_ptr<TileMap> >() );
-    m_tileMaps[0].push_back(initialTileMap);
+    m_tileMaps[0].push_back(initialTileMap); */
     
     // Nothing else to do.
 }
@@ -25,4 +25,9 @@ OverworldMap::OverworldMap(std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSy
 OverworldMap::~OverworldMap()
 {
     // Nothing else to do.
+}
+
+void OverworldMap::SetCurrentTileMap(const std::shared_ptr<TileMap>& tileMap)
+{
+    m_currentTileMap = tileMap;
 }

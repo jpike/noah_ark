@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <hge.h>
+#include "Input/MapScrollingDebugInputController.h"
 #include "Maps/OverworldMap.h"
 #include "States/IGameState.h"
 
@@ -13,9 +15,12 @@ namespace STATES
     {
     public:
         /// @brief      Constructor.
+        /// @param[in]  pGameEngine - The HGE game engine.  Must not be nullptr.
         /// @param[in]  graphicsSystem - The graphics system.
         /// @throws     std::runtime_error - Thrown if the overworld can't be loaded.
-        explicit TileMapScrollingTestState(std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
+        explicit TileMapScrollingTestState(
+            HGE* const pGameEngine,
+            std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
         /// @brief  Destructor.
         virtual ~TileMapScrollingTestState();
 
@@ -33,7 +38,13 @@ namespace STATES
         /// @return     True if the overworld was loaded successfully; false otherwise.
         bool LoadOverworldMap(const std::string& overworldSpecFilepath);
 
+        /// @brief      Handles user input for a single frame.
+        /// @param[in]  inputController - The controller supplying user input.
+        void HandleUserInput(const INPUT_CONTROL::IDebugInputController& inputController);
+
         std::shared_ptr<GRAPHICS::GraphicsSystem> m_graphicsSystem; ///< The graphics system.
+        INPUT_CONTROL::MapScrollingDebugInputController m_inputController;  ///< The controller supplying user input.
+
         MAPS::OverworldMap m_overworldMap;  ///< The overworld map of the game.
     };
 }

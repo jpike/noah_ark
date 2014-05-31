@@ -112,7 +112,7 @@ bool NoahArkGame::Initialize()
     // SET THE INITIAL GAME STATE.
     /// @todo The state needs to be changed once all of the game states and finally implemented.
     ///       It should go to an "intro video" or "title screen" state initially.
-    std::shared_ptr<STATES::IGameState> initialState(new STATES::TileMapScrollingTestState(m_graphicsSystem));
+    std::shared_ptr<STATES::IGameState> initialState(new STATES::TileMapScrollingTestState(m_pGameEngine, m_graphicsSystem));
     m_stateManager->SetCurrentState(initialState);
 
     // ALL INITIALIZATION STEPS SUCCEEDED.

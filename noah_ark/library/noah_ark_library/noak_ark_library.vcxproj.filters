@@ -46,6 +46,12 @@
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{3925d819-4201-44a4-a812-542438edbf0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Input">
+      <UniqueIdentifier>{4b4eb563-8b93-408b-8d73-636d0a79d31e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{b4ad34dc-8b87-451a-bd4f-2ab16c50043e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\States\OverworldState.h">
@@ -90,6 +96,15 @@
     <ClInclude Include="src\States\TileMapScrollingTestState.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
+    <ClInclude Include="src\Input\IDebugInputController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\MapScrollingDebugInputController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\Keyboard.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -124,6 +139,12 @@
     </ClCompile>
     <ClCompile Include="src\States\TileMapScrollingTestState.cpp">
       <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input\Keyboard.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input\MapScrollingDebugInputController.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

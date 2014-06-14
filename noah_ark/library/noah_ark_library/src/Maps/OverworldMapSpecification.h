@@ -2,7 +2,8 @@
 
 #include <string>
 #include <vector>
-#include "TmxParser/tinyxml/tinyxml.h"
+#include <TmxParser/tinyxml/tinyxml.h>
+#include "Math/Vector2.h"
 
 namespace MAPS
 {
@@ -38,6 +39,11 @@ namespace MAPS
         /// @return     The filepath to the overworld's starting tile map.
         std::string GetStartingTileMapFilepath() const;
 
+        /// @brief      Gets the 2D x, y (column, row) position of the starting tile map
+        ///             in the overworld map.
+        /// @return     The 2D position of the starting tile map.
+        MATH::Vector2ui GetStartingTileMapPosition() const;
+
         /// @brief      Gets the filepath of the tile map at the specified row and column of the overworld.
         ///             Row and column coordinates are 0-based.
         /// @param[in]  row - The row for which to get the tile map filepath (in units of tile maps).
@@ -54,6 +60,7 @@ namespace MAPS
         unsigned int m_overworldHeightInTileMaps;   ///< The height of the overworld (in units of tile maps).
 
         std::string m_startingTileMapFilepath;  ///< The filepath to the overworld's starting tile map.
+        MATH::Vector2ui m_startingTileMapPosition;  ///< The 2D position of the starting tile map.
         
         /// @brief  Tile map filepaths within the overworld map, stored by their 2D positions relative to each other.
         ///         The y (vertical) coordinate comes first, followed by the x (horizontal) coordinate.

@@ -8,6 +8,7 @@ OverworldMapSpecification::OverworldMapSpecification() :
     m_overworldWidthInTileMaps(0),
     m_overworldHeightInTileMaps(0),
     m_startingTileMapFilepath(),
+    m_startingTileMapPosition(0, 0),
     m_tileMapFilepaths()
 {
 
@@ -108,6 +109,7 @@ bool OverworldMapSpecification::LoadFromFile(const std::string& filepath)
     // the row/column position of each tile map and validate that the expected
     // number of maps were provided.
     unsigned int tileMapFilepathsReadCount = 0;
+    MATH::Vector2ui startingTileMapPosition(0, 0);
     std::vector< std::vector<std::string> > tileMapFilepaths;
 
     const std::string EXPECTED_TILE_MAPS_ELEMENT_NAME = "TileMaps";
@@ -142,6 +144,13 @@ bool OverworldMapSpecification::LoadFromFile(const std::string& filepath)
         // Save the current tile map filepath.
         tileMapFilepaths[currentTileMapRow].push_back(currentTileMapFilepath);
         ++tileMapFilepathsReadCount;
+
+        // Store the position of the starting tile map if it matches the current tilemap.
+        bool currentFilepathIsForStartingTileMap = (startingTileMapFilepath == currentTileMapFilepath);
+        if (currentFilepathIsForStartingTileMap)
+        {
+            startingTileMapPosition = MATH::Vector2ui(currentTileMapColumn, currentTileMapRow);
+        }
     }
 
     // VALIDATE THAT THE MAP WAS PROPERLY FORMED.
@@ -170,6 +179,7 @@ bool OverworldMapSpecification::LoadFromFile(const std::string& filepath)
     m_overworldWidthInTileMaps = widthInTileMaps;
     m_overworldHeightInTileMaps = heightInTileMaps;
     m_startingTileMapFilepath = startingTileMapFilepath;
+    m_startingTileMapPosition = startingTileMapPosition;
     m_tileMapFilepaths = tileMapFilepaths;
 
     return true;
@@ -188,6 +198,11 @@ unsigned int OverworldMapSpecification::GetOverworldHeightInTileMaps() const
 std::string OverworldMapSpecification::GetStartingTileMapFilepath() const
 {
     return m_startingTileMapFilepath;
+}
+
+MATH::Vector2ui OverworldMapSpecification::GetStartingTileMapPosition() const
+{
+    return m_startingTileMapPosition;
 }
 
 std::string OverworldMapSpecification::GetTileMapFilepath(const unsigned int row, const unsigned int column) const

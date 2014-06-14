@@ -201,7 +201,7 @@ bool NoahArkGame::InitializeSubsystems()
     m_resourceManager = std::make_shared<hgeResourceManager>(RESOURCE_FILE_RELATIVE_PATH);
 
     // INITIALIZE THE GRAPHICS SYSTEM.
-    m_graphicsSystem = std::make_shared<GRAPHICS::GraphicsSystem>(m_resourceManager);
+    m_graphicsSystem = std::make_shared<GRAPHICS::GraphicsSystem>(m_pGameEngine, m_resourceManager);
 
     // INITIALIZE THE PHYSICS SYSTEM.
     m_physicsSystem = std::make_shared<PHYSICS::PhysicsSystem>();

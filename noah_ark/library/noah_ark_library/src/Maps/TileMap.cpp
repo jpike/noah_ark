@@ -2,11 +2,14 @@
 
 using namespace MAPS;
 
-TileMap::TileMap(const std::shared_ptr<Tmx::Map>& map, std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
+TileMap::TileMap(
+    const MATH::Vector2f& topLeftWorldPositionInPixels,
+    const std::shared_ptr<Tmx::Map>& map, 
+    std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
     m_tiles()
 {
     // BUILD THIS TILEMAP FROM THE TMX MAP.
-    BuildFromTmxMap(map, *graphicsSystem);
+    BuildFromTmxMap(topLeftWorldPositionInPixels, map, *graphicsSystem);
 }
 
 TileMap::~TileMap()
@@ -14,7 +17,10 @@ TileMap::~TileMap()
     // Nothing else to do.
 }
 
-void TileMap::BuildFromTmxMap(const std::shared_ptr<Tmx::Map>& map, GRAPHICS::GraphicsSystem& graphicsSystem)
+void TileMap::BuildFromTmxMap(
+    const MATH::Vector2f& topLeftWorldPositionInPixels,
+    const std::shared_ptr<Tmx::Map>& map, 
+    GRAPHICS::GraphicsSystem& graphicsSystem)
 {
     // VERIFY THAT THE EXPECTED NUMBER OF LAYERS EXIST IN THE MAP.
     // For now, we only support a single ground layer.
@@ -92,10 +98,10 @@ void TileMap::BuildFromTmxMap(const std::shared_ptr<Tmx::Map>& map, GRAPHICS::Gr
             // Set any flipping for the sprite.
             tileSprite->SetFlip(tmxTile.flippedHorizontally, tmxTile.flippedVertically);
 
-            // Set the sprite's screen position.
-            float screenXPosition = static_cast<float>(tileWidthInPixels * xPositionInTiles);
-            float screenYPosition = static_cast<float>(tileHeightInPixels * yPositionInTiles);
-            tileSprite->SetScreenPosition(screenXPosition, screenYPosition);
+            // Set the sprite's world position.
+            float worldXPosition = static_cast<float>(tileWidthInPixels * xPositionInTiles) + topLeftWorldPositionInPixels.X;
+            float worldYPosition = static_cast<float>(tileHeightInPixels * yPositionInTiles) + topLeftWorldPositionInPixels.Y;
+            tileSprite->SetWorldPosition(worldXPosition, worldYPosition);
 
             // STORE A TILE IN THE COLLECTION OF TILES.
             std::shared_ptr<Tile> tile = std::make_shared<Tile>(tileSprite);

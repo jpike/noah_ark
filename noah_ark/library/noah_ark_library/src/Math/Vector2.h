@@ -34,6 +34,13 @@ namespace MATH
         /// @return     This vector with values copied from the provided vector.
         Vector2& operator= (const Vector2& rhsVector);
 
+        /// @brief      Equality operator.  Direct equality comparison is used for components,
+        ///             so the precision of components types should be considered when using
+        ///             this operator.
+        /// @param[in]  rhsVector - The vector on the right-hand side of the operator.
+        /// @return     True if the vectors are equal; false otherwise.
+        bool operator== (const Vector2& rhsVector) const;
+
         ComponentType X;    ///< The x component of the vector.  Public for easy access.
         ComponentType Y;    ///< The y component of the vector.  Public for easy access.
 
@@ -75,7 +82,17 @@ namespace MATH
     }
 
     template <typename ComponentType>
-    void Copy(const Vector2<ComponentType>& vectorToCopy)
+    bool Vector2<ComponentType>::operator== (const Vector2<ComponentType>& rhsVector) const
+    {
+        bool xComponentMatches = (this->X == rhsVector.X);
+        bool yComponentMatches = (this->Y == rhsVector.X);
+
+        bool bothComponentsMatch = (xComponentMatches && yComponentMatches);
+        return bothComponentsMatch;
+    }
+
+    template <typename ComponentType>
+    void Vector2<ComponentType>::Copy(const Vector2<ComponentType>& vectorToCopy)
     {
         // COPY COMPONENTS FROM THE PROVIDED VECTOR.
         this->X = vectorToCopy.X;

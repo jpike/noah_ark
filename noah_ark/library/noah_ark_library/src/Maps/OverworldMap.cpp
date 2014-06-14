@@ -5,7 +5,11 @@
 using namespace MAPS;
 
 OverworldMap::OverworldMap() :
-    m_tileMaps()
+    m_currentTileMap(),
+    m_topTileMap(),
+    m_bottomTileMap(),
+    m_leftTileMap(),
+    m_rightTileMap()
 {
     // Create an initial tile map for testing.
     /// @todo   Change the code around so that a hard coded path isn't used here.
@@ -30,4 +34,24 @@ OverworldMap::~OverworldMap()
 void OverworldMap::SetCurrentTileMap(const std::shared_ptr<TileMap>& tileMap)
 {
     m_currentTileMap = tileMap;
+}
+
+void OverworldMap::SetTopTileMap(const std::shared_ptr<TileMap>& tileMap)
+{
+    m_topTileMap = tileMap;
+}
+
+void OverworldMap::SetBottomTileMap(const std::shared_ptr<TileMap>& tileMap)
+{
+    m_bottomTileMap = tileMap;
+}
+
+void OverworldMap::SetLeftTileMap(const std::shared_ptr<TileMap>& tileMap)
+{
+    m_leftTileMap = tileMap;
+}
+
+void OverworldMap::SetRightTileMap(const std::shared_ptr<TileMap>& tileMap)
+{
+    m_rightTileMap = tileMap;
 }

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <hge.h>
+#include "Graphics/Camera.h"
 #include "Input/MapScrollingDebugInputController.h"
 #include "Maps/OverworldMap.h"
 #include "States/IGameState.h"
@@ -41,6 +42,8 @@ namespace STATES
         /// @brief      Handles user input for a single frame.
         /// @param[in]  inputController - The controller supplying user input.
         void HandleUserInput(const INPUT_CONTROL::IDebugInputController& inputController);
+
+        GRAPHICS::Camera m_camera;  ///< The camera indicating the portion of the world being shown.
 
         std::shared_ptr<GRAPHICS::GraphicsSystem> m_graphicsSystem; ///< The graphics system.
         INPUT_CONTROL::MapScrollingDebugInputController m_inputController;  ///< The controller supplying user input.

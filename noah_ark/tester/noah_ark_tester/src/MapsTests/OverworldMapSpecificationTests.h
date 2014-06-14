@@ -66,6 +66,11 @@ TEST_CASE( "Load specification from file.  Success.", "[OverworldMapSpecificatio
         }
     }
 
+    // Verify that the starting map is at the expected position.
+    const MATH::Vector2ui EXPECTED_STARTING_TILE_MAP_POSITION(1, 1);
+    MATH::Vector2ui actual_starting_tile_map_position = overworldSpecification.GetStartingTileMapPosition();
+    REQUIRE(EXPECTED_STARTING_TILE_MAP_POSITION == actual_starting_tile_map_position);
+
     // Verify that the expected starting map was specified.
     const std::string& EXPECTED_STARTING_MAP_FILEPATH = expected_tile_map_filepaths[1][1];
     std::string actual_starting_tile_map_filepath = overworldSpecification.GetStartingTileMapFilepath();

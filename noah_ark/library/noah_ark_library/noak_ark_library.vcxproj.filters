@@ -105,6 +105,12 @@
     <ClInclude Include="src\Input\Keyboard.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="src\Maps\TileMapLoader.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Camera.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -145,6 +151,12 @@
     </ClCompile>
     <ClCompile Include="src\Input\MapScrollingDebugInputController.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\TileMapLoader.cpp">
+      <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Camera.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

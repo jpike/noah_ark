@@ -28,10 +28,10 @@ namespace GRAPHICS
         /// @brief  Renders the sprite.
         virtual void Render();
 
-        /// @brief      Sets the screen position of the sprite.
-        /// @param[in]  xPositionInPixels - The x-coordinate of the sprite on screen.
-        /// @param[in]  yPositionInPixels - The y-coordinate of the sprite on screen.
-        void SetScreenPosition(const float xPositionInPixels, const float yPositionInPixels);
+        /// @brief      Sets the world position of the sprite.
+        /// @param[in]  xPositionInPixels - The x-coordinate of the sprite in the world.
+        /// @param[in]  yPositionInPixels - The y-coordinate of the sprite in the world.
+        void SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels);
 
         /// @brief      Sets the flipping capabilities of the sprite.
         /// @param[in]  flippedHorizontally - Whether or not the sprite is flipped horizontally.
@@ -41,6 +41,6 @@ namespace GRAPHICS
     private:
         std::shared_ptr<hgeSprite> m_sprite;   ///< The underlying HGE sprite resource.
         bool m_visible; ///< Whether or not the sprite is visible.
-        MATH::Vector2f m_screenPositionInPixels;  ///< The position of the sprite on screen.
+        MATH::Vector2f m_worldPositionInPixels;  ///< The position of the sprite in the world.
     };
 }

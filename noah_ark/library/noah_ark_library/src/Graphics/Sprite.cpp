@@ -5,7 +5,7 @@ using namespace GRAPHICS;
 Sprite::Sprite(const std::shared_ptr<hgeSprite>& sprite) :
     m_sprite(sprite),
     m_visible(true),
-    m_screenPositionInPixels()
+    m_worldPositionInPixels()
 {
     // Nothing else to do.
 }
@@ -22,13 +22,13 @@ bool Sprite::IsVisible() const
 
 void Sprite::Render()
 {
-    m_sprite->Render(m_screenPositionInPixels.X, m_screenPositionInPixels.Y);
+    m_sprite->Render(m_worldPositionInPixels.X, m_worldPositionInPixels.Y);
 }
 
-void Sprite::SetScreenPosition(const float xPositionInPixels, const float yPositionInPixels)
+void Sprite::SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels)
 {
-    m_screenPositionInPixels.X = xPositionInPixels;
-    m_screenPositionInPixels.Y = yPositionInPixels;
+    m_worldPositionInPixels.X = xPositionInPixels;
+    m_worldPositionInPixels.Y = yPositionInPixels;
 }
 
 void Sprite::SetFlip(const bool flippedHorizontally, const bool flippedVertically)

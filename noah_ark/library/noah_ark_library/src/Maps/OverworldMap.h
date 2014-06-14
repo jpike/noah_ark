@@ -24,17 +24,30 @@ namespace MAPS
         /// @param[in]  tileMap - The new current tile map.
         void SetCurrentTileMap(const std::shared_ptr<TileMap>& tileMap);
 
+        /// @brief      Sets the tile map above the map currently displayed by the overworld.
+        /// @param[in]  tileMap - The new tile map above the currently displayed one.
+        void SetTopTileMap(const std::shared_ptr<TileMap>& tileMap);
+
+        /// @brief      Sets the tile map below the map currently displayed by the overworld.
+        /// @param[in]  tileMap - The new tile map below the currently displayed one.
+        void SetBottomTileMap(const std::shared_ptr<TileMap>& tileMap);
+
+        /// @brief      Sets the tile map to the left of the map currently displayed by the overworld.
+        /// @param[in]  tileMap - The new tile map to the left of the currently displayed one.
+        void SetLeftTileMap(const std::shared_ptr<TileMap>& leftTileMap);
+
+        /// @brief      Sets the tile map to the right of the map currently displayed by the overworld.
+        /// @param[in]  tileMap - The new tile map to the right of the currently displayed one.
+        void SetRightTileMap(const std::shared_ptr<TileMap>& leftTileMap);
+
     private:
         OverworldMap(const OverworldMap& mapToCopy);  ///< Private to disallow copying.
         OverworldMap& operator= (const OverworldMap& rhsMap); ///< Private to disallow assignment.
 
-        /// @brief  Tile maps within the overworld map, stored by their 2D positions relative to each other.
-        ///         The x (horizontal) coordinate comes first, followed by the y (vertical) coordinate.
-        ///         For example, the map at (0,0) is the top-left map.  The map at (1,0) is right of the top-left map.
-        ///         The map at (0,1) is below the top-left map.
-        std::vector< std::vector< std::shared_ptr<TileMap> > > m_tileMaps;
-
-        /// @todo   Consider removing the above array and instead just using this initial map.
-        std::shared_ptr<TileMap> m_currentTileMap;
+        std::shared_ptr<TileMap> m_currentTileMap;  ///< The current tile map containing the player.
+        std::shared_ptr<TileMap> m_topTileMap;  ///< The tile map above the current tile map.
+        std::shared_ptr<TileMap> m_bottomTileMap;   ///< The tile map below the current tile map.
+        std::shared_ptr<TileMap> m_leftTileMap; ///< The tile map to the left of the current tile map.
+        std::shared_ptr<TileMap> m_rightTileMap;    ///< The tile map to the right of the current tile map.
     };
 }

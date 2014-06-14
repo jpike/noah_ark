@@ -3,6 +3,7 @@
 #include <hgeresource.h>
 #include <list>
 #include <memory>
+#include "Graphics/Camera.h"
 #include "Graphics/IGraphicsComponent.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Texture.h"
@@ -18,8 +19,9 @@ namespace GRAPHICS
     {
     public:
         /// @brief      Constructor.
+        /// @param      pGameEngine - The underlying HGE game engine.  Must not be NULL.
         /// @param[in]  resourceManager - The resource manager used to access graphics resources.
-        explicit GraphicsSystem(const std::shared_ptr<hgeResourceManager>& resourceManager);
+        explicit GraphicsSystem(HGE* const pGameEngine, const std::shared_ptr<hgeResourceManager>& resourceManager);
         /// @brief  Destructor.
         ~GraphicsSystem();
 
@@ -29,6 +31,10 @@ namespace GRAPHICS
         ///         being in back/front of others.  Therefore, you should make
         ///         sure that z values have been properly set for all components objects.
         void Render();
+
+        /// @brief      Sets the camera used by the graphics system for rendering.
+        /// @param[in]  camera - The camera indicating the viewable area of the world.
+        void SetCamera(const Camera& camera);
 
         /// @brief      Gets a texture resource with the specified name.
         ///             Textures are not automatically rendered by the graphics system
@@ -63,6 +69,8 @@ namespace GRAPHICS
         /// @param[in]  graphicsComponent - The graphics component to render.
         void RenderIfVisible(std::shared_ptr<IGraphicsComponent>& graphicsComponent);
 
+        HGE* m_pGameEngine; ///< The underlying HGE game engine.
+        Camera m_camera;    ///< The camera indicating what portion of the world is currently in view.
         std::shared_ptr<hgeResourceManager> m_resourceManager;   ///< The resource manager used to access graphics resources.
         std::list< std::shared_ptr<IGraphicsComponent> > m_graphicsComponents;    ///< The graphics components to be rendered.
     };

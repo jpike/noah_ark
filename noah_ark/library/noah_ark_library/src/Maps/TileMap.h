@@ -28,16 +28,42 @@ namespace MAPS
     {
     public:
         /// @brief          Constructor.
+        /// @param[in]      overworldGridPosition - The position of the tile map within the overworld grid.
         /// @param[in]      topLeftWorldPositionInPixels - The top-left position of the map within the world.
         /// @param[in]      map - The underlying map that has already been loaded.
         /// @param[in,out]  graphicsSystem - The graphics system used to manage graphics for this tile map.
         explicit TileMap(
+            const MATH::Vector2ui& overworldGridPosition,
             const MATH::Vector2f& topLeftWorldPositionInPixels,
             const std::shared_ptr<Tmx::Map>& map, 
             std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
         
         /// @brief  Destructor.
         virtual ~TileMap();
+
+        /// @brief  Gets the position of the tile map within the overworld grid.
+        /// @return The overworld grid position of the tile map.
+        MATH::Vector2ui GetOverworldGridPosition() const;
+        
+        /// @brief  Gets the top-left world position of the tile map, in pixels.
+        /// @return The top-left position of the map.
+        MATH::Vector2f GetTopLeftWorldPosition() const;
+
+        /// @brief  Gets the width of the map, in tiles.
+        /// @return The width of the map, in tiles.
+        unsigned int GetWidthInTiles() const;
+
+        /// @brief  Gets the height of the map, in tiles.
+        /// @return The height of the map, in tiles.
+        unsigned int GetHeightInTiles() const;
+
+        /// @brief  Gets the width of a tile in the map, in pixels.
+        /// @return The width of a single tile.
+        unsigned int GetTileWidthInPixels() const;
+
+        /// @brief  Gets the height of a tile in the map, in pixels.
+        /// @return The height of single tile.
+        unsigned int GetTileHeightInPixels() const;
 
     private:
         TileMap(const TileMap& mapToCopy);  ///< Private to disallow copying.
@@ -57,5 +83,10 @@ namespace MAPS
         ///         For example, the tile at (0,0) is the top-left tile.  The tile at (1,0) is right of the top-left tile.
         ///         The tile at (0,1) is below the top-left tile.
         std::vector< std::vector< std::shared_ptr<Tile> > > m_tiles;
+
+        std::shared_ptr<Tmx::Map> m_tmxMap; ///< The TMX map used to create this map.
+
+        MATH::Vector2ui m_overworldGridPosition;    ///< The position of the tile map in the overworld map's grid.
+        MATH::Vector2f m_topLeftWorldPositionInPixels;  ///< The top-left world position of the tile map.
     };
 }

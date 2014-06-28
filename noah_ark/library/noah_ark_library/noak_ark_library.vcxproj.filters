@@ -52,6 +52,12 @@
     <Filter Include="Source Files\Input">
       <UniqueIdentifier>{b4ad34dc-8b87-451a-bd4f-2ab16c50043e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Processes">
+      <UniqueIdentifier>{5de459dc-fcab-49f3-b360-2bb668425dbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Processes">
+      <UniqueIdentifier>{ec215c39-e600-47b9-99fc-fa2a5e62f128}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\States\OverworldState.h">
@@ -111,6 +117,9 @@
     <ClInclude Include="src\Graphics\Camera.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Processes\ScrollProcess.h">
+      <Filter>Header Files\Processes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -157,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="src\Graphics\Camera.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Processes\ScrollProcess.cpp">
+      <Filter>Source Files\Processes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

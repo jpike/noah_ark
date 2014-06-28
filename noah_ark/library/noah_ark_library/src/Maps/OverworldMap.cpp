@@ -31,6 +31,31 @@ OverworldMap::~OverworldMap()
     // Nothing else to do.
 }
 
+std::shared_ptr<TileMap> OverworldMap::GetCurrentTileMap() const
+{
+    return m_currentTileMap;
+}
+
+std::shared_ptr<TileMap> OverworldMap::GetTopTileMap() const
+{
+    return m_topTileMap;
+}
+
+std::shared_ptr<TileMap> OverworldMap::GetBottomTileMap() const
+{
+    return m_bottomTileMap;
+}
+
+std::shared_ptr<TileMap> OverworldMap::GetLeftTileMap() const
+{
+    return m_leftTileMap;
+}
+
+std::shared_ptr<TileMap> OverworldMap::GetRightTileMap() const
+{
+    return m_rightTileMap;
+}
+
 void OverworldMap::SetCurrentTileMap(const std::shared_ptr<TileMap>& tileMap)
 {
     m_currentTileMap = tileMap;

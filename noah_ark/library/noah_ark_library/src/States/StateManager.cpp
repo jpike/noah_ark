@@ -23,7 +23,7 @@ void StateManager::SetCurrentState(const std::shared_ptr<IGameState>& newState)
     m_currentState = newState;
 }
 
-bool StateManager::Update()
+bool StateManager::Update(const float elapsedTimeInSeconds)
 {
-    return m_currentState->Update();
+    return m_currentState->Update(elapsedTimeInSeconds);
 }

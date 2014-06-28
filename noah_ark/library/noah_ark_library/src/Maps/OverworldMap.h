@@ -20,6 +20,27 @@ namespace MAPS
         /// @brief  Destructor.
         ~OverworldMap();
 
+        
+        /// @brief  Gets the currently displayed tile map.
+        /// @return The currently displayed tile map.
+        std::shared_ptr<TileMap> GetCurrentTileMap() const;
+
+        /// @brief  Gets the tile map above the currently displayed map.
+        /// @return The tile map above the current one.
+        std::shared_ptr<TileMap> GetTopTileMap() const;
+
+        /// @brief  Gets the tile map below the currently displayed map.
+        /// @return The tile map below the current one.
+        std::shared_ptr<TileMap> GetBottomTileMap() const;
+
+        /// @brief  Gets the tile map to the left the currently displayed map.
+        /// @return The tile map left of the current one.
+        std::shared_ptr<TileMap> GetLeftTileMap() const;
+
+        /// @brief  Gets the tile map to the right the currently displayed map.
+        /// @return The tile map right of the current one.
+        std::shared_ptr<TileMap> GetRightTileMap() const;
+
         /// @brief      Sets the current tile map displayed by the overworld.
         /// @param[in]  tileMap - The new current tile map.
         void SetCurrentTileMap(const std::shared_ptr<TileMap>& tileMap);

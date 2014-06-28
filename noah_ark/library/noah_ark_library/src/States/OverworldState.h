@@ -20,10 +20,8 @@ namespace STATES
         /// @brief  Destructor.
         virtual ~OverworldState();
 
-        /// @brief      Updates the state for a single frame of the game.
-        /// @return     True if the game should terminate and no longer update;
-        ///             false if the game should continue updating.
-        virtual bool Update();
+        /// @copydoc    IGameState::Update(const float elapsedTimeInSeconds)
+        virtual bool Update(const float elapsedTimeInSeconds);
 
     private:
         OverworldState(const OverworldState& stateToCopy);  ///< Private to disallow copying.

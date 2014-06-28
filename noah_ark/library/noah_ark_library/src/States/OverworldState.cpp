@@ -14,7 +14,7 @@ OverworldState::~OverworldState()
 
 }
 
-bool OverworldState::Update()
+bool OverworldState::Update(const float elapsedTimeInSeconds)
 {
     return false;
 }

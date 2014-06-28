@@ -218,7 +218,9 @@ bool NoahArkGame::InitializeSubsystems()
 
 bool NoahArkGame::Update()
 {
-    return m_stateManager->Update();
+    float elapsedTimeInSeconds = m_pGameEngine->Timer_GetDelta();
+    
+    return m_stateManager->Update(elapsedTimeInSeconds);
 }
 
 bool NoahArkGame::Render()

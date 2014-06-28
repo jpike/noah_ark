@@ -25,9 +25,10 @@ namespace STATES
         void SetCurrentState(const std::shared_ptr<IGameState>& newState);
 
         /// @brief      Updates the current state for a single frame of the game.
+        /// @param[in]  elapsedTimeInSeconds - The elapsed time since the last frame update, in seconds.
         /// @return     True if the game should terminate and no longer update;
         ///             false if the game should continue updating.
-        bool Update();
+        bool Update(const float elapsedTimeInSeconds);
 
     private:
         StateManager(const StateManager& managerToCopy);  ///< Private to disallow copying.

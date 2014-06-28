@@ -3,10 +3,14 @@
 using namespace MAPS;
 
 TileMap::TileMap(
+    const MATH::Vector2ui& overworldGridPosition,
     const MATH::Vector2f& topLeftWorldPositionInPixels,
     const std::shared_ptr<Tmx::Map>& map, 
     std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
-    m_tiles()
+    m_tiles(),
+    m_tmxMap(map),
+    m_overworldGridPosition(overworldGridPosition),
+    m_topLeftWorldPositionInPixels(topLeftWorldPositionInPixels)
 {
     // BUILD THIS TILEMAP FROM THE TMX MAP.
     BuildFromTmxMap(topLeftWorldPositionInPixels, map, *graphicsSystem);
@@ -15,6 +19,36 @@ TileMap::TileMap(
 TileMap::~TileMap()
 {
     // Nothing else to do.
+}
+
+MATH::Vector2ui TileMap::GetOverworldGridPosition() const
+{
+    return m_overworldGridPosition;
+}
+
+MATH::Vector2f TileMap::GetTopLeftWorldPosition() const
+{
+    return m_topLeftWorldPositionInPixels;
+}
+
+unsigned int TileMap::GetWidthInTiles() const
+{
+    return static_cast<unsigned int>(m_tmxMap->GetWidth());
+}
+
+unsigned int TileMap::GetHeightInTiles() const
+{
+    return static_cast<unsigned int>(m_tmxMap->GetHeight());
+}
+
+unsigned int TileMap::GetTileWidthInPixels() const
+{
+    return static_cast<unsigned int>(m_tmxMap->GetTileWidth());
+}
+
+unsigned int TileMap::GetTileHeightInPixels() const
+{
+    return static_cast<unsigned int>(m_tmxMap->GetTileHeight());
 }
 
 void TileMap::BuildFromTmxMap(

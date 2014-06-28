@@ -472,18 +472,18 @@ void TileMapScrollingTestState::LoadSurroundingMaps(
     rightTileMap.reset();
     
     // Get the center tile map's positions.
-    MATH::Vector2ui centerTileMapOverworldGridPostion = centerTileMap->GetOverworldGridPosition();
+    MATH::Vector2ui centerTileMapOverworldGridPosition = centerTileMap->GetOverworldGridPosition();
     MATH::Vector2f centerTileMapTopLeftWorldPosition = centerTileMap->GetTopLeftWorldPosition();
 
     /// @todo   Clean-up and refactor this code so that it is shorter and so that most of this logic isn't duplicated.
 
     // Load the top tile map.
     MAPS::TileMapLoader mapLoader;
-    bool topTileMapExists = (centerTileMapOverworldGridPostion.Y > 0);
+    bool topTileMapExists = (centerTileMapOverworldGridPosition.Y > 0);
     if (topTileMapExists)
     {
         // Get the filepath for the top tile map.
-        MATH::Vector2ui topTileMapPosition = centerTileMapOverworldGridPostion;
+        MATH::Vector2ui topTileMapPosition = centerTileMapOverworldGridPosition;
         topTileMapPosition.Y--;
         topTileMapExists = (
             topTileMapPosition.X < m_overworldSpec.GetOverworldWidthInTileMaps() &&
@@ -498,7 +498,7 @@ void TileMapScrollingTestState::LoadSurroundingMaps(
             std::shared_ptr<Tmx::Map> topTmxMap = mapLoader.LoadMap(topTileMapFilepath);
 
             // Calculate the grid position of the top tile map.
-            MATH::Vector2ui topTileMapOverworldGridPosition = centerTileMapOverworldGridPostion;
+            MATH::Vector2ui topTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
             topTileMapOverworldGridPosition.Y--;
 
             // Calculate the world position of the top map.
@@ -519,7 +519,7 @@ void TileMapScrollingTestState::LoadSurroundingMaps(
     }
 
     // Load the bottom tile map.
-    MATH::Vector2ui bottomTileMapPosition = centerTileMapOverworldGridPostion;
+    MATH::Vector2ui bottomTileMapPosition = centerTileMapOverworldGridPosition;
     bottomTileMapPosition.Y++;
     bool bottomTileMapExists = (bottomTileMapPosition.Y < m_overworldSpec.GetOverworldHeightInTileMaps());
     if (bottomTileMapExists)
@@ -539,7 +539,7 @@ void TileMapScrollingTestState::LoadSurroundingMaps(
             std::shared_ptr<Tmx::Map> bottomTmxMap = mapLoader.LoadMap(bottomTileMapFilepath);
 
             // Calculate the grid position of the bottom tile map.
-            MATH::Vector2ui bottomTileMapOverworldGridPosition = centerTileMapOverworldGridPostion;
+            MATH::Vector2ui bottomTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
             bottomTileMapOverworldGridPosition.Y++;
 
             // Calculate the world position of the bottom map.
@@ -560,11 +560,11 @@ void TileMapScrollingTestState::LoadSurroundingMaps(
     }
 
     // Load the left tile map.
-    bool leftTileMapExists = (centerTileMapOverworldGridPostion.X > 0);
+    bool leftTileMapExists = (centerTileMapOverworldGridPosition.X > 0);
     if (leftTileMapExists)
     {
         // Get the filepath for the left tile map.
-        MATH::Vector2ui leftTileMapPosition = centerTileMapOverworldGridPostion;
+        MATH::Vector2ui leftTileMapPosition = centerTileMapOverworldGridPosition;
         leftTileMapPosition.X--;
         leftTileMapExists = (
             leftTileMapPosition.X < m_overworldSpec.GetOverworldWidthInTileMaps() &&
@@ -580,7 +580,7 @@ void TileMapScrollingTestState::LoadSurroundingMaps(
             std::shared_ptr<Tmx::Map> leftTmxMap = mapLoader.LoadMap(leftTileMapFilepath);
 
             // Calculate the grid position of the left tile map.
-            MATH::Vector2ui leftTileMapOverworldGridPosition = centerTileMapOverworldGridPostion;
+            MATH::Vector2ui leftTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
             leftTileMapOverworldGridPosition.X--;
 
             // Calculate the world position of the left map.
@@ -601,7 +601,7 @@ void TileMapScrollingTestState::LoadSurroundingMaps(
     }
 
     // Load the right tile map.
-    MATH::Vector2ui rightTileMapPosition = centerTileMapOverworldGridPostion;
+    MATH::Vector2ui rightTileMapPosition = centerTileMapOverworldGridPosition;
     rightTileMapPosition.X++;
     bool rightTileMapExists = (rightTileMapPosition.X < m_overworldSpec.GetOverworldWidthInTileMaps());
     if (rightTileMapExists)
@@ -620,7 +620,7 @@ void TileMapScrollingTestState::LoadSurroundingMaps(
             std::shared_ptr<Tmx::Map> rightTmxMap = mapLoader.LoadMap(rightTileMapFilepath);
 
             // Calculate the grid position of the right tile map.
-            MATH::Vector2ui rightTileMapOverworldGridPosition = centerTileMapOverworldGridPostion;
+            MATH::Vector2ui rightTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
             rightTileMapOverworldGridPosition.X++;
 
             // Calculate the world position of the left map.

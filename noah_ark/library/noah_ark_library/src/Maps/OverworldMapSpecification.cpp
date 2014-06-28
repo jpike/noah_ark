@@ -205,6 +205,15 @@ MATH::Vector2ui OverworldMapSpecification::GetStartingTileMapPosition() const
     return m_startingTileMapPosition;
 }
 
+bool OverworldMapSpecification::PositionInRange(const unsigned int row, const unsigned int column) const
+{
+    // Validate that the coordinates are in range.
+    bool rowNumberValid = (m_overworldHeightInTileMaps > row);
+    bool columnNumberValid = (m_overworldWidthInTileMaps > column);
+    bool positionValid = (rowNumberValid && columnNumberValid);
+    return positionValid;
+}
+
 std::string OverworldMapSpecification::GetTileMapFilepath(const unsigned int row, const unsigned int column) const
 {
     // VALIDATE THE ROW AND COLUMN COORDINATES.

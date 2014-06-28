@@ -44,6 +44,13 @@ namespace MAPS
         /// @return     The 2D position of the starting tile map.
         MATH::Vector2ui GetStartingTileMapPosition() const;
 
+        /// @brief      Checks if the provided position is within a valid range for tile maps
+        ///             in the overworld map.
+        /// @param[in]  row - The row to check (in units of tile maps).
+        /// @param[in]  column - The column to check (in units of tile maps).
+        /// @return     True if the position is valid; false otherwise.
+        bool PositionInRange(const unsigned int row, const unsigned int column) const;
+
         /// @brief      Gets the filepath of the tile map at the specified row and column of the overworld.
         ///             Row and column coordinates are 0-based.
         /// @param[in]  row - The row for which to get the tile map filepath (in units of tile maps).

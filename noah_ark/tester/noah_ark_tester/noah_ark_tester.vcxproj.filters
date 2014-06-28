@@ -35,5 +35,8 @@
     <ClInclude Include="src\MapsTests\OverworldMapSpecificationTests.h">
       <Filter>Header Files\MapsTests</Filter>
     </ClInclude>
+    <ClInclude Include="src\MapsTests\SurroundingMapLoaderTests.h">
+      <Filter>Header Files\MapsTests</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

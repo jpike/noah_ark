@@ -15,7 +15,8 @@ TileMapScrollingTestState::TileMapScrollingTestState(
     m_graphicsSystem(graphicsSystem),
     m_inputController(pGameEngine),
     m_overworldSpec(),
-    m_overworldMap()
+    m_overworldMap(),
+    m_surroundingMapLoader()
 {
     // LOAD THE OVERWORLD FROM FILE.
     const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map.xml";
@@ -26,6 +27,10 @@ TileMapScrollingTestState::TileMapScrollingTestState(
         errorMessage << "Error loading overworld for specification file: " << TEST_OVERWORLD_SPECIFICATION_FILEPATH << std::endl;
         throw std::runtime_error(errorMessage.str());
     }
+
+    // INITIALIZE THE SURROUNDING MAP LOADER.
+    m_surroundingMapLoader = std::unique_ptr<MAPS::SurroundingTileMapLoader>(
+        new MAPS::SurroundingTileMapLoader(&m_overworldSpec));
 }
 
 TileMapScrollingTestState::~TileMapScrollingTestState()
@@ -57,7 +62,8 @@ bool TileMapScrollingTestState::Update(const float elapsedTimeInSeconds)
             m_inputController.EnableInput();
 
             // Load the next set of tile maps.
-            LoadSurroundingMapsAfterScrolling(m_scrollProcess->GetStartPoint(), m_scrollProcess->GetEndPoint());
+            //LoadSurroundingMapsAfterScrolling(m_scrollProcess->GetStartPoint(), m_scrollProcess->GetEndPoint());
+            UpdateSurroundingMapsAfterScrolling(m_scrollProcess->GetDirection());
 
             // Delete the scrolling process.
             m_scrollProcess.reset();
@@ -275,9 +281,21 @@ void TileMapScrollingTestState::HandleUserInput(const INPUT_CONTROL::IDebugInput
             // CREATE SCROLL PROCESS.
             m_scrollProcess = std::unique_ptr<PROCESSES::ScrollProcess>(
                 new PROCESSES::ScrollProcess(
+                    PROCESSES::ScrollProcess::ScrollDirection::UP,
                     currentMapTopLeftPosition,
                     topMapTopLeftPosition,
                     MAX_SCROLL_TIME_IN_SECONDS));
+
+            // SWITCH THE CURRENT MAP WITH THE TOP MAP.
+            m_overworldMap.SetBottomTileMap(currentTileMap);
+            m_overworldMap.SetCurrentTileMap(topTileMap);
+
+            // KICK OFF LOADING THE NEW SURROUNDING TILE MAPS.
+            // The new bottom tile map has already been loaded.
+            MATH::Vector2ui newCurrentMapOverworldGridPosition = topTileMap->GetOverworldGridPosition();
+            m_surroundingMapLoader->StartLoadingLeftTileMap(newCurrentMapOverworldGridPosition);
+            m_surroundingMapLoader->StartLoadingRightTileMap(newCurrentMapOverworldGridPosition);
+            m_surroundingMapLoader->StartLoadingTopTileMap(newCurrentMapOverworldGridPosition);
 
             // Return to prevent other key presses from interfering with scrolling.
             return;
@@ -304,9 +322,21 @@ void TileMapScrollingTestState::HandleUserInput(const INPUT_CONTROL::IDebugInput
             // CREATE SCROLL PROCESS.
             m_scrollProcess = std::unique_ptr<PROCESSES::ScrollProcess>(
                 new PROCESSES::ScrollProcess(
+                    PROCESSES::ScrollProcess::ScrollDirection::DOWN,
                     currentMapTopLeftPosition,
                     bottomMapTopLeftPosition,
                     MAX_SCROLL_TIME_IN_SECONDS));
+
+            // SWITCH THE CURRENT MAP WITH THE BOTTOM MAP.
+            m_overworldMap.SetTopTileMap(currentTileMap);
+            m_overworldMap.SetCurrentTileMap(bottomTileMap);
+
+            // KICK OFF LOADING THE NEW SURROUNDING TILE MAPS.
+            // The new top tile map has already been loaded.
+            MATH::Vector2ui newCurrentMapOverworldGridPosition = bottomTileMap->GetOverworldGridPosition();
+            m_surroundingMapLoader->StartLoadingLeftTileMap(newCurrentMapOverworldGridPosition);
+            m_surroundingMapLoader->StartLoadingRightTileMap(newCurrentMapOverworldGridPosition);
+            m_surroundingMapLoader->StartLoadingBottomTileMap(newCurrentMapOverworldGridPosition);
 
             // Return to prevent other key presses from interfering with scrolling.
             return;
@@ -333,9 +363,21 @@ void TileMapScrollingTestState::HandleUserInput(const INPUT_CONTROL::IDebugInput
             // CREATE SCROLL PROCESS.
             m_scrollProcess = std::unique_ptr<PROCESSES::ScrollProcess>(
                 new PROCESSES::ScrollProcess(
+                    PROCESSES::ScrollProcess::ScrollDirection::LEFT,
                     currentMapTopLeftPosition,
                     leftMapTopLeftPosition,
                     MAX_SCROLL_TIME_IN_SECONDS));
+
+            // SWITCH THE CURRENT MAP WITH THE LEFT MAP.
+            m_overworldMap.SetRightTileMap(currentTileMap);
+            m_overworldMap.SetCurrentTileMap(leftTileMap);
+
+            // KICK OFF LOADING THE NEW SURROUNDING TILE MAPS.
+            // The new right tile map has already been loaded.
+            MATH::Vector2ui newCurrentMapOverworldGridPosition = leftTileMap->GetOverworldGridPosition();
+            m_surroundingMapLoader->StartLoadingLeftTileMap(newCurrentMapOverworldGridPosition);
+            m_surroundingMapLoader->StartLoadingTopTileMap(newCurrentMapOverworldGridPosition);
+            m_surroundingMapLoader->StartLoadingBottomTileMap(newCurrentMapOverworldGridPosition);
 
             // Return to prevent other key presses from interfering with scrolling.
             return;
@@ -362,14 +404,269 @@ void TileMapScrollingTestState::HandleUserInput(const INPUT_CONTROL::IDebugInput
             // CREATE SCROLL PROCESS.
             m_scrollProcess = std::unique_ptr<PROCESSES::ScrollProcess>(
                 new PROCESSES::ScrollProcess(
+                    PROCESSES::ScrollProcess::ScrollDirection::RIGHT,
                     currentMapTopLeftPosition,
                     rightMapTopLeftPosition,
                     MAX_SCROLL_TIME_IN_SECONDS));
+
+            // SWITCH THE CURRENT MAP WITH THE RIGHT MAP.
+            m_overworldMap.SetLeftTileMap(currentTileMap);
+            m_overworldMap.SetCurrentTileMap(rightTileMap);
+
+            // KICK OFF LOADING THE NEW SURROUNDING TILE MAPS.
+            // The new left tile map has already been loaded.
+            MATH::Vector2ui newCurrentMapOverworldGridPosition = rightTileMap->GetOverworldGridPosition();
+            m_surroundingMapLoader->StartLoadingRightTileMap(newCurrentMapOverworldGridPosition);
+            m_surroundingMapLoader->StartLoadingTopTileMap(newCurrentMapOverworldGridPosition);
+            m_surroundingMapLoader->StartLoadingBottomTileMap(newCurrentMapOverworldGridPosition);
 
             // Return to prevent other key presses from interfering with scrolling.
             return;
         }
     }
+}
+
+void TileMapScrollingTestState::UpdateSurroundingMapsAfterScrolling(const PROCESSES::ScrollProcess::ScrollDirection direction)
+{
+    // VERIFY THAT A CURRENT CENTER MAP EXISTS.
+    // This center map is required to make any updates.
+    std::shared_ptr<MAPS::TileMap> centerMap = m_overworldMap.GetCurrentTileMap();
+    bool centerMapExists = (nullptr != centerMap);
+    if (!centerMapExists)
+    {
+        return;
+    }
+    
+    // UPDATE THE MAPS DEPENDING ON THE DIRECTION.
+    // If one of the valid directions wasn't specified, then we just won't
+    // update the maps since we don't know what to do.
+    switch (direction)
+    {
+        // The current and bottom maps have already been set.
+        case PROCESSES::ScrollProcess::ScrollDirection::UP:
+        {
+            // Create the new top tile map.
+            std::shared_ptr<MAPS::TileMap> newTopMap = BuildTopTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetTopTileMap());
+            m_overworldMap.SetTopTileMap(newTopMap);
+            // Create the new left tile map.
+            std::shared_ptr<MAPS::TileMap> newLeftTileMap = BuildLeftTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetLeftTileMap());
+            m_overworldMap.SetLeftTileMap(newLeftTileMap);
+            // Create the new right tile map.
+            std::shared_ptr<MAPS::TileMap> newRightTileMap = BuildRightTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetRightTileMap());
+            m_overworldMap.SetRightTileMap(newRightTileMap);
+            break;
+        }
+        // The current and top maps have already been set.
+        case PROCESSES::ScrollProcess::ScrollDirection::DOWN:
+        {
+            // Create the new bottom tile map.
+            std::shared_ptr<MAPS::TileMap> newBottomMap = BuildBottomTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetBottomTileMap());
+            m_overworldMap.SetBottomTileMap(newBottomMap);
+            // Create the new left tile map.
+            std::shared_ptr<MAPS::TileMap> newLeftTileMap = BuildLeftTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetLeftTileMap());
+            m_overworldMap.SetLeftTileMap(newLeftTileMap);
+            // Create the new right tile map.
+            std::shared_ptr<MAPS::TileMap> newRightTileMap = BuildRightTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetRightTileMap());
+            m_overworldMap.SetRightTileMap(newRightTileMap);
+            break;
+        }
+        // The current and right maps have already been set.
+        case PROCESSES::ScrollProcess::ScrollDirection::LEFT:
+        {
+            // Create the new top tile map.
+            std::shared_ptr<MAPS::TileMap> newTopMap = BuildTopTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetTopTileMap());
+            m_overworldMap.SetTopTileMap(newTopMap);
+            // Create the new bottom tile map.
+            std::shared_ptr<MAPS::TileMap> newBottomMap = BuildBottomTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetBottomTileMap());
+            m_overworldMap.SetBottomTileMap(newBottomMap);
+            // Create the new left tile map.
+            std::shared_ptr<MAPS::TileMap> newLeftTileMap = BuildLeftTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetLeftTileMap());
+            m_overworldMap.SetLeftTileMap(newLeftTileMap);
+            break;
+        }
+        // The current and left maps have already been set.
+        case PROCESSES::ScrollProcess::ScrollDirection::RIGHT:
+        {
+            // Create the new top tile map.
+            std::shared_ptr<MAPS::TileMap> newTopMap = BuildTopTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetTopTileMap());
+            m_overworldMap.SetTopTileMap(newTopMap);
+            // Create the new bottom tile map.
+            std::shared_ptr<MAPS::TileMap> newBottomMap = BuildBottomTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetBottomTileMap());
+            m_overworldMap.SetBottomTileMap(newBottomMap);
+            // Create the new right tile map.
+            std::shared_ptr<MAPS::TileMap> newRightTileMap = BuildRightTileMap(
+                *centerMap,
+                m_surroundingMapLoader->GetRightTileMap());
+            m_overworldMap.SetRightTileMap(newRightTileMap);
+            break;
+        }
+    }
+}
+
+std::shared_ptr<MAPS::TileMap> TileMapScrollingTestState::BuildTopTileMap(
+    const MAPS::TileMap& centerMap,
+    const std::shared_ptr<Tmx::Map>& topTmxMap)
+{
+    // CHECK IF A TOP TMX MAP WAS PROVIDED.
+    bool topTmxMapExists = (nullptr != topTmxMap);
+    if (!topTmxMapExists)
+    {
+        // No tile map can be constructed without a TMX map.
+        return nullptr;
+    }
+
+    // CALCULATE THE GRID POSITION OF THE TOP MAP.
+    MATH::Vector2ui centerTileMapOverworldGridPosition = centerMap.GetOverworldGridPosition();
+    MATH::Vector2ui topTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
+    topTileMapOverworldGridPosition.Y--;
+
+    // CALCULATE THE WORLD POSITION OF THE TOP MAP.
+    float topMapHeightInTiles = static_cast<float>(topTmxMap->GetHeight());
+    float topMapTileHeightInPixels = static_cast<float>(topTmxMap->GetTileHeight());
+    float topMapHeightInPixels = topMapHeightInTiles * topMapTileHeightInPixels;
+    MATH::Vector2f centerTileMapTopLeftWorldPosition = centerMap.GetTopLeftWorldPosition();
+    float topMapWorldYPosition = centerTileMapTopLeftWorldPosition.Y - topMapHeightInPixels;
+    MATH::Vector2f topTileMapTopLeftWorldPosition(
+        centerTileMapTopLeftWorldPosition.X,
+        topMapWorldYPosition);
+
+    // CREATE THE TOP TILE MAP.
+    std::shared_ptr<MAPS::TileMap> topTileMap = std::make_shared<MAPS::TileMap>(
+        topTileMapOverworldGridPosition,
+        topTileMapTopLeftWorldPosition,
+        topTmxMap,
+        m_graphicsSystem);
+    return topTileMap;
+}
+
+std::shared_ptr<MAPS::TileMap> TileMapScrollingTestState::BuildBottomTileMap(
+    const MAPS::TileMap& centerMap,
+    const std::shared_ptr<Tmx::Map>& bottomTmxMap)
+{
+    // CHECK IF A BOTTOM TMX MAP WAS PROVIDED.
+    bool bottomTmxMapExists = (nullptr != bottomTmxMap);
+    if (!bottomTmxMapExists)
+    {
+        // No tile map can be constructed without a TMX map.
+        return nullptr;
+    }
+
+    // CALCULATE THE GRID POSITION OF THE BOTTOM MAP.
+    MATH::Vector2ui centerTileMapOverworldGridPosition = centerMap.GetOverworldGridPosition();
+    MATH::Vector2ui bottomTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
+    bottomTileMapOverworldGridPosition.Y++;
+
+    // CALCULATE THE WORLD POSITION OF THE BOTTOM MAP.
+    float centerMapHeightInTiles = static_cast<float>(centerMap.GetHeightInTiles());
+    float centerMapTileHeightInPixels = static_cast<float>(centerMap.GetTileHeightInPixels());
+    float centerMapHeightInPixels = centerMapHeightInTiles * centerMapTileHeightInPixels;
+    MATH::Vector2f centerTileMapTopLeftWorldPosition = centerMap.GetTopLeftWorldPosition();
+    float bottomMapWorldYPosition = centerTileMapTopLeftWorldPosition.Y + centerMapHeightInPixels;
+    MATH::Vector2f bottomTileMapTopLeftWorldPosition(
+        centerTileMapTopLeftWorldPosition.X,
+        bottomMapWorldYPosition);
+
+    // CREATE THE BOTTOM TILE MAP.
+    std::shared_ptr<MAPS::TileMap> bottomTileMap = std::make_shared<MAPS::TileMap>(
+        bottomTileMapOverworldGridPosition,
+        bottomTileMapTopLeftWorldPosition,
+        bottomTmxMap,
+        m_graphicsSystem);
+    return bottomTileMap;
+}
+
+std::shared_ptr<MAPS::TileMap> TileMapScrollingTestState::BuildLeftTileMap(
+    const MAPS::TileMap& centerMap,
+    const std::shared_ptr<Tmx::Map>& leftTmxMap)
+{
+    // CHECK IF A LEFT TMX MAP WAS PROVIDED.
+    bool leftTmxMapExists = (nullptr != leftTmxMap);
+    if (!leftTmxMapExists)
+    {
+        // No tile map can be constructed without a TMX map.
+        return nullptr;
+    }
+
+    // CALCULATE THE GRID POSITION OF THE LEFT MAP.
+    MATH::Vector2ui centerTileMapOverworldGridPosition = centerMap.GetOverworldGridPosition();
+    MATH::Vector2ui leftTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
+    leftTileMapOverworldGridPosition.X--;
+
+    // CALCULATE THE WORLD POSITION OF THE LEFT MAP.
+    float leftMapWidthInTiles = static_cast<float>(leftTmxMap->GetWidth());
+    float leftMapTileWidthInPixels = static_cast<float>(leftTmxMap->GetTileWidth());
+    float leftMapWidthInPixels = leftMapWidthInTiles * leftMapTileWidthInPixels;
+    MATH::Vector2f centerTileMapTopLeftWorldPosition = centerMap.GetTopLeftWorldPosition();
+    float leftMapWorldXPosition = centerTileMapTopLeftWorldPosition.X - leftMapWidthInPixels;
+    MATH::Vector2f leftTileMapTopLeftWorldPosition(
+        leftMapWorldXPosition,
+        centerTileMapTopLeftWorldPosition.Y);
+
+    // CREATE THE LEFT TILE MAP.
+    std::shared_ptr<MAPS::TileMap> leftTileMap = std::make_shared<MAPS::TileMap>(
+        leftTileMapOverworldGridPosition,
+        leftTileMapTopLeftWorldPosition,
+        leftTmxMap,
+        m_graphicsSystem);
+    return leftTileMap;
+}
+
+std::shared_ptr<MAPS::TileMap> TileMapScrollingTestState::BuildRightTileMap(
+    const MAPS::TileMap& centerMap,
+    const std::shared_ptr<Tmx::Map>& rightTmxMap)
+{
+    // CHECK IF A RIGHT TMX MAP WAS PROVIDED.
+    bool rightTmxMapExists = (nullptr != rightTmxMap);
+    if (!rightTmxMapExists)
+    {
+        // No tile map can be constructed without a TMX map.
+        return nullptr;
+    }
+
+    // CALCULATE THE GRID POSITION OF THE RIGHT MAP.
+    MATH::Vector2ui centerTileMapOverworldGridPosition = centerMap.GetOverworldGridPosition();
+    MATH::Vector2ui rightTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
+    rightTileMapOverworldGridPosition.X++;
+
+    // CALCULATE THE WORLD POSITION OF THE LEFT MAP.
+    float centerMapWidthInTiles = static_cast<float>(centerMap.GetWidthInTiles());
+    float centerMapTileWidthInPixels = static_cast<float>(centerMap.GetTileWidthInPixels());
+    float centerMapWidthInPixels = centerMapWidthInTiles * centerMapTileWidthInPixels;
+    MATH::Vector2f centerTileMapTopLeftWorldPosition = centerMap.GetTopLeftWorldPosition();
+    float rightMapWorldXPosition = centerTileMapTopLeftWorldPosition.X + centerMapWidthInPixels;
+    MATH::Vector2f rightTileMapTopLeftWorldPosition(
+        rightMapWorldXPosition,
+        centerTileMapTopLeftWorldPosition.Y);
+
+    // CREATE THE RIGHT TILE MAP.
+    std::shared_ptr<MAPS::TileMap> rightTileMap = std::make_shared<MAPS::TileMap>(
+        rightTileMapOverworldGridPosition,
+        rightTileMapTopLeftWorldPosition,
+        rightTmxMap,
+        m_graphicsSystem);
+    return rightTileMap;
 }
 
 void TileMapScrollingTestState::LoadSurroundingMapsAfterScrolling(const MATH::Vector2f& scrollStartPoint, const MATH::Vector2f& scrollEndPoint)

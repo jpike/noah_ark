@@ -5,9 +5,11 @@
 using namespace PROCESSES;
 
 ScrollProcess::ScrollProcess(
+    const ScrollProcess::ScrollDirection direction,
     const MATH::Vector2f& startPoint, 
     const MATH::Vector2f& endPoint,
     const float maximumScrollTimeInSeconds) :
+    m_direction(direction),
     m_startPoint(startPoint),
     m_endPoint(endPoint),
     m_currentPoint(startPoint),
@@ -46,6 +48,11 @@ bool ScrollProcess::IsComplete() const
 {
     bool scrollingComplete = (m_totalScrollTimeSoFarInSeconds >= m_maximumScrollTimeInSeconds);
     return scrollingComplete;
+}
+
+ScrollProcess::ScrollDirection ScrollProcess::GetDirection() const
+{
+    return m_direction;
 }
 
 MATH::Vector2f ScrollProcess::GetStartPoint() const

@@ -2,6 +2,8 @@
 
 #include <map>
 #include <memory>
+#include "Graphics/GraphicsSystem.h"
+#include "Maps/OverworldMapSpecification.h"
 #include "Maps/TileMap.h"
 #include "Math/Vector2.h"
 
@@ -20,6 +22,19 @@ namespace MAPS
         /// @brief  Destructor.
         ~OverworldMap();
 
+        /// @brief          Populates the overworld map from the provided specification.
+        ///                 Any existing data in this overworld map are overwritten.
+        /// @param[in]      overworldSpec - The specification describing how tile maps
+        ///                 are positioned in the overworld.
+        /// @param[in]      startingTileMapOverworldGridPosition - The relative position of
+        ///                 the starting tile map within the overworld's "grid".
+        /// @param[in,out]  graphicsSystem - The graphics system supplying graphical data for
+        ///                 the tile maps.
+        void PopulateFromSpecification(
+            const OverworldMapSpecification& overworldSpec,
+            const OverworldGridPosition& startingTileMapOverworldGridPosition,
+            const MATH::Vector2f& startingTileMapTopLeftWorldPosition,
+            std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
         
         /// @brief  Gets the currently displayed tile map.
         /// @return The currently displayed tile map.

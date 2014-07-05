@@ -1,6 +1,8 @@
 #include <memory>
 #include <TmxParser/Tmx.h>
 #include "Maps/OverworldMap.h"
+#include "Maps/TileMapBuilder.h"
+#include "Maps/TileMapLoader.h"
 
 using namespace MAPS;
 
@@ -11,24 +13,125 @@ OverworldMap::OverworldMap() :
     m_leftTileMap(),
     m_rightTileMap()
 {
-    // Create an initial tile map for testing.
-    /// @todo   Change the code around so that a hard coded path isn't used here.
-    ///         The OverworldState should take in a filepath and possibly a resource
-    ///         manager to load an XML file that specifies the entire overworld map.
-    ///         That class should load the overworld map to pass to this constructor.
-    ///         Alternatively, individual tile maps could reference adjacent tile maps.
-    /* std::shared_ptr<Tmx::Map> initialTmxMap(new Tmx::Map());
-    initialTmxMap->ParseFile("res/maps/test_map_1_1.tmx");
-    std::shared_ptr<TileMap> initialTileMap( new TileMap(initialTmxMap, graphicsSystem) );
-    m_tileMaps.push_back( std::vector< std::shared_ptr<TileMap> >() );
-    m_tileMaps[0].push_back(initialTileMap); */
-    
     // Nothing else to do.
 }
 
 OverworldMap::~OverworldMap()
 {
     // Nothing else to do.
+}
+
+void OverworldMap::PopulateFromSpecification(
+    const OverworldMapSpecification& overworldSpec,
+    const OverworldGridPosition& startingTileMapOverworldGridPosition,
+    const MATH::Vector2f& startingTileMapTopLeftWorldPosition,
+    std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem)
+{
+    // CREATE THE STARTING TILE MAP.
+    MAPS::TileMapLoader mapLoader;
+    std::shared_ptr<Tmx::Map> startingTmxMap = mapLoader.LoadMap(overworldSpec.GetStartingTileMapFilepath());
+    std::shared_ptr<MAPS::TileMap> startingTileMap = std::make_shared<MAPS::TileMap>(
+        startingTileMapOverworldGridPosition,
+        startingTileMapTopLeftWorldPosition,
+        startingTmxMap, 
+        graphicsSystem);
+    SetCurrentTileMap(startingTileMap);
+
+    // CREATE THE TOP TILE MAP, IF ONE EXISTS.
+    // Determine the position of the top map in the overworld grid.
+    MATH::Vector2ui topTileMapOverworldGridPosition = startingTileMapOverworldGridPosition;
+    topTileMapOverworldGridPosition.Y--;
+    // These checks are needed to prevent an exception.
+    bool topTileMapExists = overworldSpec.PositionInRange(
+        topTileMapOverworldGridPosition.Y,
+        topTileMapOverworldGridPosition.X);
+    if (topTileMapExists)
+    {
+        // Get the filepath to the top tile map.
+        std::string topTileMapFilepath = overworldSpec.GetTileMapFilepath(
+            topTileMapOverworldGridPosition.Y,
+            topTileMapOverworldGridPosition.X);
+
+        // Create the top tile map in the overworld.
+        std::shared_ptr<Tmx::Map> topTmxMap = mapLoader.LoadMap(topTileMapFilepath);
+        std::shared_ptr<MAPS::TileMap> topTileMap = TileMapBuilder::BuildTopTileMap(
+            *startingTileMap, 
+            topTmxMap, 
+            graphicsSystem);
+        SetTopTileMap(topTileMap);
+    }
+
+    // CREATE THE BOTTOM TILE MAP, IF ONE EXISTS.
+    // Determine the position of the bottom map in the overworld grid.
+    MATH::Vector2ui bottomTileOverworldGridPosition = startingTileMapOverworldGridPosition;
+    bottomTileOverworldGridPosition.Y++;
+    // These checks are needed to prevent an exception.
+    bool bottomTileMapExists = overworldSpec.PositionInRange(
+        bottomTileOverworldGridPosition.Y,
+        bottomTileOverworldGridPosition.X);
+    if (bottomTileMapExists)
+    {
+        // Get the filepath to the bottom tile map.
+        std::string bottomTileMapFilepath = overworldSpec.GetTileMapFilepath(
+            bottomTileOverworldGridPosition.Y,
+            bottomTileOverworldGridPosition.X);
+
+        // Create the bottom tile map in the overworld.
+        std::shared_ptr<Tmx::Map> bottomTmxMap = mapLoader.LoadMap(bottomTileMapFilepath);
+        std::shared_ptr<MAPS::TileMap> bottomTileMap = TileMapBuilder::BuildBottomTileMap(
+            *startingTileMap, 
+            bottomTmxMap,
+            graphicsSystem);
+        SetBottomTileMap(bottomTileMap);
+    }
+
+    // CREATE THE LEFT TILE MAP, IF ONE EXISTS.
+    // Determine the position of the left map in the overworld grid.
+    MATH::Vector2ui leftTileMapOverworldGridPosition = startingTileMapOverworldGridPosition;
+    leftTileMapOverworldGridPosition.X--;
+    // These checks are needed to prevent an exception.
+    bool leftTileMapExists = overworldSpec.PositionInRange(
+        leftTileMapOverworldGridPosition.Y,
+        leftTileMapOverworldGridPosition.X);
+    if (leftTileMapExists)
+    {
+        // Get the filepath to the left tile map.
+        std::string leftTileMapFilepath = overworldSpec.GetTileMapFilepath(
+            leftTileMapOverworldGridPosition.Y,
+            leftTileMapOverworldGridPosition.X);
+
+        // Create the left tile map in the overworld.
+        std::shared_ptr<Tmx::Map> leftTmxMap = mapLoader.LoadMap(leftTileMapFilepath);
+        std::shared_ptr<MAPS::TileMap> leftTileMap = TileMapBuilder::BuildLeftTileMap(
+            *startingTileMap, 
+            leftTmxMap,
+            graphicsSystem);
+        SetLeftTileMap(leftTileMap);
+    }
+
+    // CREATE THE RIGHT TILE MAP, IF ONE EXISTS.
+    // Determine the position of the right map in the overworld grid.
+    MATH::Vector2ui rightTileMapOverworldGridPosition = startingTileMapOverworldGridPosition;
+    rightTileMapOverworldGridPosition.X++;
+    // These checks are needed to prevent an exception.
+    bool rightTileMapExists = overworldSpec.PositionInRange(
+        rightTileMapOverworldGridPosition.Y,
+        rightTileMapOverworldGridPosition.X);
+    if (rightTileMapExists)
+    {
+        // Get the filepath to the right tile map.
+        std::string rightTileMapFilepath = overworldSpec.GetTileMapFilepath(
+            rightTileMapOverworldGridPosition.Y,
+            rightTileMapOverworldGridPosition.X);
+
+        // Create the right tile map in the overworld.
+        std::shared_ptr<Tmx::Map> rightTmxMap = mapLoader.LoadMap(rightTileMapFilepath);
+        std::shared_ptr<MAPS::TileMap> rightTileMap = TileMapBuilder::BuildTopTileMap(
+            *startingTileMap, 
+            rightTmxMap,
+            graphicsSystem);
+        SetRightTileMap(rightTileMap);
+    }
 }
 
 std::shared_ptr<TileMap> OverworldMap::GetCurrentTileMap() const

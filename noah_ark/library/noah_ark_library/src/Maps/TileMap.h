@@ -10,6 +10,12 @@
 
 namespace MAPS
 {
+    /// @brief  Represents the position of a tile map in the overworld's "grid".
+    ///         These positions are relative to each other.  For example, a map
+    ///         at x,y position 1,1 is to the right of a map at position 0,1, and
+    ///         a map at position 0,0 is above a map at position 0,1.
+    typedef MATH::Vector2ui OverworldGridPosition;
+    
     ///////////////////////////////////////////////////////////
     /// @brief  A single 2D map composed of individual tiles and any objects
     ///         that may located on the map.
@@ -33,7 +39,7 @@ namespace MAPS
         /// @param[in]      map - The underlying map that has already been loaded.
         /// @param[in,out]  graphicsSystem - The graphics system used to manage graphics for this tile map.
         explicit TileMap(
-            const MATH::Vector2ui& overworldGridPosition,
+            const OverworldGridPosition& overworldGridPosition,
             const MATH::Vector2f& topLeftWorldPositionInPixels,
             const std::shared_ptr<Tmx::Map>& map, 
             std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
@@ -43,7 +49,7 @@ namespace MAPS
 
         /// @brief  Gets the position of the tile map within the overworld grid.
         /// @return The overworld grid position of the tile map.
-        MATH::Vector2ui GetOverworldGridPosition() const;
+        OverworldGridPosition GetOverworldGridPosition() const;
         
         /// @brief  Gets the top-left world position of the tile map, in pixels.
         /// @return The top-left position of the map.
@@ -86,7 +92,7 @@ namespace MAPS
 
         std::shared_ptr<Tmx::Map> m_tmxMap; ///< The TMX map used to create this map.
 
-        MATH::Vector2ui m_overworldGridPosition;    ///< The position of the tile map in the overworld map's grid.
+        OverworldGridPosition m_overworldGridPosition;    ///< The position of the tile map in the overworld map's grid.
         MATH::Vector2f m_topLeftWorldPositionInPixels;  ///< The top-left world position of the tile map.
     };
 }

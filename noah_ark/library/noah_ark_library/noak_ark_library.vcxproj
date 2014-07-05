@@ -24,6 +24,7 @@
     <ClInclude Include="src\Maps\SurroundingTileMapLoader.h" />
     <ClInclude Include="src\Maps\Tile.h" />
     <ClInclude Include="src\Maps\TileMap.h" />
+    <ClInclude Include="src\Maps\TileMapBuilder.h" />
     <ClInclude Include="src\Maps\TileMapLoader.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Physics\PhysicsSystem.h" />
@@ -45,6 +46,7 @@
     <ClCompile Include="src\Maps\SurroundingTileMapLoader.cpp" />
     <ClCompile Include="src\Maps\Tile.cpp" />
     <ClCompile Include="src\Maps\TileMap.cpp" />
+    <ClCompile Include="src\Maps\TileMapBuilder.cpp" />
     <ClCompile Include="src\Maps\TileMapLoader.cpp" />
     <ClCompile Include="src\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="src\Processes\ScrollProcess.cpp" />

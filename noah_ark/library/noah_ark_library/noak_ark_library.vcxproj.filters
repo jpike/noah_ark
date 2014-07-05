@@ -123,6 +123,9 @@
     <ClInclude Include="src\Maps\SurroundingTileMapLoader.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
+    <ClInclude Include="src\Maps\TileMapBuilder.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -174,6 +177,9 @@
       <Filter>Source Files\Processes</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\SurroundingTileMapLoader.cpp">
+      <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\TileMapBuilder.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
   </ItemGroup>

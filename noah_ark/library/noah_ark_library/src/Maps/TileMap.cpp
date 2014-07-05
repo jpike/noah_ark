@@ -3,7 +3,7 @@
 using namespace MAPS;
 
 TileMap::TileMap(
-    const MATH::Vector2ui& overworldGridPosition,
+    const OverworldGridPosition& overworldGridPosition,
     const MATH::Vector2f& topLeftWorldPositionInPixels,
     const std::shared_ptr<Tmx::Map>& map, 
     std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
@@ -21,7 +21,7 @@ TileMap::~TileMap()
     // Nothing else to do.
 }
 
-MATH::Vector2ui TileMap::GetOverworldGridPosition() const
+OverworldGridPosition TileMap::GetOverworldGridPosition() const
 {
     return m_overworldGridPosition;
 }

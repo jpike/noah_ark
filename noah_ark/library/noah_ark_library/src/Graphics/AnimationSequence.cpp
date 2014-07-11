@@ -1,4 +1,3 @@
-#include <iostream>
 #include <stdexcept>
 #include "Graphics/AnimationSequence.h"
 
@@ -27,6 +26,11 @@ void AnimationSequence::Render(const float worldXPositionInPixels, const float w
     m_pAnimation->Render(worldXPositionInPixels, worldYPositionInPixels);
 }
 
+void AnimationSequence::Update(const float elapsedTimeInSeconds)
+{
+    m_pAnimation->Update(elapsedTimeInSeconds);
+}
+
 void AnimationSequence::SetZPosition(const float zPosition)
 {
     m_pAnimation->SetZ(zPosition);
@@ -36,11 +40,19 @@ void AnimationSequence::Play()
 {
     // PLAY THE ANIMATION SEQUENCE IF IT ISN'T ALREADY PLAYING.
     bool animationAlreadyPlaying = m_pAnimation->IsPlaying();
-    std::cout << "AnimationSequence::Play()" << std::endl;
 
     if (!animationAlreadyPlaying)
     {
-        std::cout << "Playing animation..." << std::endl;
         m_pAnimation->Play();
     }
+}
+
+void AnimationSequence::Reset()
+{
+    // Set the animation sequence back to its first frame.
+    const int FIRST_FRAME_NUMBER = 0;
+    m_pAnimation->SetFrame(FIRST_FRAME_NUMBER);
+
+    // Stop the animation from playing.
+    m_pAnimation->Stop();
 }

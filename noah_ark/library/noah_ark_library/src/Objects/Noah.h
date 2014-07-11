@@ -43,6 +43,10 @@ namespace OBJECTS
         /// @param[in]  elapsedTimeInSeconds - The elapsed time for which to move Noah.
         void MoveRight(const float elapsedTimeInSeconds);
 
+        /// @brief  Have Noah stop performing whatever action he may be currently doing
+        ///         and enter an idle state (typically standing still).
+        void Idle();
+
     private:
         Noah(const Noah& noahToCopy);   ///< Private to disallow copying.
         Noah& operator=(const Noah& rhsNoah);   ///< Private to disallow copying.

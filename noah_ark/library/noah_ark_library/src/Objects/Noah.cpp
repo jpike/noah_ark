@@ -16,7 +16,7 @@ const float Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND = 64.0f;
 Noah::Noah() :
     m_sprite()
 {}
-        
+
 Noah::~Noah()
 {}
         
@@ -67,6 +67,12 @@ void Noah::MoveRight(const float elapsedTimeInSeconds)
     // PLAY THE WALKING-RIGHT ANIMATION.
     m_sprite->UseAnimationSequence(WALK_RIGHT_ANIMATION_NAME);
     m_sprite->Play();
+}
+
+void Noah::Idle()
+{
+    // RESET NOAH'S ANIMATION SO THAT NOAH STOPS MOVING.
+    m_sprite->ResetAnimation();
 }
 
 float Noah::GetMoveDistance(const float elapsedTimeInSeconds) const

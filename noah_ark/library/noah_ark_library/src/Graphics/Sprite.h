@@ -21,12 +21,14 @@ namespace GRAPHICS
         /// @brief  Destructor.
         virtual ~Sprite();
 
-        /// @brief  Indicates whether or not the sprite is visible.
-        /// @return The visibility of the sprite.
+        /// @copydoc    IGraphicsComponent::IsVisible() const
         virtual bool IsVisible() const;
 
-        /// @brief  Renders the sprite.
+        /// @copydoc    IGraphicsComponent::Render()
         virtual void Render();
+
+        /// @copydoc    IGraphicsComponent::Update(const float elapsedTimeInSeconds)
+        virtual void Update(const float elapsedTimeInSeconds);
 
         /// @copydoc    IGraphicsComponent::SetZPosition(const float zPosition)
         virtual void SetZPosition(const float zPosition);

@@ -58,6 +58,14 @@ void GraphicsSystem::Render()
     m_pGameEngine->Gfx_SetTransform();
 }
 
+void GraphicsSystem::Update(const float elapsedTimeInSeconds)
+{
+    for (std::shared_ptr<IGraphicsComponent>& graphicsComponent : m_graphicsComponents)
+    {
+        graphicsComponent->Update(elapsedTimeInSeconds);
+    }
+}
+
 void GraphicsSystem::SetCamera(const Camera& camera)
 {
     m_camera = camera;

@@ -33,6 +33,12 @@ namespace GRAPHICS
         /// @param[in]  worldYPositionInPixels - The world Y position at which to render the animation.
         void Render(const float worldXPositionInPixels, const float worldYPositionInPixels);
 
+        /// @brief      Updates the animation sequence for a single frame based on
+        ///             the provided time.
+        /// @param[in]  elapsedTimeInSeconds - The elapsed time since the last frame
+        ///             for wich to update the animation sequence.
+        void Update(const float elapsedTimeInSeconds);
+
         /// @brief      Sets the Z-position for the graphics component.  This is used
         ///             to order how graphics are layered on top of each other.
         ///             Lower values are on the bottom.
@@ -41,6 +47,9 @@ namespace GRAPHICS
 
         /// @brief  Begins playing the animation sequence, if it isn't already playing.
         void Play();
+
+        /// @brief  Resets the animation to its first frame and stops it from playing.
+        void Reset();
 
     private:
         AnimationSequence(const AnimationSequence& animationToCopy);    ///< Private to disallow copying.

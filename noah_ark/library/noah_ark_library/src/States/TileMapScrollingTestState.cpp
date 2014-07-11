@@ -68,6 +68,9 @@ bool TileMapScrollingTestState::Update(const float elapsedTimeInSeconds)
         }
     }
 
+    // UPDATE ANY GRAPHICS THAT NEED TO CHANGE OVER TIME.
+    m_graphicsSystem->Update(elapsedTimeInSeconds);
+
     // CONTINUE RUNNING THE GAME.
     return false;
 }
@@ -323,6 +326,9 @@ void TileMapScrollingTestState::HandleUserInput(
             return;
         }
     }
+
+    // If we reach this point, no buttons were pressed, so stop playing Noah's current animation.
+    m_noahPlayer.Idle();
 }
 
 void TileMapScrollingTestState::UpdateSurroundingMapsAfterScrolling(const PROCESSES::ScrollProcess::ScrollDirection direction)

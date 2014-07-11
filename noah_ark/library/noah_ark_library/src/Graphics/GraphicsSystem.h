@@ -38,6 +38,13 @@ namespace GRAPHICS
         ///         sure that z values have been properly set for all components objects.
         void Render();
 
+        /// @brief      Updates all graphics components (including invisible ones) that are
+        ///             managed by this system for a single frame, based on the provided
+        ///             amount of time.
+        /// @param[in]  elapsedTimeInSeconds - The elapsed time since the last frame for
+        ///             which to update the graphics components.
+        void Update(const float elapsedTimeInSeconds);
+
         /// @brief      Sets the camera used by the graphics system for rendering.
         /// @param[in]  camera - The camera indicating the viewable area of the world.
         void SetCamera(const Camera& camera);

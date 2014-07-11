@@ -25,6 +25,11 @@ void Sprite::Render()
     m_sprite->Render(m_worldPositionInPixels.X, m_worldPositionInPixels.Y);
 }
 
+void Sprite::Update(const float elapsedTimeInSeconds)
+{
+    // Nothing to do for a basic sprite.
+}
+
 void Sprite::SetZPosition(const float zPosition)
 {
     m_sprite->SetZ(zPosition);

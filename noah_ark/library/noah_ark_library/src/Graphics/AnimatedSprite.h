@@ -21,12 +21,14 @@ namespace GRAPHICS
         /// @brief  Destructor.
         virtual ~AnimatedSprite();
 
-        /// @brief  Indicates whether or not the sprite is visible.
-        /// @return The visibility of the sprite.
+        /// @copydoc    IGraphicsComponent::IsVisible() const
         virtual bool IsVisible() const;
 
-        /// @brief  Renders the sprite.
+        /// @copydoc    IGraphicsComponent::Render()
         virtual void Render();
+
+        /// @copydoc    IGraphicsComponent::Update(const float elapsedTimeInSeconds)
+        virtual void Update(const float elapsedTimeInSeconds);
 
         /// @copydoc    IGraphicsComponent::SetZPosition(const float zPosition)
         virtual void SetZPosition(const float zPosition);
@@ -64,6 +66,9 @@ namespace GRAPHICS
 
         /// @brief  Begins playing the current animation sequence, if it isn't already playing.
         void Play();
+
+        /// @brief  Resets the current animation to its first frame and stops it from playing.
+        void ResetAnimation();
 
     private:
         AnimatedSprite(const AnimatedSprite& spriteToCopy); ///< Private to disallow copying.

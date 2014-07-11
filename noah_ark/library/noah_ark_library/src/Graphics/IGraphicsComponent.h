@@ -18,6 +18,12 @@ namespace GRAPHICS
         /// @brief  Renders the graphics component.
         virtual void Render() = 0;
 
+        /// @brief      Updates the graphics component for a single frame based on
+        ///             the provided time.
+        /// @param[in]  elapsedTimeInSeconds - The elapsed time since the last frame
+        ///             for wich to update the graphics component.
+        virtual void Update(const float elapsedTimeInSeconds) = 0;
+
         /// @brief      Sets the Z-position for the graphics component.  This is used
         ///             to order how graphics are layered on top of each other.
         ///             Higher values are on the bottom.

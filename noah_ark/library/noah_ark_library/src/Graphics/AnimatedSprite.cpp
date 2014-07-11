@@ -25,8 +25,23 @@ void AnimatedSprite::Render()
     bool currentAnimationExists = (nullptr != currentAnimationSequence);
     if (currentAnimationExists)
     {
+        // RENDER IT IN THE WORLD.
+        // The z-position is set in case the currently used animation sequence has changed
+        // or never been used since last setting the z-position.
         currentAnimationSequence->SetZPosition(m_zPosition);
         currentAnimationSequence->Render(m_worldPositionInPixels.X, m_worldPositionInPixels.Y);
+    }
+}
+
+void AnimatedSprite::Update(const float elapsedTimeInSeconds)
+{
+    // GET THE CURRENT ANIMATION SEQUENCE.
+    std::shared_ptr<AnimationSequence> currentAnimationSequence = GetCurrentAnimationSequence();
+    bool currentAnimationExists = (nullptr != currentAnimationSequence);
+    if (currentAnimationExists)
+    {
+        // UPDATE IT BASED ON THE PROVIDED TIME.
+        currentAnimationSequence->Update(elapsedTimeInSeconds);
     }
 }
 
@@ -80,6 +95,18 @@ void AnimatedSprite::Play()
     if (currentAnimationSequenceExists)
     {
         currentAnimationSequence->Play();
+    }
+}
+
+void AnimatedSprite::ResetAnimation()
+{
+    // GET THE CURRENT ANIMATION SEQUENCE.
+    std::shared_ptr<AnimationSequence> currentAnimationSequence = GetCurrentAnimationSequence();
+    bool currentAnimationExists = (nullptr != currentAnimationSequence);
+    if (currentAnimationExists)
+    {
+        // RESET THE CURRENT ANIMATION SEQUENCE.
+        currentAnimationSequence->Reset();
     }
 }
 

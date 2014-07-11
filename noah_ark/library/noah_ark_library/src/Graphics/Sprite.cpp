@@ -25,6 +25,11 @@ void Sprite::Render()
     m_sprite->Render(m_worldPositionInPixels.X, m_worldPositionInPixels.Y);
 }
 
+void Sprite::SetZPosition(const float zPosition)
+{
+    m_sprite->SetZ(zPosition);
+}
+
 void Sprite::SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels)
 {
     m_worldPositionInPixels.X = xPositionInPixels;

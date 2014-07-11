@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Graphics\AnimatedSprite.h" />
+    <ClInclude Include="src\Graphics\AnimationSequence.h" />
     <ClInclude Include="src\Graphics\Camera.h" />
     <ClInclude Include="src\Graphics\GraphicsSystem.h" />
     <ClInclude Include="src\Graphics\IGraphicsComponent.h" />
@@ -27,6 +29,7 @@
     <ClInclude Include="src\Maps\TileMapBuilder.h" />
     <ClInclude Include="src\Maps\TileMapLoader.h" />
     <ClInclude Include="src\Math\Vector2.h" />
+    <ClInclude Include="src\Objects\Noah.h" />
     <ClInclude Include="src\Physics\PhysicsSystem.h" />
     <ClInclude Include="src\Processes\ScrollProcess.h" />
     <ClInclude Include="src\States\IGameState.h" />
@@ -35,6 +38,8 @@
     <ClInclude Include="src\States\TileMapScrollingTestState.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Graphics\AnimatedSprite.cpp" />
+    <ClCompile Include="src\Graphics\AnimationSequence.cpp" />
     <ClCompile Include="src\Graphics\Camera.cpp" />
     <ClCompile Include="src\Graphics\GraphicsSystem.cpp" />
     <ClCompile Include="src\Graphics\Sprite.cpp" />
@@ -48,6 +53,7 @@
     <ClCompile Include="src\Maps\TileMap.cpp" />
     <ClCompile Include="src\Maps\TileMapBuilder.cpp" />
     <ClCompile Include="src\Maps\TileMapLoader.cpp" />
+    <ClCompile Include="src\Objects\Noah.cpp" />
     <ClCompile Include="src\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="src\Processes\ScrollProcess.cpp" />
     <ClCompile Include="src\States\OverworldState.cpp" />

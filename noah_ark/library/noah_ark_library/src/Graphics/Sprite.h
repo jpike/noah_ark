@@ -28,6 +28,9 @@ namespace GRAPHICS
         /// @brief  Renders the sprite.
         virtual void Render();
 
+        /// @copydoc    IGraphicsComponent::SetZPosition(const float zPosition)
+        virtual void SetZPosition(const float zPosition);
+
         /// @brief      Sets the world position of the sprite.
         /// @param[in]  xPositionInPixels - The x-coordinate of the sprite in the world.
         /// @param[in]  yPositionInPixels - The y-coordinate of the sprite in the world.

@@ -126,6 +126,15 @@
     <ClInclude Include="src\Maps\TileMapBuilder.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
+    <ClInclude Include="src\Objects\Noah.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\AnimatedSprite.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\AnimationSequence.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -181,6 +190,15 @@
     </ClCompile>
     <ClCompile Include="src\Maps\TileMapBuilder.cpp">
       <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\AnimationSequence.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\AnimatedSprite.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Objects\Noah.cpp">
+      <Filter>Source Files\Objects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

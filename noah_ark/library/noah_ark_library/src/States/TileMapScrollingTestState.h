@@ -7,6 +7,7 @@
 #include "Maps/OverworldMap.h"
 #include "Maps/OverworldMapSpecification.h"
 #include "Maps/SurroundingTileMapLoader.h"
+#include "Objects/Noah.h"
 #include "Processes/ScrollProcess.h"
 #include "States/IGameState.h"
 
@@ -40,13 +41,19 @@ namespace STATES
         /// @return     True if the overworld was loaded successfully; false otherwise.
         bool LoadOverworldMap(const std::string& overworldSpecFilepath);
 
-        /// @brief      Updates the overworld for the new surrounding maps after scrolling has finished.
-        /// @param[in]  direction - The direction of the scrolling that just finished.
-        void UpdateSurroundingMapsAfterScrolling(const PROCESSES::ScrollProcess::ScrollDirection direction);
+        /// @brief      Initializes the player object in the provided Noah character.
+        /// @param[out] noahPlayer - The player Noah character, if successfully initialized.
+        /// @return     True if the player is successfully initialized; false otherwise.
+        bool InitializePlayer(OBJECTS::Noah& noahPlayer);
 
         /// @brief      Handles user input for a single frame.
         /// @param[in]  inputController - The controller supplying user input.
-        void HandleUserInput(const INPUT_CONTROL::IDebugInputController& inputController);
+        /// @param[in]  elapsedTimeInSeconds - The elapsed time for the frame to handle input for.
+        void HandleUserInput(const INPUT_CONTROL::IDebugInputController& inputController, const float elapsedTimeInSeconds);
+
+        /// @brief      Updates the overworld for the new surrounding maps after scrolling has finished.
+        /// @param[in]  direction - The direction of the scrolling that just finished.
+        void UpdateSurroundingMapsAfterScrolling(const PROCESSES::ScrollProcess::ScrollDirection direction);
 
         GRAPHICS::Camera m_camera;  ///< The camera indicating the portion of the world being shown.
         std::unique_ptr<PROCESSES::ScrollProcess> m_scrollProcess;  ///< The process controlling scrolling of tile maps in the overworld map, if active (nullptr otherwise).
@@ -57,5 +64,7 @@ namespace STATES
         MAPS::OverworldMapSpecification m_overworldSpec;    ///< The specification of the overworld map.
         MAPS::OverworldMap m_overworldMap;  ///< The overworld map of the game.
         std::unique_ptr<MAPS::SurroundingTileMapLoader> m_surroundingMapLoader;  ///< The loader of maps surrounding the center one.
+
+        OBJECTS::Noah m_noahPlayer; ///< Noah, the main character controlled by the player.
     };
 }

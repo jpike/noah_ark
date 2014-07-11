@@ -137,6 +137,9 @@ void TileMap::BuildFromTmxMap(
             float worldYPosition = static_cast<float>(tileHeightInPixels * yPositionInTiles) + topLeftWorldPositionInPixels.Y;
             tileSprite->SetWorldPosition(worldXPosition, worldYPosition);
 
+            // Set the tile to the proper z-layer.
+            tileSprite->SetZPosition(GRAPHICS::GraphicsSystem::GROUND_LAYER_Z_VALUE);
+
             // STORE A TILE IN THE COLLECTION OF TILES.
             std::shared_ptr<Tile> tile = std::make_shared<Tile>(tileSprite);
             m_tiles.at(xPositionInTiles).push_back(tile);

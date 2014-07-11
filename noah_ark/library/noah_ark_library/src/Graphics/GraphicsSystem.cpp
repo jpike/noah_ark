@@ -2,6 +2,10 @@
 
 using namespace GRAPHICS;
 
+// STATIC CLASS CONSTANT INITIALIZION.
+const float GraphicsSystem::GROUND_LAYER_Z_VALUE = 0.9f;
+const float GraphicsSystem::PLAYER_LAYER_Z_VALUE = 0.8f;
+
 GraphicsSystem::GraphicsSystem(HGE* pGameEngine, const std::shared_ptr<hgeResourceManager>& resourceManager) :
     m_pGameEngine(pGameEngine),
     m_camera(),
@@ -74,6 +78,21 @@ std::shared_ptr<Texture> GraphicsSystem::GetTexture(const std::string& textureRe
     return texture;
 }
 
+std::shared_ptr<AnimationSequence> GraphicsSystem::GetAnimationSequence(const std::string& animationResourceName)
+{
+    // GET THE HGE ANIMATION RESOURCE.
+    hgeAnimation* pAnimation = m_resourceManager->GetAnimation(animationResourceName.c_str());
+    bool animationResourceRetrieved = (nullptr != pAnimation);
+    if (!animationResourceRetrieved)
+    {
+        return nullptr;
+    }
+
+    // CONVERT THE HGE TEXTURE RESOURCE TO A CUSTOM ANIMATION SEQUENCE OBJECT.
+    std::shared_ptr<AnimationSequence> animationSequence = std::make_shared<AnimationSequence>(pAnimation);
+    return animationSequence;
+}
+
 std::shared_ptr<Sprite> GraphicsSystem::CreateSprite(
     const std::shared_ptr<Texture>& texture,
     const float xPositionInTexels,
@@ -104,6 +123,16 @@ std::shared_ptr<Sprite> GraphicsSystem::CreateSprite(
     m_graphicsComponents.push_back(newSprite);
 
     return newSprite;
+}
+
+std::shared_ptr<AnimatedSprite> GraphicsSystem::CreateAnimatedSprite()
+{
+    // CREATE A NEW ANIMATED SPRITE MANAGED BY THIS SYSTEM.
+    std::shared_ptr<AnimatedSprite> newAnimatedSprite = std::make_shared<AnimatedSprite>();
+
+    m_graphicsComponents.push_back(newAnimatedSprite);
+
+    return newAnimatedSprite;
 }
 
 void GraphicsSystem::RenderIfVisible(std::shared_ptr<IGraphicsComponent>& graphicsComponent)

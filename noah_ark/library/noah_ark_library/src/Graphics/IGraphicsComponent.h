@@ -1,7 +1,7 @@
 #pragma once
 
 namespace GRAPHICS
-{
+{   
     ///////////////////////////////////////////////////////////
     /// @brief  An interface for graphics components.
     ///////////////////////////////////////////////////////////
@@ -17,5 +17,11 @@ namespace GRAPHICS
 
         /// @brief  Renders the graphics component.
         virtual void Render() = 0;
+
+        /// @brief      Sets the Z-position for the graphics component.  This is used
+        ///             to order how graphics are layered on top of each other.
+        ///             Higher values are on the bottom.
+        /// @param[in]  zPosition - The z-position to set for the graphics component.
+        virtual void SetZPosition(const float zPosition) = 0;
     };
 }

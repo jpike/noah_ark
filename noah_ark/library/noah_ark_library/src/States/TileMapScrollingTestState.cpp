@@ -17,7 +17,8 @@ TileMapScrollingTestState::TileMapScrollingTestState(
     m_inputController(pGameEngine),
     m_overworldSpec(),
     m_overworldMap(),
-    m_surroundingMapLoader()
+    m_surroundingMapLoader(),
+    m_noahPlayer()
 {
     // LOAD THE OVERWORLD FROM FILE.
     const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map.xml";
@@ -28,6 +29,9 @@ TileMapScrollingTestState::TileMapScrollingTestState(
         errorMessage << "Error loading overworld for specification file: " << TEST_OVERWORLD_SPECIFICATION_FILEPATH << std::endl;
         throw std::runtime_error(errorMessage.str());
     }
+
+    // INITIALIZE THE PLAYER CHARACTER.
+    InitializePlayer(m_noahPlayer);
 }
 
 TileMapScrollingTestState::~TileMapScrollingTestState()
@@ -38,7 +42,7 @@ TileMapScrollingTestState::~TileMapScrollingTestState()
 bool TileMapScrollingTestState::Update(const float elapsedTimeInSeconds)
 {
     // HANDLE USER INPUT.
-    HandleUserInput(m_inputController);
+    HandleUserInput(m_inputController, elapsedTimeInSeconds);
     
     // SCROLL THE MAP IF SCROLLING IS STILL OCCURRING.
     bool scrollingActive = (nullptr != m_scrollProcess.get());
@@ -99,7 +103,50 @@ bool TileMapScrollingTestState::LoadOverworldMap(const std::string& overworldSpe
     return true;
 }
 
-void TileMapScrollingTestState::HandleUserInput(const INPUT_CONTROL::IDebugInputController& inputController)
+bool TileMapScrollingTestState::InitializePlayer(OBJECTS::Noah& noahPlayer)
+{
+    /// @todo   Add error checking to this method (i.e. for nullptrs).
+    
+    // LOAD THE ANIMATIONS FOR NOAH.
+    // Load the animations for walking in each direction.
+    std::shared_ptr<GRAPHICS::AnimationSequence> walkFrontAnimation = 
+        m_graphicsSystem->GetAnimationSequence(OBJECTS::Noah::WALK_FRONT_ANIMATION_NAME);
+    std::shared_ptr<GRAPHICS::AnimationSequence> walkBackAnimation = 
+        m_graphicsSystem->GetAnimationSequence(OBJECTS::Noah::WALK_BACK_ANIMATION_NAME);
+    std::shared_ptr<GRAPHICS::AnimationSequence> walkLeftAnimation = 
+        m_graphicsSystem->GetAnimationSequence(OBJECTS::Noah::WALK_LEFT_ANIMATION_NAME);
+    std::shared_ptr<GRAPHICS::AnimationSequence> walkRightAnimation = 
+        m_graphicsSystem->GetAnimationSequence(OBJECTS::Noah::WALK_RIGHT_ANIMATION_NAME);
+
+    // CREATE THE ANIMATED SPRITE FOR NOAH.
+    std::shared_ptr<GRAPHICS::AnimatedSprite> noahSprite = m_graphicsSystem->CreateAnimatedSprite();
+
+    // Add the animations to the sprite.
+    noahSprite->AddAnimationSequence(OBJECTS::Noah::WALK_FRONT_ANIMATION_NAME, walkFrontAnimation);
+    noahSprite->AddAnimationSequence(OBJECTS::Noah::WALK_BACK_ANIMATION_NAME, walkBackAnimation);
+    noahSprite->AddAnimationSequence(OBJECTS::Noah::WALK_LEFT_ANIMATION_NAME, walkLeftAnimation);
+    noahSprite->AddAnimationSequence(OBJECTS::Noah::WALK_RIGHT_ANIMATION_NAME, walkRightAnimation);
+
+    // Set the initial animation sequence to have the player facing forward (downward).
+    noahSprite->UseAnimationSequence(OBJECTS::Noah::WALK_FRONT_ANIMATION_NAME);
+
+    // POSITION NOAH IN THE WORLD.
+    // For now, the position is arbitrary.
+    const MATH::Vector2f NOAH_INITIAL_WORLD_POSITION(100.0f, 100.0f);
+    noahSprite->SetWorldPosition(NOAH_INITIAL_WORLD_POSITION.X, NOAH_INITIAL_WORLD_POSITION.Y);
+
+    noahSprite->SetZPosition(GRAPHICS::GraphicsSystem::PLAYER_LAYER_Z_VALUE);
+
+    // SET THE ANIMATED SPRITE FOR THE NOAH PLAYER.
+    noahPlayer.SetSprite(noahSprite);
+
+    // INITIALIZING THE PLAYER SUCCEEDED.
+    return true;
+}
+
+void TileMapScrollingTestState::HandleUserInput(
+    const INPUT_CONTROL::IDebugInputController& inputController,
+    const float elapsedTimeInSeconds)
 {
     // DEFINE SCROLLING PARAMETERS.
     const float MOVE_DISTANCE_IN_PIXELS = 2.0f;
@@ -119,6 +166,9 @@ void TileMapScrollingTestState::HandleUserInput(const INPUT_CONTROL::IDebugInput
     // SCROLL IN THE DIRECTION BASED ON USER INPUT.
     if (inputController.ScrollUpButtonPressed())
     {
+        m_noahPlayer.MoveUp(elapsedTimeInSeconds);
+        return;
+
         // CHECK IF A TOP MAP EXISTS.
         std::shared_ptr<MAPS::TileMap> topTileMap = m_overworldMap.GetTopTileMap();
         bool topTileMapExists = (nullptr != topTileMap);
@@ -156,6 +206,9 @@ void TileMapScrollingTestState::HandleUserInput(const INPUT_CONTROL::IDebugInput
 
     if (inputController.ScrollDownButtonPressed())
     {
+        m_noahPlayer.MoveDown(elapsedTimeInSeconds);
+        return;
+
         // CHECK IF A BOTTOM MAP EXISTS.
         std::shared_ptr<MAPS::TileMap> bottomTileMap = m_overworldMap.GetBottomTileMap();
         bool bottomTileMapExists = (nullptr != bottomTileMap);
@@ -193,6 +246,9 @@ void TileMapScrollingTestState::HandleUserInput(const INPUT_CONTROL::IDebugInput
 
     if (inputController.ScrollLeftButtonPressed())
     {
+        m_noahPlayer.MoveLeft(elapsedTimeInSeconds);
+        return;
+        
         // CHECK IF A LEFT MAP EXISTS.
         std::shared_ptr<MAPS::TileMap> leftTileMap = m_overworldMap.GetLeftTileMap();
         bool leftTileMapExists = (nullptr != leftTileMap);
@@ -230,6 +286,9 @@ void TileMapScrollingTestState::HandleUserInput(const INPUT_CONTROL::IDebugInput
 
     if (inputController.ScrollRightButtonPressed())
     {
+        m_noahPlayer.MoveRight(elapsedTimeInSeconds);
+        return;
+
         // CHECK IF A RIGHT MAP EXISTS.
         std::shared_ptr<MAPS::TileMap> rightTileMap = m_overworldMap.GetRightTileMap();
         bool rightTileMapExists = (nullptr != rightTileMap);

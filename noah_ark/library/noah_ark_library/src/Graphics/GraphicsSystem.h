@@ -3,6 +3,8 @@
 #include <hgeresource.h>
 #include <list>
 #include <memory>
+#include "Graphics/AnimatedSprite.h"
+#include "Graphics/AnimationSequence.h"
 #include "Graphics/Camera.h"
 #include "Graphics/IGraphicsComponent.h"
 #include "Graphics/Sprite.h"
@@ -18,6 +20,10 @@ namespace GRAPHICS
     class GraphicsSystem
     {
     public:
+        // CONSTANTS DEFINING THE Z-VALUES TO SET FOR LAYERING GRAPHICS ON TOP FOR EACH OTHER.
+        static const float GROUND_LAYER_Z_VALUE;    ///< The z-value for graphics on the ground level.
+        static const float PLAYER_LAYER_Z_VALUE;    ///< The z-value for graphics of the player.
+        
         /// @brief      Constructor.
         /// @param      pGameEngine - The underlying HGE game engine.  Must not be NULL.
         /// @param[in]  resourceManager - The resource manager used to access graphics resources.
@@ -44,6 +50,15 @@ namespace GRAPHICS
         ///             as specified in a resource script.
         /// @return     The texture resource, if found; nullptr otherwise.
         std::shared_ptr<Texture> GetTexture(const std::string& textureResourceName);
+
+        /// @brief      Gets an animation resource with the specified name.
+        ///             Animations are not automatically rendered by the graphics system
+        ///             and must be explicitly attached to a graphics component that
+        ///             does get rendered.
+        /// @param[in]  animationResourceName - The name of the animation resource to retrieve,
+        ///             as specified in a resource script.
+        /// @return     The animation resource, if found; nullptr otherwise.
+        std::shared_ptr<AnimationSequence> GetAnimationSequence(const std::string& animationResourceName);
         
         /// @brief      Creates a new sprite within the graphics system.
         /// @param[in]  texture - The texture resource for the sprite.
@@ -60,6 +75,10 @@ namespace GRAPHICS
             const float yPositionInTexels,
             const float widthInTexels,
             const float heightInTexels);
+
+        /// @brief  Creates a new animated sprite within the graphics system.
+        /// @return The newly created animated sprite.
+        std::shared_ptr<AnimatedSprite> CreateAnimatedSprite();
 
     private:
         GraphicsSystem(const GraphicsSystem& systemToCopy); ///< Private to disallow copying.

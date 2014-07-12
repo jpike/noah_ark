@@ -33,10 +33,18 @@ namespace GRAPHICS
         /// @copydoc    IGraphicsComponent::SetZPosition(const float zPosition)
         virtual void SetZPosition(const float zPosition);
 
+        /// @brief      Gets the world position of the sprite.
+        /// @return     The world position of the sprite, in pixels.
+        MATH::Vector2f GetWorldPosition() const;
+
         /// @brief      Sets the world position of the sprite.
         /// @param[in]  xPositionInPixels - The x-coordinate of the sprite in the world.
         /// @param[in]  yPositionInPixels - The y-coordinate of the sprite in the world.
         void SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels);
+
+        /// @brief      Gets the bounding box of the sprite in the world.
+        /// @return     The bounding box of the sprite.
+        hgeRect GetWorldBoundingBox();
 
         /// @brief      Moves the sprite's world position up the specified distance.
         /// @param[in]  distanceToMoveInPixels - The distance to move, in pixels.

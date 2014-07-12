@@ -50,10 +50,33 @@ void AnimatedSprite::SetZPosition(const float zPosition)
     m_zPosition = zPosition;
 }
 
+MATH::Vector2f AnimatedSprite::GetWorldPosition() const
+{
+    return m_worldPositionInPixels;
+}
+
 void AnimatedSprite::SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels)
 {
     m_worldPositionInPixels.X = xPositionInPixels;
     m_worldPositionInPixels.Y = yPositionInPixels;
+}
+
+hgeRect AnimatedSprite::GetWorldBoundingBox()
+{
+    // SET A DEFAULT BOUNDING BOX.
+    // This default box should be harmless in the event
+    // that no animation sequence is currently being used.
+    hgeRect boundingBox(0.0f, 0.0f, 0.0f, 0.0f);
+
+    // GET THE CURRENT ANIMATION SEQUENCE.
+    std::shared_ptr<AnimationSequence> currentAnimationSequence = GetCurrentAnimationSequence();
+    bool currentAnimationExists = (nullptr != currentAnimationSequence);
+    if (currentAnimationExists)
+    {
+        boundingBox = currentAnimationSequence->GetWorldBoundingBox(m_worldPositionInPixels.X, m_worldPositionInPixels.Y);
+    }
+
+    return boundingBox;
 }
 
 void AnimatedSprite::MoveUp(const float distanceToMoveInPixels)

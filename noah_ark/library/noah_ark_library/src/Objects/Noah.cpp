@@ -24,7 +24,22 @@ void Noah::SetSprite(const std::shared_ptr<GRAPHICS::AnimatedSprite>& sprite)
 {
     m_sprite = sprite;
 }
-        
+
+hgeRect Noah::GetWorldBoundingBox()
+{
+    return m_sprite->GetWorldBoundingBox();
+}
+
+MATH::Vector2f Noah::GetWorldPosition() const
+{
+    return m_sprite->GetWorldPosition();
+}
+
+void Noah::SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels)
+{
+    m_sprite->SetWorldPosition(xPositionInPixels, yPositionInPixels);
+}
+
 void Noah::MoveUp(const float elapsedTimeInSeconds)
 {
     // MOVE THE SPRITE.

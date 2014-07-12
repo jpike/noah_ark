@@ -31,6 +31,26 @@ MATH::Vector2f TileMap::GetTopLeftWorldPosition() const
     return m_topLeftWorldPositionInPixels;
 }
 
+MATH::Vector2f TileMap::GetBottomRightWorldPosition() const
+{
+    // CALCULATE THE BOTTOM RIGHT POSITION FROM OTHER TILE MAP PROPERTIES.
+    // Calculate the bottom position.
+    float mapHeightInTiles = static_cast<float>(GetHeightInTiles());
+    float tileHeightInPixels = static_cast<float>(GetTileHeightInPixels());
+    float mapHeightInPixels = mapHeightInTiles * tileHeightInPixels;
+    float bottomWorldPosition = m_topLeftWorldPositionInPixels.Y + mapHeightInPixels;
+
+    // Calculate the right position.
+    float mapWidthInTiles = static_cast<float>(GetWidthInTiles());
+    float tileWidthInPixels = static_cast<float>(GetTileWidthInPixels());
+    float mapWidthInPixels = mapWidthInTiles * tileWidthInPixels;
+    float rightWorldPosition = m_topLeftWorldPositionInPixels.X + mapWidthInPixels;
+
+    // Return the bottom right position.
+    MATH::Vector2f bottomRightWorldPosition(rightWorldPosition, bottomWorldPosition);
+    return bottomRightWorldPosition;
+}
+
 unsigned int TileMap::GetWidthInTiles() const
 {
     return static_cast<unsigned int>(m_tmxMap->GetWidth());

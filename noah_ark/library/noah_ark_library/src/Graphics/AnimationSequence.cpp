@@ -36,6 +36,13 @@ void AnimationSequence::SetZPosition(const float zPosition)
     m_pAnimation->SetZ(zPosition);
 }
 
+hgeRect AnimationSequence::GetWorldBoundingBox(const float worldXPositionInPixels, const float worldYPositionInPixels)
+{
+    hgeRect worldBoundingBox(0.0f, 0.0f, 0.0f, 0.0f);
+    m_pAnimation->GetBoundingBox(worldXPositionInPixels, worldYPositionInPixels, &worldBoundingBox);
+    return worldBoundingBox;
+}
+
 void AnimationSequence::Play()
 {
     // PLAY THE ANIMATION SEQUENCE IF IT ISN'T ALREADY PLAYING.

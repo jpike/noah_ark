@@ -30,6 +30,19 @@ namespace OBJECTS
         /// @param[in]  sprite - The sprite to set.
         void SetSprite(const std::shared_ptr<GRAPHICS::AnimatedSprite>& sprite);
 
+        /// @brief      Gets the world position of Noah.
+        /// @return     The world position of Noah, in pixels.
+        MATH::Vector2f GetWorldPosition() const;
+
+        /// @brief      Sets the world position of Noah.
+        /// @param[in]  xPositionInPixels - The x-coordinate of the Noah in the world.
+        /// @param[in]  yPositionInPixels - The y-coordinate of the Noah in the world.
+        void SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels);
+
+        /// @brief      Gets the bounding box of Noah in the world.
+        /// @return     The bounding box of Noah.
+        hgeRect GetWorldBoundingBox();
+
         /// @brief      Moves Noah up based on the specified amount of time.
         /// @param[in]  elapsedTimeInSeconds - The elapsed time for which to move Noah.
         void MoveUp(const float elapsedTimeInSeconds);

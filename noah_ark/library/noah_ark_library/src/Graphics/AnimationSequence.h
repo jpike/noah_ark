@@ -45,6 +45,13 @@ namespace GRAPHICS
         /// @param[in]  zPosition - The z-position to set for the graphics component.
         void SetZPosition(const float zPosition);
 
+        /// @brief      Gets the bounding box of the animation sequence, given
+        ///             the provided world coordinates.
+        /// @param[in]  worldXPositionInPixels - The world X position that the animation sequence is rendered at.
+        /// @param[in]  worldYPositionInPixels - The world Y position that the animation sequence is rendered at.
+        /// @return     The bounding box of the animation sequence.
+        hgeRect GetWorldBoundingBox(const float worldXPositionInPixels, const float worldYPositionInPixels);
+
         /// @brief  Begins playing the animation sequence, if it isn't already playing.
         void Play();
 

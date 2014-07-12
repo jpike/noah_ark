@@ -165,17 +165,31 @@ void TileMapScrollingTestState::HandleUserInput(
         return;
     }
     MATH::Vector2f currentMapTopLeftPosition = currentTileMap->GetTopLeftWorldPosition();
+    MATH::Vector2f currentMapBottomRightPosition = currentTileMap->GetBottomRightWorldPosition();
     
     // SCROLL IN THE DIRECTION BASED ON USER INPUT.
     if (inputController.ScrollUpButtonPressed())
     {
         m_noahPlayer.MoveUp(elapsedTimeInSeconds);
-        return;
+
+        // CHECK IF NOAH HAS EXCEEDED THE CURRENT MAP'S TOP BOUNDARY.
+        MATH::Vector2f noahPosition = m_noahPlayer.GetWorldPosition();
+        bool noahMovedBeyondCurrentMapTopBoundary = (noahPosition.Y < currentMapTopLeftPosition.Y);
+        if (!noahMovedBeyondCurrentMapTopBoundary)
+        {
+            // Noah hasn't moved beyond the top boundary, so we don't need to do anything.
+            return;
+        }
 
         // CHECK IF A TOP MAP EXISTS.
         std::shared_ptr<MAPS::TileMap> topTileMap = m_overworldMap.GetTopTileMap();
         bool topTileMapExists = (nullptr != topTileMap);
-        if (topTileMapExists)
+        if (!topTileMapExists)
+        {
+            // Ensure that Noah stays within the bounds of the current map.
+            m_noahPlayer.SetWorldPosition(noahPosition.X, currentMapTopLeftPosition.Y);
+        }
+        else
         {
             // Get the top map's top-left corner.
             MATH::Vector2f topMapTopLeftPosition = topTileMap->GetTopLeftWorldPosition();
@@ -210,12 +224,25 @@ void TileMapScrollingTestState::HandleUserInput(
     if (inputController.ScrollDownButtonPressed())
     {
         m_noahPlayer.MoveDown(elapsedTimeInSeconds);
-        return;
+
+        // CHECK IF NOAH HAS EXCEEDED THE CURRENT MAP'S BOTTOM BOUNDARY.
+        MATH::Vector2f noahPosition = m_noahPlayer.GetWorldPosition();
+        bool noahMovedBeyondCurrentMapBottomBoundary = (noahPosition.Y > currentMapBottomRightPosition.Y);
+        if (!noahMovedBeyondCurrentMapBottomBoundary)
+        {
+            // Noah hasn't moved beyond the bottom boundary, so we don't need to do anything.
+            return;
+        }
 
         // CHECK IF A BOTTOM MAP EXISTS.
         std::shared_ptr<MAPS::TileMap> bottomTileMap = m_overworldMap.GetBottomTileMap();
         bool bottomTileMapExists = (nullptr != bottomTileMap);
-        if (bottomTileMapExists)
+        if (!bottomTileMapExists)
+        {
+            // Ensure that Noah stays within the bounds of the current map.
+            m_noahPlayer.SetWorldPosition(noahPosition.X, currentMapBottomRightPosition.Y);
+        }
+        else
         {
             // Get the bottom map's top-left corner.
             MATH::Vector2f bottomMapTopLeftPosition = bottomTileMap->GetTopLeftWorldPosition();
@@ -250,12 +277,25 @@ void TileMapScrollingTestState::HandleUserInput(
     if (inputController.ScrollLeftButtonPressed())
     {
         m_noahPlayer.MoveLeft(elapsedTimeInSeconds);
-        return;
-        
+
+        // CHECK IF NOAH HAS EXCEEDED THE CURRENT MAP'S LEFT BOUNDARY.
+        MATH::Vector2f noahPosition = m_noahPlayer.GetWorldPosition();
+        bool noahMovedBeyondCurrentMapLeftBoundary = (noahPosition.X < currentMapTopLeftPosition.X);
+        if (!noahMovedBeyondCurrentMapLeftBoundary)
+        {
+            // Noah hasn't moved beyond the left boundary, so we don't need to do anything.
+            return;
+        }
+
         // CHECK IF A LEFT MAP EXISTS.
         std::shared_ptr<MAPS::TileMap> leftTileMap = m_overworldMap.GetLeftTileMap();
         bool leftTileMapExists = (nullptr != leftTileMap);
-        if (leftTileMapExists)
+        if (!leftTileMapExists)
+        {
+            // Ensure that Noah stays within the bounds of the current map.
+            m_noahPlayer.SetWorldPosition(currentMapTopLeftPosition.X, noahPosition.Y);
+        }
+        else
         {
             // Get the left map's top-left corner.
             MATH::Vector2f leftMapTopLeftPosition = leftTileMap->GetTopLeftWorldPosition();
@@ -290,12 +330,25 @@ void TileMapScrollingTestState::HandleUserInput(
     if (inputController.ScrollRightButtonPressed())
     {
         m_noahPlayer.MoveRight(elapsedTimeInSeconds);
-        return;
+
+        // CHECK IF NOAH HAS EXCEEDED THE CURRENT MAP'S RIGHT BOUNDARY.
+        MATH::Vector2f noahPosition = m_noahPlayer.GetWorldPosition();
+        bool noahMovedBeyondCurrentMapRightBoundary = (noahPosition.X > currentMapBottomRightPosition.X);
+        if (!noahMovedBeyondCurrentMapRightBoundary)
+        {
+            // Noah hasn't moved beyond the right boundary, so we don't need to do anything.
+            return;
+        }
 
         // CHECK IF A RIGHT MAP EXISTS.
         std::shared_ptr<MAPS::TileMap> rightTileMap = m_overworldMap.GetRightTileMap();
         bool rightTileMapExists = (nullptr != rightTileMap);
-        if (rightTileMapExists)
+        if (!rightTileMapExists)
+        {
+            // Ensure that Noah stays within the bounds of the current map.
+            m_noahPlayer.SetWorldPosition(currentMapBottomRightPosition.X, noahPosition.Y);
+        }
+        else
         {
             // Get the right map's top-left corner.
             MATH::Vector2f rightMapTopLeftPosition = rightTileMap->GetTopLeftWorldPosition();

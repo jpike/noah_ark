@@ -55,6 +55,10 @@ namespace MAPS
         /// @return The top-left position of the map.
         MATH::Vector2f GetTopLeftWorldPosition() const;
 
+        /// @brief  Gets the bottom-right world position of the tile map, in pixels.
+        /// @return The bottom-right position of the map.
+        MATH::Vector2f GetBottomRightWorldPosition() const;
+
         /// @brief  Gets the width of the map, in tiles.
         /// @return The width of the map, in tiles.
         unsigned int GetWidthInTiles() const;

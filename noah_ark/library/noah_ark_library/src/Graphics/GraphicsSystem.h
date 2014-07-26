@@ -95,9 +95,19 @@ namespace GRAPHICS
         /// @param[in]  graphicsComponent - The graphics component to render.
         void RenderIfVisible(std::shared_ptr<IGraphicsComponent>& graphicsComponent);
 
+        /// @brief  Removes unusued graphics components from the system.  Allows freeing
+        ///         memory for graphics components that are no longer being used elsewhere
+        ///         in the game.
+        void RemoveUnusedGraphicsComponents();
+
         HGE* m_pGameEngine; ///< The underlying HGE game engine.
         Camera m_camera;    ///< The camera indicating what portion of the world is currently in view.
         std::shared_ptr<hgeResourceManager> m_resourceManager;   ///< The resource manager used to access graphics resources.
-        std::list< std::shared_ptr<IGraphicsComponent> > m_graphicsComponents;    ///< The graphics components to be rendered.
+
+        /// @brief  The graphics components to be rendered.  The methods for creating
+        ///         these components return shared_ptrs, but they are stored as weak_ptrs
+        ///         to allow their memory to be properly released once the objects holding
+        ///         the shared_ptrs are deleted.
+        std::list< std::weak_ptr<IGraphicsComponent> > m_graphicsComponents;
     };
 }

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Graphics/GraphicsSystem.h"
 
 using namespace GRAPHICS;
@@ -49,9 +50,15 @@ void GraphicsSystem::Render()
         NORMAL_VERTICAL_SCALE);
     
     // RENDER ALL OF THE VISIBLE GRAPHICS COMPONENTS.
-    for (std::shared_ptr<IGraphicsComponent>& graphicsComponent : m_graphicsComponents)
+    for (std::weak_ptr<IGraphicsComponent>& graphicsComponentWeakReference : m_graphicsComponents)
     {
-        RenderIfVisible(graphicsComponent);
+        // Check if the graphics component is still in use.
+        if (!graphicsComponentWeakReference.expired())
+        {
+            // Render the current graphics component.
+            std::shared_ptr<IGraphicsComponent> graphicsComponent = graphicsComponentWeakReference.lock();
+            RenderIfVisible(graphicsComponent);
+        }
     }
 
     // RESET THE CAMERA'S VIEW.
@@ -60,10 +67,22 @@ void GraphicsSystem::Render()
 
 void GraphicsSystem::Update(const float elapsedTimeInSeconds)
 {
-    for (std::shared_ptr<IGraphicsComponent>& graphicsComponent : m_graphicsComponents)
+    // UPDATE ALL GRAPHICS COMPONENTS.
+    for (std::weak_ptr<IGraphicsComponent>& graphicsComponentWeakReference : m_graphicsComponents)
     {
-        graphicsComponent->Update(elapsedTimeInSeconds);
+        // Check if the graphics component is still in use.
+        if (!graphicsComponentWeakReference.expired())
+        {        
+            // Update the current graphics component.
+            std::shared_ptr<IGraphicsComponent> graphicsComponent = graphicsComponentWeakReference.lock();
+            graphicsComponent->Update(elapsedTimeInSeconds);
+        }
     }
+
+    // REMOVE ANY GRAPHICS COMPONENTS THAT ARE NO LONGER NEEDED.
+    // This is done here, rather than in the render call, because more overall time
+    // is spent in the render call than the update call, so this helps balance things out.
+    RemoveUnusedGraphicsComponents();
 }
 
 void GraphicsSystem::SetCamera(const Camera& camera)
@@ -149,4 +168,11 @@ void GraphicsSystem::RenderIfVisible(std::shared_ptr<IGraphicsComponent>& graphi
     {
         graphicsComponent->Render();
     }
+}
+
+void GraphicsSystem::RemoveUnusedGraphicsComponents()
+{
+    // Remove any graphics components that are no longer being used.
+    m_graphicsComponents.remove_if(
+        [](std::weak_ptr<IGraphicsComponent>& graphicsComponent) { return graphicsComponent.expired(); });
 }

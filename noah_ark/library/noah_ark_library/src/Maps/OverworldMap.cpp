@@ -126,7 +126,7 @@ void OverworldMap::PopulateFromSpecification(
 
         // Create the right tile map in the overworld.
         std::shared_ptr<Tmx::Map> rightTmxMap = mapLoader.LoadMap(rightTileMapFilepath);
-        std::shared_ptr<MAPS::TileMap> rightTileMap = TileMapBuilder::BuildTopTileMap(
+        std::shared_ptr<MAPS::TileMap> rightTileMap = TileMapBuilder::BuildRightTileMap(
             *startingTileMap, 
             rightTmxMap,
             graphicsSystem);

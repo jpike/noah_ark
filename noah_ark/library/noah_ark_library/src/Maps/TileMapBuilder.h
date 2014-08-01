@@ -10,6 +10,9 @@ namespace MAPS
     /// @brief  Responsible for building complete TileMaps from Tiled
     ///         TMX maps.  This class only contains static utility
     ///         methods and is not intended to be instantiated.
+    ///
+    /// @todo   Refactor this so that it can be instantiated.  This
+    ///         will allow it to access a graphics system.
     ///////////////////////////////////////////////////////////
     class TileMapBuilder
     {

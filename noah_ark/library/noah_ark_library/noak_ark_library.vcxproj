@@ -23,6 +23,7 @@
     <ClInclude Include="src\Input\MapScrollingDebugInputController.h" />
     <ClInclude Include="src\Maps\OverworldMap.h" />
     <ClInclude Include="src\Maps\OverworldMapSpecification.h" />
+    <ClInclude Include="src\Maps\ScrollableOverworldMap.h" />
     <ClInclude Include="src\Maps\SurroundingTileMapLoader.h" />
     <ClInclude Include="src\Maps\Tile.h" />
     <ClInclude Include="src\Maps\TileMap.h" />
@@ -48,6 +49,7 @@
     <ClCompile Include="src\Input\MapScrollingDebugInputController.cpp" />
     <ClCompile Include="src\Maps\OverworldMap.cpp" />
     <ClCompile Include="src\Maps\OverworldMapSpecification.cpp" />
+    <ClCompile Include="src\Maps\ScrollableOverworldMap.cpp" />
     <ClCompile Include="src\Maps\SurroundingTileMapLoader.cpp" />
     <ClCompile Include="src\Maps\Tile.cpp" />
     <ClCompile Include="src\Maps\TileMap.cpp" />

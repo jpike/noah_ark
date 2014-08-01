@@ -135,6 +135,9 @@
     <ClInclude Include="src\Graphics\AnimationSequence.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Maps\ScrollableOverworldMap.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -199,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="src\Objects\Noah.cpp">
       <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\ScrollableOverworldMap.cpp">
+      <Filter>Source Files\Maps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

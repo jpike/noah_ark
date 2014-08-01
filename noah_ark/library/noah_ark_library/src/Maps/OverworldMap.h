@@ -13,6 +13,9 @@ namespace MAPS
     ///////////////////////////////////////////////////////////
     /// @brief  Represents the entire overworld map, which is composed of many
     ///         individual tile maps (and objects on them) that are connected together.
+    ///
+    ///         This class has the responsibility of scrolling between individual
+    ///         tile maps.
     ///////////////////////////////////////////////////////////
     class OverworldMap
     {

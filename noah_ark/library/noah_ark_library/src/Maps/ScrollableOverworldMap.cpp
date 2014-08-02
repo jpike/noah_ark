@@ -8,10 +8,12 @@ const float ScrollableOverworldMap::MAX_SCROLL_TIME_IN_SECONDS = 3.0f;
 
 ScrollableOverworldMap::ScrollableOverworldMap(
     const std::shared_ptr<OverworldMap>& overworldMap,
-    const OverworldMapSpecification* const pOverworldMapSpec) :
+    const OverworldMapSpecification* const pOverworldMapSpec,
+    const std::shared_ptr<TileMapBuilder>& tileMapBuilder) :
     m_overworldMap(overworldMap),
     m_scrollProcess(),
-    m_surroundingMapLoader()
+    m_surroundingMapLoader(),
+    m_tileMapBuilder(tileMapBuilder)
 {
     /// @todo   Throw an exception if the provided overworld map is NULL.
 
@@ -193,7 +195,20 @@ MATH::Vector2f ScrollableOverworldMap::Scroll(const float elapsedTimeInSeconds)
 {
     if (IsScrolling())
     {
-        return m_scrollProcess->Scroll(elapsedTimeInSeconds);
+        // CONTINUING SCROLLING BASED ON THE AMOUNT OF TIME.
+        MATH::Vector2f newScrollPosition =  m_scrollProcess->Scroll(elapsedTimeInSeconds);
+
+        // CHECK IF SCROLLING IS COMPLETE.
+        if (IsScrollingComplete())
+        {
+            // Update the surrounding maps based on the new map brought into view during scrolling.
+            UpdateSurroundingMapsAfterScrolling();
+
+            // Reset the scroll process.
+            m_scrollProcess.reset();
+        }
+
+        return newScrollPosition;
     }
     else
     {
@@ -215,7 +230,7 @@ bool ScrollableOverworldMap::IsScrollingComplete() const
     }
 }
 
-void ScrollableOverworldMap::UpdateSurroundingMapsAfterScrolling(std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem)
+void ScrollableOverworldMap::UpdateSurroundingMapsAfterScrolling()
 {
     // VERIFY THAT A CURRENT CENTER MAP EXISTS.
     // This center map is required to make any updates.
@@ -236,22 +251,19 @@ void ScrollableOverworldMap::UpdateSurroundingMapsAfterScrolling(std::shared_ptr
         case PROCESSES::ScrollProcess::ScrollDirection::UP:
         {
             // Create the new top tile map.
-            std::shared_ptr<MAPS::TileMap> newTopMap = MAPS::TileMapBuilder::BuildTopTileMap(
+            std::shared_ptr<MAPS::TileMap> newTopMap = m_tileMapBuilder->BuildTopTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetTopTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetTopTileMap());
             m_overworldMap->SetTopTileMap(newTopMap);
             // Create the new left tile map.
-            std::shared_ptr<MAPS::TileMap> newLeftTileMap = MAPS::TileMapBuilder::BuildLeftTileMap(
+            std::shared_ptr<MAPS::TileMap> newLeftTileMap = m_tileMapBuilder->BuildLeftTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetLeftTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetLeftTileMap());
             m_overworldMap->SetLeftTileMap(newLeftTileMap);
             // Create the new right tile map.
-            std::shared_ptr<MAPS::TileMap> newRightTileMap = MAPS::TileMapBuilder::BuildRightTileMap(
+            std::shared_ptr<MAPS::TileMap> newRightTileMap = m_tileMapBuilder->BuildRightTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetRightTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetRightTileMap());
             m_overworldMap->SetRightTileMap(newRightTileMap);
             break;
         }
@@ -259,22 +271,19 @@ void ScrollableOverworldMap::UpdateSurroundingMapsAfterScrolling(std::shared_ptr
         case PROCESSES::ScrollProcess::ScrollDirection::DOWN:
         {
             // Create the new bottom tile map.
-            std::shared_ptr<MAPS::TileMap> newBottomMap = MAPS::TileMapBuilder::BuildBottomTileMap(
+            std::shared_ptr<MAPS::TileMap> newBottomMap = m_tileMapBuilder->BuildBottomTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetBottomTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetBottomTileMap());
             m_overworldMap->SetBottomTileMap(newBottomMap);
             // Create the new left tile map.
-            std::shared_ptr<MAPS::TileMap> newLeftTileMap = MAPS::TileMapBuilder::BuildLeftTileMap(
+            std::shared_ptr<MAPS::TileMap> newLeftTileMap = m_tileMapBuilder->BuildLeftTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetLeftTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetLeftTileMap());
             m_overworldMap->SetLeftTileMap(newLeftTileMap);
             // Create the new right tile map.
-            std::shared_ptr<MAPS::TileMap> newRightTileMap = MAPS::TileMapBuilder::BuildRightTileMap(
+            std::shared_ptr<MAPS::TileMap> newRightTileMap = m_tileMapBuilder->BuildRightTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetRightTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetRightTileMap());
             m_overworldMap->SetRightTileMap(newRightTileMap);
             break;
         }
@@ -282,22 +291,19 @@ void ScrollableOverworldMap::UpdateSurroundingMapsAfterScrolling(std::shared_ptr
         case PROCESSES::ScrollProcess::ScrollDirection::LEFT:
         {
             // Create the new top tile map.
-            std::shared_ptr<MAPS::TileMap> newTopMap = MAPS::TileMapBuilder::BuildTopTileMap(
+            std::shared_ptr<MAPS::TileMap> newTopMap = m_tileMapBuilder->BuildTopTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetTopTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetTopTileMap());
             m_overworldMap->SetTopTileMap(newTopMap);
             // Create the new bottom tile map.
-            std::shared_ptr<MAPS::TileMap> newBottomMap = MAPS::TileMapBuilder::BuildBottomTileMap(
+            std::shared_ptr<MAPS::TileMap> newBottomMap = m_tileMapBuilder->BuildBottomTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetBottomTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetBottomTileMap());
             m_overworldMap->SetBottomTileMap(newBottomMap);
             // Create the new left tile map.
-            std::shared_ptr<MAPS::TileMap> newLeftTileMap = MAPS::TileMapBuilder::BuildLeftTileMap(
+            std::shared_ptr<MAPS::TileMap> newLeftTileMap = m_tileMapBuilder->BuildLeftTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetLeftTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetLeftTileMap());
             m_overworldMap->SetLeftTileMap(newLeftTileMap);
             break;
         }
@@ -305,28 +311,21 @@ void ScrollableOverworldMap::UpdateSurroundingMapsAfterScrolling(std::shared_ptr
         case PROCESSES::ScrollProcess::ScrollDirection::RIGHT:
         {
             // Create the new top tile map.
-            std::shared_ptr<MAPS::TileMap> newTopMap = MAPS::TileMapBuilder::BuildTopTileMap(
+            std::shared_ptr<MAPS::TileMap> newTopMap = m_tileMapBuilder->BuildTopTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetTopTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetTopTileMap());
             m_overworldMap->SetTopTileMap(newTopMap);
             // Create the new bottom tile map.
-            std::shared_ptr<MAPS::TileMap> newBottomMap = MAPS::TileMapBuilder::BuildBottomTileMap(
+            std::shared_ptr<MAPS::TileMap> newBottomMap = m_tileMapBuilder->BuildBottomTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetBottomTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetBottomTileMap());
             m_overworldMap->SetBottomTileMap(newBottomMap);
             // Create the new right tile map.
-            std::shared_ptr<MAPS::TileMap> newRightTileMap = MAPS::TileMapBuilder::BuildRightTileMap(
+            std::shared_ptr<MAPS::TileMap> newRightTileMap = m_tileMapBuilder->BuildRightTileMap(
                 *centerMap,
-                m_surroundingMapLoader->GetRightTileMap(),
-                graphicsSystem);
+                m_surroundingMapLoader->GetRightTileMap());
             m_overworldMap->SetRightTileMap(newRightTileMap);
             break;
         }
     }
-
-    /// RESET THE SCROLL PROCESS.
-    /// @todo   This probably should go in a separate or better named method.
-    m_scrollProcess.reset();
 }

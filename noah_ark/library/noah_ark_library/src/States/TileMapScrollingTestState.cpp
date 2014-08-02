@@ -52,9 +52,6 @@ bool TileMapScrollingTestState::Update(const float elapsedTimeInSeconds)
         {            
             // Re-enable user input.
             m_inputController.EnableInput();
-
-            // Load the next set of tile maps.
-            m_scrollingOverworld->UpdateSurroundingMapsAfterScrolling(m_graphicsSystem);
         }
     }
 
@@ -75,6 +72,9 @@ bool TileMapScrollingTestState::LoadOverworldMap(const std::string& overworldSpe
     }
 
     // LOAD THE OVERWORLD MAP.
+    // Create a tile map builder needed for the creating tile maps.
+    std::shared_ptr<MAPS::TileMapBuilder> tileMapBuilder = std::make_shared<MAPS::TileMapBuilder>(m_graphicsSystem);
+
     // The starting tile map starts out at 0,0 in the world.  Other tile maps will be positioned relative to it.
     const MAPS::OverworldGridPosition STARTING_TILE_MAP_OVERWORLD_GRID_POSITION = m_overworldSpec.GetStartingTileMapPosition();
     const MATH::Vector2f STARTING_TILE_MAP_TOP_LEFT_WORLD_POSITION = MATH::Vector2f(0.0f, 0.0f);
@@ -85,11 +85,11 @@ bool TileMapScrollingTestState::LoadOverworldMap(const std::string& overworldSpe
         m_overworldSpec,
         STARTING_TILE_MAP_OVERWORLD_GRID_POSITION,
         STARTING_TILE_MAP_TOP_LEFT_WORLD_POSITION,
-        m_graphicsSystem);
+        tileMapBuilder);
 
     // Wrap the overworld map so that it can be scrolled.
     m_scrollingOverworld = std::unique_ptr<MAPS::ScrollableOverworldMap>(
-        new MAPS::ScrollableOverworldMap(m_overworldMap, &m_overworldSpec));
+        new MAPS::ScrollableOverworldMap(m_overworldMap, &m_overworldSpec, tileMapBuilder));
     
     // SET THE CAMERA TO VIEW THE STARTING TILE MAP.
     m_camera.SetTopLeftViewPosition(STARTING_TILE_MAP_TOP_LEFT_WORLD_POSITION);

@@ -2,10 +2,30 @@
 
 using namespace MAPS;
 
+TileMapBuilder::TileMapBuilder(const std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
+    m_graphicsSystem(graphicsSystem)
+{}
+
+TileMapBuilder::~TileMapBuilder()
+{}
+
+std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildTileMap(
+    const OverworldGridPosition& overworldGridPosition,
+    const MATH::Vector2f& topLeftWorldPositionInPixels,
+    const std::shared_ptr<Tmx::Map>& tmxMap)
+{
+    std::shared_ptr<MAPS::TileMap> tileMap = std::make_shared<MAPS::TileMap>(
+        overworldGridPosition,
+        topLeftWorldPositionInPixels,
+        tmxMap, 
+        m_graphicsSystem);
+
+    return tileMap;
+}
+
 std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildTopTileMap(
     const MAPS::TileMap& centerMap,
-    const std::shared_ptr<Tmx::Map>& topTmxMap,
-    std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem)
+    const std::shared_ptr<Tmx::Map>& topTmxMap)
 {
     // CHECK IF A TOP TMX MAP WAS PROVIDED.
     bool topTmxMapExists = (nullptr != topTmxMap);
@@ -35,14 +55,13 @@ std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildTopTileMap(
         topTileMapOverworldGridPosition,
         topTileMapTopLeftWorldPosition,
         topTmxMap,
-        graphicsSystem);
+        m_graphicsSystem);
     return topTileMap;
 }
 
 std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildBottomTileMap(
     const MAPS::TileMap& centerMap,
-    const std::shared_ptr<Tmx::Map>& bottomTmxMap,
-    std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem)
+    const std::shared_ptr<Tmx::Map>& bottomTmxMap)
 {
     // CHECK IF A BOTTOM TMX MAP WAS PROVIDED.
     bool bottomTmxMapExists = (nullptr != bottomTmxMap);
@@ -72,14 +91,13 @@ std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildBottomTileMap(
         bottomTileMapOverworldGridPosition,
         bottomTileMapTopLeftWorldPosition,
         bottomTmxMap,
-        graphicsSystem);
+        m_graphicsSystem);
     return bottomTileMap;
 }
 
 std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildLeftTileMap(
     const MAPS::TileMap& centerMap,
-    const std::shared_ptr<Tmx::Map>& leftTmxMap,
-    std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem)
+    const std::shared_ptr<Tmx::Map>& leftTmxMap)
 {
     // CHECK IF A LEFT TMX MAP WAS PROVIDED.
     bool leftTmxMapExists = (nullptr != leftTmxMap);
@@ -109,14 +127,13 @@ std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildLeftTileMap(
         leftTileMapOverworldGridPosition,
         leftTileMapTopLeftWorldPosition,
         leftTmxMap,
-        graphicsSystem);
+        m_graphicsSystem);
     return leftTileMap;
 }
 
 std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildRightTileMap(
     const MAPS::TileMap& centerMap,
-    const std::shared_ptr<Tmx::Map>& rightTmxMap,
-    std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem)
+    const std::shared_ptr<Tmx::Map>& rightTmxMap)
 {
     // CHECK IF A RIGHT TMX MAP WAS PROVIDED.
     bool rightTmxMapExists = (nullptr != rightTmxMap);
@@ -146,6 +163,6 @@ std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildRightTileMap(
         rightTileMapOverworldGridPosition,
         rightTileMapTopLeftWorldPosition,
         rightTmxMap,
-        graphicsSystem);
+        m_graphicsSystem);
     return rightTileMap;
 }

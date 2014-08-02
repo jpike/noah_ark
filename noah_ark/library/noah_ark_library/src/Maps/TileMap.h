@@ -21,16 +21,8 @@ namespace MAPS
     ///         that may located on the map.
     ///
     ///         It is constructed from data in a Tiled TMX map.
-    ///
-    ///         @todo This class implements the IGraphicsComponent interface
-    ///         to allow individual tile maps to be completely included
-    ///         or excluded from rendering, as opposed to individual tiles.
-    ///         This allows improved rendering efficiency by reducing the
-    ///         number of components to be examined for rendering from 
-    ///         a large number of individual tiles to a small number of
-    ///         larger tile maps.
     ///////////////////////////////////////////////////////////
-    class TileMap// : public GRAPHICS::IGraphicsComponent
+    class TileMap
     {
     public:
         /// @brief          Constructor.

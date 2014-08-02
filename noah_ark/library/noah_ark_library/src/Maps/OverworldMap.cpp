@@ -25,16 +25,15 @@ void OverworldMap::PopulateFromSpecification(
     const OverworldMapSpecification& overworldSpec,
     const OverworldGridPosition& startingTileMapOverworldGridPosition,
     const MATH::Vector2f& startingTileMapTopLeftWorldPosition,
-    std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem)
+    const std::shared_ptr<TileMapBuilder>& tileMapBuilder)
 {
     // CREATE THE STARTING TILE MAP.
     MAPS::TileMapLoader mapLoader;
     std::shared_ptr<Tmx::Map> startingTmxMap = mapLoader.LoadMap(overworldSpec.GetStartingTileMapFilepath());
-    std::shared_ptr<MAPS::TileMap> startingTileMap = std::make_shared<MAPS::TileMap>(
+    std::shared_ptr<MAPS::TileMap> startingTileMap = tileMapBuilder->BuildTileMap(
         startingTileMapOverworldGridPosition,
         startingTileMapTopLeftWorldPosition,
-        startingTmxMap, 
-        graphicsSystem);
+        startingTmxMap);
     SetCurrentTileMap(startingTileMap);
 
     // CREATE THE TOP TILE MAP, IF ONE EXISTS.
@@ -54,10 +53,9 @@ void OverworldMap::PopulateFromSpecification(
 
         // Create the top tile map in the overworld.
         std::shared_ptr<Tmx::Map> topTmxMap = mapLoader.LoadMap(topTileMapFilepath);
-        std::shared_ptr<MAPS::TileMap> topTileMap = TileMapBuilder::BuildTopTileMap(
+        std::shared_ptr<MAPS::TileMap> topTileMap = tileMapBuilder->BuildTopTileMap(
             *startingTileMap, 
-            topTmxMap, 
-            graphicsSystem);
+            topTmxMap);
         SetTopTileMap(topTileMap);
     }
 
@@ -78,10 +76,9 @@ void OverworldMap::PopulateFromSpecification(
 
         // Create the bottom tile map in the overworld.
         std::shared_ptr<Tmx::Map> bottomTmxMap = mapLoader.LoadMap(bottomTileMapFilepath);
-        std::shared_ptr<MAPS::TileMap> bottomTileMap = TileMapBuilder::BuildBottomTileMap(
+        std::shared_ptr<MAPS::TileMap> bottomTileMap = tileMapBuilder->BuildBottomTileMap(
             *startingTileMap, 
-            bottomTmxMap,
-            graphicsSystem);
+            bottomTmxMap);
         SetBottomTileMap(bottomTileMap);
     }
 
@@ -102,10 +99,9 @@ void OverworldMap::PopulateFromSpecification(
 
         // Create the left tile map in the overworld.
         std::shared_ptr<Tmx::Map> leftTmxMap = mapLoader.LoadMap(leftTileMapFilepath);
-        std::shared_ptr<MAPS::TileMap> leftTileMap = TileMapBuilder::BuildLeftTileMap(
+        std::shared_ptr<MAPS::TileMap> leftTileMap = tileMapBuilder->BuildLeftTileMap(
             *startingTileMap, 
-            leftTmxMap,
-            graphicsSystem);
+            leftTmxMap);
         SetLeftTileMap(leftTileMap);
     }
 
@@ -126,10 +122,9 @@ void OverworldMap::PopulateFromSpecification(
 
         // Create the right tile map in the overworld.
         std::shared_ptr<Tmx::Map> rightTmxMap = mapLoader.LoadMap(rightTileMapFilepath);
-        std::shared_ptr<MAPS::TileMap> rightTileMap = TileMapBuilder::BuildRightTileMap(
+        std::shared_ptr<MAPS::TileMap> rightTileMap = tileMapBuilder->BuildRightTileMap(
             *startingTileMap, 
-            rightTmxMap,
-            graphicsSystem);
+            rightTmxMap);
         SetRightTileMap(rightTileMap);
     }
 }

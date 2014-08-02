@@ -5,6 +5,7 @@
 #include "Graphics/GraphicsSystem.h"
 #include "Maps/OverworldMapSpecification.h"
 #include "Maps/TileMap.h"
+#include "Maps/TileMapBuilder.h"
 #include "Math/Vector2.h"
 
 /// Holds code related to maps in the game.
@@ -13,9 +14,8 @@ namespace MAPS
     ///////////////////////////////////////////////////////////
     /// @brief  Represents the entire overworld map, which is composed of many
     ///         individual tile maps (and objects on them) that are connected together.
-    ///
-    ///         This class has the responsibility of scrolling between individual
-    ///         tile maps.
+    ///         This class is responsible for managing the connective relationship
+    ///         between adjacent tile maps.
     ///////////////////////////////////////////////////////////
     class OverworldMap
     {
@@ -31,13 +31,13 @@ namespace MAPS
         ///                 are positioned in the overworld.
         /// @param[in]      startingTileMapOverworldGridPosition - The relative position of
         ///                 the starting tile map within the overworld's "grid".
-        /// @param[in,out]  graphicsSystem - The graphics system supplying graphical data for
-        ///                 the tile maps.
+        /// @param[in,out]  tileMapBuilder - The builder for creating tile maps described
+        ///                 in the specification.
         void PopulateFromSpecification(
             const OverworldMapSpecification& overworldSpec,
             const OverworldGridPosition& startingTileMapOverworldGridPosition,
             const MATH::Vector2f& startingTileMapTopLeftWorldPosition,
-            std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
+            const std::shared_ptr<TileMapBuilder>& tileMapBuilder);
         
         /// @brief  Gets the currently displayed tile map.
         /// @return The currently displayed tile map.

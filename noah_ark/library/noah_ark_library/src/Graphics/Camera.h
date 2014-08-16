@@ -13,7 +13,7 @@ namespace GRAPHICS
     public:
         /// @brief      Constructor.
         /// @param[in]  leftViewPosition - The left X world position in the camera's view, in pixels.
-        /// @param[in]  topViewPositoin - The top Y world position in the camera's view, in pixels.
+        /// @param[in]  topViewPosition - The top Y world position in the camera's view, in pixels.
         explicit Camera(const float leftViewPosition = 0.0f, const float topViewPosition = 0.0f);
 
         /// @brief  Destructor.

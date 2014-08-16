@@ -1,0 +1,34 @@
+/**
+
+@page trees Trees
+
+> Make thee an ark of gopher wood; rooms shalt thou make in the ark, and shalt pitch it within and without with pitch.
+- *Genesis 6:14*
+
+To build the ark, Noah obviously needs to gather wood.  The Bible specifies [gopher wood](http://en.wikipedia.org/wiki/Gopher_wood), but there is debate over exactly what type of wood this is.  Favored ideas seem to be cypress or cedar, but those are still not definite.
+
+Initially, trees will only be implemented for gathering wood, but different types of trees may be added in the future for other reasons (like food).
+
+Trees in Nintendo's Animal Crossing games may be good references.
+
+@section tree_behavior Tree Behavior
+
+In the game, Noah will chop down trees with an axe to gather wood.  When Noah swings his axe and hits a tree, the tree should briefly shake.  After about 3 hits (exact number may be adjusted) with an axe, the tree should become wood.
+
+@section tree_graphics Tree Graphics
+
+The overall size of the trees is to-be-determined.  The minimum size (width x height) is 16x16 pixels, but 32x32 or 16x32 may work as well.
+
+The tree needs at least 2 frames of animation so that it can shake when it.  More frames can be added if they would result in a better animation.
+
+It may be fine to have the "top" and "bottom" of the tree be separate components for the purposes of achieving the desired animation.  For example, a single "bottom" for the trunk may work, with the "top" green area just shifting back-and-forth.
+
+The exact type of tree depicted in the game isn't too important, but it should have some kind of greenery on it.  If a specific "reference" tree is preferred, cypress or cedar could be used (see above), but a generic tree will work.  The most important thing is that it is clearly recognizable as a tree.
+
+Finally, a generic wood/log sprite (single frame, 16x16) is needed for after a tree is cut down.  As an added effect, some kind of dust/smoke effect could be added for the transistion of tree to wood, but this is optional.
+
+@section tree_sound Tree Sounds
+
+A brief sound effect is needed for when the tree is shaking after being hit with an axe.  A "rustling of leaves" sound or a tree hitting the ground may be appropriate.
+
+*/

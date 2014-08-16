@@ -31,6 +31,8 @@ namespace MAPS
         ///                 are positioned in the overworld.
         /// @param[in]      startingTileMapOverworldGridPosition - The relative position of
         ///                 the starting tile map within the overworld's "grid".
+        /// @param[in]      startingTileMapTopLeftWorldPosition - The top-left world position
+        ///                 of the starting tile map.
         /// @param[in,out]  tileMapBuilder - The builder for creating tile maps described
         ///                 in the specification.
         void PopulateFromSpecification(
@@ -73,11 +75,11 @@ namespace MAPS
 
         /// @brief      Sets the tile map to the left of the map currently displayed by the overworld.
         /// @param[in]  tileMap - The new tile map to the left of the currently displayed one.
-        void SetLeftTileMap(const std::shared_ptr<TileMap>& leftTileMap);
+        void SetLeftTileMap(const std::shared_ptr<TileMap>& tileMap);
 
         /// @brief      Sets the tile map to the right of the map currently displayed by the overworld.
         /// @param[in]  tileMap - The new tile map to the right of the currently displayed one.
-        void SetRightTileMap(const std::shared_ptr<TileMap>& leftTileMap);
+        void SetRightTileMap(const std::shared_ptr<TileMap>& tileMap);
 
     private:
         OverworldMap(const OverworldMap& mapToCopy);  ///< Private to disallow copying.

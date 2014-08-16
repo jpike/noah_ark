@@ -21,7 +21,7 @@ namespace GRAPHICS
     {
     public:
         /// @brief      Constructor.  The sprite is visible by default.
-        /// @param      animation - The HGE animation resource to use.
+        /// @param      pAnimation - The HGE animation resource to use.
         /// @throws     std::invalid_argument - If pAnimation is null.
         explicit AnimationSequence(hgeAnimation* const pAnimation);
         

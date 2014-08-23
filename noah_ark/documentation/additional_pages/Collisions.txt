@@ -1,0 +1,71 @@
+/**
+
+@page collisions Collisions
+
+This page will document how collisions will be handled in the Noah's Ark game.
+
+The current plan is as follows:
+- A collision system will handle collision detection.
+- Each game object that needs to be collided with will need to have a collision component attached to it.
+- The game objects will be responsible for synchronizing graphics with physical position.
+- When a game object wants to move, it will "request" movement to its collision component.
+- The collision system will use current and "requested" data in collision components to properly handle movement.
+
+Further research performed is below.
+
+@section map_representation Map Representation
+
+It would be nice to have tile maps define which tiles are walkable (not solid) or solid.
+The Tiled [TMX map format](https://github.com/bjorn/tiled/wiki/TMX-Map-Format) provides
+several options for how collision data could be defined in the map itself.
+
+@subsection terrain Terrain
+
+The `<terraintypes>` and `<terrain>` elements can be used to
+define different types of "terrain" that can be applied to tiles.  The `<tile>`
+element can have a terrain type associated with each corner.
+
+While we don't need more than 1 terrain type per tile, this could be a viable options
+for defining different types of terrain (which some types being collidable and others not).
+
+@subsection properties Properties
+
+The TMX map format can also support arbitrary name-value properties.  This could be used
+to define if a tile is solid or not.
+
+@subsection object_layer Object Layer
+
+[This tutorial](http://gamedevelopment.tutsplus.com/tutorials/introduction-to-tiled-map-editor--gamedev-2838)
+presents an interesting idea about creating a separate object layer in Tiled just for collisions.  This sounds
+like a neat idea, but I'm not yet if it might present problems for defining collisions for objects in a map
+that move.
+
+@subsection collision_tile_layer Collision Tile Layer
+
+The second answer [here](http://gamedev.stackexchange.com/questions/71364/libgdx-collision-detection-with-tiled-map-java)
+presents an idea that I like.  Instead of having the collision data associated with the "visual" layer of tiles,
+a separate layer with only two types of tiles (solid or not) would exist.
+
+This may be overkill for this game though.  We only need simple square tiles (at the ground layer), and associating
+solid or not with each different type of tile would be similar.  Having a separate layer just for collisions
+for all types could be a maintainability burden.  On the other hand, it means that if I needed to make some
+area unwalkable that would normally be walkable, this could be very easy.
+
+@section varying_object_sizes Varying Object Sizes
+
+While not needed for the initial ground tile collisions, a [hiearchical quadtree](http://gamedev.stackexchange.com/questions/24009/detecting-collision-between-a-sprite-and-many-tiles)
+of different tile sizes may be something useful to keep in mind for future development.  In particular, there
+will likely be moving objects of larger sizes later in the game.
+
+@section other_resources Other Resources
+
+Other resources that may be useful to review at a later date include:
+
+- [Tile-based 2D collision detection problems](http://gamedev.stackexchange.com/questions/8421/tile-based-2d-collision-detection-problems)
+- [JavaScript - 2D Top-down Tile Collision Detection](http://gamedev.stackexchange.com/questions/53870/javascript-2d-top-down-tile-collision-detection)
+- [How do I detect and handle collisions using a tile property with Slick2D?](http://gamedev.stackexchange.com/questions/59308/how-do-i-detect-and-handle-collisions-using-a-tile-property-with-slick2d)
+- [implementing collision detection and handling for tiled 2D world with smooth wall sliding](http://gamedev.stackexchange.com/questions/66729/implementing-collision-detection-and-handling-for-tiled-2d-world-with-smooth-wal)
+- [How was collision detection handled in The Legend of Zelda: A Link to the Past](http://gamedev.stackexchange.com/questions/8336/how-was-collision-detection-handled-in-the-legend-of-zelda-a-link-to-the-past)
+- [Collisions and Collectables: How To Make a Tile-Based Game with Cocos2D 2.X Part 2](http://www.raywenderlich.com/29460/collisions-and-collectables-how-to-make-a-tile-based-game-with-cocos2d-2-x-part-2)
+
+*/

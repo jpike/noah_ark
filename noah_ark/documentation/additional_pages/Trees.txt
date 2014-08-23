@@ -13,7 +13,12 @@ Trees in Nintendo's Animal Crossing games may be good references.
 
 @section tree_behavior Tree Behavior
 
-In the game, Noah will chop down trees with an axe to gather wood.  When Noah swings his axe and hits a tree, the tree should briefly shake.  After about 3 hits (exact number may be adjusted) with an axe, the tree should become wood.
+In the game, Noah will chop down trees with an axe to gather wood.  When Noah swings his axe and hits a tree, the tree should briefly shake.  After about 3 hits (exact number may be adjusted) with an axe, the tree should become wood.  This is illustrated in the sequence of images below:
+
+ _ | _ | _ | _
+ - | - | - | -
+@image html axe_swing/axe_swing1.jpg "" | @image html axe_swing/axe_swing2.jpg "" | @image html axe_swing/axe_swing3.jpg "" | @image html axe_swing/axe_swing4.jpg ""
+Repeat previous 4 steps two more times. | @image html axe_swing/axe_swing6.jpg "" | @image html axe_swing/axe_swing7.jpg "" | Done.  Noah can now collect wood.
 
 @section tree_graphics Tree Graphics
 

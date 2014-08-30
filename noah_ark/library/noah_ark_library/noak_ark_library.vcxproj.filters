@@ -138,6 +138,9 @@
     <ClInclude Include="src\Maps\ScrollableOverworldMap.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
+    <ClInclude Include="src\Input\KeyboardInputController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -205,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="src\Maps\ScrollableOverworldMap.cpp">
       <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input\KeyboardInputController.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #include <hgestrings.h>
 #include <string>
 #include "NoahArkGame.h"
-#include "States/TileMapScrollingTestState.h"
+#include "States/OverworldState.h"
 
 // STATIC MEMBER VARIABLES.
 std::unique_ptr<NoahArkGame> NoahArkGame::singleNoahArkGame = nullptr;
@@ -112,7 +112,7 @@ bool NoahArkGame::Initialize()
     // SET THE INITIAL GAME STATE.
     /// @todo The state needs to be changed once all of the game states and finally implemented.
     ///       It should go to an "intro video" or "title screen" state initially.
-    std::shared_ptr<STATES::IGameState> initialState(new STATES::TileMapScrollingTestState(m_pGameEngine, m_graphicsSystem));
+    std::shared_ptr<STATES::IGameState> initialState(new STATES::OverworldState(m_pGameEngine, m_graphicsSystem));
     m_stateManager->SetCurrentState(initialState);
 
     // ALL INITIALIZATION STEPS SUCCEEDED.

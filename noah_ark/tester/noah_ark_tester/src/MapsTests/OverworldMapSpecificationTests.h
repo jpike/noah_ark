@@ -76,3 +76,84 @@ TEST_CASE( "Load specification from file.  Success.", "[OverworldMapSpecificatio
     std::string actual_starting_tile_map_filepath = overworldSpecification.GetStartingTileMapFilepath();
     REQUIRE(EXPECTED_STARTING_MAP_FILEPATH == actual_starting_tile_map_filepath);
 }
+
+TEST_CASE( "Load map with single row.  Success.", "[OverworldMapSpecification][LoadFromFile]" )
+{
+    // SETUP.
+    MAPS::OverworldMapSpecification overworldSpecification;
+
+    // EXECUTE.
+    // Load from a known specification file.
+    const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map_one_row.xml";
+    bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
+
+    // VERIFY.
+    // Verify that the return value indicates success.
+    REQUIRE(true == specificationLoadedSuccessfully);
+
+    // Verify the size of the overworld.
+    const unsigned int OVERWORLD_WIDTH_IN_TILE_MAPS = 3;
+    unsigned int actual_overworld_width_in_tile_maps = overworldSpecification.GetOverworldWidthInTileMaps();
+    REQUIRE(OVERWORLD_WIDTH_IN_TILE_MAPS == actual_overworld_width_in_tile_maps);
+
+    const unsigned int OVERWORLD_HEIGHT_IN_TILE_MAPS = 1;
+    unsigned int actual_overworld_height_in_tile_maps = overworldSpecification.GetOverworldHeightInTileMaps();
+    REQUIRE(OVERWORLD_HEIGHT_IN_TILE_MAPS == actual_overworld_height_in_tile_maps);
+
+    // Verification of the actual data in the tile map is left to another test.
+    // It can be added later here if necessary.
+}
+
+TEST_CASE( "Load map with single column.  Success.", "[OverworldMapSpecification][LoadFromFile]" )
+{
+    // SETUP.
+    MAPS::OverworldMapSpecification overworldSpecification;
+
+    // EXECUTE.
+    // Load from a known specification file.
+    const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map_one_column.xml";
+    bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
+
+    // VERIFY.
+    // Verify that the return value indicates success.
+    REQUIRE(true == specificationLoadedSuccessfully);
+
+    // Verify the size of the overworld.
+    const unsigned int OVERWORLD_WIDTH_IN_TILE_MAPS = 1;
+    unsigned int actual_overworld_width_in_tile_maps = overworldSpecification.GetOverworldWidthInTileMaps();
+    REQUIRE(OVERWORLD_WIDTH_IN_TILE_MAPS == actual_overworld_width_in_tile_maps);
+
+    const unsigned int OVERWORLD_HEIGHT_IN_TILE_MAPS = 3;
+    unsigned int actual_overworld_height_in_tile_maps = overworldSpecification.GetOverworldHeightInTileMaps();
+    REQUIRE(OVERWORLD_HEIGHT_IN_TILE_MAPS == actual_overworld_height_in_tile_maps);
+
+    // Verification of the actual data in the tile map is left to another test.
+    // It can be added later here if necessary.
+}
+
+TEST_CASE( "Load map with single row and column.  Success.", "[OverworldMapSpecification][LoadFromFile]" )
+{
+    // SETUP.
+    MAPS::OverworldMapSpecification overworldSpecification;
+
+    // EXECUTE.
+    // Load from a known specification file.
+    const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map_one_map.xml";
+    bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
+
+    // VERIFY.
+    // Verify that the return value indicates success.
+    REQUIRE(true == specificationLoadedSuccessfully);
+
+    // Verify the size of the overworld.
+    const unsigned int OVERWORLD_WIDTH_IN_TILE_MAPS = 1;
+    unsigned int actual_overworld_width_in_tile_maps = overworldSpecification.GetOverworldWidthInTileMaps();
+    REQUIRE(OVERWORLD_WIDTH_IN_TILE_MAPS == actual_overworld_width_in_tile_maps);
+
+    const unsigned int OVERWORLD_HEIGHT_IN_TILE_MAPS = 1;
+    unsigned int actual_overworld_height_in_tile_maps = overworldSpecification.GetOverworldHeightInTileMaps();
+    REQUIRE(OVERWORLD_HEIGHT_IN_TILE_MAPS == actual_overworld_height_in_tile_maps);
+
+    // Verification of the actual data in the tile map is left to another test.
+    // It can be added later here if necessary.
+}

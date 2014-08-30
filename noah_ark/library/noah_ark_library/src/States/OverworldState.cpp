@@ -16,7 +16,7 @@ OverworldState::OverworldState(
     m_noahPlayer()
 {
     // LOAD THE OVERWORLD FROM FILE.
-    const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map.xml";
+    const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/overworld_map.xml";
     bool overworldLoadedSuccessfully = LoadOverworldMap(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
     if (!overworldLoadedSuccessfully)
     {

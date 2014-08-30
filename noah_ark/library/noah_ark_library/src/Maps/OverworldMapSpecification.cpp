@@ -105,10 +105,11 @@ bool OverworldMapSpecification::LoadFromFile(const std::string& filepath)
     }
 
     // READ IN THE ALL OF THE TILE MAP FILEPATHS.
-    // Keep track of the number of filepaths read so that we can properly calculate
-    // the row/column position of each tile map and validate that the expected
-    // number of maps were provided.
+    // Keep track of the number of filepaths read so that we can validate that
+    // all maps get read.
     unsigned int tileMapFilepathsReadCount = 0;
+    unsigned int currentTileMapRow = 0;
+    unsigned int currentTileMapColumn = 0;
     MATH::Vector2ui startingTileMapPosition(0, 0);
     std::vector< std::vector<std::string> > tileMapFilepaths;
 
@@ -128,14 +129,10 @@ bool OverworldMapSpecification::LoadFromFile(const std::string& filepath)
         {
             return false;
         }
-        
-        // Calculate the row/column position of the current tile map.
-        unsigned int currentTileMapRow = tileMapFilepathsReadCount / heightInTileMaps;
-        unsigned int currentTileMapColumn = tileMapFilepathsReadCount % widthInTileMaps;
 
         // Check if we need to create a new empty row.
-        bool tileMapRowAlreadyExists = (currentTileMapColumn != 0);
-        if (!tileMapRowAlreadyExists)
+        bool startingNewRow = (0 == currentTileMapColumn);
+        if (startingNewRow)
         {
             // Create an empty container to hold filepaths for this row's tile maps.
             tileMapFilepaths.push_back( std::vector<std::string>() );
@@ -150,6 +147,21 @@ bool OverworldMapSpecification::LoadFromFile(const std::string& filepath)
         if (currentFilepathIsForStartingTileMap)
         {
             startingTileMapPosition = MATH::Vector2ui(currentTileMapColumn, currentTileMapRow);
+        }
+
+        // Calculate the row/column position of the current tile map.
+        const unsigned int MAX_TILE_MAP_COLUMN = widthInTileMaps - 1;
+        bool currentRowFullyLoaded = (currentTileMapColumn >= MAX_TILE_MAP_COLUMN);
+        if (currentRowFullyLoaded)
+        {
+            // Move to the first column of the next row.
+            ++currentTileMapRow;
+            currentTileMapColumn = 0;
+        }
+        else
+        {
+            // Move to the next column of the current row.
+            ++currentTileMapColumn;
         }
     }
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OverworldMap>
+	<WidthInTileMaps>7</WidthInTileMaps>
+	<HeightInTileMaps>1</HeightInTileMaps>
+	<!-- Starting map is currently arbitrarily chosen. -->
+	<StartingTileMapFilepath>res/maps/map_0_0.tmx</StartingTileMapFilepath>
+	<TileMaps>
+		<!-- ROW 0 -->
+		<Filepath>res/maps/map_0_0.tmx</Filepath>
+		<Filepath>res/maps/map_1_0.tmx</Filepath>
+		<Filepath>res/maps/map_2_0.tmx</Filepath>
+        <Filepath>res/maps/map_3_0.tmx</Filepath>
+        <Filepath>res/maps/map_4_0.tmx</Filepath>
+        <Filepath>res/maps/map_5_0.tmx</Filepath>
+        <Filepath>res/maps/map_6_0.tmx</Filepath>
+	</TileMaps>
+</OverworldMap>

@@ -76,7 +76,7 @@ NoahArkGame::NoahArkGame() :
     m_pGameEngine(nullptr),
     m_resourceManager(),
     m_graphicsSystem(),
-    m_physicsSystem(),
+    m_collisionSystem(),
     m_stateManager()
 {
     // CHECK IF AN INSTANCE OF THE GAME HAS ALREADY BEEN CREATED.
@@ -124,8 +124,8 @@ bool NoahArkGame::Shutdown()
     // SHUTDOWN THE STATE MANAGER.
     m_stateManager.reset();
 
-    // SHUTDOWN THE PHYSICS SYSTEM.
-    m_physicsSystem.reset();
+    // SHUTDOWN THE COLLISION SYSTEM.
+    m_collisionSystem.reset();
 
     // SHUTDOWN THE GRAPHICS SYSTEM.
     m_graphicsSystem.reset();
@@ -203,8 +203,8 @@ bool NoahArkGame::InitializeSubsystems()
     // INITIALIZE THE GRAPHICS SYSTEM.
     m_graphicsSystem = std::make_shared<GRAPHICS::GraphicsSystem>(m_pGameEngine, m_resourceManager);
 
-    // INITIALIZE THE PHYSICS SYSTEM.
-    m_physicsSystem = std::make_shared<PHYSICS::PhysicsSystem>();
+    // INITIALIZE THE COLLISION SYSTEM.
+    m_collisionSystem = std::make_shared<PHYSICS::COLLISION::CollisionSystem>();
 
     // INITIALIZE THE STATE MANAGER.
     m_stateManager = std::make_shared<STATES::StateManager>();

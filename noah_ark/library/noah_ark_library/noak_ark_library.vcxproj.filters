@@ -58,6 +58,12 @@
     <Filter Include="Source Files\Processes">
       <UniqueIdentifier>{ec215c39-e600-47b9-99fc-fa2a5e62f128}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Physics\Collision">
+      <UniqueIdentifier>{678317fc-7a5f-4bfe-b7fe-762656d618f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics\Collision">
+      <UniqueIdentifier>{c373eb1f-cd12-4a4e-a6d9-a3d2c947be66}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\States\OverworldState.h">
@@ -68,9 +74,6 @@
     </ClInclude>
     <ClInclude Include="src\States\StateManager.h">
       <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Physics\PhysicsSystem.h">
-      <Filter>Header Files\Physics</Filter>
     </ClInclude>
     <ClInclude Include="src\Maps\OverworldMap.h">
       <Filter>Header Files\Maps</Filter>
@@ -141,6 +144,15 @@
     <ClInclude Include="src\Input\KeyboardInputController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="src\Physics\Collision\ICollisionComponent.h">
+      <Filter>Header Files\Physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\Collision\BoxCollider.h">
+      <Filter>Header Files\Physics\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\Collision\CollisionSystem.h">
+      <Filter>Header Files\Physics\Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -148,9 +160,6 @@
     </ClCompile>
     <ClCompile Include="src\States\StateManager.cpp">
       <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Physics\PhysicsSystem.cpp">
-      <Filter>Source Files\Physics</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\Tile.cpp">
       <Filter>Source Files\Maps</Filter>
@@ -211,6 +220,12 @@
     </ClCompile>
     <ClCompile Include="src\Input\KeyboardInputController.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Physics\Collision\BoxCollider.cpp">
+      <Filter>Source Files\Physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Physics\Collision\CollisionSystem.cpp">
+      <Filter>Source Files\Physics\Collision</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

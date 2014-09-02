@@ -109,6 +109,7 @@ xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(Targe
   <ItemGroup>
     <ClInclude Include="src\MapsTests\OverworldMapSpecificationTests.h" />
     <ClInclude Include="src\MapsTests\SurroundingMapLoaderTests.h" />
+    <ClInclude Include="src\PhysicsTests\CollisionTests\CollisionSystemTests.h" />
     <ClInclude Include="src\StatesTests\MockGameState.h" />
     <ClInclude Include="src\StatesTests\StateManagerTests.h" />
   </ItemGroup>

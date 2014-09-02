@@ -4,7 +4,7 @@
 #include <hgeresource.h>
 #include <memory>
 #include "Graphics/GraphicsSystem.h"
-#include "Physics/PhysicsSystem.h"
+#include "Physics/Collision/CollisionSystem.h"
 #include "States/StateManager.h"
 
 ///////////////////////////////////////////////////////////
@@ -91,6 +91,6 @@ private:
     HGE* m_pGameEngine;    ///< The underlying game engine.
     std::shared_ptr<hgeResourceManager> m_resourceManager;    ///< The resource manager.
     std::shared_ptr<GRAPHICS::GraphicsSystem> m_graphicsSystem; ///< The graphics system.
-    std::shared_ptr<PHYSICS::PhysicsSystem> m_physicsSystem;  ///< The physics system.
+    std::shared_ptr<PHYSICS::COLLISION::CollisionSystem> m_collisionSystem;  ///< The collision system.
     std::shared_ptr<STATES::StateManager> m_stateManager; ///< The game state manager.
 };

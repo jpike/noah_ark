@@ -19,6 +19,12 @@
     <Filter Include="Header Files\MapsTests">
       <UniqueIdentifier>{019a74d1-b79e-4ad7-95dd-4b5ae35f0d08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\PhysicsTests">
+      <UniqueIdentifier>{ecd18116-ebd6-4933-a856-5f5e4bf25101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\PhysicsTests\CollisionTests">
+      <UniqueIdentifier>{46e03b57-139d-420b-b7d7-6d1975fb29ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -37,6 +43,9 @@
     </ClInclude>
     <ClInclude Include="src\MapsTests\SurroundingMapLoaderTests.h">
       <Filter>Header Files\MapsTests</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PhysicsTests\CollisionTests\CollisionSystemTests.h">
+      <Filter>Header Files\PhysicsTests\CollisionTests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

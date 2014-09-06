@@ -3,7 +3,8 @@
 #include "MapsTests/OverworldMapSpecificationTests.h"
 /// @todo   The following tests are commented out because they seem to result
 ///         in catch compilation errors that I haven't been able to resolve yet.
-// #include "MapsTests/SurroundingMapLoaderTests.h"
+#include "MapsTests/SurroundingMapLoaderTests.h"
+#include "MathTests/FloatRectangleTests.h"
 #include "PhysicsTests/CollisionTests/CollisionSystemTests.h"
 #include "StatesTests/StateManagerTests.h"
 

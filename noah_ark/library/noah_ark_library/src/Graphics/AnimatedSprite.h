@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/IGraphicsComponent.h"
+#include "Math/FloatRectangle.h"
 #include "Math/Vector2.h"
 
 namespace GRAPHICS
@@ -44,7 +45,7 @@ namespace GRAPHICS
 
         /// @brief      Gets the bounding box of the sprite in the world.
         /// @return     The bounding box of the sprite.
-        hgeRect GetWorldBoundingBox();
+        MATH::FloatRectangle GetWorldBoundingBox();
 
         /// @brief      Moves the sprite's world position up the specified distance.
         /// @param[in]  distanceToMoveInPixels - The distance to move, in pixels.

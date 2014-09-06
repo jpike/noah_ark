@@ -25,6 +25,9 @@
     <Filter Include="Header Files\PhysicsTests\CollisionTests">
       <UniqueIdentifier>{46e03b57-139d-420b-b7d7-6d1975fb29ab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\MathTests">
+      <UniqueIdentifier>{ec556b3b-8a28-4371-81e2-2e5142dc7162}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -46,6 +49,9 @@
     </ClInclude>
     <ClInclude Include="src\PhysicsTests\CollisionTests\CollisionSystemTests.h">
       <Filter>Header Files\PhysicsTests\CollisionTests</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MathTests\FloatRectangleTests.h">
+      <Filter>Header Files\MathTests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

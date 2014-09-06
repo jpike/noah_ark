@@ -41,7 +41,7 @@ namespace OBJECTS
 
         /// @brief      Gets the bounding box of Noah in the world.
         /// @return     The bounding box of Noah.
-        hgeRect GetWorldBoundingBox();
+        MATH::FloatRectangle GetWorldBoundingBox();
 
         /// @brief      Moves Noah up based on the specified amount of time.
         /// @param[in]  elapsedTimeInSeconds - The elapsed time for which to move Noah.

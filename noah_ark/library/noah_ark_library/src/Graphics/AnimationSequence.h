@@ -1,6 +1,7 @@
 #pragma once
 
 #include <hgeanim.h>
+#include "Math/FloatRectangle.h"
 #include "Math/Vector2.h"
 
 namespace GRAPHICS
@@ -50,7 +51,7 @@ namespace GRAPHICS
         /// @param[in]  worldXPositionInPixels - The world X position that the animation sequence is rendered at.
         /// @param[in]  worldYPositionInPixels - The world Y position that the animation sequence is rendered at.
         /// @return     The bounding box of the animation sequence.
-        hgeRect GetWorldBoundingBox(const float worldXPositionInPixels, const float worldYPositionInPixels);
+        MATH::FloatRectangle GetWorldBoundingBox(const float worldXPositionInPixels, const float worldYPositionInPixels);
 
         /// @brief  Begins playing the animation sequence, if it isn't already playing.
         void Play();

@@ -36,10 +36,22 @@ void AnimationSequence::SetZPosition(const float zPosition)
     m_pAnimation->SetZ(zPosition);
 }
 
-hgeRect AnimationSequence::GetWorldBoundingBox(const float worldXPositionInPixels, const float worldYPositionInPixels)
+MATH::FloatRectangle AnimationSequence::GetWorldBoundingBox(const float worldXPositionInPixels, const float worldYPositionInPixels)
 {
-    hgeRect worldBoundingBox(0.0f, 0.0f, 0.0f, 0.0f);
-    m_pAnimation->GetBoundingBox(worldXPositionInPixels, worldYPositionInPixels, &worldBoundingBox);
+    // GET THE HGE RECTANGLE.
+    hgeRect rectangle(0.0f, 0.0f, 0.0f, 0.0f);
+    m_pAnimation->GetBoundingBox(worldXPositionInPixels, worldYPositionInPixels, &rectangle);
+
+    // CONVERT THE RECTANGLE TO OUR CUSTOM TYPE.
+    const float centerXPosition = (rectangle.x1 + rectangle.x2) / 2.0f;
+    const float centerYPosition = (rectangle.y1 + rectangle.y2) / 2.0f;
+    const float width = (rectangle.x2 - rectangle.x1);
+    const float height = (rectangle.y2 - rectangle.y1);
+    MATH::FloatRectangle worldBoundingBox(
+        centerXPosition,
+        centerYPosition,
+        width,
+        height);
     return worldBoundingBox;
 }
 

@@ -27,11 +27,11 @@ namespace COLLISION
         virtual ~BoxCollider();
 
         /// @copydoc    ICollisionComponent::GetBoundingBox() const
-        virtual hgeRect GetBoundingBox() const;
+        virtual MATH::FloatRectangle GetBoundingBox() const;
 
     private:
 
-        hgeRect m_boundingBox; ///< The bounding box (in world coordinates) for the collider.
+        MATH::FloatRectangle m_boundingBox; ///< The bounding box (in world coordinates) for the collider.
     };
 }
 }

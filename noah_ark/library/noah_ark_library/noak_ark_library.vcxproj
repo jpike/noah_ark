@@ -30,6 +30,7 @@
     <ClInclude Include="src\Maps\TileMap.h" />
     <ClInclude Include="src\Maps\TileMapBuilder.h" />
     <ClInclude Include="src\Maps\TileMapLoader.h" />
+    <ClInclude Include="src\Math\FloatRectangle.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Objects\Noah.h" />
     <ClInclude Include="src\Physics\Collision\BoxCollider.h" />
@@ -59,6 +60,7 @@
     <ClCompile Include="src\Maps\TileMap.cpp" />
     <ClCompile Include="src\Maps\TileMapBuilder.cpp" />
     <ClCompile Include="src\Maps\TileMapLoader.cpp" />
+    <ClCompile Include="src\Math\FloatRectangle.cpp" />
     <ClCompile Include="src\Objects\Noah.cpp" />
     <ClCompile Include="src\Physics\Collision\BoxCollider.cpp" />
     <ClCompile Include="src\Physics\Collision\CollisionSystem.cpp" />

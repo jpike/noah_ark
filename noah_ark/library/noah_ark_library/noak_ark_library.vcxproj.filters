@@ -64,6 +64,9 @@
     <Filter Include="Source Files\Physics\Collision">
       <UniqueIdentifier>{c373eb1f-cd12-4a4e-a6d9-a3d2c947be66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{3933b87c-2082-427d-a944-90fc02ee9239}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\States\OverworldState.h">
@@ -153,6 +156,9 @@
     <ClInclude Include="src\Physics\Collision\CollisionSystem.h">
       <Filter>Header Files\Physics\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="src\Math\FloatRectangle.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -226,6 +232,9 @@
     </ClCompile>
     <ClCompile Include="src\Physics\Collision\CollisionSystem.cpp">
       <Filter>Source Files\Physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Math\FloatRectangle.cpp">
+      <Filter>Source Files\Math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

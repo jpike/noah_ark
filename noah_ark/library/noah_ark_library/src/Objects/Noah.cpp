@@ -25,7 +25,7 @@ void Noah::SetSprite(const std::shared_ptr<GRAPHICS::AnimatedSprite>& sprite)
     m_sprite = sprite;
 }
 
-hgeRect Noah::GetWorldBoundingBox()
+MATH::FloatRectangle Noah::GetWorldBoundingBox()
 {
     return m_sprite->GetWorldBoundingBox();
 }

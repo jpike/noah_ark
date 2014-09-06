@@ -61,12 +61,12 @@ void AnimatedSprite::SetWorldPosition(const float xPositionInPixels, const float
     m_worldPositionInPixels.Y = yPositionInPixels;
 }
 
-hgeRect AnimatedSprite::GetWorldBoundingBox()
+MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox()
 {
     // SET A DEFAULT BOUNDING BOX.
     // This default box should be harmless in the event
     // that no animation sequence is currently being used.
-    hgeRect boundingBox(0.0f, 0.0f, 0.0f, 0.0f);
+    MATH::FloatRectangle boundingBox(0.0f, 0.0f, 0.0f, 0.0f);
 
     // GET THE CURRENT ANIMATION SEQUENCE.
     std::shared_ptr<AnimationSequence> currentAnimationSequence = GetCurrentAnimationSequence();

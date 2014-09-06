@@ -8,6 +8,7 @@
 #include "Maps/OverworldMap.h"
 #include "Maps/ScrollableOverworldMap.h"
 #include "Objects/Noah.h"
+#include "Physics/Collision/CollisionSystem.h"
 #include "States/IGameState.h"
 
 namespace STATES
@@ -22,10 +23,12 @@ namespace STATES
         /// @brief      Constructor.
         /// @param[in]  pGameEngine - The HGE game engine.  Must not be nullptr.
         /// @param[in]  graphicsSystem - The graphics system.
+        /// @param[in]  collisionSystem - The collision system.
         /// @throws     std::runtime_error - Thrown if the an error occurs during initialization.
         explicit OverworldState(
             HGE* const pGameEngine,
-            std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
+            std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem,
+            std::shared_ptr<PHYSICS::COLLISION::CollisionSystem>& collisionSystem);
         /// @brief  Destructor.
         virtual ~OverworldState();
 
@@ -55,6 +58,8 @@ namespace STATES
 
         std::shared_ptr<GRAPHICS::GraphicsSystem> m_graphicsSystem; ///< The graphics system.
         INPUT_CONTROL::KeyboardInputController m_inputController;  ///< The controller supplying user input.
+
+        std::shared_ptr<PHYSICS::COLLISION::CollisionSystem> m_collisionSystem; ///< The collision system.
 
         MAPS::OverworldMapSpecification m_overworldSpec;    ///< The specification of the overworld map.
         std::shared_ptr<MAPS::OverworldMap> m_overworldMap; ///< The overworld map of the game.

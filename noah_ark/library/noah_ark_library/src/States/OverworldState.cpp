@@ -6,15 +6,32 @@ using namespace STATES;
 
 OverworldState::OverworldState(
     HGE* const pGameEngine,
-    std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
+    std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem,
+    std::shared_ptr<PHYSICS::COLLISION::CollisionSystem>& collisionSystem) :
     m_camera(),
     m_graphicsSystem(graphicsSystem),
     m_inputController(pGameEngine),
+    m_collisionSystem(collisionSystem),
     m_overworldSpec(),
     m_overworldMap(),
     m_scrollingOverworld(),
     m_noahPlayer()
 {
+    // VALIDATE THE POINTER MEMBERS.
+    // Make sure a graphics system was provided.
+    bool graphicsSystemExists = (nullptr != m_graphicsSystem.get());
+    if (!graphicsSystemExists)
+    {
+        throw std::runtime_error("Error creating overworld state: no graphics system provided.");
+    }
+
+    // Make sure a collision system was provided.
+    bool collisionSystemExists = (nullptr != m_collisionSystem.get());
+    if (!collisionSystemExists)
+    {
+        throw std::runtime_error("Error creating overworld state: no collision system provided.");
+    }
+    
     // LOAD THE OVERWORLD FROM FILE.
     const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/overworld_map.xml";
     bool overworldLoadedSuccessfully = LoadOverworldMap(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
@@ -160,6 +177,14 @@ bool OverworldState::InitializePlayer(OBJECTS::Noah& noahPlayer)
 
     // SET THE ANIMATED SPRITE FOR THE NOAH PLAYER.
     noahPlayer.SetSprite(noahSprite);
+
+    // CREATE THE COLLISION BOX FOR NOAH.
+    MATH::FloatRectangle noahBoundingBox = noahSprite->GetWorldBoundingBox();
+    std::shared_ptr<PHYSICS::COLLISION::BoxCollider> noahCollider = m_collisionSystem->CreateBoxCollider(
+        NOAH_INITIAL_WORLD_POSITION.X,
+        NOAH_INITIAL_WORLD_POSITION.Y,
+        noahBoundingBox.GetWidth(),
+        noahBoundingBox.GetHeight());
 
     // INITIALIZING THE PLAYER SUCCEEDED.
     return true;

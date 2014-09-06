@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hgerect.h>
+#include "Math/FloatRectangle.h"
 
 namespace PHYSICS
 {
@@ -19,7 +19,7 @@ namespace COLLISION
 
         /// @brief  Gets the bounding box (in world coordinates) for this component.
         /// @return The bounding box for this component.
-        virtual hgeRect GetBoundingBox() const = 0;
+        virtual MATH::FloatRectangle GetBoundingBox() const = 0;
     };
 }
 }

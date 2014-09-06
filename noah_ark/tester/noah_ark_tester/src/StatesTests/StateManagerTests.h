@@ -1,62 +1,60 @@
 #pragma once
 
 #include <memory>
-
-// This guard is needed to avoid issues where catch is already included.
-// Otherwise, we can't split up tests into multiple files.
-#ifndef CATCH_CONFIG_MAIN
-#include <catch.hpp>
-#endif
-
 #include "States/StateManager.h"
 #include "StatesTests/MockGameState.h"
 
-TEST_CASE( "Set current state, no previous state.", "[StateManager][GetCurrentState][SetCurrentState]" )
+namespace STATE_MANAGER_TESTS
 {
-    // CREATE THE STATE MANAGER.
-    STATES::StateManager stateManager;
 
-    // VERIFY THAT NO PREVIOUS STATE IS BEING MANAGED.
-    std::shared_ptr<STATES::IGameState> initialState = stateManager.GetCurrentState();
-    bool noInitialState = ( NULL == initialState.get() );
-    REQUIRE( noInitialState );
+    TEST_CASE( "Set current state, no previous state.", "[StateManager][GetCurrentState][SetCurrentState]" )
+    {
+        // CREATE THE STATE MANAGER.
+        STATES::StateManager stateManager;
 
-    // CREATE THE NEW STATE FOR THE STATE MANAGER.
-    std::shared_ptr<STATES::IGameState> newState = std::shared_ptr<STATES::IGameState>(new STATES::MockGameState());
-    stateManager.SetCurrentState(newState);
+        // VERIFY THAT NO PREVIOUS STATE IS BEING MANAGED.
+        std::shared_ptr<STATES::IGameState> initialState = stateManager.GetCurrentState();
+        bool noInitialState = ( NULL == initialState.get() );
+        REQUIRE( noInitialState );
 
-    // VERIFY THAT THE STATE MANAGER HAS CHANGED TO MANAGING THE NEW STATE.
-    std::shared_ptr<STATES::IGameState> currentManagedState = stateManager.GetCurrentState();
-    bool currentManagedStateMatchesNewlySetState = ( currentManagedState.get() == newState.get() );
-    REQUIRE( currentManagedStateMatchesNewlySetState );
-}
+        // CREATE THE NEW STATE FOR THE STATE MANAGER.
+        std::shared_ptr<STATES::IGameState> newState = std::shared_ptr<STATES::IGameState>(new STATES::MockGameState());
+        stateManager.SetCurrentState(newState);
 
-TEST_CASE( "Change state from previous state.", "[StateManager][GetCurrentState][SetCurrentState]" )
-{
-    // CREATE THE STATE MANAGER.
-    STATES::StateManager stateManager;
+        // VERIFY THAT THE STATE MANAGER HAS CHANGED TO MANAGING THE NEW STATE.
+        std::shared_ptr<STATES::IGameState> currentManagedState = stateManager.GetCurrentState();
+        bool currentManagedStateMatchesNewlySetState = ( currentManagedState.get() == newState.get() );
+        REQUIRE( currentManagedStateMatchesNewlySetState );
+    }
 
-    // CREATE AN INITIAL STATE FOR THE STATE MANAGER.
-    std::shared_ptr<STATES::IGameState> initialState = std::shared_ptr<STATES::IGameState>(new STATES::MockGameState());
-    stateManager.SetCurrentState(initialState);
+    TEST_CASE( "Change state from previous state.", "[StateManager][GetCurrentState][SetCurrentState]" )
+    {
+        // CREATE THE STATE MANAGER.
+        STATES::StateManager stateManager;
 
-    // Verify that the initial state is managed.
-    std::shared_ptr<STATES::IGameState> initialManagedState = stateManager.GetCurrentState();
-    bool initialStateIsManaged = ( initialManagedState.get() == initialState.get() );
-    REQUIRE( initialStateIsManaged );
+        // CREATE AN INITIAL STATE FOR THE STATE MANAGER.
+        std::shared_ptr<STATES::IGameState> initialState = std::shared_ptr<STATES::IGameState>(new STATES::MockGameState());
+        stateManager.SetCurrentState(initialState);
 
-    // CREATE A NEW STATE FOR THE STATE MANAGER.
-    std::shared_ptr<STATES::IGameState> newState = std::shared_ptr<STATES::IGameState>(new STATES::MockGameState());
-    stateManager.SetCurrentState(newState);
+        // Verify that the initial state is managed.
+        std::shared_ptr<STATES::IGameState> initialManagedState = stateManager.GetCurrentState();
+        bool initialStateIsManaged = ( initialManagedState.get() == initialState.get() );
+        REQUIRE( initialStateIsManaged );
 
-    // VERIFY THAT THE STATE HAS CHANGED.
-    std::shared_ptr<STATES::IGameState> currentManagedState = stateManager.GetCurrentState();
+        // CREATE A NEW STATE FOR THE STATE MANAGER.
+        std::shared_ptr<STATES::IGameState> newState = std::shared_ptr<STATES::IGameState>(new STATES::MockGameState());
+        stateManager.SetCurrentState(newState);
 
-    // Verify the initial state is no longer managed.
-    bool initialStateNoLongerManaged = ( initialState.get() != currentManagedState.get() );
-    REQUIRE( initialStateNoLongerManaged );
+        // VERIFY THAT THE STATE HAS CHANGED.
+        std::shared_ptr<STATES::IGameState> currentManagedState = stateManager.GetCurrentState();
 
-    // Verify the new state is managed.
-    bool newStateIsManaged = ( newState.get() == currentManagedState.get() );
-    REQUIRE( newStateIsManaged );
+        // Verify the initial state is no longer managed.
+        bool initialStateNoLongerManaged = ( initialState.get() != currentManagedState.get() );
+        REQUIRE( initialStateNoLongerManaged );
+
+        // Verify the new state is managed.
+        bool newStateIsManaged = ( newState.get() == currentManagedState.get() );
+        REQUIRE( newStateIsManaged );
+    }
+
 }

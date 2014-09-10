@@ -186,6 +186,9 @@ bool OverworldState::InitializePlayer(OBJECTS::Noah& noahPlayer)
         noahBoundingBox.GetWidth(),
         noahBoundingBox.GetHeight());
 
+    // SET THE COLLISION BOX.
+    noahPlayer.SetCollider(noahCollider);
+
     // INITIALIZING THE PLAYER SUCCEEDED.
     return true;
 }

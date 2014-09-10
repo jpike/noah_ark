@@ -2,6 +2,7 @@
 
 #include "Math/FloatRectangle.h"
 
+/// A namespace for testing the FloatRectangle class.
 namespace FLOAT_RECTANGLE_TESTS
 {
 
@@ -21,6 +22,31 @@ namespace FLOAT_RECTANGLE_TESTS
         // VALIDATE THE RECTANGLE.
         REQUIRE( CENTER_X_POSITION == testRectangle.GetCenterXPosition() );
         REQUIRE( CENTER_Y_POSITION == testRectangle.GetCenterYPosition() );
+        REQUIRE( WIDTH == testRectangle.GetWidth() );
+        REQUIRE( HEIGHT == testRectangle.GetHeight() );
+    }
+
+    TEST_CASE( "Change the center position.", "[FloatRectangle][SetCenterPosition]" )
+    {
+        // CREATE THE INITIAL TEST RECTANGLE.
+        const float ORIGINAL_CENTER_X_POSITION = 70.0f;
+        const float ORIGINAL_CENTER_Y_POSITION = 54.0f;
+        const float WIDTH = 32.0f;
+        const float HEIGHT = 47.0f;
+        MATH::FloatRectangle testRectangle(
+            ORIGINAL_CENTER_X_POSITION,
+            ORIGINAL_CENTER_Y_POSITION,
+            WIDTH,
+            HEIGHT);
+
+        // CHANGE THE CENTER POSITION.
+        const float NEW_CENTER_X_POSITION = 97.0f;
+        const float NEW_CENTER_Y_POSITION = -22.0f;
+        testRectangle.SetCenterPosition(NEW_CENTER_X_POSITION, NEW_CENTER_Y_POSITION);
+
+        // VALIDATE THE CHANGED RECTANGLE.
+        REQUIRE( NEW_CENTER_X_POSITION == testRectangle.GetCenterXPosition() );
+        REQUIRE( NEW_CENTER_Y_POSITION == testRectangle.GetCenterYPosition() );
         REQUIRE( WIDTH == testRectangle.GetWidth() );
         REQUIRE( HEIGHT == testRectangle.GetHeight() );
     }

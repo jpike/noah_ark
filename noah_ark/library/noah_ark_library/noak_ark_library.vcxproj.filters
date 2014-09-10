@@ -67,6 +67,12 @@
     <Filter Include="Source Files\Math">
       <UniqueIdentifier>{3933b87c-2082-427d-a944-90fc02ee9239}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{6829d0c2-965c-4408-96e0-210afc68260e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{e76c2b04-1771-48f1-9384-a661f3d2445c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\States\OverworldState.h">
@@ -158,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="src\Math\FloatRectangle.h">
       <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Direction.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

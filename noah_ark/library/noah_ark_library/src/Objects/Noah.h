@@ -2,6 +2,7 @@
 
 #include <string>
 #include "Graphics/AnimatedSprite.h"
+#include "Physics/Collision/BoxCollider.h"
 
 /// @brief  Holds codes for specific objects in the game.
 namespace OBJECTS
@@ -29,6 +30,10 @@ namespace OBJECTS
         /// @brief      Sets the animated sprite used for rendering Noah on screen.
         /// @param[in]  sprite - The sprite to set.
         void SetSprite(const std::shared_ptr<GRAPHICS::AnimatedSprite>& sprite);
+
+        /// @brief      Sets the box collider used for detecting collisions with Noah.
+        /// @param[in]  collider - The collider to set.
+        void SetCollider(const std::shared_ptr<PHYSICS::COLLISION::BoxCollider>& collider);
 
         /// @brief      Gets the world position of Noah.
         /// @return     The world position of Noah, in pixels.
@@ -70,5 +75,6 @@ namespace OBJECTS
         float GetMoveDistance(const float elapsedTimeInSeconds) const;
 
         std::shared_ptr<GRAPHICS::AnimatedSprite> m_sprite; ///< The sprite used for rendering Noah.
+        std::shared_ptr<PHYSICS::COLLISION::BoxCollider> m_collider; ///< The collider used to colliding with Noah.
     };
 }

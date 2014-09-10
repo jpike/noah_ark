@@ -17,7 +17,7 @@ namespace MATH
     class FloatRectangle
     {
     public:
-        /// Constructor.
+        /// @brief      Constructor.
         /// @param[in]  centerWorldXPositionInPixels - The center X position of the rectangle.
         /// @param[in]  centerWorldYPositionInPixels - The center Y position of the rectangle.
         /// @param[in]  widthInPixels - The width of the rectangle.
@@ -27,24 +27,41 @@ namespace MATH
             const float centerWorldYPositionInPixels,
             const float widthInPixels,
             const float heightInPixels);
-        /// Destructor.
+        /// @brief  Destructor.
         ~FloatRectangle();
 
-        /// Gets the center X position of the rectangle, in world pixel coordinates.
+        /// @brief  Gets the center X position of the rectangle, in world pixel coordinates.
         /// @return The center X position of the rectangle.
         float GetCenterXPosition() const;
-        /// Gets the center Y position of the rectangle, in world pixel coordinates.
+        /// @brief  Gets the center Y position of the rectangle, in world pixel coordinates.
         /// @return The center Y position of the rectangle.
         float GetCenterYPosition() const;
+        
+        /// @brief  Sets the center world position (in pixels) of the rectangle.
+        /// @param[in]  centerWorldXPositionInPixels - The center X position of the rectangle.
+        /// @param[in]  centerWorldYPositionInPixels - The center Y position of the rectangle.
+        void SetCenterPosition(const float centerWorldXPositionInPixels, const float centerWorldYPositionInPixels);
 
-        /// Gets the width of the rectangle, in pixels.
+        /// @brief  Gets the width of the rectangle, in pixels.
         /// @return The width of the rectangle.
         float GetWidth() const;
-        /// Gets the height of the rectangle, in pixels.
+        /// @brief  Gets the height of the rectangle, in pixels.
         /// @return The height of the rectangle.
         float GetHeight() const;
 
     private:
+
+        /// @brief      Recalculates the rectangle based on the provided information.
+        /// @param[in]  centerWorldXPositionInPixels - The center X position of the rectangle.
+        /// @param[in]  centerWorldYPositionInPixels - The center Y position of the rectangle.
+        /// @param[in]  widthInPixels - The width of the rectangle.
+        /// @param[in]  heightInPixels - The height of the rectangle.
+        /// @return     The underlying HGE rectangle based on the provided parameters.
+        hgeRect RecalculateRectangle(
+            const float centerWorldXPositionInPixels,
+            const float centerWorldYPositionInPixels,
+            const float widthInPixels,
+            const float heightInPixels);
 
         hgeRect m_rectangle;    ///< The underlying HGE rectangle.
     };

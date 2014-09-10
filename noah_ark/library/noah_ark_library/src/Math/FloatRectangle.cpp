@@ -11,23 +11,12 @@ FloatRectangle::FloatRectangle(
     const float heightInPixels) :
 m_rectangle()
 {
-    // CALCULATE THE LEFT COORDINATE.
-    const float halfWidth = widthInPixels / 2.0f;
-    const float leftXPosition = centerWorldXPositionInPixels - halfWidth;
-
-    // CALCULATE THE RIGHT COORDINATE.
-    const float rightXPosition = centerWorldXPositionInPixels + halfWidth;
-
-    // CALCULATE THE TOP COORDINATE.
-    const float halfHeight = heightInPixels / 2.0f;
-    // Y decreases going up on the screen.
-    const float topYPosition = centerWorldYPositionInPixels - halfHeight;
-
-    // CALCULATE THE BOTTOM COORDINATE.
-    const float bottomYPosition = centerWorldYPositionInPixels + halfHeight;
-
-    // CONVERT THE RECTANGLE TO HGE FORMAT.
-    m_rectangle = hgeRect(leftXPosition, topYPosition, rightXPosition, bottomYPosition);
+    // CREATE THE HGE RECTANGLE FROM THE PROVIDED PARAMETERS.
+    m_rectangle = RecalculateRectangle(
+        centerWorldXPositionInPixels,
+        centerWorldYPositionInPixels,
+        widthInPixels,
+        heightInPixels);
 }
 
 FloatRectangle::~FloatRectangle()
@@ -47,6 +36,16 @@ float FloatRectangle::GetCenterYPosition() const
     return verticalMidpoint;
 }
 
+void FloatRectangle::SetCenterPosition(const float centerWorldXPositionInPixels, const float centerWorldYPositionInPixels)
+{
+    // RE-CREATE THE HGE RECTANGLE FROM THE PROVIDED PARAMETERS.
+    m_rectangle = RecalculateRectangle(
+        centerWorldXPositionInPixels,
+        centerWorldYPositionInPixels,
+        GetWidth(),
+        GetHeight());
+}
+
 float FloatRectangle::GetWidth() const
 {
     const float width = fabs(m_rectangle.x2 - m_rectangle.x1);
@@ -57,4 +56,30 @@ float FloatRectangle::GetHeight() const
 {
     const float height = fabs(m_rectangle.y2 - m_rectangle.y1);
     return height;
+}
+
+hgeRect FloatRectangle::RecalculateRectangle(
+    const float centerWorldXPositionInPixels,
+    const float centerWorldYPositionInPixels,
+    const float widthInPixels,
+    const float heightInPixels)
+{
+    // CALCULATE THE LEFT COORDINATE.
+    const float halfWidth = widthInPixels / 2.0f;
+    const float leftXPosition = centerWorldXPositionInPixels - halfWidth;
+
+    // CALCULATE THE RIGHT COORDINATE.
+    const float rightXPosition = centerWorldXPositionInPixels + halfWidth;
+
+    // CALCULATE THE TOP COORDINATE.
+    const float halfHeight = heightInPixels / 2.0f;
+    // Y decreases going up on the screen.
+    const float topYPosition = centerWorldYPositionInPixels - halfHeight;
+
+    // CALCULATE THE BOTTOM COORDINATE.
+    const float bottomYPosition = centerWorldYPositionInPixels + halfHeight;
+
+    // CONVERT THE RECTANGLE TO HGE FORMAT.
+    hgeRect rectangle = hgeRect(leftXPosition, topYPosition, rightXPosition, bottomYPosition);
+    return rectangle;
 }

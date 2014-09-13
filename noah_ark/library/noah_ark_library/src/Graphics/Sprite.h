@@ -4,6 +4,7 @@
 #include <memory>
 #include "Graphics/IGraphicsComponent.h"
 #include "Graphics/Texture.h"
+#include "Math/FloatRectangle.h"
 #include "Math/ITransformable.h"
 #include "Math/Vector2.h"
 
@@ -46,6 +47,10 @@ namespace GRAPHICS
         /// @param[in]  flippedHorizontally - Whether or not the sprite is flipped horizontally.
         /// @param[in]  flippedVertically - Whether or not the sprite is flipped horizontally.
         void SetFlip(const bool flippedHorizontally, const bool flippedVertically);
+
+        /// @brief  Gets the bounding box of the tile, in world pixel coordinates.
+        /// @return The bounding box of the tile.
+        MATH::FloatRectangle GetBoundingBox() const;
 
     private:
         std::shared_ptr<hgeSprite> m_sprite;   ///< The underlying HGE sprite resource.

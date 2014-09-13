@@ -2,6 +2,7 @@
 
 #include <list>
 #include <memory>
+#include "Maps/OverworldMap.h"
 #include "Physics/Collision/BoxCollider.h"
 #include "Physics/Collision/ICollisionComponent.h"
 
@@ -30,6 +31,12 @@ namespace COLLISION
         /// @brief  Destructor.
         ~CollisionSystem();
 
+        /// @brief      Sets the overworld map that provides basic tile map
+        ///             collision data for the collision system.
+        /// @param[in]  overworldMap - The overworld map to set as a tile map
+        ///             collision data source for the collision system.
+        void SetOverworldMap(const std::shared_ptr<MAPS::OverworldMap>& overworldMap);
+        
         /// @brief  Simulates movement for all collision components managed by
         ///         this system.
         void SimulateMovement();
@@ -60,11 +67,40 @@ namespace COLLISION
         ///         in the game.
         void RemoveUnusedCollisionComponents();
 
+        /// @brief          Simulates the provided movement for the specified collision component.
+        ///                 Any collisions that occur are handled by this method.
+        /// @param[in]      movement - The movement to simulate.
+        /// @param[in,out]  collisionComponent - The collison component for which to simulate movement.
+        void SimulateMovement(const Movement& movement, ICollisionComponent& collisionComponent) const;
+
+        /// @brief          Simulates the provided upward movement for the specified collision component.
+        ///                 Any collisions that occur are handled by this method.
+        /// @param[in]      movement - The movement to simulate.  It must be in the up direction.
+        /// @param[in,out]  collisionComponent - The collision component for which to simulate movement.
+        void SimulateUpMovement(const Movement& movement, ICollisionComponent& collisionComponent) const;
+        /// @brief          Simulates the provided downward movement for the specified collision component.
+        ///                 Any collisions that occur are handled by this method.
+        /// @param[in]      movement - The movement to simulate.  It must be in the down direction.
+        /// @param[in,out]  collisionComponent - The collision component for which to simulate movement.
+        void SimulateDownMovement(const Movement& movement, ICollisionComponent& collisionComponent) const;
+        /// @brief          Simulates the provided leftward movement for the specified collision component.
+        ///                 Any collisions that occur are handled by this method.
+        /// @param[in]      movement - The movement to simulate.  It must be in the left direction.
+        /// @param[in,out]  collisionComponent - The collision component for which to simulate movement.
+        void SimulateLeftMovement(const Movement& movement, ICollisionComponent& collisionComponent) const;
+        /// @brief          Simulates the provided rightward movement for the specified collision component.
+        ///                 Any collisions that occur are handled by this method.
+        /// @param[in]      movement - The movement to simulate.  It must be in the right direction.
+        /// @param[in,out]  collisionComponent - The collision component for which to simulate movement.
+        void SimulateRightMovement(const Movement& movement, ICollisionComponent& collisionComponent) const;
+
         /// @brief  The collision components managed by this system.  The methods for creating
         ///         these components return shared_ptrs, but they are stored as weak_ptrs
         ///         to allow their memory to be properly released once the objects holding
         ///         the shared_ptrs are deleted.
         std::list< std::weak_ptr<ICollisionComponent> > m_collisionComponents;
+
+        std::shared_ptr<MAPS::OverworldMap> m_overworldMap; ///< The overworld map supplying tile map collision data.
     };
 }
 }

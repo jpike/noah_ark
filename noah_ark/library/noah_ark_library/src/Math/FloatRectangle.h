@@ -27,6 +27,9 @@ namespace MATH
             const float centerWorldYPositionInPixels,
             const float widthInPixels,
             const float heightInPixels);
+        /// @brief      Constructor accepting an HGE rectangle.
+        /// @param[in]  hgeRectangle - The HGE rectangle to use for the float rectangle.
+        explicit FloatRectangle(const hgeRect& hgeRectangle);
         /// @brief  Destructor.
         ~FloatRectangle();
 
@@ -36,6 +39,20 @@ namespace MATH
         /// @brief  Gets the center Y position of the rectangle, in world pixel coordinates.
         /// @return The center Y position of the rectangle.
         float GetCenterYPosition() const;
+
+        /// @brief  Gets the left X position of the rectangle, in world pixel coordinates.
+        /// @return The left X position of the rectangle.
+        float GetLeftXPosition() const;
+        /// @brief  Gets the right X position of the rectangle, in world pixel coordinates.
+        /// @return The right X position of the rectangle.
+        float GetRightXPosition() const;
+
+        /// @brief  Gets the top Y position of the rectangle, in world pixel coordinates.
+        /// @return The top Y position of the rectangle.
+        float GetTopYPosition() const;
+        /// @brief  Gets the bottom Y position of the rectangle, in world pixel coordinates.
+        /// @return The bottom Y position of the rectangle.
+        float GetBottomYPosition() const;
         
         /// @brief  Sets the center world position (in pixels) of the rectangle.
         /// @param[in]  centerWorldXPositionInPixels - The center X position of the rectangle.

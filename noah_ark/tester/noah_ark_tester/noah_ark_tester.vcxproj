@@ -96,6 +96,7 @@ xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(Targe
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>noah_ark_library_$(Configuration).lib;hge.lib;hgehelp.lib;TmxParser.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBC.lib</IgnoreSpecificDefaultLibraries>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "$(HGE_DIR)\hge.dll" "$(TargetDir)"

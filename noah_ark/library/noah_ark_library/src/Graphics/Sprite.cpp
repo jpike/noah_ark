@@ -50,3 +50,16 @@ void Sprite::SetFlip(const bool flippedHorizontally, const bool flippedVerticall
 {
     m_sprite->SetFlip(flippedHorizontally, flippedVertically);
 }
+
+MATH::FloatRectangle Sprite::GetBoundingBox() const
+{
+    // GET THE HGE RECTANGLE.
+    hgeRect hgeRectangle;
+    m_sprite->GetBoundingBox(
+        m_worldPositionInPixels->X,
+        m_worldPositionInPixels->Y,
+        &hgeRectangle);
+
+    // CONVERT THE HGE RECTANGLE TO OUR CUSTOM RECTANGLE TYPE.
+    return MATH::FloatRectangle(hgeRectangle);
+}

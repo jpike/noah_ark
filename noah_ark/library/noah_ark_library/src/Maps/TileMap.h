@@ -67,6 +67,12 @@ namespace MAPS
         /// @return The height of single tile.
         unsigned int GetTileHeightInPixels() const;
 
+        /// @brief      Gets the tile at the specified world position.
+        /// @param[in]  worldXPosition - The world X position at which to get the tile.
+        /// @param[in]  worldYPosition - The world Y position at which to get the tile.
+        /// @return     The tile at the specified world position, if one exists.
+        std::shared_ptr<Tile> GetTileAtWorldPosition(const float worldXPosition, const float worldYPosition) const;
+
     private:
         TileMap(const TileMap& mapToCopy);  ///< Private to disallow copying.
         TileMap& operator= (const TileMap& rhsMap); ///< Private to disallow assignment.

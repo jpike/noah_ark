@@ -129,6 +129,72 @@ void OverworldMap::PopulateFromSpecification(
     }
 }
 
+std::shared_ptr<Tile> OverworldMap::GetTileAtWorldPosition(const float worldXPosition, const float worldYPosition) const
+{
+    // ATTEMPT TO RETRIEVE THE TILE FROM THE CURRENT CENTER TILE MAP.
+    bool currentTileMapExists = (nullptr != m_currentTileMap);
+    if (currentTileMapExists)
+    {
+        std::shared_ptr<Tile> requestedTile = m_currentTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
+        bool requestedTileFound = (nullptr != requestedTile);
+        if (requestedTileFound)
+        {
+            return requestedTile;
+        }
+    }
+
+    // ATTEMPT TO RETRIEVE THE TILE FROM THE TOP TILE MAP.
+    bool topTileMapExists = (nullptr != m_topTileMap);
+    if (topTileMapExists)
+    {
+        std::shared_ptr<Tile> requestedTile = m_topTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
+        bool requestedTileFound = (nullptr != requestedTile);
+        if (requestedTileFound)
+        {
+            return requestedTile;
+        }
+    }
+
+    // ATTEMPT TO RETRIEVE THE TILE FROM THE BOTTOM TILE MAP.
+    bool bottomTileMapExists = (nullptr != m_bottomTileMap);
+    if (bottomTileMapExists)
+    {
+        std::shared_ptr<Tile> requestedTile = m_bottomTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
+        bool requestedTileFound = (nullptr != requestedTile);
+        if (requestedTileFound)
+        {
+            return requestedTile;
+        }
+    }
+
+    // ATTEMPT TO RETRIEVE THE TILE FROM THE LEFT TILE MAP.
+    bool leftTileMapExists = (nullptr != m_leftTileMap);
+    if (leftTileMapExists)
+    {
+        std::shared_ptr<Tile> requestedTile = m_leftTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
+        bool requestedTileFound = (nullptr != requestedTile);
+        if (requestedTileFound)
+        {
+            return requestedTile;
+        }
+    }
+
+    // ATTEMPT TO RETRIEVE THE TILE FROM THE RIGHT TILE MAP.
+    bool rightTileMapExists = (nullptr != m_rightTileMap);
+    if (rightTileMapExists)
+    {
+        std::shared_ptr<Tile> requestedTile = m_rightTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
+        bool requestedTileFound = (nullptr != requestedTile);
+        if (requestedTileFound)
+        {
+            return requestedTile;
+        }
+    }
+
+    // NO VALID TILE COULD BE FOUND.
+    return nullptr;
+}
+
 std::shared_ptr<TileMap> OverworldMap::GetCurrentTileMap() const
 {
     return m_currentTileMap;

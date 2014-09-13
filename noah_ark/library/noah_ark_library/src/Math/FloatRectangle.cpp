@@ -19,6 +19,10 @@ m_rectangle()
         heightInPixels);
 }
 
+FloatRectangle::FloatRectangle(const hgeRect& hgeRectangle) :
+    m_rectangle(hgeRectangle)
+{}
+
 FloatRectangle::~FloatRectangle()
 {}
 
@@ -34,6 +38,26 @@ float FloatRectangle::GetCenterYPosition() const
     // Calculate the center using the midpoint formula.
     const float verticalMidpoint = (m_rectangle.y1 + m_rectangle.y2) / 2.0f;
     return verticalMidpoint;
+}
+
+float FloatRectangle::GetLeftXPosition() const
+{
+    return m_rectangle.x1;
+}
+
+float FloatRectangle::GetRightXPosition() const
+{
+    return m_rectangle.x2;
+}
+
+float FloatRectangle::GetTopYPosition() const
+{
+    return m_rectangle.y1;
+}
+
+float FloatRectangle::GetBottomYPosition() const
+{
+    return m_rectangle.y2;
 }
 
 void FloatRectangle::SetCenterPosition(const float centerWorldXPositionInPixels, const float centerWorldYPositionInPixels)

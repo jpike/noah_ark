@@ -41,6 +41,12 @@ namespace MAPS
             const MATH::Vector2f& startingTileMapTopLeftWorldPosition,
             const std::shared_ptr<TileMapBuilder>& tileMapBuilder);
         
+        /// @brief      Gets the tile at the specified world position.
+        /// @param[in]  worldXPosition - The world X position at which to get the tile.
+        /// @param[in]  worldYPosition - The world Y position at which to get the tile.
+        /// @return     The tile at the specified world position, if one exists.
+        std::shared_ptr<Tile> GetTileAtWorldPosition(const float worldXPosition, const float worldYPosition) const;
+
         /// @brief  Gets the currently displayed tile map.
         /// @return The currently displayed tile map.
         std::shared_ptr<TileMap> GetCurrentTileMap() const;

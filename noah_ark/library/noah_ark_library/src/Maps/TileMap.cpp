@@ -71,6 +71,53 @@ unsigned int TileMap::GetTileHeightInPixels() const
     return static_cast<unsigned int>(m_tmxMap->GetTileHeight());
 }
 
+std::shared_ptr<Tile> TileMap::GetTileAtWorldPosition(const float worldXPosition, const float worldYPosition) const
+{
+    // CHECK IF THE WORLD POSITION IS WITHIN THE BOUNDS OF THIS TILE MAP.
+    MATH::Vector2f topLeftMapWorldPosition = GetTopLeftWorldPosition();
+    MATH::Vector2f bottomRightMapWorldPosition = GetBottomRightWorldPosition();
+    hgeRect tileMapBoundingHgeRect(
+        topLeftMapWorldPosition.X,
+        topLeftMapWorldPosition.Y,
+        bottomRightMapWorldPosition.X,
+        bottomRightMapWorldPosition.Y);
+    bool tilePositionWithinMap = tileMapBoundingHgeRect.TestPoint(worldXPosition, worldYPosition);
+    if (!tilePositionWithinMap)
+    {
+        // The requested tile position isn't within this map.
+        return nullptr;
+    }
+
+    // ADJUST THE WORLD POSITIONS TO BE RELATIVE TO THIS TILE MAP.
+    // The top-left corner of this map will serve as the new origin.
+    float relativeTileXPosition = worldXPosition - topLeftMapWorldPosition.X;
+    float relativeTileYPosition = worldYPosition - topLeftMapWorldPosition.Y;
+
+    // CALCULATE THE GRID COORDINATES OF THE REQUESTED TILE.
+    unsigned int tileXGridPosition = static_cast<int>(relativeTileXPosition / GetTileWidthInPixels());
+    unsigned int tileYGridPosition = static_cast<int>(relativeTileYPosition / GetTileHeightInPixels());
+
+    // VALIDATE THE GRID COORDINATES OF THE TILE.
+    // Validate the X coordinate.
+    bool validTileXGridPosition = (tileXGridPosition < m_tiles.size());
+    if (!validTileXGridPosition)
+    {
+        // The tile grid position isn't valid, so no tile can be retrieved.
+        return nullptr;
+    }
+
+    // Validate the Y coordinate.
+    bool validTileYGridPosition = (tileYGridPosition < m_tiles[tileXGridPosition].size());
+    if (!validTileYGridPosition)
+    {
+        // The tile grid position isn't valid, so no tile can be retrieved.
+        return nullptr;
+    }
+    
+    // GET THE TILE AT THE SPECIFIED GRID COORDINATES.
+    return m_tiles[tileXGridPosition][tileYGridPosition];
+}
+
 void TileMap::BuildFromTmxMap(
     const MATH::Vector2f& topLeftWorldPositionInPixels,
     const std::shared_ptr<Tmx::Map>& map, 
@@ -161,8 +208,8 @@ void TileMap::BuildFromTmxMap(
             tileSprite->SetZPosition(GRAPHICS::GraphicsSystem::GROUND_LAYER_Z_VALUE);
 
             // STORE A TILE IN THE COLLECTION OF TILES.
-            std::shared_ptr<Tile> tile = std::make_shared<Tile>(tileSprite);
-            m_tiles.at(xPositionInTiles).push_back(tile);
+            std::shared_ptr<Tile> tile = std::make_shared<Tile>(tmxTile.id, tileSprite);
+            m_tiles[xPositionInTiles][yPositionInTiles] = tile;
         }
     }
 }

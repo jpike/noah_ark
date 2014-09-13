@@ -120,6 +120,9 @@ bool OverworldState::LoadOverworldMap(const std::string& overworldSpecFilepath)
     // SET THE CAMERA TO VIEW THE STARTING TILE MAP.
     m_camera.SetTopLeftViewPosition(STARTING_TILE_MAP_TOP_LEFT_WORLD_POSITION);
 
+    // PROVIDE THE OVERWORLD MAP DATA TO THE COLLISION SYSTEM.
+    m_collisionSystem->SetOverworldMap(m_overworldMap);
+
     return true;
 }
 
@@ -174,7 +177,7 @@ bool OverworldState::InitializePlayer(OBJECTS::Noah& noahPlayer)
     // POSITION NOAH ON SCREEN.
     // The same position component will be used for the collision box to allowing
     // automatic synchronization of positions.
-    std::shared_ptr<MATH::Vector2f> noahPositionComponent = std::make_shared<MATH::Vector2f>(100.0f, 100.0f);
+    std::shared_ptr<MATH::Vector2f> noahPositionComponent = std::make_shared<MATH::Vector2f>(300.0f, 100.0f);
     noahSprite->SetPositionComponent(noahPositionComponent);
 
     noahSprite->SetZPosition(GRAPHICS::GraphicsSystem::PLAYER_LAYER_Z_VALUE);

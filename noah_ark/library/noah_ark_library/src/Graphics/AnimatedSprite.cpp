@@ -6,7 +6,7 @@ AnimatedSprite::AnimatedSprite() :
     m_animationSequences(),
     m_currentAnimationSequenceName(),
     m_visible(true),
-    m_worldPositionInPixels(),
+    m_worldPositionInPixels(new MATH::Vector2f(0.0f, 0.0f)),
     m_zPosition(0.0f)
 {}
         
@@ -29,7 +29,7 @@ void AnimatedSprite::Render()
         // The z-position is set in case the currently used animation sequence has changed
         // or never been used since last setting the z-position.
         currentAnimationSequence->SetZPosition(m_zPosition);
-        currentAnimationSequence->Render(m_worldPositionInPixels.X, m_worldPositionInPixels.Y);
+        currentAnimationSequence->Render(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
     }
 }
 
@@ -50,15 +50,20 @@ void AnimatedSprite::SetZPosition(const float zPosition)
     m_zPosition = zPosition;
 }
 
+void AnimatedSprite::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent)
+{
+    m_worldPositionInPixels = positionComponent;
+}
+
 MATH::Vector2f AnimatedSprite::GetWorldPosition() const
 {
-    return m_worldPositionInPixels;
+    return (*m_worldPositionInPixels);
 }
 
 void AnimatedSprite::SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels)
 {
-    m_worldPositionInPixels.X = xPositionInPixels;
-    m_worldPositionInPixels.Y = yPositionInPixels;
+    m_worldPositionInPixels->X = xPositionInPixels;
+    m_worldPositionInPixels->Y = yPositionInPixels;
 }
 
 MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox()
@@ -73,7 +78,7 @@ MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox()
     bool currentAnimationExists = (nullptr != currentAnimationSequence);
     if (currentAnimationExists)
     {
-        boundingBox = currentAnimationSequence->GetWorldBoundingBox(m_worldPositionInPixels.X, m_worldPositionInPixels.Y);
+        boundingBox = currentAnimationSequence->GetWorldBoundingBox(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
     }
 
     return boundingBox;
@@ -81,22 +86,22 @@ MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox()
 
 void AnimatedSprite::MoveUp(const float distanceToMoveInPixels)
 {
-    m_worldPositionInPixels.Y -= distanceToMoveInPixels;
+    m_worldPositionInPixels->Y -= distanceToMoveInPixels;
 }
 
 void AnimatedSprite::MoveDown(const float distanceToMoveInPixels)
 {
-    m_worldPositionInPixels.Y += distanceToMoveInPixels;
+    m_worldPositionInPixels->Y += distanceToMoveInPixels;
 }
 
 void AnimatedSprite::MoveLeft(const float distanceToMoveInPixels)
 {
-    m_worldPositionInPixels.X -= distanceToMoveInPixels;
+    m_worldPositionInPixels->X -= distanceToMoveInPixels;
 }
 
 void AnimatedSprite::MoveRight(const float distanceToMoveInPixels)
 {
-    m_worldPositionInPixels.X += distanceToMoveInPixels;
+    m_worldPositionInPixels->X += distanceToMoveInPixels;
 }
 
 void AnimatedSprite::AddAnimationSequence(

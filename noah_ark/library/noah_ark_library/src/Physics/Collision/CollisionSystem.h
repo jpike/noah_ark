@@ -30,6 +30,10 @@ namespace COLLISION
         /// @brief  Destructor.
         ~CollisionSystem();
 
+        /// @brief  Simulates movement for all collision components managed by
+        ///         this system.
+        void SimulateMovement();
+
         /// @brief      Creates a box collider based on the specified parameters.
         /// @param[in]  centerXWorldPositionInPixels - The center X world position of the box (in pixels).
         /// @param[in]  centerYWorldPositionInPixels - The center Y world position of the box (in pixels).
@@ -50,6 +54,11 @@ namespace COLLISION
     private:
         CollisionSystem(const CollisionSystem& systemToCopy);  ///< Private to disallow copying.
         CollisionSystem& operator= (const CollisionSystem& rhsSystem); ///< Private to disallow assignment.
+
+        /// @brief  Removes unusued collision components from the system.  Allows freeing
+        ///         memory for collision components that are no longer being used elsewhere
+        ///         in the game.
+        void RemoveUnusedCollisionComponents();
 
         /// @brief  The collision components managed by this system.  The methods for creating
         ///         these components return shared_ptrs, but they are stored as weak_ptrs

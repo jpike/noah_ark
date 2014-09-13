@@ -32,11 +32,13 @@
     <ClInclude Include="src\Maps\TileMapBuilder.h" />
     <ClInclude Include="src\Maps\TileMapLoader.h" />
     <ClInclude Include="src\Math\FloatRectangle.h" />
+    <ClInclude Include="src\Math\ITransformable.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Objects\Noah.h" />
     <ClInclude Include="src\Physics\Collision\BoxCollider.h" />
     <ClInclude Include="src\Physics\Collision\CollisionSystem.h" />
     <ClInclude Include="src\Physics\Collision\ICollisionComponent.h" />
+    <ClInclude Include="src\Physics\Collision\Movement.h" />
     <ClInclude Include="src\Processes\ScrollProcess.h" />
     <ClInclude Include="src\States\IGameState.h" />
     <ClInclude Include="src\States\OverworldState.h" />
@@ -65,6 +67,7 @@
     <ClCompile Include="src\Objects\Noah.cpp" />
     <ClCompile Include="src\Physics\Collision\BoxCollider.cpp" />
     <ClCompile Include="src\Physics\Collision\CollisionSystem.cpp" />
+    <ClCompile Include="src\Physics\Collision\Movement.cpp" />
     <ClCompile Include="src\Processes\ScrollProcess.cpp" />
     <ClCompile Include="src\States\OverworldState.cpp" />
     <ClCompile Include="src\States\StateManager.cpp" />

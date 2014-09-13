@@ -6,6 +6,7 @@
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/IGraphicsComponent.h"
 #include "Math/FloatRectangle.h"
+#include "Math/ITransformable.h"
 #include "Math/Vector2.h"
 
 namespace GRAPHICS
@@ -13,7 +14,7 @@ namespace GRAPHICS
     ///////////////////////////////////////////////////////////
     /// @brief  An animated graphical sprite.
     ///////////////////////////////////////////////////////////
-    class AnimatedSprite : public IGraphicsComponent
+    class AnimatedSprite : public IGraphicsComponent, public MATH::ITransformable
     {
     public:
         /// @brief      Constructor.  The sprite is visible by default.
@@ -33,6 +34,9 @@ namespace GRAPHICS
 
         /// @copydoc    IGraphicsComponent::SetZPosition(const float zPosition)
         virtual void SetZPosition(const float zPosition);
+
+        /// @copydoc    ITransformable::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent)
+        virtual void SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent);
 
         /// @brief      Gets the world position of the sprite.
         /// @return     The world position of the sprite, in pixels.
@@ -95,7 +99,7 @@ namespace GRAPHICS
         std::string m_currentAnimationSequenceName; ///< The name of the animation sequence currently being displayed.
 
         bool m_visible; ///< Whether or not the sprite is visible.
-        MATH::Vector2f m_worldPositionInPixels;  ///< The position of the sprite in the world.
+        std::shared_ptr<MATH::Vector2f> m_worldPositionInPixels;  ///< The position of the sprite in the world.
         float m_zPosition;  ///< The z-position of the sprite.
     };
 }

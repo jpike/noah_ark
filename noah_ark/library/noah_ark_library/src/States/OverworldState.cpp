@@ -78,6 +78,9 @@ bool OverworldState::Update(const float elapsedTimeInSeconds)
         }
     }
 
+    // SIMULATE MOVEMENT AND HANDLE COLLISIONS.
+    m_collisionSystem->SimulateMovement();
+
     // UPDATE ANY GRAPHICS THAT NEED TO CHANGE OVER TIME.
     m_graphicsSystem->Update(elapsedTimeInSeconds);
 
@@ -168,10 +171,11 @@ bool OverworldState::InitializePlayer(OBJECTS::Noah& noahPlayer)
     // Set the initial animation sequence to have the player facing forward (downward).
     noahSprite->UseAnimationSequence(OBJECTS::Noah::WALK_FRONT_ANIMATION_NAME);
 
-    // POSITION NOAH IN THE WORLD.
-    // For now, the position is arbitrary.
-    const MATH::Vector2f NOAH_INITIAL_WORLD_POSITION(100.0f, 100.0f);
-    noahSprite->SetWorldPosition(NOAH_INITIAL_WORLD_POSITION.X, NOAH_INITIAL_WORLD_POSITION.Y);
+    // POSITION NOAH ON SCREEN.
+    // The same position component will be used for the collision box to allowing
+    // automatic synchronization of positions.
+    std::shared_ptr<MATH::Vector2f> noahPositionComponent = std::make_shared<MATH::Vector2f>(100.0f, 100.0f);
+    noahSprite->SetPositionComponent(noahPositionComponent);
 
     noahSprite->SetZPosition(GRAPHICS::GraphicsSystem::PLAYER_LAYER_Z_VALUE);
 
@@ -181,10 +185,15 @@ bool OverworldState::InitializePlayer(OBJECTS::Noah& noahPlayer)
     // CREATE THE COLLISION BOX FOR NOAH.
     MATH::FloatRectangle noahBoundingBox = noahSprite->GetWorldBoundingBox();
     std::shared_ptr<PHYSICS::COLLISION::BoxCollider> noahCollider = m_collisionSystem->CreateBoxCollider(
-        NOAH_INITIAL_WORLD_POSITION.X,
-        NOAH_INITIAL_WORLD_POSITION.Y,
+        noahPositionComponent->X,
+        noahPositionComponent->Y,
         noahBoundingBox.GetWidth(),
         noahBoundingBox.GetHeight());
+
+    // POSITION NOAH IN THE WORLD.
+    // The same position component as used for the sprite is used for the collision box to allowing
+    // automatic synchronization of positions.
+    noahCollider->SetPositionComponent(noahPositionComponent);
 
     // SET THE COLLISION BOX.
     noahPlayer.SetCollider(noahCollider);

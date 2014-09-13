@@ -5,7 +5,7 @@ using namespace GRAPHICS;
 Sprite::Sprite(const std::shared_ptr<hgeSprite>& sprite) :
     m_sprite(sprite),
     m_visible(true),
-    m_worldPositionInPixels()
+    m_worldPositionInPixels(new MATH::Vector2f(0.0f, 0.0f))
 {
     // Nothing else to do.
 }
@@ -22,7 +22,7 @@ bool Sprite::IsVisible() const
 
 void Sprite::Render()
 {
-    m_sprite->Render(m_worldPositionInPixels.X, m_worldPositionInPixels.Y);
+    m_sprite->Render(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
 }
 
 void Sprite::Update(const float elapsedTimeInSeconds)
@@ -35,10 +35,15 @@ void Sprite::SetZPosition(const float zPosition)
     m_sprite->SetZ(zPosition);
 }
 
+void Sprite::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent)
+{
+    m_worldPositionInPixels = positionComponent;
+}
+
 void Sprite::SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels)
 {
-    m_worldPositionInPixels.X = xPositionInPixels;
-    m_worldPositionInPixels.Y = yPositionInPixels;
+    m_worldPositionInPixels->X = xPositionInPixels;
+    m_worldPositionInPixels->Y = yPositionInPixels;
 }
 
 void Sprite::SetFlip(const bool flippedHorizontally, const bool flippedVertically)

@@ -4,6 +4,7 @@
 #include <memory>
 #include "Graphics/IGraphicsComponent.h"
 #include "Graphics/Texture.h"
+#include "Math/ITransformable.h"
 #include "Math/Vector2.h"
 
 namespace GRAPHICS
@@ -11,7 +12,7 @@ namespace GRAPHICS
     ///////////////////////////////////////////////////////////
     /// @brief  A graphical sprite.
     ///////////////////////////////////////////////////////////
-    class Sprite : public IGraphicsComponent
+    class Sprite : public IGraphicsComponent, public MATH::ITransformable
     {
     public:
         /// @brief      Constructor.  The sprite is visible by default.
@@ -33,6 +34,9 @@ namespace GRAPHICS
         /// @copydoc    IGraphicsComponent::SetZPosition(const float zPosition)
         virtual void SetZPosition(const float zPosition);
 
+        /// @copydoc    ITransformable::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent)
+        virtual void SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent);
+
         /// @brief      Sets the world position of the sprite.
         /// @param[in]  xPositionInPixels - The x-coordinate of the sprite in the world.
         /// @param[in]  yPositionInPixels - The y-coordinate of the sprite in the world.
@@ -46,6 +50,6 @@ namespace GRAPHICS
     private:
         std::shared_ptr<hgeSprite> m_sprite;   ///< The underlying HGE sprite resource.
         bool m_visible; ///< Whether or not the sprite is visible.
-        MATH::Vector2f m_worldPositionInPixels;  ///< The position of the sprite in the world.
+        std::shared_ptr<MATH::Vector2f> m_worldPositionInPixels;  ///< The position of the sprite in the world.
     };
 }

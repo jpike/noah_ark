@@ -10,6 +10,38 @@ CollisionSystem::CollisionSystem() :
 CollisionSystem::~CollisionSystem()
 {}
 
+void CollisionSystem::SimulateMovement()
+{
+    // SIMULATE MOVEMENT FOR ALL COLLISION COMPONENTS.
+    for (std::weak_ptr<ICollisionComponent>& collisionComponent : m_collisionComponents)
+    {
+        // ATTEMPT TO OBTAIN A USABLE COLLISION COMPONENT.
+        std::shared_ptr<ICollisionComponent> currentCollisionComponent = collisionComponent.lock();
+        bool currentCollisionComponentStillExists = (nullptr != currentCollisionComponent);
+        if (!currentCollisionComponentStillExists)
+        {
+            // Move on to the next collision component.
+            continue;
+        }
+
+        // SEE IF ANY MOVEMENT WAS REQUEST FOR THE CURRENT COLLISION COMPONENT.
+        std::unique_ptr<Movement> requestedMovement = currentCollisionComponent->GetRequestedMovement();
+        if (!requestedMovement)
+        {
+            // Move on to the next collision component.
+            continue;
+        }
+
+        // SIMULATE MOVEMENT FOR THE COLLISION COMPONENT.
+        /// @todo   Collision detection will need to be added here.
+        MATH::Vector2f movementVector = requestedMovement->ToVector();
+        currentCollisionComponent->Move(movementVector);
+    }
+
+    // REMOVE ANY COLLISION COMPONENTS THAT ARE NO LONGER NEEDED.
+    RemoveUnusedCollisionComponents();
+}
+
 std::shared_ptr<BoxCollider> CollisionSystem::CreateBoxCollider(
     const float centerXWorldPositionInPixels,
     const float centerYWorldPositionInPixels,
@@ -65,4 +97,11 @@ bool CollisionSystem::ManagesCollisionComponent(const std::shared_ptr<ICollision
     // DETERMINE IF THE COLLISION COMPONENT WAS FOUND.
     bool collisionComponentFound = (m_collisionComponents.cend() != collisionComponentIterator);
     return collisionComponentFound;
+}
+
+void CollisionSystem::RemoveUnusedCollisionComponents()
+{
+    // Remove any collsion components that are no longer being used.
+    m_collisionComponents.remove_if(
+        [](std::weak_ptr<ICollisionComponent>& collisionComponent) { return collisionComponent.expired(); });
 }

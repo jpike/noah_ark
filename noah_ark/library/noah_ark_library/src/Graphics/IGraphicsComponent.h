@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
+
 namespace GRAPHICS
 {   
     ///////////////////////////////////////////////////////////
@@ -15,8 +17,9 @@ namespace GRAPHICS
         /// @return The visibility of the graphics component.
         virtual bool IsVisible() const = 0;
 
-        /// @brief  Renders the graphics component.
-        virtual void Render() = 0;
+        /// @brief          Renders the graphics component.
+        /// @param[in,out]  renderTarget - The target to render to.
+        virtual void Render(sf::RenderTarget& renderTarget) = 0;
 
         /// @brief      Updates the graphics component for a single frame based on
         ///             the provided time.

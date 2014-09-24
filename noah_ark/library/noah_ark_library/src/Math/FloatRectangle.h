@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hgerect.h>
+#include <SFML/Graphics.hpp>
 
 namespace MATH
 {
@@ -28,8 +28,8 @@ namespace MATH
             const float widthInPixels,
             const float heightInPixels);
         /// @brief      Constructor accepting an HGE rectangle.
-        /// @param[in]  hgeRectangle - The HGE rectangle to use for the float rectangle.
-        explicit FloatRectangle(const hgeRect& hgeRectangle);
+        /// @param[in]  sfmlRectangle - The SFML rectangle to use for the float rectangle.
+        explicit FloatRectangle(const sf::FloatRect& sfmlRectangle);
         /// @brief  Destructor.
         ~FloatRectangle();
 
@@ -66,6 +66,12 @@ namespace MATH
         /// @return The height of the rectangle.
         float GetHeight() const;
 
+        /// @brief      Determines if the specified point is contained in this rectangle.
+        /// @param[in]  worldXPositionInPixels - The world X position to check for containmnet in this rectangle.
+        /// @param[in]  worldYPositionInPixels - The world Y position to check for containmnet in this rectangle.
+        /// @return     True if the specified point is within this rectangle; false otherwise.
+        bool Contains(const float worldXPositionInPixels, const float worldYPositionInPixels) const;
+
     private:
 
         /// @brief      Recalculates the rectangle based on the provided information.
@@ -73,13 +79,13 @@ namespace MATH
         /// @param[in]  centerWorldYPositionInPixels - The center Y position of the rectangle.
         /// @param[in]  widthInPixels - The width of the rectangle.
         /// @param[in]  heightInPixels - The height of the rectangle.
-        /// @return     The underlying HGE rectangle based on the provided parameters.
-        hgeRect RecalculateRectangle(
+        /// @return     The underlying SFML rectangle based on the provided parameters.
+        sf::FloatRect RecalculateRectangle(
             const float centerWorldXPositionInPixels,
             const float centerWorldYPositionInPixels,
             const float widthInPixels,
             const float heightInPixels);
 
-        hgeRect m_rectangle;    ///< The underlying HGE rectangle.
+        sf::FloatRect m_rectangle;    ///< The underlying SFML rectangle.
     };
 }

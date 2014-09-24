@@ -75,6 +75,7 @@
     <None Include="res\maps\test_map_2_0.MAP" />
     <None Include="res\maps\test_map_2_1.MAP" />
     <None Include="res\maps\test_map_2_2.MAP" />
+    <None Include="res\resources.json" />
     <None Include="res\resources.txt" />
     <None Include="res\res_images.txt" />
   </ItemGroup>

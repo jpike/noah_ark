@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <SFML/Graphics.hpp>
+#include <Thor/Animation.hpp>
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/IGraphicsComponent.h"
 #include "Math/FloatRectangle.h"
@@ -18,7 +20,9 @@ namespace GRAPHICS
     {
     public:
         /// @brief      Constructor.  The sprite is visible by default.
-        explicit AnimatedSprite();
+        /// @param[in]  sprite - The SFML sprite resource being animated.  Must not be null.
+        /// @throws     std::invalid_argument - Thrown if the provided sprite resource is null.
+        explicit AnimatedSprite(const std::shared_ptr<sf::Sprite>& sprite);
         
         /// @brief  Destructor.
         virtual ~AnimatedSprite();
@@ -26,8 +30,8 @@ namespace GRAPHICS
         /// @copydoc    IGraphicsComponent::IsVisible() const
         virtual bool IsVisible() const;
 
-        /// @copydoc    IGraphicsComponent::Render()
-        virtual void Render();
+        /// @copydoc    IGraphicsComponent::Render(sf::RenderTarget& renderTarget)
+        virtual void Render(sf::RenderTarget& renderTarget);
 
         /// @copydoc    IGraphicsComponent::Update(const float elapsedTimeInSeconds)
         virtual void Update(const float elapsedTimeInSeconds);
@@ -93,7 +97,15 @@ namespace GRAPHICS
         /// @return     The current animation sequence, if it exists.
         std::shared_ptr<AnimationSequence> GetCurrentAnimationSequence();
 
+        std::shared_ptr<sf::Sprite> m_sprite;   ///< The underlying sprite being animated.
+        /// @brief  The Thor animator controlling animations.  The IDs used for animations
+        ///         in this animator are the same animator names used for the map to
+        ///         the full animation sequences.
+        thor::Animator<sf::Sprite, std::string> m_animator;
+
         /// @brief  A mapping of animation sequence names to actual animation sequences.
+        ///         Animation sequences can store additional data beyond that stored in
+        ///         Thor animators, which is why they are stored in this mapping.
         std::unordered_map< std::string, std::shared_ptr<AnimationSequence> > m_animationSequences;
 
         std::string m_currentAnimationSequenceName; ///< The name of the animation sequence currently being displayed.

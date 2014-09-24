@@ -1,14 +1,24 @@
+#include <stdexcept>
 #include "Graphics/AnimatedSprite.h"
 
 using namespace GRAPHICS;
 
-AnimatedSprite::AnimatedSprite() :
+AnimatedSprite::AnimatedSprite(const std::shared_ptr<sf::Sprite>& sprite) :
+    m_sprite(sprite),
+    m_animator(),
     m_animationSequences(),
     m_currentAnimationSequenceName(),
     m_visible(true),
     m_worldPositionInPixels(new MATH::Vector2f(0.0f, 0.0f)),
     m_zPosition(0.0f)
-{}
+{
+    // REQUIRE THAT THE SPRITE ISN'T NULL.
+    bool spriteProvided = (nullptr != sprite);
+    if (!spriteProvided)
+    {
+        throw std::invalid_argument("Sprite provided for the animated sprite cannot be null.");
+    }
+}
         
 AnimatedSprite::~AnimatedSprite()
 {}
@@ -18,31 +28,23 @@ bool AnimatedSprite::IsVisible() const
     return m_visible;
 }
 
-void AnimatedSprite::Render()
+void AnimatedSprite::Render(sf::RenderTarget& renderTarget)
 {
-    // GET THE CURRENT ANIMATION SEQUENCE.
-    std::shared_ptr<AnimationSequence> currentAnimationSequence = GetCurrentAnimationSequence();
-    bool currentAnimationExists = (nullptr != currentAnimationSequence);
-    if (currentAnimationExists)
-    {
-        // RENDER IT IN THE WORLD.
-        // The z-position is set in case the currently used animation sequence has changed
-        // or never been used since last setting the z-position.
-        currentAnimationSequence->SetZPosition(m_zPosition);
-        currentAnimationSequence->Render(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
-    }
+    // MAKE SURE THE SPRITE IS CORRECTLY POSITIONED IN THE WORLD.
+    m_sprite->setPosition(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
+
+    // APPLY ANY ANIMATIONS TO THE SPRITE.
+    m_animator.animate(*m_sprite);
+
+    // RENDER THE SPRITE.
+    renderTarget.draw(*m_sprite);
 }
 
 void AnimatedSprite::Update(const float elapsedTimeInSeconds)
 {
-    // GET THE CURRENT ANIMATION SEQUENCE.
-    std::shared_ptr<AnimationSequence> currentAnimationSequence = GetCurrentAnimationSequence();
-    bool currentAnimationExists = (nullptr != currentAnimationSequence);
-    if (currentAnimationExists)
-    {
-        // UPDATE IT BASED ON THE PROVIDED TIME.
-        currentAnimationSequence->Update(elapsedTimeInSeconds);
-    }
+    // UPDATE THE ANIMATOR BASED ON THE PROVIDED TIME.
+    sf::Time elapsedTime = sf::seconds(elapsedTimeInSeconds);
+    m_animator.update(elapsedTime);
 }
 
 void AnimatedSprite::SetZPosition(const float zPosition)
@@ -68,18 +70,8 @@ void AnimatedSprite::SetWorldPosition(const float xPositionInPixels, const float
 
 MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox()
 {
-    // SET A DEFAULT BOUNDING BOX.
-    // This default box should be harmless in the event
-    // that no animation sequence is currently being used.
-    MATH::FloatRectangle boundingBox(0.0f, 0.0f, 0.0f, 0.0f);
-
-    // GET THE CURRENT ANIMATION SEQUENCE.
-    std::shared_ptr<AnimationSequence> currentAnimationSequence = GetCurrentAnimationSequence();
-    bool currentAnimationExists = (nullptr != currentAnimationSequence);
-    if (currentAnimationExists)
-    {
-        boundingBox = currentAnimationSequence->GetWorldBoundingBox(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
-    }
+    // GET THE SPRITE'S BOUNDING BOX.
+    MATH::FloatRectangle boundingBox(m_sprite->getGlobalBounds());
 
     return boundingBox;
 }
@@ -108,7 +100,14 @@ void AnimatedSprite::AddAnimationSequence(
     const std::string& animationName,
     const std::shared_ptr<AnimationSequence>& animationSequence)
 {
+    // Store the animation sequence so that we have full access to its details later.
     m_animationSequences[animationName] = animationSequence;
+
+    // Add the animation sequence to the animator.
+    m_animator.addAnimation(
+        animationSequence->GetName(),
+        animationSequence->GetFrames(),
+        animationSequence->GetDuration());
 }
 
 void AnimatedSprite::UseAnimationSequence(const std::string& animationName)
@@ -118,11 +117,15 @@ void AnimatedSprite::UseAnimationSequence(const std::string& animationName)
 
 void AnimatedSprite::Play()
 {
+    // GET THE CURRENT ANIMATION SEQUENCE.
     std::shared_ptr<AnimationSequence> currentAnimationSequence = GetCurrentAnimationSequence();
     bool currentAnimationSequenceExists = (nullptr != currentAnimationSequence);
     if (currentAnimationSequenceExists)
     {
-        currentAnimationSequence->Play();
+        // PLAY THE CURRENT ANIMATION SEQUENCE.
+        m_animator.playAnimation(
+            currentAnimationSequence->GetName(),
+            currentAnimationSequence->IsLooping());
     }
 }
 
@@ -133,8 +136,8 @@ void AnimatedSprite::ResetAnimation()
     bool currentAnimationExists = (nullptr != currentAnimationSequence);
     if (currentAnimationExists)
     {
-        // RESET THE CURRENT ANIMATION SEQUENCE.
-        currentAnimationSequence->Reset();
+        // STOP PLAYING THE CURRENT ANIMATION SEQUENCE.
+        m_animator.stopAnimation();
     }
 }
 

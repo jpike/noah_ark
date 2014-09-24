@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <string>
-#include <hge.h>
 #include "Graphics/GraphicsSystem.h"
 #include "Input/KeyboardInputController.h"
 #include "Maps/OverworldMap.h"
@@ -21,12 +20,10 @@ namespace STATES
     {
     public:
         /// @brief      Constructor.
-        /// @param[in]  pGameEngine - The HGE game engine.  Must not be nullptr.
         /// @param[in]  graphicsSystem - The graphics system.
         /// @param[in]  collisionSystem - The collision system.
         /// @throws     std::runtime_error - Thrown if the an error occurs during initialization.
         explicit OverworldState(
-            HGE* const pGameEngine,
             std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem,
             std::shared_ptr<PHYSICS::COLLISION::CollisionSystem>& collisionSystem);
         /// @brief  Destructor.

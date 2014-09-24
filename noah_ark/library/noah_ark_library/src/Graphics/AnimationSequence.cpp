@@ -1,77 +1,37 @@
-#include <stdexcept>
 #include "Graphics/AnimationSequence.h"
 
 using namespace GRAPHICS;
 
-AnimationSequence::AnimationSequence(hgeAnimation* const pAnimation) :
-    m_pAnimation(pAnimation)
-{
-    // REQUIRE THAT THE ANIMATION RESOURCE ISN'T NULL.
-    bool animationProvided = (nullptr != m_pAnimation);
-    if (!animationProvided)
-    {
-        throw std::invalid_argument("Animation resource provided for the animation sequence cannot be null.");
-    }
-}
+AnimationSequence::AnimationSequence(
+    const std::string& name,
+    const bool isLooping,
+    const sf::Time& totalDuration,
+    const thor::FrameAnimation& frameAnimation) :
+    m_animationName(name),
+    m_isLooping(isLooping),
+    m_totalDuration(totalDuration),
+    m_frameAnimation(frameAnimation)
+{}
         
 AnimationSequence::~AnimationSequence()
+{}
+
+std::string AnimationSequence::GetName() const
 {
-    // NULLIFY THE ANIMATION RESOURCE POINTER.
-    // It is the responsibility of external code to actually free the memory.
-    m_pAnimation = nullptr;
+    return m_animationName;
 }
 
-void AnimationSequence::Render(const float worldXPositionInPixels, const float worldYPositionInPixels)
+bool AnimationSequence::IsLooping() const
 {
-    m_pAnimation->Render(worldXPositionInPixels, worldYPositionInPixels);
+    return m_isLooping;
 }
 
-void AnimationSequence::Update(const float elapsedTimeInSeconds)
+sf::Time AnimationSequence::GetDuration() const
 {
-    m_pAnimation->Update(elapsedTimeInSeconds);
+    return m_totalDuration;
 }
 
-void AnimationSequence::SetZPosition(const float zPosition)
+thor::FrameAnimation AnimationSequence::GetFrames() const
 {
-    m_pAnimation->SetZ(zPosition);
-}
-
-MATH::FloatRectangle AnimationSequence::GetWorldBoundingBox(const float worldXPositionInPixels, const float worldYPositionInPixels)
-{
-    // GET THE HGE RECTANGLE.
-    hgeRect rectangle(0.0f, 0.0f, 0.0f, 0.0f);
-    m_pAnimation->GetBoundingBox(worldXPositionInPixels, worldYPositionInPixels, &rectangle);
-
-    // CONVERT THE RECTANGLE TO OUR CUSTOM TYPE.
-    const float centerXPosition = (rectangle.x1 + rectangle.x2) / 2.0f;
-    const float centerYPosition = (rectangle.y1 + rectangle.y2) / 2.0f;
-    const float width = (rectangle.x2 - rectangle.x1);
-    const float height = (rectangle.y2 - rectangle.y1);
-    MATH::FloatRectangle worldBoundingBox(
-        centerXPosition,
-        centerYPosition,
-        width,
-        height);
-    return worldBoundingBox;
-}
-
-void AnimationSequence::Play()
-{
-    // PLAY THE ANIMATION SEQUENCE IF IT ISN'T ALREADY PLAYING.
-    bool animationAlreadyPlaying = m_pAnimation->IsPlaying();
-
-    if (!animationAlreadyPlaying)
-    {
-        m_pAnimation->Play();
-    }
-}
-
-void AnimationSequence::Reset()
-{
-    // Set the animation sequence back to its first frame.
-    const int FIRST_FRAME_NUMBER = 0;
-    m_pAnimation->SetFrame(FIRST_FRAME_NUMBER);
-
-    // Stop the animation from playing.
-    m_pAnimation->Stop();
+    return m_frameAnimation;
 }

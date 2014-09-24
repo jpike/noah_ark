@@ -2,10 +2,11 @@
 
 using namespace GRAPHICS;
 
-Sprite::Sprite(const std::shared_ptr<hgeSprite>& sprite) :
+Sprite::Sprite(const std::shared_ptr<sf::Sprite>& sprite) :
     m_sprite(sprite),
     m_visible(true),
-    m_worldPositionInPixels(new MATH::Vector2f(0.0f, 0.0f))
+    m_worldPositionInPixels(new MATH::Vector2f(0.0f, 0.0f)),
+    m_zPosition(0.0f)
 {
     // Nothing else to do.
 }
@@ -20,9 +21,11 @@ bool Sprite::IsVisible() const
     return m_visible;
 }
 
-void Sprite::Render()
+void Sprite::Render(sf::RenderTarget& renderTarget)
 {
-    m_sprite->Render(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
+    // Make sure the sprite's position is updated for rendering.
+    m_sprite->setPosition(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
+    renderTarget.draw(*m_sprite);
 }
 
 void Sprite::Update(const float elapsedTimeInSeconds)
@@ -32,7 +35,7 @@ void Sprite::Update(const float elapsedTimeInSeconds)
 
 void Sprite::SetZPosition(const float zPosition)
 {
-    m_sprite->SetZ(zPosition);
+    m_zPosition = zPosition;
 }
 
 void Sprite::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent)
@@ -46,20 +49,11 @@ void Sprite::SetWorldPosition(const float xPositionInPixels, const float yPositi
     m_worldPositionInPixels->Y = yPositionInPixels;
 }
 
-void Sprite::SetFlip(const bool flippedHorizontally, const bool flippedVertically)
-{
-    m_sprite->SetFlip(flippedHorizontally, flippedVertically);
-}
-
 MATH::FloatRectangle Sprite::GetBoundingBox() const
 {
-    // GET THE HGE RECTANGLE.
-    hgeRect hgeRectangle;
-    m_sprite->GetBoundingBox(
-        m_worldPositionInPixels->X,
-        m_worldPositionInPixels->Y,
-        &hgeRectangle);
+    // GET THE SFML RECTANGLE.
+    sf::FloatRect sfmlRectangle = m_sprite->getGlobalBounds();
 
-    // CONVERT THE HGE RECTANGLE TO OUR CUSTOM RECTANGLE TYPE.
-    return MATH::FloatRectangle(hgeRectangle);
+    // CONVERT THE SFML RECTANGLE TO OUR CUSTOM RECTANGLE TYPE.
+    return MATH::FloatRectangle(sfmlRectangle);
 }

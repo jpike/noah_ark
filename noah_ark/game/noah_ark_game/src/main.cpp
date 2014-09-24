@@ -1,5 +1,4 @@
 #include <iostream>
-#include <TmxParser/Tmx.h>
 #include "NoahArkGame.h"
 
 /// @brief      The main entry point for the game.

@@ -4,20 +4,19 @@
 
 using namespace INPUT_CONTROL;
 
-Keyboard::Keyboard(HGE* const pGameEngine) :
-    m_pGameEngine(pGameEngine)
+Keyboard::Keyboard()
 {}
 
 Keyboard::~Keyboard()
 {}
 
-bool Keyboard::IsKeyDown(const int keyCode) const
+bool Keyboard::IsKeyDown(const sf::Keyboard::Key keyCode) const
 {
-    bool keyDown = m_pGameEngine->Input_GetKeyState(keyCode);
+    bool keyDown = sf::Keyboard::isKeyPressed(keyCode);
     return keyDown;
 }
 
-bool Keyboard::IsKeyUp(const int keyCode) const
+bool Keyboard::IsKeyUp(const sf::Keyboard::Key keyCode) const
 {
     bool keyUp = !IsKeyDown(keyCode);
     return keyUp;

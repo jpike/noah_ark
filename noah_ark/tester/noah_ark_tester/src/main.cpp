@@ -4,6 +4,7 @@
 #include "MapsTests/SurroundingMapLoaderTests.h"
 #include "MathTests/FloatRectangleTests.h"
 #include "PhysicsTests/CollisionTests/CollisionSystemTests.h"
+#include "ResourcesTests/ResourceManagerTests.h"
 #include "StatesTests/StateManagerTests.h"
 
 TEST_CASE( "Final test case to use for debugging." )

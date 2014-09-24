@@ -1,6 +1,5 @@
 #pragma once
 
-#include <hge.h>
 #include "Input/Keyboard.h"
 
 namespace INPUT_CONTROL
@@ -13,8 +12,7 @@ namespace INPUT_CONTROL
     {
     public:
         /// @brief      Constructor.  Input is enabled by default.
-        /// @param[in]  pGameEngine - The HGE game engine.  Must not be nullptr.
-        explicit KeyboardInputController(HGE* const pGameEngine);
+        explicit KeyboardInputController();
         /// @brief  Destructor.
         virtual ~KeyboardInputController();
 

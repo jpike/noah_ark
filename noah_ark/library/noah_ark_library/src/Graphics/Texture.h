@@ -1,6 +1,7 @@
 #pragma once
 
-#include <hge.h>
+#include <memory>
+#include <SFML/Graphics.hpp>
 
 namespace GRAPHICS
 {
@@ -9,14 +10,10 @@ namespace GRAPHICS
     ///////////////////////////////////////////////////////////
     class Texture
     {
-    public:
-        static const HTEXTURE INVALID_TEXTURE_HANDLE;   ///< A constant for an invalid handle.
-        
+    public:        
         /// @brief      Constructor.
-        /// @param[in]  textureHandle - The HGE texture handle to the underlying resource.
-        ///             An invalid handle is allowed to be passed here to allow "empty"
-        ///             textures to be created (an expected use case).
-        explicit Texture(const HTEXTURE textureHandle);
+        /// @param[in]  textureResource - The SFML texture that is the underlying resource.
+        explicit Texture(const std::shared_ptr<sf::Texture>& textureResource);
         /// @brief      Copy constructor.
         /// @param[in]  textureToCopy - The texture to copy.
         explicit Texture(const Texture& textureToCopy);
@@ -27,15 +24,15 @@ namespace GRAPHICS
         /// @param[in]  rhsTexture - The texture to assign from.
         Texture& operator= (const Texture& rhsTexture);
 
-        /// @brief      Returns the HGE texture handle to the underlying resource.
-        /// @return     The HGE texture handle.
-        const HTEXTURE GetTextureHandle() const;
+        /// @brief      Returns the underlying SFML texture resource.
+        /// @return     The SFML texture resource.
+        const std::shared_ptr<sf::Texture> GetTextureResource() const;
 
     private:
         /// @brief      Helper method for copying a texture.
         /// @param[in]  textureToCopy - The texture to copy.
         void Copy(const Texture& textureToCopy);
 
-        HTEXTURE m_textureHandle;   ///< The handle to the HGE texture resource.
+        std::shared_ptr<sf::Texture> m_textureResource;   ///< The underlying SFML texture resource.
     };
 }

@@ -51,6 +51,20 @@ MATH::Vector2f TileMap::GetBottomRightWorldPosition() const
     return bottomRightWorldPosition;
 }
 
+MATH::Vector2f TileMap::GetCenterWorldPosition() const
+{
+    // GET THE BOUNDING CORNERS OF THE TILE MAP.
+    MATH::Vector2f topLeftWorldPostion = GetTopLeftWorldPosition();
+    MATH::Vector2f bottomRightWorldPosition = GetBottomRightWorldPosition();
+
+    // CALCULATE THE CENTER USING THE MIDPOINT FORMULA.
+    float centerXPosition = (topLeftWorldPostion.X + bottomRightWorldPosition.X) / 2.0f;
+    float centerYPosition = (topLeftWorldPostion.Y + bottomRightWorldPosition.Y) / 2.0f;
+
+    MATH::Vector2f centerPosition(centerXPosition, centerYPosition);
+    return centerPosition;
+}
+
 unsigned int TileMap::GetWidthInTiles() const
 {
     return static_cast<unsigned int>(m_tmxMap->GetWidth());
@@ -71,17 +85,34 @@ unsigned int TileMap::GetTileHeightInPixels() const
     return static_cast<unsigned int>(m_tmxMap->GetTileHeight());
 }
 
+MATH::Vector2f TileMap::GetSizeInPixels() const
+{
+    // GET THE WIDTH IN PIXELS.
+    float mapWidthInTiles = static_cast<float>(GetWidthInTiles());
+    float tileWidthInPixels = static_cast<float>(GetTileWidthInPixels());
+    float mapWidthInPixels = mapWidthInTiles * tileWidthInPixels;
+
+    // GET THE HEIGHT IN PIXELS.
+    float mapHeightInTiles = static_cast<float>(GetHeightInTiles());
+    float tileHeightInPixels = static_cast<float>(GetTileHeightInPixels());
+    float mapHeightInPixels = mapHeightInTiles * tileHeightInPixels;
+
+    // RETURN THE MAP SIZE IN PIXELS.
+    MATH::Vector2f sizeInPixels(mapWidthInPixels, mapHeightInPixels);
+    return sizeInPixels;
+}
+
 std::shared_ptr<Tile> TileMap::GetTileAtWorldPosition(const float worldXPosition, const float worldYPosition) const
 {
     // CHECK IF THE WORLD POSITION IS WITHIN THE BOUNDS OF THIS TILE MAP.
-    MATH::Vector2f topLeftMapWorldPosition = GetTopLeftWorldPosition();
-    MATH::Vector2f bottomRightMapWorldPosition = GetBottomRightWorldPosition();
-    hgeRect tileMapBoundingHgeRect(
-        topLeftMapWorldPosition.X,
-        topLeftMapWorldPosition.Y,
-        bottomRightMapWorldPosition.X,
-        bottomRightMapWorldPosition.Y);
-    bool tilePositionWithinMap = tileMapBoundingHgeRect.TestPoint(worldXPosition, worldYPosition);
+    MATH::Vector2f centerWorldPosition = GetCenterWorldPosition();
+    MATH::Vector2f sizeInPixels = GetSizeInPixels();
+    MATH::FloatRectangle tileMapBoundingRect(
+        centerWorldPosition.X,
+        centerWorldPosition.Y,
+        sizeInPixels.X,
+        sizeInPixels.Y);
+    bool tilePositionWithinMap = tileMapBoundingRect.Contains(worldXPosition, worldYPosition);
     if (!tilePositionWithinMap)
     {
         // The requested tile position isn't within this map.
@@ -90,6 +121,7 @@ std::shared_ptr<Tile> TileMap::GetTileAtWorldPosition(const float worldXPosition
 
     // ADJUST THE WORLD POSITIONS TO BE RELATIVE TO THIS TILE MAP.
     // The top-left corner of this map will serve as the new origin.
+    MATH::Vector2f topLeftMapWorldPosition = GetTopLeftWorldPosition();
     float relativeTileXPosition = worldXPosition - topLeftMapWorldPosition.X;
     float relativeTileYPosition = worldYPosition - topLeftMapWorldPosition.Y;
 
@@ -193,19 +225,21 @@ void TileMap::BuildFromTmxMap(
                 tilesetXPosition,
                 tilesetYPosition,
                 static_cast<float>(tileWidthInPixels),
-                static_cast<float>(tileHeightInPixels));
+                static_cast<float>(tileHeightInPixels),
+                GRAPHICS::GraphicsLayer::GROUND);
 
             // SET ADDITIONAL PROPERTIES OF THE TILE'S SPRITE.
-            // Set any flipping for the sprite.
-            tileSprite->SetFlip(tmxTile.flippedHorizontally, tmxTile.flippedVertically);
-
             // Set the sprite's world position.
             float worldXPosition = static_cast<float>(tileWidthInPixels * xPositionInTiles) + topLeftWorldPositionInPixels.X;
+            // Position it based on its center.
+            /// @todo   Re-examine commented-out code.
+            /*float tileHalfWidth = static_cast<float>(tileWidthInPixels) / 2.0f;
+            worldXPosition += tileHalfWidth;*/
             float worldYPosition = static_cast<float>(tileHeightInPixels * yPositionInTiles) + topLeftWorldPositionInPixels.Y;
+            // Position it based on its center.
+            /*float tileHalfHeight = static_cast<float>(tileHeightInPixels) / 2.0f;
+            worldYPosition += tileHalfHeight;*/
             tileSprite->SetWorldPosition(worldXPosition, worldYPosition);
-
-            // Set the tile to the proper z-layer.
-            tileSprite->SetZPosition(GRAPHICS::GraphicsSystem::GROUND_LAYER_Z_VALUE);
 
             // STORE A TILE IN THE COLLECTION OF TILES.
             std::shared_ptr<Tile> tile = std::make_shared<Tile>(tmxTile.id, tileSprite);

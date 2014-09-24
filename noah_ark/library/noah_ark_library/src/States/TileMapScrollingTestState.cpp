@@ -5,11 +5,10 @@
 using namespace STATES;
 
 TileMapScrollingTestState::TileMapScrollingTestState(
-    HGE* const pGameEngine,
     std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
     m_camera(),
     m_graphicsSystem(graphicsSystem),
-    m_inputController(pGameEngine),
+    m_inputController(),
     m_overworldSpec(),
     m_overworldMap(),
     m_scrollingOverworld(),
@@ -113,7 +112,10 @@ bool TileMapScrollingTestState::InitializePlayer(OBJECTS::Noah& noahPlayer)
         m_graphicsSystem->GetAnimationSequence(OBJECTS::Noah::WALK_RIGHT_ANIMATION_NAME);
 
     // CREATE THE ANIMATED SPRITE FOR NOAH.
-    std::shared_ptr<GRAPHICS::AnimatedSprite> noahSprite = m_graphicsSystem->CreateAnimatedSprite();
+    const std::string NOAH_SPRITE_RESOURCE_NAME = "noah_sprite";
+    std::shared_ptr<GRAPHICS::AnimatedSprite> noahSprite = m_graphicsSystem->CreateAnimatedSprite(
+        NOAH_SPRITE_RESOURCE_NAME,
+        GRAPHICS::GraphicsLayer::PLAYER);
 
     // Add the animations to the sprite.
     noahSprite->AddAnimationSequence(OBJECTS::Noah::WALK_FRONT_ANIMATION_NAME, walkFrontAnimation);
@@ -128,8 +130,6 @@ bool TileMapScrollingTestState::InitializePlayer(OBJECTS::Noah& noahPlayer)
     // For now, the position is arbitrary.
     const MATH::Vector2f NOAH_INITIAL_WORLD_POSITION(100.0f, 100.0f);
     noahSprite->SetWorldPosition(NOAH_INITIAL_WORLD_POSITION.X, NOAH_INITIAL_WORLD_POSITION.Y);
-
-    noahSprite->SetZPosition(GRAPHICS::GraphicsSystem::PLAYER_LAYER_Z_VALUE);
 
     // SET THE ANIMATED SPRITE FOR THE NOAH PLAYER.
     noahPlayer.SetSprite(noahSprite);

@@ -1,4 +1,5 @@
-#include <hgestrings.h>
+#include <exception>
+#include <iostream>
 #include <string>
 #include "NoahArkGame.h"
 #include "States/OverworldState.h"
@@ -56,24 +57,12 @@ int NoahArkGame::RunGame()
     }
 }
 
-bool NoahArkGame::UpdateGame()
-{
-    // UPDATE THE SINGLETON INSTANCE OF THE GAME.
-    return GetInstance().Update();
-}
-
-bool NoahArkGame::RenderGame()
-{
-    // RENDER THE SINGLETON INSTANCE OF THE GAME.
-    return GetInstance().Render();
-}
-
 ///////////////////////////////////////////////////////////
 // INSTANCE METHODS.
 ///////////////////////////////////////////////////////////
 
 NoahArkGame::NoahArkGame() : 
-    m_pGameEngine(nullptr),
+    m_window(),
     m_resourceManager(),
     m_graphicsSystem(),
     m_collisionSystem(),
@@ -95,9 +84,9 @@ NoahArkGame::~NoahArkGame()
 
 bool NoahArkGame::Initialize()
 {
-    // INITIALIZE THE GAME ENGINE.
-    bool gameEngineInitialized = InitializeGameEngine();
-    if (!gameEngineInitialized)
+    // INITIALIZE THE MAIN WINDOW.
+    bool windowInitialized = InitializeWindow();
+    if (!windowInitialized)
     {
         return false;
     }
@@ -114,7 +103,6 @@ bool NoahArkGame::Initialize()
     ///       It should go to an "intro video" or "title screen" state initially.
     std::shared_ptr<STATES::IGameState> initialState(
         new STATES::OverworldState(
-            m_pGameEngine, 
             m_graphicsSystem, 
             m_collisionSystem));
     m_stateManager->SetCurrentState(initialState);
@@ -133,15 +121,12 @@ bool NoahArkGame::Shutdown()
 
     // SHUTDOWN THE GRAPHICS SYSTEM.
     m_graphicsSystem.reset();
-
+    
     // SHUTDOWN THE RESOURCE MANAGER.
     m_resourceManager.reset();
-    
-    // SHUTDOWN THE GAME ENGINE.
-    m_pGameEngine->System_Shutdown();
-	m_pGameEngine->Release();
-	// Release above frees memory, so we can just set the variable to NULL here.
-	m_pGameEngine = nullptr;
+
+    // CLOSE THE WINDOW IF IT IS STILL OPEN.
+    m_window->close();
     
     // ALL SHUTDOWN STEPS SUCCEEDED.
     return true;
@@ -150,62 +135,76 @@ bool NoahArkGame::Shutdown()
 bool NoahArkGame::RunGameLoop()
 {
     // RUN THE GAME LOOP.
-    return m_pGameEngine->System_Start();
-}
-
-bool NoahArkGame::InitializeGameEngine()
-{
-    // CREATE THE UNDERLYING GAME ENGINE.
-    m_pGameEngine = hgeCreate(HGE_VERSION);
-    bool engineCreated = ( m_pGameEngine != nullptr );
-    if (!engineCreated)
+    try
     {
+        // PROCESS EVENTS AS LONG AS THE WINDOW IS OPEN.
+        sf::Clock gameLoopClock;
+        while (m_window->isOpen())
+        {
+            // PROCESS WINDOW EVENTS.
+            sf::Event event;
+            while (m_window->pollEvent(event))
+            {
+                // Handle the current event based on its type.
+                switch (event.type)
+                {
+                case sf::Event::Closed:
+                    m_window->close();
+                    break;
+                }
+            }
+
+            // UPDATE AND DISPLAY THE GAME IN THE WINDOW.
+            if (m_window->isOpen())
+            {
+                // Update the game for the new frame.
+                sf::Time elapsedTime = gameLoopClock.restart();
+                Update(elapsedTime);
+
+                // Render the current state of the game.
+                m_window->clear();
+                Render();
+                m_window->display();
+            }
+        }
+        
+        return true;
+    }
+    catch (const std::exception& exception)
+    {
+        std::cerr << "Exception during game: " << exception.what() << std::endl;
         return false;
     }
+    catch (...)
+    {
+        std::cerr << "Unknown error during game. " << std::endl;
+        return false;
+    }
+}
 
-    // CONFIGURE THE UNDERLYING GAME ENGINE.
-    // Currently, flexibility of file-based configuration isn't needed.
-    // Only settings that are important to the current operation of the
-    // game are explicitly set.  Other settings may be set in the future
-    // as required.
+bool NoahArkGame::InitializeWindow()
+{
+    // CREATE THE WINDOW.
+    // The width and height are currently set to match the dimensions
+    // of a single tile map in the game.
+    const unsigned int SCREEN_WIDTH_IN_PIXELS = 512;
+    const unsigned int SCREEN_HEIGHT_IN_PIXELS = 384;
+    const std::string GAME_TITLE = "Bible Games - Noah's Ark";
+    m_window = std::make_shared<sf::RenderWindow>(
+        sf::VideoMode(SCREEN_WIDTH_IN_PIXELS, SCREEN_HEIGHT_IN_PIXELS),
+        GAME_TITLE);
 
-    // Set the callback functions needed for running the game.
-    m_pGameEngine->System_SetState(HGE_FRAMEFUNC, NoahArkGame::UpdateGame);
-	m_pGameEngine->System_SetState(HGE_RENDERFUNC, NoahArkGame::RenderGame);
-
-    // The following set of settings are largely arbitrary but are deemed to be the
-    // current best settings for the game.  They may be changed in the future.
-    m_pGameEngine->System_SetState(HGE_TITLE, "Bible Games - Noah's Ark");
-    m_pGameEngine->System_SetState(HGE_SCREENWIDTH, 512);
-    m_pGameEngine->System_SetState(HGE_SCREENHEIGHT, 384);
-    m_pGameEngine->System_SetState(HGE_WINDOWED, true);
-    m_pGameEngine->System_SetState(HGE_LOGFILE, "noah_ark_game.log");
-    m_pGameEngine->System_SetState(HGE_FPS, 60);
-    m_pGameEngine->System_SetState(HGE_HIDEMOUSE, false);
-
-    // The following set of settings are important to the operation of the game
-    // and should not be changed without deep consideration.
-    // Z-buffering is needed for the graphics system to properly render overlapping objects.
-    m_pGameEngine->System_SetState(HGE_ZBUFFER, true);
-    /// @todo Document why the texture filtering is disabled.
-    m_pGameEngine->System_SetState(HGE_TEXTUREFILTER, false);
-    /// @todo Sound is currently disabled since we aren't using HGE's built-in BASS audio
-    ///       functionality.  If we end up using BASS for audio, then this will need to be enabled.
-    m_pGameEngine->System_SetState(HGE_USESOUND, false);    
-    
-    // INITIALIZE THE UNDERLYING GAME ENGINE.
-    bool gameEngineInitialized = m_pGameEngine->System_Initiate();
-    return gameEngineInitialized;
+    return true;
 }
 
 bool NoahArkGame::InitializeSubsystems()
 {
     // INITIALIZE THE RESOURCE MANAGER.
-    const char* RESOURCE_FILE_RELATIVE_PATH = "res/resources.txt";
-    m_resourceManager = std::make_shared<hgeResourceManager>(RESOURCE_FILE_RELATIVE_PATH);
+    const char* RESOURCE_FILE_RELATIVE_PATH = "res/resources.json";
+    m_resourceManager = std::make_shared<RESOURCES::ResourceManager>(RESOURCE_FILE_RELATIVE_PATH);
 
     // INITIALIZE THE GRAPHICS SYSTEM.
-    m_graphicsSystem = std::make_shared<GRAPHICS::GraphicsSystem>(m_pGameEngine, m_resourceManager);
+    m_graphicsSystem = std::make_shared<GRAPHICS::GraphicsSystem>(m_window, m_resourceManager);
 
     // INITIALIZE THE COLLISION SYSTEM.
     m_collisionSystem = std::make_shared<PHYSICS::COLLISION::CollisionSystem>();
@@ -219,29 +218,13 @@ bool NoahArkGame::InitializeSubsystems()
     return allSubsystemsInitialized;
 }
 
-
-bool NoahArkGame::Update()
-{
-    float elapsedTimeInSeconds = m_pGameEngine->Timer_GetDelta();
-    
-    return m_stateManager->Update(elapsedTimeInSeconds);
+void NoahArkGame::Update(const sf::Time& elapsedTime)
+{   
+    m_stateManager->Update(elapsedTime.asSeconds());
 }
 
-bool NoahArkGame::Render()
+void NoahArkGame::Render()
 {
-    // SETUP THE GAME ENGINE FOR RENDERING.
-    m_pGameEngine->Gfx_BeginScene();
-
-    /// @todo   Should this clear color be retrieved from the graphics system?
-    const DWORD BLACK_COLOR = 0;
-	m_pGameEngine->Gfx_Clear(BLACK_COLOR);
-
     // RENDER THE GAME.
     m_graphicsSystem->Render();
-
-    // FINISH RENDERING THE CURRENT SCENE.
-    m_pGameEngine->Gfx_EndScene();
-
-    // False is required to always be returned by HGE.
-    return false;
 }

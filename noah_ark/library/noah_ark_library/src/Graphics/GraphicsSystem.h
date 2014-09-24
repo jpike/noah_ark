@@ -1,18 +1,31 @@
 #pragma once
 
-#include <hgeresource.h>
-#include <list>
 #include <memory>
+#include <unordered_map>
+#include <SFML/Graphics.hpp>
 #include "Graphics/AnimatedSprite.h"
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Camera.h"
 #include "Graphics/IGraphicsComponent.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Texture.h"
+#include "Resources/ResourceManager.h"
 
 /// A namespace for graphics code.
 namespace GRAPHICS
 {
+    ///////////////////////////////////////////////////////////
+    /// @brief  Defines different layers that graphics components
+    ///         may be placed for rendering.  Lower layers are
+    ///         defined first, so they will rendered below components
+    ///         on higher layers.
+    ///////////////////////////////////////////////////////////
+    enum class GraphicsLayer
+    {
+        GROUND, ///< The layer defined for physical ground (i.e. tiles).
+        PLAYER  ///< The layer defined for the player character.
+    };
+
     ///////////////////////////////////////////////////////////
     /// @brief  The graphics system for the game.  Manages and renders
     ///         graphics components.
@@ -20,22 +33,20 @@ namespace GRAPHICS
     class GraphicsSystem
     {
     public:
-        // CONSTANTS DEFINING THE Z-VALUES TO SET FOR LAYERING GRAPHICS ON TOP FOR EACH OTHER.
-        static const float GROUND_LAYER_Z_VALUE;    ///< The z-value for graphics on the ground level.
-        static const float PLAYER_LAYER_Z_VALUE;    ///< The z-value for graphics of the player.
-        
         /// @brief      Constructor.
-        /// @param      pGameEngine - The underlying HGE game engine.  Must not be NULL.
+        /// @param[in]  renderTarget - The target which the graphics system should render to.
         /// @param[in]  resourceManager - The resource manager used to access graphics resources.
-        explicit GraphicsSystem(HGE* const pGameEngine, const std::shared_ptr<hgeResourceManager>& resourceManager);
+        explicit GraphicsSystem(
+            const std::shared_ptr<sf::RenderTarget>& renderTarget,
+            const std::shared_ptr<RESOURCES::ResourceManager>& resourceManager);
         /// @brief  Destructor.
         ~GraphicsSystem();
 
-        /// @brief  Renders all visible graphics components managed by this system.
-        ///         Components are rendered in order of creation within the graphics
-        ///         system and relies on z-buffering to handle certains components
-        ///         being in back/front of others.  Therefore, you should make
-        ///         sure that z values have been properly set for all components objects.
+        /// @brief          Renders all visible graphics components managed by this system.
+        ///                 Components are rendered in order of creation within the graphics
+        ///                 system and relies on z-buffering to handle certains components
+        ///                 being in back/front of others.  Therefore, you should make
+        ///                 sure that z values have been properly set for all components objects.
         void Render();
 
         /// @brief      Updates all graphics components (including invisible ones) that are
@@ -74,40 +85,47 @@ namespace GRAPHICS
         /// @param[in]  yPositionInTexels - The y-coordinate of the top of the rectangle within
         ///             the texture to use for the sprite image.
         /// @param[in]  widthInTexels - The width of the rectangle within the texture to use for the sprite image.
-        /// @param[in]  heightInTexels - The height of the rectangle within the texture to use for the sprite image..
+        /// @param[in]  heightInTexels - The height of the rectangle within the texture to use for the sprite image.
+        /// @param[in]  graphics_layer - The visual layer in which the sprite is to be created and rendered.
         /// @return     The newly created sprite.
         std::shared_ptr<Sprite> CreateSprite(
             const std::shared_ptr<Texture>& texture,
             const float xPositionInTexels,
             const float yPositionInTexels,
             const float widthInTexels,
-            const float heightInTexels);
+            const float heightInTexels,
+            const GraphicsLayer graphicsLayer);
 
-        /// @brief  Creates a new animated sprite within the graphics system.
-        /// @return The newly created animated sprite.
-        std::shared_ptr<AnimatedSprite> CreateAnimatedSprite();
+        /// @brief      Creates a new animated sprite within the graphics system.
+        /// @param[in]  spriteResourceName - The name of the basic sprite resource to be animated.
+        /// @param[in]  graphics_layer - The visual layer in which the sprite is to be created and rendered.
+        /// @return     The newly created animated sprite; nullptr if an error occurs.
+        std::shared_ptr<AnimatedSprite> CreateAnimatedSprite(
+            const std::string& spriteResourceName,
+            const GraphicsLayer graphicsLayer);
 
     private:
         GraphicsSystem(const GraphicsSystem& systemToCopy); ///< Private to disallow copying.
         GraphicsSystem& operator= (const GraphicsSystem& rhsSystem);    ///< Private to disallow assignment.
 
-        /// @brief      Renders the provided graphics component if it is visible.
-        /// @param[in]  graphicsComponent - The graphics component to render.
-        void RenderIfVisible(std::shared_ptr<IGraphicsComponent>& graphicsComponent);
+        /// @brief          Renders the provided graphics component if it is visible.
+        /// @param[in,out]  graphicsComponent - The graphics component to render.
+        /// @param[in,out]  renderTarget - The target to render to.
+        void RenderIfVisible(std::shared_ptr<IGraphicsComponent>& graphicsComponent, sf::RenderTarget& renderTarget);
 
         /// @brief  Removes unusued graphics components from the system.  Allows freeing
         ///         memory for graphics components that are no longer being used elsewhere
         ///         in the game.
         void RemoveUnusedGraphicsComponents();
 
-        HGE* m_pGameEngine; ///< The underlying HGE game engine.
+        std::shared_ptr<sf::RenderTarget> m_renderTarget;   ///< The target that is rendered to.
         Camera m_camera;    ///< The camera indicating what portion of the world is currently in view.
-        std::shared_ptr<hgeResourceManager> m_resourceManager;   ///< The resource manager used to access graphics resources.
+        std::shared_ptr<RESOURCES::ResourceManager> m_resourceManager;   ///< The resource manager used to access graphics resources.
 
-        /// @brief  The graphics components to be rendered.  The methods for creating
-        ///         these components return shared_ptrs, but they are stored as weak_ptrs
-        ///         to allow their memory to be properly released once the objects holding
-        ///         the shared_ptrs are deleted.
-        std::list< std::weak_ptr<IGraphicsComponent> > m_graphicsComponents;
+        /// @brief  The graphics components to be rendered, keyed based on their layer.
+        ///         The methods for creating these components return shared_ptrs, but they
+        ///         are stored as weak_ptrs to allow their memory to be properly released 
+        ///         once the objects holding the shared_ptrs are deleted.
+        std::unordered_multimap< GraphicsLayer, std::weak_ptr<IGraphicsComponent> > m_graphicsComponents;
     };
 }

@@ -19,8 +19,8 @@ m_rectangle()
         heightInPixels);
 }
 
-FloatRectangle::FloatRectangle(const hgeRect& hgeRectangle) :
-    m_rectangle(hgeRectangle)
+FloatRectangle::FloatRectangle(const sf::FloatRect& sfmlRectangle) :
+    m_rectangle(sfmlRectangle)
 {}
 
 FloatRectangle::~FloatRectangle()
@@ -29,35 +29,41 @@ FloatRectangle::~FloatRectangle()
 float FloatRectangle::GetCenterXPosition() const
 {
     // Calculate the center using the midpoint formula.
-    const float horizontalMidpoint = (m_rectangle.x1 + m_rectangle.x2) / 2.0f;
+    const float leftXPosition = GetLeftXPosition();
+    const float rightXPosition = GetRightXPosition();
+    const float horizontalMidpoint = (leftXPosition + rightXPosition) / 2.0f;
     return horizontalMidpoint;
 }
 
 float FloatRectangle::GetCenterYPosition() const
 {
     // Calculate the center using the midpoint formula.
-    const float verticalMidpoint = (m_rectangle.y1 + m_rectangle.y2) / 2.0f;
+    const float topYPosition = GetTopYPosition();
+    const float bottomYPosition = GetBottomYPosition();
+    const float verticalMidpoint = (topYPosition + bottomYPosition) / 2.0f;
     return verticalMidpoint;
 }
 
 float FloatRectangle::GetLeftXPosition() const
 {
-    return m_rectangle.x1;
+    return m_rectangle.left;
 }
 
 float FloatRectangle::GetRightXPosition() const
 {
-    return m_rectangle.x2;
+    const float rightXPosition = m_rectangle.left + m_rectangle.width;
+    return rightXPosition;
 }
 
 float FloatRectangle::GetTopYPosition() const
 {
-    return m_rectangle.y1;
+    return m_rectangle.top;
 }
 
 float FloatRectangle::GetBottomYPosition() const
 {
-    return m_rectangle.y2;
+    const float bottomYPosition = m_rectangle.top + m_rectangle.height;
+    return bottomYPosition;
 }
 
 void FloatRectangle::SetCenterPosition(const float centerWorldXPositionInPixels, const float centerWorldYPositionInPixels)
@@ -72,17 +78,20 @@ void FloatRectangle::SetCenterPosition(const float centerWorldXPositionInPixels,
 
 float FloatRectangle::GetWidth() const
 {
-    const float width = fabs(m_rectangle.x2 - m_rectangle.x1);
-    return width;
+    return m_rectangle.width;
 }
 
 float FloatRectangle::GetHeight() const
 {
-    const float height = fabs(m_rectangle.y2 - m_rectangle.y1);
-    return height;
+    return m_rectangle.height;
 }
 
-hgeRect FloatRectangle::RecalculateRectangle(
+bool FloatRectangle::Contains(const float worldXPositionInPixels, const float worldYPositionInPixels) const
+{
+    return m_rectangle.contains(worldXPositionInPixels, worldYPositionInPixels);
+}
+
+sf::FloatRect FloatRectangle::RecalculateRectangle(
     const float centerWorldXPositionInPixels,
     const float centerWorldYPositionInPixels,
     const float widthInPixels,
@@ -92,18 +101,12 @@ hgeRect FloatRectangle::RecalculateRectangle(
     const float halfWidth = widthInPixels / 2.0f;
     const float leftXPosition = centerWorldXPositionInPixels - halfWidth;
 
-    // CALCULATE THE RIGHT COORDINATE.
-    const float rightXPosition = centerWorldXPositionInPixels + halfWidth;
-
     // CALCULATE THE TOP COORDINATE.
     const float halfHeight = heightInPixels / 2.0f;
     // Y decreases going up on the screen.
     const float topYPosition = centerWorldYPositionInPixels - halfHeight;
 
-    // CALCULATE THE BOTTOM COORDINATE.
-    const float bottomYPosition = centerWorldYPositionInPixels + halfHeight;
-
-    // CONVERT THE RECTANGLE TO HGE FORMAT.
-    hgeRect rectangle = hgeRect(leftXPosition, topYPosition, rightXPosition, bottomYPosition);
+    // CONVERT THE RECTANGLE TO SFML FORMAT.
+    sf::FloatRect rectangle = sf::FloatRect(leftXPosition, topYPosition, widthInPixels, heightInPixels);
     return rectangle;
 }

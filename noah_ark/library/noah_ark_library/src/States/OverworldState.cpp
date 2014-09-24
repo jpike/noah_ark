@@ -5,12 +5,11 @@
 using namespace STATES;
 
 OverworldState::OverworldState(
-    HGE* const pGameEngine,
     std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem,
     std::shared_ptr<PHYSICS::COLLISION::CollisionSystem>& collisionSystem) :
     m_camera(),
     m_graphicsSystem(graphicsSystem),
-    m_inputController(pGameEngine),
+    m_inputController(),
     m_collisionSystem(collisionSystem),
     m_overworldSpec(),
     m_overworldMap(),
@@ -163,7 +162,10 @@ bool OverworldState::InitializePlayer(OBJECTS::Noah& noahPlayer)
     }
 
     // CREATE THE ANIMATED SPRITE FOR NOAH.
-    std::shared_ptr<GRAPHICS::AnimatedSprite> noahSprite = m_graphicsSystem->CreateAnimatedSprite();
+    const std::string NOAH_SPRITE_RESOURCE_NAME = "noah_sprite";
+    std::shared_ptr<GRAPHICS::AnimatedSprite> noahSprite = m_graphicsSystem->CreateAnimatedSprite(
+        NOAH_SPRITE_RESOURCE_NAME,
+        GRAPHICS::GraphicsLayer::PLAYER);
 
     // Add the animations to the sprite.
     noahSprite->AddAnimationSequence(OBJECTS::Noah::WALK_FRONT_ANIMATION_NAME, walkFrontAnimation);
@@ -179,8 +181,6 @@ bool OverworldState::InitializePlayer(OBJECTS::Noah& noahPlayer)
     // automatic synchronization of positions.
     std::shared_ptr<MATH::Vector2f> noahPositionComponent = std::make_shared<MATH::Vector2f>(300.0f, 100.0f);
     noahSprite->SetPositionComponent(noahPositionComponent);
-
-    noahSprite->SetZPosition(GRAPHICS::GraphicsSystem::PLAYER_LAYER_Z_VALUE);
 
     // SET THE ANIMATED SPRITE FOR THE NOAH PLAYER.
     noahPlayer.SetSprite(noahSprite);
@@ -210,7 +210,7 @@ void OverworldState::HandleUserInput(
     const float elapsedTimeInSeconds)
 {
     // DEFINE SCROLLING PARAMETERS.
-    const float MOVE_DISTANCE_IN_PIXELS = 2.0f;
+    const float PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS = 8.0f;
     const float MAX_SCROLL_TIME_IN_SECONDS = 3.0f;
 
     // GET CURRENT MAP TOP-LEFT CORNER.
@@ -243,6 +243,10 @@ void OverworldState::HandleUserInput(
         bool scrollingUpSucceeded = m_scrollingOverworld->BeginScrollingUp();
         if (scrollingUpSucceeded)
         {
+            // Move Noah a few more pixels up so that he will be more visibile on the new map.
+            noahPosition.Y -= PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
+            m_noahPlayer.SetWorldPosition(noahPosition.X, noahPosition.Y);
+
             // Disable user input while scrolling is occurring.
             m_inputController.DisableInput();
 
@@ -273,6 +277,10 @@ void OverworldState::HandleUserInput(
         bool scrollingDownSucceeded = m_scrollingOverworld->BeginScrollingDown();
         if (scrollingDownSucceeded)
         {
+            // Move Noah a few more pixels down so that he will be more visibile on the new map.
+            noahPosition.Y += PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
+            m_noahPlayer.SetWorldPosition(noahPosition.X, noahPosition.Y);
+
             // Disable user input while scrolling is occurring.
             m_inputController.DisableInput();
 
@@ -303,6 +311,10 @@ void OverworldState::HandleUserInput(
         bool scrollingLeftSucceeded = m_scrollingOverworld->BeginScrollingLeft();
         if (scrollingLeftSucceeded)
         {
+            // Move Noah a few more pixels left so that he will be more visibile on the new map.
+            noahPosition.X -= PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
+            m_noahPlayer.SetWorldPosition(noahPosition.X, noahPosition.Y);
+
             // Disable user input while scrolling is occurring.
             m_inputController.DisableInput();
 
@@ -333,6 +345,10 @@ void OverworldState::HandleUserInput(
         bool scrollingRightSucceeded = m_scrollingOverworld->BeginScrollingRight();
         if (scrollingRightSucceeded)
         {
+            // Move Noah a few more pixels right so that he will be more visibile on the new map.
+            noahPosition.X += PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
+            m_noahPlayer.SetWorldPosition(noahPosition.X, noahPosition.Y);
+
             // Disable user input while scrolling is occurring.
             m_inputController.DisableInput();
 

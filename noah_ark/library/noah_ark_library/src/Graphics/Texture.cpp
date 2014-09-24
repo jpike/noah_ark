@@ -2,19 +2,14 @@
 
 using namespace GRAPHICS;
 
-// STATIC MEMBER CONSTANTS.
-const HTEXTURE Texture::INVALID_TEXTURE_HANDLE = 0;
-
-// METHODS.
-
-Texture::Texture(const HTEXTURE textureHandle) :
-    m_textureHandle(textureHandle)
+Texture::Texture(const std::shared_ptr<sf::Texture>& textureResource) :
+    m_textureResource(textureResource)
 {
     // Nothing else to do.
 }
 
 Texture::Texture(const Texture& textureToCopy) :
-    m_textureHandle(INVALID_TEXTURE_HANDLE)
+    m_textureResource()
 {
     Copy(textureToCopy);
 }
@@ -38,12 +33,12 @@ Texture& Texture::operator= (const Texture& rhsTexture)
     return (*this);
 }
 
-const HTEXTURE Texture::GetTextureHandle() const
+const std::shared_ptr<sf::Texture> Texture::GetTextureResource() const
 {
-    return m_textureHandle;
+    return m_textureResource;
 }
 
 void Texture::Copy(const Texture& textureToCopy)
 {
-    this->m_textureHandle = textureToCopy.m_textureHandle;
+    this->m_textureResource = textureToCopy.m_textureResource;
 }

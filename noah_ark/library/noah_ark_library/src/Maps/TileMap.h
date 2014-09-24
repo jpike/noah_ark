@@ -51,6 +51,10 @@ namespace MAPS
         /// @return The bottom-right position of the map.
         MATH::Vector2f GetBottomRightWorldPosition() const;
 
+        /// @brief  Gets the center world position of the tile map, in pixels.
+        /// @return The center position of the map.
+        MATH::Vector2f GetCenterWorldPosition() const;
+
         /// @brief  Gets the width of the map, in tiles.
         /// @return The width of the map, in tiles.
         unsigned int GetWidthInTiles() const;
@@ -66,6 +70,10 @@ namespace MAPS
         /// @brief  Gets the height of a tile in the map, in pixels.
         /// @return The height of single tile.
         unsigned int GetTileHeightInPixels() const;
+
+        /// @brief  Gets the width and height of the tile map, in pixels.
+        /// @return The size of the tile map.
+        MATH::Vector2f GetSizeInPixels() const;
 
         /// @brief      Gets the tile at the specified world position.
         /// @param[in]  worldXPosition - The world X position at which to get the tile.

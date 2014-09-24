@@ -2,9 +2,9 @@
 
 using namespace INPUT_CONTROL;
 
-KeyboardInputController::KeyboardInputController(HGE* const pGameEngine) :
+KeyboardInputController::KeyboardInputController() :
     m_enabled(true),
-    m_keyboard(pGameEngine)
+    m_keyboard()
 {}
 
 KeyboardInputController::~KeyboardInputController()
@@ -24,8 +24,7 @@ bool KeyboardInputController::UpButtonPressed() const
 {
     if (m_enabled)
     {
-        const int UP_KEY_CODE = HGEK_UP;
-        return m_keyboard.IsKeyDown(UP_KEY_CODE);
+        return m_keyboard.IsKeyDown(sf::Keyboard::Up);
     }
     else
     {
@@ -37,8 +36,7 @@ bool KeyboardInputController::DownButtonPressed() const
 {
     if (m_enabled)
     {
-        const int DOWN_KEY_CODE = HGEK_DOWN;
-        return m_keyboard.IsKeyDown(DOWN_KEY_CODE);
+        return m_keyboard.IsKeyDown(sf::Keyboard::Down);
     }
     else
     {
@@ -50,8 +48,7 @@ bool KeyboardInputController::LeftButtonPressed() const
 {
     if (m_enabled)
     {
-        const int LEFT_KEY_CODE = HGEK_LEFT;
-        return m_keyboard.IsKeyDown(LEFT_KEY_CODE);
+        return m_keyboard.IsKeyDown(sf::Keyboard::Left);
     }
     else
     {
@@ -63,8 +60,7 @@ bool KeyboardInputController::RightButtonPressed() const
 {
     if (m_enabled)
     {
-        const int RIGHT_KEY_CODE = HGEK_RIGHT;
-        return m_keyboard.IsKeyDown(RIGHT_KEY_CODE);
+        return m_keyboard.IsKeyDown(sf::Keyboard::Right);
     }
     else
     {

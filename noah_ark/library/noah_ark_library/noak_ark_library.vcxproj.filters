@@ -73,6 +73,12 @@
     <Filter Include="Header Files\Core">
       <UniqueIdentifier>{e76c2b04-1771-48f1-9384-a661f3d2445c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Resources">
+      <UniqueIdentifier>{987c335d-d622-41a9-b0ef-ad9b7bde9e0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resources">
+      <UniqueIdentifier>{4956a80e-a2d1-4ddf-aa74-81899618280f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\States\OverworldState.h">
@@ -174,6 +180,9 @@
     <ClInclude Include="src\Physics\Collision\Movement.h">
       <Filter>Header Files\Physics\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="src\Resources\ResourceManager.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -253,6 +262,9 @@
     </ClCompile>
     <ClCompile Include="src\Physics\Collision\Movement.cpp">
       <Filter>Source Files\Physics\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resources\ResourceManager.cpp">
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

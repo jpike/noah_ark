@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <hge.h>
 #include "Graphics/Camera.h"
 #include "Input/MapScrollingDebugInputController.h"
 #include "Maps/OverworldMapSpecification.h"
@@ -18,11 +17,9 @@ namespace STATES
     {
     public:
         /// @brief      Constructor.
-        /// @param[in]  pGameEngine - The HGE game engine.  Must not be nullptr.
         /// @param[in]  graphicsSystem - The graphics system.
         /// @throws     std::runtime_error - Thrown if the overworld can't be loaded.
         explicit TileMapScrollingTestState(
-            HGE* const pGameEngine,
             std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
         /// @brief  Destructor.
         virtual ~TileMapScrollingTestState();

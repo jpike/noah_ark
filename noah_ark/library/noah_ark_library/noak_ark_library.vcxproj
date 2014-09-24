@@ -40,6 +40,7 @@
     <ClInclude Include="src\Physics\Collision\ICollisionComponent.h" />
     <ClInclude Include="src\Physics\Collision\Movement.h" />
     <ClInclude Include="src\Processes\ScrollProcess.h" />
+    <ClInclude Include="src\Resources\ResourceManager.h" />
     <ClInclude Include="src\States\IGameState.h" />
     <ClInclude Include="src\States\OverworldState.h" />
     <ClInclude Include="src\States\StateManager.h" />
@@ -69,6 +70,7 @@
     <ClCompile Include="src\Physics\Collision\CollisionSystem.cpp" />
     <ClCompile Include="src\Physics\Collision\Movement.cpp" />
     <ClCompile Include="src\Processes\ScrollProcess.cpp" />
+    <ClCompile Include="src\Resources\ResourceManager.cpp" />
     <ClCompile Include="src\States\OverworldState.cpp" />
     <ClCompile Include="src\States\StateManager.cpp" />
     <ClCompile Include="src\States\TileMapScrollingTestState.cpp" />
@@ -104,18 +106,18 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>./src;($ProjectDir)src;$(HGE_DIR)\include;$(TMX_PARSER_DIR);$(IncludePath)</IncludePath>
+    <IncludePath>./src;($ProjectDir)src;$(SFML_DIR)\include;$(THOR_DIR)\include;$(TMX_PARSER_DIR);$(BOOST_DIR);$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <LibraryPath>$(HGE_DIR)\lib\vc;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SFML_DIR)\lib\vc;$(THOR_DIR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>./src;($ProjectDir)src;$(HGE_DIR)\include;$(TMX_PARSER_DIR);$(IncludePath)</IncludePath>
+    <IncludePath>./src;($ProjectDir)src;$(SFML_DIR)\include;$(THOR_DIR)\include;$(TMX_PARSER_DIR);$(BOOST_DIR);$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <LibraryPath>$(HGE_DIR)\lib\vc;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SFML_DIR)\lib\vc;$(THOR_DIR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

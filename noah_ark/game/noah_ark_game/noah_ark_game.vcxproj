@@ -48,18 +48,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\noah_ark_library\src;$(HGE_DIR)\include;$(TMX_PARSER_DIR);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\noah_ark_library\src;$(SFML_DIR)\include;$(THOR_DIR)\include;$(TMX_PARSER_DIR);$(BOOST_DIR);$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <LibraryPath>$(HGE_DIR)\lib\vc;$(SolutionDir)noah_ark\library\noah_ark_library\bin\$(Configuration);$(TMX_PARSER_DIR)\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)noah_ark\library\noah_ark_library\bin\$(Configuration);$(SFML_DIR)\lib;$(THOR_DIR)\lib;$(TMX_PARSER_DIR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\noah_ark_library\src;$(HGE_DIR)\include;$(TMX_PARSER_DIR);$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\noah_ark_library\src;$(SFML_DIR)\include;$(THOR_DIR)\include;$(TMX_PARSER_DIR);$(BOOST_DIR);$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
-    <LibraryPath>$(HGE_DIR)\lib\vc;$(SolutionDir)noah_ark\library\noah_ark_library\bin\$(Configuration);$(TMX_PARSER_DIR)\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)noah_ark\library\noah_ark_library\bin\$(Configuration);$(SFML_DIR)\lib;$(THOR_DIR)\lib;$(TMX_PARSER_DIR)\lib;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -73,11 +73,13 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>noah_ark_library_$(Configuration).lib;hge.lib;hgehelp.lib;TmxParserd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>LIBC.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>noah_ark_library_$(Configuration).lib;sfml-main-d.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;thor-d.lib;TmxParserd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(HGE_DIR)\hge.dll" "$(TargetDir)"
+      <Command>xcopy /Y "$(SFML_DIR)\bin\*.dll" "$(TargetDir)"
+xcopy /Y "$(THOR_DIR)\bin\*.dll" "$(TargetDir)"
 
 xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(TargetDir)res\"</Command>
     </PostBuildEvent>
@@ -97,14 +99,16 @@ xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(Targe
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>noah_ark_library_$(Configuration).lib;hge.lib;hgehelp.lib;TmxParser.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <IgnoreSpecificDefaultLibraries>LIBC.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>noah_ark_library_$(Configuration).lib;sfml-main.lib;sfml-system.lib;sfml-window.lib;sfml-graphics.lib;thor.lib;TmxParser.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/SAFESEH:NO %(AdditionalOptions)</AdditionalOptions>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(HGE_DIR)\hge.dll" "$(TargetDir)"
+      <Command>xcopy /Y "$(SFML_DIR)\bin\*.dll" "$(TargetDir)"
+xcopy /Y "$(THOR_DIR)\bin\*.dll" "$(TargetDir)"
 
 xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(TargetDir)res\"</Command>
     </PostBuildEvent>

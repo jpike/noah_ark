@@ -13,8 +13,7 @@ namespace INPUT_CONTROL
     {
     public:
         /// @brief      Constructor.  Input is enabled by default.
-        /// @param[in]  pGameEngine - The HGE game engine.  Must not be nullptr.
-        explicit MapScrollingDebugInputController(HGE* const pGameEngine);
+        explicit MapScrollingDebugInputController();
         /// @brief  Destructor.
         virtual ~MapScrollingDebugInputController();
 

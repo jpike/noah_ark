@@ -1,7 +1,7 @@
 #pragma once
 
-#include <hgesprite.h>
 #include <memory>
+#include <SFML/Graphics.hpp>
 #include "Graphics/IGraphicsComponent.h"
 #include "Graphics/Texture.h"
 #include "Math/FloatRectangle.h"
@@ -17,8 +17,8 @@ namespace GRAPHICS
     {
     public:
         /// @brief      Constructor.  The sprite is visible by default.
-        /// @param[in]  sprite - The HGE sprite resource to use.
-        explicit Sprite(const std::shared_ptr<hgeSprite>& sprite);
+        /// @param[in]  sprite - The SFML sprite resource to use.
+        explicit Sprite(const std::shared_ptr<sf::Sprite>& sprite);
         
         /// @brief  Destructor.
         virtual ~Sprite();
@@ -26,8 +26,8 @@ namespace GRAPHICS
         /// @copydoc    IGraphicsComponent::IsVisible() const
         virtual bool IsVisible() const;
 
-        /// @copydoc    IGraphicsComponent::Render()
-        virtual void Render();
+        /// @copydoc    IGraphicsComponent::Render(sf::RenderTarget& renderTarget)
+        virtual void Render(sf::RenderTarget& renderTarget);
 
         /// @copydoc    IGraphicsComponent::Update(const float elapsedTimeInSeconds)
         virtual void Update(const float elapsedTimeInSeconds);
@@ -43,18 +43,14 @@ namespace GRAPHICS
         /// @param[in]  yPositionInPixels - The y-coordinate of the sprite in the world.
         void SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels);
 
-        /// @brief      Sets the flipping capabilities of the sprite.
-        /// @param[in]  flippedHorizontally - Whether or not the sprite is flipped horizontally.
-        /// @param[in]  flippedVertically - Whether or not the sprite is flipped horizontally.
-        void SetFlip(const bool flippedHorizontally, const bool flippedVertically);
-
         /// @brief  Gets the bounding box of the tile, in world pixel coordinates.
         /// @return The bounding box of the tile.
         MATH::FloatRectangle GetBoundingBox() const;
 
     private:
-        std::shared_ptr<hgeSprite> m_sprite;   ///< The underlying HGE sprite resource.
+        std::shared_ptr<sf::Sprite> m_sprite;   ///< The underlying HGE sprite resource.
         bool m_visible; ///< Whether or not the sprite is visible.
         std::shared_ptr<MATH::Vector2f> m_worldPositionInPixels;  ///< The position of the sprite in the world.
+        float m_zPosition;  ///< The z-position of the sprite.
     };
 }

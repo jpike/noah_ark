@@ -122,7 +122,20 @@ void AnimatedSprite::Play()
     bool currentAnimationSequenceExists = (nullptr != currentAnimationSequence);
     if (currentAnimationSequenceExists)
     {
-        // PLAY THE CURRENT ANIMATION SEQUENCE.
+        // CHECK IF AN ANIMATION SEQUENCE IS CURRENTLY PLAYING.
+        if (m_animator.isPlayingAnimation())
+        {
+            // CHECK IF THE SAME ANIMATION SEQUENCE IS ALREADY PLAYING.
+            std::string playingAnimationSequence = m_animator.getPlayingAnimation();
+            bool sameAnimationSequencePlaying = (currentAnimationSequence->GetName() == playingAnimationSequence);
+            if (sameAnimationSequencePlaying)
+            {
+                // Go ahead and return.  We don't want to start re-playing the animation sequence because
+                // that will have the effect of restarting it, which will result in an appearance of no animation.
+                return;
+            }
+        }
+
         m_animator.playAnimation(
             currentAnimationSequence->GetName(),
             currentAnimationSequence->IsLooping());
@@ -137,6 +150,17 @@ void AnimatedSprite::ResetAnimation()
     if (currentAnimationExists)
     {
         // STOP PLAYING THE CURRENT ANIMATION SEQUENCE.
+        if (m_animator.isPlayingAnimation())
+        {
+            // RESET THE SPRITE TO THE FIRST FRAME OF THE ANIMATION.
+            // This is necessary so that the sprite isn't left with a frame in the middle of the animation sequence.
+            // The resetting is done by re-starting the animation, updating it with zero seconds to the force it
+            // to the ver beginning, and finally animating the actual sprite to use the animation with zero progress.
+            m_animator.playAnimation(currentAnimationSequence->GetName(), currentAnimationSequence->IsLooping());
+            const sf::Time BEGINNING_OF_ANIMATION = sf::seconds(0.0f);
+            m_animator.update(BEGINNING_OF_ANIMATION);
+            m_animator.animate(*m_sprite);
+        }
         m_animator.stopAnimation();
     }
 }

@@ -27,7 +27,7 @@
         "noah_walk_front":
         {
             "loop": true,
-            "duration_in_seconds": 0.34,
+            "duration_in_seconds": 0.7,
             "frames": 
             [
                 { "left": 0, "top": 0, "width": 16, "height": 16 },
@@ -39,7 +39,7 @@
         "noah_walk_back":
         {
             "loop": true,
-            "duration_in_seconds": 0.34,
+            "duration_in_seconds": 0.7,
             "frames": 
             [
                 { "left": 0, "top": 16, "width": 16, "height": 16 },
@@ -51,7 +51,7 @@
         "noah_walk_left":
         {
             "loop": true,
-            "duration_in_seconds": 0.34,
+            "duration_in_seconds": 0.7,
             "frames": 
             [
                 { "left": 0, "top": 32, "width": 16, "height": 16 },
@@ -62,7 +62,7 @@
         "noah_walk_right":
         {
             "loop": true,
-            "duration_in_seconds": 0.34,
+            "duration_in_seconds": 0.7,
             "frames": 
             [
                 { "left": 0, "top": 48, "width": 16, "height": 16 },

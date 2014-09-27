@@ -86,7 +86,7 @@ namespace GRAPHICS
         ///             the texture to use for the sprite image.
         /// @param[in]  widthInTexels - The width of the rectangle within the texture to use for the sprite image.
         /// @param[in]  heightInTexels - The height of the rectangle within the texture to use for the sprite image.
-        /// @param[in]  graphics_layer - The visual layer in which the sprite is to be created and rendered.
+        /// @param[in]  graphicsLayer - The visual layer in which the sprite is to be created and rendered.
         /// @return     The newly created sprite.
         std::shared_ptr<Sprite> CreateSprite(
             const std::shared_ptr<Texture>& texture,
@@ -98,7 +98,7 @@ namespace GRAPHICS
 
         /// @brief      Creates a new animated sprite within the graphics system.
         /// @param[in]  spriteResourceName - The name of the basic sprite resource to be animated.
-        /// @param[in]  graphics_layer - The visual layer in which the sprite is to be created and rendered.
+        /// @param[in]  graphicsLayer - The visual layer in which the sprite is to be created and rendered.
         /// @return     The newly created animated sprite; nullptr if an error occurs.
         std::shared_ptr<AnimatedSprite> CreateAnimatedSprite(
             const std::string& spriteResourceName,

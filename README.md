@@ -19,13 +19,17 @@ For projects exist within the Visual Studio solution:
 * noah_ark_resources - A project to manage any non-code resources of the project (graphics, tile maps, audio, etc.).
 
 Several dependencies are used:
-* [Haaf's Game Engine 1.81](http://hge.relishgames.com) - The main game engine ([zlib/libpng license](http://hge.relishgames.com/license.html)).
+* [SFML 2.1](http://sfml-dev.org/) - The main library for windowing, graphics, and input. ([zlib/libpng license](http://sfml-dev.org/license.php)).
+* [Thor commit f57666d - SFML 2.1 compatible](http://www.bromeon.ch/libraries/thor/) - An extension library for SFML for animation ([zlib/libpng license](https://github.com/Bromeon/Thor/blob/master/License.txt)).
+* [Boost 1.56.0](http://www.boost.org/) - Used for JSON parsing ([Boost Software license](http://www.boost.org/LICENSE_1_0.txt)).
 * [TmxParser](https://code.google.com/p/tmx-parser/) - Parsing tile maps made with Tiled ([New BSD license](https://code.google.com/p/tmx-parser/source/browse/trunk/LICENSE)).
 * [Catch](https://github.com/philsquared/Catch) - Unit testing ([Boost Software license](https://github.com/philsquared/Catch/blob/master/LICENSE_1_0.txt)).
 
 The dependencies described above are not included with this project and must be downloaded externally.  To build the solution, you'll need to have environment variables set to the following directories:
 
-* HGE_DIR - Set to the root directory for Haaf's Game Engine (with include and lib directories and hge.dll).
+* SFML_DIR - Set to the root directory for SFML (with include, lib, and bin directories).
+* THOR_DIR - Set to the directory for a built version of Thor (with include, lib, and bin directories).
+* BOOST_DIR - Set to the root directory for the Boost version (with directories like boost, doc, libs).
 * TMX_PARSER_DIR - Set to the root directory for tmx-parser (the directory with the .sln file).
 * CATCH_DIR - Set to the directory with Catch's catch.hpp file.
 

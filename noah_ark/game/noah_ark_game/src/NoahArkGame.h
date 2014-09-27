@@ -73,7 +73,7 @@ private:
 
     // MAIN GAME LOOP HELPER FUNCTIONS.
     /// @brief      Updates the game for a single frame.
-    /// @param[in]  The elapsed time since the last frame update.
+    /// @param[in]  elapsedTime - The elapsed time since the last frame update.
     void Update(const sf::Time& elapsedTime);
     /// @brief          Renders a single frame of the game.
     void Render();

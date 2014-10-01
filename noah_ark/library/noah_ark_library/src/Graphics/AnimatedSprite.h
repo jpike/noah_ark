@@ -14,13 +14,20 @@
 namespace GRAPHICS
 {
     ///////////////////////////////////////////////////////////
-    /// @brief  An animated graphical sprite.
+    /// @brief  An animated graphical sprite.  This class enhances
+    ///         the basic sprite functionality by allowing the
+    ///         visible rectangle of the sprite's texture to change
+    ///         over time according to frames in animation sequences.
+    ///         Multiple animation sequences, each identified by
+    ///         unique names, may be added to the sprite.
     ///////////////////////////////////////////////////////////
     class AnimatedSprite : public IGraphicsComponent, public MATH::ITransformable
     {
     public:
         /// @brief      Constructor.  The sprite is visible by default.
         /// @param[in]  sprite - The SFML sprite resource being animated.  Must not be null.
+        ///             The sprite's origin will be set to the center of its texture rectangle,
+        ///             and its position will become the world position of this animated sprite.
         /// @throws     std::invalid_argument - Thrown if the provided sprite resource is null.
         explicit AnimatedSprite(const std::shared_ptr<sf::Sprite>& sprite);
         
@@ -35,9 +42,6 @@ namespace GRAPHICS
 
         /// @copydoc    IGraphicsComponent::Update(const float elapsedTimeInSeconds)
         virtual void Update(const float elapsedTimeInSeconds);
-
-        /// @copydoc    IGraphicsComponent::SetZPosition(const float zPosition)
-        virtual void SetZPosition(const float zPosition);
 
         /// @copydoc    ITransformable::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent)
         virtual void SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent);
@@ -91,6 +95,13 @@ namespace GRAPHICS
         AnimatedSprite(const AnimatedSprite& spriteToCopy); ///< Private to disallow copying.
         AnimatedSprite& operator=(const AnimatedSprite& rhsSprite); ///< Private to disallow copying.
         
+        /// @brief  Synchronizes the sprite resource's position with the overall world
+        ///         position of this animated sprite.  This is necessary because the 
+        ///         world position is maintained separately from the position in the
+        ///         sprite resource, so the sprite resource needs to be updated anytime
+        ///         the main world position changes.
+        void SynchronizeSpriteResourcePosition();
+
         /// @brief      Returns the animation sequence currently in use.
         ///             If the current animation sequence name is not mapped to a valid
         ///             sequence, then nullptr may be returned.
@@ -112,6 +123,5 @@ namespace GRAPHICS
 
         bool m_visible; ///< Whether or not the sprite is visible.
         std::shared_ptr<MATH::Vector2f> m_worldPositionInPixels;  ///< The position of the sprite in the world.
-        float m_zPosition;  ///< The z-position of the sprite.
     };
 }

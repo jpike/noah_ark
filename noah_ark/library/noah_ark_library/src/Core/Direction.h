@@ -1,7 +1,7 @@
 #pragma once
 
 /// Holds generic core code for the Noah's Ark game that doesn't
-/// necessarily fit within a specific subsystem.  An example would
+/// necessarily fit within a specific subsystem.  Examples would
 /// be primitive and common data types.
 namespace CORE
 {

@@ -9,8 +9,7 @@ AnimatedSprite::AnimatedSprite(const std::shared_ptr<sf::Sprite>& sprite) :
     m_animationSequences(),
     m_currentAnimationSequenceName(),
     m_visible(true),
-    m_worldPositionInPixels(new MATH::Vector2f(0.0f, 0.0f)),
-    m_zPosition(0.0f)
+    m_worldPositionInPixels(new MATH::Vector2f(0.0f, 0.0f))
 {
     // REQUIRE THAT THE SPRITE ISN'T NULL.
     bool spriteProvided = (nullptr != sprite);
@@ -18,6 +17,19 @@ AnimatedSprite::AnimatedSprite(const std::shared_ptr<sf::Sprite>& sprite) :
     {
         throw std::invalid_argument("Sprite provided for the animated sprite cannot be null.");
     }
+
+    // SET THE WORLD POSITION TO MATCH THAT OF THE PROVIDED SPRITE.
+    // It was not set in the initialization list because the sprite pointer may have been null.
+    const sf::Vector2f& spritePosition = m_sprite->getPosition();
+    m_worldPositionInPixels->X = spritePosition.x;
+    m_worldPositionInPixels->Y = spritePosition.y;
+
+    // SET THE SPRITE RESOURCE TO BE CENTERED IN THE MIDDLE OF ITS TEXTURE RECTANGLE.
+    // All sprites within this game are expected to be positioned based on their centers.
+    sf::FloatRect spriteBounds = m_sprite->getLocalBounds();
+    const float spriteTextureCenterX = spriteBounds.width / 2.0f;
+    const float spriteTextureCenterY = spriteBounds.height / 2.0f;
+    m_sprite->setOrigin(spriteTextureCenterX, spriteTextureCenterY);
 }
         
 AnimatedSprite::~AnimatedSprite()
@@ -31,7 +43,7 @@ bool AnimatedSprite::IsVisible() const
 void AnimatedSprite::Render(sf::RenderTarget& renderTarget)
 {
     // MAKE SURE THE SPRITE IS CORRECTLY POSITIONED IN THE WORLD.
-    m_sprite->setPosition(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
+    SynchronizeSpriteResourcePosition();
 
     // APPLY ANY ANIMATIONS TO THE SPRITE.
     m_animator.animate(*m_sprite);
@@ -47,14 +59,19 @@ void AnimatedSprite::Update(const float elapsedTimeInSeconds)
     m_animator.update(elapsedTime);
 }
 
-void AnimatedSprite::SetZPosition(const float zPosition)
-{
-    m_zPosition = zPosition;
-}
-
 void AnimatedSprite::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent)
 {
+    // MAKE SURE THE PROVIDED POSITION COMPONENT EXISTS.
+    bool newPositionComponentExists = (nullptr != positionComponent);
+    if (!newPositionComponentExists)
+    {
+        throw std::invalid_argument("Position component provided for the animated sprite cannot be null.");
+    }
+
+    // UPDATE THE SPRITE TO USE THE NEW POSITION COMPONENT.
     m_worldPositionInPixels = positionComponent;
+    // The sprite resource needs to be kept in-sync.
+    SynchronizeSpriteResourcePosition();
 }
 
 MATH::Vector2f AnimatedSprite::GetWorldPosition() const
@@ -66,6 +83,9 @@ void AnimatedSprite::SetWorldPosition(const float xPositionInPixels, const float
 {
     m_worldPositionInPixels->X = xPositionInPixels;
     m_worldPositionInPixels->Y = yPositionInPixels;
+
+    // The sprite resource needs to be kept in-sync.
+    SynchronizeSpriteResourcePosition();
 }
 
 MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox()
@@ -79,21 +99,33 @@ MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox()
 void AnimatedSprite::MoveUp(const float distanceToMoveInPixels)
 {
     m_worldPositionInPixels->Y -= distanceToMoveInPixels;
+
+    // The sprite resource needs to be kept in-sync.
+    SynchronizeSpriteResourcePosition();
 }
 
 void AnimatedSprite::MoveDown(const float distanceToMoveInPixels)
 {
     m_worldPositionInPixels->Y += distanceToMoveInPixels;
+
+    // The sprite resource needs to be kept in-sync.
+    SynchronizeSpriteResourcePosition();
 }
 
 void AnimatedSprite::MoveLeft(const float distanceToMoveInPixels)
 {
     m_worldPositionInPixels->X -= distanceToMoveInPixels;
+
+    // The sprite resource needs to be kept in-sync.
+    SynchronizeSpriteResourcePosition();
 }
 
 void AnimatedSprite::MoveRight(const float distanceToMoveInPixels)
 {
     m_worldPositionInPixels->X += distanceToMoveInPixels;
+
+    // The sprite resource needs to be kept in-sync.
+    SynchronizeSpriteResourcePosition();
 }
 
 void AnimatedSprite::AddAnimationSequence(
@@ -163,6 +195,11 @@ void AnimatedSprite::ResetAnimation()
         }
         m_animator.stopAnimation();
     }
+}
+
+void AnimatedSprite::SynchronizeSpriteResourcePosition()
+{
+    m_sprite->setPosition(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
 }
 
 std::shared_ptr<AnimationSequence> AnimatedSprite::GetCurrentAnimationSequence()

@@ -195,4 +195,372 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(NEW_X_POSITION) == static_cast<int>(newBoundingBox.GetCenterXPosition()) );
         REQUIRE( static_cast<int>(NEW_Y_POSITION) == static_cast<int>(newBoundingBox.GetCenterYPosition()) );
     }
+
+    TEST_CASE( "Move up by negative amount.", "[AnimatedSprite][MoveUp][Negative]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE UP BY A NEGATIVE AMOUNT.
+        // The specific amount is arbitrary.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = -11.0f;
+        animatedSprite.MoveUp(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the Y position should change by the amount moved,
+        // and upward movement is in the negative Y direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION - MOVEMENT_AMOUNT_IN_PIXELS;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move up by zero.", "[AnimatedSprite][MoveUp][Zero]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE UP BY ZERO.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = 0.0f;
+        animatedSprite.MoveUp(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the Y position should change by the amount moved,
+        // and upward movement is in the negative Y direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION - MOVEMENT_AMOUNT_IN_PIXELS;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move up by positive amount.", "[AnimatedSprite][MoveUp][Positive]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE UP BY A POSITIVE AMOUNT.
+        // The specific amount is arbitrary.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = 8.0f;
+        animatedSprite.MoveUp(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the Y position should change by the amount moved,
+        // and upward movement is in the negative Y direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION - MOVEMENT_AMOUNT_IN_PIXELS;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move down by negative amount.", "[AnimatedSprite][MoveDown][Negative]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE DOWN BY A NEGATIVE AMOUNT.
+        // The specific amount is arbitrary.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = -11.0f;
+        animatedSprite.MoveDown(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the Y position should change by the amount moved,
+        // and downward movement is in the positive Y direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION + MOVEMENT_AMOUNT_IN_PIXELS;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move down by zero.", "[AnimatedSprite][MoveDown][Zero]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE DOWN BY ZERO.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = 0.0f;
+        animatedSprite.MoveDown(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the Y position should change by the amount moved,
+        // and downward movement is in the positive Y direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION + MOVEMENT_AMOUNT_IN_PIXELS;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move down by positive amount.", "[AnimatedSprite][MoveDown][Positive]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE DOWN BY A POSITIVE AMOUNT.
+        // The specific amount is arbitrary.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = 8.0f;
+        animatedSprite.MoveDown(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the Y position should change by the amount moved,
+        // and downward movement is in the positive Y direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION + MOVEMENT_AMOUNT_IN_PIXELS;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move left by negative amount.", "[AnimatedSprite][MoveLeft][Negative]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE LEFT BY A NEGATIVE AMOUNT.
+        // The specific amount is arbitrary.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = -11.0f;
+        animatedSprite.MoveLeft(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the X position should change by the amount moved,
+        // and leftward movement is in the negative X direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION - MOVEMENT_AMOUNT_IN_PIXELS;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move left by zero.", "[AnimatedSprite][MoveLeft][Zero]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE LEFT BY ZERO.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = 0.0f;
+        animatedSprite.MoveLeft(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the X position should change by the amount moved,
+        // and leftward movement is in the negative X direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION - MOVEMENT_AMOUNT_IN_PIXELS;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move left by positive amount.", "[AnimatedSprite][MoveLeft][Positive]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE LEFT BY A POSITIVE AMOUNT.
+        // The specific amount is arbitrary.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = 8.0f;
+        animatedSprite.MoveLeft(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the X position should change by the amount moved,
+        // and leftward movement is in the negative X direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION - MOVEMENT_AMOUNT_IN_PIXELS;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move right by negative amount.", "[AnimatedSprite][MoveRight][Negative]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE RIGHT BY A NEGATIVE AMOUNT.
+        // The specific amount is arbitrary.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = -11.0f;
+        animatedSprite.MoveRight(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the X position should change by the amount moved,
+        // and rightward movement is in the positive X direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION + MOVEMENT_AMOUNT_IN_PIXELS;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move right by zero.", "[AnimatedSprite][MoveRight][Zero]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE RIGHT BY ZERO.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = 0.0f;
+        animatedSprite.MoveRight(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the X position should change by the amount moved,
+        // and rightward movement is in the positive X direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION + MOVEMENT_AMOUNT_IN_PIXELS;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
+
+    TEST_CASE( "Move right by positive amount.", "[AnimatedSprite][MoveRight][Positive]" )
+    {
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
+        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+
+        // SET AN INITIAL POSITION.
+        // The initial position is arbitrary.
+        const float INITIAL_X_POSITION = 32.0f;
+        const float INITIAL_Y_POSITION = 55.0f;
+        animatedSprite.SetWorldPosition(INITIAL_X_POSITION, INITIAL_Y_POSITION);
+
+        // MOVE THE SPRITE RIGHT BY A POSITIVE AMOUNT.
+        // The specific amount is arbitrary.
+        const float MOVEMENT_AMOUNT_IN_PIXELS = 8.0f;
+        animatedSprite.MoveRight(MOVEMENT_AMOUNT_IN_PIXELS);
+
+        // VERIFY THE FINAL POSITION.
+        // Only the X position should change by the amount moved,
+        // and rightward movement is in the positive X direction.
+        const float EXPECTED_FINAL_X_POSITION = INITIAL_X_POSITION + MOVEMENT_AMOUNT_IN_PIXELS;
+        const float EXPECTED_FINAL_Y_POSITION = INITIAL_Y_POSITION;
+        // The positions are cast to integers to allow for validation ignoring floating-point issues.
+        // It is expected that the positions should be convert directly to integers.  A position
+        // that differs by less than an integral amount also isn't that important since that means
+        // it differs by less than a pixel, which shouldn't be that noticeable to a human eye.
+        MATH::Vector2f actualFinalPosition = animatedSprite.GetWorldPosition();
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_X_POSITION) == static_cast<int>(actualFinalPosition.X) );
+        REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
+    }
 }

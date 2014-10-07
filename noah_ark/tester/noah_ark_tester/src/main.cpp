@@ -1,6 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
 #include "GraphicsTests/AnimatedSpriteTests.h"
+#include "GraphicsTests/AnimationSequenceTests.h"
 #include "MapsTests/OverworldMapSpecificationTests.h"
 #include "MapsTests/SurroundingMapLoaderTests.h"
 #include "MathTests/FloatRectangleTests.h"

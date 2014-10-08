@@ -68,5 +68,8 @@
     <ClInclude Include="src\GraphicsTests\AnimationSequenceTests.h">
       <Filter>Header Files\GraphicsTests</Filter>
     </ClInclude>
+    <ClInclude Include="src\GraphicsTests\CameraTests.h">
+      <Filter>Header Files\GraphicsTests</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

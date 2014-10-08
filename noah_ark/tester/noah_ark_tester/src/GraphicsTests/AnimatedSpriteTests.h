@@ -196,7 +196,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(NEW_Y_POSITION) == static_cast<int>(newBoundingBox.GetCenterYPosition()) );
     }
 
-    TEST_CASE( "Move up by negative amount.", "[AnimatedSprite][MoveUp][Negative]" )
+    TEST_CASE( "Move animated sprite up by negative amount.", "[AnimatedSprite][MoveUp][Negative]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -227,7 +227,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move up by zero.", "[AnimatedSprite][MoveUp][Zero]" )
+    TEST_CASE( "Move animated sprite up by zero.", "[AnimatedSprite][MoveUp][Zero]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -257,7 +257,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move up by positive amount.", "[AnimatedSprite][MoveUp][Positive]" )
+    TEST_CASE( "Move animated sprite up by positive amount.", "[AnimatedSprite][MoveUp][Positive]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -288,7 +288,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move down by negative amount.", "[AnimatedSprite][MoveDown][Negative]" )
+    TEST_CASE( "Move animated sprite down by negative amount.", "[AnimatedSprite][MoveDown][Negative]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -319,7 +319,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move down by zero.", "[AnimatedSprite][MoveDown][Zero]" )
+    TEST_CASE( "Move animated sprite down by zero.", "[AnimatedSprite][MoveDown][Zero]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -349,7 +349,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move down by positive amount.", "[AnimatedSprite][MoveDown][Positive]" )
+    TEST_CASE( "Move animated sprite down by positive amount.", "[AnimatedSprite][MoveDown][Positive]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -380,7 +380,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move left by negative amount.", "[AnimatedSprite][MoveLeft][Negative]" )
+    TEST_CASE( "Move animated sprite left by negative amount.", "[AnimatedSprite][MoveLeft][Negative]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -411,7 +411,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move left by zero.", "[AnimatedSprite][MoveLeft][Zero]" )
+    TEST_CASE( "Move animated sprite left by zero.", "[AnimatedSprite][MoveLeft][Zero]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -441,7 +441,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move left by positive amount.", "[AnimatedSprite][MoveLeft][Positive]" )
+    TEST_CASE( "Move animated sprite left by positive amount.", "[AnimatedSprite][MoveLeft][Positive]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -472,7 +472,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move right by negative amount.", "[AnimatedSprite][MoveRight][Negative]" )
+    TEST_CASE( "Move animated sprite right by negative amount.", "[AnimatedSprite][MoveRight][Negative]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -503,7 +503,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move right by zero.", "[AnimatedSprite][MoveRight][Zero]" )
+    TEST_CASE( "Move animated sprite right by zero.", "[AnimatedSprite][MoveRight][Zero]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
@@ -533,7 +533,7 @@ namespace TEST_ANIMATED_SPRITE
         REQUIRE( static_cast<int>(EXPECTED_FINAL_Y_POSITION) == static_cast<int>(actualFinalPosition.Y) );
     }
 
-    TEST_CASE( "Move right by positive amount.", "[AnimatedSprite][MoveRight][Positive]" )
+    TEST_CASE( "Move animated sprite right by positive amount.", "[AnimatedSprite][MoveRight][Positive]" )
     {
         // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
         std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();

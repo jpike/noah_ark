@@ -13,47 +13,60 @@ std::unique_ptr<NoahArkGame> NoahArkGame::singleNoahArkGame = nullptr;
 
 int NoahArkGame::RunGame()
 {
-    // CREATE THE SINGLETON INSTANCE OF THE GAME.
-    singleNoahArkGame = std::unique_ptr<NoahArkGame>(new NoahArkGame());
+    try
+    {
+        // CREATE THE SINGLETON INSTANCE OF THE GAME.
+        singleNoahArkGame = std::unique_ptr<NoahArkGame>(new NoahArkGame());
     
-    // INITIALIZE THE GAME.
-    bool initializationSuccessful = singleNoahArkGame->Initialize();
-    if (!initializationSuccessful)
-    {
-        return EXIT_CODE_INITIALIZATION_FAILURE;
-    }
-
-    // RUN THE GAME.
-    // This will not return until the user chooses to exit or an error occurs.
-    bool gameCompletedSuccessfully = singleNoahArkGame->RunGameLoop();
-
-    // SHUTDOWN THE GAME.
-    bool shutdownSuccessful = singleNoahArkGame->Shutdown();
-    // Free memory used by the singleton instance of the game.
-    singleNoahArkGame.reset();
-
-    // DETERMINE THE EXIT CODE TO RETURN.
-    if (gameCompletedSuccessfully)
-    {
-        if (shutdownSuccessful)
+        // INITIALIZE THE GAME.
+        bool initializationSuccessful = singleNoahArkGame->Initialize();
+        if (!initializationSuccessful)
         {
-            return EXIT_CODE_SUCCESS;
+            return EXIT_CODE_INITIALIZATION_FAILURE;
+        }
+
+        // RUN THE GAME.
+        // This will not return until the user chooses to exit or an error occurs.
+        bool gameCompletedSuccessfully = singleNoahArkGame->RunGameLoop();
+
+        // SHUTDOWN THE GAME.
+        bool shutdownSuccessful = singleNoahArkGame->Shutdown();
+        // Free memory used by the singleton instance of the game.
+        singleNoahArkGame.reset();
+
+        // DETERMINE THE EXIT CODE TO RETURN.
+        if (gameCompletedSuccessfully)
+        {
+            if (shutdownSuccessful)
+            {
+                return EXIT_CODE_SUCCESS;
+            }
+            else
+            {
+                return EXIT_CODE_SHUTDOWN_FAILURE;
+            }
         }
         else
         {
-            return EXIT_CODE_SHUTDOWN_FAILURE;
+            if (shutdownSuccessful)
+            {
+                return EXIT_CODE_FAILURE;
+            }
+            else
+            {
+                return (EXIT_CODE_FAILURE | EXIT_CODE_SHUTDOWN_FAILURE);
+            }
         }
     }
-    else
+    catch (const std::exception& exception)
     {
-        if (shutdownSuccessful)
-        {
-            return EXIT_CODE_FAILURE;
-        }
-        else
-        {
-            return (EXIT_CODE_FAILURE | EXIT_CODE_SHUTDOWN_FAILURE);
-        }
+        std::cerr << "Exception: " << exception.what() << std::endl;
+        return EXIT_CODE_FAILURE;
+    }
+    catch (...)
+    {
+        std::cerr << "Unknown exception." << std::endl;
+        return EXIT_FAILURE;
     }
 }
 

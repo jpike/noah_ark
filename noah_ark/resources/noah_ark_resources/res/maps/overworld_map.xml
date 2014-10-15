@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OverworldMap>
 	<WidthInTileMaps>7</WidthInTileMaps>
-	<HeightInTileMaps>4</HeightInTileMaps>
+	<HeightInTileMaps>7</HeightInTileMaps>
 	<!-- Starting map is currently arbitrarily chosen. -->
 	<StartingTileMapFilepath>res/maps/map_0_0.tmx</StartingTileMapFilepath>
 	<TileMaps>
@@ -37,5 +37,29 @@
         <Filepath>res/maps/map_4_3.tmx</Filepath>
         <Filepath>res/maps/map_5_3.tmx</Filepath>
         <Filepath>res/maps/map_6_3.tmx</Filepath>
+        <!-- ROW 4 -->
+        <Filepath>res/maps/map_0_4.tmx</Filepath>
+		<Filepath>res/maps/map_1_4.tmx</Filepath>
+		<Filepath>res/maps/map_2_4.tmx</Filepath>
+        <Filepath>res/maps/map_3_4.tmx</Filepath>
+        <Filepath>res/maps/map_4_4.tmx</Filepath>
+        <Filepath>res/maps/map_5_4.tmx</Filepath>
+        <Filepath>res/maps/map_6_4.tmx</Filepath>
+        <!-- ROW 5 -->
+        <Filepath>res/maps/map_0_5.tmx</Filepath>
+		<Filepath>res/maps/map_1_5.tmx</Filepath>
+		<Filepath>res/maps/map_2_5.tmx</Filepath>
+        <Filepath>res/maps/map_3_5.tmx</Filepath>
+        <Filepath>res/maps/map_4_5.tmx</Filepath>
+        <Filepath>res/maps/map_5_5.tmx</Filepath>
+        <Filepath>res/maps/map_6_5.tmx</Filepath>
+        <!-- ROW 6 -->
+        <Filepath>res/maps/map_0_6.tmx</Filepath>
+		<Filepath>res/maps/map_1_6.tmx</Filepath>
+		<Filepath>res/maps/map_2_6.tmx</Filepath>
+        <Filepath>res/maps/map_3_6.tmx</Filepath>
+        <Filepath>res/maps/map_4_6.tmx</Filepath>
+        <Filepath>res/maps/map_5_6.tmx</Filepath>
+        <Filepath>res/maps/map_6_6.tmx</Filepath>
 	</TileMaps>
 </OverworldMap>

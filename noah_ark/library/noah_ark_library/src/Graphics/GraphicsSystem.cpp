@@ -27,17 +27,11 @@ void GraphicsSystem::Render()
 
     // Calculate the new center position.
     sf::Vector2f originalViewCenter = originalView.getCenter();
-    // The displacements need to be flipped for the transformation because the
-    // camera's view represents absolute world positions for the top-left corner,
-    // and we want to translate the graphics at this position so that they match
-    // up to 0,0 on the screen.  For example, if the camera wants to view the world
-    // at coordinates 100,100, then we need to translate all graphics being rendered
-    // so that 100,100 (world) becomes 0,0 (screen).
-    /// @todo   This camera view logic needs to be re-verified.  SFML has a nicer
-    ///         interface than HGE, so we can probably re-work the camera class to
-    ///         take advantage of this.
-    float newCenterXPosition = 1.0f * m_camera.GetLeftViewPosition() + originalViewCenter.x;
-    float newCenterYPosition = 1.0f * m_camera.GetTopViewPosition() + originalViewCenter.y;
+    /// @todo   Rework the camera logic to use SFML's view class more directly.
+    ///         The concept of top-left positions (as opposed to a center + width/height
+    ///         or a rectangle) is leftover from the older HGE implementation.
+    float newCenterXPosition = m_camera.GetLeftViewPosition() + originalViewCenter.x;
+    float newCenterYPosition = m_camera.GetTopViewPosition() + originalViewCenter.y;
 
     // No rotation is needed.
     const float NO_ROTATION = 0.0f;

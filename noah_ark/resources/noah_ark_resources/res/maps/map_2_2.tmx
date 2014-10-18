@@ -5,7 +5,7 @@
  </tileset>
  <layer name="GroundLayer" width="32" height="24">
   <data encoding="base64" compression="zlib">
-   eJzt1ssKwCAMRNFAq/n/P64bQcoMDcTEgi7uxkWPFF9FRIqzG6RDtXWRvDbzx3kwf4aN/ArGouy3j+xMn5X5/61+xPrTH/hoDsffx8/cf+i8zTx/jv8duv929zPeHn09RL5/1NBKP9Jm37W20vb4M+zeA9FTDXk=
+   eJzt1rEKwCAMBNBAq/n/P26XgsNFAknOljrc4uALiolNRFowJ4gO6XcOI1Hb8sc6kJ/hWn4Haywf2cjPrGF2/jOfcf9sX1/goxq2/x+f+f5Rv/X4Gfb2fb2vcv591WfNnur/jzqy0q+0rX29WWlH/Az7yQXASw13
   </data>
  </layer>
 </map>

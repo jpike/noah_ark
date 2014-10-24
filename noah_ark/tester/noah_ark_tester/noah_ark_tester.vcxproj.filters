@@ -34,10 +34,16 @@
     <Filter Include="Header Files\GraphicsTests">
       <UniqueIdentifier>{5d9a28d3-d5d9-429e-b7d6-179218bff8e1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ResourcesTests">
+      <UniqueIdentifier>{73b4922b-0cd5-4000-aaa5-6d605142ac1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourcesTests\ResourceManagerTestConstants.cpp">
+      <Filter>Source Files\ResourcesTests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +76,12 @@
     </ClInclude>
     <ClInclude Include="src\GraphicsTests\CameraTests.h">
       <Filter>Header Files\GraphicsTests</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GraphicsTests\GraphicsSystemTests.h">
+      <Filter>Header Files\GraphicsTests</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ResourcesTests\ResourceManagerTestConstants.h">
+      <Filter>Header Files\ResourcesTests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

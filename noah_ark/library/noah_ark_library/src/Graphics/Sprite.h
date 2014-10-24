@@ -38,6 +38,9 @@ namespace GRAPHICS
         /// @copydoc    ITransformable::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent)
         virtual void SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent);
 
+        /// @brief      Gets the world position of the sprite.
+        /// @return     The world position of the sprite, in pixels.
+        MATH::Vector2f GetWorldPosition() const;
         /// @brief      Sets the world position of the sprite.
         /// @param[in]  xPositionInPixels - The x-coordinate of the sprite in the world.
         /// @param[in]  yPositionInPixels - The y-coordinate of the sprite in the world.

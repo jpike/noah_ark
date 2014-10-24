@@ -36,6 +36,7 @@ namespace GRAPHICS
         /// @brief      Constructor.
         /// @param[in]  renderTarget - The target which the graphics system should render to.
         /// @param[in]  resourceManager - The resource manager used to access graphics resources.
+        /// @throws     std::invalid_argument - Thrown if either of the provided pointers is null.
         explicit GraphicsSystem(
             const std::shared_ptr<sf::RenderTarget>& renderTarget,
             const std::shared_ptr<RESOURCES::ResourceManager>& resourceManager);
@@ -56,6 +57,9 @@ namespace GRAPHICS
         ///             which to update the graphics components.
         void Update(const float elapsedTimeInSeconds);
 
+        /// @brief  Retrieves the camera used by the graphics system.
+        /// @return The camera currently used for rendering.
+        Camera GetCamera() const;
         /// @brief      Sets the camera used by the graphics system for rendering.
         /// @param[in]  camera - The camera indicating the viewable area of the world.
         void SetCamera(const Camera& camera);

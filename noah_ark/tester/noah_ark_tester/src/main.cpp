@@ -3,6 +3,7 @@
 #include "GraphicsTests/AnimatedSpriteTests.h"
 #include "GraphicsTests/AnimationSequenceTests.h"
 #include "GraphicsTests/CameraTests.h"
+#include "GraphicsTests/GraphicsSystemTests.h"
 #include "MapsTests/OverworldMapSpecificationTests.h"
 #include "MapsTests/SurroundingMapLoaderTests.h"
 #include "MathTests/FloatRectangleTests.h"

@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "noah_ark_tester", "noah_ark\tester\noah_ark_tester\noah_ark_tester.vcxproj", "{4459616F-64F9-47ED-BD17-C365536B66D4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0D615E35-8F41-44B6-BE1B-FED957017972} = {0D615E35-8F41-44B6-BE1B-FED957017972}

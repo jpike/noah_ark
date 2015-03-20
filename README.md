@@ -2,7 +2,7 @@
 
 This in-development game is based on the Biblical story of Noah's Ark.  The goal is to provide a fun way to become more familiar with and learn more about the story of Noah's Ark.
 
-The game will be a native Windows game, running at least on Windows 7.  Currently, the game is in the earliest stages of development, with little more than an empty window appearing when run.
+The game will be a native Windows game, running at least on Windows 8.  Currently, the game is in the earliest stages of development, with little more than an empty window appearing when run.
 
 ## Gameplay
 
@@ -10,7 +10,7 @@ Gameplay details are still being fleshed out, but some preliminary details are p
 
 ## Programming
 
-The game is being programmed using C++ within a Visual Studio 2012 Express environment.  Doxygen is used to document the code.
+The game is being programmed using C++ within a Visual Studio 2013 environment.  Doxygen is used to document the code.
 
 For projects exist within the Visual Studio solution:
 * noah_ark_game - The main game.  Uses the library to orchestrate running an actual game.
@@ -19,7 +19,7 @@ For projects exist within the Visual Studio solution:
 * noah_ark_resources - A project to manage any non-code resources of the project (graphics, tile maps, audio, etc.).
 
 Several dependencies are used:
-* [SFML 2.1](http://sfml-dev.org/) - The main library for windowing, graphics, and input. ([zlib/libpng license](http://sfml-dev.org/license.php)).
+* [SFML 2.2](http://sfml-dev.org/) - The main library for windowing, graphics, and input. ([zlib/libpng license](http://sfml-dev.org/license.php)).
 * [Thor commit f57666d - SFML 2.1 compatible](http://www.bromeon.ch/libraries/thor/) - An extension library for SFML for animation ([zlib/libpng license](https://github.com/Bromeon/Thor/blob/master/License.txt)).
 * [Boost 1.56.0](http://www.boost.org/) - Used for JSON parsing ([Boost Software license](http://www.boost.org/LICENSE_1_0.txt)).
 * [TmxParser](https://code.google.com/p/tmx-parser/) - Parsing tile maps made with Tiled ([New BSD license](https://code.google.com/p/tmx-parser/source/browse/trunk/LICENSE)).
@@ -27,7 +27,7 @@ Several dependencies are used:
 
 The dependencies described above are not included with this project and must be downloaded externally.  To build the solution, you'll need to have environment variables set to the following directories:
 
-* SFML_DIR - Set to the root directory for SFML (with include, lib, and bin directories).
+* SFML_32_BIT_DIR - Set to the root directory for the 32-bit (x86) version of SFML (with include, lib, and bin directories).
 * THOR_DIR - Set to the directory for a built version of Thor (with include, lib, and bin directories).
 * BOOST_DIR - Set to the root directory for the Boost version (with directories like boost, doc, libs).
 * TMX_PARSER_DIR - Set to the root directory for tmx-parser (the directory with the .sln file).

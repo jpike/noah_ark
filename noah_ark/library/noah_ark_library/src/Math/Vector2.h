@@ -41,6 +41,13 @@ namespace MATH
         /// @return     True if the vectors are equal; false otherwise.
         bool operator== (const Vector2& rhsVector) const;
 
+        /// Inequality operator.  Direct equality comparison is used for components,
+        ///     so the precision of components types should be considered when using
+        ///     this operator.
+        /// @param[in]  rhsVector - The vector on the right-hand side of the operator.
+        /// @return     True if the vectors are unequal; false otherwise.
+        bool operator!= (const Vector2& rhsVector) const;
+
         ComponentType X;    ///< The x component of the vector.  Public for easy access.
         ComponentType Y;    ///< The y component of the vector.  Public for easy access.
 
@@ -70,7 +77,7 @@ namespace MATH
     Vector2<ComponentType>& Vector2<ComponentType>::operator= (const Vector2<ComponentType>& rhsVector)
     {
         // CHECK FOR SELF-ASSIGNMENT.
-        bool selfAssignment = ( this == &rhsVector );
+        bool selfAssignment = (this == &rhsVector);
         if (!selfAssignment)
         {
             // Copy the values of the right-hand side vector into this vector.
@@ -85,10 +92,17 @@ namespace MATH
     bool Vector2<ComponentType>::operator== (const Vector2<ComponentType>& rhsVector) const
     {
         bool xComponentMatches = (this->X == rhsVector.X);
-        bool yComponentMatches = (this->Y == rhsVector.X);
+        bool yComponentMatches = (this->Y == rhsVector.Y);
 
         bool bothComponentsMatch = (xComponentMatches && yComponentMatches);
         return bothComponentsMatch;
+    }
+
+    template <typename ComponentType>
+    bool Vector2<ComponentType>::operator!= (const Vector2<ComponentType>& rhsVector) const
+    {
+        bool vectorsEqual = ((*this) == rhsVector);
+        return !vectorsEqual;
     }
 
     template <typename ComponentType>

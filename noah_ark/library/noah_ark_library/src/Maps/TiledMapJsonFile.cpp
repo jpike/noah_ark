@@ -6,6 +6,44 @@
 
 namespace MAPS
 {
+    bool TileMapObjectDescription::operator == (const TileMapObjectDescription& rhs) const
+    {
+        // The descriptions aren't equal if a single field differs.
+        if (Name != rhs.Name) return false;
+        if (Type != rhs.Type) return false;
+        if (TopLeftPositionInPixels != rhs.TopLeftPositionInPixels) return false;
+        if (WidthInPixels != rhs.WidthInPixels) return false;
+        if (HeightInPixels != rhs.HeightInPixels) return false;
+
+        // All fields were equal.
+        return true;
+    }
+
+    bool TileMapLayerDescription::operator == (const TileMapLayerDescription& rhs) const
+    {
+        // The descriptions aren't equal if a single field differs.
+        if (Name != rhs.Name) return false;
+        if (Type != rhs.Type) return false;
+        if (TileIds != rhs.TileIds) return false;
+        if (Objects != rhs.Objects) return false;
+
+        // All fields were equal.
+        return true;
+    }
+
+    bool TilesetDescription::operator == (const TilesetDescription& rhs) const
+    {
+        // The descriptions aren't equal if a single field differs.
+        if (Name != rhs.Name) return false;
+        if (FirstTileId != rhs.FirstTileId) return false;
+        if (TileWidthInPixels != rhs.TileWidthInPixels) return false;
+        if (TileHeightInPixels != rhs.TileHeightInPixels) return false;
+        if (TransparentColor != rhs.TransparentColor) return false;
+
+        // All fields were equal.
+        return true;
+    }
+
     TiledMapJsonFile::TiledMapJsonFile() :
     WidthInTiles(),
     HeightInTiles(),
@@ -49,6 +87,36 @@ namespace MAPS
         {
             return false;
         }
+    }
+
+    unsigned int TiledMapJsonFile::GetWidthInTiles() const
+    {
+        return WidthInTiles;
+    }
+    
+    unsigned int TiledMapJsonFile::GetHeightInTiles() const
+    {
+        return HeightInTiles;
+    }
+    
+    unsigned int TiledMapJsonFile::GetTileWidthInPixels() const
+    {
+        return TileWidthInPixels;
+    }
+    
+    unsigned int TiledMapJsonFile::GetTileHeightInPixels() const
+    {
+        return TileHeightInPixels;
+    }
+    
+    std::vector<TilesetDescription> TiledMapJsonFile::GetTilesets() const
+    {
+        return Tilesets;
+    }
+    
+    std::vector<TileMapLayerDescription> TiledMapJsonFile::GetLayers() const
+    {
+        return Layers;
     }
 
     void TiledMapJsonFile::Clear()

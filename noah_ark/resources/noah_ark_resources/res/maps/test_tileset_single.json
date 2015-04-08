@@ -1,0 +1,22 @@
+{
+    "width":3,
+    "height":24,
+    "tilewidth":16,
+    "tileheight":8,
+    "tilesets":[
+    {
+        "name":"first_tileset",
+        "firstgid":1,
+        "tilewidth":16,
+        "tileheight":8,
+        "transparentcolor":"#ff00ff"
+    }],
+    "layers":[
+    {
+        "name":"FirstLayer",
+        "type":"tilelayer",
+        "data":[
+            1, 2, 3,
+            4, 5, 6]
+    }]
+}

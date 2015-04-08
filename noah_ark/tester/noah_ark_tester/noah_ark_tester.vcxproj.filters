@@ -37,6 +37,9 @@
     <Filter Include="Source Files\ResourcesTests">
       <UniqueIdentifier>{73b4922b-0cd5-4000-aaa5-6d605142ac1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\CoreTests">
+      <UniqueIdentifier>{9c00cad2-0fa5-48ce-abd7-1357a3bd26e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -82,6 +85,12 @@
     </ClInclude>
     <ClInclude Include="src\ResourcesTests\ResourceManagerTestConstants.h">
       <Filter>Header Files\ResourcesTests</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapsTests\TiledMapJsonFileTests.h">
+      <Filter>Header Files\MapsTests</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CoreTests\Array2DTests.h">
+      <Filter>Header Files\CoreTests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,11 +1,13 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
+#include "CoreTests/Array2DTests.h"
 #include "GraphicsTests/AnimatedSpriteTests.h"
 #include "GraphicsTests/AnimationSequenceTests.h"
 #include "GraphicsTests/CameraTests.h"
 #include "GraphicsTests/GraphicsSystemTests.h"
 #include "MapsTests/OverworldMapSpecificationTests.h"
 #include "MapsTests/SurroundingMapLoaderTests.h"
+#include "MapsTests/TiledMapJsonFileTests.h"
 #include "MathTests/FloatRectangleTests.h"
 #include "PhysicsTests/CollisionTests/CollisionSystemTests.h"
 #include "ResourcesTests/ResourceManagerTests.h"

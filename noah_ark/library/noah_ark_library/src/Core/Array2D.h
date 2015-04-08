@@ -58,6 +58,8 @@ namespace CORE
         /// @param[in]  x - The horizontal coordinate (or column) of the element index.
         /// @param[in]  y - The vertical coordinate (or row) of the element index.
         /// @return The 1D array index for the provided 2D coordinates.
+        /// @throws std::out_of_range - Thrown if the coordinates are out of range
+        ///     of the array's bounds.
         unsigned int Get1DArrayIndex(const unsigned int x, const unsigned int y) const;
 
         // MEMBER VARIABLES.
@@ -73,26 +75,26 @@ namespace CORE
     };
 
     template <typename T>
-    Array2D::Array2D(const unsigned int width, const unsigned int height) :
+    Array2D<T>::Array2D(const unsigned int width, const unsigned int height) :
     Width(width),
     Height(height),
     Data(Width * Height)
     {}
 
     template <typename T>
-    unsigned int Array2D::GetWidth() const
+    unsigned int Array2D<T>::GetWidth() const
     {
         return Width;
     }
     
     template <typename T>
-    unsigned int Array2D::GetHeight() const
+    unsigned int Array2D<T>::GetHeight() const
     {
         return Height;
     }
 
     template <typename T>
-    T& Array2D::operator()(const unsigned int x, const unsigned int y)
+    T& Array2D<T>::operator()(const unsigned int x, const unsigned int y)
     {
         // CONVERT THE 2D INDEX INTO A 1D INDEX.
         unsigned int elementIndex = Get1DArrayIndex(x, y);
@@ -104,7 +106,7 @@ namespace CORE
     }
 
     template <typename T>
-    const T& Array2D::operator()(const unsigned int x, const unsigned int y) const
+    const T& Array2D<T>::operator()(const unsigned int x, const unsigned int y) const
     {
         // CONVERT THE 2D INDEX INTO A 1D INDEX.
         unsigned int elementIndex = Get1DArrayIndex(x, y);
@@ -116,8 +118,17 @@ namespace CORE
     }
 
     template <typename T>
-    unsigned int Array2D::Get1DArrayIndex(const unsigned int x, const unsigned int y) const
+    unsigned int Array2D<T>::Get1DArrayIndex(const unsigned int x, const unsigned int y) const
     {
+        // MAKE SURE THE COORDINATES ARE WITHIN THE ARRAY'S BOUNDS.
+        bool xWithinBounds = (x < Width);
+        bool yWithinBounds = (y < Height);
+        bool coordinatesWithinBounds = (xWithinBounds && yWithinBounds);
+        if (!coordinatesWithinBounds)
+        {
+            throw std::out_of_range("Array2D coordinates out-of-range.");
+        }
+
         // CALCULATE THE INDEX OF THE FIRST ELEMENT IN THE REQUESTED ROW.
         unsigned int rowIndex = y * Width;
 

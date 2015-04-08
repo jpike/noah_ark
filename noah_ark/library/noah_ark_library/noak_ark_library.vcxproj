@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\Array2D.h" />
     <ClInclude Include="src\Core\Direction.h" />
     <ClInclude Include="src\Graphics\AnimatedSprite.h" />
     <ClInclude Include="src\Graphics\AnimationSequence.h" />
@@ -28,6 +29,7 @@
     <ClInclude Include="src\Maps\ScrollableOverworldMap.h" />
     <ClInclude Include="src\Maps\SurroundingTileMapLoader.h" />
     <ClInclude Include="src\Maps\Tile.h" />
+    <ClInclude Include="src\Maps\TiledMapJsonFile.h" />
     <ClInclude Include="src\Maps\TileMap.h" />
     <ClInclude Include="src\Maps\TileMapBuilder.h" />
     <ClInclude Include="src\Maps\TileMapLoader.h" />
@@ -61,6 +63,7 @@
     <ClCompile Include="src\Maps\ScrollableOverworldMap.cpp" />
     <ClCompile Include="src\Maps\SurroundingTileMapLoader.cpp" />
     <ClCompile Include="src\Maps\Tile.cpp" />
+    <ClCompile Include="src\Maps\TiledMapJsonFile.cpp" />
     <ClCompile Include="src\Maps\TileMap.cpp" />
     <ClCompile Include="src\Maps\TileMapBuilder.cpp" />
     <ClCompile Include="src\Maps\TileMapLoader.cpp" />

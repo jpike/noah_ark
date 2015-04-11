@@ -109,9 +109,12 @@ namespace TILED_MAP_JSON_FILE_TESTS
         MAPS::TileMapLayerDescription expectedLayer;
         expectedLayer.Name = "FirstLayer";
         expectedLayer.Type = MAPS::TileMapLayerType::TILE_LAYER;
-        expectedLayer.TileIds = {
+
+        const unsigned int WIDTH = 3;
+        const unsigned int HEIGHT = 2;
+        expectedLayer.TileIds = CORE::Array2D<MAPS::TileId>(WIDTH, HEIGHT, {
             1, 2, 3,
-            4, 5, 6 };
+            4, 5, 6 } );
 
         MAPS::TileMapLayerDescription actualLayer = layerDescriptions.front();
         REQUIRE(expectedLayer == actualLayer);
@@ -172,9 +175,12 @@ namespace TILED_MAP_JSON_FILE_TESTS
         MAPS::TileMapLayerDescription expectedFirstLayer;
         expectedFirstLayer.Name = "FirstLayer";
         expectedFirstLayer.Type = MAPS::TileMapLayerType::TILE_LAYER;
-        expectedFirstLayer.TileIds = {
+
+        const unsigned int WIDTH = 3;
+        const unsigned int HEIGHT = 2;
+        expectedFirstLayer.TileIds = CORE::Array2D<MAPS::TileId>(WIDTH, HEIGHT, {
             1, 2, 3,
-            4, 5, 6 };
+            4, 5, 6 } );
 
         // CREATE THE SECOND EXPECTED LAYER.
         MAPS::TileMapLayerDescription expectedSecondLayer;

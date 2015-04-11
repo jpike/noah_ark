@@ -1,168 +1,169 @@
 #include "Maps/TileMapBuilder.h"
 
-using namespace MAPS;
-
-TileMapBuilder::TileMapBuilder(const std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
-    m_graphicsSystem(graphicsSystem)
-{}
-
-TileMapBuilder::~TileMapBuilder()
-{}
-
-std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildTileMap(
-    const OverworldGridPosition& overworldGridPosition,
-    const MATH::Vector2f& topLeftWorldPositionInPixels,
-    const std::shared_ptr<Tmx::Map>& tmxMap)
+namespace MAPS
 {
-    std::shared_ptr<MAPS::TileMap> tileMap = std::make_shared<MAPS::TileMap>(
-        overworldGridPosition,
-        topLeftWorldPositionInPixels,
-        tmxMap, 
-        m_graphicsSystem);
+    TileMapBuilder::TileMapBuilder(const std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system) :
+        GraphicsSystem(graphics_system)
+    {}
 
-    return tileMap;
-}
+    TileMapBuilder::~TileMapBuilder()
+    {}
 
-std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildTopTileMap(
-    const MAPS::TileMap& centerMap,
-    const std::shared_ptr<Tmx::Map>& topTmxMap)
-{
-    // CHECK IF A TOP TMX MAP WAS PROVIDED.
-    bool topTmxMapExists = (nullptr != topTmxMap);
-    if (!topTmxMapExists)
+    std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildTileMap(
+        const OverworldGridPosition& overworld_grid_position,
+        const MATH::Vector2f& top_left_world_position_in_pixels,
+        const TiledMapJsonFile& map_data)
     {
-        // No tile map can be constructed without a TMX map.
-        return nullptr;
+        std::shared_ptr<MAPS::TileMap> tile_map = std::make_shared<MAPS::TileMap>(
+            overworld_grid_position,
+            top_left_world_position_in_pixels,
+            map_data,
+            GraphicsSystem);
+
+        return tile_map;
     }
 
-    // CALCULATE THE GRID POSITION OF THE TOP MAP.
-    MATH::Vector2ui centerTileMapOverworldGridPosition = centerMap.GetOverworldGridPosition();
-    MATH::Vector2ui topTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
-    topTileMapOverworldGridPosition.Y--;
-
-    // CALCULATE THE WORLD POSITION OF THE TOP MAP.
-    float topMapHeightInTiles = static_cast<float>(topTmxMap->GetHeight());
-    float topMapTileHeightInPixels = static_cast<float>(topTmxMap->GetTileHeight());
-    float topMapHeightInPixels = topMapHeightInTiles * topMapTileHeightInPixels;
-    MATH::Vector2f centerTileMapTopLeftWorldPosition = centerMap.GetTopLeftWorldPosition();
-    float topMapWorldYPosition = centerTileMapTopLeftWorldPosition.Y - topMapHeightInPixels;
-    MATH::Vector2f topTileMapTopLeftWorldPosition(
-        centerTileMapTopLeftWorldPosition.X,
-        topMapWorldYPosition);
-
-    // CREATE THE TOP TILE MAP.
-    std::shared_ptr<MAPS::TileMap> topTileMap = std::make_shared<MAPS::TileMap>(
-        topTileMapOverworldGridPosition,
-        topTileMapTopLeftWorldPosition,
-        topTmxMap,
-        m_graphicsSystem);
-    return topTileMap;
-}
-
-std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildBottomTileMap(
-    const MAPS::TileMap& centerMap,
-    const std::shared_ptr<Tmx::Map>& bottomTmxMap)
-{
-    // CHECK IF A BOTTOM TMX MAP WAS PROVIDED.
-    bool bottomTmxMapExists = (nullptr != bottomTmxMap);
-    if (!bottomTmxMapExists)
+    std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildTopTileMap(
+        const MAPS::TileMap& center_map,
+        const std::shared_ptr<TiledMapJsonFile>& top_map_data)
     {
-        // No tile map can be constructed without a TMX map.
-        return nullptr;
+        // CHECK IF MAP DATA WAS PROVIDED.
+        bool map_data_exists = (nullptr != top_map_data);
+        if (!map_data_exists)
+        {
+            // No tile map can be constructed without map data.
+            return nullptr;
+        }
+
+        // CALCULATE THE GRID POSITION OF THE TOP MAP.
+        MATH::Vector2ui center_tile_map_overwrld_grid_position = center_map.GetOverworldGridPosition();
+        MATH::Vector2ui top_tile_map_overworld_grid_position = center_tile_map_overwrld_grid_position;
+        top_tile_map_overworld_grid_position.Y--;
+
+        // CALCULATE THE WORLD POSITION OF THE TOP MAP.
+        float top_map_height_in_tiles = static_cast<float>(top_map_data->GetHeightInTiles());
+        float top_map_tile_height_in_pixels = static_cast<float>(top_map_data->GetTileHeightInPixels());
+        float top_map_height_in_pixels = top_map_height_in_tiles * top_map_tile_height_in_pixels;
+        MATH::Vector2f center_tile_map_top_left_world_position = center_map.GetTopLeftWorldPosition();
+        float topMapWorldYPosition = center_tile_map_top_left_world_position.Y - top_map_height_in_pixels;
+        MATH::Vector2f top_tile_map_top_left_world_position(
+            center_tile_map_top_left_world_position.X,
+            topMapWorldYPosition);
+
+        // CREATE THE TOP TILE MAP.
+        std::shared_ptr<MAPS::TileMap> top_tile_map = std::make_shared<MAPS::TileMap>(
+            top_tile_map_overworld_grid_position,
+            top_tile_map_top_left_world_position,
+            *top_map_data,
+            GraphicsSystem);
+        return top_tile_map;
     }
 
-    // CALCULATE THE GRID POSITION OF THE BOTTOM MAP.
-    MATH::Vector2ui centerTileMapOverworldGridPosition = centerMap.GetOverworldGridPosition();
-    MATH::Vector2ui bottomTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
-    bottomTileMapOverworldGridPosition.Y++;
-
-    // CALCULATE THE WORLD POSITION OF THE BOTTOM MAP.
-    float centerMapHeightInTiles = static_cast<float>(centerMap.GetHeightInTiles());
-    float centerMapTileHeightInPixels = static_cast<float>(centerMap.GetTileHeightInPixels());
-    float centerMapHeightInPixels = centerMapHeightInTiles * centerMapTileHeightInPixels;
-    MATH::Vector2f centerTileMapTopLeftWorldPosition = centerMap.GetTopLeftWorldPosition();
-    float bottomMapWorldYPosition = centerTileMapTopLeftWorldPosition.Y + centerMapHeightInPixels;
-    MATH::Vector2f bottomTileMapTopLeftWorldPosition(
-        centerTileMapTopLeftWorldPosition.X,
-        bottomMapWorldYPosition);
-
-    // CREATE THE BOTTOM TILE MAP.
-    std::shared_ptr<MAPS::TileMap> bottomTileMap = std::make_shared<MAPS::TileMap>(
-        bottomTileMapOverworldGridPosition,
-        bottomTileMapTopLeftWorldPosition,
-        bottomTmxMap,
-        m_graphicsSystem);
-    return bottomTileMap;
-}
-
-std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildLeftTileMap(
-    const MAPS::TileMap& centerMap,
-    const std::shared_ptr<Tmx::Map>& leftTmxMap)
-{
-    // CHECK IF A LEFT TMX MAP WAS PROVIDED.
-    bool leftTmxMapExists = (nullptr != leftTmxMap);
-    if (!leftTmxMapExists)
+    std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildBottomTileMap(
+        const MAPS::TileMap& center_map,
+        const std::shared_ptr<TiledMapJsonFile>& bottom_map_data)
     {
-        // No tile map can be constructed without a TMX map.
-        return nullptr;
+        // CHECK IF MAP DATA WAS PROVIDED.
+        bool map_data_exists = (nullptr != bottom_map_data);
+        if (!map_data_exists)
+        {
+            // No tile map can be constructed without map data.
+            return nullptr;
+        }
+
+        // CALCULATE THE GRID POSITION OF THE BOTTOM MAP.
+        MATH::Vector2ui center_tile_map_overworld_grid_position = center_map.GetOverworldGridPosition();
+        MATH::Vector2ui bottom_tile_map_overworld_grid_position = center_tile_map_overworld_grid_position;
+        bottom_tile_map_overworld_grid_position.Y++;
+
+        // CALCULATE THE WORLD POSITION OF THE BOTTOM MAP.
+        float center_map_height_in_tiles = static_cast<float>(center_map.GetHeightInTiles());
+        float center_map_tile_height_in_pixels = static_cast<float>(center_map.GetTileHeightInPixels());
+        float center_map_height_in_pixels = center_map_height_in_tiles * center_map_tile_height_in_pixels;
+        MATH::Vector2f center_tile_map_top_left_world_position = center_map.GetTopLeftWorldPosition();
+        float bottom_map_world_y_position = center_tile_map_top_left_world_position.Y + center_map_height_in_pixels;
+        MATH::Vector2f bottom_tile_map_top_left_world_position(
+            center_tile_map_top_left_world_position.X,
+            bottom_map_world_y_position);
+
+        // CREATE THE BOTTOM TILE MAP.
+        std::shared_ptr<MAPS::TileMap> bottom_tile_map = std::make_shared<MAPS::TileMap>(
+            bottom_tile_map_overworld_grid_position,
+            bottom_tile_map_top_left_world_position,
+            *bottom_map_data,
+            GraphicsSystem);
+        return bottom_tile_map;
     }
 
-    // CALCULATE THE GRID POSITION OF THE LEFT MAP.
-    MATH::Vector2ui centerTileMapOverworldGridPosition = centerMap.GetOverworldGridPosition();
-    MATH::Vector2ui leftTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
-    leftTileMapOverworldGridPosition.X--;
-
-    // CALCULATE THE WORLD POSITION OF THE LEFT MAP.
-    float leftMapWidthInTiles = static_cast<float>(leftTmxMap->GetWidth());
-    float leftMapTileWidthInPixels = static_cast<float>(leftTmxMap->GetTileWidth());
-    float leftMapWidthInPixels = leftMapWidthInTiles * leftMapTileWidthInPixels;
-    MATH::Vector2f centerTileMapTopLeftWorldPosition = centerMap.GetTopLeftWorldPosition();
-    float leftMapWorldXPosition = centerTileMapTopLeftWorldPosition.X - leftMapWidthInPixels;
-    MATH::Vector2f leftTileMapTopLeftWorldPosition(
-        leftMapWorldXPosition,
-        centerTileMapTopLeftWorldPosition.Y);
-
-    // CREATE THE LEFT TILE MAP.
-    std::shared_ptr<MAPS::TileMap> leftTileMap = std::make_shared<MAPS::TileMap>(
-        leftTileMapOverworldGridPosition,
-        leftTileMapTopLeftWorldPosition,
-        leftTmxMap,
-        m_graphicsSystem);
-    return leftTileMap;
-}
-
-std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildRightTileMap(
-    const MAPS::TileMap& centerMap,
-    const std::shared_ptr<Tmx::Map>& rightTmxMap)
-{
-    // CHECK IF A RIGHT TMX MAP WAS PROVIDED.
-    bool rightTmxMapExists = (nullptr != rightTmxMap);
-    if (!rightTmxMapExists)
+    std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildLeftTileMap(
+        const MAPS::TileMap& center_map,
+        const std::shared_ptr<TiledMapJsonFile>& left_map_data)
     {
-        // No tile map can be constructed without a TMX map.
-        return nullptr;
+        // CHECK IF MAP DATA WAS PROVIDED.
+        bool map_data_exists = (nullptr != left_map_data);
+        if (!map_data_exists)
+        {
+            // No tile map can be constructed without map data.
+            return nullptr;
+        }
+
+        // CALCULATE THE GRID POSITION OF THE LEFT MAP.
+        MATH::Vector2ui center_tile_map_overworld_grid_position = center_map.GetOverworldGridPosition();
+        MATH::Vector2ui left_tile_map_overworld_grid_position = center_tile_map_overworld_grid_position;
+        left_tile_map_overworld_grid_position.X--;
+
+        // CALCULATE THE WORLD POSITION OF THE LEFT MAP.
+        float left_map_width_in_tiles = static_cast<float>(left_map_data->GetWidthInTiles());
+        float left_map_tile_width_in_pixels = static_cast<float>(left_map_data->GetTileWidthInPixels());
+        float left_map_width_in_pixels = left_map_width_in_tiles * left_map_tile_width_in_pixels;
+        MATH::Vector2f center_tile_map_top_left_world_position = center_map.GetTopLeftWorldPosition();
+        float left_map_world_x_position = center_tile_map_top_left_world_position.X - left_map_width_in_pixels;
+        MATH::Vector2f left_tile_map_top_left_world_position(
+            left_map_world_x_position,
+            center_tile_map_top_left_world_position.Y);
+
+        // CREATE THE LEFT TILE MAP.
+        std::shared_ptr<MAPS::TileMap> left_tile_map = std::make_shared<MAPS::TileMap>(
+            left_tile_map_overworld_grid_position,
+            left_tile_map_top_left_world_position,
+            *left_map_data,
+            GraphicsSystem);
+        return left_tile_map;
     }
 
-    // CALCULATE THE GRID POSITION OF THE RIGHT MAP.
-    MATH::Vector2ui centerTileMapOverworldGridPosition = centerMap.GetOverworldGridPosition();
-    MATH::Vector2ui rightTileMapOverworldGridPosition = centerTileMapOverworldGridPosition;
-    rightTileMapOverworldGridPosition.X++;
+    std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildRightTileMap(
+        const MAPS::TileMap& center_map,
+        const std::shared_ptr<TiledMapJsonFile>& right_map_data)
+    {
+        // CHECK IF MAP DATA WAS PROVIDED.
+        bool map_data_exists = (nullptr != right_map_data);
+        if (!map_data_exists)
+        {
+            // No tile map can be constructed without map data.
+            return nullptr;
+        }
 
-    // CALCULATE THE WORLD POSITION OF THE LEFT MAP.
-    float centerMapWidthInTiles = static_cast<float>(centerMap.GetWidthInTiles());
-    float centerMapTileWidthInPixels = static_cast<float>(centerMap.GetTileWidthInPixels());
-    float centerMapWidthInPixels = centerMapWidthInTiles * centerMapTileWidthInPixels;
-    MATH::Vector2f centerTileMapTopLeftWorldPosition = centerMap.GetTopLeftWorldPosition();
-    float rightMapWorldXPosition = centerTileMapTopLeftWorldPosition.X + centerMapWidthInPixels;
-    MATH::Vector2f rightTileMapTopLeftWorldPosition(
-        rightMapWorldXPosition,
-        centerTileMapTopLeftWorldPosition.Y);
+        // CALCULATE THE GRID POSITION OF THE RIGHT MAP.
+        MATH::Vector2ui center_tile_map_overworld_grid_position = center_map.GetOverworldGridPosition();
+        MATH::Vector2ui right_tile_map_overworld_grid_position = center_tile_map_overworld_grid_position;
+        right_tile_map_overworld_grid_position.X++;
 
-    // CREATE THE RIGHT TILE MAP.
-    std::shared_ptr<MAPS::TileMap> rightTileMap = std::make_shared<MAPS::TileMap>(
-        rightTileMapOverworldGridPosition,
-        rightTileMapTopLeftWorldPosition,
-        rightTmxMap,
-        m_graphicsSystem);
-    return rightTileMap;
+        // CALCULATE THE WORLD POSITION OF THE LEFT MAP.
+        float center_map_width_in_tiles = static_cast<float>(center_map.GetWidthInTiles());
+        float center_map_tile_width_in_pixels = static_cast<float>(center_map.GetTileWidthInPixels());
+        float center_map_width_in_pixels = center_map_width_in_tiles * center_map_tile_width_in_pixels;
+        MATH::Vector2f center_tile_map_top_left_world_position = center_map.GetTopLeftWorldPosition();
+        float right_map_world_position = center_tile_map_top_left_world_position.X + center_map_width_in_pixels;
+        MATH::Vector2f rightTileMapTopLeftWorldPosition(
+            right_map_world_position,
+            center_tile_map_top_left_world_position.Y);
+
+        // CREATE THE RIGHT TILE MAP.
+        std::shared_ptr<MAPS::TileMap> right_tile_map = std::make_shared<MAPS::TileMap>(
+            right_tile_map_overworld_grid_position,
+            rightTileMapTopLeftWorldPosition,
+            *right_map_data,
+            GraphicsSystem);
+        return right_tile_map;
+    }
 }

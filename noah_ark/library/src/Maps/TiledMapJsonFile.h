@@ -71,16 +71,25 @@ namespace MAPS
         /// @throws std::exception - Thrown if an error occurs.
         std::vector<TilesetDescription> ReadTilesets(const boost::property_tree::ptree& mapFileData) const;
         /// Reads layer data from the map property tree.
-        /// @param[in]  mapFileData - The tile map data.
+        /// @param[in]  map_file_data - The tile map data.
+        /// @param[in]  width_in_tiles - The width of the layer (in tiles).
+        /// @param[in]  height_in_tiles - The height of the layer (in tiles).
         /// @return The layers in the map, in order from bottom to top.
         /// @throws std::exception - Thrown if an error occurs.
-        std::vector<TileMapLayerDescription> ReadLayers(const boost::property_tree::ptree& mapFileData) const;
+        std::vector<TileMapLayerDescription> ReadLayers(
+            const boost::property_tree::ptree& map_file_data,
+            const unsigned int width_in_tiles,
+            const unsigned int height_in_tiles) const;
         /// Reads tile IDs from the provided layer property tree data.
-        /// @param[in]  layerData - The layer data.
-        /// @return The tile IDs in the layer.  See @ref TileMapLayerDescription::TileIds
-        ///     for details of the exact layout of the tile IDs.
+        /// @param[in]  layer_data - The layer data.
+        /// @param[in]  width_in_tiles - The width of the layer (in tiles).
+        /// @param[in]  height_in_tiles - The height of the layer (in tiles).
+        /// @return The tile IDs in the layer.
         /// @throws std::exception - Thrown if an error occurs.
-        std::vector<TileId> ReadTileIds(const boost::property_tree::ptree::value_type& layerData) const;
+        CORE::Array2D<TileId> ReadTileIds(
+            const boost::property_tree::ptree::value_type& layer_data,
+            const unsigned int width_in_tiles,
+            const unsigned int height_in_tiles) const;
         /// Reads object descriptions from the provided layer property tree data.
         /// @param[in]  layerData - The layer data.
         /// @return The descriptions of all objects in the layer.

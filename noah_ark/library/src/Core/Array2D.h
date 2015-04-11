@@ -1,5 +1,7 @@
 #pragma once
 
+#include <initializer_list>
+#include <stdexcept>
 #include <vector>
 
 namespace CORE
@@ -18,19 +20,47 @@ namespace CORE
     {
     public:
         // CONSTRUCTION.
+        /// Constructor to create an empty array.  It must be
+        /// resized later before use.
+        explicit Array2D();
         /// Constructor.  The array will be filled with default
         /// constructed elements to fill its maximum capacity.
         /// @param[in]  width - The width of the array (number of columns).
         /// @param[in]  height - The height of the array (number of rows).
         explicit Array2D(const unsigned int width, const unsigned int height);
+        /// Constructor to fill the array with the provided data.
+        /// @param[in]  width - The width of the array (number of columns).
+        /// @param[in]  height - The height of the array (number of rows).
+        /// @param[in]  data - The data to fill in the array.  The data should
+        ///     be ordered such that the first width number of elements are
+        ///     for the first row, with subsequent rows following.  Within
+        ///     each row, elements should go from left to right across columns.
+        /// @throws std::invalid_argument - Thrown if the data's size does
+        ///     not match the size indicated by the width and height.
+        explicit Array2D(const unsigned int width, const unsigned int height, const std::initializer_list<T>& data);
 
-        // DIMENSION ACCESS.
+        // COMPARISON OPERATORS.
+        /// Equality operator.
+        /// @param[in]  rhs - The array to compare with.
+        /// @return True if this array and the provided array are equal; false otherwise.
+        bool operator==(const Array2D& rhs) const;
+        /// Inequality operator.
+        /// @param[in]  rhs - The array to compare with.
+        /// @return True if this array and the provided array aren't equal; false otherwise.
+        bool operator!=(const Array2D& rhs) const;
+
+        // DIMENSION ACCESS/MODIFICATION.
         /// Gets the width (number of columns) in the array.
         /// @return The width of the array.
         unsigned int GetWidth() const;
         /// Gets the height (number of rows) in the array.
         /// @return The height of the array.
         unsigned int GetHeight() const;
+        /// Resizes the array.  Existing data is cleared and replaced
+        /// with default constructed elements.
+        /// @param[in]  width - The width of the array (number of columns).
+        /// @param[in]  height - The height of the array (number of rows).
+        void Resize(const unsigned int width, const unsigned int height);
 
         // ELEMENT ACCESS.
         /// Retrieves a reference to the element at the specified 2D coordinates.
@@ -75,11 +105,55 @@ namespace CORE
     };
 
     template <typename T>
+    Array2D<T>::Array2D() :
+    Width(0),
+    Height(0),
+    Data()
+    {}
+
+    template <typename T>
     Array2D<T>::Array2D(const unsigned int width, const unsigned int height) :
     Width(width),
     Height(height),
     Data(Width * Height)
     {}
+
+    template <typename T>
+    Array2D<T>::Array2D(const unsigned int width, const unsigned int height, const std::initializer_list<T>& data) :
+    Width(width),
+    Height(height),
+    Data(data)
+    {
+        // MAKE SURE THE SIZE OF THE DATA IS VALID.
+        // This check and exception are thrown to ensure that the array is constructed with
+        // sufficient data.  It would be possible to get around this by potentially expanding
+        // the array, but that additional complication isn't needed yet.
+        unsigned int EXPECTED_DATA_ELEMENT_COUNT = Width * Height;
+        bool enough_data_provided = (EXPECTED_DATA_ELEMENT_COUNT == data.size());
+        if (!enough_data_provided)
+        {
+            throw std::invalid_argument("Insufficient data elements provided to Array2D.");
+        }
+    }
+
+    template <typename T>
+    bool Array2D<T>::operator==(const Array2D<T>& rhs) const
+    {
+        // Make sure all fields are equal.
+        if (Width != rhs.Width) return false;
+        if (Height != rhs.Height) return false;
+        if (Data != rhs.Data) return false;
+
+        // All fields were equal.
+        return true;
+    }
+
+    template <typename T>
+    bool Array2D<T>::operator!=(const Array2D<T>& rhs) const
+    {
+        bool arrays_equal = ((*this) == rhs);
+        return !arrays_equal;
+    }
 
     template <typename T>
     unsigned int Array2D<T>::GetWidth() const
@@ -94,47 +168,57 @@ namespace CORE
     }
 
     template <typename T>
+    void Array2D<T>::Resize(const unsigned int width, const unsigned int height)
+    {
+        // CREATE AN ARRAY WITH THE NEW SIZE.
+        Array2D<T> resized_array(width, height);
+
+        // REPLACE THIS ARRAY WITH THE RESIZED ARRAY.
+        (*this) = resized_array;
+    }
+
+    template <typename T>
     T& Array2D<T>::operator()(const unsigned int x, const unsigned int y)
     {
         // CONVERT THE 2D INDEX INTO A 1D INDEX.
-        unsigned int elementIndex = Get1DArrayIndex(x, y);
+        unsigned int element_index = Get1DArrayIndex(x, y);
 
         // RETURN THE ELEMENT AT THE SPECIFIED INDEX.
         // The at() method is used because it has bounds-checking and
         // may throw an exception if given an invalid index.
-        return Data.at(elementIndex);
+        return Data.at(element_index);
     }
 
     template <typename T>
     const T& Array2D<T>::operator()(const unsigned int x, const unsigned int y) const
     {
         // CONVERT THE 2D INDEX INTO A 1D INDEX.
-        unsigned int elementIndex = Get1DArrayIndex(x, y);
+        unsigned int element_index = Get1DArrayIndex(x, y);
 
         // RETURN THE ELEMENT AT THE SPECIFIED INDEX.
         // The at() method is used because it has bounds-checking and
         // may throw an exception if given an invalid index.
-        return Data.at(elementIndex);
+        return Data.at(element_index);
     }
 
     template <typename T>
     unsigned int Array2D<T>::Get1DArrayIndex(const unsigned int x, const unsigned int y) const
     {
         // MAKE SURE THE COORDINATES ARE WITHIN THE ARRAY'S BOUNDS.
-        bool xWithinBounds = (x < Width);
-        bool yWithinBounds = (y < Height);
-        bool coordinatesWithinBounds = (xWithinBounds && yWithinBounds);
-        if (!coordinatesWithinBounds)
+        bool x_within_bounds = (x < Width);
+        bool y_within_bounds = (y < Height);
+        bool coordinates_within_bounds = (x_within_bounds && y_within_bounds);
+        if (!coordinates_within_bounds)
         {
             throw std::out_of_range("Array2D coordinates out-of-range.");
         }
 
         // CALCULATE THE INDEX OF THE FIRST ELEMENT IN THE REQUESTED ROW.
-        unsigned int rowIndex = y * Width;
+        unsigned int row_index = y * Width;
 
         // MOVE OVER TO THE REQUESTED ELEMENT IN THE ROW.
-        unsigned int elementIndex = rowIndex + x;
+        unsigned int element_index = row_index + x;
 
-        return elementIndex;
+        return element_index;
     }
 }

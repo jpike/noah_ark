@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include "Core/Array2D.h"
 #include "Maps/TileMapObjectDescription.h"
 
 namespace MAPS
@@ -35,7 +36,7 @@ namespace MAPS
         /// IDs are contained in 1D container to simplify interaction logic.
         /// The tiles start with the top row, going from left to right,
         /// with rows further down in the layer following.
-        std::vector<TileId> TileIds;
+        CORE::Array2D<TileId> TileIds;
         /// A list of objects in the layer.  Only populated if the type
         /// of layer in this description is for an object layer.
         std::vector<TileMapObjectDescription> Objects;

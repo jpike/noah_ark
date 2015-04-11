@@ -6,35 +6,34 @@
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/IGraphicsComponent.h"
 #include "Maps/Tile.h"
+#include "Maps/TiledMapJsonFile.h"
 #include "Math/Vector2.h"
 
 namespace MAPS
 {
-    /// @brief  Represents the position of a tile map in the overworld's "grid".
-    ///         These positions are relative to each other.  For example, a map
-    ///         at x,y position 1,1 is to the right of a map at position 0,1, and
-    ///         a map at position 0,0 is above a map at position 0,1.
+    /// Represents the position of a tile map in the overworld's "grid".
+    /// These positions are relative to each other.  For example, a map
+    /// at x,y position 1,1 is to the right of a map at position 0,1, and
+    /// a map at position 0,0 is above a map at position 0,1.
     typedef MATH::Vector2ui OverworldGridPosition;
     
-    ///////////////////////////////////////////////////////////
-    /// @brief  A single 2D map composed of individual tiles and any objects
-    ///         that may located on the map.
+    /// A single 2D map composed of individual tiles and any objects
+    /// that may located on the map.
     ///
-    ///         It is constructed from data in a Tiled TMX map.
-    ///////////////////////////////////////////////////////////
+    /// It is constructed from data in a Tiled map.
     class TileMap
     {
     public:
         /// @brief          Constructor.
-        /// @param[in]      overworldGridPosition - The position of the tile map within the overworld grid.
-        /// @param[in]      topLeftWorldPositionInPixels - The top-left position of the map within the world.
-        /// @param[in]      map - The underlying map that has already been loaded.
-        /// @param[in,out]  graphicsSystem - The graphics system used to manage graphics for this tile map.
+        /// @param[in]      overworld_grid_position - The position of the tile map within the overworld grid.
+        /// @param[in]      top_left_world_position_in_pixels - The top-left position of the map within the world.
+        /// @param[in]      map_data - The underlying map that has already been loaded.
+        /// @param[in,out]  graphics_system - The graphics system used to manage graphics for this tile map.
         explicit TileMap(
-            const OverworldGridPosition& overworldGridPosition,
-            const MATH::Vector2f& topLeftWorldPositionInPixels,
-            const std::shared_ptr<Tmx::Map>& map, 
-            std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
+            const OverworldGridPosition& overworld_grid_position,
+            const MATH::Vector2f& top_left_world_position_in_pixels,
+            const TiledMapJsonFile& map_data,
+            std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system);
         
         /// @brief  Destructor.
         virtual ~TileMap();
@@ -76,33 +75,33 @@ namespace MAPS
         MATH::Vector2f GetSizeInPixels() const;
 
         /// @brief      Gets the tile at the specified world position.
-        /// @param[in]  worldXPosition - The world X position at which to get the tile.
-        /// @param[in]  worldYPosition - The world Y position at which to get the tile.
+        /// @param[in]  world_x_position - The world X position at which to get the tile.
+        /// @param[in]  world_y_position - The world Y position at which to get the tile.
         /// @return     The tile at the specified world position, if one exists.
-        std::shared_ptr<Tile> GetTileAtWorldPosition(const float worldXPosition, const float worldYPosition) const;
+        std::shared_ptr<Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const;
 
     private:
         TileMap(const TileMap& mapToCopy);  ///< Private to disallow copying.
         TileMap& operator= (const TileMap& rhsMap); ///< Private to disallow assignment.
 
-        /// @brief          Populates this tile map with data from the provided TMX map.
-        /// @param[in]      topLeftWorldPositionInPixels - The top-left position of the map within the world.
-        /// @param[in]      map - The underlying map that has already been loaded.
-        /// @param[in,out]  graphicsSystem - The graphics system used to manage graphics for this tile map.
-        void BuildFromTmxMap(
-            const MATH::Vector2f& topLeftWorldPositionInPixels,
-            const std::shared_ptr<Tmx::Map>& map, 
-            GRAPHICS::GraphicsSystem& graphicsSystem);
+        /// @brief          Populates this tile map from the provided data.
+        /// @param[in]      top_left_world_position_in_pixels - The top-left position of the map within the world.
+        /// @param[in]      map_data - The underlying map that has already been loaded.
+        /// @param[in,out]  graphics_system - The graphics system used to manage graphics for this tile map.
+        void BuildFromMapData(
+            const MATH::Vector2f& top_left_world_position_in_pixels,
+            const TiledMapJsonFile& map_data,
+            GRAPHICS::GraphicsSystem& graphics_system);
 
         /// @brief  Tiles within the map, stored by their 2D positions relative to each other.
         ///         The x (horizontal) coordinate comes first, followed by the y (vertical) coordinate.
         ///         For example, the tile at (0,0) is the top-left tile.  The tile at (1,0) is right of the top-left tile.
         ///         The tile at (0,1) is below the top-left tile.
-        std::vector< std::vector< std::shared_ptr<Tile> > > m_tiles;
+        std::vector< std::vector< std::shared_ptr<Tile> > > Tiles;
 
-        std::shared_ptr<Tmx::Map> m_tmxMap; ///< The TMX map used to create this map.
+        TiledMapJsonFile MapData; ///< The map file used to create this map.
 
-        OverworldGridPosition m_overworldGridPosition;    ///< The position of the tile map in the overworld map's grid.
-        MATH::Vector2f m_topLeftWorldPositionInPixels;  ///< The top-left world position of the tile map.
+        OverworldGridPosition OverworldPosition;    ///< The position of the tile map in the overworld map's grid.
+        MATH::Vector2f TopLeftWorldPositionInPixels;  ///< The top-left world position of the tile map.
     };
 }

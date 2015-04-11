@@ -27,19 +27,19 @@ namespace MAPS
 
         /// @brief          Populates the overworld map from the provided specification.
         ///                 Any existing data in this overworld map are overwritten.
-        /// @param[in]      overworldSpec - The specification describing how tile maps
+        /// @param[in]      overworld_spec - The specification describing how tile maps
         ///                 are positioned in the overworld.
-        /// @param[in]      startingTileMapOverworldGridPosition - The relative position of
+        /// @param[in]      starting_tile_map_overworld_grid_position - The relative position of
         ///                 the starting tile map within the overworld's "grid".
-        /// @param[in]      startingTileMapTopLeftWorldPosition - The top-left world position
+        /// @param[in]      starting_tile_map_top_left_world_position - The top-left world position
         ///                 of the starting tile map.
-        /// @param[in,out]  tileMapBuilder - The builder for creating tile maps described
+        /// @param[in,out]  tile_map_builder - The builder for creating tile maps described
         ///                 in the specification.
         void PopulateFromSpecification(
-            const OverworldMapSpecification& overworldSpec,
-            const OverworldGridPosition& startingTileMapOverworldGridPosition,
-            const MATH::Vector2f& startingTileMapTopLeftWorldPosition,
-            const std::shared_ptr<TileMapBuilder>& tileMapBuilder);
+            const OverworldMapSpecification& overworld_spec,
+            const OverworldGridPosition& starting_tile_map_overworld_grid_position,
+            const MATH::Vector2f& starting_tile_map_top_left_world_position,
+            const std::shared_ptr<TileMapBuilder>& tile_map_builder);
         
         /// @brief      Gets the tile at the specified world position.
         /// @param[in]  worldXPosition - The world X position at which to get the tile.

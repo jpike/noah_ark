@@ -1,246 +1,281 @@
 #include <memory>
 #include <TmxParser/Tmx.h>
 #include "Maps/OverworldMap.h"
+#include "Maps/TiledMapJsonFile.h"
 #include "Maps/TileMapBuilder.h"
 #include "Maps/TileMapLoader.h"
 
-using namespace MAPS;
-
-OverworldMap::OverworldMap() :
-    m_currentTileMap(),
-    m_topTileMap(),
-    m_bottomTileMap(),
-    m_leftTileMap(),
-    m_rightTileMap()
+namespace MAPS
 {
-    // Nothing else to do.
-}
-
-OverworldMap::~OverworldMap()
-{
-    // Nothing else to do.
-}
-
-void OverworldMap::PopulateFromSpecification(
-    const OverworldMapSpecification& overworldSpec,
-    const OverworldGridPosition& startingTileMapOverworldGridPosition,
-    const MATH::Vector2f& startingTileMapTopLeftWorldPosition,
-    const std::shared_ptr<TileMapBuilder>& tileMapBuilder)
-{
-    // CREATE THE STARTING TILE MAP.
-    MAPS::TileMapLoader mapLoader;
-    std::shared_ptr<Tmx::Map> startingTmxMap = mapLoader.LoadMap(overworldSpec.GetStartingTileMapFilepath());
-    std::shared_ptr<MAPS::TileMap> startingTileMap = tileMapBuilder->BuildTileMap(
-        startingTileMapOverworldGridPosition,
-        startingTileMapTopLeftWorldPosition,
-        startingTmxMap);
-    SetCurrentTileMap(startingTileMap);
-
-    // CREATE THE TOP TILE MAP, IF ONE EXISTS.
-    // Determine the position of the top map in the overworld grid.
-    MATH::Vector2ui topTileMapOverworldGridPosition = startingTileMapOverworldGridPosition;
-    topTileMapOverworldGridPosition.Y--;
-    // These checks are needed to prevent an exception.
-    bool topTileMapExists = overworldSpec.PositionInRange(
-        topTileMapOverworldGridPosition.Y,
-        topTileMapOverworldGridPosition.X);
-    if (topTileMapExists)
+    OverworldMap::OverworldMap() :
+        m_currentTileMap(),
+        m_topTileMap(),
+        m_bottomTileMap(),
+        m_leftTileMap(),
+        m_rightTileMap()
     {
-        // Get the filepath to the top tile map.
-        std::string topTileMapFilepath = overworldSpec.GetTileMapFilepath(
-            topTileMapOverworldGridPosition.Y,
-            topTileMapOverworldGridPosition.X);
-
-        // Create the top tile map in the overworld.
-        std::shared_ptr<Tmx::Map> topTmxMap = mapLoader.LoadMap(topTileMapFilepath);
-        std::shared_ptr<MAPS::TileMap> topTileMap = tileMapBuilder->BuildTopTileMap(
-            *startingTileMap, 
-            topTmxMap);
-        SetTopTileMap(topTileMap);
+        // Nothing else to do.
     }
 
-    // CREATE THE BOTTOM TILE MAP, IF ONE EXISTS.
-    // Determine the position of the bottom map in the overworld grid.
-    MATH::Vector2ui bottomTileOverworldGridPosition = startingTileMapOverworldGridPosition;
-    bottomTileOverworldGridPosition.Y++;
-    // These checks are needed to prevent an exception.
-    bool bottomTileMapExists = overworldSpec.PositionInRange(
-        bottomTileOverworldGridPosition.Y,
-        bottomTileOverworldGridPosition.X);
-    if (bottomTileMapExists)
+    OverworldMap::~OverworldMap()
     {
-        // Get the filepath to the bottom tile map.
-        std::string bottomTileMapFilepath = overworldSpec.GetTileMapFilepath(
-            bottomTileOverworldGridPosition.Y,
-            bottomTileOverworldGridPosition.X);
-
-        // Create the bottom tile map in the overworld.
-        std::shared_ptr<Tmx::Map> bottomTmxMap = mapLoader.LoadMap(bottomTileMapFilepath);
-        std::shared_ptr<MAPS::TileMap> bottomTileMap = tileMapBuilder->BuildBottomTileMap(
-            *startingTileMap, 
-            bottomTmxMap);
-        SetBottomTileMap(bottomTileMap);
+        // Nothing else to do.
     }
 
-    // CREATE THE LEFT TILE MAP, IF ONE EXISTS.
-    // Determine the position of the left map in the overworld grid.
-    MATH::Vector2ui leftTileMapOverworldGridPosition = startingTileMapOverworldGridPosition;
-    leftTileMapOverworldGridPosition.X--;
-    // These checks are needed to prevent an exception.
-    bool leftTileMapExists = overworldSpec.PositionInRange(
-        leftTileMapOverworldGridPosition.Y,
-        leftTileMapOverworldGridPosition.X);
-    if (leftTileMapExists)
+    void OverworldMap::PopulateFromSpecification(
+        const OverworldMapSpecification& overworld_spec,
+        const OverworldGridPosition& starting_tile_map_overworld_grid_position,
+        const MATH::Vector2f& starting_tile_map_top_left_world_position,
+        const std::shared_ptr<TileMapBuilder>& tile_map_builder)
     {
-        // Get the filepath to the left tile map.
-        std::string leftTileMapFilepath = overworldSpec.GetTileMapFilepath(
-            leftTileMapOverworldGridPosition.Y,
-            leftTileMapOverworldGridPosition.X);
-
-        // Create the left tile map in the overworld.
-        std::shared_ptr<Tmx::Map> leftTmxMap = mapLoader.LoadMap(leftTileMapFilepath);
-        std::shared_ptr<MAPS::TileMap> leftTileMap = tileMapBuilder->BuildLeftTileMap(
-            *startingTileMap, 
-            leftTmxMap);
-        SetLeftTileMap(leftTileMap);
-    }
-
-    // CREATE THE RIGHT TILE MAP, IF ONE EXISTS.
-    // Determine the position of the right map in the overworld grid.
-    MATH::Vector2ui rightTileMapOverworldGridPosition = startingTileMapOverworldGridPosition;
-    rightTileMapOverworldGridPosition.X++;
-    // These checks are needed to prevent an exception.
-    bool rightTileMapExists = overworldSpec.PositionInRange(
-        rightTileMapOverworldGridPosition.Y,
-        rightTileMapOverworldGridPosition.X);
-    if (rightTileMapExists)
-    {
-        // Get the filepath to the right tile map.
-        std::string rightTileMapFilepath = overworldSpec.GetTileMapFilepath(
-            rightTileMapOverworldGridPosition.Y,
-            rightTileMapOverworldGridPosition.X);
-
-        // Create the right tile map in the overworld.
-        std::shared_ptr<Tmx::Map> rightTmxMap = mapLoader.LoadMap(rightTileMapFilepath);
-        std::shared_ptr<MAPS::TileMap> rightTileMap = tileMapBuilder->BuildRightTileMap(
-            *startingTileMap, 
-            rightTmxMap);
-        SetRightTileMap(rightTileMap);
-    }
-}
-
-std::shared_ptr<Tile> OverworldMap::GetTileAtWorldPosition(const float worldXPosition, const float worldYPosition) const
-{
-    // ATTEMPT TO RETRIEVE THE TILE FROM THE CURRENT CENTER TILE MAP.
-    bool currentTileMapExists = (nullptr != m_currentTileMap);
-    if (currentTileMapExists)
-    {
-        std::shared_ptr<Tile> requestedTile = m_currentTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
-        bool requestedTileFound = (nullptr != requestedTile);
-        if (requestedTileFound)
+        // CREATE THE STARTING TILE MAP.
+        TiledMapJsonFile starting_map_file;
+        bool starting_map_loaded = starting_map_file.Load(overworld_spec.GetStartingTileMapFilepath());
+        if (!starting_map_loaded)
         {
-            return requestedTile;
+            /// @todo   Return false?
+            return;
+        }
+
+        std::shared_ptr<TileMap> starting_tile_map = tile_map_builder->BuildTileMap(
+            starting_tile_map_overworld_grid_position,
+            starting_tile_map_top_left_world_position,
+            starting_map_file);
+        SetCurrentTileMap(starting_tile_map);
+
+        // CREATE THE TOP TILE MAP, IF ONE EXISTS.
+        // Determine the position of the top map in the overworld grid.
+        MATH::Vector2ui top_tile_map_overworld_grid_position = starting_tile_map_overworld_grid_position;
+        top_tile_map_overworld_grid_position.Y--;
+        // These checks are needed to prevent an exception.
+        bool top_tile_map_exists = overworld_spec.PositionInRange(
+            top_tile_map_overworld_grid_position.Y,
+            top_tile_map_overworld_grid_position.X);
+        if (top_tile_map_exists)
+        {
+            // Get the filepath to the top tile map.
+            std::string top_tile_map_filepath = overworld_spec.GetTileMapFilepath(
+                top_tile_map_overworld_grid_position.Y,
+                top_tile_map_overworld_grid_position.X);
+
+            // Create the top tile map in the overworld.
+            std::shared_ptr<TiledMapJsonFile> top_map_file = std::make_shared<TiledMapJsonFile>();
+            bool top_map_loaded = top_map_file->Load(top_tile_map_filepath);
+            if (!top_map_loaded)
+            {
+                /// @todo   Return false?
+                return;
+            }
+            std::shared_ptr<MAPS::TileMap> top_tile_map = tile_map_builder->BuildTopTileMap(
+                *starting_tile_map,
+                top_map_file);
+            SetTopTileMap(top_tile_map);
+        }
+
+        // CREATE THE BOTTOM TILE MAP, IF ONE EXISTS.
+        // Determine the position of the bottom map in the overworld grid.
+        MATH::Vector2ui bottom_tile_map_overworld_grid_position = starting_tile_map_overworld_grid_position;
+        bottom_tile_map_overworld_grid_position.Y++;
+        // These checks are needed to prevent an exception.
+        bool bottom_tile_map_exists = overworld_spec.PositionInRange(
+            bottom_tile_map_overworld_grid_position.Y,
+            bottom_tile_map_overworld_grid_position.X);
+        if (bottom_tile_map_exists)
+        {
+            // Get the filepath to the bottom tile map.
+            std::string bottom_tile_map_filepath = overworld_spec.GetTileMapFilepath(
+                bottom_tile_map_overworld_grid_position.Y,
+                bottom_tile_map_overworld_grid_position.X);
+
+            // Create the bottom tile map in the overworld.
+            std::shared_ptr<TiledMapJsonFile> bottom_map_file = std::make_shared<TiledMapJsonFile>();
+            bool bottom_map_loaded = bottom_map_file->Load(bottom_tile_map_filepath);
+            if (!bottom_map_loaded)
+            {
+                /// @todo   Return false?
+                return;
+            }
+
+            std::shared_ptr<MAPS::TileMap> bottom_tile_map = tile_map_builder->BuildBottomTileMap(
+                *starting_tile_map,
+                bottom_map_file);
+            SetBottomTileMap(bottom_tile_map);
+        }
+
+        // CREATE THE LEFT TILE MAP, IF ONE EXISTS.
+        // Determine the position of the left map in the overworld grid.
+        MATH::Vector2ui left_tile_map_overworld_grid_position = starting_tile_map_overworld_grid_position;
+        left_tile_map_overworld_grid_position.X--;
+        // These checks are needed to prevent an exception.
+        bool left_tile_map_exists = overworld_spec.PositionInRange(
+            left_tile_map_overworld_grid_position.Y,
+            left_tile_map_overworld_grid_position.X);
+        if (left_tile_map_exists)
+        {
+            // Get the filepath to the left tile map.
+            std::string left_tile_map_filepath = overworld_spec.GetTileMapFilepath(
+                left_tile_map_overworld_grid_position.Y,
+                left_tile_map_overworld_grid_position.X);
+
+            // Create the left tile map in the overworld.
+            std::shared_ptr<TiledMapJsonFile> left_map_file = std::make_shared<TiledMapJsonFile>();
+            bool left_map_loaded = left_map_file->Load(left_tile_map_filepath);
+            if (!left_map_loaded)
+            {
+                /// @todo   Return false?
+                return;
+            }
+
+            std::shared_ptr<MAPS::TileMap> left_tile_map = tile_map_builder->BuildLeftTileMap(
+                *starting_tile_map,
+                left_map_file);
+            SetLeftTileMap(left_tile_map);
+        }
+
+        // CREATE THE RIGHT TILE MAP, IF ONE EXISTS.
+        // Determine the position of the right map in the overworld grid.
+        MATH::Vector2ui right_tile_map_overworld_grid_position = starting_tile_map_overworld_grid_position;
+        right_tile_map_overworld_grid_position.X++;
+        // These checks are needed to prevent an exception.
+        bool right_tile_map_exists = overworld_spec.PositionInRange(
+            right_tile_map_overworld_grid_position.Y,
+            right_tile_map_overworld_grid_position.X);
+        if (right_tile_map_exists)
+        {
+            // Get the filepath to the right tile map.
+            std::string right_tile_map_filepath = overworld_spec.GetTileMapFilepath(
+                right_tile_map_overworld_grid_position.Y,
+                right_tile_map_overworld_grid_position.X);
+
+            // Create the right tile map in the overworld.
+            std::shared_ptr<TiledMapJsonFile> right_map_file = std::make_shared<TiledMapJsonFile>();
+            bool right_map_loaded = right_map_file->Load(right_tile_map_filepath);
+            if (!right_map_loaded)
+            {
+                /// @todo   Return false?
+                return;
+            }
+
+            std::shared_ptr<MAPS::TileMap> right_tile_map = tile_map_builder->BuildRightTileMap(
+                *starting_tile_map,
+                right_map_file);
+            SetRightTileMap(right_tile_map);
         }
     }
 
-    // ATTEMPT TO RETRIEVE THE TILE FROM THE TOP TILE MAP.
-    bool topTileMapExists = (nullptr != m_topTileMap);
-    if (topTileMapExists)
+    std::shared_ptr<Tile> OverworldMap::GetTileAtWorldPosition(const float worldXPosition, const float worldYPosition) const
     {
-        std::shared_ptr<Tile> requestedTile = m_topTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
-        bool requestedTileFound = (nullptr != requestedTile);
-        if (requestedTileFound)
+        // ATTEMPT TO RETRIEVE THE TILE FROM THE CURRENT CENTER TILE MAP.
+        bool currentTileMapExists = (nullptr != m_currentTileMap);
+        if (currentTileMapExists)
         {
-            return requestedTile;
+            std::shared_ptr<Tile> requestedTile = m_currentTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
+            bool requestedTileFound = (nullptr != requestedTile);
+            if (requestedTileFound)
+            {
+                return requestedTile;
+            }
         }
+
+        // ATTEMPT TO RETRIEVE THE TILE FROM THE TOP TILE MAP.
+        bool topTileMapExists = (nullptr != m_topTileMap);
+        if (topTileMapExists)
+        {
+            std::shared_ptr<Tile> requestedTile = m_topTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
+            bool requestedTileFound = (nullptr != requestedTile);
+            if (requestedTileFound)
+            {
+                return requestedTile;
+            }
+        }
+
+        // ATTEMPT TO RETRIEVE THE TILE FROM THE BOTTOM TILE MAP.
+        bool bottomTileMapExists = (nullptr != m_bottomTileMap);
+        if (bottomTileMapExists)
+        {
+            std::shared_ptr<Tile> requestedTile = m_bottomTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
+            bool requestedTileFound = (nullptr != requestedTile);
+            if (requestedTileFound)
+            {
+                return requestedTile;
+            }
+        }
+
+        // ATTEMPT TO RETRIEVE THE TILE FROM THE LEFT TILE MAP.
+        bool leftTileMapExists = (nullptr != m_leftTileMap);
+        if (leftTileMapExists)
+        {
+            std::shared_ptr<Tile> requestedTile = m_leftTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
+            bool requestedTileFound = (nullptr != requestedTile);
+            if (requestedTileFound)
+            {
+                return requestedTile;
+            }
+        }
+
+        // ATTEMPT TO RETRIEVE THE TILE FROM THE RIGHT TILE MAP.
+        bool rightTileMapExists = (nullptr != m_rightTileMap);
+        if (rightTileMapExists)
+        {
+            std::shared_ptr<Tile> requestedTile = m_rightTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
+            bool requestedTileFound = (nullptr != requestedTile);
+            if (requestedTileFound)
+            {
+                return requestedTile;
+            }
+        }
+
+        // NO VALID TILE COULD BE FOUND.
+        return nullptr;
     }
 
-    // ATTEMPT TO RETRIEVE THE TILE FROM THE BOTTOM TILE MAP.
-    bool bottomTileMapExists = (nullptr != m_bottomTileMap);
-    if (bottomTileMapExists)
+    std::shared_ptr<TileMap> OverworldMap::GetCurrentTileMap() const
     {
-        std::shared_ptr<Tile> requestedTile = m_bottomTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
-        bool requestedTileFound = (nullptr != requestedTile);
-        if (requestedTileFound)
-        {
-            return requestedTile;
-        }
+        return m_currentTileMap;
     }
 
-    // ATTEMPT TO RETRIEVE THE TILE FROM THE LEFT TILE MAP.
-    bool leftTileMapExists = (nullptr != m_leftTileMap);
-    if (leftTileMapExists)
+    std::shared_ptr<TileMap> OverworldMap::GetTopTileMap() const
     {
-        std::shared_ptr<Tile> requestedTile = m_leftTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
-        bool requestedTileFound = (nullptr != requestedTile);
-        if (requestedTileFound)
-        {
-            return requestedTile;
-        }
+        return m_topTileMap;
     }
 
-    // ATTEMPT TO RETRIEVE THE TILE FROM THE RIGHT TILE MAP.
-    bool rightTileMapExists = (nullptr != m_rightTileMap);
-    if (rightTileMapExists)
+    std::shared_ptr<TileMap> OverworldMap::GetBottomTileMap() const
     {
-        std::shared_ptr<Tile> requestedTile = m_rightTileMap->GetTileAtWorldPosition(worldXPosition, worldYPosition);
-        bool requestedTileFound = (nullptr != requestedTile);
-        if (requestedTileFound)
-        {
-            return requestedTile;
-        }
+        return m_bottomTileMap;
     }
 
-    // NO VALID TILE COULD BE FOUND.
-    return nullptr;
-}
+    std::shared_ptr<TileMap> OverworldMap::GetLeftTileMap() const
+    {
+        return m_leftTileMap;
+    }
 
-std::shared_ptr<TileMap> OverworldMap::GetCurrentTileMap() const
-{
-    return m_currentTileMap;
-}
+    std::shared_ptr<TileMap> OverworldMap::GetRightTileMap() const
+    {
+        return m_rightTileMap;
+    }
 
-std::shared_ptr<TileMap> OverworldMap::GetTopTileMap() const
-{
-    return m_topTileMap;
-}
+    void OverworldMap::SetCurrentTileMap(const std::shared_ptr<TileMap>& tileMap)
+    {
+        m_currentTileMap = tileMap;
+    }
 
-std::shared_ptr<TileMap> OverworldMap::GetBottomTileMap() const
-{
-    return m_bottomTileMap;
-}
+    void OverworldMap::SetTopTileMap(const std::shared_ptr<TileMap>& tileMap)
+    {
+        m_topTileMap = tileMap;
+    }
 
-std::shared_ptr<TileMap> OverworldMap::GetLeftTileMap() const
-{
-    return m_leftTileMap;
-}
+    void OverworldMap::SetBottomTileMap(const std::shared_ptr<TileMap>& tileMap)
+    {
+        m_bottomTileMap = tileMap;
+    }
 
-std::shared_ptr<TileMap> OverworldMap::GetRightTileMap() const
-{
-    return m_rightTileMap;
-}
+    void OverworldMap::SetLeftTileMap(const std::shared_ptr<TileMap>& tileMap)
+    {
+        m_leftTileMap = tileMap;
+    }
 
-void OverworldMap::SetCurrentTileMap(const std::shared_ptr<TileMap>& tileMap)
-{
-    m_currentTileMap = tileMap;
-}
-
-void OverworldMap::SetTopTileMap(const std::shared_ptr<TileMap>& tileMap)
-{
-    m_topTileMap = tileMap;
-}
-
-void OverworldMap::SetBottomTileMap(const std::shared_ptr<TileMap>& tileMap)
-{
-    m_bottomTileMap = tileMap;
-}
-
-void OverworldMap::SetLeftTileMap(const std::shared_ptr<TileMap>& tileMap)
-{
-    m_leftTileMap = tileMap;
-}
-
-void OverworldMap::SetRightTileMap(const std::shared_ptr<TileMap>& tileMap)
-{
-    m_rightTileMap = tileMap;
+    void OverworldMap::SetRightTileMap(const std::shared_ptr<TileMap>& tileMap)
+    {
+        m_rightTileMap = tileMap;
+    }
 }

@@ -2,37 +2,40 @@
 
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include "Math/Vector2.h"
 
 namespace GRAPHICS
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  A texture resource.
-    ///////////////////////////////////////////////////////////
+    /// A texture resource.
     class Texture
     {
     public:        
-        /// @brief      Constructor.
-        /// @param[in]  textureResource - The SFML texture that is the underlying resource.
-        explicit Texture(const std::shared_ptr<sf::Texture>& textureResource);
-        /// @brief      Copy constructor.
-        /// @param[in]  textureToCopy - The texture to copy.
-        explicit Texture(const Texture& textureToCopy);
-        /// @brief      Destructor.
+        /// Constructor.
+        /// @param[in]  texture_resource - The SFML texture that is the underlying resource.
+        explicit Texture(const std::shared_ptr<sf::Texture>& texture_resource);
+        /// Copy constructor.
+        /// @param[in]  other - The texture to copy.
+        Texture(const Texture& other);
+        /// Destructor.
         ~Texture();
 
-        /// @brief      Assignment operator.
-        /// @param[in]  rhsTexture - The texture to assign from.
-        Texture& operator= (const Texture& rhsTexture);
+        /// Assignment operator.
+        /// @param[in]  rhs - The texture to assign from.
+        Texture& operator= (const Texture& rhs);
 
-        /// @brief      Returns the underlying SFML texture resource.
-        /// @return     The SFML texture resource.
+        /// Gets the dimensions of the texture, in pixels.
+        /// @return The dimensions of the texture image.
+        MATH::Vector2ui GetSize() const;
+
+        /// Returns the underlying SFML texture resource.
+        /// @return The SFML texture resource.
         const std::shared_ptr<sf::Texture> GetTextureResource() const;
 
     private:
-        /// @brief      Helper method for copying a texture.
-        /// @param[in]  textureToCopy - The texture to copy.
-        void Copy(const Texture& textureToCopy);
+        /// Helper method for copying a texture.
+        /// @param[in]  texture_to_copy - The texture to copy.
+        void Copy(const Texture& texture_to_copy);
 
-        std::shared_ptr<sf::Texture> m_textureResource;   ///< The underlying SFML texture resource.
+        std::shared_ptr<sf::Texture> TextureResource;   ///< The underlying SFML texture resource.
     };
 }

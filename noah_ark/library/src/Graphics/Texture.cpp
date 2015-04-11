@@ -2,16 +2,16 @@
 
 using namespace GRAPHICS;
 
-Texture::Texture(const std::shared_ptr<sf::Texture>& textureResource) :
-    m_textureResource(textureResource)
+Texture::Texture(const std::shared_ptr<sf::Texture>& texture_resource) :
+TextureResource(texture_resource)
 {
     // Nothing else to do.
 }
 
-Texture::Texture(const Texture& textureToCopy) :
-    m_textureResource()
+Texture::Texture(const Texture& other) :
+TextureResource()
 {
-    Copy(textureToCopy);
+    Copy(other);
 }
 
 Texture::~Texture()
@@ -19,26 +19,33 @@ Texture::~Texture()
     // Nothing else to do.
 }
 
-Texture& Texture::operator= (const Texture& rhsTexture)
+Texture& Texture::operator= (const Texture& rhs)
 {
     // CHECK FOR SELF-ASSIGNMENT.
-    bool selfAssignment = ( this == &rhsTexture );
-    if (!selfAssignment)
+    bool self_assignment = (this == &rhs);
+    if (!self_assignment)
     {
         // Copy the values of the right-hand side texture into this texture.
-        Copy(rhsTexture);
+        Copy(rhs);
     }
 
     // RETURN THIS OBJECT.
     return (*this);
 }
 
+MATH::Vector2ui Texture::GetSize() const
+{
+    sf::Vector2u texture_resource_size = TextureResource->getSize();
+    MATH::Vector2ui texture_size(texture_resource_size.x, texture_resource_size.y);
+    return texture_size;
+}
+
 const std::shared_ptr<sf::Texture> Texture::GetTextureResource() const
 {
-    return m_textureResource;
+    return TextureResource;
 }
 
 void Texture::Copy(const Texture& textureToCopy)
 {
-    this->m_textureResource = textureToCopy.m_textureResource;
+    this->TextureResource = textureToCopy.TextureResource;
 }

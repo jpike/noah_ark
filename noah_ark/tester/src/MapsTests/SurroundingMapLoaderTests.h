@@ -9,124 +9,104 @@ namespace SURROUNDING_MAP_LOADER_TESTS
     {
         // SETUP.
         // Load the default testing overworld map specification.
-        MAPS::OverworldMapSpecification overworldSpecification;
+        MAPS::OverworldMapSpecification overworld_specification;
         const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
-        bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
+        bool specification_loaded_successfully = overworld_specification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
-        REQUIRE(specificationLoadedSuccessfully);
+        REQUIRE(specification_loaded_successfully);
 
         // Create the surrounding tile map loader.
-        MAPS::SurroundingTileMapLoader surroundingMapLoader(&overworldSpecification);
+        MAPS::SurroundingTileMapLoader surrounding_map_loader(&overworld_specification);
 
         // EXECUTE.
         // Test loading and retrieving the top map.
         const MATH::Vector2ui CENTER_MAP_GRID_POSITION(1, 1);
-        surroundingMapLoader.StartLoadingTopTileMap(CENTER_MAP_GRID_POSITION);
-        std::shared_ptr<Tmx::Map> topTmxMap = surroundingMapLoader.GetTopTileMap();
+        surrounding_map_loader.StartLoadingTopTileMap(CENTER_MAP_GRID_POSITION);
+        std::shared_ptr<MAPS::TiledMapJsonFile> top_map = surrounding_map_loader.GetTopTileMap();
 
         // VERIFY.
         /// @todo   Create helper function(s) to verify data from the test overworld map specification.
         ///         More verification should be added here.
-        bool topMapLoadedSuccessfully = (nullptr != topTmxMap);
-        REQUIRE(topMapLoadedSuccessfully);
-
-        // Verify the filepath.  Note that the filename should return more than just as name.
-        const std::string EXPECTED_TOP_TILE_MAP_FILEPATH = "res/maps/testing/test_map_1_0.tmx";
-        std::string actual_top_tile_map_filepath = topTmxMap->GetFilename();
-        REQUIRE(EXPECTED_TOP_TILE_MAP_FILEPATH == actual_top_tile_map_filepath);
+        bool top_map_loaded_successfully = (nullptr != top_map);
+        REQUIRE(top_map_loaded_successfully);
     }
 
     TEST_CASE( "Load the bottom surrounding map.  Success.", "[SurroundingTileMapLoader][StartLoadingBottomTileMap][GetBottomTileMap]" )
     {
         // SETUP.
         // Load the default testing overworld map specification.
-        MAPS::OverworldMapSpecification overworldSpecification;
+        MAPS::OverworldMapSpecification overworld_specification;
         const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
-        bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
+        bool specification_loaded_successfully = overworld_specification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
-        REQUIRE(specificationLoadedSuccessfully);
+        REQUIRE(specification_loaded_successfully);
 
         // Create the surrounding tile map loader.
-        MAPS::SurroundingTileMapLoader surroundingMapLoader(&overworldSpecification);
+        MAPS::SurroundingTileMapLoader surrounding_map_loader(&overworld_specification);
 
         // EXECUTE.
         // Test loading and retrieving the bottom map.
         const MATH::Vector2ui CENTER_MAP_GRID_POSITION(1, 1);
-        surroundingMapLoader.StartLoadingBottomTileMap(CENTER_MAP_GRID_POSITION);
-        std::shared_ptr<Tmx::Map> bottomTmxMap = surroundingMapLoader.GetBottomTileMap();
+        surrounding_map_loader.StartLoadingBottomTileMap(CENTER_MAP_GRID_POSITION);
+        std::shared_ptr<MAPS::TiledMapJsonFile> bottom_map = surrounding_map_loader.GetBottomTileMap();
 
         // VERIFY.
         /// @todo   Create helper function(s) to verify data from the test overworld map specification.
         ///         More verification should be added here.
-        bool bottomMapLoadedSuccessfully = (nullptr != bottomTmxMap);
-        REQUIRE(bottomMapLoadedSuccessfully);
-
-        // Verify the filepath.  Note that the filename should return more than just as name.
-        const std::string EXPECTED_BOTTOM_TILE_MAP_FILEPATH = "res/maps/testing/test_map_1_2.tmx";
-        std::string actual_bottom_tile_map_filepath = bottomTmxMap->GetFilename();
-        REQUIRE(EXPECTED_BOTTOM_TILE_MAP_FILEPATH == actual_bottom_tile_map_filepath);
+        bool bottom_map_loaded_successfully = (nullptr != bottom_map);
+        REQUIRE(bottom_map_loaded_successfully);
     }
 
     TEST_CASE( "Load the left surrounding map.  Success.", "[SurroundingTileMapLoader][StartLoadingLeftTileMap][GetLeftTileMap]" )
     {
         // SETUP.
         // Load the default testing overworld map specification.
-        MAPS::OverworldMapSpecification overworldSpecification;
+        MAPS::OverworldMapSpecification overworld_specification;
         const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
-        bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
+        bool specification_loaded_successfully = overworld_specification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
-        REQUIRE(specificationLoadedSuccessfully);
+        REQUIRE(specification_loaded_successfully);
 
         // Create the surrounding tile map loader.
-        MAPS::SurroundingTileMapLoader surroundingMapLoader(&overworldSpecification);
+        MAPS::SurroundingTileMapLoader surrounding_map_loader(&overworld_specification);
 
         // EXECUTE.
         // Test loading and retrieving the left map.
         const MATH::Vector2ui CENTER_MAP_GRID_POSITION(1, 1);
-        surroundingMapLoader.StartLoadingLeftTileMap(CENTER_MAP_GRID_POSITION);
-        std::shared_ptr<Tmx::Map> leftTmxMap = surroundingMapLoader.GetLeftTileMap();
+        surrounding_map_loader.StartLoadingLeftTileMap(CENTER_MAP_GRID_POSITION);
+        std::shared_ptr<MAPS::TiledMapJsonFile> left_map = surrounding_map_loader.GetLeftTileMap();
 
         // VERIFY.
         /// @todo   Create helper function(s) to verify data from the test overworld map specification.
         ///         More verification should be added here.
-        bool leftMapLoadedSuccessfully = (nullptr != leftTmxMap);
-        REQUIRE(leftMapLoadedSuccessfully);
-
-        // Verify the filepath.  Note that the filename should return more than just as name.
-        const std::string EXPECTED_LEFT_TILE_MAP_FILEPATH = "res/maps/testing/test_map_0_1.tmx";
-        std::string actual_left_tile_map_filepath = leftTmxMap->GetFilename();
-        REQUIRE(EXPECTED_LEFT_TILE_MAP_FILEPATH == actual_left_tile_map_filepath);
+        bool left_map_loaded_successfully = (nullptr != left_map);
+        REQUIRE(left_map_loaded_successfully);
     }
 
     TEST_CASE( "Load the right surrounding map.  Success.", "[SurroundingTileMapLoader][StartLoadingRightTileMap][GetRightTileMap]" )
     {
         // SETUP.
         // Load the default testing overworld map specification.
-        MAPS::OverworldMapSpecification overworldSpecification;
+        MAPS::OverworldMapSpecification overworld_specification;
         const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
-        bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
+        bool specification_loaded_successfully = overworld_specification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
-        REQUIRE(specificationLoadedSuccessfully);
+        REQUIRE(specification_loaded_successfully);
 
         // Create the surrounding tile map loader.
-        MAPS::SurroundingTileMapLoader surroundingMapLoader(&overworldSpecification);
+        MAPS::SurroundingTileMapLoader surrounding_map_loader(&overworld_specification);
 
         // EXECUTE.
         // Test loading and retrieving the right map.
         const MATH::Vector2ui CENTER_MAP_GRID_POSITION(1, 1);
-        surroundingMapLoader.StartLoadingRightTileMap(CENTER_MAP_GRID_POSITION);
-        std::shared_ptr<Tmx::Map> rightTmxMap = surroundingMapLoader.GetRightTileMap();
+        surrounding_map_loader.StartLoadingRightTileMap(CENTER_MAP_GRID_POSITION);
+        std::shared_ptr<MAPS::TiledMapJsonFile> right_map = surrounding_map_loader.GetRightTileMap();
 
         // VERIFY.
         /// @todo   Create helper function(s) to verify data from the test overworld map specification.
         ///         More verification should be added here.
-        bool rightMapLoadedSuccessfully = (nullptr != rightTmxMap);
-        REQUIRE(rightMapLoadedSuccessfully);
-
-        // Verify the filepath.  Note that the filename should return more than just as name.
-        const std::string EXPECTED_RIGHT_TILE_MAP_FILEPATH = "res/maps/testing/test_map_2_1.tmx";
-        std::string actual_right_tile_map_filepath = rightTmxMap->GetFilename();
-        REQUIRE(EXPECTED_RIGHT_TILE_MAP_FILEPATH == actual_right_tile_map_filepath);
+        bool right_map_loaded_successfully = (nullptr != right_map);
+        REQUIRE(right_map_loaded_successfully);
     }
 
 }

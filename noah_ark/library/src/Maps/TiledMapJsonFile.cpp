@@ -40,7 +40,7 @@ namespace MAPS
             Tilesets = ReadTilesets(mapFileData);
 
             // READ THE TILE MAP LAYERS.
-            Layers = ReadLayers(mapFileData);
+            Layers = ReadLayers(mapFileData, WidthInTiles, HeightInTiles);
 
             return true;
         }
@@ -118,19 +118,22 @@ namespace MAPS
         return tilesets;
     }
 
-    std::vector<TileMapLayerDescription> TiledMapJsonFile::ReadLayers(const boost::property_tree::ptree& mapFileData) const
+    std::vector<TileMapLayerDescription> TiledMapJsonFile::ReadLayers(
+        const boost::property_tree::ptree& map_file_data,
+        const unsigned int width_in_tiles,
+        const unsigned int height_in_tiles) const
     {
         std::vector<TileMapLayerDescription> layers;
 
         // READ EACH LAYER.
-        BOOST_FOREACH(const boost::property_tree::ptree::value_type& layerData, mapFileData.get_child("layers"))
+        BOOST_FOREACH(const boost::property_tree::ptree::value_type& layer_data, map_file_data.get_child("layers"))
         {
             // READ THE CURRENT LAYER'S NAME INTO A NEW LAYER DESCRIPTION.
             TileMapLayerDescription layer = {};
-            layer.Name = layerData.second.get<std::string>("name");
+            layer.Name = layer_data.second.get<std::string>("name");
 
             // POPULATE THE LAYER DATA BASED ON ITS TYPE.
-            std::string layerType = layerData.second.get<std::string>("type");
+            std::string layerType = layer_data.second.get<std::string>("type");
             bool currentLayerHasTiles = ("tilelayer" == layerType);
             bool currentLayerHasObjects = ("objectgroup" == layerType);
             if (currentLayerHasTiles)
@@ -139,7 +142,7 @@ namespace MAPS
                 layer.Type = TileMapLayerType::TILE_LAYER;
 
                 // READ IN THE TILES.
-                layer.TileIds = ReadTileIds(layerData);
+                layer.TileIds = ReadTileIds(layer_data, width_in_tiles, height_in_tiles);
             }
             else if (currentLayerHasObjects)
             {
@@ -147,7 +150,7 @@ namespace MAPS
                 layer.Type = TileMapLayerType::OBJECT_LAYER;
 
                 // READ IN THE OBJECTS.
-                layer.Objects = ReadObjects(layerData);
+                layer.Objects = ReadObjects(layer_data);
             }
             else
             {
@@ -163,15 +166,42 @@ namespace MAPS
         return layers;
     }
 
-    std::vector<TileId> TiledMapJsonFile::ReadTileIds(const boost::property_tree::ptree::value_type& layerData) const
+    CORE::Array2D<TileId> TiledMapJsonFile::ReadTileIds(
+        const boost::property_tree::ptree::value_type& layer_data,
+        const unsigned int width_in_tiles,
+        const unsigned int height_in_tiles) const
     {
-        std::vector<TileId> tile_ids;
+        CORE::Array2D<TileId> tile_ids(width_in_tiles, height_in_tiles);
 
         // READ EACH TILE ID.
-        BOOST_FOREACH(const boost::property_tree::ptree::value_type& tileIdData, layerData.second.get_child("data"))
+        unsigned int current_x_position = 0;
+        unsigned int current_y_position = 0;
+        BOOST_FOREACH(const boost::property_tree::ptree::value_type& tile_id_data, layer_data.second.get_child("data"))
         {
-            TileId dataValue = tileIdData.second.get_value<TileId>();
-            tile_ids.push_back(dataValue);
+            // ADD THE CURRENT TILE ID TO THE COLLECTION.
+            TileId tile_id = tile_id_data.second.get_value<TileId>();
+            tile_ids(current_x_position, current_y_position) = tile_id;
+
+            // ADJUST THE POSITION FOR THE NEXT TILE ID.
+            ++current_x_position;
+            bool full_row_populated = (current_x_position >= width_in_tiles);
+            if (full_row_populated)
+            {
+                // Move to the beginning of the next row.
+                current_x_position = 0;
+                ++current_y_position;
+            }
+
+            // CHECK IF THE ARRAY OF TILE IDs HAS BEEN FULLY POPULAYED.
+            bool full_array_populated = (current_y_position >= height_in_tiles);
+            if (full_array_populated)
+            {
+                // Return the tile IDs collected so far.  Any other tile IDs will
+                // be discarded.  This is acceptable since this scenario isn't expected
+                // to actually occur.  If it does occur, the preference would be
+                // to avoid any out-of-bounds exceptions.
+                return tile_ids;
+            }
         }
 
         return tile_ids;

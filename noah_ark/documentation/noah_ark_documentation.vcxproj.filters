@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Doxygen">
-      <UniqueIdentifier>{36e8b6cf-7a51-4322-8059-00cfb2ee47c2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="AdditionalPages">
       <UniqueIdentifier>{84f21a8d-0969-4ec4-a8aa-c39557af2901}</UniqueIdentifier>
     </Filter>
@@ -15,9 +12,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="noark_ark.dxy">
-      <Filter>Doxygen</Filter>
-    </None>
+    <None Include="noark_ark.dxy" />
+    <None Include="CodingStandards.md" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="additional_pages\Animals.txt">

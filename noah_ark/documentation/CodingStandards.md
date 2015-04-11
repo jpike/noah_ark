@@ -10,7 +10,7 @@ The following types of comments are encouraged inside function bodies (although 
 
 * Intent comments - These are the most valuable type of comments.  They communicate things that may not be readily available from simply reading the code.  Providing intent helps future programmers gain insight into the mind of the original programmer and often answers the question "Why?"
 * Tricky code comments - Any type of "trick" used in the code should be documented.  If it takes more than a few seconds to understand a line or two of code, the code is probably too tricky.  It is always preferable to try and rewrite code to remove tricks so that it is simple and more self-documenting, but comments help when this is not possible.
-* Summary comments - Comments that summarize a block of code are less valuable but still encouraged.  Primarily, summary comments (not using the summary XML tags) inside methods help improve scannability of the code.  Readers can quickly read one-line summary comments to skip over or find sections of code of interest.
+* Summary comments - Comments that summarize a block of code are less valuable but still encouraged.  Primarily, summary comments inside functions help improve scannability of the code.  Readers can quickly read one-line summary comments to skip over or find sections of code of interest.
 
 ### Author / Date Documentation ###
 

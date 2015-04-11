@@ -64,6 +64,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="CodingStandards.md" />
     <None Include="noark_ark.dxy" />
   </ItemGroup>
   <ItemGroup>

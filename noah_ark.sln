@@ -3,20 +3,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "noah_ark_tester", "noah_ark\tester\noah_ark_tester\noah_ark_tester.vcxproj", "{4459616F-64F9-47ED-BD17-C365536B66D4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "noah_ark_tester", "noah_ark\tester\noah_ark_tester.vcxproj", "{4459616F-64F9-47ED-BD17-C365536B66D4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0D615E35-8F41-44B6-BE1B-FED957017972} = {0D615E35-8F41-44B6-BE1B-FED957017972}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "noah_ark_library", "noah_ark\library\noah_ark_library\noak_ark_library.vcxproj", "{0D615E35-8F41-44B6-BE1B-FED957017972}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "noah_ark_library", "noah_ark\library\noak_ark_library.vcxproj", "{0D615E35-8F41-44B6-BE1B-FED957017972}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "noah_ark_game", "noah_ark\game\noah_ark_game\noah_ark_game.vcxproj", "{0021B634-865C-4E17-9D99-6B13900EDA2E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "noah_ark_game", "noah_ark\game\noah_ark_game.vcxproj", "{0021B634-865C-4E17-9D99-6B13900EDA2E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0D615E35-8F41-44B6-BE1B-FED957017972} = {0D615E35-8F41-44B6-BE1B-FED957017972}
 		{D49E3A88-DC57-4AAB-8C6C-FA5479E40032} = {D49E3A88-DC57-4AAB-8C6C-FA5479E40032}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "noak_ark_resources", "noah_ark\resources\noah_ark_resources\noak_ark_resources.vcxproj", "{D49E3A88-DC57-4AAB-8C6C-FA5479E40032}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "noak_ark_resources", "noah_ark\resources\noak_ark_resources.vcxproj", "{D49E3A88-DC57-4AAB-8C6C-FA5479E40032}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "noah_ark_documentation", "noah_ark\documentation\noah_ark_documentation.vcxproj", "{1EBB39FA-B36B-403F-9C32-ACC97EF89098}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,6 +42,10 @@ Global
 		{D49E3A88-DC57-4AAB-8C6C-FA5479E40032}.Debug|Win32.Build.0 = Debug|Win32
 		{D49E3A88-DC57-4AAB-8C6C-FA5479E40032}.Release|Win32.ActiveCfg = Release|Win32
 		{D49E3A88-DC57-4AAB-8C6C-FA5479E40032}.Release|Win32.Build.0 = Release|Win32
+		{1EBB39FA-B36B-403F-9C32-ACC97EF89098}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1EBB39FA-B36B-403F-9C32-ACC97EF89098}.Debug|Win32.Build.0 = Debug|Win32
+		{1EBB39FA-B36B-403F-9C32-ACC97EF89098}.Release|Win32.ActiveCfg = Release|Win32
+		{1EBB39FA-B36B-403F-9C32-ACC97EF89098}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

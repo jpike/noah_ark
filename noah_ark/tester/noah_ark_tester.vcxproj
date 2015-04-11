@@ -44,16 +44,16 @@
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\noah_ark_library\src;$(CATCH_DIR);$(SFML_32_BIT_DIR)\include;$(TMX_PARSER_DIR);$(THOR_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)noah_ark\library\noah_ark_library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(THOR_DIR)\lib;$(TMX_PARSER_DIR)\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\src;$(CATCH_DIR);$(SFML_32_BIT_DIR)\include;$(TMX_PARSER_DIR);$(THOR_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)noah_ark\library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(THOR_DIR)\lib;$(TMX_PARSER_DIR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\noah_ark_library\src;$(CATCH_DIR);$(SFML_32_BIT_DIR)\include;$(TMX_PARSER_DIR);$(THOR_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)noah_ark\library\noah_ark_library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(THOR_DIR)\lib;$(TMX_PARSER_DIR)\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\src;$(CATCH_DIR);$(SFML_32_BIT_DIR)\include;$(TMX_PARSER_DIR);$(THOR_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)noah_ark\library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(THOR_DIR)\lib;$(TMX_PARSER_DIR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -74,7 +74,7 @@
       <Command>xcopy /Y "$(SFML_32_BIT_DIR)\bin\*.dll" "$(TargetDir)"
 xcopy /Y "$(THOR_DIR)\bin\*.dll" "$(TargetDir)"
 
-xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(TargetDir)res\"</Command>
+xcopy /Y /S "$(SolutionDir)noah_ark\resources\res\*" "$(TargetDir)res\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>
@@ -105,7 +105,7 @@ xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(Targe
       <Command>xcopy /Y "$(SFML_32_BIT_DIR)\bin\*.dll" "$(TargetDir)"
 xcopy /Y "$(THOR_DIR)\bin\*.dll" "$(TargetDir)"
 
-xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(TargetDir)res\"</Command>
+xcopy /Y /S "$(SolutionDir)noah_ark\resources\res\*" "$(TargetDir)res\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

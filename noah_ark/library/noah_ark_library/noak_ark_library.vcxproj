@@ -32,7 +32,10 @@
     <ClInclude Include="src\Maps\TiledMapJsonFile.h" />
     <ClInclude Include="src\Maps\TileMap.h" />
     <ClInclude Include="src\Maps\TileMapBuilder.h" />
+    <ClInclude Include="src\Maps\TileMapLayerDescription.h" />
     <ClInclude Include="src\Maps\TileMapLoader.h" />
+    <ClInclude Include="src\Maps\TileMapObjectDescription.h" />
+    <ClInclude Include="src\Maps\TilesetDescription.h" />
     <ClInclude Include="src\Math\FloatRectangle.h" />
     <ClInclude Include="src\Math\ITransformable.h" />
     <ClInclude Include="src\Math\Vector2.h" />
@@ -66,7 +69,10 @@
     <ClCompile Include="src\Maps\TiledMapJsonFile.cpp" />
     <ClCompile Include="src\Maps\TileMap.cpp" />
     <ClCompile Include="src\Maps\TileMapBuilder.cpp" />
+    <ClCompile Include="src\Maps\TileMapLayerDescription.cpp" />
     <ClCompile Include="src\Maps\TileMapLoader.cpp" />
+    <ClCompile Include="src\Maps\TileMapObjectDescription.cpp" />
+    <ClCompile Include="src\Maps\TilesetDescription.cpp" />
     <ClCompile Include="src\Math\FloatRectangle.cpp" />
     <ClCompile Include="src\Objects\Noah.cpp" />
     <ClCompile Include="src\Physics\Collision\BoxCollider.cpp" />

@@ -123,6 +123,10 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
+# Doxygen generated documentation files.
+doxygen_docs
+NoahArkWarningLog.txt
+
 # Click-Once directory
 publish/
 

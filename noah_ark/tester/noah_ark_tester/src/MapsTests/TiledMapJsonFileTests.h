@@ -8,17 +8,17 @@ namespace TILED_MAP_JSON_FILE_TESTS
     TEST_CASE("Tile and map dimensions are required in the file.", "[TileMapJsonFile]")
     {
         // LOAD THE TEST MAP.
-        const std::string MAP_FILEPATH = "res/maps/test_dimensions.json";
+        const std::string MAP_FILEPATH = "res/maps/testing/test_layer_tile_single.json";
         MAPS::TiledMapJsonFile mapFile;
         bool fileLoaded = mapFile.Load(MAP_FILEPATH);
         REQUIRE(fileLoaded);
 
         // VALIDATE THE DIMENSIONS OF THE MAP.
-        const unsigned int EXPECTED_WIDTH_IN_TILES = 32;
+        const unsigned int EXPECTED_WIDTH_IN_TILES = 3;
         unsigned int actualWidthInTiles = mapFile.GetWidthInTiles();
         REQUIRE(EXPECTED_WIDTH_IN_TILES == actualWidthInTiles);
 
-        const unsigned int EXPECTED_HEIGHT_IN_TILES = 24;
+        const unsigned int EXPECTED_HEIGHT_IN_TILES = 2;
         unsigned int actualHeightInTiles = mapFile.GetHeightInTiles();
         REQUIRE(EXPECTED_HEIGHT_IN_TILES == actualHeightInTiles);
 
@@ -34,7 +34,7 @@ namespace TILED_MAP_JSON_FILE_TESTS
     TEST_CASE("A tile map may have a single tileset.", "[TileMapJsonFile]")
     {
         // LOAD THE TEST MAP.
-        const std::string MAP_FILEPATH = "res/maps/test_tileset_single.json";
+        const std::string MAP_FILEPATH = "res/maps/testing/test_layer_tile_single.json";
         MAPS::TiledMapJsonFile mapFile;
         bool fileLoaded = mapFile.Load(MAP_FILEPATH);
         REQUIRE(fileLoaded);
@@ -58,7 +58,7 @@ namespace TILED_MAP_JSON_FILE_TESTS
     TEST_CASE("A tile map may have multiple tilesets.", "[TileMapJsonFile]")
     {
         // LOAD THE TEST MAP.
-        const std::string MAP_FILEPATH = "res/maps/test_tileset_multiple.json";
+        const std::string MAP_FILEPATH = "res/maps/testing/test_tileset_multiple.json";
         MAPS::TiledMapJsonFile mapFile;
         bool fileLoaded = mapFile.Load(MAP_FILEPATH);
         REQUIRE(fileLoaded);
@@ -96,7 +96,7 @@ namespace TILED_MAP_JSON_FILE_TESTS
     TEST_CASE("A tile map may have a tile layer.", "[TileMapJsonFile]")
     {
         // LOAD THE TEST MAP.
-        const std::string MAP_FILEPATH = "res/maps/test_layer_tile_single.json";
+        const std::string MAP_FILEPATH = "res/maps/testing/test_layer_tile_single.json";
         MAPS::TiledMapJsonFile mapFile;
         bool fileLoaded = mapFile.Load(MAP_FILEPATH);
         REQUIRE(fileLoaded);
@@ -120,7 +120,7 @@ namespace TILED_MAP_JSON_FILE_TESTS
     TEST_CASE("A tile map may have an object layer.", "[TileMapJsonFile]")
     {
         // LOAD THE TEST MAP.
-        const std::string MAP_FILEPATH = "res/maps/test_layer_object_single.json";
+        const std::string MAP_FILEPATH = "res/maps/testing/test_layer_object_single.json";
         MAPS::TiledMapJsonFile mapFile;
         bool fileLoaded = mapFile.Load(MAP_FILEPATH);
         REQUIRE(fileLoaded);
@@ -163,7 +163,7 @@ namespace TILED_MAP_JSON_FILE_TESTS
     TEST_CASE("A tile map may have multiple layers.", "[TileMapJsonFile]")
     {
         // LOAD THE TEST MAP.
-        const std::string MAP_FILEPATH = "res/maps/test_layer_multiple.json";
+        const std::string MAP_FILEPATH = "res/maps/testing/test_layer_multiple.json";
         MAPS::TiledMapJsonFile mapFile;
         bool fileLoaded = mapFile.Load(MAP_FILEPATH);
         REQUIRE(fileLoaded);

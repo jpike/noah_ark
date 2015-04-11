@@ -3,9 +3,9 @@
 <OverworldMap>
 	<WidthInTileMaps>1</WidthInTileMaps>
 	<HeightInTileMaps>1</HeightInTileMaps>
-	<StartingTileMapFilepath>res/maps/test_map_0_0.tmx</StartingTileMapFilepath>
+	<StartingTileMapFilepath>res/maps/testing/test_map_0_0.tmx</StartingTileMapFilepath>
 	<TileMaps>
 		<!-- ROW 0 -->
-		<Filepath>res/maps/test_map_0_0.tmx</Filepath>
+		<Filepath>res/maps/testing/test_map_0_0.tmx</Filepath>
 	</TileMaps>
 </OverworldMap>

@@ -78,7 +78,7 @@
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(SFML_DIR)\bin\*.dll" "$(TargetDir)"
+      <Command>xcopy /Y "$(SFML_32_BIT_DIR)\bin\*.dll" "$(TargetDir)"
 xcopy /Y "$(THOR_DIR)\bin\*.dll" "$(TargetDir)"
 
 xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(TargetDir)res\"</Command>
@@ -107,7 +107,7 @@ xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(Targe
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(SFML_DIR)\bin\*.dll" "$(TargetDir)"
+      <Command>xcopy /Y "$(SFML_32_BIT_DIR)\bin\*.dll" "$(TargetDir)"
 xcopy /Y "$(THOR_DIR)\bin\*.dll" "$(TargetDir)"
 
 xcopy /Y /S "$(SolutionDir)noah_ark\resources\noah_ark_resources\res\*" "$(TargetDir)res\"</Command>

@@ -10,7 +10,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         // SETUP.
         // Load the default testing overworld map specification.
         MAPS::OverworldMapSpecification overworldSpecification;
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
         bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
         REQUIRE(specificationLoadedSuccessfully);
@@ -31,7 +31,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         REQUIRE(topMapLoadedSuccessfully);
 
         // Verify the filepath.  Note that the filename should return more than just as name.
-        const std::string EXPECTED_TOP_TILE_MAP_FILEPATH = "res/maps/test_map_1_0.tmx";
+        const std::string EXPECTED_TOP_TILE_MAP_FILEPATH = "res/maps/testing/test_map_1_0.tmx";
         std::string actual_top_tile_map_filepath = topTmxMap->GetFilename();
         REQUIRE(EXPECTED_TOP_TILE_MAP_FILEPATH == actual_top_tile_map_filepath);
     }
@@ -41,7 +41,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         // SETUP.
         // Load the default testing overworld map specification.
         MAPS::OverworldMapSpecification overworldSpecification;
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
         bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
         REQUIRE(specificationLoadedSuccessfully);
@@ -62,7 +62,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         REQUIRE(bottomMapLoadedSuccessfully);
 
         // Verify the filepath.  Note that the filename should return more than just as name.
-        const std::string EXPECTED_BOTTOM_TILE_MAP_FILEPATH = "res/maps/test_map_1_2.tmx";
+        const std::string EXPECTED_BOTTOM_TILE_MAP_FILEPATH = "res/maps/testing/test_map_1_2.tmx";
         std::string actual_bottom_tile_map_filepath = bottomTmxMap->GetFilename();
         REQUIRE(EXPECTED_BOTTOM_TILE_MAP_FILEPATH == actual_bottom_tile_map_filepath);
     }
@@ -72,7 +72,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         // SETUP.
         // Load the default testing overworld map specification.
         MAPS::OverworldMapSpecification overworldSpecification;
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
         bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
         REQUIRE(specificationLoadedSuccessfully);
@@ -93,7 +93,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         REQUIRE(leftMapLoadedSuccessfully);
 
         // Verify the filepath.  Note that the filename should return more than just as name.
-        const std::string EXPECTED_LEFT_TILE_MAP_FILEPATH = "res/maps/test_map_0_1.tmx";
+        const std::string EXPECTED_LEFT_TILE_MAP_FILEPATH = "res/maps/testing/test_map_0_1.tmx";
         std::string actual_left_tile_map_filepath = leftTmxMap->GetFilename();
         REQUIRE(EXPECTED_LEFT_TILE_MAP_FILEPATH == actual_left_tile_map_filepath);
     }
@@ -103,7 +103,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         // SETUP.
         // Load the default testing overworld map specification.
         MAPS::OverworldMapSpecification overworldSpecification;
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
         bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
         REQUIRE(specificationLoadedSuccessfully);
@@ -124,7 +124,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         REQUIRE(rightMapLoadedSuccessfully);
 
         // Verify the filepath.  Note that the filename should return more than just as name.
-        const std::string EXPECTED_RIGHT_TILE_MAP_FILEPATH = "res/maps/test_map_2_1.tmx";
+        const std::string EXPECTED_RIGHT_TILE_MAP_FILEPATH = "res/maps/testing/test_map_2_1.tmx";
         std::string actual_right_tile_map_filepath = rightTmxMap->GetFilename();
         REQUIRE(EXPECTED_RIGHT_TILE_MAP_FILEPATH == actual_right_tile_map_filepath);
     }

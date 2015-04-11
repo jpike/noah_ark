@@ -13,7 +13,7 @@ namespace OVERWORLD_MAP_SPECIFICATION_TESTS
 
         // EXECUTE.
         // Load from a known specification file.
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
         bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
 
         // VERIFY.
@@ -34,21 +34,21 @@ namespace OVERWORLD_MAP_SPECIFICATION_TESTS
         std::vector< std::vector<std::string> > expected_tile_map_filepaths;
         // Row 0.
         std::vector<std::string> row_0_tile_maps;
-        row_0_tile_maps.push_back("res/maps/test_map_0_0.tmx");
-        row_0_tile_maps.push_back("res/maps/test_map_1_0.tmx");
-        row_0_tile_maps.push_back("res/maps/test_map_2_0.tmx");
+        row_0_tile_maps.push_back("res/maps/testing/test_map_0_0.tmx");
+        row_0_tile_maps.push_back("res/maps/testing/test_map_1_0.tmx");
+        row_0_tile_maps.push_back("res/maps/testing/test_map_2_0.tmx");
         expected_tile_map_filepaths.push_back(row_0_tile_maps);
         // Row 1.
         std::vector<std::string> row_1_tile_maps;
-        row_1_tile_maps.push_back("res/maps/test_map_0_1.tmx");
-        row_1_tile_maps.push_back("res/maps/test_map_1_1.tmx");
-        row_1_tile_maps.push_back("res/maps/test_map_2_1.tmx");
+        row_1_tile_maps.push_back("res/maps/testing/test_map_0_1.tmx");
+        row_1_tile_maps.push_back("res/maps/testing/test_map_1_1.tmx");
+        row_1_tile_maps.push_back("res/maps/testing/test_map_2_1.tmx");
         expected_tile_map_filepaths.push_back(row_1_tile_maps);
         // Row 2.
         std::vector<std::string> row_2_tile_maps;
-        row_2_tile_maps.push_back("res/maps/test_map_0_2.tmx");
-        row_2_tile_maps.push_back("res/maps/test_map_1_2.tmx");
-        row_2_tile_maps.push_back("res/maps/test_map_2_2.tmx");
+        row_2_tile_maps.push_back("res/maps/testing/test_map_0_2.tmx");
+        row_2_tile_maps.push_back("res/maps/testing/test_map_1_2.tmx");
+        row_2_tile_maps.push_back("res/maps/testing/test_map_2_2.tmx");
         expected_tile_map_filepaths.push_back(row_2_tile_maps);
 
         for (unsigned int tileMapRow = 0; tileMapRow < expected_tile_map_filepaths.size(); ++tileMapRow)
@@ -80,7 +80,7 @@ namespace OVERWORLD_MAP_SPECIFICATION_TESTS
 
         // EXECUTE.
         // Load from a known specification file.
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map_one_row.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map_one_row.xml";
         bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
 
         // VERIFY.
@@ -107,7 +107,7 @@ namespace OVERWORLD_MAP_SPECIFICATION_TESTS
 
         // EXECUTE.
         // Load from a known specification file.
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map_one_column.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map_one_column.xml";
         bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
 
         // VERIFY.
@@ -134,7 +134,7 @@ namespace OVERWORLD_MAP_SPECIFICATION_TESTS
 
         // EXECUTE.
         // Load from a known specification file.
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map_one_map.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map_one_map.xml";
         bool specificationLoadedSuccessfully = overworldSpecification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
 
         // VERIFY.

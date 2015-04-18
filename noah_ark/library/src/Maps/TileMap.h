@@ -2,7 +2,6 @@
 
 #include <map>
 #include <memory>
-#include <TmxParser/Tmx.h>
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/IGraphicsComponent.h"
 #include "Maps/Tile.h"

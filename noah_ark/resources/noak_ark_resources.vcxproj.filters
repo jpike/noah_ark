@@ -10,9 +10,6 @@
     <Filter Include="Resources\Maps">
       <UniqueIdentifier>{945ffc88-0bf6-47c7-968c-1101687322e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resources\Maps\OldMaps">
-      <UniqueIdentifier>{c9f00c3a-4b9a-4f51-92de-91bc31e1e36d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resources\Maps\Testing">
       <UniqueIdentifier>{19042ea5-347a-4c54-9ca1-6d2ea37ba297}</UniqueIdentifier>
     </Filter>
@@ -48,218 +45,11 @@
     <None Include="res\maps\testing\test_layer_tile_single.json">
       <Filter>Resources\Maps\Testing</Filter>
     </None>
-    <None Include="res\maps\testing\test_map_0_0.tmx">
-      <Filter>Resources\Maps\Testing</Filter>
-    </None>
-    <None Include="res\maps\testing\test_map_0_1.tmx">
-      <Filter>Resources\Maps\Testing</Filter>
-    </None>
-    <None Include="res\maps\testing\test_map_0_2.tmx">
-      <Filter>Resources\Maps\Testing</Filter>
-    </None>
-    <None Include="res\maps\testing\test_map_1_0.tmx">
-      <Filter>Resources\Maps\Testing</Filter>
-    </None>
-    <None Include="res\maps\testing\test_map_1_1.tmx">
-      <Filter>Resources\Maps\Testing</Filter>
-    </None>
-    <None Include="res\maps\testing\test_map_1_2.tmx">
-      <Filter>Resources\Maps\Testing</Filter>
-    </None>
-    <None Include="res\maps\testing\test_map_2_0.tmx">
-      <Filter>Resources\Maps\Testing</Filter>
-    </None>
-    <None Include="res\maps\testing\test_map_2_1.tmx">
-      <Filter>Resources\Maps\Testing</Filter>
-    </None>
-    <None Include="res\maps\testing\test_map_2_2.tmx">
-      <Filter>Resources\Maps\Testing</Filter>
-    </None>
     <None Include="res\maps\testing\test_tileset_multiple.json">
       <Filter>Resources\Maps\Testing</Filter>
     </None>
     <None Include="res\maps\testing\tree_test.json">
       <Filter>Resources\Maps\Testing</Filter>
-    </None>
-    <None Include="res\maps\testing\tree_test.tmx">
-      <Filter>Resources\Maps\Testing</Filter>
-    </None>
-    <None Include="res\maps\old_maps\test_map_0_0.MAP">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </None>
-    <None Include="res\maps\old_maps\test_map_0_1.MAP">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </None>
-    <None Include="res\maps\old_maps\test_map_0_2.MAP">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </None>
-    <None Include="res\maps\old_maps\test_map_1_0.MAP">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </None>
-    <None Include="res\maps\old_maps\test_map_1_1.MAP">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </None>
-    <None Include="res\maps\old_maps\test_map_1_2.MAP">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </None>
-    <None Include="res\maps\old_maps\test_map_2_0.MAP">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </None>
-    <None Include="res\maps\old_maps\test_map_2_1.MAP">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </None>
-    <None Include="res\maps\old_maps\test_map_2_2.MAP">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </None>
-    <None Include="res\maps\old_maps\test_map1.MAP">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </None>
-    <None Include="res\maps\map_0_0.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_0_1.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_0_2.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_0_3.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_0_4.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_0_5.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_0_6.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_1_0.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_1_1.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_1_2.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_1_3.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_1_4.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_1_5.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_1_6.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_2_0.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_2_1.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_2_2.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_2_3.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_2_4.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_2_5.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_2_6.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_3_0.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_3_1.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_3_2.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_3_3.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_3_4.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_3_5.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_3_6.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_4_0.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_4_1.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_4_2.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_4_3.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_4_4.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_4_5.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_4_6.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_5_0.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_5_1.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_5_2.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_5_3.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_5_4.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_5_5.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_5_6.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_6_0.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_6_1.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_6_2.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_6_3.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_6_4.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_6_5.tmx">
-      <Filter>Resources\Maps</Filter>
-    </None>
-    <None Include="res\maps\map_6_6.tmx">
-      <Filter>Resources\Maps</Filter>
     </None>
     <None Include="res\maps\map_0_0.json">
       <Filter>Resources\Maps</Filter>
@@ -408,6 +198,45 @@
     <None Include="res\maps\map_6_6.json">
       <Filter>Resources\Maps</Filter>
     </None>
+    <None Include="res\maps\testing\test_overworld_map.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_overworld_map_one_column.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_overworld_map_one_map.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_overworld_map_one_row.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_map_0_0.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_map_0_1.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_map_0_2.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_map_1_0.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_map_1_1.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_map_2_0.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_map_2_1.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\testing\test_map_2_2.json">
+      <Filter>Resources\Maps\Testing</Filter>
+    </None>
+    <None Include="res\maps\overworld_map.json">
+      <Filter>Resources\Maps</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\images\ground_tile_set.png">
@@ -416,27 +245,5 @@
     <Image Include="res\images\tree_sprite_32x32.png">
       <Filter>Resources\Images</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="res\maps\testing\test_overworld_map.xml">
-      <Filter>Resources\Maps\Testing</Filter>
-    </Xml>
-    <Xml Include="res\maps\testing\test_overworld_map_one_column.xml">
-      <Filter>Resources\Maps\Testing</Filter>
-    </Xml>
-    <Xml Include="res\maps\testing\test_overworld_map_one_map.xml">
-      <Filter>Resources\Maps\Testing</Filter>
-    </Xml>
-    <Xml Include="res\maps\testing\test_overworld_map_one_row.xml">
-      <Filter>Resources\Maps\Testing</Filter>
-    </Xml>
-    <Xml Include="res\maps\overworld_map.xml">
-      <Filter>Resources\Maps</Filter>
-    </Xml>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="res\maps\old_maps\overworld_map.txt">
-      <Filter>Resources\Maps\OldMaps</Filter>
-    </Text>
   </ItemGroup>
 </Project>

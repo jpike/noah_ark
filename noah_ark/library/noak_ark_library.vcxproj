@@ -115,14 +115,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>./src;($ProjectDir)src;$(SFML_32_BIT_DIR)\include;$(THOR_DIR)\include;$(TMX_PARSER_DIR);$(BOOST_DIR);$(IncludePath)</IncludePath>
+    <IncludePath>./src;($ProjectDir)src;$(SFML_32_BIT_DIR)\include;$(THOR_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <LibraryPath>$(SFML_32_BIT_DIR)\lib\vc;$(THOR_DIR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>./src;($ProjectDir)src;$(SFML_32_BIT_DIR)\include;$(THOR_DIR)\include;$(TMX_PARSER_DIR);$(BOOST_DIR);$(IncludePath)</IncludePath>
+    <IncludePath>./src;($ProjectDir)src;$(SFML_32_BIT_DIR)\include;$(THOR_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>

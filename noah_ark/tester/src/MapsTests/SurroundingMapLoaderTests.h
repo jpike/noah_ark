@@ -10,7 +10,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         // SETUP.
         // Load the default testing overworld map specification.
         MAPS::OverworldMapSpecification overworld_specification;
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.json";
         bool specification_loaded_successfully = overworld_specification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
         REQUIRE(specification_loaded_successfully);
@@ -36,7 +36,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         // SETUP.
         // Load the default testing overworld map specification.
         MAPS::OverworldMapSpecification overworld_specification;
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.json";
         bool specification_loaded_successfully = overworld_specification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
         REQUIRE(specification_loaded_successfully);
@@ -62,7 +62,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         // SETUP.
         // Load the default testing overworld map specification.
         MAPS::OverworldMapSpecification overworld_specification;
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.json";
         bool specification_loaded_successfully = overworld_specification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
         REQUIRE(specification_loaded_successfully);
@@ -88,7 +88,7 @@ namespace SURROUNDING_MAP_LOADER_TESTS
         // SETUP.
         // Load the default testing overworld map specification.
         MAPS::OverworldMapSpecification overworld_specification;
-        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.xml";
+        const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/testing/test_overworld_map.json";
         bool specification_loaded_successfully = overworld_specification.LoadFromFile(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
         /// @todo   Move loading and verification of this overworld map specification to a helper function.
         REQUIRE(specification_loaded_successfully);

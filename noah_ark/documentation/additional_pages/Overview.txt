@@ -6,7 +6,7 @@
 
 Bible verses will be incorporated from the King James Version (due to its public domain status).
 
-It will be a native Windows game, playable at least on Windows 7, x86 systems.  Development is being done with C++ and Visual Studio 2012 Express.  For additional third-party technologies used, check out the source code on [GitHub](https://github.com/jpike/noah_ark).
+It will be a native Windows game, playable at least on Windows 8, x86 systems.  Development is being done with C++ and Visual Studio 2013.  For additional third-party technologies used, check out the source code on [GitHub](https://github.com/jpike/noah_ark).
 
 [Blog posts](http://www.jacobpike.com/blog/?tag=noahs-ark) also exist related to the game's development.
 

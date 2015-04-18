@@ -665,9 +665,9 @@ WARN_LOGFILE           = NoahArkGameWarningLog.txt
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ../library/noah_ark_library/src \
-						../game/noah_ark_game/src \
-						../tester/noah_ark_tester/src \
+INPUT                  = ../library/src \
+						../game/src \
+						../tester/src \
                         ./additional_pages
 
 # This tag can be used to specify the character encoding of the source files 

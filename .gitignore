@@ -125,7 +125,7 @@ DocProject/Help/html
 
 # Doxygen generated documentation files.
 doxygen_docs
-NoahArkWarningLog.txt
+NoahArkGameWarningLog.txt
 
 # Click-Once directory
 publish/

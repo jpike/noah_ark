@@ -32,7 +32,7 @@ namespace MAPS
 
         /// @brief          Builds a complete tile map for the TMX map that is positioned above
         ///                 the provided center map.
-        /// @param[in]      centerMap - The center map providing a reference point for positioning
+        /// @param[in]      center_map - The center map providing a reference point for positioning
         ///                 the top map.
         /// @param[in]      top_map_data - The data for the tile map to create.
         /// @return         The complete tile map for the data, if successfully built.
@@ -42,7 +42,7 @@ namespace MAPS
 
         /// @brief          Builds a complete tile map for the TMX map that is positioned below
         ///                 the provided center map.
-        /// @param[in]      centerMap - The center map providing a reference point for positioning
+        /// @param[in]      center_map - The center map providing a reference point for positioning
         ///                 the below map.
         /// @param[in]      bottom_map_data - The data for the tile map to create.
         /// @return         The complete tile map for the data, if successfully built.
@@ -52,7 +52,7 @@ namespace MAPS
 
         /// @brief          Builds a complete tile map for the TMX map that is positioned left of
         ///                 the provided center map.
-        /// @param[in]      centerMap - The center map providing a reference point for positioning
+        /// @param[in]      center_map - The center map providing a reference point for positioning
         ///                 the left map.
         /// @param[in]      left_map_data - The data for the tile map to create.
         /// @return         The complete tile map for the data, if successfully built.
@@ -62,7 +62,7 @@ namespace MAPS
 
         /// @brief          Builds a complete tile map for the TMX map that is positioned right of
         ///                 the provided center map.
-        /// @param[in]      centerMap - The center map providing a reference point for positioning
+        /// @param[in]      center_map - The center map providing a reference point for positioning
         ///                 the right map.
         /// @param[in]      right_map_data - The data for the tile map to create.
         /// @return         The complete tile map for the data, if successfully built.

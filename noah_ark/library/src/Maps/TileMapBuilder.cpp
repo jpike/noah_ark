@@ -12,7 +12,7 @@ namespace MAPS
     std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildTileMap(
         const OverworldGridPosition& overworld_grid_position,
         const MATH::Vector2f& top_left_world_position_in_pixels,
-        const TiledMapJsonFile& map_data)
+        const std::shared_ptr<ITileMapData>& map_data)
     {
         std::shared_ptr<MAPS::TileMap> tile_map = std::make_shared<MAPS::TileMap>(
             overworld_grid_position,
@@ -25,7 +25,7 @@ namespace MAPS
 
     std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildTopTileMap(
         const MAPS::TileMap& center_map,
-        const std::shared_ptr<TiledMapJsonFile>& top_map_data)
+        const std::shared_ptr<ITileMapData>& top_map_data)
     {
         // CHECK IF MAP DATA WAS PROVIDED.
         bool map_data_exists = (nullptr != top_map_data);
@@ -54,14 +54,14 @@ namespace MAPS
         std::shared_ptr<MAPS::TileMap> top_tile_map = std::make_shared<MAPS::TileMap>(
             top_tile_map_overworld_grid_position,
             top_tile_map_top_left_world_position,
-            *top_map_data,
+            top_map_data,
             GraphicsSystem);
         return top_tile_map;
     }
 
     std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildBottomTileMap(
         const MAPS::TileMap& center_map,
-        const std::shared_ptr<TiledMapJsonFile>& bottom_map_data)
+        const std::shared_ptr<ITileMapData>& bottom_map_data)
     {
         // CHECK IF MAP DATA WAS PROVIDED.
         bool map_data_exists = (nullptr != bottom_map_data);
@@ -90,14 +90,14 @@ namespace MAPS
         std::shared_ptr<MAPS::TileMap> bottom_tile_map = std::make_shared<MAPS::TileMap>(
             bottom_tile_map_overworld_grid_position,
             bottom_tile_map_top_left_world_position,
-            *bottom_map_data,
+            bottom_map_data,
             GraphicsSystem);
         return bottom_tile_map;
     }
 
     std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildLeftTileMap(
         const MAPS::TileMap& center_map,
-        const std::shared_ptr<TiledMapJsonFile>& left_map_data)
+        const std::shared_ptr<ITileMapData>& left_map_data)
     {
         // CHECK IF MAP DATA WAS PROVIDED.
         bool map_data_exists = (nullptr != left_map_data);
@@ -126,14 +126,14 @@ namespace MAPS
         std::shared_ptr<MAPS::TileMap> left_tile_map = std::make_shared<MAPS::TileMap>(
             left_tile_map_overworld_grid_position,
             left_tile_map_top_left_world_position,
-            *left_map_data,
+            left_map_data,
             GraphicsSystem);
         return left_tile_map;
     }
 
     std::shared_ptr<MAPS::TileMap> TileMapBuilder::BuildRightTileMap(
         const MAPS::TileMap& center_map,
-        const std::shared_ptr<TiledMapJsonFile>& right_map_data)
+        const std::shared_ptr<ITileMapData>& right_map_data)
     {
         // CHECK IF MAP DATA WAS PROVIDED.
         bool map_data_exists = (nullptr != right_map_data);
@@ -162,7 +162,7 @@ namespace MAPS
         std::shared_ptr<MAPS::TileMap> right_tile_map = std::make_shared<MAPS::TileMap>(
             right_tile_map_overworld_grid_position,
             rightTileMapTopLeftWorldPosition,
-            *right_map_data,
+            right_map_data,
             GraphicsSystem);
         return right_tile_map;
     }

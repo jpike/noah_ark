@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "Maps/TileMap.h"
 
 namespace MAPS
@@ -5,15 +6,29 @@ namespace MAPS
     TileMap::TileMap(
         const OverworldGridPosition& overworld_grid_position,
         const MATH::Vector2f& top_left_world_position_in_pixels,
-        const TiledMapJsonFile& map_data,
+        const std::shared_ptr<ITileMapData>& map_data,
         std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system) :
     Tiles(),
     MapData(map_data),
     OverworldPosition(overworld_grid_position),
     TopLeftWorldPositionInPixels(top_left_world_position_in_pixels)
     {
+        // MAKE MAP DATA WAS PROVIDED.
+        bool map_data_exists = (nullptr != MapData);
+        if (!map_data_exists)
+        {
+            throw std::runtime_error("Cannot construct tile map with null map data.");
+        }
+
+        // MAKE SURE A GRAPHICS SYSTEM WAS PROVIDED.
+        bool graphics_system_exists = (nullptr != graphics_system);
+        if (!graphics_system_exists)
+        {
+            throw std::runtime_error("Cannot construct tile map with null graphics system.");
+        }
+
         // BUILD THIS TILEMAP FROM THE MAP DATA.
-        BuildFromMapData(TopLeftWorldPositionInPixels, MapData, *graphics_system);
+        BuildFromMapData(TopLeftWorldPositionInPixels, *MapData, *graphics_system);
     }
 
     TileMap::~TileMap()
@@ -67,22 +82,22 @@ namespace MAPS
 
     unsigned int TileMap::GetWidthInTiles() const
     {
-        return MapData.GetWidthInTiles();
+        return MapData->GetWidthInTiles();
     }
 
     unsigned int TileMap::GetHeightInTiles() const
     {
-        return MapData.GetHeightInTiles();
+        return MapData->GetHeightInTiles();
     }
 
     unsigned int TileMap::GetTileWidthInPixels() const
     {
-        return MapData.GetTileWidthInPixels();
+        return MapData->GetTileWidthInPixels();
     }
 
     unsigned int TileMap::GetTileHeightInPixels() const
     {
-        return MapData.GetTileHeightInPixels();
+        return MapData->GetTileHeightInPixels();
     }
 
     MATH::Vector2f TileMap::GetSizeInPixels() const
@@ -152,7 +167,7 @@ namespace MAPS
 
     void TileMap::BuildFromMapData(
         const MATH::Vector2f& top_left_world_position_in_pixels,
-        const TiledMapJsonFile& map_data,
+        const ITileMapData& map_data,
         GRAPHICS::GraphicsSystem& graphics_system)
     {
         // VERIFY THAT THE EXPECTED NUMBER OF LAYERS EXIST IN THE MAP.

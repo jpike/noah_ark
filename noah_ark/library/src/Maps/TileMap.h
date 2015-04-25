@@ -4,8 +4,8 @@
 #include <memory>
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/IGraphicsComponent.h"
+#include "Maps/ITileMapData.h"
 #include "Maps/Tile.h"
-#include "Maps/TiledMapJsonFile.h"
 #include "Math/Vector2.h"
 
 namespace MAPS
@@ -28,10 +28,11 @@ namespace MAPS
         /// @param[in]      top_left_world_position_in_pixels - The top-left position of the map within the world.
         /// @param[in]      map_data - The underlying map that has already been loaded.
         /// @param[in,out]  graphics_system - The graphics system used to manage graphics for this tile map.
+        /// @throws std::invalid_argument - Thrown if any pointer parameters are null.
         explicit TileMap(
             const OverworldGridPosition& overworld_grid_position,
             const MATH::Vector2f& top_left_world_position_in_pixels,
-            const TiledMapJsonFile& map_data,
+            const std::shared_ptr<ITileMapData>& map_data,
             std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system);
         
         /// @brief  Destructor.
@@ -89,7 +90,7 @@ namespace MAPS
         /// @param[in,out]  graphics_system - The graphics system used to manage graphics for this tile map.
         void BuildFromMapData(
             const MATH::Vector2f& top_left_world_position_in_pixels,
-            const TiledMapJsonFile& map_data,
+            const ITileMapData& map_data,
             GRAPHICS::GraphicsSystem& graphics_system);
 
         /// @brief  Tiles within the map, stored by their 2D positions relative to each other.
@@ -98,7 +99,7 @@ namespace MAPS
         ///         The tile at (0,1) is below the top-left tile.
         std::vector< std::vector< std::shared_ptr<Tile> > > Tiles;
 
-        TiledMapJsonFile MapData; ///< The map file used to create this map.
+        std::shared_ptr<ITileMapData> MapData; ///< The map data used to create this map.
 
         OverworldGridPosition OverworldPosition;    ///< The position of the tile map in the overworld map's grid.
         MATH::Vector2f TopLeftWorldPositionInPixels;  ///< The top-left world position of the tile map.

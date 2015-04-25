@@ -28,8 +28,8 @@ namespace MAPS
         const std::shared_ptr<TileMapBuilder>& tile_map_builder)
     {
         // CREATE THE STARTING TILE MAP.
-        TiledMapJsonFile starting_map_file;
-        bool starting_map_loaded = starting_map_file.Load(overworld_spec.GetStartingTileMapFilepath());
+        std::shared_ptr<TiledMapJsonFile> starting_map_file = std::make_shared<TiledMapJsonFile>();
+        bool starting_map_loaded = starting_map_file->Load(overworld_spec.GetStartingTileMapFilepath());
         if (!starting_map_loaded)
         {
             /// @todo   Return false?

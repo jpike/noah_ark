@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <boost/property_tree/ptree.hpp>
+#include "Maps/ITileMapData.h"
 #include "Maps/TileMapLayerDescription.h"
 #include "Maps/TileMapObjectDescription.h"
 #include "Maps/TilesetDescription.h"
@@ -21,12 +22,14 @@ namespace MAPS
     /// See public methods and returned data structures
     /// for details on the exact features currently
     /// supported.
-    class TiledMapJsonFile
+    class TiledMapJsonFile : public ITileMapData
     {
     public:
-        // CONSTRUCTION.
+        // CONSTRUCTION/DESTRUCTION.
         /// Constructor.  No data will be loaded from any file.
         explicit TiledMapJsonFile();
+        /// Destructor.
+        virtual ~TiledMapJsonFile();
 
         // FILE LOADING.
         /// Loads Tiled map data from the specified JSON file
@@ -38,28 +41,18 @@ namespace MAPS
         bool Load(const std::string& filepath);
 
         // DATA ACCESS.
-        /// Gets the tile map's width (in tiles);
-        /// @return The map's width.
-        unsigned int GetWidthInTiles() const;
-        /// Gets the tile map's height (in tiles);
-        /// @return The map's height.
-        unsigned int GetHeightInTiles() const;
-        /// Gets the width (in pixels) of a tile in the map.  This only defines
-        /// the general grid size of the map - individual tiles may have
-        /// different sizes.
-        /// @return The width of a tile.
-        unsigned int GetTileWidthInPixels() const;
-        /// Gets the height (in pixels) of a tile in the map.  This only defines
-        /// the general grid size of the map - individual tiles may have
-        /// different sizes.
-        /// @return The height of a tile.
-        unsigned int GetTileHeightInPixels() const;
-        /// Gets descriptions of tilesets for the tile map.
-        /// @return Tilesets for the tile map.
-        std::vector<TilesetDescription> GetTilesets() const;
-        /// Gets descriptions of layers in the tile map.
-        /// @return Layers for the tile map.
-        std::vector<TileMapLayerDescription> GetLayers() const;
+        /// @copydoc    ITileMapData::GetWidthInTiles() const
+        virtual unsigned int GetWidthInTiles() const;
+        /// @copydoc    ITileMapData::GetHeightInTiles() const
+        virtual unsigned int GetHeightInTiles() const;
+        /// @copydoc    ITileMapData::GetTileWidthInPixels() const
+        virtual unsigned int GetTileWidthInPixels() const;
+        /// @copydoc    ITileMapData::GetTileHeightInPixels() const
+        virtual unsigned int GetTileHeightInPixels() const;
+        /// @copydoc    ITileMapData::GetTilesets() const
+        virtual std::vector<TilesetDescription> GetTilesets() const;
+        /// @copydoc    ITileMapData::GetLayers() const
+        virtual std::vector<TileMapLayerDescription> GetLayers() const;
 
     private:
         // HELPER METHODS.

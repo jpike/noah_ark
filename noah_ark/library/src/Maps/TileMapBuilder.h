@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "Graphics/GraphicsSystem.h"
-#include "Maps/TiledMapJsonFile.h"
+#include "Maps/ITileMapData.h"
 #include "Maps/TileMap.h"
 
 namespace MAPS
@@ -28,7 +28,7 @@ namespace MAPS
         std::shared_ptr<MAPS::TileMap> BuildTileMap(
             const OverworldGridPosition& overworld_grid_position,
             const MATH::Vector2f& top_left_world_position_in_pixels,
-            const TiledMapJsonFile& map_data);
+            const std::shared_ptr<ITileMapData>& map_data);
 
         /// @brief          Builds a complete tile map for the TMX map that is positioned above
         ///                 the provided center map.
@@ -38,7 +38,7 @@ namespace MAPS
         /// @return         The complete tile map for the data, if successfully built.
         std::shared_ptr<MAPS::TileMap> BuildTopTileMap(
             const MAPS::TileMap& center_map,
-            const std::shared_ptr<TiledMapJsonFile>& top_map_data);
+            const std::shared_ptr<ITileMapData>& top_map_data);
 
         /// @brief          Builds a complete tile map for the TMX map that is positioned below
         ///                 the provided center map.
@@ -48,7 +48,7 @@ namespace MAPS
         /// @return         The complete tile map for the data, if successfully built.
         std::shared_ptr<MAPS::TileMap> BuildBottomTileMap(
             const MAPS::TileMap& center_map,
-            const std::shared_ptr<TiledMapJsonFile>& bottom_map_data);
+            const std::shared_ptr<ITileMapData>& bottom_map_data);
 
         /// @brief          Builds a complete tile map for the TMX map that is positioned left of
         ///                 the provided center map.
@@ -58,7 +58,7 @@ namespace MAPS
         /// @return         The complete tile map for the data, if successfully built.
         std::shared_ptr<MAPS::TileMap> BuildLeftTileMap(
             const MAPS::TileMap& center_map,
-            const std::shared_ptr<TiledMapJsonFile>& left_map_data);
+            const std::shared_ptr<ITileMapData>& left_map_data);
 
         /// @brief          Builds a complete tile map for the TMX map that is positioned right of
         ///                 the provided center map.
@@ -68,7 +68,7 @@ namespace MAPS
         /// @return         The complete tile map for the data, if successfully built.
         std::shared_ptr<MAPS::TileMap> BuildRightTileMap(
             const MAPS::TileMap& center_map,
-            const std::shared_ptr<TiledMapJsonFile>& right_map_data);
+            const std::shared_ptr<ITileMapData>& right_map_data);
 
     private:
         TileMapBuilder(const TileMapBuilder& builderToCopy);    ///< Private to disallow copying.

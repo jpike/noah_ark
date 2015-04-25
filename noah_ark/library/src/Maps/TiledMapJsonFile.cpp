@@ -16,6 +16,9 @@ namespace MAPS
         Clear();
     }
 
+    TiledMapJsonFile::~TiledMapJsonFile()
+    {}
+
     bool TiledMapJsonFile::Load(const std::string& filepath)
     {
         // CLEAR ANY PREVIOUSLY LOADED DATA.

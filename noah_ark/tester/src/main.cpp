@@ -8,6 +8,7 @@
 #include "MapsTests/OverworldMapSpecificationTests.h"
 #include "MapsTests/SurroundingMapLoaderTests.h"
 #include "MapsTests/TiledMapJsonFileTests.h"
+#include "MapsTests/TileMapTests.h"
 #include "MathTests/FloatRectangleTests.h"
 #include "PhysicsTests/CollisionTests/CollisionSystemTests.h"
 #include "ResourcesTests/ResourceManagerTests.h"

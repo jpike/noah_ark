@@ -88,5 +88,8 @@
     <ClInclude Include="src\CoreTests\Array2DTests.h">
       <Filter>Header Files\CoreTests</Filter>
     </ClInclude>
+    <ClInclude Include="src\MapsTests\TileMapTests.h">
+      <Filter>Header Files\MapsTests</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

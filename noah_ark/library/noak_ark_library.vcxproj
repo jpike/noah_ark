@@ -32,6 +32,7 @@
     <ClInclude Include="src\Maps\TiledMapJsonFile.h" />
     <ClInclude Include="src\Maps\TileMap.h" />
     <ClInclude Include="src\Maps\TileMapBuilder.h" />
+    <ClInclude Include="src\Maps\ITileMapData.h" />
     <ClInclude Include="src\Maps\TileMapLayerDescription.h" />
     <ClInclude Include="src\Maps\TileMapLoader.h" />
     <ClInclude Include="src\Maps\TileMapObjectDescription.h" />

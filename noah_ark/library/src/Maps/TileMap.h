@@ -22,10 +22,12 @@ namespace MAPS
     /// that may located on the map.
     ///
     /// It is constructed from data in a Tiled map.
-    class TileMap
+    ///
+    /// @todo   Document implementing the IGraphicsComponent interface.
+    class TileMap : public GRAPHICS::IGraphicsComponent
     {
     public:
-        /// @brief          Constructor.
+        /// @brief          Constructor.  The map won't be visible by default.
         /// @param[in]      overworld_grid_position - The position of the tile map within the overworld grid.
         /// @param[in]      top_left_world_position_in_pixels - The top-left position of the map within the world.
         /// @param[in]      map_data - The underlying map that has already been loaded.
@@ -82,6 +84,19 @@ namespace MAPS
         /// @return     The tile at the specified world position, if one exists.
         std::shared_ptr<Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const;
 
+        /// Changes the visibility of this tile map.
+        /// @param[in]  visible - True if this tile map should be visible;
+        ///     false if this tile map should be hidden.
+        void SetVisible(const bool visible);
+
+        // INTERFACE IMPLEMENTATION - IGraphicsComponent
+        /// @copydoc    GRAPHICS::IGraphicsComponent::IsVisible
+        virtual bool IsVisible() const;
+        /// @copydoc    GRAPHICS::IGraphicsComponent::Render
+        virtual void Render(sf::RenderTarget& render_target);
+        /// @copydoc    GRAPHICS::IGraphicsComponent::Update
+        virtual void Update(const float elapsed_time_in_seconds);
+
     private:
         TileMap(const TileMap& map_to_copy);  ///< Private to disallow copying.
         TileMap& operator= (const TileMap& rhs_map); ///< Private to disallow assignment.
@@ -95,6 +110,8 @@ namespace MAPS
             const ITileMapData& map_data,
             GRAPHICS::GraphicsSystem& graphics_system);
 
+        /// Whether or not the tile map is currently visible.
+        bool Visible;
         /// The position of the tile map in the overworld map's grid.
         OverworldGridPosition OverworldPosition;
         ///< The top-left world position of the tile map.

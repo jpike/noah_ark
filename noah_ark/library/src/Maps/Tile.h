@@ -21,40 +21,59 @@ namespace MAPS
         explicit Tile(
             const unsigned int tile_id,
             const std::shared_ptr<GRAPHICS::Sprite>& sprite);
-        /// @brief      Copy constructor.
+        /// Copy constructor.
         /// @param[in]  tile_to_copy - The tile to copy.
         explicit Tile(const Tile& tile_to_copy);
-        /// @brief  Destructor.
+        /// Destructor.
         ~Tile();
 
-        /// @brief      Assignment operator.
+        /// Assignment operator.
         /// @param[in]  rhs_tile - The tile to assign from.
         Tile& operator= (const Tile& rhs_tile);
 
-        /// @brief  Determines if the tile is walkable or not.
+        /// Creates a deep copy of this tile, except for
+        /// any underlying texture resource.
+        /// @return A deep copy of this tile.
+        std::shared_ptr<Tile> Clone() const;
+
+        /// Determines if the tile is walkable or not.
         /// @return Whether or not this tile is walkable.
         bool IsWalkable() const;
 
-        /// @brief  Gets the height of the tile, in pixels.
+        /// Gets the width of the tile, in pixels.
+        /// @return The width of the tile in pixels.
+        float GetWidthInPixels() const;
+        /// Gets the height of the tile, in pixels.
         /// @return The height of the tile in pixels.
         float GetHeightInPixels() const;
         
-        /// @brief  Gets the left X position of the tile's bounding box, in world pixel coordinates.
+        /// Gets the left X position of the tile's bounding box, in world pixel coordinates.
         /// @return The left X position of the tile.
         float GetLeftXPosition() const;
-        /// @brief  Gets the right X posision of the tile's bounding box, in world pixel coordinates.
+        /// Gets the right X posision of the tile's bounding box, in world pixel coordinates.
         /// @return The right X position of the tile.
         float GetRightXPosition() const;
 
-        /// @brief  Gets the top Y position of the tile's bounding box, in world pixel coordinates.
+        /// Gets the top Y position of the tile's bounding box, in world pixel coordinates.
         /// @return The top Y position of the tile.
         float GetTopYPosition() const;
-        /// @brief  Gets the bottom Y position of the tile's bounding box, in world pixel coordinates.
+        /// Gets the bottom Y position of the tile's bounding box, in world pixel coordinates.
         /// @return The bottom Y position of the tile.
         float GetBottomYPosition() const;
 
+        /// Sets the top-left world position of the tile, in pixels.
+        /// @param[in]  top_world_position - The top world position of the tile.
+        /// @param[in]  left_world_position - The left world position of the tile.
+        void SetTopLeftWorldPosition(
+            const float top_world_position,
+            const float left_world_position);
+
+        /// Renders the tile to the specified render target.
+        /// @param[in,out]  renderTarget - The target to render to.
+        void Render(sf::RenderTarget& render_target);
+
     private:
-        /// @brief      Helper method for copying a tile.
+        /// Helper method for copying a tile.
         /// @param[in]  tile_to_copy - The tile to copy.
         void Copy(const Tile& tile_to_copy);
 

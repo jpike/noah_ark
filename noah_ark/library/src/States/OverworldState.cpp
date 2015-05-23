@@ -112,9 +112,15 @@ bool OverworldState::LoadOverworldMap(const std::string& overworldSpecFilepath)
         STARTING_TILE_MAP_TOP_LEFT_WORLD_POSITION,
         tileMapBuilder);
 
+    // Add the overworld map so that it can be rendered.
+    std::shared_ptr<MAPS::TileMap> starting_tile_map = m_overworldMap->GetCurrentTileMap();
+    m_graphicsSystem->AddGraphicsComponent(
+        GRAPHICS::GraphicsLayer::GROUND,
+        starting_tile_map);
+
     // Wrap the overworld map so that it can be scrolled.
     m_scrollingOverworld = std::unique_ptr<MAPS::ScrollableOverworldMap>(
-        new MAPS::ScrollableOverworldMap(m_overworldMap, &m_overworldSpec, tileMapBuilder));
+        new MAPS::ScrollableOverworldMap(m_overworldMap, &m_overworldSpec, tileMapBuilder, m_graphicsSystem));
     
     // SET THE CAMERA TO VIEW THE STARTING TILE MAP.
     m_camera.SetTopLeftViewPosition(STARTING_TILE_MAP_TOP_LEFT_WORLD_POSITION);

@@ -9,11 +9,13 @@ const float ScrollableOverworldMap::MAX_SCROLL_TIME_IN_SECONDS = 3.0f;
 ScrollableOverworldMap::ScrollableOverworldMap(
     const std::shared_ptr<OverworldMap>& overworldMap,
     const OverworldMapSpecification* const pOverworldMapSpec,
-    const std::shared_ptr<TileMapBuilder>& tileMapBuilder) :
-    m_overworldMap(overworldMap),
-    m_scrollProcess(),
-    m_surroundingMapLoader(),
-    m_tileMapBuilder(tileMapBuilder)
+    const std::shared_ptr<TileMapBuilder>& tileMapBuilder,
+    const std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem) :
+m_overworldMap(overworldMap),
+m_scrollProcess(),
+m_surroundingMapLoader(),
+m_tileMapBuilder(tileMapBuilder),
+m_graphicsSystem(graphicsSystem)
 {
     /// @todo   Throw an exception if the provided overworld map is NULL.
 
@@ -39,6 +41,12 @@ bool ScrollableOverworldMap::BeginScrollingUp()
         // We can't start scrolling up without both current and top tile maps.
         return false;
     }
+
+    // MAKE THE TOP TILE MAP VISIBLE SINCE IT IS SCROLLING INTO VIEW.
+    topTileMap->SetVisible(true);
+    m_graphicsSystem->AddGraphicsComponent(
+        GRAPHICS::GraphicsLayer::GROUND,
+        topTileMap);
 
     // GET THE STARTING AND ENDING POINTS FOR SCROLLING.
     MATH::Vector2f currentMapTopLeftPosition = currentTileMap->GetTopLeftWorldPosition();
@@ -79,6 +87,12 @@ bool ScrollableOverworldMap::BeginScrollingDown()
         return false;
     }
 
+    // MAKE THE BOTTOM TILE MAP VISIBLE SINCE IT IS SCROLLING INTO VIEW.
+    bottomTileMap->SetVisible(true);
+    m_graphicsSystem->AddGraphicsComponent(
+        GRAPHICS::GraphicsLayer::GROUND,
+        bottomTileMap);
+
     // GET THE STARTING AND ENDING POINTS FOR SCROLLING.
     MATH::Vector2f currentMapTopLeftPosition = currentTileMap->GetTopLeftWorldPosition();
     MATH::Vector2f bottomMapTopLeftPosition = bottomTileMap->GetTopLeftWorldPosition();
@@ -118,6 +132,12 @@ bool ScrollableOverworldMap::BeginScrollingLeft()
         return false;
     }
 
+    // MAKE THE LEFT TILE MAP VISIBLE SINCE IT IS SCROLLING INTO VIEW.
+    leftTileMap->SetVisible(true);
+    m_graphicsSystem->AddGraphicsComponent(
+        GRAPHICS::GraphicsLayer::GROUND, 
+        leftTileMap);
+
     // GET THE STARTING AND ENDING POINTS FOR SCROLLING.
     MATH::Vector2f currentMapTopLeftPosition = currentTileMap->GetTopLeftWorldPosition();
     MATH::Vector2f leftMapTopLeftPosition = leftTileMap->GetTopLeftWorldPosition();
@@ -156,6 +176,12 @@ bool ScrollableOverworldMap::BeginScrollingRight()
         // We can't start scrolling right without both current and right tile maps.
         return false;
     }
+
+    // MAKE THE RIGHT TILE MAP VISIBLE SINCE IT IS SCROLLING INTO VIEW.
+    rightTileMap->SetVisible(true);
+    m_graphicsSystem->AddGraphicsComponent(
+        GRAPHICS::GraphicsLayer::GROUND, 
+        rightTileMap);
 
     // GET THE STARTING AND ENDING POINTS FOR SCROLLING.
     MATH::Vector2f currentMapTopLeftPosition = currentTileMap->GetTopLeftWorldPosition();

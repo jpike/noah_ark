@@ -26,5 +26,9 @@ namespace MAPS
         virtual std::shared_ptr<Tile> GetTileAtGridPosition(
             const unsigned int tile_x_grid_position,
             const unsigned int tile_y_grid_position) const = 0;
+
+        /// Renders the layer.
+        /// @param[in,out]  renderTarget - The target to render to.
+        virtual void Render(sf::RenderTarget& render_target) = 0;
     };
 }

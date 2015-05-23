@@ -38,6 +38,11 @@ namespace GRAPHICS
         /// Destructor.
         virtual ~Sprite();
 
+        /// Creates a deep copy of this sprite, except for
+        /// any underlying texture resource.
+        /// @return A deep copy of this sprite.
+        std::shared_ptr<Sprite> Clone() const;
+
         // INTERFACE IMPLEMENTATION - IGraphicsComponent.
         /// @copydoc    IGraphicsComponent::IsVisible() const
         virtual bool IsVisible() const;

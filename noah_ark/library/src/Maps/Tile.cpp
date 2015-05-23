@@ -42,20 +42,43 @@ namespace MAPS
         return (*this);
     }
 
+    std::shared_ptr<Tile> Tile::Clone() const
+    {
+        // CLONE THE SPRITE IF ONE EXISTS.
+        std::shared_ptr<GRAPHICS::Sprite> cloned_sprite;
+        bool sprite_exists = (nullptr != Sprite);
+        if (sprite_exists)
+        {
+            cloned_sprite = Sprite->Clone();
+        }
+        
+        // CREATE THE CLONED TILE.
+        std::shared_ptr<Tile> cloned_tile = std::make_shared<Tile>(
+            TileId,
+            cloned_sprite);
+        return cloned_tile;
+    }
+
     bool Tile::IsWalkable() const
     {
         // DEFINE ID CONSTANTS FOR EACH TILE IN THE TILESET.
-        const unsigned int BLACK_TEST_TILE_ID = 0;
-        const unsigned int WHITE_TEST_TILE_ID = 1;
-        const unsigned int SAND_TILE_ID = 2;
-        const unsigned int GRASS_TILE_ID = 3;
-        const unsigned int WATER_TILE_ID = 4;
-        const unsigned int BROWN_DIRT_TILE_ID = 5;
-        const unsigned int GRAY_STONE_TILE_ID = 6;
+        /// @todo   Re-think invalid tile ID stuff here.
+        /// A 0 entry had to be added here to account for
+        /// the fact that the first tile ID read from
+        /// the tile map file started at 1, not 0.
+        const unsigned int INVALID_TILE_ID = 0;
+        const unsigned int BLACK_TEST_TILE_ID = 1;
+        const unsigned int WHITE_TEST_TILE_ID = 2;
+        const unsigned int SAND_TILE_ID = 3;
+        const unsigned int GRASS_TILE_ID = 4;
+        const unsigned int WATER_TILE_ID = 5;
+        const unsigned int BROWN_DIRT_TILE_ID = 6;
+        const unsigned int GRAY_STONE_TILE_ID = 7;
 
         // MAP EACH TILE ID TO A WALKABLE STATUS.
-        const unsigned int TILESET_TILE_COUNT = 7;
+        const unsigned int TILESET_TILE_COUNT = 8;
         std::array<bool, TILESET_TILE_COUNT> tile_is_walkable;
+        tile_is_walkable[INVALID_TILE_ID] = false;
         tile_is_walkable[BLACK_TEST_TILE_ID] = false;
         tile_is_walkable[WHITE_TEST_TILE_ID] = false;
         tile_is_walkable[SAND_TILE_ID] = true;
@@ -76,6 +99,12 @@ namespace MAPS
             // The tile ID is invalid, so assume the tile isn't walkable.
             return false;
         }
+    }
+
+    float Tile::GetWidthInPixels() const
+    {
+        MATH::FloatRectangle tile_bounding_box = Sprite->GetBoundingBox();
+        return tile_bounding_box.GetWidth();
     }
 
     float Tile::GetHeightInPixels() const
@@ -106,6 +135,33 @@ namespace MAPS
     {
         MATH::FloatRectangle tile_bounding_box = Sprite->GetBoundingBox();
         return tile_bounding_box.GetBottomYPosition();
+    }
+
+    void Tile::SetTopLeftWorldPosition(
+        const float top_world_position,
+        const float left_world_position)
+    {
+        // MAKE SURE A SPRITE EXISTS.
+        bool sprite_exists = (nullptr != Sprite);
+        if (!sprite_exists)
+        {
+            // The position can't be set without a sprite.
+            return;
+        }
+
+        /// @todo   Re-think if tiles should be positioned at
+        /// the top-left corner.  This contradicts some other code.
+        Sprite->SetWorldPosition(left_world_position, top_world_position);
+    }
+
+    void Tile::Render(sf::RenderTarget& render_target)
+    {
+        // ONLY RENDER THE SPRITE IF IT EXISTS.
+        bool sprite_exists = (nullptr != Sprite);
+        if (sprite_exists)
+        {
+            Sprite->Render(render_target);
+        }
     }
 
     void Tile::Copy(const Tile& tile_to_copy)

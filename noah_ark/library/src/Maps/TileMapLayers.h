@@ -34,6 +34,10 @@ namespace MAPS
             const unsigned int tile_x_grid_position, 
             const unsigned int tile_y_grid_position) const;
 
+        /// Renders all layers in this collection, from bottom to top.
+        /// @param[in,out]  renderTarget - The target to render to.
+        void Render(sf::RenderTarget& render_target);
+
     private:
 
         /// Layers in the map organized from bottom (first) to top (last).

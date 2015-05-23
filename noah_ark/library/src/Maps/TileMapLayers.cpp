@@ -35,4 +35,13 @@ namespace MAPS
         const std::unique_ptr<ITileMapLayer>& layer = LayersFromBottomToTop.front();
         return layer->GetTileAtGridPosition(tile_x_grid_position, tile_y_grid_position);
     }
+
+    void TileMapLayers::Render(sf::RenderTarget& render_target)
+    {
+        // RENDER LAYERS FROM BOTTOM TO TOP.
+        for (auto& layer : LayersFromBottomToTop)
+        {
+            layer->Render(render_target);
+        }
+    }
 }

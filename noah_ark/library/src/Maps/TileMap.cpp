@@ -10,6 +10,7 @@ namespace MAPS
         const MATH::Vector2f& top_left_world_position_in_pixels,
         const std::shared_ptr<ITileMapData>& map_data,
         std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system) :
+    Visible(false),
     OverworldPosition(overworld_grid_position),
     TopLeftWorldPositionInPixels(top_left_world_position_in_pixels),
     WidthInTiles(0),
@@ -173,6 +174,35 @@ namespace MAPS
         return tile;
     }
 
+    void TileMap::SetVisible(const bool visible)
+    {
+        Visible = visible;
+    }
+
+    bool TileMap::IsVisible() const
+    {
+        return Visible;
+    }
+    
+    void TileMap::Render(sf::RenderTarget& render_target)
+    {
+        // DON'T RENDER IF WE AREN'T VISIBLE.
+        if (!Visible)
+        {
+            return;
+        }
+
+        // RENDER ALL LAYERS.
+        Layers.Render(render_target);
+    }
+    
+    void TileMap::Update(const float elapsed_time_in_seconds)
+    {
+        // Tile maps currently don't need any updating.
+        // If we need something like animated tiles in
+        // the future, then we can add logic here.
+    }
+
     void TileMap::BuildFromMapData(
         const MATH::Vector2f& top_left_world_position_in_pixels,
         const ITileMapData& map_data,
@@ -199,7 +229,10 @@ namespace MAPS
             bool is_object_layer = (TileMapLayerType::OBJECT_LAYER == layer_description.Type);
             if (is_tile_layer)
             {
-                layer = std::unique_ptr<ITileMapLayer>(new TileMapTileLayer(layer_description.TileIds, Tileset));
+                layer = std::unique_ptr<ITileMapLayer>(new TileMapTileLayer(
+                    top_left_world_position_in_pixels,
+                    layer_description.TileIds, 
+                    Tileset));
             }
             else if (is_object_layer)
             {

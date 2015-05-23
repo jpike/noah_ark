@@ -256,6 +256,9 @@ namespace MAPS
     void OverworldMap::SetCurrentTileMap(const std::shared_ptr<TileMap>& tileMap)
     {
         m_currentTileMap = tileMap;
+
+        // The current tile map should always be visible.
+        m_currentTileMap->SetVisible(true);
     }
 
     void OverworldMap::SetTopTileMap(const std::shared_ptr<TileMap>& tileMap)

@@ -28,17 +28,20 @@ namespace MAPS
             // CREATE AND STORE EACH TILE IN THE CURRENT DESCRIPTION.
             TileId current_tile_id = tileset_description.FirstTileId;
             MATH::Vector2ui tileset_texture_dimensions = tileset_texture->GetSize();
-            for (unsigned int tileset_texture_x = 0;
-                tileset_texture_x < tileset_texture_dimensions.X;
-                ++tileset_texture_x)
+            /// @todo   Avoid truncation?
+            unsigned int column_count_of_tiles = tileset_texture_dimensions.X / tileset_description.TileWidthInPixels;
+            unsigned int row_count_of_tiles = tileset_texture_dimensions.Y / tileset_description.TileHeightInPixels;
+            for (unsigned int tile_column_index = 0;
+                tile_column_index < column_count_of_tiles;
+                ++tile_column_index)
             {
-                for (unsigned int tileset_texture_y = 0;
-                    tileset_texture_y < tileset_texture_dimensions.Y;
-                    ++tileset_texture_y)
+                for (unsigned int tile_row_index = 0;
+                    tile_row_index < row_count_of_tiles;
+                    ++tile_row_index)
                 {
                     // CALCULATE THE OFFSET WITHIN THE TEXTURE FOR THE CURRENT TILE.
-                    float tile_left_texture_offset_in_texels = static_cast<float>(tileset_texture_x);
-                    float tile_top_texture_offset_in_texels = static_cast<float>(tileset_texture_y);
+                    float tile_left_texture_offset_in_texels = static_cast<float>(tile_column_index * tileset_description.TileWidthInPixels);
+                    float tile_top_texture_offset_in_texels = static_cast<float>(tile_row_index * tileset_description.TileHeightInPixels);
 
                     // CREATE A SPRITE FOR THE CURRENT TILE.
                     std::shared_ptr<GRAPHICS::Sprite> tile_sprite = GRAPHICS::Sprite::Create(

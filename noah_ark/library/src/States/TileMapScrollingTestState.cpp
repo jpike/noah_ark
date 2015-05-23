@@ -88,7 +88,7 @@ bool TileMapScrollingTestState::LoadOverworldMap(const std::string& overworldSpe
 
     // Wrap the overworld map so that it can be scrolled.
     m_scrollingOverworld = std::unique_ptr<MAPS::ScrollableOverworldMap>(
-        new MAPS::ScrollableOverworldMap(m_overworldMap, &m_overworldSpec, tileMapBuilder));
+        new MAPS::ScrollableOverworldMap(m_overworldMap, &m_overworldSpec, tileMapBuilder, m_graphicsSystem));
     
     // SET THE CAMERA TO VIEW THE STARTING TILE MAP.
     m_camera.SetTopLeftViewPosition(STARTING_TILE_MAP_TOP_LEFT_WORLD_POSITION);

@@ -25,6 +25,12 @@ namespace MAPS
             return nullptr;
         }
 
+        /// @todo   Finish implementation!
+        virtual void Render(sf::RenderTarget& render_target)
+        {
+
+        }
+
     private:
 
     };

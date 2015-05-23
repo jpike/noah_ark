@@ -49,6 +49,34 @@ namespace GRAPHICS
         // Nothing else to do.
     }
 
+    std::shared_ptr<Sprite> Sprite::Clone() const
+    {
+        // CLONE THE SPRITE RESOURCE IF IT EXISTS.
+        std::shared_ptr<sf::Sprite> cloned_sprite_resource;
+        bool sprite_resource_exists = (nullptr != m_sprite);
+        if (sprite_resource_exists)
+        {
+            cloned_sprite_resource = std::make_shared<sf::Sprite>(*m_sprite);
+        }
+
+        // CLONE THE POSITION COMPONENT IF IT EXISTS.
+        std::shared_ptr<MATH::Vector2f> cloned_position;
+        bool position_component_exists = (nullptr != m_worldPositionInPixels);
+        if (position_component_exists)
+        {
+            cloned_position = std::make_shared<MATH::Vector2f>(*m_worldPositionInPixels);
+        }
+
+        // CREATE THE CLONED SPRITE.
+        std::shared_ptr<Sprite> cloned_sprite = std::make_shared<Sprite>(
+            cloned_sprite_resource);
+        cloned_sprite->m_visible = m_visible;
+        cloned_sprite->SetPositionComponent(cloned_position);
+        cloned_sprite->SetZPosition(m_zPosition);
+
+        return cloned_sprite;
+    }
+
     bool Sprite::IsVisible() const
     {
         return m_visible;

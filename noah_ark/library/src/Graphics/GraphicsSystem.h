@@ -108,6 +108,13 @@ namespace GRAPHICS
             const std::string& spriteResourceName,
             const GraphicsLayer graphicsLayer);
 
+        /// Adds an external graphics component to be managed by this system.
+        /// @param[in]  graphics_layer - The visual layer in which to add the graphics component.
+        /// @param[in]  graphics_component - The graphics component to add.
+        void AddGraphicsComponent(
+            const GraphicsLayer graphics_layer,
+            const std::shared_ptr<IGraphicsComponent>& graphics_component);
+
     private:
         GraphicsSystem(const GraphicsSystem& systemToCopy); ///< Private to disallow copying.
         GraphicsSystem& operator= (const GraphicsSystem& rhsSystem);    ///< Private to disallow assignment.

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <stdexcept>
+#include <utility>
 #include "Graphics/GraphicsSystem.h"
 
 namespace GRAPHICS
@@ -204,6 +205,15 @@ namespace GRAPHICS
             std::pair< GraphicsLayer, std::weak_ptr<IGraphicsComponent> >(graphicsLayer, newAnimatedSprite));
 
         return newAnimatedSprite;
+    }
+
+    void GraphicsSystem::AddGraphicsComponent(
+        const GraphicsLayer graphics_layer,
+        const std::shared_ptr<IGraphicsComponent>& graphics_component)
+    {
+        m_graphicsComponents.insert(std::make_pair(
+            graphics_layer, 
+            graphics_component));
     }
 
     void GraphicsSystem::RenderIfVisible(std::shared_ptr<IGraphicsComponent>& graphicsComponent, sf::RenderTarget& renderTarget)

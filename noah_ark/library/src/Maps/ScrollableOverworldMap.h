@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "Graphics/GraphicsSystem.h"
 #include "Maps/OverworldMap.h"
 #include "Maps/SurroundingTileMapLoader.h"
 #include "Maps/TileMapBuilder.h"
@@ -34,11 +35,13 @@ namespace MAPS
         ///             which tile maps are adjacent to each other.  Memory is expected
         ///             to be externally managed from this class and must not be deleted
         ///             while this class is being used to load maps.
-        /// @param      tileMapBuilder - The builder for creating new tile maps loaded during scrolling.
+        /// @param[in]  tileMapBuilder - The builder for creating new tile maps loaded during scrolling.
+        /// @param[in]  graphicsSystem - The graphics system responsible for rendering tile maps.
         explicit ScrollableOverworldMap(
             const std::shared_ptr<OverworldMap>& overworldMap,
             const OverworldMapSpecification* const pOverworldMapSpec,
-            const std::shared_ptr<TileMapBuilder>& tileMapBuilder);
+            const std::shared_ptr<TileMapBuilder>& tileMapBuilder,
+            const std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem);
         /// @brief  Destructor.
         ~ScrollableOverworldMap();
 
@@ -94,5 +97,6 @@ namespace MAPS
         std::unique_ptr<PROCESSES::ScrollProcess> m_scrollProcess;  ///< The process controlling scrolling of tile maps in the overworld map, if active (nullptr otherwise).
         std::unique_ptr<MAPS::SurroundingTileMapLoader> m_surroundingMapLoader;  ///< The loader of maps surrounding the center one.
         std::shared_ptr<TileMapBuilder> m_tileMapBuilder;   ///< The builder of new tile maps loaded during scrolling.
+        std::shared_ptr<GRAPHICS::GraphicsSystem> m_graphicsSystem; ///< The graphics system responsible for rendering tile maps.
     };
 }

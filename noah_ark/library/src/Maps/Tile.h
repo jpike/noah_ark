@@ -5,27 +5,31 @@
 
 namespace MAPS
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  A 2D graphical tile intended to be used as a building block for tile maps.
-    ///////////////////////////////////////////////////////////
+    /// A typedef to hide the underlying type used for tile IDs
+    /// and clarify when variables refer to tile IDs.
+    typedef unsigned int TileId;
+
+    /// A 2D graphical tile intended to be used as a building block for tile maps.
     class Tile
     {
     public:
-        /// @brief      Constructor.
-        /// @param[in]  tileId - A numeric ID identifying the tile in a tileset.
+        /// Constructor to create an invalid tile.
+        explicit Tile();
+        /// Constructor.
+        /// @param[in]  tile_id - A numeric ID identifying the tile in a tileset.
         /// @param[in]  sprite - The sprite resource used for rendering the tile.
         explicit Tile(
-            const unsigned int tileId,
+            const unsigned int tile_id,
             const std::shared_ptr<GRAPHICS::Sprite>& sprite);
         /// @brief      Copy constructor.
-        /// @param[in]  tileToCopy - The tile to copy.
-        explicit Tile(const Tile& tileToCopy);
+        /// @param[in]  tile_to_copy - The tile to copy.
+        explicit Tile(const Tile& tile_to_copy);
         /// @brief  Destructor.
         ~Tile();
 
         /// @brief      Assignment operator.
-        /// @param[in]  rhsTile - The tile to assign from.
-        Tile& operator= (const Tile& rhsTile);
+        /// @param[in]  rhs_tile - The tile to assign from.
+        Tile& operator= (const Tile& rhs_tile);
 
         /// @brief  Determines if the tile is walkable or not.
         /// @return Whether or not this tile is walkable.
@@ -51,10 +55,10 @@ namespace MAPS
 
     private:
         /// @brief      Helper method for copying a tile.
-        /// @param[in]  tileToCopy - The tile to copy.
-        void Copy(const Tile& tileToCopy);
+        /// @param[in]  tile_to_copy - The tile to copy.
+        void Copy(const Tile& tile_to_copy);
 
-        unsigned int m_tileId;  ///< The numeric ID for the tile in a tile set.
-        std::shared_ptr<GRAPHICS::Sprite> m_sprite;   ///< The sprite used for rendering the tile.
+        unsigned int TileId;  ///< The numeric ID for the tile in a tile set.
+        std::shared_ptr<GRAPHICS::Sprite> Sprite;   ///< The sprite used for rendering the tile.
     };
 }

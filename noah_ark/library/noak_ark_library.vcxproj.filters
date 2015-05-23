@@ -197,6 +197,21 @@
     <ClInclude Include="src\Maps\ITileMapData.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
+    <ClInclude Include="src\Maps\Tileset.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\TileMapLayers.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\ITileMapLayer.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\TileMapTileLayer.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\TileMapObjectLayer.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -290,6 +305,15 @@
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\TilesetDescription.cpp">
+      <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\TileMapLayers.cpp">
+      <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\Tileset.cpp">
+      <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\TileMapTileLayer.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
   </ItemGroup>

@@ -6,6 +6,8 @@
 #include "Graphics/IGraphicsComponent.h"
 #include "Maps/ITileMapData.h"
 #include "Maps/Tile.h"
+#include "Maps/TileMapLayers.h"
+#include "Maps/Tileset.h"
 #include "Math/Vector2.h"
 
 namespace MAPS
@@ -81,8 +83,8 @@ namespace MAPS
         std::shared_ptr<Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const;
 
     private:
-        TileMap(const TileMap& mapToCopy);  ///< Private to disallow copying.
-        TileMap& operator= (const TileMap& rhsMap); ///< Private to disallow assignment.
+        TileMap(const TileMap& map_to_copy);  ///< Private to disallow copying.
+        TileMap& operator= (const TileMap& rhs_map); ///< Private to disallow assignment.
 
         /// @brief          Populates this tile map from the provided data.
         /// @param[in]      top_left_world_position_in_pixels - The top-left position of the map within the world.
@@ -93,15 +95,25 @@ namespace MAPS
             const ITileMapData& map_data,
             GRAPHICS::GraphicsSystem& graphics_system);
 
-        /// @brief  Tiles within the map, stored by their 2D positions relative to each other.
-        ///         The x (horizontal) coordinate comes first, followed by the y (vertical) coordinate.
-        ///         For example, the tile at (0,0) is the top-left tile.  The tile at (1,0) is right of the top-left tile.
-        ///         The tile at (0,1) is below the top-left tile.
-        std::vector< std::vector< std::shared_ptr<Tile> > > Tiles;
-
-        std::shared_ptr<ITileMapData> MapData; ///< The map data used to create this map.
-
-        OverworldGridPosition OverworldPosition;    ///< The position of the tile map in the overworld map's grid.
-        MATH::Vector2f TopLeftWorldPositionInPixels;  ///< The top-left world position of the tile map.
+        /// The position of the tile map in the overworld map's grid.
+        OverworldGridPosition OverworldPosition;
+        ///< The top-left world position of the tile map.
+        MATH::Vector2f TopLeftWorldPositionInPixels;
+        /// The width of the map in tiles.
+        unsigned int WidthInTiles;
+        /// The height of the map in tiles.
+        unsigned int HeightInTiles;
+        /// The width (in pixels) of a tile in the map.  This only defines
+        /// the general grid size of the map - individual tiles may have
+        /// different sizes.
+        unsigned int TileWidthInPixels;
+        /// The height (in pixels) of a tile in the map.  This only defines
+        /// the general grid size of the map - individual tiles may have
+        /// different sizes.
+        unsigned int TileHeightInPixels;
+        /// The set of tiles used in this map.
+        MAPS::Tileset Tileset;
+        /// Layers within this tile map.
+        TileMapLayers Layers;
     };
 }

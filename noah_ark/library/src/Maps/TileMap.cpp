@@ -1,5 +1,7 @@
 #include <stdexcept>
 #include "Maps/TileMap.h"
+#include "Maps/TileMapObjectLayer.h"
+#include "Maps/TileMapTileLayer.h"
 
 namespace MAPS
 {
@@ -8,13 +10,17 @@ namespace MAPS
         const MATH::Vector2f& top_left_world_position_in_pixels,
         const std::shared_ptr<ITileMapData>& map_data,
         std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system) :
-    Tiles(),
-    MapData(map_data),
     OverworldPosition(overworld_grid_position),
-    TopLeftWorldPositionInPixels(top_left_world_position_in_pixels)
+    TopLeftWorldPositionInPixels(top_left_world_position_in_pixels),
+    WidthInTiles(0),
+    HeightInTiles(0),
+    TileWidthInPixels(0),
+    TileHeightInPixels(0),
+    Tileset(),
+    Layers()
     {
         // MAKE MAP DATA WAS PROVIDED.
-        bool map_data_exists = (nullptr != MapData);
+        bool map_data_exists = (nullptr != map_data);
         if (!map_data_exists)
         {
             throw std::runtime_error("Cannot construct tile map with null map data.");
@@ -28,7 +34,7 @@ namespace MAPS
         }
 
         // BUILD THIS TILEMAP FROM THE MAP DATA.
-        BuildFromMapData(TopLeftWorldPositionInPixels, *MapData, *graphics_system);
+        BuildFromMapData(TopLeftWorldPositionInPixels, *map_data, *graphics_system);
     }
 
     TileMap::~TileMap()
@@ -82,22 +88,22 @@ namespace MAPS
 
     unsigned int TileMap::GetWidthInTiles() const
     {
-        return MapData->GetWidthInTiles();
+        return WidthInTiles;
     }
 
     unsigned int TileMap::GetHeightInTiles() const
     {
-        return MapData->GetHeightInTiles();
+        return HeightInTiles;
     }
 
     unsigned int TileMap::GetTileWidthInPixels() const
     {
-        return MapData->GetTileWidthInPixels();
+        return TileHeightInPixels;
     }
 
     unsigned int TileMap::GetTileHeightInPixels() const
     {
-        return MapData->GetTileHeightInPixels();
+        return TileHeightInPixels;
     }
 
     MATH::Vector2f TileMap::GetSizeInPixels() const
@@ -146,7 +152,7 @@ namespace MAPS
 
         // VALIDATE THE GRID COORDINATES OF THE TILE.
         // Validate the X coordinate.
-        bool valid_tile_x_grid_position = (tile_x_grid_position < Tiles.size());
+        bool valid_tile_x_grid_position = (tile_x_grid_position < WidthInTiles);
         if (!valid_tile_x_grid_position)
         {
             // The tile grid position isn't valid, so no tile can be retrieved.
@@ -154,7 +160,7 @@ namespace MAPS
         }
 
         // Validate the Y coordinate.
-        bool valid_tile_y_grid_position = (tile_y_grid_position < Tiles[tile_x_grid_position].size());
+        bool valid_tile_y_grid_position = (tile_y_grid_position < HeightInTiles);
         if (!valid_tile_y_grid_position)
         {
             // The tile grid position isn't valid, so no tile can be retrieved.
@@ -162,7 +168,9 @@ namespace MAPS
         }
 
         // GET THE TILE AT THE SPECIFIED GRID COORDINATES.
-        return Tiles[tile_x_grid_position][tile_y_grid_position];
+        /// @todo   Figure out which layer to get get this tile from.
+        std::shared_ptr<Tile> tile = Layers.GetTileAtGridPosition(tile_x_grid_position, tile_y_grid_position);
+        return tile;
     }
 
     void TileMap::BuildFromMapData(
@@ -170,95 +178,41 @@ namespace MAPS
         const ITileMapData& map_data,
         GRAPHICS::GraphicsSystem& graphics_system)
     {
-        // VERIFY THAT THE EXPECTED NUMBER OF LAYERS EXIST IN THE MAP.
-        // For now, we only support a single ground layer.
-        const int EXPECTED_LAYER_COUNT = 1;
-        std::vector<TileMapLayerDescription> layer_descriptions = map_data.GetLayers();
-        bool expected_layers_provided = (EXPECTED_LAYER_COUNT == layer_descriptions.size());
-        if (!expected_layers_provided)
-        {
-            // Don't populate the map if it isn't properly formed.
-            return;
-        }
+        // GET THE MAP DIMENSIONS.
+        WidthInTiles = map_data.GetWidthInTiles();
+        HeightInTiles = map_data.GetHeightInTiles();
+        TileWidthInPixels = map_data.GetTileWidthInPixels();
+        TileHeightInPixels = map_data.GetTileHeightInPixels();
 
-        // VERIFY THAT THE EXPECTED NUMBER OF TILESETS EXIST IN THE MAP.
-        // For now, we only support a single tileset.
-        const int EXPECTED_TILESET_COUNT = 1;
+        // CREATE THE TILESET.
         std::vector<TilesetDescription> tileset_descriptions = map_data.GetTilesets();
-        bool expected_tilesets_provided = (EXPECTED_TILESET_COUNT == tileset_descriptions.size());
-        if (!expected_tilesets_provided)
+        Tileset.Populate(tileset_descriptions, graphics_system);
+
+        // CREATE EACH LAYER.
+        Layers.Clear();
+        std::vector<TileMapLayerDescription> layer_descriptions = map_data.GetLayers();
+        for (const auto& layer_description : layer_descriptions)
         {
-            // Don't populate the map if it isn't properly formed.
-            return;
-        }
-
-        // GET THE LAYER TO USE FOR BUILDING THE MAP.
-        const TileMapLayerDescription& map_layer = layer_descriptions.front();
-
-        // GET THE TILESET TEXTURE NEEDED FOR CREATING GRAPHICS FOR THE TILES.
-        const TilesetDescription& tileset_description = tileset_descriptions.front();
-        std::shared_ptr<GRAPHICS::Texture> tileset_texture = graphics_system.GetTexture(tileset_description.Name);
-        bool tileset_texture_exists = (nullptr != tileset_texture);
-        if (!tileset_texture_exists)
-        {
-            return;
-        }
-
-        // GET THE TILESET IMAGE INFORMATION SO THAT WE KNOW HOW TO CONVERT A TILE ID TO PIXEL COORDINATES OF A TILE.
-        MATH::Vector2ui tileset_image_size = tileset_texture->GetSize();
-        unsigned int tileset_image_width_in_pixels = tileset_image_size.X;
-        unsigned int tileset_image_height_in_pixels = tileset_image_size.Y;
-
-        // POPULATE THE MAP FROM THE ONLY LAYER.
-        unsigned int layer_width_in_tiles = map_data.GetWidthInTiles();
-        unsigned int layer_height_in_tiles = map_data.GetHeightInTiles();
-        // Reserve space in the container for all columns of tiles to avoid later reallocations.
-        Tiles.resize(layer_width_in_tiles);
-        for (unsigned int x_position_in_tiles = 0; x_position_in_tiles < layer_width_in_tiles; ++x_position_in_tiles)
-        {
-            // Reserve space for all rows of tiles in the current row to avoid later reallocations.
-            Tiles.at(x_position_in_tiles).resize(layer_height_in_tiles);
-            for (unsigned int y_position_in_tiles = 0; y_position_in_tiles < layer_height_in_tiles; ++y_position_in_tiles)
+            // CREATE A LAYER OF THE APPROPRIATE TYPE.
+            std::unique_ptr<ITileMapLayer> layer;
+            bool is_tile_layer = (TileMapLayerType::TILE_LAYER == layer_description.Type);
+            bool is_object_layer = (TileMapLayerType::OBJECT_LAYER == layer_description.Type);
+            if (is_tile_layer)
             {
-                // GET INFORMATION NEEDED TO CREATE THE TILE.
-                /// @todo   Correct things so an adjustment by -1 isn't necessary.
-                /// This issue popped up in the switch from TMX to JSON file formats.
-                TileId tile_id = map_layer.TileIds(x_position_in_tiles, y_position_in_tiles) - 1;
-
-                unsigned int tile_width_in_pixels = tileset_description.TileWidthInPixels;
-                unsigned int tile_height_in_pixels = tileset_description.TileHeightInPixels;
-
-                /// @todo   Move this logic to a helper function.
-                float tileset_x_position = static_cast<float>((tile_width_in_pixels * tile_id) % tileset_image_width_in_pixels);
-                unsigned int tiles_per_row = (tileset_image_width_in_pixels / tile_width_in_pixels);
-                float tileset_y_position = static_cast<float>((tile_height_in_pixels * (tile_id / tiles_per_row)) % tileset_image_height_in_pixels);
-
-                // CREATE A SPRITE FOR THE TILE.
-                std::shared_ptr<GRAPHICS::Sprite> tile_sprite = graphics_system.CreateSprite(
-                    tileset_texture,
-                    tileset_x_position,
-                    tileset_y_position,
-                    static_cast<float>(tile_width_in_pixels),
-                    static_cast<float>(tile_height_in_pixels),
-                    GRAPHICS::GraphicsLayer::GROUND);
-
-                // SET ADDITIONAL PROPERTIES OF THE TILE'S SPRITE.
-                // Set the sprite's world position.
-                float worldXPosition = static_cast<float>(tile_width_in_pixels * x_position_in_tiles) + top_left_world_position_in_pixels.X;
-                // Position it based on its center.
-                /// @todo   Re-examine commented-out code.
-                /*float tileHalfWidth = static_cast<float>(tileWidthInPixels) / 2.0f;
-                worldXPosition += tileHalfWidth;*/
-                float worldYPosition = static_cast<float>(tile_height_in_pixels * y_position_in_tiles) + top_left_world_position_in_pixels.Y;
-                // Position it based on its center.
-                /*float tileHalfHeight = static_cast<float>(tileHeightInPixels) / 2.0f;
-                worldYPosition += tileHalfHeight;*/
-                tile_sprite->SetWorldPosition(worldXPosition, worldYPosition);
-
-                // STORE A TILE IN THE COLLECTION OF TILES.
-                std::shared_ptr<Tile> tile = std::make_shared<Tile>(tile_id, tile_sprite);
-                Tiles[x_position_in_tiles][y_position_in_tiles] = tile;
+                layer = std::unique_ptr<ITileMapLayer>(new TileMapTileLayer(layer_description.TileIds, Tileset));
             }
+            else if (is_object_layer)
+            {
+                layer = std::unique_ptr<ITileMapLayer>(new TileMapObjectLayer(layer_description.Objects, Tileset));
+            }
+            else
+            {
+                // The layer is invalid, so skip over it to avoid adding a
+                // null pointer to the container of layers.
+            }
+
+            // ADD THE LAYER TO THIS TILE MAP.
+            Layers.AddToTop(layer);
         }
     }
 }

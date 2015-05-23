@@ -33,9 +33,14 @@
     <ClInclude Include="src\Maps\TileMap.h" />
     <ClInclude Include="src\Maps\TileMapBuilder.h" />
     <ClInclude Include="src\Maps\ITileMapData.h" />
+    <ClInclude Include="src\Maps\ITileMapLayer.h" />
     <ClInclude Include="src\Maps\TileMapLayerDescription.h" />
+    <ClInclude Include="src\Maps\TileMapLayers.h" />
     <ClInclude Include="src\Maps\TileMapLoader.h" />
     <ClInclude Include="src\Maps\TileMapObjectDescription.h" />
+    <ClInclude Include="src\Maps\TileMapObjectLayer.h" />
+    <ClInclude Include="src\Maps\TileMapTileLayer.h" />
+    <ClInclude Include="src\Maps\Tileset.h" />
     <ClInclude Include="src\Maps\TilesetDescription.h" />
     <ClInclude Include="src\Math\FloatRectangle.h" />
     <ClInclude Include="src\Math\ITransformable.h" />
@@ -71,8 +76,11 @@
     <ClCompile Include="src\Maps\TileMap.cpp" />
     <ClCompile Include="src\Maps\TileMapBuilder.cpp" />
     <ClCompile Include="src\Maps\TileMapLayerDescription.cpp" />
+    <ClCompile Include="src\Maps\TileMapLayers.cpp" />
     <ClCompile Include="src\Maps\TileMapLoader.cpp" />
     <ClCompile Include="src\Maps\TileMapObjectDescription.cpp" />
+    <ClCompile Include="src\Maps\TileMapTileLayer.cpp" />
+    <ClCompile Include="src\Maps\Tileset.cpp" />
     <ClCompile Include="src\Maps\TilesetDescription.cpp" />
     <ClCompile Include="src\Math\FloatRectangle.cpp" />
     <ClCompile Include="src\Objects\Noah.cpp" />

@@ -3,14 +3,11 @@
 #include <string>
 #include <vector>
 #include "Core/Array2D.h"
+#include "Maps/Tile.h"
 #include "Maps/TileMapObjectDescription.h"
 
 namespace MAPS
 {
-    /// A typedef to hide the underlying type used for tile IDs
-    /// and clarify when variables refer to tile IDs.
-    typedef unsigned int TileId;
-
     /// Identifies the different types of layers that may
     /// exist in a tile map.
     enum class TileMapLayerType

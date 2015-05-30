@@ -29,15 +29,15 @@ namespace MAPS
             TileId current_tile_id = tileset_description.FirstTileId;
             MATH::Vector2ui tileset_texture_dimensions = tileset_texture->GetSize();
             /// @todo   Avoid truncation?
-            unsigned int column_count_of_tiles = tileset_texture_dimensions.X / tileset_description.TileWidthInPixels;
             unsigned int row_count_of_tiles = tileset_texture_dimensions.Y / tileset_description.TileHeightInPixels;
-            for (unsigned int tile_column_index = 0;
-                tile_column_index < column_count_of_tiles;
-                ++tile_column_index)
+            unsigned int column_count_of_tiles = tileset_texture_dimensions.X / tileset_description.TileWidthInPixels;
+            for (unsigned int tile_row_index = 0;
+                tile_row_index < row_count_of_tiles;
+                ++tile_row_index)
             {
-                for (unsigned int tile_row_index = 0;
-                    tile_row_index < row_count_of_tiles;
-                    ++tile_row_index)
+                for (unsigned int tile_column_index = 0;
+                    tile_column_index < column_count_of_tiles;
+                    ++tile_column_index)
                 {
                     // CALCULATE THE OFFSET WITHIN THE TEXTURE FOR THE CURRENT TILE.
                     float tile_left_texture_offset_in_texels = static_cast<float>(tile_column_index * tileset_description.TileWidthInPixels);

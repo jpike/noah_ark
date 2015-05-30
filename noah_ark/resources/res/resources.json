@@ -9,6 +9,11 @@
         "noah_texture":
         {
             "filepath": "res/images/noah_sprite1.png"
+        },
+
+        "tree_texture": 
+        {
+            "filepath": "res/images/tree_sprite1.png"
         }
     },
 

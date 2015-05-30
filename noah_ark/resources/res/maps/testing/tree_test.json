@@ -129,7 +129,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"..\/images\/ground_tile_set.png",
+         "image":"..\/..\/images\/ground_tile_set.png",
          "imageheight":16,
          "imagewidth":112,
          "margin":0,
@@ -145,7 +145,7 @@
         }, 
         {
          "firstgid":8,
-         "image":"..\/images\/tree_sprite1.png",
+         "image":"..\/..\/images\/tree_sprite1.png",
          "imageheight":48,
          "imagewidth":48,
          "margin":0,
@@ -161,7 +161,7 @@
         }, 
         {
          "firstgid":17,
-         "image":"..\/images\/tree_sprite1.png",
+         "image":"..\/..\/images\/tree_sprite1.png",
          "imageheight":48,
          "imagewidth":48,
          "margin":0,
@@ -177,7 +177,7 @@
         }, 
         {
          "firstgid":20,
-         "image":"..\/images\/tree_sprite_32x32.png",
+         "image":"..\/..\/images\/tree_sprite_32x32.png",
          "imageheight":32,
          "imagewidth":32,
          "margin":0,

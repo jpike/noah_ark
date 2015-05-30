@@ -29,11 +29,23 @@ namespace MAPS
         }
 
         // GET THE TILE AT THE SPECIFIED POSITION.
-        /// @todo   The first (bottom) layer is arbitrarily chosen
-        /// for now.  Something else will need to be done later so
-        /// that a tile for a specific layer can be retrieved.
-        const std::unique_ptr<ITileMapLayer>& layer = LayersFromBottomToTop.front();
-        return layer->GetTileAtGridPosition(tile_x_grid_position, tile_y_grid_position);
+        /// @todo   We probably need to us z-positions.
+        /// For now, just iterate from top to bottom.
+        for (auto layer = LayersFromBottomToTop.rbegin();
+            layer != LayersFromBottomToTop.rend();
+            ++layer)
+        {
+            // RETURN THE TILE AT THE CURRENT LAYER IF ONE EXISTS.
+            std::shared_ptr<Tile> tile = (*layer)->GetTileAtGridPosition(tile_x_grid_position, tile_y_grid_position);
+            bool tile_exists = (nullptr != tile);
+            if (tile_exists)
+            {
+                return tile;
+            }
+        }
+        
+        // No tile could be found.
+        return nullptr;
     }
 
     void TileMapLayers::Render(sf::RenderTarget& render_target)

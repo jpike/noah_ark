@@ -46,6 +46,8 @@
     <ClInclude Include="src\Math\ITransformable.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Objects\Noah.h" />
+    <ClInclude Include="src\Objects\ObjectType.h" />
+    <ClInclude Include="src\Objects\Tree.h" />
     <ClInclude Include="src\Physics\Collision\BoxCollider.h" />
     <ClInclude Include="src\Physics\Collision\CollisionSystem.h" />
     <ClInclude Include="src\Physics\Collision\ICollisionComponent.h" />
@@ -79,11 +81,14 @@
     <ClCompile Include="src\Maps\TileMapLayers.cpp" />
     <ClCompile Include="src\Maps\TileMapLoader.cpp" />
     <ClCompile Include="src\Maps\TileMapObjectDescription.cpp" />
+    <ClCompile Include="src\Maps\TileMapObjectLayer.cpp" />
     <ClCompile Include="src\Maps\TileMapTileLayer.cpp" />
     <ClCompile Include="src\Maps\Tileset.cpp" />
     <ClCompile Include="src\Maps\TilesetDescription.cpp" />
     <ClCompile Include="src\Math\FloatRectangle.cpp" />
     <ClCompile Include="src\Objects\Noah.cpp" />
+    <ClCompile Include="src\Objects\ObjectType.cpp" />
+    <ClCompile Include="src\Objects\Tree.cpp" />
     <ClCompile Include="src\Physics\Collision\BoxCollider.cpp" />
     <ClCompile Include="src\Physics\Collision\CollisionSystem.cpp" />
     <ClCompile Include="src\Physics\Collision\Movement.cpp" />

@@ -230,13 +230,17 @@ namespace MAPS
             if (is_tile_layer)
             {
                 layer = std::unique_ptr<ITileMapLayer>(new TileMapTileLayer(
+                    layer_description.Name,
                     top_left_world_position_in_pixels,
                     layer_description.TileIds, 
                     Tileset));
             }
             else if (is_object_layer)
             {
-                layer = std::unique_ptr<ITileMapLayer>(new TileMapObjectLayer(layer_description.Objects, Tileset));
+                layer = std::unique_ptr<ITileMapLayer>(new TileMapObjectLayer(
+                    layer_description.Name, 
+                    layer_description.Objects, 
+                    graphics_system));
             }
             else
             {

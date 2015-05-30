@@ -3,9 +3,11 @@
 namespace MAPS
 {
     TileMapTileLayer::TileMapTileLayer(
+        const std::string& name,
         const MATH::Vector2f& top_left_world_position,
         const CORE::Array2D<TileId>& tile_ids,
         const MAPS::Tileset& tileset) :
+    Name(name),
     Tiles(tile_ids.GetWidth(), tile_ids.GetHeight())
     {
         Tiles = CreateTiles(top_left_world_position, tile_ids, tileset);

@@ -52,14 +52,14 @@
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <LibraryPath>$(SolutionDir)noah_ark\library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(THOR_DIR)\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)noah_ark\library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(THOR_DIR)\lib;$(BOOST_DIR)\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\src;$(SFML_32_BIT_DIR)\include;$(THOR_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
-    <LibraryPath>$(SolutionDir)noah_ark\library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(THOR_DIR)\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)noah_ark\library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(THOR_DIR)\lib;$(BOOST_DIR)\stage\lib;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

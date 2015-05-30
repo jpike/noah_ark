@@ -22,6 +22,11 @@ namespace MAPS
     /// See public methods and returned data structures
     /// for details on the exact features currently
     /// supported.
+    ///
+    /// @note    This class uses boost's property tree library,
+    /// which isn't thread-safe by default.
+    /// This code expects BOOST_SPIRIT_THREADSAFE to be defined for
+    /// this class to be used safely across multiple threads.
     class TiledMapJsonFile : public ITileMapData
     {
     public:

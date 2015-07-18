@@ -29,38 +29,28 @@ namespace GRAPHICS
         /// Destructor.
         virtual ~AnimatedSprite();
 
-        // IGraphicsComponent INTERFACE IMPLEMENTATION.
-        /// @copydoc    IGraphicsComponent::IsVisible() const
+        // INTERFACE IMPLEMENTATION - IGraphicsComponent.
+        /// @copydoc    IGraphicsComponent::IsVisible
         virtual bool IsVisible() const;
-
-        /// Sets whether the sprite is visible.
-        /// @param[in]  is_visible - True to make the sprite visible; false to hide it.
-        void SetVisible(const bool is_visible);
-
+        /// @copydoc    IGraphicsComponent::SetVisible
+        virtual void SetVisible(const bool is_visible);
         /// @copydoc    IGraphicsComponent::Render
         virtual void Render(sf::RenderTarget& render_target);
-
         /// @copydoc    IGraphicsComponent::Update
         virtual void Update(const float elapsed_time_in_seconds);
 
-        // ITransformable INTERFACE IMPLEMENTATION.
+        // INTERFACE IMPLEMENTATION - ITransformable.
         /// @copydoc    ITransformable::SetPositionComponent
         virtual void SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& position_component);
 
         // POSITIONING.
         /// Gets the world position of the sprite.
-        /// @return     The world position of the sprite, in pixels.
+        /// @return The world position of the sprite, in pixels.
         MATH::Vector2f GetWorldPosition() const;
-
         /// Sets the world position of the sprite.
         /// @param[in]  x_position_in_pixels - The x-coordinate of the sprite in the world.
-        /// @param[in]  y_position_in_pixes - The y-coordinate of the sprite in the world.
-        void SetWorldPosition(const float x_position_in_pixels, const float y_position_in_pixes);
-
-        /// Gets the bounding box of the sprite in the world.
-        /// @return     The bounding box of the sprite.
-        MATH::FloatRectangle GetWorldBoundingBox();
-
+        /// @param[in]  y_position_in_pixels - The y-coordinate of the sprite in the world.
+        void SetWorldPosition(const float x_position_in_pixels, const float y_position_in_pixels);   
         /// Moves the sprite's world position up the specified distance.
         /// @param[in]  distance_to_move_in_pixels - The distance to move, in pixels.
         void MoveUp(const float distance_to_move_in_pixels);
@@ -74,10 +64,10 @@ namespace GRAPHICS
         /// @param[in]  distance_to_move_in_pixels - The distance to move, in pixels.
         void MoveRight(const float distance_to_move_in_pixels);
 
-        // ROTATION.
-        /// Sets the rotation of the sprite, relative to its local origin.
-        /// @param[in]  degrees - The amount of degrees for the rotation.
-        void SetRotation(const float degrees);
+        // BOUNDING BOXES.
+        /// Gets the bounding box of the sprite in the world.
+        /// @return The bounding box of the sprite.
+        MATH::FloatRectangle GetWorldBoundingBox();
 
         // ANIMATION.
         /// Sets the animation sequence for the sprite with the given name.
@@ -89,29 +79,22 @@ namespace GRAPHICS
         void AddAnimationSequence(
             const std::string& animation_name,
             const std::shared_ptr<AnimationSequence>& animation_sequence);
-
         /// Specifies the animation sequence that the sprite should use.
         /// @param[in]  animation_name - The name of the animation sequence to use.
         void UseAnimationSequence(const std::string& animation_name);
-
         /// Begins playing the current animation sequence, if it isn't already playing.
         void Play();
-
-        /// Indicates if the sprite is currently playing an animation sequence.
-        /// @return True if the sprite is playing an animation sequence; false otherwise.
-        bool IsAnimating();
-
         /// Resets the current animation to its first frame and stops it from playing.
         void ResetAnimation();
 
+    private:
+        // PRIVATE METHODS.
         /// Returns the animation sequence currently in use.
         /// If the current animation sequence name is not mapped to a valid
         /// sequence, then nullptr may be returned.
         /// @return     The current animation sequence, if it exists.
-        /// @todo   Return this to its previous position.  It probably shouldn't be exposed.
         std::shared_ptr<AnimationSequence> GetCurrentAnimationSequence();
 
-    private:
         // MEMBER VARIABLES.
         std::shared_ptr<GRAPHICS::Sprite> Sprite;   ///< The underlying sprite being animated.
         /// A mapping of animation sequence names to actual animation sequences.

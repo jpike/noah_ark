@@ -112,11 +112,6 @@ namespace GRAPHICS
         Sprite->MoveRight(distance_to_move_in_pixels);
     }
 
-    void AnimatedSprite::SetRotation(const float degrees)
-    {
-        Sprite->SetRotation(degrees);
-    }
-
     void AnimatedSprite::AddAnimationSequence(
         const std::string& animation_name,
         const std::shared_ptr<AnimationSequence>& animation_sequence)
@@ -159,24 +154,6 @@ namespace GRAPHICS
 
         // START PLAYING THE ANIMATION.
         current_animation_sequence->Start();
-    }
-
-    bool AnimatedSprite::IsAnimating()
-    {
-        // CHECK IF A CURRENT ANIMATION SEQUENCE EXISTS.
-        std::shared_ptr<AnimationSequence> current_animation_sequence = GetCurrentAnimationSequence();
-        bool current_animation_exists = (nullptr != current_animation_sequence);
-        if (current_animation_exists)
-        {
-            // Return if the animation is playing.
-            bool animation_playing = current_animation_sequence->IsPlaying();
-            return animation_playing;
-        }
-        else
-        {
-            // No animation sequence is playing.
-            return false;
-        }
     }
 
     void AnimatedSprite::ResetAnimation()

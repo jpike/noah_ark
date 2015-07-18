@@ -155,16 +155,14 @@ std::shared_ptr<GRAPHICS::AnimationSequence> ResourceManager::GetAnimation(const
         // RETRIEVE THE FRAMES.
         const std::string FRAMES_PROPERTY_SUFFIX = ".frames";
         std::string framesPropertyPath = animationResourcePath + FRAMES_PROPERTY_SUFFIX;
-        thor::FrameAnimation frameAnimation;
+        std::vector<sf::IntRect> frames;
         BOOST_FOREACH(const boost::property_tree::ptree::value_type& frameProperties, m_resourceTree.get_child(framesPropertyPath))
         {
             // CREATE A FRAME FROM THE CURRENT PROPERTIES.
             sf::IntRect frame = ParseAnimationFrame(frameProperties);
 
             // ADD THE FRAME TO THE ANIMATION.
-            // All frames have the same duration relative to each other.
-            const float SAME_RELATIVE_DURATION_FOR_EACH_FRAME = 1.0f;
-            frameAnimation.addFrame(SAME_RELATIVE_DURATION_FOR_EACH_FRAME, frame);
+            frames.push_back(frame);
         }
 
         // CREATE THE ANIMATION SEQUENCE.
@@ -172,7 +170,7 @@ std::shared_ptr<GRAPHICS::AnimationSequence> ResourceManager::GetAnimation(const
             animationName,
             isLooping,
             sf::seconds(durationInSeconds),
-            frameAnimation);
+            frames);
 
         return animationSequence;
     }

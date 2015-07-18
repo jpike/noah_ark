@@ -13,10 +13,14 @@ namespace MAPS
     class TileMapBuilder
     {
     public:
-        /// @brief      Constructor.
-        /// @param      graphics_system - The graphics system supplying graphics for tile maps
-        ///             built by this class.
-        explicit TileMapBuilder(const std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system);
+        /// Constructor.
+        /// @param[in]  graphics_system - The graphics system supplying graphics for tile maps
+        ///     built by this class.
+        /// @param[in]  assets - The assets supplying graphics for tile maps
+        ///     built by this class.
+        explicit TileMapBuilder(
+            const std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system,
+            const std::shared_ptr<RESOURCES::Assets>& assets);
         /// @brief  Destructor.
         ~TileMapBuilder();
 
@@ -75,5 +79,6 @@ namespace MAPS
         TileMapBuilder& operator=(const TileMapBuilder& rhsBuilder);    ///< Private to disallow assignment.
 
         std::shared_ptr<GRAPHICS::GraphicsSystem> GraphicsSystem; ///< The graphics system supplying graphics for tile maps built by this class.
+        std::shared_ptr<RESOURCES::Assets> Assets;  ///< The source of assets used for tile maps.
     };
 }

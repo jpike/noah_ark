@@ -75,6 +75,18 @@
     <Filter Include="Source Files\Resources">
       <UniqueIdentifier>{4956a80e-a2d1-4ddf-aa74-81899618280f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Events">
+      <UniqueIdentifier>{05bdbfc0-74c0-4ed7-922a-dccc0a456372}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Events">
+      <UniqueIdentifier>{f17e002a-997c-4bd3-84eb-1ac54bb3b9a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\World">
+      <UniqueIdentifier>{6f4f580f-7668-4780-9acc-eca45678ae85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\World">
+      <UniqueIdentifier>{427c6823-0e14-45f1-9e66-9554e4996098}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\States\OverworldState.h">
@@ -218,6 +230,33 @@
     <ClInclude Include="src\Objects\ObjectType.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="src\Events\AxeSwingEvent.h">
+      <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Objects\Axe.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\States\AxeTestState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resources\Assets.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\States\WorldAreaTestState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World\GroundLayer.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\World\WorldArea.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Renderer.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\RenderBatch.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -330,6 +369,33 @@
     </ClCompile>
     <ClCompile Include="src\Objects\ObjectType.cpp">
       <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Events\AxeSwingEvent.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Objects\Axe.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\States\AxeTestState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resources\Assets.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\States\WorldAreaTestState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\World\GroundLayer.cpp">
+      <Filter>Source Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="src\World\WorldArea.cpp">
+      <Filter>Source Files\World</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\RenderBatch.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Renderer.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

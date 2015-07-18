@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "Math/Vector2.h"
 
 namespace MATH
 {
@@ -17,16 +18,28 @@ namespace MATH
     class FloatRectangle
     {
     public:
-        /// @brief      Constructor.
+        /// Creates a rectangle from the top-left coordinates and dimensions.
+        /// @param[in]  left_position - The left position of the rectangle.
+        /// @param[in]  top_position - The top position of the rectangle.
+        /// @param[in]  width - The width of the rectangle.
+        /// @param[in]  height - The height of the rectangle.
+        /// @return A rectangle based on the provided values.
+        static FloatRectangle FromTopLeftAndDimensions(
+            const float left_position,
+            const float top_position,
+            const float width,
+            const float height);
+        /// Constructor.  Default parameter values allow for easy creation of an
+        /// invalid rectangle (no width/height).
         /// @param[in]  centerWorldXPositionInPixels - The center X position of the rectangle.
         /// @param[in]  centerWorldYPositionInPixels - The center Y position of the rectangle.
         /// @param[in]  widthInPixels - The width of the rectangle.
         /// @param[in]  heightInPixels - The height of the rectangle.
         explicit FloatRectangle(
-            const float centerWorldXPositionInPixels,
-            const float centerWorldYPositionInPixels,
-            const float widthInPixels,
-            const float heightInPixels);
+            const float centerWorldXPositionInPixels = 0.0f,
+            const float centerWorldYPositionInPixels = 0.0f,
+            const float widthInPixels = 0.0f,
+            const float heightInPixels = 0.0f);
         /// @brief      Constructor accepting an HGE rectangle.
         /// @param[in]  sfmlRectangle - The SFML rectangle to use for the float rectangle.
         explicit FloatRectangle(const sf::FloatRect& sfmlRectangle);
@@ -39,6 +52,9 @@ namespace MATH
         /// @brief  Gets the center Y position of the rectangle, in world pixel coordinates.
         /// @return The center Y position of the rectangle.
         float GetCenterYPosition() const;
+        /// Gets the center position of the rectangle, in world pixel coordinates.
+        /// @return The center position of the rectangl.
+        MATH::Vector2f GetCenterPosition() const;
 
         /// @brief  Gets the left X position of the rectangle, in world pixel coordinates.
         /// @return The left X position of the rectangle.
@@ -71,6 +87,11 @@ namespace MATH
         /// @param[in]  worldYPositionInPixels - The world Y position to check for containmnet in this rectangle.
         /// @return     True if the specified point is within this rectangle; false otherwise.
         bool Contains(const float worldXPositionInPixels, const float worldYPositionInPixels) const;
+
+        /// Checks if the other rectangle intersects any portion of this rectangle.
+        /// @param[in]  other_rectangle - The rectangle to test against this rectangle for intersection.
+        /// @return True if the rectangles intersect; false otherwise.
+        bool Intersects(const MATH::FloatRectangle& other_rectangle) const;
 
     private:
 

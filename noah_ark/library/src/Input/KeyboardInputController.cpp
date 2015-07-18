@@ -1,69 +1,82 @@
 #include "Input/KeyboardInputController.h"
 
-using namespace INPUT_CONTROL;
+namespace INPUT_CONTROL
+{
+    KeyboardInputController::KeyboardInputController() :
+    Enabled(true),
+    Keyboard()
+    {}
 
-KeyboardInputController::KeyboardInputController() :
-    m_enabled(true),
-    m_keyboard()
-{}
+    KeyboardInputController::~KeyboardInputController()
+    {}
 
-KeyboardInputController::~KeyboardInputController()
-{}
+    void KeyboardInputController::DisableInput()
+    {
+        Enabled = false;
+    }
 
-void KeyboardInputController::DisableInput()
-{
-    m_enabled = false;
-}
+    void KeyboardInputController::EnableInput()
+    {
+        Enabled = true;
+    }
 
-void KeyboardInputController::EnableInput()
-{
-    m_enabled = true;
-}
+    bool KeyboardInputController::UpButtonPressed() const
+    {
+        if (Enabled)
+        {
+            return Keyboard.IsKeyDown(sf::Keyboard::Up);
+        }
+        else
+        {
+            return false;
+        }
+    }
 
-bool KeyboardInputController::UpButtonPressed() const
-{
-    if (m_enabled)
+    bool KeyboardInputController::DownButtonPressed() const
     {
-        return m_keyboard.IsKeyDown(sf::Keyboard::Up);
+        if (Enabled)
+        {
+            return Keyboard.IsKeyDown(sf::Keyboard::Down);
+        }
+        else
+        {
+            return false;
+        }
     }
-    else
+
+    bool KeyboardInputController::LeftButtonPressed() const
     {
-        return false;
+        if (Enabled)
+        {
+            return Keyboard.IsKeyDown(sf::Keyboard::Left);
+        }
+        else
+        {
+            return false;
+        }
     }
-}
-        
-bool KeyboardInputController::DownButtonPressed() const
-{
-    if (m_enabled)
+
+    bool KeyboardInputController::RightButtonPressed() const
     {
-        return m_keyboard.IsKeyDown(sf::Keyboard::Down);
+        if (Enabled)
+        {
+            return Keyboard.IsKeyDown(sf::Keyboard::Right);
+        }
+        else
+        {
+            return false;
+        }
     }
-    else
+
+    bool KeyboardInputController::PrimaryActionButtonPressed() const
     {
-        return false;
-    }
-}
-        
-bool KeyboardInputController::LeftButtonPressed() const
-{
-    if (m_enabled)
-    {
-        return m_keyboard.IsKeyDown(sf::Keyboard::Left);
-    }
-    else
-    {
-        return false;
-    }
-}
-        
-bool KeyboardInputController::RightButtonPressed() const
-{
-    if (m_enabled)
-    {
-        return m_keyboard.IsKeyDown(sf::Keyboard::Right);
-    }
-    else
-    {
-        return false;
+        if (Enabled)
+        {
+            return Keyboard.IsKeyDown(sf::Keyboard::Z);
+        }
+        else
+        {
+            return false;
+        }
     }
 }

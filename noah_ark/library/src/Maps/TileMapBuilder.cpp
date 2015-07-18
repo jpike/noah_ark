@@ -2,8 +2,11 @@
 
 namespace MAPS
 {
-    TileMapBuilder::TileMapBuilder(const std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system) :
-        GraphicsSystem(graphics_system)
+    TileMapBuilder::TileMapBuilder(
+        const std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system,
+        const std::shared_ptr<RESOURCES::Assets>& assets) :
+    GraphicsSystem(graphics_system),
+    Assets(assets)
     {}
 
     TileMapBuilder::~TileMapBuilder()
@@ -18,7 +21,8 @@ namespace MAPS
             overworld_grid_position,
             top_left_world_position_in_pixels,
             map_data,
-            GraphicsSystem);
+            GraphicsSystem,
+            Assets);
 
         return tile_map;
     }
@@ -55,7 +59,8 @@ namespace MAPS
             top_tile_map_overworld_grid_position,
             top_tile_map_top_left_world_position,
             top_map_data,
-            GraphicsSystem);
+            GraphicsSystem,
+            Assets);
         return top_tile_map;
     }
 
@@ -91,7 +96,8 @@ namespace MAPS
             bottom_tile_map_overworld_grid_position,
             bottom_tile_map_top_left_world_position,
             bottom_map_data,
-            GraphicsSystem);
+            GraphicsSystem,
+            Assets);
         return bottom_tile_map;
     }
 
@@ -127,7 +133,8 @@ namespace MAPS
             left_tile_map_overworld_grid_position,
             left_tile_map_top_left_world_position,
             left_map_data,
-            GraphicsSystem);
+            GraphicsSystem,
+            Assets);
         return left_tile_map;
     }
 
@@ -163,7 +170,8 @@ namespace MAPS
             right_tile_map_overworld_grid_position,
             rightTileMapTopLeftWorldPosition,
             right_map_data,
-            GraphicsSystem);
+            GraphicsSystem,
+            Assets);
         return right_tile_map;
     }
 }

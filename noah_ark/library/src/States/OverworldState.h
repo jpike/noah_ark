@@ -12,56 +12,57 @@
 
 namespace STATES
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  The main gameplay state that involves the player (Noah)
-    ///         moving over an overworld.
-    ///////////////////////////////////////////////////////////
+    /// The main gameplay state that involves the player (Noah)
+    /// moving over an overworld.
     class OverworldState : public IGameState
     {
     public:
-        /// @brief      Constructor.
-        /// @param[in]  graphicsSystem - The graphics system.
-        /// @param[in]  collisionSystem - The collision system.
-        /// @throws     std::runtime_error - Thrown if the an error occurs during initialization.
+        /// Constructor.
+        /// @param[in]  graphics_system - The graphics system.
+        /// @param[in]  collision_system - The collision system.
+        /// @throws std::runtime_error - Thrown if the an error occurs during initialization.
         explicit OverworldState(
-            std::shared_ptr<GRAPHICS::GraphicsSystem>& graphicsSystem,
-            std::shared_ptr<PHYSICS::COLLISION::CollisionSystem>& collisionSystem);
-        /// @brief  Destructor.
+            std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system,
+            std::shared_ptr<PHYSICS::COLLISION::CollisionSystem>& collision_system);
+        /// Destructor.
         virtual ~OverworldState();
 
-        /// @copydoc    IGameState::Update(const float elapsedTimeInSeconds)
-        virtual bool Update(const float elapsedTimeInSeconds);
+        /// @copydoc    IGameState::Update
+        virtual bool Update(const float elapsed_time_in_seconds);
 
     private:
-        OverworldState(const OverworldState& stateToCopy);  ///< Private to disallow copying.
-        OverworldState& operator= (const OverworldState& rhsState); ///< Private to disallow assignment.
+        OverworldState(const OverworldState&);  ///< Private to disallow copying.
+        OverworldState& operator= (const OverworldState&); ///< Private to disallow assignment.
 
-        /// @brief      Attempts to load the overworld map from the provided specification file.
-        /// @param[in]  overworldSpecFilepath - The filepath to the overworld map specification.
-        /// @return     True if the overworld was loaded successfully; false otherwise.
-        bool LoadOverworldMap(const std::string& overworldSpecFilepath);
+        /// Attempts to load the overworld map from the provided specification file.
+        /// @param[in]  overworld_spec_filepath - The filepath to the overworld map specification.
+        /// @return True if the overworld was loaded successfully; false otherwise.
+        bool LoadOverworldMap(const std::string& overworld_spec_filepath);
 
-        /// @brief      Initializes the player object in the provided Noah character.
-        /// @param[out] noahPlayer - The player Noah character, if successfully initialized.
-        /// @return     True if the player is successfully initialized; false otherwise.
-        bool InitializePlayer(OBJECTS::Noah& noahPlayer);
+        /// Initializes the player object in the provided Noah character.
+        /// @param[out] noah_player - The player Noah character, if successfully initialized.
+        /// @return True if the player is successfully initialized; false otherwise.
+        bool InitializePlayer(OBJECTS::Noah& noah_player);
 
-        /// @brief      Handles user input for a single frame.
-        /// @param[in]  inputController - The controller supplying user input.
-        /// @param[in]  elapsedTimeInSeconds - The elapsed time for the frame to handle input for.
-        void HandleUserInput(const INPUT_CONTROL::KeyboardInputController& inputController, const float elapsedTimeInSeconds);
+        /// Handles user input for a single frame.
+        /// @param[in]  elapsed_time_in_seconds - The elapsed time for the frame to handle input for.
+        /// @param[in]  input_controller - The controller supplying user input.
+        void HandleUserInput(
+            const float elapsed_time_in_seconds,
+            INPUT_CONTROL::KeyboardInputController& input_controller);
 
-        GRAPHICS::Camera m_camera;  ///< The camera indicating the portion of the world being shown.
+        GRAPHICS::Camera Camera;  ///< The camera indicating the portion of the world being shown.
 
-        std::shared_ptr<GRAPHICS::GraphicsSystem> m_graphicsSystem; ///< The graphics system.
-        INPUT_CONTROL::KeyboardInputController m_inputController;  ///< The controller supplying user input.
+        std::shared_ptr<RESOURCES::Assets> Assets;  ///< Assets for the game.
+        std::shared_ptr<GRAPHICS::GraphicsSystem> GraphicsSystem; ///< The graphics system.
+        INPUT_CONTROL::KeyboardInputController InputController;  ///< The controller supplying user input.
 
-        std::shared_ptr<PHYSICS::COLLISION::CollisionSystem> m_collisionSystem; ///< The collision system.
+        std::shared_ptr<PHYSICS::COLLISION::CollisionSystem> CollisionSystem; ///< The collision system.
 
-        MAPS::OverworldMapSpecification m_overworldSpec;    ///< The specification of the overworld map.
-        std::shared_ptr<MAPS::OverworldMap> m_overworldMap; ///< The overworld map of the game.
-        std::unique_ptr<MAPS::ScrollableOverworldMap> m_scrollingOverworld;  ///< Wraps the overworld map to manage scrolling.
+        MAPS::OverworldMapSpecification OverworldSpec;    ///< The specification of the overworld map.
+        std::shared_ptr<MAPS::OverworldMap> OverworldMap; ///< The overworld map of the game.
+        std::unique_ptr<MAPS::ScrollableOverworldMap> ScrollingOverworld;  ///< Wraps the overworld map to manage scrolling.
 
-        OBJECTS::Noah m_noahPlayer; ///< Noah, the main character controlled by the player.
+        OBJECTS::Noah NoahPlayer; ///< Noah, the main character controlled by the player.
     };
 }

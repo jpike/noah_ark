@@ -19,6 +19,7 @@ namespace TILE_MAP_TESTS
         std::shared_ptr<GRAPHICS::GraphicsSystem> graphics_system = std::make_shared<GRAPHICS::GraphicsSystem>(
             render_target,
             resource_manager);
+        std::shared_ptr<RESOURCES::Assets> assets = std::make_shared<RESOURCES::Assets>();
 
         // ATTEMPT CONSTRUCTION.
         bool exception_thrown = false;
@@ -28,7 +29,8 @@ namespace TILE_MAP_TESTS
                 overworld_grid_position,
                 top_left_world_position_in_pixels,
                 null_map_data,
-                graphics_system);
+                graphics_system,
+                assets);
         }
         catch (const std::exception&)
         {
@@ -46,6 +48,7 @@ namespace TILE_MAP_TESTS
         MATH::Vector2f top_left_world_position_in_pixels;
         std::shared_ptr<MAPS::ITileMapData> map_data = std::make_shared<MAPS::TiledMapJsonFile>();
         std::shared_ptr<GRAPHICS::GraphicsSystem> null_graphics_system;
+        std::shared_ptr<RESOURCES::Assets> assets = std::make_shared<RESOURCES::Assets>();
 
         // ATTEMPT CONSTRUCTION.
         bool exception_thrown = false;
@@ -55,7 +58,8 @@ namespace TILE_MAP_TESTS
                 overworld_grid_position,
                 top_left_world_position_in_pixels,
                 map_data,
-                null_graphics_system);
+                null_graphics_system,
+                assets);
         }
         catch (const std::exception&)
         {

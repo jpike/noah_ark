@@ -12,8 +12,12 @@ TileMapScrollingTestState::TileMapScrollingTestState(
     m_overworldSpec(),
     m_overworldMap(),
     m_scrollingOverworld(),
-    m_noahPlayer()
+    m_noahPlayer(),
+    Assets()
 {
+    // CREATE THE COLLECTION OF ASSETS.
+    Assets = std::make_shared<RESOURCES::Assets>();
+
     // LOAD THE OVERWORLD FROM FILE.
     const std::string TEST_OVERWORLD_SPECIFICATION_FILEPATH = "res/maps/test_overworld_map.json";
     bool overworldLoadedSuccessfully = LoadOverworldMap(TEST_OVERWORLD_SPECIFICATION_FILEPATH);
@@ -72,7 +76,9 @@ bool TileMapScrollingTestState::LoadOverworldMap(const std::string& overworldSpe
 
     // LOAD THE OVERWORLD MAP.
     // Create a tile map builder needed for the creating tile maps.
-    std::shared_ptr<MAPS::TileMapBuilder> tileMapBuilder = std::make_shared<MAPS::TileMapBuilder>(m_graphicsSystem);
+    std::shared_ptr<MAPS::TileMapBuilder> tileMapBuilder = std::make_shared<MAPS::TileMapBuilder>(
+        m_graphicsSystem,
+        Assets);
 
     // The starting tile map starts out at 0,0 in the world.  Other tile maps will be positioned relative to it.
     const MAPS::OverworldGridPosition STARTING_TILE_MAP_OVERWORLD_GRID_POSITION = m_overworldSpec.GetStartingTileMapPosition();

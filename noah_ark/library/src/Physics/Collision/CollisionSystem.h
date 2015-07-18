@@ -2,7 +2,10 @@
 
 #include <list>
 #include <memory>
+#include <vector>
+#include "Events/AxeSwingEvent.h"
 #include "Maps/OverworldMap.h"
+#include "Math/FloatRectangle.h"
 #include "Physics/Collision/BoxCollider.h"
 #include "Physics/Collision/ICollisionComponent.h"
 
@@ -12,95 +15,119 @@ namespace PHYSICS
 /// Holds code related to collisions.
 namespace COLLISION
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  Responsible for detecting and handling collisions.
+    /// Responsible for detecting and handling collisions.
     ///
-    ///         Collision components created from this class
-    ///         are managed by this class as long as they are
-    ///         referenced elsewhere in the game.
+    /// Collision components created from this class
+    /// are managed by this class as long as they are
+    /// referenced elsewhere in the game.
     ///
-    ///         Calling SimulateMovement will handle movement
-    ///         and collision detection/handling for a specified
-    ///         amount of time for any managed collision components.
-    ///////////////////////////////////////////////////////////
+    /// Calling SimulateMovement will handle movement
+    /// and collision detection/handling for a specified
+    /// amount of time for any managed collision components.
     class CollisionSystem
     {
     public:
-        /// @brief  Constructor.
+        /// Constructor.
         explicit CollisionSystem();
-        /// @brief  Destructor.
+        /// Destructor.
         ~CollisionSystem();
 
-        /// @brief      Sets the overworld map that provides basic tile map
-        ///             collision data for the collision system.
-        /// @param[in]  overworldMap - The overworld map to set as a tile map
-        ///             collision data source for the collision system.
-        void SetOverworldMap(const std::shared_ptr<MAPS::OverworldMap>& overworldMap);
+        /// Sets the overworld map that provides basic tile map
+        /// collision data for the collision system.
+        /// @param[in]  overworld_map - The overworld map to set as a tile map
+        ///     collision data source for the collision system.
+        void SetOverworldMap(const std::shared_ptr<MAPS::OverworldMap>& overworld_map);
         
-        /// @brief  Simulates movement for all collision components managed by
-        ///         this system.
+        /// Adds an axe swing event to the collision system for processing.
+        /// @param[in]  axe_swing_event - The axe swing event to add.
+        void Add(const std::shared_ptr<EVENTS::AxeSwingEvent>& axe_swing_event);
+
+        /// Updates the collision system by a single iteration of processing.
+        void Update();
+
+        /// Simulates movement for all collision components managed by this system.
         void SimulateMovement();
 
-        /// @brief      Creates a box collider based on the specified parameters.
-        /// @param[in]  centerXWorldPositionInPixels - The center X world position of the box (in pixels).
-        /// @param[in]  centerYWorldPositionInPixels - The center Y world position of the box (in pixels).
-        /// @param[in]  widthInPixels - The width of the box (in pixels).
-        /// @param[in]  heightInPixels - The height of the box (in pixels).
-        /// @return     The box collider, if successfully created.  Otherwise, an unset pointer type.
+        /// Creates a box collider based on the specified parameters.
+        /// @param[in]  center_x_world_position_in_pixels - The center X world position of the box (in pixels).
+        /// @param[in]  center_y_world_position_in_pixels - The center Y world position of the box (in pixels).
+        /// @param[in]  width_in_pixels - The width of the box (in pixels).
+        /// @param[in]  height_in_pixels - The height of the box (in pixels).
+        /// @return The box collider, if successfully created.  Otherwise, an unset pointer type.
         std::shared_ptr<BoxCollider> CreateBoxCollider(
-            const float centerXWorldPositionInPixels,
-            const float centerYWorldPositionInPixels,
-            const float widthInPixels,
-            const float heightInPixels);
+            const float center_x_world_position_in_pixels,
+            const float center_y_world_position_in_pixels,
+            const float width_in_pixels,
+            const float height_in_pixels);
 
-        /// @brief      Determines if a collision component is managed by this system.
-        /// @param[in]  collisionComponent - The collision component to check.
-        /// @return     True if the provided collision component is managed by this system; false otherwise.
-        bool ManagesCollisionComponent(const std::shared_ptr<ICollisionComponent>& collisionComponent) const;
+        /// Determines if a collision component is managed by this system.
+        /// @param[in]  collision_component - The collision component to check.
+        /// @return True if the provided collision component is managed by this system; false otherwise.
+        bool ManagesCollisionComponent(const std::shared_ptr<ICollisionComponent>& collision_component) const;
 
     private:
-        CollisionSystem(const CollisionSystem& systemToCopy);  ///< Private to disallow copying.
-        CollisionSystem& operator= (const CollisionSystem& rhsSystem); ///< Private to disallow assignment.
+        CollisionSystem(const CollisionSystem&);  ///< Private to disallow copying.
+        CollisionSystem& operator= (const CollisionSystem&); ///< Private to disallow assignment.
 
-        /// @brief  Removes unusued collision components from the system.  Allows freeing
-        ///         memory for collision components that are no longer being used elsewhere
-        ///         in the game.
+        /// Removes unusued collision components from the system.  Allows freeing
+        /// memory for collision components that are no longer being used elsewhere
+        /// in the game.
         void RemoveUnusedCollisionComponents();
 
-        /// @brief          Simulates the provided movement for the specified collision component.
-        ///                 Any collisions that occur are handled by this method.
-        /// @param[in]      movement - The movement to simulate.
-        /// @param[in,out]  collisionComponent - The collison component for which to simulate movement.
-        void SimulateMovement(const Movement& movement, ICollisionComponent& collisionComponent) const;
+        /// Simulates the provided movement for the specified collision component.
+        /// Any collisions that occur are handled by this method.
+        /// @param[in]  movement - The movement to simulate.
+        /// @param[in,out]  collision_component - The collison component for which to simulate movement.
+        void SimulateMovement(const Movement& movement, ICollisionComponent& collision_component) const;
 
-        /// @brief          Simulates the provided upward movement for the specified collision component.
-        ///                 Any collisions that occur are handled by this method.
-        /// @param[in]      movement - The movement to simulate.  It must be in the up direction.
-        /// @param[in,out]  collisionComponent - The collision component for which to simulate movement.
-        void SimulateUpMovement(const Movement& movement, ICollisionComponent& collisionComponent) const;
-        /// @brief          Simulates the provided downward movement for the specified collision component.
-        ///                 Any collisions that occur are handled by this method.
-        /// @param[in]      movement - The movement to simulate.  It must be in the down direction.
-        /// @param[in,out]  collisionComponent - The collision component for which to simulate movement.
-        void SimulateDownMovement(const Movement& movement, ICollisionComponent& collisionComponent) const;
-        /// @brief          Simulates the provided leftward movement for the specified collision component.
-        ///                 Any collisions that occur are handled by this method.
-        /// @param[in]      movement - The movement to simulate.  It must be in the left direction.
-        /// @param[in,out]  collisionComponent - The collision component for which to simulate movement.
-        void SimulateLeftMovement(const Movement& movement, ICollisionComponent& collisionComponent) const;
-        /// @brief          Simulates the provided rightward movement for the specified collision component.
-        ///                 Any collisions that occur are handled by this method.
-        /// @param[in]      movement - The movement to simulate.  It must be in the right direction.
-        /// @param[in,out]  collisionComponent - The collision component for which to simulate movement.
-        void SimulateRightMovement(const Movement& movement, ICollisionComponent& collisionComponent) const;
+        /// Simulates the provided upward movement for the specified collision component.
+        /// Any collisions that occur are handled by this method.
+        /// @param[in]  movement - The movement to simulate.  It must be in the up direction.
+        /// @param[in,out]  collision_component - The collision component for which to simulate movement.
+        void SimulateUpMovement(const Movement& movement, ICollisionComponent& collision_component) const;
+        /// Simulates the provided downward movement for the specified collision component.
+        /// Any collisions that occur are handled by this method.
+        /// @param[in]  movement - The movement to simulate.  It must be in the down direction.
+        /// @param[in,out]  collision_component - The collision component for which to simulate movement.
+        void SimulateDownMovement(const Movement& movement, ICollisionComponent& collision_component) const;
+        /// Simulates the provided leftward movement for the specified collision component.
+        /// Any collisions that occur are handled by this method.
+        /// @param[in]  movement - The movement to simulate.  It must be in the left direction.
+        /// @param[in,out]  collision_component - The collision component for which to simulate movement.
+        void SimulateLeftMovement(const Movement& movement, ICollisionComponent& collision_component) const;
+        /// Simulates the provided rightward movement for the specified collision component.
+        /// Any collisions that occur are handled by this method.
+        /// @param[in]  movement - The movement to simulate.  It must be in the right direction.
+        /// @param[in,out]  collision_component - The collision component for which to simulate movement.
+        void SimulateRightMovement(const Movement& movement, ICollisionComponent& collision_component) const;
 
-        /// @brief  The collision components managed by this system.  The methods for creating
-        ///         these components return shared_ptrs, but they are stored as weak_ptrs
-        ///         to allow their memory to be properly released once the objects holding
-        ///         the shared_ptrs are deleted.
-        std::list< std::weak_ptr<ICollisionComponent> > m_collisionComponents;
+        /// Determines if the provided rectangle collides with a tree.
+        /// @param[in]  rectangle - The rectangle (in world coordinates) to check
+        ///     for collision with any tree.
+        /// @param[out] tree_rectangle - The rectangle (in world coordinates) of the tree
+        ///     that was collided with, if a collision occured.
+        /// @return True if the provided rectangle collides with a tree; false otherwise.
+        bool CollidesWithTree(const MATH::FloatRectangle& rectangle, MATH::FloatRectangle& tree_rectangle) const;
 
-        std::shared_ptr<MAPS::OverworldMap> m_overworldMap; ///< The overworld map supplying tile map collision data.
+        /// Processes the axe swings to handle any collisions.
+        /// @param[in,out]  axe_swings - The axe swings to process.  They may be removed from
+        ///     the container if their processing if complete.
+        void HandleCollisions(std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings);
+
+        /// Handles collisions of an axe with trees.
+        /// @param[in]  axe_blade_bounds - The world bounding rectangle for the axe's blade.
+        void HandleAxeCollisionsWithTrees(const MATH::FloatRectangle& axe_blade_bounds);
+
+        /// The collision components managed by this system.  The methods for creating
+        /// these components return shared_ptrs, but they are stored as weak_ptrs
+        /// to allow their memory to be properly released once the objects holding
+        /// the shared_ptrs are deleted.
+        std::list< std::weak_ptr<ICollisionComponent> > CollisionComponents;
+
+        /// Axe swing events currently being processed.
+        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings;
+
+        std::shared_ptr<MAPS::OverworldMap> OverworldMap; ///< The overworld map supplying tile map collision data.
     };
 }
 }

@@ -13,7 +13,7 @@ namespace TEST_ANIMATION_SEQUENCE
         const bool IS_LOOPING = true;
         const int TEST_DURATION_IN_MICROSECONDS = 24567;
         const sf::Time TEST_DURATION = sf::microseconds(TEST_DURATION_IN_MICROSECONDS);
-        const thor::FrameAnimation TEST_FRAMES;
+        const std::vector<sf::IntRect> TEST_FRAMES;
 
         GRAPHICS::AnimationSequence animationSequence(
             TEST_ANIMATION_SEQUENCE_NAME,
@@ -31,9 +31,8 @@ namespace TEST_ANIMATION_SEQUENCE
         // Verify the duration.
         REQUIRE( TEST_DURATION == animationSequence.GetDuration() );
 
-        /// @todo   The frames themselves aren't verified because there is not a way yet to
-        ///         get access to the internally frame data.  If we move to a custom implementation
-        ///         that doesn't use Thor, then verification should be done here.
+        // Verify the frames.
+        REQUIRE( TEST_FRAMES == animationSequence.GetFrames() );
     }
 
     TEST_CASE( "Constructor.  Not looping.", "[AnimationSequence][Constructor][NotLooping]" )
@@ -44,7 +43,7 @@ namespace TEST_ANIMATION_SEQUENCE
         const bool IS_NOT_LOOPING = false;
         const int TEST_DURATION_IN_MICROSECONDS = 24567;
         const sf::Time TEST_DURATION = sf::microseconds(TEST_DURATION_IN_MICROSECONDS);
-        const thor::FrameAnimation TEST_FRAMES;
+        const std::vector<sf::IntRect> TEST_FRAMES;
 
         GRAPHICS::AnimationSequence animationSequence(
             TEST_ANIMATION_SEQUENCE_NAME,
@@ -62,8 +61,7 @@ namespace TEST_ANIMATION_SEQUENCE
         // Verify the duration.
         REQUIRE( TEST_DURATION == animationSequence.GetDuration() );
 
-        /// @todo   The frames themselves aren't verified because there is not a way yet to
-        ///         get access to the internally frame data.  If we move to a custom implementation
-        ///         that doesn't use Thor, then verification should be done here.
+        // Verify the frames.
+        REQUIRE( TEST_FRAMES == animationSequence.GetFrames() );
     }
 }

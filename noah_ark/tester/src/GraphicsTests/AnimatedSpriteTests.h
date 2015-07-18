@@ -90,6 +90,11 @@ namespace TEST_ANIMATED_SPRITE
         sf::IntRect spriteTextureRectangle(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
         spriteResource->setTextureRect(spriteTextureRectangle);
 
+        /// @todo   Rethink about how centering should occur.
+        const float SPRITE_CENTER_X = static_cast<float>(SPRITE_WIDTH) / 2.0f;
+        const float SPRITE_CENTER_Y = static_cast<float>(SPRITE_HEIGHT) / 2.0f;
+        spriteResource->setOrigin(SPRITE_CENTER_X, SPRITE_CENTER_Y);
+
         // CONSTRUCT AN ANIMATED SPRITE FROM THE RESOURCE.
         GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
         

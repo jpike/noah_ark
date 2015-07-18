@@ -36,6 +36,17 @@ namespace MAPS
         /// @return A deep copy of this tile.
         std::shared_ptr<Tile> Clone() const;
 
+        /// @todo   Determine if this should be permanent.
+        std::shared_ptr<GRAPHICS::Sprite> GetSprite() const
+        {
+            return Sprite;
+        }
+        /// @todo   Temporary.
+        TileId GetId() const
+        {
+            return TileId;
+        }
+
         /// Determines if the tile is walkable or not.
         /// @return Whether or not this tile is walkable.
         bool IsWalkable() const;

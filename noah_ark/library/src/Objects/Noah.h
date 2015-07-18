@@ -1,7 +1,9 @@
 #pragma once
 
 #include <string>
+#include "Events/AxeSwingEvent.h"
 #include "Graphics/AnimatedSprite.h"
+#include "Objects/Axe.h"
 #include "Physics/Collision/BoxCollider.h"
 
 /// @brief  Holds codes for specific objects in the game.
@@ -27,9 +29,23 @@ namespace OBJECTS
         /// @brief  Destructor.
         ~Noah();
 
+        /// Updates Noah for a frame based on the elapsed amount of time.
+        /// @param[in]  elapsed_time_in_seconds - The amount of time to update by.
+        void Update(const float elapsed_time_in_seconds);
+
         /// @brief      Sets the animated sprite used for rendering Noah on screen.
         /// @param[in]  sprite - The sprite to set.
         void SetSprite(const std::shared_ptr<GRAPHICS::AnimatedSprite>& sprite);
+
+        /// @todo   Temporary?
+        std::shared_ptr<GRAPHICS::AnimatedSprite> GetSprite() const
+        {
+            return Sprite;
+        }
+
+        /// Sets the axe that can be used by Noah.
+        /// @param[in]  axe - The axe to set.
+        void SetAxe(const std::shared_ptr<Axe>& axe);
 
         /// @brief      Sets the box collider used for detecting collisions with Noah.
         /// @param[in]  collider - The collider to set.
@@ -46,7 +62,7 @@ namespace OBJECTS
 
         /// @brief      Gets the bounding box of Noah in the world.
         /// @return     The bounding box of Noah.
-        MATH::FloatRectangle GetWorldBoundingBox();
+        MATH::FloatRectangle GetWorldBoundingBox() const;
 
         /// @brief      Moves Noah up based on the specified amount of time.
         /// @param[in]  elapsedTimeInSeconds - The elapsed time for which to move Noah.
@@ -65,16 +81,22 @@ namespace OBJECTS
         ///         and enter an idle state (typically standing still).
         void Idle();
 
+        /// Causes Noah to begin swinging his axe, if he has one and isn't already swinging it.
+        /// @return The event describing the axe swing, if an axe swing is started.
+        std::shared_ptr<EVENTS::AxeSwingEvent> SwingAxe() const;
+
     private:
-        Noah(const Noah& noahToCopy);   ///< Private to disallow copying.
-        Noah& operator=(const Noah& rhsNoah);   ///< Private to disallow copying.
+        Noah(const Noah&);   ///< Private to disallow copying.
+        Noah& operator=(const Noah&);   ///< Private to disallow copying.
 
         /// @brief      Gets the distance Noah should move for the elapsed time.
         /// @param[in]  elapsedTimeInSeconds - The elapsed time for which to move Noah.
         /// @return     The distance to move (in pixels) for the given time.
         float GetMoveDistance(const float elapsedTimeInSeconds) const;
 
-        std::shared_ptr<GRAPHICS::AnimatedSprite> m_sprite; ///< The sprite used for rendering Noah.
-        std::shared_ptr<PHYSICS::COLLISION::BoxCollider> m_collider; ///< The collider used to colliding with Noah.
+        CORE::Direction FacingDirection;    ///< The direction Noah is currently facing.
+        std::shared_ptr<GRAPHICS::AnimatedSprite> Sprite; ///< The sprite used for rendering Noah.
+        std::shared_ptr<PHYSICS::COLLISION::BoxCollider> Collider; ///< The collider used to colliding with Noah.
+        std::shared_ptr<OBJECTS::Axe> Axe;  ///< The axe that can be swung by Noah.
     };
 }

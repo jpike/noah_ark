@@ -32,6 +32,13 @@ namespace GRAPHICS
             const float y_position_in_texels,
             const float width_in_texels,
             const float height_in_texels);
+        /// Creates an invisible sprite based on the provided texture information.
+        /// @param[in]  texture - The texture containing graphics for the sprite.
+        /// @param[in]  texture_sub_rectangle - The sub-rectangle of the texture
+        /// defining which portion should be used for the sprite.
+        explicit Sprite(
+            const Texture& texture,
+            const MATH::FloatRectangle& texture_sub_rectangle);
         /// Constructor.  The sprite is visible by default.
         /// @param[in]  sprite - The SFML sprite resource to use.
         explicit Sprite(const std::shared_ptr<sf::Sprite>& sprite);
@@ -42,6 +49,11 @@ namespace GRAPHICS
         /// any underlying texture resource.
         /// @return A deep copy of this sprite.
         std::shared_ptr<Sprite> Clone() const;
+
+        /// Sets if the sprite is visible or not.
+        /// @param[in]  is_visible - True if the sprite should be visible;
+        /// false if the sprite should be hidden.
+        void SetVisible(const bool is_visible);
 
         // INTERFACE IMPLEMENTATION - IGraphicsComponent.
         /// @copydoc    IGraphicsComponent::IsVisible() const
@@ -69,9 +81,31 @@ namespace GRAPHICS
         /// @param[in]  yPositionInPixels - The y-coordinate of the sprite in the world.
         void SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels);
 
-        /// Gets the bounding box of the tile, in world pixel coordinates.
-        /// @return The bounding box of the tile.
+        // DIMENSIONS.
+        /// Gets the bounding box of the sprite, in world pixel coordinates.
+        /// @return The bounding box of the sprite.
         MATH::FloatRectangle GetBoundingBox() const;
+        /// Gets the width of the sprite, in pixels.
+        /// @return The width of the sprite.
+        float GetWidthInPixels() const;
+        /// Gets the height of the sprite, in pixels.
+        /// @return The height of the sprite.
+        float GetHeightInPixels() const;
+
+        // ROTATION.
+        /// Sets the rotation of the sprite, relative to its origin.
+        /// @param[in]  angle_in_degrees - The angle for the rotation.
+        void SetRotation(const float angle_in_degrees);
+        /// Sets the local origin of the sprite used for rotation,
+        /// relative to its top-left coordinate of (0,0).
+        /// @param[in]  origin - The origin, in pixel coordinates.
+        void SetOrigin(const MATH::Vector2f& origin);
+
+        // SCALING.
+        /// Sets the scaling of the sprite.  1.0f represents
+        /// the normal, unscaled value for a dimension.
+        /// @param[in]  scale - The scaling amount for the sprite.
+        void SetScale(const MATH::Vector2f& scale);
 
     private:
         // MEMBER VARIABLES.

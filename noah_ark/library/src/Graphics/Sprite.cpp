@@ -35,10 +35,35 @@ namespace GRAPHICS
         return sprite;
     }
 
+    Sprite::Sprite(
+        const Texture& texture,
+        const MATH::FloatRectangle& texture_sub_rectangle) :
+    m_sprite(),
+    m_visible(false),
+    m_worldPositionInPixels(new MATH::Vector2f(0.0f, 0.0f)),
+    m_zPosition(0.0f)
+    {
+        // CONVERT THE PARAMETERS TO THE FORMAT NEEDED FOR SFML.
+        std::shared_ptr<sf::Texture> texture_resource = texture.GetTextureResource();
+        sf::IntRect texture_rectangle(
+            static_cast<int>(texture_sub_rectangle.GetLeftXPosition()),
+            static_cast<int>(texture_sub_rectangle.GetTopYPosition()),
+            static_cast<int>(texture_sub_rectangle.GetWidth()),
+            static_cast<int>(texture_sub_rectangle.GetHeight()));
+
+        // CREATE THE SFML SPRITE.
+        m_sprite = std::make_shared<sf::Sprite>(*texture_resource, texture_rectangle);
+
+        // Sprites should be centered within their texture rectangle by default.
+        float texture_half_width_in_pixels = texture_sub_rectangle.GetWidth() / 2.0f;
+        float texture_half_height_in_pixels = texture_sub_rectangle.GetHeight() / 2.0f;
+        m_sprite->setOrigin(texture_half_width_in_pixels, texture_half_height_in_pixels);
+    }
+
     Sprite::Sprite(const std::shared_ptr<sf::Sprite>& sprite) :
     m_sprite(sprite),
     m_visible(true),
-    m_worldPositionInPixels(new MATH::Vector2f(0.0f, 0.0f)),
+    m_worldPositionInPixels(new MATH::Vector2f(sprite->getPosition().x, sprite->getPosition().y)),
     m_zPosition(0.0f)
     {
         // Nothing else to do.
@@ -75,6 +100,11 @@ namespace GRAPHICS
         cloned_sprite->SetZPosition(m_zPosition);
 
         return cloned_sprite;
+    }
+
+    void Sprite::SetVisible(const bool is_visible)
+    {
+        m_visible = is_visible;
     }
 
     bool Sprite::IsVisible() const
@@ -122,5 +152,36 @@ namespace GRAPHICS
 
         // CONVERT THE SFML RECTANGLE TO OUR CUSTOM RECTANGLE TYPE.
         return MATH::FloatRectangle(sfmlRectangle);
+    }
+
+    float Sprite::GetWidthInPixels() const
+    {
+        MATH::FloatRectangle bounding_box = GetBoundingBox();
+        float width = bounding_box.GetWidth();
+        return width;
+    }
+
+    float Sprite::GetHeightInPixels() const
+    {
+        MATH::FloatRectangle bounding_box = GetBoundingBox();
+        float height = bounding_box.GetHeight();
+        return height;
+    }
+
+    void Sprite::SetOrigin(const MATH::Vector2f& origin)
+    {
+        m_sprite->setOrigin(origin.X, origin.Y);
+    }
+
+    void Sprite::SetRotation(const float angle_in_degrees)
+    {
+        m_sprite->setRotation(angle_in_degrees);
+    }
+
+    void Sprite::SetScale(const MATH::Vector2f& scale)
+    {
+        m_sprite->setScale(
+            scale.X,
+            scale.Y);
     }
 }

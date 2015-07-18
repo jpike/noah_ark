@@ -3,15 +3,56 @@
 namespace MAPS
 {
     Tileset::Tileset() :
-    Tiles()
+    TileTextures(),
+    TileTextureSubRectangles()
     {}
+
+    void Tileset::SetTile(
+        const TileId tile_id,
+        const std::shared_ptr<GRAPHICS::Texture>& texture,
+        const sf::IntRect& texture_sub_rectangle)
+    {
+        TileTextures[tile_id] = texture;
+        TileTextureSubRectangles[tile_id] = texture_sub_rectangle;
+    }
+
+    std::shared_ptr<Tile> Tileset::CreateTile(const TileId tile_id) const
+    {
+        // GET THE TEXTURE FOR THE TILE.
+        auto id_with_texture = TileTextures.find(tile_id);
+        bool texture_exists = (TileTextures.cend() != id_with_texture);
+        if (!texture_exists)
+        {
+            return nullptr;
+        }
+
+        // GET THE TEXTURE SUB-RECTANGLE FOR THE TILE.
+        auto id_with_sub_rectangle = TileTextureSubRectangles.find(tile_id);
+        bool sub_rectangle_exists = (TileTextureSubRectangles.cend() != id_with_sub_rectangle);
+        if (!sub_rectangle_exists)
+        {
+            return nullptr;
+        }
+
+        // CREATE A SPRITE FOR THE TILE.
+        /// @todo   This needs to be cleaner.
+        std::shared_ptr<sf::Sprite> sprite_resource = std::make_shared<sf::Sprite>(
+            *id_with_texture->second->GetTextureResource(),
+            id_with_sub_rectangle->second);
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>(sprite_resource);
+
+        // CREATE THE TILE.
+        std::shared_ptr<Tile> tile = std::make_shared<Tile>(tile_id, sprite);
+        return tile;
+    }
 
     void Tileset::Populate(
         const std::vector<TilesetDescription>& tileset_descriptions,
         GRAPHICS::GraphicsSystem& graphics_system)
     {
         // CLEAR ANY OLD TILE DATA.
-        Tiles.clear();
+        TileTextures.clear();
+        TileTextureSubRectangles.clear();
 
         // POPULATE THIS TILESET FROM EACH DESCRIPTION.
         for (const auto& tileset_description : tileset_descriptions)
@@ -40,45 +81,23 @@ namespace MAPS
                     ++tile_column_index)
                 {
                     // CALCULATE THE OFFSET WITHIN THE TEXTURE FOR THE CURRENT TILE.
-                    float tile_left_texture_offset_in_texels = static_cast<float>(tile_column_index * tileset_description.TileWidthInPixels);
-                    float tile_top_texture_offset_in_texels = static_cast<float>(tile_row_index * tileset_description.TileHeightInPixels);
+                    int tile_left_texture_offset_in_texels = tile_column_index * tileset_description.TileWidthInPixels;
+                    int tile_top_texture_offset_in_texels = tile_row_index * tileset_description.TileHeightInPixels;
 
                     // CREATE A SPRITE FOR THE CURRENT TILE.
-                    std::shared_ptr<GRAPHICS::Sprite> tile_sprite = GRAPHICS::Sprite::Create(
-                        tileset_texture,
+                    sf::IntRect tile_texture_rect(
                         tile_left_texture_offset_in_texels,
                         tile_top_texture_offset_in_texels,
-                        static_cast<float>(tileset_description.TileWidthInPixels),
-                        static_cast<float>(tileset_description.TileHeightInPixels));
-                    bool tile_sprite_created = (nullptr != tile_sprite);
-                    if (!tile_sprite_created)
-                    {
-                        // SKIP TO TRY CREATING THE NEXT TILE.
-                        ++current_tile_id;
-                        continue;
-                    }
+                        tileset_description.TileWidthInPixels,
+                        tileset_description.TileHeightInPixels);
 
                     // STORE THE CURRENT TILE.
-                    Tiles[current_tile_id] = std::make_shared<Tile>(current_tile_id, tile_sprite);
+                    SetTile(current_tile_id, tileset_texture, tile_texture_rect);
 
                     // UPDATE THE TILE ID FOR THE NEXT TILE.
                     ++current_tile_id;
                 }
             }
-        }
-    }
-
-    std::shared_ptr<Tile> Tileset::GetTile(const TileId tile_id) const
-    {
-        auto id_with_tile = Tiles.find(tile_id);
-        bool tile_found = (Tiles.cend() != id_with_tile);
-        if (tile_found)
-        {
-            return id_with_tile->second;
-        }
-        else
-        {
-            return nullptr;
         }
     }
 }

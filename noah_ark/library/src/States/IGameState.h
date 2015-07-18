@@ -1,21 +1,22 @@
 #pragma once
 
+#include "Graphics/Camera.h"
+#include "Graphics/RenderBatch.h"
+
 /// Code for game states and their management.
 namespace STATES
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  An interface for any game states.
-    ///////////////////////////////////////////////////////////
+    /// An interface for any game states.
     class IGameState
     {
     public:
-        /// @brief  Virtual destructor for this interface.
+        /// Virtual destructor for this interface.
         virtual ~IGameState() {};
 
-        /// @brief      Updates the state for a single frame of the game.
-        /// @param[in]  elapsedTimeInSeconds - The elapsed time since the last frame update, in seconds.
-        /// @return     True if the game should terminate and no longer update;
-        ///             false if the game should continue updating.
-        virtual bool Update(const float elapsedTimeInSeconds) = 0;
+        /// Updates the state for a single frame of the game.
+        /// @param[in]  elapsed_time_in_seconds - The elapsed time since the last frame update, in seconds.
+        /// @return True if the game should terminate and no longer update;
+        ///     false if the game should continue updating.
+        virtual bool Update(const float elapsed_time_in_seconds) = 0;
     };
 }

@@ -85,19 +85,9 @@ namespace MAPS
             {
                 // GET THE BASIC TILE INFORMATION FOR THE CURRENT TILE.
                 TileId tile_id = tile_ids(current_tile_x, current_tile_y);
-                std::shared_ptr<Tile> tile_prototype = tileset.GetTile(tile_id);
-                bool tile_exists_in_tileset = (nullptr != tile_prototype);
+                std::shared_ptr<Tile> tile = tileset.CreateTile(tile_id);
+                bool tile_exists_in_tileset = (nullptr != tile);
                 if (!tile_exists_in_tileset)
-                {
-                    // Skip to trying to create the next tile.  The layer
-                    // simply won't have any any tile at this location.
-                    continue;
-                }
-
-                // COPY THE TILE SO THAT IT CAN BE MODIFIED WITHOUT ALTERING OTHER TILES WITH THE SAME ID.
-                std::shared_ptr<Tile> tile = tile_prototype->Clone();
-                bool tile_cloned = (nullptr != tile);
-                if (!tile_cloned)
                 {
                     // Skip to trying to create the next tile.  The layer
                     // simply won't have any any tile at this location.

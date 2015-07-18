@@ -43,6 +43,12 @@ namespace GRAPHICS
         /// @brief  Destructor.
         ~GraphicsSystem();
 
+        /// @todo   Remove this temporary function.
+        std::shared_ptr<sf::RenderTarget> GetRenderTarget() const
+        {
+            return m_renderTarget;
+        }
+
         /// @brief          Renders all visible graphics components managed by this system.
         ///                 Components are rendered in order of creation within the graphics
         ///                 system and relies on z-buffering to handle certains components

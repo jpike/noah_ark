@@ -47,6 +47,13 @@ namespace MAPS
         /// @return     The tile at the specified world position, if one exists.
         std::shared_ptr<Tile> GetTileAtWorldPosition(const float worldXPosition, const float worldYPosition) const;
 
+        /// Gets the trees within the sub-area of the world in which the provided position is located.
+        /// @param[in]  world_position - The position identifying the sub-area for which to retrieve trees.
+        /// @return A pointer to the trees within the area containing the provided world position;
+        ///     null if no world sub-area exists for the world position.  The pointer is only valid
+        ///     as long as the sub-area still exists within the world.
+        std::vector< std::shared_ptr<OBJECTS::Tree> >* GetTreesInArea(const MATH::Vector2f& world_position) const;
+
         /// @brief  Gets the currently displayed tile map.
         /// @return The currently displayed tile map.
         std::shared_ptr<TileMap> GetCurrentTileMap() const;

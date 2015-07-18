@@ -4,7 +4,6 @@
 #include <string>
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
-#include <Thor/Animation.hpp>
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/IGraphicsComponent.h"
 #include "Math/FloatRectangle.h"
@@ -36,6 +35,10 @@ namespace GRAPHICS
 
         /// @copydoc    IGraphicsComponent::IsVisible() const
         virtual bool IsVisible() const;
+
+        /// Sets whether the sprite is visible.
+        /// @param[in]  is_visible - True to make the sprite visible; false to hide it.
+        void SetVisible(const bool is_visible);
 
         /// @copydoc    IGraphicsComponent::Render(sf::RenderTarget& renderTarget)
         virtual void Render(sf::RenderTarget& renderTarget);
@@ -72,6 +75,10 @@ namespace GRAPHICS
         /// @param[in]  distanceToMoveInPixels - The distance to move, in pixels.
         void MoveRight(const float distanceToMoveInPixels);
 
+        /// Sets the rotation of the sprite, relative to its local origin.
+        /// @param[in]  degrees - The amount of degrees for the rotation.
+        void SetRotation(const float degrees);
+
         /// @brief      Sets the animation sequence for the sprite with the given name.
         ///             If an animation with the specified name already exists for this
         ///             sprite, it will be overwritten.
@@ -88,8 +95,19 @@ namespace GRAPHICS
         /// @brief  Begins playing the current animation sequence, if it isn't already playing.
         void Play();
 
+        /// Indicates if the sprite is currently playing an animation sequence.
+        /// @return True if the sprite is playing an animation sequence; false otherwise.
+        bool IsAnimating();
+
         /// @brief  Resets the current animation to its first frame and stops it from playing.
         void ResetAnimation();
+
+        /// @brief      Returns the animation sequence currently in use.
+        ///             If the current animation sequence name is not mapped to a valid
+        ///             sequence, then nullptr may be returned.
+        /// @return     The current animation sequence, if it exists.
+        /// @todo   Return this to its previous position.  It probably shouldn't be exposed.
+        std::shared_ptr<AnimationSequence> GetCurrentAnimationSequence();
 
     private:
         AnimatedSprite(const AnimatedSprite& spriteToCopy); ///< Private to disallow copying.
@@ -102,17 +120,7 @@ namespace GRAPHICS
         ///         the main world position changes.
         void SynchronizeSpriteResourcePosition();
 
-        /// @brief      Returns the animation sequence currently in use.
-        ///             If the current animation sequence name is not mapped to a valid
-        ///             sequence, then nullptr may be returned.
-        /// @return     The current animation sequence, if it exists.
-        std::shared_ptr<AnimationSequence> GetCurrentAnimationSequence();
-
         std::shared_ptr<sf::Sprite> m_sprite;   ///< The underlying sprite being animated.
-        /// @brief  The Thor animator controlling animations.  The IDs used for animations
-        ///         in this animator are the same animator names used for the map to
-        ///         the full animation sequences.
-        thor::Animator<sf::Sprite, std::string> m_animator;
 
         /// @brief  A mapping of animation sequence names to actual animation sequences.
         ///         Animation sequences can store additional data beyond that stored in

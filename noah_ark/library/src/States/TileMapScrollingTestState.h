@@ -56,5 +56,7 @@ namespace STATES
         std::unique_ptr<MAPS::ScrollableOverworldMap> m_scrollingOverworld;  ///< Wraps the overworld map to manage scrolling.
 
         OBJECTS::Noah m_noahPlayer; ///< Noah, the main character controlled by the player.
+
+        std::shared_ptr<RESOURCES::Assets> Assets;  ///< Assets for the game.
     };
 }

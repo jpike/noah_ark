@@ -23,9 +23,9 @@ namespace MAPS
                 case OBJECTS::ObjectType::TREE:
                 {
                     /// @todo   Do we need a base class/shared_ptr?
-                    OBJECTS::Tree tree(object_description, graphics_system);
+                    /*OBJECTS::Tree tree(object_description, graphics_system);
                     /// @todo   Spatial partition?
-                    Trees.push_back(tree);
+                    Trees.push_back(tree);*/
                 }
                 case OBJECTS::ObjectType::INVALID:
                 default:

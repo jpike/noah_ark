@@ -228,6 +228,70 @@ namespace MAPS
         return nullptr;
     }
 
+    std::vector< std::shared_ptr<OBJECTS::Tree> >* OverworldMap::GetTreesInArea(const MATH::Vector2f& world_position) const
+    {
+        /// @todo   Use a spatial hash.
+
+        // GET TREES FROM THE CURRENT TILE MAP IF THE WORLD POSITION IS WITHIN THAT MAP.
+        bool current_tile_map_exists = (nullptr != m_currentTileMap);
+        if (current_tile_map_exists)
+        {
+            bool position_within_current_tile_map = m_currentTileMap->ContainsPosition(world_position);
+            if (position_within_current_tile_map)
+            {
+                return m_currentTileMap->GetTrees();
+            }
+        }
+
+        // GET TREES FROM THE TOP TILE MAP IF THE WORLD POSITION IS WITHIN THAT MAP.
+        bool top_tile_map_exists = (nullptr != m_topTileMap);
+        if (top_tile_map_exists)
+        {
+            bool position_within_top_tile_map = m_topTileMap->ContainsPosition(world_position);
+            if (position_within_top_tile_map)
+            {
+                return m_topTileMap->GetTrees();
+            }
+        }
+
+        // GET TREES FROM THE BOTTOM TILE MAP IF THE WORLD POSITION IS WITHIN THAT MAP.
+        bool bottom_tile_map_exists = (nullptr != m_bottomTileMap);
+        if (bottom_tile_map_exists)
+        {
+            bool position_within_bottom_tile_map = m_bottomTileMap->ContainsPosition(world_position);
+            if (position_within_bottom_tile_map)
+            {
+                return m_bottomTileMap->GetTrees();
+            }
+        }
+
+        // GET TREES FROM THE LEFT TILE MAP IF THE WORLD POSITION IS WITHIN THAT MAP.
+        bool left_tile_map_exists = (nullptr != m_leftTileMap);
+        if (left_tile_map_exists)
+        {
+            bool position_within_left_tile_map = m_leftTileMap->ContainsPosition(world_position);
+            if (position_within_left_tile_map)
+            {
+                return m_leftTileMap->GetTrees();
+            }
+        }
+
+        // GET TREES FROM THE RIGHT TILE MAP IF THE WORLD POSITION IS WITHIN THAT MAP.
+        bool right_tile_map_exists = (nullptr != m_rightTileMap);
+        if (right_tile_map_exists)
+        {
+            bool position_within_right_tile_map = m_rightTileMap->ContainsPosition(world_position);
+            if (position_within_right_tile_map)
+            {
+                return m_rightTileMap->GetTrees();
+            }
+        }
+
+        // No world area could be found for the specified position,
+        // so indicate that no trees are available.
+        return nullptr;
+    }
+
     std::shared_ptr<TileMap> OverworldMap::GetCurrentTileMap() const
     {
         return m_currentTileMap;

@@ -9,7 +9,8 @@ namespace MAPS
         const OverworldGridPosition& overworld_grid_position,
         const MATH::Vector2f& top_left_world_position_in_pixels,
         const std::shared_ptr<ITileMapData>& map_data,
-        std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system) :
+        std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system,
+        std::shared_ptr<RESOURCES::Assets>& assets) :
     Visible(false),
     OverworldPosition(overworld_grid_position),
     TopLeftWorldPositionInPixels(top_left_world_position_in_pixels),
@@ -18,7 +19,8 @@ namespace MAPS
     TileWidthInPixels(0),
     TileHeightInPixels(0),
     Tileset(),
-    Layers()
+    Ground(),
+    Trees()
     {
         // MAKE MAP DATA WAS PROVIDED.
         bool map_data_exists = (nullptr != map_data);
@@ -34,8 +36,10 @@ namespace MAPS
             throw std::runtime_error("Cannot construct tile map with null graphics system.");
         }
 
+        /// @todo   Check assets if they stay.
+
         // BUILD THIS TILEMAP FROM THE MAP DATA.
-        BuildFromMapData(TopLeftWorldPositionInPixels, *map_data, *graphics_system);
+        BuildFromMapData(TopLeftWorldPositionInPixels, *map_data, *graphics_system, *assets);
     }
 
     TileMap::~TileMap()
@@ -85,6 +89,26 @@ namespace MAPS
 
         MATH::Vector2f center_position(center_x_position, center_y_position);
         return center_position;
+    }
+
+    MATH::FloatRectangle TileMap::GetWorldBounds() const
+    {
+        MATH::Vector2f center_position = GetCenterWorldPosition();
+        MATH::Vector2f map_dimensions = GetSizeInPixels();
+
+        MATH::FloatRectangle world_bounds(
+            center_position.X,
+            center_position.Y,
+            map_dimensions.X,
+            map_dimensions.Y);
+        return world_bounds;
+    }
+
+    bool TileMap::ContainsPosition(const MATH::Vector2f& world_position) const
+    {
+        MATH::FloatRectangle world_bounds = GetWorldBounds();
+        bool position_within_bounds = world_bounds.Contains(world_position.X, world_position.Y);
+        return position_within_bounds;
     }
 
     unsigned int TileMap::GetWidthInTiles() const
@@ -170,8 +194,13 @@ namespace MAPS
 
         // GET THE TILE AT THE SPECIFIED GRID COORDINATES.
         /// @todo   Figure out which layer to get get this tile from.
-        std::shared_ptr<Tile> tile = Layers.GetTileAtGridPosition(tile_x_grid_position, tile_y_grid_position);
+        std::shared_ptr<Tile> tile = Ground->GetTile(tile_x_grid_position, tile_y_grid_position);
         return tile;
+    }
+
+    std::vector< std::shared_ptr<OBJECTS::Tree> >* TileMap::GetTrees()
+    {
+        return &Trees;
     }
 
     void TileMap::SetVisible(const bool visible)
@@ -192,8 +221,19 @@ namespace MAPS
             return;
         }
 
-        // RENDER ALL LAYERS.
-        Layers.Render(render_target);
+        // RENDER THE GROUND.
+        std::vector< std::shared_ptr<GRAPHICS::IGraphicsComponent> > ground_graphics = Ground->GetRenderables();
+        for (const auto& graphics_component : ground_graphics)
+        {
+            graphics_component->Render(render_target);
+        }
+
+        // RENDER TREES.
+        for (const auto& tree : Trees)
+        {
+            std::shared_ptr<GRAPHICS::Sprite> tree_sprite = tree->GetSprite();
+            tree_sprite->Render(render_target);
+        }
     }
     
     void TileMap::Update(const float elapsed_time_in_seconds)
@@ -206,7 +246,8 @@ namespace MAPS
     void TileMap::BuildFromMapData(
         const MATH::Vector2f& top_left_world_position_in_pixels,
         const ITileMapData& map_data,
-        GRAPHICS::GraphicsSystem& graphics_system)
+        GRAPHICS::GraphicsSystem& graphics_system,
+        RESOURCES::Assets& assets)
     {
         // GET THE MAP DIMENSIONS.
         WidthInTiles = map_data.GetWidthInTiles();
@@ -219,7 +260,6 @@ namespace MAPS
         Tileset.Populate(tileset_descriptions, graphics_system);
 
         // CREATE EACH LAYER.
-        Layers.Clear();
         std::vector<TileMapLayerDescription> layer_descriptions = map_data.GetLayers();
         for (const auto& layer_description : layer_descriptions)
         {
@@ -229,27 +269,75 @@ namespace MAPS
             bool is_object_layer = (TileMapLayerType::OBJECT_LAYER == layer_description.Type);
             if (is_tile_layer)
             {
-                layer = std::unique_ptr<ITileMapLayer>(new TileMapTileLayer(
-                    layer_description.Name,
-                    top_left_world_position_in_pixels,
-                    layer_description.TileIds, 
-                    Tileset));
+                const std::string GROUND_LAYER_NAME = "GroundLayer";
+                bool is_ground_layer = (GROUND_LAYER_NAME == layer_description.Name);
+                if (is_ground_layer)
+                {
+                    MATH::Vector2f center_world_position = GetCenterWorldPosition();
+                    MATH::Vector2ui ground_dimensions_in_tiles(
+                        WidthInTiles,
+                        HeightInTiles);
+                    Ground = std::make_shared<WORLD::GroundLayer>(
+                        center_world_position,
+                        ground_dimensions_in_tiles);
+                    /// @todo   Figure out where this should go.
+                    for (unsigned int current_tile_y = 0;
+                        current_tile_y < HeightInTiles;
+                        ++current_tile_y)
+                    {
+                        // CREATE TILES FOR THIS ROW.
+                        for (unsigned int current_tile_x = 0;
+                            current_tile_x < WidthInTiles;
+                            ++current_tile_x)
+                        {
+                            // GET THE BASIC TILE INFORMATION FOR THE CURRENT TILE.
+                            TileId tile_id = layer_description.TileIds(current_tile_x, current_tile_y);
+                            std::shared_ptr<Tile> tile = Tileset.CreateTile(tile_id);
+                            bool tile_exists_in_tileset = (nullptr != tile);
+                            if (!tile_exists_in_tileset)
+                            {
+                                // Skip to trying to create the next tile.  The layer
+                                // simply won't have any any tile at this location.
+                                continue;
+                            }
+
+                            // SET THE TILE IN THE GROUND LAYER.
+                            Ground->SetTile(current_tile_x, current_tile_y, tile);
+                        }
+                    }
+                }
             }
             else if (is_object_layer)
             {
-                layer = std::unique_ptr<ITileMapLayer>(new TileMapObjectLayer(
+                for (const auto& object_description : layer_description.Objects)
+                {
+                    const std::string TREE_OBJECT_TYPE = "TREE";
+                    bool is_tree = (TREE_OBJECT_TYPE == object_description.Type);
+                    if (is_tree)
+                    {
+                        // CREATE THE TREE.
+                        std::shared_ptr<OBJECTS::Tree> tree = OBJECTS::Tree::Create(
+                            object_description,
+                            assets);
+                        bool tree_created = (nullptr != tree);
+                        if (tree_created)
+                        {
+                            // ADD THE TREE TO THIS MAP.
+                            Trees.push_back(tree);
+                        }
+                    }
+                }
+
+                /*layer = std::unique_ptr<ITileMapLayer>(new TileMapObjectLayer(
                     layer_description.Name, 
                     layer_description.Objects, 
-                    graphics_system));
+                    graphics_system));*/
             }
             else
             {
                 // The layer is invalid, so skip over it to avoid adding a
                 // null pointer to the container of layers.
             }
-
-            // ADD THE LAYER TO THIS TILE MAP.
-            Layers.AddToTop(layer);
         }
     }
 }

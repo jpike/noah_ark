@@ -7,7 +7,9 @@
 /// Holds code representing in-game events that may cross subsystem boundaries.
 namespace EVENTS
 {
-    /// An event describing the swinging of an axe.
+    /// An event describing the swinging of an axe, primarily for the
+    /// purposes of detecting when an axe being swung collides with
+    /// other objects.
     class AxeSwingEvent
     {
     public:

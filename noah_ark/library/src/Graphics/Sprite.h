@@ -32,6 +32,8 @@ namespace GRAPHICS
             const float y_position_in_texels,
             const float width_in_texels,
             const float height_in_texels);
+        /// Creates an visible sprite positioned at (0,0,0).
+        explicit Sprite();
         /// Creates an invisible sprite based on the provided texture information.
         /// @param[in]  texture - The texture containing graphics for the sprite.
         /// @param[in]  texture_sub_rectangle - The sub-rectangle of the texture
@@ -49,6 +51,13 @@ namespace GRAPHICS
         /// any underlying texture resource.
         /// @return A deep copy of this sprite.
         std::shared_ptr<Sprite> Clone() const;
+
+        /// Sets the sub-rectangle of the sprite's texture that should be used
+        /// for rendering.
+        /// @param[in]  texture_rectangle - The rectangle of the texture to
+        ///     render for the sprite.  Relative to (0,0) being the top-left
+        ///     corner of the texture.
+        void SetTextureRectangle(const sf::IntRect& texture_rectangle);
 
         /// Sets if the sprite is visible or not.
         /// @param[in]  is_visible - True if the sprite should be visible;
@@ -80,6 +89,20 @@ namespace GRAPHICS
         /// @param[in]  xPositionInPixels - The x-coordinate of the sprite in the world.
         /// @param[in]  yPositionInPixels - The y-coordinate of the sprite in the world.
         void SetWorldPosition(const float xPositionInPixels, const float yPositionInPixels);
+
+        // MOVEMENT.
+        /// Moves the sprite's world position up the specified distance.
+        /// @param[in]  distance_to_move_in_pixels - The distance to move, in pixels.
+        void MoveUp(const float distance_to_move_in_pixels);
+        /// Moves the sprite's world position down the specified distance.
+        /// @param[in]  distance_to_move_in_pixels - The distance to move, in pixels.
+        void MoveDown(const float distance_to_move_in_pixels);
+        /// Moves the sprite's world position left the specified distance.
+        /// @param[in]  distance_to_move_in_pixels - The distance to move, in pixels.
+        void MoveLeft(const float distance_to_move_in_pixels);
+        /// Moves the sprite's world position right the specified distance.
+        /// @param[in]  distance_to_move_in_pixels - The distance to move, in pixels.
+        void MoveRight(const float distance_to_move_in_pixels);
 
         // DIMENSIONS.
         /// Gets the bounding box of the sprite, in world pixel coordinates.

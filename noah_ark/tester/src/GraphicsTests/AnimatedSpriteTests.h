@@ -8,7 +8,7 @@ namespace TEST_ANIMATED_SPRITE
 {
     TEST_CASE( "Constructor.  Null sprite.", "[AnimatedSprite][Constructor][Failure]" )
     {
-        // CONSTRUCT THE ANIMATED SPRITE WITH A NULL SPRITE RESOURCE.
+        // CONSTRUCT THE ANIMATED SPRITE WITH A NULL SPRITE.
         // We want to verify that the appropriate exception is thrown.
         bool exceptionThrown = false;
         try
@@ -26,13 +26,13 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Constructor.  Valid sprite.", "[AnimatedSprite][Constructor][Success]" )
     {
-        // CONSTRUCT THE ANIMATED SPRITE WITH A VALID SPRITE RESOURCE.
+        // CONSTRUCT THE ANIMATED SPRITE WITH A VALID SPRITE.
         // We want to verify that the appropriate exception is not thrown.
         bool exceptionThrown = false;
         try
         {
-            std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-            GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+            std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+            GRAPHICS::AnimatedSprite animatedSprite(sprite);
         }
         catch (const std::invalid_argument&)
         {
@@ -45,9 +45,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Constructor.  Verify visible status.", "[AnimatedSprite][Constructor][Visibility]" )
     {
-        // CONSTRUCT THE ANIMATED SPRITE WITH A VALID SPRITE RESOURCE..
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT THE ANIMATED SPRITE WITH A VALID SPRITE..
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
         
         // VERIFY THAT THE ANIMATED SPRITE IS VISIBLE BY DEFAULT
         REQUIRE( true == animatedSprite.IsVisible() );
@@ -55,20 +55,20 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Constructor.  Verify world position.", "[AnimatedSprite][Constructor][WorldPosition]" )
     {
-        // CONSTRUCT A SPRITE RESOURCE WITH AN INITIAL POSITION.
+        // CONSTRUCT A SPRITE WITH AN INITIAL POSITION.
         // The initial position is arbitrary.
         const float INITIAL_WORLD_X_POSITION = 40.0f;
         const float INITIAL_WORLD_Y_POSITION = 64.0f;
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        spriteResource->setPosition(INITIAL_WORLD_X_POSITION, INITIAL_WORLD_Y_POSITION);
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        sprite->SetWorldPosition(INITIAL_WORLD_X_POSITION, INITIAL_WORLD_Y_POSITION);
 
-        // CONSTRUCT AN ANIMATED SPRITE FROM THE RESOURCE.
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM THE SPRITE.
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
         
         // VERIFY THAT THE ANIMATED SPRITE'S WORLD POSITION WAS INITIALIZED FROM THE SPRITE.
         MATH::Vector2f animatedSpriteWorldPosition = animatedSprite.GetWorldPosition();
         // The components of the position are verified using the constants, rather than
-        // the initial sprite resource, because the sprite resource is passed as a shared_ptr,
+        // the initial sprite, because the sprite is passed as a shared_ptr,
         // which means its position could have theoretically been modified in the constructor.
         REQUIRE( INITIAL_WORLD_X_POSITION == animatedSpriteWorldPosition.X );
         REQUIRE( INITIAL_WORLD_Y_POSITION == animatedSpriteWorldPosition.Y );
@@ -76,27 +76,27 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Constructor.  Verify bounding box.", "[AnimatedSprite][Constructor][BoundingBox]" )
     {
-        // CONSTRUCT A SPRITE RESOURCE WITH AN INITIAL POSITION AND SIZE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
+        // CONSTRUCT A SPRITE WITH AN INITIAL POSITION AND SIZE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
         
         // The initial position is arbitrary.
         const float INITIAL_WORLD_X_POSITION = 40.0f;
         const float INITIAL_WORLD_Y_POSITION = 64.0f;
-        spriteResource->setPosition(INITIAL_WORLD_X_POSITION, INITIAL_WORLD_Y_POSITION);
+        sprite->SetWorldPosition(INITIAL_WORLD_X_POSITION, INITIAL_WORLD_Y_POSITION);
 
         // The initial size is chosen arbitrary.
         const int SPRITE_WIDTH = 10;
         const int SPRITE_HEIGHT = 35;
         sf::IntRect spriteTextureRectangle(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-        spriteResource->setTextureRect(spriteTextureRectangle);
+        sprite->SetTextureRectangle(spriteTextureRectangle);
 
         /// @todo   Rethink about how centering should occur.
         const float SPRITE_CENTER_X = static_cast<float>(SPRITE_WIDTH) / 2.0f;
         const float SPRITE_CENTER_Y = static_cast<float>(SPRITE_HEIGHT) / 2.0f;
-        spriteResource->setOrigin(SPRITE_CENTER_X, SPRITE_CENTER_Y);
+        sprite->SetOrigin(MATH::Vector2f(SPRITE_CENTER_X, SPRITE_CENTER_Y));
 
-        // CONSTRUCT AN ANIMATED SPRITE FROM THE RESOURCE.
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM THE SPRITE.
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
         
         // VERIFY THAT THE ANIMATED SPRITE'S BOUNDING BOX IS CORRECT.
         MATH::FloatRectangle animatedSpriteBoundingBox = animatedSprite.GetWorldBoundingBox();
@@ -110,9 +110,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Set null position component.", "[AnimatedSprite][SetPositionComponent][Failure]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
         
         // SET A NULL POSITION COMPONENT.
         // We want to verify that an exception is thrown.
@@ -132,9 +132,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Set valid position component.", "[AnimatedSprite][SetPositionComponent][Success]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
         
         // SET A VALID POSITION COMPONENT.
         // The new position is arbitrary.
@@ -175,9 +175,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Set new position.  Negative values.", "[AnimatedSprite][SetWorldPosition][NegativeValues]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
         
         // SET A NEW POSITION.
         // The new position is negative but otherwise arbitrary.
@@ -203,9 +203,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite up by negative amount.", "[AnimatedSprite][MoveUp][Negative]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -234,9 +234,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite up by zero.", "[AnimatedSprite][MoveUp][Zero]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -264,9 +264,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite up by positive amount.", "[AnimatedSprite][MoveUp][Positive]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -295,9 +295,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite down by negative amount.", "[AnimatedSprite][MoveDown][Negative]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -326,9 +326,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite down by zero.", "[AnimatedSprite][MoveDown][Zero]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -356,9 +356,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite down by positive amount.", "[AnimatedSprite][MoveDown][Positive]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -387,9 +387,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite left by negative amount.", "[AnimatedSprite][MoveLeft][Negative]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -418,9 +418,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite left by zero.", "[AnimatedSprite][MoveLeft][Zero]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -448,9 +448,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite left by positive amount.", "[AnimatedSprite][MoveLeft][Positive]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -479,9 +479,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite right by negative amount.", "[AnimatedSprite][MoveRight][Negative]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -510,9 +510,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite right by zero.", "[AnimatedSprite][MoveRight][Zero]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.
@@ -540,9 +540,9 @@ namespace TEST_ANIMATED_SPRITE
 
     TEST_CASE( "Move animated sprite right by positive amount.", "[AnimatedSprite][MoveRight][Positive]" )
     {
-        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE RESOURCE.
-        std::shared_ptr<sf::Sprite> spriteResource = std::make_shared<sf::Sprite>();
-        GRAPHICS::AnimatedSprite animatedSprite(spriteResource);
+        // CONSTRUCT AN ANIMATED SPRITE FROM A VALID SPRITE.
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>();
+        GRAPHICS::AnimatedSprite animatedSprite(sprite);
 
         // SET AN INITIAL POSITION.
         // The initial position is arbitrary.

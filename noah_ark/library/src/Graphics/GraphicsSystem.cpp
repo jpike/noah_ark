@@ -199,7 +199,8 @@ namespace GRAPHICS
         }
     
         // CREATE A NEW ANIMATED SPRITE MANAGED BY THIS SYSTEM.
-        std::shared_ptr<AnimatedSprite> newAnimatedSprite = std::make_shared<AnimatedSprite>(spriteResource);
+        std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(spriteResource);
+        std::shared_ptr<AnimatedSprite> newAnimatedSprite = std::make_shared<AnimatedSprite>(sprite);
 
         m_graphicsComponents.insert(
             std::pair< GraphicsLayer, std::weak_ptr<IGraphicsComponent> >(graphicsLayer, newAnimatedSprite));

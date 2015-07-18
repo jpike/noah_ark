@@ -92,7 +92,8 @@ namespace STATES
         std::shared_ptr<sf::Sprite> noah_sprite_resource = std::make_shared<sf::Sprite>(*noah_texture->GetTextureResource(), noah_subrect);
         noah_sprite_resource->setOrigin(8.0f, 8.0f);
         noah_sprite_resource->setPosition(24.0f, -24.0f);
-        std::shared_ptr<GRAPHICS::AnimatedSprite> noah_sprite = std::make_shared<GRAPHICS::AnimatedSprite>(noah_sprite_resource);
+        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>(noah_sprite_resource);
+        std::shared_ptr<GRAPHICS::AnimatedSprite> noah_sprite = std::make_shared<GRAPHICS::AnimatedSprite>(sprite);
         std::shared_ptr<OBJECTS::Noah> noah = std::make_shared<OBJECTS::Noah>();
         noah->SetSprite(noah_sprite);
 

@@ -35,6 +35,13 @@ namespace GRAPHICS
         return sprite;
     }
 
+    Sprite::Sprite() :
+    m_sprite(new sf::Sprite()),
+    m_visible(true),
+    m_worldPositionInPixels(new MATH::Vector2f(0.0f, 0.0f)),
+    m_zPosition(0.0f)
+    {}
+
     Sprite::Sprite(
         const Texture& texture,
         const MATH::FloatRectangle& texture_sub_rectangle) :
@@ -102,6 +109,11 @@ namespace GRAPHICS
         return cloned_sprite;
     }
 
+    void Sprite::SetTextureRectangle(const sf::IntRect& texture_rectangle)
+    {
+        m_sprite->setTextureRect(texture_rectangle);
+    }
+
     void Sprite::SetVisible(const bool is_visible)
     {
         m_visible = is_visible;
@@ -132,6 +144,9 @@ namespace GRAPHICS
     void Sprite::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent)
     {
         m_worldPositionInPixels = positionComponent;
+
+        /// @todo   Rethink position synchronization.
+        SetWorldPosition(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
     }
 
     MATH::Vector2f Sprite::GetWorldPosition() const
@@ -143,6 +158,41 @@ namespace GRAPHICS
     {
         m_worldPositionInPixels->X = xPositionInPixels;
         m_worldPositionInPixels->Y = yPositionInPixels;
+
+        /// @todo   Rethink position synchronization.
+        m_sprite->setPosition(xPositionInPixels, yPositionInPixels);
+    }
+
+    void Sprite::MoveUp(const float distance_to_move_in_pixels)
+    {
+        m_worldPositionInPixels->Y -= distance_to_move_in_pixels;
+
+        /// @todo   Rethink position synchronization.
+        SetWorldPosition(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
+    }
+    
+    void Sprite::MoveDown(const float distance_to_move_in_pixels)
+    {
+        m_worldPositionInPixels->Y += distance_to_move_in_pixels;
+
+        /// @todo   Rethink position synchronization.
+        SetWorldPosition(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
+    }
+    
+    void Sprite::MoveLeft(const float distance_to_move_in_pixels)
+    {
+        m_worldPositionInPixels->X -= distance_to_move_in_pixels;
+
+        /// @todo   Rethink position synchronization.
+        SetWorldPosition(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
+    }
+    
+    void Sprite::MoveRight(const float distance_to_move_in_pixels)
+    {
+        m_worldPositionInPixels->X += distance_to_move_in_pixels;
+
+        /// @todo   Rethink position synchronization.
+        SetWorldPosition(m_worldPositionInPixels->X, m_worldPositionInPixels->Y);
     }
 
     MATH::FloatRectangle Sprite::GetBoundingBox() const

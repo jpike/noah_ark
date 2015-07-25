@@ -21,14 +21,12 @@ Several projects exist within the Visual Studio solution:
 
 Several dependencies are used:
 * [SFML 2.2](http://sfml-dev.org/) - The main library for windowing, graphics, and input. ([zlib/libpng license](http://sfml-dev.org/license.php)).
-* [Thor commit f57666d - SFML 2.1 compatible](http://www.bromeon.ch/libraries/thor/) - An extension library for SFML for animation ([zlib/libpng license](https://github.com/Bromeon/Thor/blob/master/License.txt)).
 * [Boost 1.56.0](http://www.boost.org/) - Used for JSON parsing ([Boost Software license](http://www.boost.org/LICENSE_1_0.txt)).
 * [Catch](https://github.com/philsquared/Catch) - Unit testing ([Boost Software license](https://github.com/philsquared/Catch/blob/master/LICENSE_1_0.txt)).
 
 The dependencies described above are not included with this project and must be downloaded externally.  To build the solution, you'll need to have environment variables set to the following directories:
 
 * SFML_32_BIT_DIR - Set to the root directory for the 32-bit (x86) version of SFML (with include, lib, and bin directories).
-* THOR_DIR - Set to the directory for a built version of Thor (with include, lib, and bin directories).
 * BOOST_DIR - Set to the root directory for the Boost version (with directories like boost, doc, libs).
 * CATCH_DIR - Set to the directory with Catch's catch.hpp file.
 

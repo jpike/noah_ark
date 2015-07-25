@@ -15,12 +15,6 @@
     <Filter Include="Source Files\States">
       <UniqueIdentifier>{dcef9554-fcf2-4097-9dac-2cd965c56fa7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Physics">
-      <UniqueIdentifier>{6dcafce6-a2a1-413f-bc1b-8aec6ee6cea2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Physics">
-      <UniqueIdentifier>{1055ce50-0689-4d63-b839-438194f8e0e3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Maps">
       <UniqueIdentifier>{2a911036-7086-4164-b04a-41e9b622b581}</UniqueIdentifier>
     </Filter>
@@ -54,18 +48,6 @@
     <Filter Include="Source Files\Processes">
       <UniqueIdentifier>{ec215c39-e600-47b9-99fc-fa2a5e62f128}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Physics\Collision">
-      <UniqueIdentifier>{678317fc-7a5f-4bfe-b7fe-762656d618f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Physics\Collision">
-      <UniqueIdentifier>{c373eb1f-cd12-4a4e-a6d9-a3d2c947be66}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Math">
-      <UniqueIdentifier>{3933b87c-2082-427d-a944-90fc02ee9239}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Core">
-      <UniqueIdentifier>{6829d0c2-965c-4408-96e0-210afc68260e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Core">
       <UniqueIdentifier>{e76c2b04-1771-48f1-9384-a661f3d2445c}</UniqueIdentifier>
     </Filter>
@@ -81,11 +63,11 @@
     <Filter Include="Source Files\Events">
       <UniqueIdentifier>{f17e002a-997c-4bd3-84eb-1ac54bb3b9a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\World">
-      <UniqueIdentifier>{6f4f580f-7668-4780-9acc-eca45678ae85}</UniqueIdentifier>
+    <Filter Include="Header Files\Collision">
+      <UniqueIdentifier>{732740fd-28c3-4da0-923b-ac7aa1efa63c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\World">
-      <UniqueIdentifier>{427c6823-0e14-45f1-9e66-9554e4996098}</UniqueIdentifier>
+    <Filter Include="Source Files\Collision">
+      <UniqueIdentifier>{47873f56-9279-4385-8382-77d134cc3ca5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -125,15 +107,6 @@
     <ClInclude Include="src\Maps\OverworldMapSpecification.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
-    <ClInclude Include="src\States\TileMapScrollingTestState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Input\IDebugInputController.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Input\MapScrollingDebugInputController.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
     <ClInclude Include="src\Input\Keyboard.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
@@ -167,23 +140,11 @@
     <ClInclude Include="src\Input\KeyboardInputController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="src\Physics\Collision\ICollisionComponent.h">
-      <Filter>Header Files\Physics\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Physics\Collision\BoxCollider.h">
-      <Filter>Header Files\Physics\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Physics\Collision\CollisionSystem.h">
-      <Filter>Header Files\Physics\Collision</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\Direction.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Math\ITransformable.h">
       <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Physics\Collision\Movement.h">
-      <Filter>Header Files\Physics\Collision</Filter>
     </ClInclude>
     <ClInclude Include="src\Resources\ResourceManager.h">
       <Filter>Header Files\Resources</Filter>
@@ -233,23 +194,26 @@
     <ClInclude Include="src\Objects\Axe.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="src\States\AxeTestState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
     <ClInclude Include="src\Resources\Assets.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="src\States\WorldAreaTestState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="src\World\GroundLayer.h">
-      <Filter>Header Files\World</Filter>
-    </ClInclude>
-    <ClInclude Include="src\World\WorldArea.h">
-      <Filter>Header Files\World</Filter>
-    </ClInclude>
     <ClInclude Include="src\Math\Rectangle.h">
       <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\GroundLayer.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Collision\BoxCollider.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Collision\CollisionSystem.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Collision\ICollisionComponent.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Collision\Movement.h">
+      <Filter>Header Files\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -280,13 +244,7 @@
     <ClCompile Include="src\Maps\OverworldMapSpecification.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
-    <ClCompile Include="src\States\TileMapScrollingTestState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
     <ClCompile Include="src\Input\Keyboard.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Input\MapScrollingDebugInputController.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\TileMapLoader.cpp">
@@ -318,15 +276,6 @@
     </ClCompile>
     <ClCompile Include="src\Input\KeyboardInputController.cpp">
       <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Physics\Collision\BoxCollider.cpp">
-      <Filter>Source Files\Physics\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Physics\Collision\CollisionSystem.cpp">
-      <Filter>Source Files\Physics\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Physics\Collision\Movement.cpp">
-      <Filter>Source Files\Physics\Collision</Filter>
     </ClCompile>
     <ClCompile Include="src\Resources\ResourceManager.cpp">
       <Filter>Source Files\Resources</Filter>
@@ -367,20 +316,20 @@
     <ClCompile Include="src\Objects\Axe.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\States\AxeTestState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
     <ClCompile Include="src\Resources\Assets.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="src\States\WorldAreaTestState.cpp">
-      <Filter>Source Files\States</Filter>
+    <ClCompile Include="src\Maps\GroundLayer.cpp">
+      <Filter>Source Files\Maps</Filter>
     </ClCompile>
-    <ClCompile Include="src\World\GroundLayer.cpp">
-      <Filter>Source Files\World</Filter>
+    <ClCompile Include="src\Collision\BoxCollider.cpp">
+      <Filter>Source Files\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="src\World\WorldArea.cpp">
-      <Filter>Source Files\World</Filter>
+    <ClCompile Include="src\Collision\CollisionSystem.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Collision\Movement.cpp">
+      <Filter>Source Files\Collision</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

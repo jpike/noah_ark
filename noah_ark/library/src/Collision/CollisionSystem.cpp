@@ -1,10 +1,8 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
-#include "Physics/Collision/CollisionSystem.h"
+#include "Collision/CollisionSystem.h"
 
-namespace PHYSICS
-{
 namespace COLLISION
 {
     CollisionSystem::CollisionSystem() :
@@ -749,5 +747,4 @@ namespace COLLISION
             }
         }
     }
-}
 }

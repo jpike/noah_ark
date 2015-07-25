@@ -15,12 +15,6 @@
     <Filter Include="Header Files\MapsTests">
       <UniqueIdentifier>{019a74d1-b79e-4ad7-95dd-4b5ae35f0d08}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\PhysicsTests">
-      <UniqueIdentifier>{ecd18116-ebd6-4933-a856-5f5e4bf25101}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\PhysicsTests\CollisionTests">
-      <UniqueIdentifier>{46e03b57-139d-420b-b7d7-6d1975fb29ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\MathTests">
       <UniqueIdentifier>{ec556b3b-8a28-4371-81e2-2e5142dc7162}</UniqueIdentifier>
     </Filter>
@@ -35,6 +29,9 @@
     </Filter>
     <Filter Include="Header Files\CoreTests">
       <UniqueIdentifier>{9c00cad2-0fa5-48ce-abd7-1357a3bd26e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CollisionTests">
+      <UniqueIdentifier>{16ffa336-2c27-4297-bc47-52529e9928e1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,9 +54,6 @@
     </ClInclude>
     <ClInclude Include="src\MapsTests\SurroundingMapLoaderTests.h">
       <Filter>Header Files\MapsTests</Filter>
-    </ClInclude>
-    <ClInclude Include="src\PhysicsTests\CollisionTests\CollisionSystemTests.h">
-      <Filter>Header Files\PhysicsTests\CollisionTests</Filter>
     </ClInclude>
     <ClInclude Include="src\MathTests\FloatRectangleTests.h">
       <Filter>Header Files\MathTests</Filter>
@@ -90,6 +84,9 @@
     </ClInclude>
     <ClInclude Include="src\MapsTests\TileMapTests.h">
       <Filter>Header Files\MapsTests</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CollisionTests\CollisionSystemTests.h">
+      <Filter>Header Files\CollisionTests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

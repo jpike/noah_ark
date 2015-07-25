@@ -3,15 +3,12 @@
 #include <list>
 #include <memory>
 #include <vector>
+#include "Collision/BoxCollider.h"
+#include "Collision/ICollisionComponent.h"
 #include "Events/AxeSwingEvent.h"
 #include "Maps/OverworldMap.h"
 #include "Math/Rectangle.h"
-#include "Physics/Collision/BoxCollider.h"
-#include "Physics/Collision/ICollisionComponent.h"
 
-/// Holds physics-related functionality.
-namespace PHYSICS
-{
 /// Holds code related to collisions.
 namespace COLLISION
 {
@@ -129,5 +126,4 @@ namespace COLLISION
 
         std::shared_ptr<MAPS::OverworldMap> OverworldMap; ///< The overworld map supplying tile map collision data.
     };
-}
 }

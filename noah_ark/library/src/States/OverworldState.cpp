@@ -6,7 +6,7 @@ namespace STATES
 {
     OverworldState::OverworldState(
         std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system,
-        std::shared_ptr<PHYSICS::COLLISION::CollisionSystem>& collision_system) :
+        std::shared_ptr<COLLISION::CollisionSystem>& collision_system) :
         Camera(),
         Assets(),
         GraphicsSystem(graphics_system),
@@ -221,7 +221,7 @@ namespace STATES
 
         // CREATE THE COLLISION BOX FOR NOAH.
         MATH::FloatRectangle noahBoundingBox = noahSprite->GetWorldBoundingBox();
-        std::shared_ptr<PHYSICS::COLLISION::BoxCollider> noahCollider = CollisionSystem->CreateBoxCollider(
+        std::shared_ptr<COLLISION::BoxCollider> noahCollider = CollisionSystem->CreateBoxCollider(
             noahPositionComponent->X,
             noahPositionComponent->Y,
             noahBoundingBox.GetWidth(),

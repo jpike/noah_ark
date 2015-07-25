@@ -1,5 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include <catch.hpp>
+#include "CollisionTests/CollisionSystemTests.h"
 #include "CoreTests/Array2DTests.h"
 #include "GraphicsTests/AnimatedSpriteTests.h"
 #include "GraphicsTests/AnimationSequenceTests.h"
@@ -10,7 +11,6 @@
 #include "MapsTests/TiledMapJsonFileTests.h"
 #include "MapsTests/TileMapTests.h"
 #include "MathTests/FloatRectangleTests.h"
-#include "PhysicsTests/CollisionTests/CollisionSystemTests.h"
 #include "ResourcesTests/ResourceManagerTests.h"
 #include "StatesTests/StateManagerTests.h"
 

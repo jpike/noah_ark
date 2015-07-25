@@ -5,13 +5,13 @@
 #include <vector>
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/IGraphicsComponent.h"
+#include "Maps/GroundLayer.h"
 #include "Maps/ITileMapData.h"
 #include "Maps/Tile.h"
 #include "Maps/TileMapLayers.h"
 #include "Maps/Tileset.h"
 #include "Math/Vector2.h"
 #include "Objects/Tree.h"
-#include "World/GroundLayer.h"
 
 namespace MAPS
 {
@@ -153,7 +153,7 @@ namespace MAPS
         /// The set of tiles used in this map.
         MAPS::Tileset Tileset;
         /// The ground in this area.
-        std::shared_ptr<WORLD::GroundLayer> Ground;
+        std::shared_ptr<GroundLayer> Ground;
         /// Trees in this area.
         std::vector< std::shared_ptr<OBJECTS::Tree> > Trees;
     };

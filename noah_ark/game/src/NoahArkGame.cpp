@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include "NoahArkGame.h"
-#include "States/AxeTestState.h"
 #include "States/OverworldState.h"
 
 // STATIC MEMBER VARIABLES.
@@ -116,7 +115,6 @@ bool NoahArkGame::Initialize()
     /// @todo The state needs to be changed once all of the game states and finally implemented.
     ///       It should go to an "intro video" or "title screen" state initially.
     std::shared_ptr<STATES::IGameState> initialState(
-        /*new STATES::AxeTestState(m_graphicsSystem));*/
         new STATES::OverworldState(
             m_graphicsSystem, 
             m_collisionSystem));
@@ -222,7 +220,7 @@ bool NoahArkGame::InitializeSubsystems()
     m_graphicsSystem = std::make_shared<GRAPHICS::GraphicsSystem>(m_window, m_resourceManager);
 
     // INITIALIZE THE COLLISION SYSTEM.
-    m_collisionSystem = std::make_shared<PHYSICS::COLLISION::CollisionSystem>();
+    m_collisionSystem = std::make_shared<COLLISION::CollisionSystem>();
 
     // INITIALIZE THE STATE MANAGER.
     m_stateManager = std::make_shared<STATES::StateManager>();

@@ -10,40 +10,38 @@
 /// Holds code for dealing with resources (assets) in the game.
 namespace RESOURCES
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  Manages loading of resources.
-    ///////////////////////////////////////////////////////////
+    /// Manages loading of resources.
     class ResourceManager
     {
     public:
-        /// @brief      Constructor.
+        /// Constructor.
         /// @param[in]  resourcesFilepath - Filepath to the JSON-formatted file describing all resources.
         /// @throws     boost::property_tree::json_parser::json_parser_error - Thrown if the file at
         ///             the provided path is ill-formed.
         explicit ResourceManager(const std::string& resourcesFilepath);
-        /// @brief  Destructor.
+        /// Destructor.
         ~ResourceManager();
 
-        /// @brief      Retrieves the texture resource with the given name.
+        /// Retrieves the texture resource with the given name.
         /// @param[in]  textureName - The name of the texture resource to retrieve.
         /// @return     The texture resource, if successfully retrieved; nullptr otherwise.
         std::shared_ptr<sf::Texture> GetTexture(const std::string& textureName);
 
-        /// @brief      Retrieves the sprite resource with the given name.
+        /// Retrieves the sprite resource with the given name.
         /// @param[in]  spriteName - The name of the sprite resource to retrieve.
         /// @return     The sprite resource, if successfully retrieved; nullptr otherwise.
         std::shared_ptr<sf::Sprite> GetSprite(const std::string& spriteName);
 
-        /// @brief      Retrieves the animation resource with the given name.
+        /// Retrieves the animation resource with the given name.
         /// @param[in]  animationName - The name of the animation resource to retrieve.
         /// @return     The animation resource, if successfully retrieved; nullptr otherwise.
         std::shared_ptr<GRAPHICS::AnimationSequence> GetAnimation(const std::string& animationName);
 
     private:
-        ResourceManager(const ResourceManager& managerToCopy); ///< Private to disallow copying.
-        ResourceManager& operator= (const ResourceManager& rhsManager);    ///< Private to disallow assignment.
+        ResourceManager(const ResourceManager&); ///< Private to disallow copying.
+        ResourceManager& operator= (const ResourceManager&);    ///< Private to disallow assignment.
 
-        /// @brief      Helper method to parse frame information from the provided frame properties node.
+        /// Helper method to parse frame information from the provided frame properties node.
         /// @param[in]  frameProperties - The frame properties to parse.  Should be an entry in the "frames" array of the JSON.
         /// @return     The rectangle parsed from the frame properties.
         /// @throws     boost::property_tree::ptree_error - Thrown if a parsing error occurs.

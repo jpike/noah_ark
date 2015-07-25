@@ -43,7 +43,7 @@ namespace OBJECTS
         Axe = axe;
     }
 
-    void Noah::SetCollider(const std::shared_ptr<PHYSICS::COLLISION::BoxCollider>& collider)
+    void Noah::SetCollider(const std::shared_ptr<COLLISION::BoxCollider>& collider)
     {
         Collider = collider;
     }

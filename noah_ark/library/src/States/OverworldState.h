@@ -2,12 +2,12 @@
 
 #include <memory>
 #include <string>
+#include "Collision/CollisionSystem.h"
 #include "Graphics/GraphicsSystem.h"
 #include "Input/KeyboardInputController.h"
 #include "Maps/OverworldMap.h"
 #include "Maps/ScrollableOverworldMap.h"
 #include "Objects/Noah.h"
-#include "Physics/Collision/CollisionSystem.h"
 #include "States/IGameState.h"
 
 namespace STATES
@@ -23,7 +23,7 @@ namespace STATES
         /// @throws std::runtime_error - Thrown if the an error occurs during initialization.
         explicit OverworldState(
             std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system,
-            std::shared_ptr<PHYSICS::COLLISION::CollisionSystem>& collision_system);
+            std::shared_ptr<COLLISION::CollisionSystem>& collision_system);
         /// Destructor.
         virtual ~OverworldState();
 
@@ -57,7 +57,7 @@ namespace STATES
         std::shared_ptr<GRAPHICS::GraphicsSystem> GraphicsSystem; ///< The graphics system.
         INPUT_CONTROL::KeyboardInputController InputController;  ///< The controller supplying user input.
 
-        std::shared_ptr<PHYSICS::COLLISION::CollisionSystem> CollisionSystem; ///< The collision system.
+        std::shared_ptr<COLLISION::CollisionSystem> CollisionSystem; ///< The collision system.
 
         MAPS::OverworldMapSpecification OverworldSpec;    ///< The specification of the overworld map.
         std::shared_ptr<MAPS::OverworldMap> OverworldMap; ///< The overworld map of the game.

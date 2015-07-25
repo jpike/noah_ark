@@ -1,21 +1,17 @@
 #pragma once
 
+#include "Collision/ICollisionComponent.h"
 #include "Math/ITransformable.h"
 #include "Math/Vector2.h"
-#include "Physics/Collision/ICollisionComponent.h"
 
-namespace PHYSICS
-{
 namespace COLLISION
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  A 2D box to define the collidable region of
-    ///         game objects.
-    ///////////////////////////////////////////////////////////
+    /// A 2D box to define the collidable region of
+    /// game objects.
     class BoxCollider : public ICollisionComponent, public MATH::ITransformable
     {
     public:
-        /// @brief      Constructor.
+        /// Constructor.
         /// @param[in]  centerXWorldPositionInPixels - The center X world position of the box (in pixels).
         /// @param[in]  centerYWorldPositionInPixels - The center Y world position of the box (in pixels).
         /// @param[in]  widthInPixels - The width of the box (in pixels).
@@ -25,7 +21,7 @@ namespace COLLISION
             const float centerYWorldPositionInPixels,
             const float widthInPixels,
             const float heightInPixels);
-        /// @brief  Destructor.
+        /// Destructor.
         virtual ~BoxCollider();
 
         /// @copydoc    ICollisionComponent::GetBoundingBox() const
@@ -34,11 +30,11 @@ namespace COLLISION
         /// @copydoc    ITransformable::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent)
         virtual void SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& positionComponent);
 
-        /// @brief  Gets the center position of the box.
+        /// Gets the center position of the box.
         /// @return The center position of the bounding box.
         MATH::Vector2f GetCenterPosition() const;
 
-        /// @brief      Sets the center position of the box.
+        /// Sets the center position of the box.
         /// @param[in]  centerXWorldPositionInPixels - The center X world position of the box (in pixels).
         /// @param[in]  centerYWorldPositionInPixels - The center Y world position of the box (in pixels).
         void SetCenterPosition(const float centerXWorldPositionInPixels, const float centerYWorldPositionInPixels);
@@ -58,5 +54,4 @@ namespace COLLISION
         MATH::FloatRectangle m_boundingBox; ///< The bounding box (in world coordinates) for the collider.
         std::unique_ptr<Movement> m_requestedMovement;   ///< Any pending movement requested for the collider.
     };
-}
 }

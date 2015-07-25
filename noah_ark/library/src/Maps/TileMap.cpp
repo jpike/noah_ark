@@ -277,7 +277,7 @@ namespace MAPS
                     MATH::Vector2ui ground_dimensions_in_tiles(
                         WidthInTiles,
                         HeightInTiles);
-                    Ground = std::make_shared<WORLD::GroundLayer>(
+                    Ground = std::make_shared<GroundLayer>(
                         center_world_position,
                         ground_dimensions_in_tiles);
                     /// @todo   Figure out where this should go.

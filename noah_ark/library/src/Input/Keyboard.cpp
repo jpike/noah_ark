@@ -2,22 +2,23 @@
 
 #include "Input/Keyboard.h"
 
-using namespace INPUT_CONTROL;
-
-Keyboard::Keyboard()
-{}
-
-Keyboard::~Keyboard()
-{}
-
-bool Keyboard::IsKeyDown(const sf::Keyboard::Key keyCode) const
+namespace INPUT_CONTROL
 {
-    bool keyDown = sf::Keyboard::isKeyPressed(keyCode);
-    return keyDown;
-}
+    Keyboard::Keyboard()
+    {}
 
-bool Keyboard::IsKeyUp(const sf::Keyboard::Key keyCode) const
-{
-    bool keyUp = !IsKeyDown(keyCode);
-    return keyUp;
+    Keyboard::~Keyboard()
+    {}
+
+    bool Keyboard::IsKeyDown(const sf::Keyboard::Key key_code) const
+    {
+        bool key_down = sf::Keyboard::isKeyPressed(key_code);
+        return key_down;
+    }
+
+    bool Keyboard::IsKeyUp(const sf::Keyboard::Key key_code) const
+    {
+        bool key_up = !IsKeyDown(key_code);
+        return key_up;
+    }
 }

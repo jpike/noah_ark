@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Physics/Collision/CollisionSystem.h"
+#include "Collision/CollisionSystem.h"
 
 namespace COLLISION_SYSTEM_TESTS
 {
@@ -8,7 +8,7 @@ namespace COLLISION_SYSTEM_TESTS
     TEST_CASE( "Create collision box.  Success.", "[CollisionSystem][CreateCollisionBox]" )
     {
         // CREATE THE COLLISION SYSTEM.
-        PHYSICS::COLLISION::CollisionSystem collisionSystem;
+        COLLISION::CollisionSystem collisionSystem;
     
         // CREATE A COLLISION BOX.
         // The position and dimensions of the box are arbitrary but chosen
@@ -17,7 +17,7 @@ namespace COLLISION_SYSTEM_TESTS
         const float WORLD_Y_CENTER_POSITION = 12.0f;
         const float BOX_WIDTH = 8.0f;
         const float BOX_HEIGHT = 1.0f;
-        std::shared_ptr<PHYSICS::COLLISION::BoxCollider> boxCollider = collisionSystem.CreateBoxCollider(
+        std::shared_ptr<COLLISION::BoxCollider> boxCollider = collisionSystem.CreateBoxCollider(
             WORLD_X_CENTER_POSITION,
             WORLD_Y_CENTER_POSITION,
             BOX_WIDTH,
@@ -42,7 +42,7 @@ namespace COLLISION_SYSTEM_TESTS
     TEST_CASE( "Create collision box.  Failure due to zero width.", "[CollisionSystem][CreateCollisionBox]" )
     {
         // CREATE THE COLLISION SYSTEM.
-        PHYSICS::COLLISION::CollisionSystem collisionSystem;
+        COLLISION::CollisionSystem collisionSystem;
     
         // CREATE A COLLISION BOX.
         // Other than the width, the other parameters for the box are arbitrary.
@@ -50,7 +50,7 @@ namespace COLLISION_SYSTEM_TESTS
         const float WORLD_Y_CENTER_POSITION = 12.0f;
         const float BOX_WIDTH = 0.0f;
         const float BOX_HEIGHT = 1.0f;
-        std::shared_ptr<PHYSICS::COLLISION::BoxCollider> boxCollider = collisionSystem.CreateBoxCollider(
+        std::shared_ptr<COLLISION::BoxCollider> boxCollider = collisionSystem.CreateBoxCollider(
             WORLD_X_CENTER_POSITION,
             WORLD_Y_CENTER_POSITION,
             BOX_WIDTH,
@@ -64,7 +64,7 @@ namespace COLLISION_SYSTEM_TESTS
     TEST_CASE( "Create collision box.  Failure due to zero height.", "[CollisionSystem][CreateCollisionBox]" )
     {
         // CREATE THE COLLISION SYSTEM.
-        PHYSICS::COLLISION::CollisionSystem collisionSystem;
+        COLLISION::CollisionSystem collisionSystem;
     
         // CREATE A COLLISION BOX.
         // Other than the height, the other parameters for the box are arbitrary.
@@ -72,7 +72,7 @@ namespace COLLISION_SYSTEM_TESTS
         const float WORLD_Y_CENTER_POSITION = 12.0f;
         const float BOX_WIDTH = 8.0f;
         const float BOX_HEIGHT = 0.0f;
-        std::shared_ptr<PHYSICS::COLLISION::BoxCollider> boxCollider = collisionSystem.CreateBoxCollider(
+        std::shared_ptr<COLLISION::BoxCollider> boxCollider = collisionSystem.CreateBoxCollider(
             WORLD_X_CENTER_POSITION,
             WORLD_Y_CENTER_POSITION,
             BOX_WIDTH,
@@ -86,7 +86,7 @@ namespace COLLISION_SYSTEM_TESTS
     TEST_CASE( "Create collision box.  Failure due to negative width.", "[CollisionSystem][CreateCollisionBox]" )
     {
         // CREATE THE COLLISION SYSTEM.
-        PHYSICS::COLLISION::CollisionSystem collisionSystem;
+        COLLISION::CollisionSystem collisionSystem;
     
         // CREATE A COLLISION BOX.
         // Other than the width, the other parameters for the box are arbitrary.
@@ -94,7 +94,7 @@ namespace COLLISION_SYSTEM_TESTS
         const float WORLD_Y_CENTER_POSITION = 12.0f;
         const float BOX_WIDTH = -8.0f;
         const float BOX_HEIGHT = 1.0f;
-        std::shared_ptr<PHYSICS::COLLISION::BoxCollider> boxCollider = collisionSystem.CreateBoxCollider(
+        std::shared_ptr<COLLISION::BoxCollider> boxCollider = collisionSystem.CreateBoxCollider(
             WORLD_X_CENTER_POSITION,
             WORLD_Y_CENTER_POSITION,
             BOX_WIDTH,
@@ -108,7 +108,7 @@ namespace COLLISION_SYSTEM_TESTS
     TEST_CASE( "Create collision box.  Failure due to negative height.", "[CollisionSystem][CreateCollisionBox]" )
     {
         // CREATE THE COLLISION SYSTEM.
-        PHYSICS::COLLISION::CollisionSystem collisionSystem;
+        COLLISION::CollisionSystem collisionSystem;
     
         // CREATE A COLLISION BOX.
         // Other than the height, the other parameters for the box are arbitrary.
@@ -116,7 +116,7 @@ namespace COLLISION_SYSTEM_TESTS
         const float WORLD_Y_CENTER_POSITION = 12.0f;
         const float BOX_WIDTH = 8.0f;
         const float BOX_HEIGHT = -1.0f;
-        std::shared_ptr<PHYSICS::COLLISION::BoxCollider> boxCollider = collisionSystem.CreateBoxCollider(
+        std::shared_ptr<COLLISION::BoxCollider> boxCollider = collisionSystem.CreateBoxCollider(
             WORLD_X_CENTER_POSITION,
             WORLD_Y_CENTER_POSITION,
             BOX_WIDTH,

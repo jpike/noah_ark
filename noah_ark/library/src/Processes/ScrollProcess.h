@@ -2,17 +2,15 @@
 
 #include "Math/Vector2.h"
 
-/// @brief  Holds code related to processes that update over time.
+/// Holds code related to processes that update over time.
 namespace PROCESSES
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  A process that controls scrolling from one point to
-    ///         another over time.
-    ///////////////////////////////////////////////////////////
+    /// A process that controls scrolling from one point to
+    /// another over time.
     class ScrollProcess
     {
     public:
-        /// @brief  An enumerated type to associate a direction with the scroll process.
+        /// An enumerated type to associate a direction with the scroll process.
         enum class ScrollDirection
         {
             UNSPECIFIED,    ///< Scrolling in an unspecified direction, or in a direction that can't be represented with other values of this enumeration.
@@ -22,7 +20,7 @@ namespace PROCESSES
             RIGHT   ///< Scrolling right.
         };
 
-        /// @brief      Constructor.
+        /// Constructor.
         /// @param[in]  direction - The general direction of scrolling.
         /// @param[in]  startPoint - The starting point of the scrolling.
         /// @param[in]  endPoint - The ending point where scrolling should stop.
@@ -37,24 +35,24 @@ namespace PROCESSES
         /// @brief  Destructor.
         ~ScrollProcess();
 
-        /// @brief      Continues scrolling from the current point towards the end point.
+        /// Continues scrolling from the current point towards the end point.
         /// @param[in]  elapsedTimeInSeconds - The elapsed time to scroll for.
         /// @return     The current point after scrolling for the provided time.
         MATH::Vector2f Scroll(const float elapsedTimeInSeconds);
 
-        /// @brief  Checks whether scrolling is complete (has reached the end point) or not.
+        /// Checks whether scrolling is complete (has reached the end point) or not.
         /// @return True if scrolling is complete; false otherwise.
         bool IsComplete() const;
 
-        /// @brief  Gets the direction of scrolling.
+        /// Gets the direction of scrolling.
         /// @return The direction.
         ScrollDirection GetDirection() const;
         
-        /// @brief  Gets the starting point of scrolling.
+        /// Gets the starting point of scrolling.
         /// @return The starting point.
         MATH::Vector2f GetStartPoint() const;
 
-        /// @brief  Gets the ending point of scrolling.
+        /// Gets the ending point of scrolling.
         /// @return The ending point.
         MATH::Vector2f GetEndPoint() const;
 

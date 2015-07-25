@@ -5,34 +5,32 @@
 
 namespace STATES
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  Responsible for managing game states.
-    ///////////////////////////////////////////////////////////
+    /// Responsible for managing game states.
     class StateManager
     {
     public:
-        /// @brief  Constructor.
+        /// Constructor.
         explicit StateManager();
-        /// @brief  Destructor.
+        /// Destructor.
         ~StateManager();
 
-        /// @brief  Gets the current state being managed.
+        /// Gets the current state being managed.
         /// @return The current state.
         std::shared_ptr<IGameState> GetCurrentState() const;
 
-        /// @brief      Sets the current state being managed.
+        /// Sets the current state being managed.
         /// @param[in]  newState - The new state to set.
         void SetCurrentState(const std::shared_ptr<IGameState>& newState);
 
-        /// @brief      Updates the current state for a single frame of the game.
+        /// Updates the current state for a single frame of the game.
         /// @param[in]  elapsedTimeInSeconds - The elapsed time since the last frame update, in seconds.
         /// @return     True if the game should terminate and no longer update;
         ///             false if the game should continue updating.
         bool Update(const float elapsedTimeInSeconds);
 
     private:
-        StateManager(const StateManager& managerToCopy);  ///< Private to disallow copying.
-        StateManager& operator= (const StateManager& rhsManager); ///< Private to disallow assignment.
+        StateManager(const StateManager&);  ///< Private to disallow copying.
+        StateManager& operator= (const StateManager&); ///< Private to disallow assignment.
 
         std::shared_ptr<IGameState> m_currentState;   ///< The current state being managed.
     };

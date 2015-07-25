@@ -113,6 +113,7 @@ xcopy /Y /S "$(SolutionDir)noah_ark\resources\res\*" "$(TargetDir)res\"</Command
     <ClCompile Include="src\ResourcesTests\ResourceManagerTestConstants.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\CollisionTests\CollisionSystemTests.h" />
     <ClInclude Include="src\CoreTests\Array2DTests.h" />
     <ClInclude Include="src\GraphicsTests\AnimatedSpriteTests.h" />
     <ClInclude Include="src\GraphicsTests\AnimationSequenceTests.h" />
@@ -123,7 +124,6 @@ xcopy /Y /S "$(SolutionDir)noah_ark\resources\res\*" "$(TargetDir)res\"</Command
     <ClInclude Include="src\MapsTests\TiledMapJsonFileTests.h" />
     <ClInclude Include="src\MapsTests\TileMapTests.h" />
     <ClInclude Include="src\MathTests\FloatRectangleTests.h" />
-    <ClInclude Include="src\PhysicsTests\CollisionTests\CollisionSystemTests.h" />
     <ClInclude Include="src\ResourcesTests\ResourceManagerTestConstants.h" />
     <ClInclude Include="src\ResourcesTests\ResourceManagerTests.h" />
     <ClInclude Include="src\StatesTests\MockGameState.h" />

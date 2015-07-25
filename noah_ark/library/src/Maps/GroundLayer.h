@@ -7,7 +7,7 @@
 #include "Maps/Tile.h"
 #include "Math/Vector2.h"
 
-namespace WORLD
+namespace MAPS
 {
     /// A single layer of tiles representing the ground for an area of the world.
     /// The ground does not necessarily represent solid "ground" but may include

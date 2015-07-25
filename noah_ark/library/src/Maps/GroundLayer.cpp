@@ -1,7 +1,6 @@
-#include <iostream>
-#include "World/GroundLayer.h"
+#include "Maps/GroundLayer.h"
 
-namespace WORLD
+namespace MAPS
 {
     GroundLayer::GroundLayer(
         const MATH::Vector2f& center_world_position,
@@ -33,8 +32,6 @@ namespace WORLD
 
         float y_offset_in_pixels = y_offset_from_top_in_tiles * tile_height_in_pixels;
         float world_y_position = layer_top_y_position + y_offset_in_pixels;
-
-        //std::cout << world_x_position << ", " << world_y_position << std::endl;
 
         tile->GetSprite()->SetWorldPosition(world_x_position, world_y_position);
         
@@ -77,11 +74,7 @@ namespace WORLD
                 const std::shared_ptr<MAPS::Tile>& tile = Tiles(tile_x, tile_y);
                 std::shared_ptr<GRAPHICS::Sprite> sprite = tile->GetSprite();
                 tile_sprites.push_back(sprite);
-
-                //std::cout << tile->GetId() << " ";
             }
-
-            //std::cout << std::endl;
         }
 
         return tile_sprites;

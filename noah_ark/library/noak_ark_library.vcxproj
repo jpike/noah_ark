@@ -11,6 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Collision\BoxCollider.h" />
+    <ClInclude Include="src\Collision\CollisionSystem.h" />
+    <ClInclude Include="src\Collision\ICollisionComponent.h" />
+    <ClInclude Include="src\Collision\Movement.h" />
     <ClInclude Include="src\Core\Array2D.h" />
     <ClInclude Include="src\Core\Direction.h" />
     <ClInclude Include="src\Events\AxeSwingEvent.h" />
@@ -21,10 +25,9 @@
     <ClInclude Include="src\Graphics\IGraphicsComponent.h" />
     <ClInclude Include="src\Graphics\Sprite.h" />
     <ClInclude Include="src\Graphics\Texture.h" />
-    <ClInclude Include="src\Input\IDebugInputController.h" />
     <ClInclude Include="src\Input\Keyboard.h" />
     <ClInclude Include="src\Input\KeyboardInputController.h" />
-    <ClInclude Include="src\Input\MapScrollingDebugInputController.h" />
+    <ClInclude Include="src\Maps\GroundLayer.h" />
     <ClInclude Include="src\Maps\OverworldMap.h" />
     <ClInclude Include="src\Maps\OverworldMapSpecification.h" />
     <ClInclude Include="src\Maps\ScrollableOverworldMap.h" />
@@ -50,23 +53,17 @@
     <ClInclude Include="src\Objects\Noah.h" />
     <ClInclude Include="src\Objects\ObjectType.h" />
     <ClInclude Include="src\Objects\Tree.h" />
-    <ClInclude Include="src\Physics\Collision\BoxCollider.h" />
-    <ClInclude Include="src\Physics\Collision\CollisionSystem.h" />
-    <ClInclude Include="src\Physics\Collision\ICollisionComponent.h" />
-    <ClInclude Include="src\Physics\Collision\Movement.h" />
     <ClInclude Include="src\Processes\ScrollProcess.h" />
     <ClInclude Include="src\Resources\Assets.h" />
     <ClInclude Include="src\Resources\ResourceManager.h" />
-    <ClInclude Include="src\States\AxeTestState.h" />
     <ClInclude Include="src\States\IGameState.h" />
     <ClInclude Include="src\States\OverworldState.h" />
     <ClInclude Include="src\States\StateManager.h" />
-    <ClInclude Include="src\States\TileMapScrollingTestState.h" />
-    <ClInclude Include="src\States\WorldAreaTestState.h" />
-    <ClInclude Include="src\World\GroundLayer.h" />
-    <ClInclude Include="src\World\WorldArea.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Collision\BoxCollider.cpp" />
+    <ClCompile Include="src\Collision\CollisionSystem.cpp" />
+    <ClCompile Include="src\Collision\Movement.cpp" />
     <ClCompile Include="src\Events\AxeSwingEvent.cpp" />
     <ClCompile Include="src\Graphics\AnimatedSprite.cpp" />
     <ClCompile Include="src\Graphics\AnimationSequence.cpp" />
@@ -76,7 +73,7 @@
     <ClCompile Include="src\Graphics\Texture.cpp" />
     <ClCompile Include="src\Input\Keyboard.cpp" />
     <ClCompile Include="src\Input\KeyboardInputController.cpp" />
-    <ClCompile Include="src\Input\MapScrollingDebugInputController.cpp" />
+    <ClCompile Include="src\Maps\GroundLayer.cpp" />
     <ClCompile Include="src\Maps\OverworldMap.cpp" />
     <ClCompile Include="src\Maps\OverworldMapSpecification.cpp" />
     <ClCompile Include="src\Maps\ScrollableOverworldMap.cpp" />
@@ -97,19 +94,11 @@
     <ClCompile Include="src\Objects\Noah.cpp" />
     <ClCompile Include="src\Objects\ObjectType.cpp" />
     <ClCompile Include="src\Objects\Tree.cpp" />
-    <ClCompile Include="src\Physics\Collision\BoxCollider.cpp" />
-    <ClCompile Include="src\Physics\Collision\CollisionSystem.cpp" />
-    <ClCompile Include="src\Physics\Collision\Movement.cpp" />
     <ClCompile Include="src\Processes\ScrollProcess.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
     <ClCompile Include="src\Resources\ResourceManager.cpp" />
-    <ClCompile Include="src\States\AxeTestState.cpp" />
     <ClCompile Include="src\States\OverworldState.cpp" />
     <ClCompile Include="src\States\StateManager.cpp" />
-    <ClCompile Include="src\States\TileMapScrollingTestState.cpp" />
-    <ClCompile Include="src\States\WorldAreaTestState.cpp" />
-    <ClCompile Include="src\World\GroundLayer.cpp" />
-    <ClCompile Include="src\World\WorldArea.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D615E35-8F41-44B6-BE1B-FED957017972}</ProjectGuid>

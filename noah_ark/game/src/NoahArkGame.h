@@ -2,8 +2,8 @@
 
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include "Collision/CollisionSystem.h"
 #include "Graphics/GraphicsSystem.h"
-#include "Physics/Collision/CollisionSystem.h"
 #include "Resources/ResourceManager.h"
 #include "States/StateManager.h"
 
@@ -82,6 +82,6 @@ private:
     std::shared_ptr<sf::RenderWindow> m_window; ///< The window displaying the game.
     std::shared_ptr<RESOURCES::ResourceManager> m_resourceManager;    ///< The resource manager.
     std::shared_ptr<GRAPHICS::GraphicsSystem> m_graphicsSystem; ///< The graphics system.
-    std::shared_ptr<PHYSICS::COLLISION::CollisionSystem> m_collisionSystem;  ///< The collision system.
+    std::shared_ptr<COLLISION::CollisionSystem> m_collisionSystem;  ///< The collision system.
     std::shared_ptr<STATES::StateManager> m_stateManager; ///< The game state manager.
 };

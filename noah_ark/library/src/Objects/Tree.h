@@ -4,7 +4,7 @@
 #include "Graphics/GraphicsSystem.h"
 #include "Graphics/Sprite.h"
 #include "Maps/TileMapObjectDescription.h"
-#include "Math/FloatRectangle.h"
+#include "Math/Rectangle.h"
 #include "Resources/Assets.h"
 
 namespace OBJECTS

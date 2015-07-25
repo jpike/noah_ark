@@ -6,7 +6,7 @@
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/IGraphicsComponent.h"
-#include "Math/FloatRectangle.h"
+#include "Math/Rectangle.h"
 #include "Math/ITransformable.h"
 #include "Math/Vector2.h"
 

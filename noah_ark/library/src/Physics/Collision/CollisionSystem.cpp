@@ -664,7 +664,7 @@ namespace COLLISION
             MATH::FloatRectangle tree_bounds = (*tree)->GetBoundingBox();
             float new_tree_width = tree_bounds.GetWidth() - TREE_DIMENSION_SHRINK_AMOUNT;
             float new_tree_height = tree_bounds.GetHeight() - TREE_DIMENSION_SHRINK_AMOUNT;
-            MATH::FloatRectangle new_tree_bounds(
+            MATH::FloatRectangle new_tree_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
                 tree_bounds.GetCenterXPosition(),
                 tree_bounds.GetCenterYPosition(),
                 new_tree_width,

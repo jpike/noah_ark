@@ -58,7 +58,7 @@ namespace WORLD
     {
         MATH::Vector2f map_dimensions = Ground.GetSizeInPixels();
 
-        MATH::FloatRectangle world_bounds(
+        MATH::FloatRectangle world_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
             CenterWorldPosition.X,
             CenterWorldPosition.Y,
             map_dimensions.X,

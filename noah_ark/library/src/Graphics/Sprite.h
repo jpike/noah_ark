@@ -4,8 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include "Graphics/IGraphicsComponent.h"
 #include "Graphics/Texture.h"
-#include "Math/FloatRectangle.h"
 #include "Math/ITransformable.h"
+#include "Math/Rectangle.h"
 #include "Math/Vector2.h"
 
 namespace GRAPHICS

@@ -5,7 +5,7 @@
 #include <vector>
 #include "Events/AxeSwingEvent.h"
 #include "Maps/OverworldMap.h"
-#include "Math/FloatRectangle.h"
+#include "Math/Rectangle.h"
 #include "Physics/Collision/BoxCollider.h"
 #include "Physics/Collision/ICollisionComponent.h"
 

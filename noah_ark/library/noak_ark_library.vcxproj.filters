@@ -176,9 +176,6 @@
     <ClInclude Include="src\Physics\Collision\CollisionSystem.h">
       <Filter>Header Files\Physics\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="src\Math\FloatRectangle.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\Direction.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -257,6 +254,9 @@
     <ClInclude Include="src\Graphics\RenderBatch.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Math\Rectangle.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -330,9 +330,6 @@
     </ClCompile>
     <ClCompile Include="src\Physics\Collision\CollisionSystem.cpp">
       <Filter>Source Files\Physics\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Math\FloatRectangle.cpp">
-      <Filter>Source Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Physics\Collision\Movement.cpp">
       <Filter>Source Files\Physics\Collision</Filter>

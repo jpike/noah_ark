@@ -2,7 +2,7 @@
 
 #include "Core/Direction.h"
 #include "Graphics/Sprite.h"
-#include "Math/FloatRectangle.h"
+#include "Math/Rectangle.h"
 #include "Math/Vector2.h"
 #include "Resources/Assets.h"
 

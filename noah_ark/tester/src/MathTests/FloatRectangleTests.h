@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/FloatRectangle.h"
+#include "Math/Rectangle.h"
 
 /// A namespace for testing the FloatRectangle class.
 namespace FLOAT_RECTANGLE_TESTS
@@ -13,7 +13,7 @@ namespace FLOAT_RECTANGLE_TESTS
         const float CENTER_Y_POSITION = 54.0f;
         const float WIDTH = 32.0f;
         const float HEIGHT = 47.0f;
-        MATH::FloatRectangle testRectangle(
+        MATH::FloatRectangle testRectangle = MATH::FloatRectangle::FromCenterAndDimensions(
             CENTER_X_POSITION,
             CENTER_Y_POSITION,
             WIDTH,
@@ -33,7 +33,7 @@ namespace FLOAT_RECTANGLE_TESTS
         const float ORIGINAL_CENTER_Y_POSITION = 54.0f;
         const float WIDTH = 32.0f;
         const float HEIGHT = 47.0f;
-        MATH::FloatRectangle testRectangle(
+        MATH::FloatRectangle testRectangle = MATH::FloatRectangle::FromCenterAndDimensions(
             ORIGINAL_CENTER_X_POSITION,
             ORIGINAL_CENTER_Y_POSITION,
             WIDTH,

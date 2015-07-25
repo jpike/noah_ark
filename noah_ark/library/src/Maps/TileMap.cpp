@@ -96,7 +96,7 @@ namespace MAPS
         MATH::Vector2f center_position = GetCenterWorldPosition();
         MATH::Vector2f map_dimensions = GetSizeInPixels();
 
-        MATH::FloatRectangle world_bounds(
+        MATH::FloatRectangle world_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
             center_position.X,
             center_position.Y,
             map_dimensions.X,
@@ -153,7 +153,7 @@ namespace MAPS
         // CHECK IF THE WORLD POSITION IS WITHIN THE BOUNDS OF THIS TILE MAP.
         MATH::Vector2f center_world_position = GetCenterWorldPosition();
         MATH::Vector2f size_in_pixels = GetSizeInPixels();
-        MATH::FloatRectangle tile_map_bounding_rect(
+        MATH::FloatRectangle tile_map_bounding_rect = MATH::FloatRectangle::FromCenterAndDimensions(
             center_world_position.X,
             center_world_position.Y,
             size_in_pixels.X,

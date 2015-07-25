@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "Math/FloatRectangle.h"
+#include "Math/Rectangle.h"
 #include "Physics/Collision/Movement.h"
 
 namespace PHYSICS

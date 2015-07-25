@@ -45,7 +45,7 @@
     <ClInclude Include="src\Maps\TileMapTileLayer.h" />
     <ClInclude Include="src\Maps\Tileset.h" />
     <ClInclude Include="src\Maps\TilesetDescription.h" />
-    <ClInclude Include="src\Math\FloatRectangle.h" />
+    <ClInclude Include="src\Math\Rectangle.h" />
     <ClInclude Include="src\Math\ITransformable.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Objects\Axe.h" />
@@ -97,7 +97,6 @@
     <ClCompile Include="src\Maps\TileMapTileLayer.cpp" />
     <ClCompile Include="src\Maps\Tileset.cpp" />
     <ClCompile Include="src\Maps\TilesetDescription.cpp" />
-    <ClCompile Include="src\Math\FloatRectangle.cpp" />
     <ClCompile Include="src\Objects\Axe.cpp" />
     <ClCompile Include="src\Objects\Noah.cpp" />
     <ClCompile Include="src\Objects\ObjectType.cpp" />

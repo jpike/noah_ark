@@ -8,11 +8,11 @@ BoxCollider::BoxCollider(
     const float widthInPixels,
     const float heightInPixels) :
     m_worldPositionInPixels(new MATH::Vector2f(centerXWorldPositionInPixels, centerYWorldPositionInPixels)),
-    m_boundingBox(
+    m_boundingBox(MATH::FloatRectangle::FromCenterAndDimensions(
         centerXWorldPositionInPixels,
         centerYWorldPositionInPixels,
         widthInPixels,
-        heightInPixels),
+        heightInPixels)),
     m_requestedMovement()
 {}
 

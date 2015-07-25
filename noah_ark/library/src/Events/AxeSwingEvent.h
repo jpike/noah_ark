@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "Math/FloatRectangle.h"
+#include "Math/Rectangle.h"
 #include "Objects/Axe.h"
 
 /// Holds code representing in-game events that may cross subsystem boundaries.

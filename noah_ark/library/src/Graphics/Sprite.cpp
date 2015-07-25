@@ -109,9 +109,14 @@ namespace GRAPHICS
         return cloned_sprite;
     }
 
-    void Sprite::SetTextureRectangle(const sf::IntRect& texture_rectangle)
+    void Sprite::SetTextureRectangle(const MATH::IntRectangle& texture_rectangle)
     {
-        m_sprite->setTextureRect(texture_rectangle);
+        sf::IntRect sfml_rectangle(
+            texture_rectangle.GetLeftXPosition(),
+            texture_rectangle.GetTopYPosition(),
+            texture_rectangle.GetWidth(),
+            texture_rectangle.GetHeight());
+        m_sprite->setTextureRect(sfml_rectangle);
     }
 
     void Sprite::SetVisible(const bool is_visible)

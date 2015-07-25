@@ -57,7 +57,7 @@ namespace GRAPHICS
         /// @param[in]  texture_rectangle - The rectangle of the texture to
         ///     render for the sprite.  Relative to (0,0) being the top-left
         ///     corner of the texture.
-        void SetTextureRectangle(const sf::IntRect& texture_rectangle);
+        void SetTextureRectangle(const MATH::IntRectangle& texture_rectangle);
 
         /// Sets if the sprite is visible or not.
         /// @param[in]  is_visible - True if the sprite should be visible;

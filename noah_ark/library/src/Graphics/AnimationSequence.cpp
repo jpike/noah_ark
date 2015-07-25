@@ -1,20 +1,19 @@
-#include <iostream>
 #include "Graphics/AnimationSequence.h"
 
 namespace GRAPHICS
 {
     AnimationSequence::AnimationSequence(
         const std::string& name,
-        const bool isLooping,
-        const sf::Time& totalDuration,
-        const std::vector<sf::IntRect>& frames) :
-        AnimationName(name),
-        Loops(isLooping),
-        TotalDuration(totalDuration),
-        Frames(frames),
-        CurrentlyPlaying(false),
-        CurrentFrameIndex(0),
-        ElapsedTimeForCurrentFrame(sf::Time::Zero)
+        const bool is_looping,
+        const sf::Time& total_duration,
+        const std::vector<MATH::IntRectangle>& frames) :
+    AnimationName(name),
+    Loops(is_looping),
+    TotalDuration(total_duration),
+    Frames(frames),
+    CurrentlyPlaying(false),
+    CurrentFrameIndex(0),
+    ElapsedTimeForCurrentFrame(sf::Time::Zero)
     {}
 
     AnimationSequence::~AnimationSequence()
@@ -35,34 +34,34 @@ namespace GRAPHICS
         return TotalDuration;
     }
 
-    std::vector<sf::IntRect> AnimationSequence::GetFrames() const
-    {
-        return Frames;
-    }
-
-    sf::IntRect AnimationSequence::GetFrame(const unsigned int frame_index) const
-    {
-        // at() is used over [] since at() will perform bounds checking
-        // and throw an exception if the index is out-of-bounds.
-        sf::IntRect frame = Frames.at(frame_index);
-        return frame;
-    }
-
     unsigned int AnimationSequence::GetFrameCount() const
     {
         unsigned int frame_count = Frames.size();
         return frame_count;
     }
 
-    sf::IntRect AnimationSequence::GetCurrentFrame() const
-    {
-        sf::IntRect current_frame = GetFrame(CurrentFrameIndex);
-        return current_frame;
-    }
-
     unsigned int AnimationSequence::GetCurrentFrameIndex() const
     {
         return CurrentFrameIndex;
+    }
+
+    std::vector<MATH::IntRectangle> AnimationSequence::GetFrames() const
+    {
+        return Frames;
+    }
+
+    MATH::IntRectangle AnimationSequence::GetFrame(const unsigned int frame_index) const
+    {
+        // at() is used over [] since at() will perform bounds checking
+        // and throw an exception if the index is out-of-bounds.
+        MATH::IntRectangle frame = Frames.at(frame_index);
+        return frame;
+    }
+
+    MATH::IntRectangle AnimationSequence::GetCurrentFrame() const
+    {
+        MATH::IntRectangle current_frame = GetFrame(CurrentFrameIndex);
+        return current_frame;
     }
 
     void AnimationSequence::Start()
@@ -87,12 +86,8 @@ namespace GRAPHICS
         bool full_time_for_current_frame_elapsed = (ElapsedTimeForCurrentFrame >= duration_per_frame);
         if (!full_time_for_current_frame_elapsed)
         {
-            //std::cout << "Elapsed time " << ElapsedTimeForCurrentFrame.asSeconds() << std::endl;
-            //std::cout << "Duration per frame " << duration_per_frame.asSeconds() << std::endl;
-
             // Nothing more needs to be done since the animation should remain
             // on the current frame.
-            //std::cout << "Returning from animation sequence early" << std::endl;
             return;
         }
 

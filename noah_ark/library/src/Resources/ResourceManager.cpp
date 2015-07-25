@@ -155,11 +155,11 @@ std::shared_ptr<GRAPHICS::AnimationSequence> ResourceManager::GetAnimation(const
         // RETRIEVE THE FRAMES.
         const std::string FRAMES_PROPERTY_SUFFIX = ".frames";
         std::string framesPropertyPath = animationResourcePath + FRAMES_PROPERTY_SUFFIX;
-        std::vector<sf::IntRect> frames;
+        std::vector<MATH::IntRectangle> frames;
         BOOST_FOREACH(const boost::property_tree::ptree::value_type& frameProperties, m_resourceTree.get_child(framesPropertyPath))
         {
             // CREATE A FRAME FROM THE CURRENT PROPERTIES.
-            sf::IntRect frame = ParseAnimationFrame(frameProperties);
+            MATH::IntRectangle frame = ParseAnimationFrame(frameProperties);
 
             // ADD THE FRAME TO THE ANIMATION.
             frames.push_back(frame);
@@ -181,7 +181,7 @@ std::shared_ptr<GRAPHICS::AnimationSequence> ResourceManager::GetAnimation(const
     }
 }
 
-sf::IntRect ResourceManager::ParseAnimationFrame(const boost::property_tree::ptree::value_type& frameProperties)
+MATH::IntRectangle ResourceManager::ParseAnimationFrame(const boost::property_tree::ptree::value_type& frameProperties)
 {
     // PARSE EACH VALUE FROM THE FRAME PROPERTIES.
     const std::string LEFT_PROPERTY_NAME = "left";
@@ -197,6 +197,6 @@ sf::IntRect ResourceManager::ParseAnimationFrame(const boost::property_tree::ptr
     int height = frameProperties.second.get<int>(HEIGHT_PROPERTY_NAME);
 
     // CREATE A RECTANGLE FOR THE FRAME VALUES.
-    sf::IntRect frameRectangle(left, top, width, height);
+    MATH::IntRectangle frameRectangle = MATH::IntRectangle::FromTopLeftAndDimensions(left, top, width, height);
     return frameRectangle;
 }

@@ -47,7 +47,7 @@ namespace RESOURCES
         /// @param[in]  frameProperties - The frame properties to parse.  Should be an entry in the "frames" array of the JSON.
         /// @return     The rectangle parsed from the frame properties.
         /// @throws     boost::property_tree::ptree_error - Thrown if a parsing error occurs.
-        sf::IntRect ParseAnimationFrame(const boost::property_tree::ptree::value_type& frameProperties);
+        MATH::IntRectangle ParseAnimationFrame(const boost::property_tree::ptree::value_type& frameProperties);
 
         boost::property_tree::ptree m_resourceTree; ///< The tree of resource information.
 

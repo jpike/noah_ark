@@ -56,6 +56,12 @@ namespace MATH
         /// Destructor.
         ~Rectangle();
 
+        // OPERATORS.
+        /// Equality operator.
+        /// @param[in]  rhs_rectangle - The rectangle on the right-hand side of the operator.
+        /// @return     True if the rectangles are equal; false otherwise.
+        bool operator== (const Rectangle& rhs_rectangle) const;
+
         // POSITIONING.
         /// @brief  Gets the center X position of the rectangle.
         /// @return The center X position of the rectangle.
@@ -175,6 +181,13 @@ namespace MATH
     template <typename CoordinateType>
     Rectangle<CoordinateType>::~Rectangle()
     {}
+
+    template <typename CoordinateType>
+    bool Rectangle<CoordinateType>::operator== (const Rectangle<CoordinateType>& rhs_rectangle) const
+    {
+        bool equal = (SfmlRectangle == rhs_rectangle.SfmlRectangle);
+        return equal;
+    }
 
     template <typename CoordinateType>
     CoordinateType Rectangle<CoordinateType>::GetCenterXPosition() const

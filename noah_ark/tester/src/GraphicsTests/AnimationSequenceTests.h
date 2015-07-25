@@ -13,7 +13,7 @@ namespace TEST_ANIMATION_SEQUENCE
         const bool IS_LOOPING = true;
         const int TEST_DURATION_IN_MICROSECONDS = 24567;
         const sf::Time TEST_DURATION = sf::microseconds(TEST_DURATION_IN_MICROSECONDS);
-        const std::vector<sf::IntRect> TEST_FRAMES;
+        const std::vector<MATH::IntRectangle> TEST_FRAMES;
 
         GRAPHICS::AnimationSequence animationSequence(
             TEST_ANIMATION_SEQUENCE_NAME,
@@ -43,7 +43,7 @@ namespace TEST_ANIMATION_SEQUENCE
         const bool IS_NOT_LOOPING = false;
         const int TEST_DURATION_IN_MICROSECONDS = 24567;
         const sf::Time TEST_DURATION = sf::microseconds(TEST_DURATION_IN_MICROSECONDS);
-        const std::vector<sf::IntRect> TEST_FRAMES;
+        const std::vector<MATH::IntRectangle> TEST_FRAMES;
 
         GRAPHICS::AnimationSequence animationSequence(
             TEST_ANIMATION_SEQUENCE_NAME,

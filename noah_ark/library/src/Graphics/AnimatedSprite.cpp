@@ -39,7 +39,7 @@ namespace GRAPHICS
         {
             // Make sure the correct portion of the sprite's texture for the
             // current frame of animation gets displayed.
-            sf::IntRect animation_rectangle = current_animation->GetCurrentFrame();
+            MATH::IntRectangle animation_rectangle = current_animation->GetCurrentFrame();
             Sprite->SetTextureRectangle(animation_rectangle);
         }
 
@@ -170,7 +170,7 @@ namespace GRAPHICS
                 // RESET THE SPRITE TO THE FIRST FRAME OF THE ANIMATION.
                 // This is necessary so that the sprite isn't left with a frame in the middle of the animation sequence.
                 current_animation_sequence->Reset();
-                sf::IntRect first_frame = current_animation_sequence->GetCurrentFrame();
+                MATH::IntRectangle first_frame = current_animation_sequence->GetCurrentFrame();
                 Sprite->SetTextureRectangle(first_frame);
             }
         }

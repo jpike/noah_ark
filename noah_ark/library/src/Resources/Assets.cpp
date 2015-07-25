@@ -75,83 +75,10 @@ namespace RESOURCES
     {
         if (AXE_SWING_RIGHT_ANIMATION_ID == animation_id)
         {
-            /// @todo   This should go in a file at some point.
-            const sf::Time DURATION = sf::seconds(3.0f);
-            const bool NOT_LOOPING = false;
-            // Left, Top, Width, Height
-            const std::vector<sf::IntRect> FRAMES =
-            {
-                sf::IntRect(32, 53, 9, 11),
-                sf::IntRect(32, 64, 11, 9),
-                sf::IntRect(32, 53, 9, 11)
-            };
-
-            std::shared_ptr<GRAPHICS::AnimationSequence> animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                AXE_SWING_RIGHT_ANIMATION_ID,
-                NOT_LOOPING,
-                DURATION,
-                FRAMES);
-            return animation;
-        }
-        else if (AXE_SWING_LEFT_ANIMATION_ID == animation_id)
-        {
-            /// @todo   This should go in a file at some point.
-            const sf::Time DURATION = sf::seconds(3.0f);
-            const bool NOT_LOOPING = false;
-            // Left, Top, Width, Height
-            const std::vector<sf::IntRect> FRAMES =
-            {
-                sf::IntRect(3, 66, 9, 11),
-                sf::IntRect(12, 68, 11, 9),
-                sf::IntRect(3, 66, 9, 11)
-            };
-
-            std::shared_ptr<GRAPHICS::AnimationSequence> animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                AXE_SWING_LEFT_ANIMATION_ID,
-                NOT_LOOPING,
-                DURATION,
-                FRAMES);
-            return animation;
-        }
-        else if (AXE_SWING_UP_ANIMATION_ID == animation_id)
-        {
-            /// @todo   This should go in a file at some point.
-            const sf::Time DURATION = sf::seconds(3.0f);
-            const bool NOT_LOOPING = false;
-            // Left, Top, Width, Height
-            const std::vector<sf::IntRect> FRAMES =
-            {
-                sf::IntRect(3, 66, 9, 11),
-                sf::IntRect(12, 68, 11, 9),
-                sf::IntRect(3, 66, 9, 11)
-            };
-
-            std::shared_ptr<GRAPHICS::AnimationSequence> animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                AXE_SWING_UP_ANIMATION_ID,
-                NOT_LOOPING,
-                DURATION,
-                FRAMES);
-            return animation;
-        }
-        else if (AXE_SWING_DOWN_ANIMATION_ID == animation_id)
-        {
-            /// @todo   This should go in a file at some point.
-            const sf::Time DURATION = sf::seconds(3.0f);
-            const bool NOT_LOOPING = false;
-            // Left, Top, Width, Height
-            const std::vector<sf::IntRect> FRAMES =
-            {
-                sf::IntRect(32, 41, 9, 11),
-                sf::IntRect(32, 32, 11, 9),
-                sf::IntRect(32, 41, 9, 11)
-            };
-
-            std::shared_ptr<GRAPHICS::AnimationSequence> animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                AXE_SWING_DOWN_ANIMATION_ID,
-                NOT_LOOPING,
-                DURATION,
-                FRAMES);
-            return animation;
+            /// @todo   Remove this soon...It is no longer needed
+            /// since we moved to using rotation for axe swings.
+            assert(false);
+            return nullptr;
         }
         else
         {

@@ -87,7 +87,7 @@ namespace TEST_ANIMATED_SPRITE
         // The initial size is chosen arbitrary.
         const int SPRITE_WIDTH = 10;
         const int SPRITE_HEIGHT = 35;
-        sf::IntRect spriteTextureRectangle(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
+        MATH::IntRectangle spriteTextureRectangle = MATH::IntRectangle::FromTopLeftAndDimensions(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
         sprite->SetTextureRectangle(spriteTextureRectangle);
 
         /// @todo   Rethink about how centering should occur.

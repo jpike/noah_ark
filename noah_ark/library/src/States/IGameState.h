@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Graphics/Camera.h"
-#include "Graphics/RenderBatch.h"
-
 /// Code for game states and their management.
 namespace STATES
 {

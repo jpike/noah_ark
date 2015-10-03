@@ -16,6 +16,10 @@ namespace MAPS
 
     MATH::Vector2ui TileMap::GetDimensionsInTiles() const
     {
-        return Ground.DimensionsInTiles;
+        MATH::Vector2ui dimensions_in_tiles(
+            Ground.Tiles.GetWidth(),
+            Ground.Tiles.GetHeight());
+
+        return dimensions_in_tiles;
     }
 }

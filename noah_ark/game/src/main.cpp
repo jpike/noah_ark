@@ -197,6 +197,29 @@ void Render(GRAPHICS::Sprite& sprite, sf::RenderTarget& render_target)
     sprite.Render(render_target);
 }
 
+void Render(const MAPS::TileMap& tile_map, sf::RenderTarget& render_target)
+{
+    // RENDER THE CURRENT TILE MAP'S GROUND LAYER.
+    MATH::Vector2ui ground_dimensions_in_tiles = tile_map.GetDimensionsInTiles();
+    for (unsigned int tile_row = 0; tile_row < ground_dimensions_in_tiles.Y; ++tile_row)
+    {
+        for (unsigned int tile_column = 0; tile_column < ground_dimensions_in_tiles.X; ++tile_column)
+        {
+            std::shared_ptr<MAPS::Tile> tile = tile_map.Ground.Tiles(tile_column, tile_row);
+            std::shared_ptr<GRAPHICS::Sprite> tile_sprite = tile->GetSprite();
+            Render(*tile_sprite, render_target);
+        }
+    }
+
+    // RENDER THE CURRENT TILE MAP'S TREES.
+    for (const auto& tree : tile_map.Trees)
+    {
+        std::shared_ptr<GRAPHICS::Sprite> tree_sprite = tree.GetSprite();
+        Render(*tree_sprite, render_target);
+    }
+}
+
+
 /// The main entry point for the game.
 /// Runs the Noah's Ark game until the user
 /// chooses to exit or an error occurs.
@@ -319,24 +342,8 @@ int main(int argumentCount, char* arguments[])
                         view.setCenter(center_world_position.X, center_world_position.Y);
                         window.setView(view);
 
-                        // RENDER THE CURRENT TILE MAP'S GROUND LAYER.
-                        MATH::Vector2ui ground_dimensions_in_tiles = tile_map->GetDimensionsInTiles();
-                        for (unsigned int tile_row = 0; tile_row < ground_dimensions_in_tiles.Y; ++tile_row)
-                        {
-                            for (unsigned int tile_column = 0; tile_column < ground_dimensions_in_tiles.X; ++tile_column)
-                            {
-                                std::shared_ptr<MAPS::Tile> tile = tile_map->Ground.Tiles(tile_column, tile_row);
-                                std::shared_ptr<GRAPHICS::Sprite> tile_sprite = tile->GetSprite();
-                                Render(*tile_sprite, window);
-                            }
-                        }
-
-                        // RENDER THE CURRENT TILE MAP'S TREES.
-                        for (const auto& tree : tile_map->Trees)
-                        {
-                            std::shared_ptr<GRAPHICS::Sprite> tree_sprite = tree.GetSprite();
-                            Render(*tree_sprite, window);
-                        }
+                        // RENDER THE TILE MAP.
+                        Render(*tile_map, window);
                     }
                 }
 

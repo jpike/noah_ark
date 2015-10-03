@@ -36,31 +36,11 @@ namespace MAPS
             const unsigned int y_offset_from_top_in_tiles,
             const std::shared_ptr<MAPS::Tile>& tile);
 
-        /// Retrieves a tile at the offset in the ground layer.
-        /// @param[in]  x_offset_from_left_in_tiles - The x offset from the left
-        ///     of the layer, in tiles, of the tile to retrieve.
-        /// @param[in]  y_offset_from_top_in_tiles - The y offset from the top
-        ///     of the layer, in tiles, of the tile to retrieve.
-        /// @return The tile at the specified position or null
-        ///     if no tile exists at the position.
-        std::shared_ptr<MAPS::Tile> GetTile(
-            const unsigned int x_offset_from_left_in_tiles,
-            const unsigned int y_offset_from_top_in_tiles) const;
-
-        /// Gets all renderable tiles within the ground layer.
-        /// @return The renderable versions of tiles in this layer.
-        std::vector< std::shared_ptr<GRAPHICS::IGraphicsComponent> > GetRenderables() const;
-
-        /// Gets the width and height of the ground layer, in pixels.
-        /// @return The size of the ground area.
-        MATH::Vector2f GetSizeInPixels() const;
-
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The world position of the center of the layer.
         MATH::Vector2f CenterWorldPosition;
-        /// The dimensions of the layer in tiles.
-        MATH::Vector2ui DimensionsInTiles;
-        /// The tiles in this layer.
+        /// The tiles in this layer.  Stored as offsets from top-left corner,
+        /// which is (0,0) (column/x,row/y).
         CORE::Array2D< std::shared_ptr<MAPS::Tile> > Tiles;
     };
 }

@@ -5,7 +5,7 @@
 
 namespace COLLISION
 {
-    CollisionSystem::CollisionSystem() :
+    /*CollisionSystem::CollisionSystem() :
     CollisionComponents(),
     AxeSwings(),
     OverworldMap()
@@ -746,5 +746,5 @@ namespace COLLISION
                 ++tree;
             }
         }
-    }
+    }*/
 }

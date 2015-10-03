@@ -4,7 +4,7 @@
 
 namespace STATES
 {
-    OverworldState::OverworldState(
+    /*OverworldState::OverworldState(
         std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system,
         std::shared_ptr<COLLISION::CollisionSystem>& collision_system) :
         Camera(),
@@ -412,5 +412,5 @@ namespace STATES
 
         // If we reach this point, no buttons were pressed, so stop playing Noah's current animation.
         NoahPlayer.Idle();
-    }
+    }*/
 }

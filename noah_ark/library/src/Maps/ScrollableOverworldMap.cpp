@@ -1,10 +1,9 @@
 #include "Maps/ScrollableOverworldMap.h"
-#include "Maps/TileMapBuilder.h"
 
 using namespace MAPS;
 
 // STATIC CONSTANT INITIALIZATION.
-const float ScrollableOverworldMap::MAX_SCROLL_TIME_IN_SECONDS = 3.0f;
+/*const float ScrollableOverworldMap::MAX_SCROLL_TIME_IN_SECONDS = 3.0f;
 
 ScrollableOverworldMap::ScrollableOverworldMap(
     const std::shared_ptr<OverworldMap>& overworldMap,
@@ -354,4 +353,4 @@ void ScrollableOverworldMap::UpdateSurroundingMapsAfterScrolling()
             break;
         }
     }
-}
+}*/

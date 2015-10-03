@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstdint>
+#include <vector>
 #include "Resources/Assets.h"
 
 namespace RESOURCES
@@ -8,6 +9,8 @@ namespace RESOURCES
     // For assets that require accessing the filesystem, IDs are currently set to filepaths
     // (relative to the working directory) to simplify loading.
     const std::string AXE_TEXTURE_ID = "res/images/noah_sprite1.png";
+    const std::string GROUND_TILESET_TEXTURE_ID = "res/images/ground_tile_set.png";
+    const std::string NOAH_TEXTURE_ID = "res/images/noah_sprite1.png";
     const std::string TREE_TEXTURE_ID = "res/images/tree_sprite1.png";
     const std::string AXE_SWING_RIGHT_ANIMATION_ID = "axe_swing_right";
     const std::string AXE_SWING_LEFT_ANIMATION_ID = "axe_swing_left";
@@ -15,8 +18,111 @@ namespace RESOURCES
     const std::string AXE_SWING_DOWN_ANIMATION_ID = "axe_swing_down";
 
     Assets::Assets() :
-    Textures()
+        Textures(),
+        OverworldMapFile(),
+        TileMapFiles()
     {}
+
+    bool Assets::LoadAll()
+    {
+        // LOAD TEXTURES.
+        bool textures_loaded = LoadTextures();
+        if (!textures_loaded)
+        {
+            return false;
+        }
+
+        // LOAD THE OVERWORLD MAP FILE.
+        bool overworld_map_file_loaded = LoadOverworldMapFile();
+        if (!overworld_map_file_loaded)
+        {
+            return false;
+        }
+
+        // LOAD THE INDIVIDUAL TILE MAP FILES.
+        bool tile_maps_loaded = LoadTileMapFiles();
+        if (!tile_maps_loaded)
+        {
+            return false;
+        }
+
+        // INDICATE THAT ALL ASSETS WERE LOADED.
+        return true;
+    }
+
+    const MAPS::OverworldMapFile* Assets::GetOverworldMapFile() const
+    {
+        return OverworldMapFile.get();
+    }
+
+    const MAPS::TileMapFile* Assets::GetTileMapFile(const unsigned int row, const unsigned int column) const
+    {
+        // FIND THE TILE MAP FILE AT THE SPECIFIED LOCATION.
+        try
+        {
+            const auto& tile_map_file = TileMapFiles(column, row);
+            return tile_map_file.get();
+        }
+        catch (const std::exception&)
+        {
+            return nullptr;
+        }
+    }
+
+    std::shared_ptr<MAPS::Tileset> Assets::GetTileset(const std::vector<MAPS::TilesetDescription>& tileset_descriptions)
+    {
+        /// @todo   Consider caching this? - There's some "name" property in the JSON files.
+
+        // POPULATE A TILESET FROM EACH DESCRIPTION.
+        std::shared_ptr<MAPS::Tileset> tileset = std::make_shared<MAPS::Tileset>();
+        for (const auto& tileset_description : tileset_descriptions)
+        {
+            // LOAD THE TEXTURE FOR THE CURRENT DESCRIPTION.
+            /// @todo   Mapping rather than hardcoded filepath here!
+            std::shared_ptr<GRAPHICS::Texture> tileset_texture = GetTexture(GROUND_TILESET_TEXTURE_ID);
+            bool texture_loaded = (nullptr != tileset_texture);
+            if (!texture_loaded)
+            {
+                // SKIP TO THE NEXT TILESET DESCRIPTION.
+                continue;
+            }
+
+            // CREATE AND STORE EACH TILE IN THE CURRENT DESCRIPTION.
+            MAPS::TileId current_tile_id = tileset_description.FirstTileId;
+            MATH::Vector2ui tileset_texture_dimensions = tileset_texture->GetSize();
+            /// @todo   Avoid truncation?
+            unsigned int row_count_of_tiles = tileset_texture_dimensions.Y / tileset_description.TileHeightInPixels;
+            unsigned int column_count_of_tiles = tileset_texture_dimensions.X / tileset_description.TileWidthInPixels;
+            for (unsigned int tile_row_index = 0;
+                tile_row_index < row_count_of_tiles;
+                ++tile_row_index)
+            {
+                for (unsigned int tile_column_index = 0;
+                    tile_column_index < column_count_of_tiles;
+                    ++tile_column_index)
+                {
+                    // CALCULATE THE OFFSET WITHIN THE TEXTURE FOR THE CURRENT TILE.
+                    int tile_left_texture_offset_in_texels = tile_column_index * tileset_description.TileWidthInPixels;
+                    int tile_top_texture_offset_in_texels = tile_row_index * tileset_description.TileHeightInPixels;
+
+                    // CREATE A SPRITE FOR THE CURRENT TILE.
+                    sf::IntRect tile_texture_rect(
+                        tile_left_texture_offset_in_texels,
+                        tile_top_texture_offset_in_texels,
+                        tileset_description.TileWidthInPixels,
+                        tileset_description.TileHeightInPixels);
+
+                    // STORE THE CURRENT TILE.
+                    tileset->SetTile(current_tile_id, tileset_texture, tile_texture_rect);
+
+                    // UPDATE THE TILE ID FOR THE NEXT TILE.
+                    ++current_tile_id;
+                }
+            }
+        }
+
+        return tileset;
+    }
 
     std::shared_ptr<GRAPHICS::Texture> Assets::GetTexture(const std::string& texture_id)
     {
@@ -28,47 +134,22 @@ namespace RESOURCES
             return id_with_texture->second;
         }
 
-        // LOAD THE IMAGE FOR THE TEXTURE.
-        // The transparent color can only be set on an image.
-        // Texture IDs are currently directly mapped to filepaths.
-        sf::Image image;
-        bool image_loaded = image.loadFromFile(texture_id);
-        if (!image_loaded)
+        // TRY LOADING THE TEXTURE.
+        // Texture IDs map directly to filepaths.
+        const auto& texture_filepath = texture_id;
+        std::shared_ptr<GRAPHICS::Texture> texture = GRAPHICS::Texture::Load(texture_filepath);
+        bool texture_loaded = (nullptr != texture);
+        if (texture_loaded)
         {
-            /// @todo   Logging?  Or returning a null pointer?
-            // CREATE A DUMMY IMAGE FOR DEBUGGING.
-            // To allow the game to continue to run (rather than fail),
-            // a dummy image is created with a specific color to make
-            // it easy to debug.
-            const unsigned int DUMMY_IMAGE_WIDTH_IN_PIXELS = 8;
-            const unsigned int DUMMY_IMAGE_HEIGHT_IN_PIXELS = 8;
-            const sf::Color DUMMY_IMAGE_COLOR = sf::Color::Cyan;
-            image.create(DUMMY_IMAGE_WIDTH_IN_PIXELS, DUMMY_IMAGE_HEIGHT_IN_PIXELS, DUMMY_IMAGE_COLOR);
+            // CACHE THE TEXTURE IN THIS COLLECTION BEFORE RETURNING.
+            Textures[texture_id] = texture;
+            return texture;
         }
-
-        // ADD TRANSPARENCY TO THE IMAGE.
-        // All images are expected to use magenta (R=255, G=0, B=255) for their parts
-        // that should be transparent.
-        const sf::Color TRANSPARENT_COLOR = sf::Color::Magenta;
-        const uint8_t MAKE_COMPLETELY_TRANSPARENT = 0;
-        image.createMaskFromColor(TRANSPARENT_COLOR, MAKE_COMPLETELY_TRANSPARENT);
-
-        // CREATE THE TEXTURE FROM THE IMAGE.
-        std::shared_ptr<sf::Texture> texture_resource = std::make_shared<sf::Texture>();
-        bool texture_loaded_from_image = texture_resource->loadFromImage(image);
-        if (!texture_loaded_from_image)
+        else
         {
-            /// @todo   Logging?  Or returning a null pointer?
-            assert(texture_loaded_from_image);
-            // Continue processing so that the calling code can continue to execute.
-            // It will just have an "empty" texture tohave to deal with.
+            // The texture couldn't be retrieved.
+            return nullptr;
         }
-
-        // CACHE THE TEXTURE IN THIS COLLECTION OF ASSETS.
-        std::shared_ptr<GRAPHICS::Texture> texture = std::make_shared<GRAPHICS::Texture>(texture_resource);
-        Textures[texture_id] = texture;
-
-        return texture;
     }
 
     std::shared_ptr<GRAPHICS::AnimationSequence> Assets::GetAnimationSequence(const std::string& animation_id)
@@ -87,5 +168,104 @@ namespace RESOURCES
             assert(false);
             return nullptr;
         }
+    }
+
+    bool Assets::LoadTextures()
+    {
+        // CLEAR ANY PREVIOUSLY LOADED TEXTURES.
+        Textures.clear();
+
+        // DEFINE THE TEXTURES TO BE LOADED.
+        const std::vector<std::string> TEXTURE_IDS =
+        {
+            AXE_TEXTURE_ID,
+            GROUND_TILESET_TEXTURE_ID,
+            NOAH_TEXTURE_ID,
+            TREE_TEXTURE_ID
+        };
+
+        // LOAD ALL OF THE TEXTURES.
+        // Texture IDs specify filepaths.
+        for (const auto& texture_id : TEXTURE_IDS)
+        {
+            // CHECK IF THE PROVIDED TEXTURE HAS ALREADY BEEN LOADED.
+            // Certain textures may use the same ID.
+            auto id_with_texture = Textures.find(texture_id);
+            bool texture_already_loaded = (Textures.cend() != id_with_texture);
+            if (texture_already_loaded)
+            {
+                // Skip to the next texture to avoid wasting time loading it again.
+                continue;
+            }
+
+            // LOAD THE CURRENT TEXTURE.
+            // Texture IDs map directly to filepaths.
+            const auto& texture_filepath = texture_id;
+            std::shared_ptr<GRAPHICS::Texture> texture = GRAPHICS::Texture::Load(texture_filepath);
+            bool texture_loaded = (nullptr != texture);
+            if (texture_loaded)
+            {
+                // STORE THE TEXTURE IN THIS COLLECTION.
+                Textures[texture_id] = texture;
+            }
+            else
+            {
+                // INDICATE THAT A TEXTURE FAILED TO LOAD.
+                return false;
+            }
+        }
+
+        // INDICATE THAT ALL TEXTURES WERE LOADED.
+        return true;
+    }
+    
+    bool Assets::LoadOverworldMapFile()
+    {
+        // CLEAR ANY PREVIOUSLY LOADED OVERWORLD MAP FILE.
+        OverworldMapFile = nullptr;
+        
+        // LOAD THE OVERWORLD MAP FILE.
+        const std::string OVERWORLD_MAP_FILEPATH = "res/maps/overworld_map.json";
+        OverworldMapFile = MAPS::OverworldMapFile::Load(OVERWORLD_MAP_FILEPATH);
+        
+        // INDICATE IF LOADING WAS SUCCESSFUL.
+        bool overworld_map_file_loaded = (nullptr != OverworldMapFile);
+        return overworld_map_file_loaded;
+    }
+    
+    bool Assets::LoadTileMapFiles()
+    {
+        // CLEAR ANY PREVIOUSLY LOADED TILE MAP FILES.
+        // Resizing is done to allocate enough space for the new tile map files
+        // while clearing old data at the same time.
+        unsigned int tile_map_row_count = OverworldMapFile->OverworldHeightInTileMaps;
+        unsigned int tile_map_column_count = OverworldMapFile->OverworldWidthInTileMaps;
+        TileMapFiles.Resize(tile_map_column_count, tile_map_row_count);
+
+        // LOAD ALL TILE MAP FILES IN THE OVERWORLD MAP FILE.
+        for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
+        {
+            for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
+            {
+                // LOAD THE CURRENT TILE MAP.
+                std::string tile_map_filepath = OverworldMapFile->GetTileMapFilepath(tile_map_row, tile_map_column);
+                std::unique_ptr<MAPS::TileMapFile> tile_map_file = MAPS::TileMapFile::Load(tile_map_filepath);
+                bool tile_map_file_loaded = (nullptr != tile_map_file);
+                if (tile_map_file_loaded)
+                {
+                    // STORE THE TILE MAP FILE IN THIS COLLECTION OF ASSETS.
+                    TileMapFiles(tile_map_column, tile_map_row) = std::move(tile_map_file);
+                }
+                else
+                {
+                    assert(false);
+                    // All tile map files could not be loaded.
+                    return false;
+                }
+            }
+        }
+
+        // All tile map files were loaded successfully.
+        return true;
     }
 }

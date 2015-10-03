@@ -5,7 +5,7 @@
 #include "States/OverworldState.h"
 
 // STATIC MEMBER VARIABLES.
-std::unique_ptr<NoahArkGame> NoahArkGame::singleNoahArkGame = nullptr;
+/*std::unique_ptr<NoahArkGame> NoahArkGame::singleNoahArkGame = nullptr;
 
 ///////////////////////////////////////////////////////////
 // STATIC METHODS.
@@ -75,11 +75,12 @@ int NoahArkGame::RunGame()
 ///////////////////////////////////////////////////////////
 
 NoahArkGame::NoahArkGame() : 
-    m_window(),
-    m_resourceManager(),
-    m_graphicsSystem(),
-    m_collisionSystem(),
-    m_stateManager()
+    Window(),
+    Assets(),
+    ResourceManager(),
+    GraphicsSystem(),
+    CollisionSystem(),
+    StateManager()
 {
     // CHECK IF AN INSTANCE OF THE GAME HAS ALREADY BEEN CREATED.
     bool gameAlreadyCreated = (singleNoahArkGame.get() != nullptr);
@@ -116,9 +117,9 @@ bool NoahArkGame::Initialize()
     ///       It should go to an "intro video" or "title screen" state initially.
     std::shared_ptr<STATES::IGameState> initialState(
         new STATES::OverworldState(
-            m_graphicsSystem, 
-            m_collisionSystem));
-    m_stateManager->SetCurrentState(initialState);
+            GraphicsSystem, 
+            CollisionSystem));
+    StateManager->SetCurrentState(initialState);
 
     // ALL INITIALIZATION STEPS SUCCEEDED.
     return true;
@@ -127,19 +128,19 @@ bool NoahArkGame::Initialize()
 bool NoahArkGame::Shutdown()
 {
     // SHUTDOWN THE STATE MANAGER.
-    m_stateManager.reset();
+    StateManager.reset();
 
     // SHUTDOWN THE COLLISION SYSTEM.
-    m_collisionSystem.reset();
+    CollisionSystem.reset();
 
     // SHUTDOWN THE GRAPHICS SYSTEM.
-    m_graphicsSystem.reset();
+    GraphicsSystem.reset();
     
     // SHUTDOWN THE RESOURCE MANAGER.
-    m_resourceManager.reset();
+    ResourceManager.reset();
 
     // CLOSE THE WINDOW IF IT IS STILL OPEN.
-    m_window->close();
+    Window->close();
     
     // ALL SHUTDOWN STEPS SUCCEEDED.
     return true;
@@ -152,32 +153,32 @@ bool NoahArkGame::RunGameLoop()
     {
         // PROCESS EVENTS AS LONG AS THE WINDOW IS OPEN.
         sf::Clock gameLoopClock;
-        while (m_window->isOpen())
+        while (Window->isOpen())
         {
             // PROCESS WINDOW EVENTS.
             sf::Event event;
-            while (m_window->pollEvent(event))
+            while (Window->pollEvent(event))
             {
                 // Handle the current event based on its type.
                 switch (event.type)
                 {
                 case sf::Event::Closed:
-                    m_window->close();
+                    Window->close();
                     break;
                 }
             }
 
             // UPDATE AND DISPLAY THE GAME IN THE WINDOW.
-            if (m_window->isOpen())
+            if (Window->isOpen())
             {
                 // Update the game for the new frame.
                 sf::Time elapsedTime = gameLoopClock.restart();
                 Update(elapsedTime);
 
                 // Render the current state of the game.
-                m_window->clear();
+                Window->clear();
                 Render();
-                m_window->display();
+                Window->display();
             }
         }
         
@@ -203,7 +204,7 @@ bool NoahArkGame::InitializeWindow()
     const unsigned int SCREEN_WIDTH_IN_PIXELS = 512;
     const unsigned int SCREEN_HEIGHT_IN_PIXELS = 384;
     const std::string GAME_TITLE = "Bible Games - Noah's Ark";
-    m_window = std::make_shared<sf::RenderWindow>(
+    Window = std::make_shared<sf::RenderWindow>(
         sf::VideoMode(SCREEN_WIDTH_IN_PIXELS, SCREEN_HEIGHT_IN_PIXELS),
         GAME_TITLE);
 
@@ -212,18 +213,26 @@ bool NoahArkGame::InitializeWindow()
 
 bool NoahArkGame::InitializeSubsystems()
 {
+    // LOAD GAME ASSETS.
+    Assets = std::make_shared<RESOURCES::Assets>();
+    bool assets_loaded = Assets->LoadAll();
+    if (!assets_loaded)
+    {
+        return false;
+    }
+
     // INITIALIZE THE RESOURCE MANAGER.
     const char* RESOURCE_FILE_RELATIVE_PATH = "res/resources.json";
-    m_resourceManager = std::make_shared<RESOURCES::ResourceManager>(RESOURCE_FILE_RELATIVE_PATH);
+    ResourceManager = std::make_shared<RESOURCES::ResourceManager>(RESOURCE_FILE_RELATIVE_PATH);
 
     // INITIALIZE THE GRAPHICS SYSTEM.
-    m_graphicsSystem = std::make_shared<GRAPHICS::GraphicsSystem>(m_window, m_resourceManager);
+    GraphicsSystem = std::make_shared<GRAPHICS::GraphicsSystem>(Window, ResourceManager);
 
     // INITIALIZE THE COLLISION SYSTEM.
-    m_collisionSystem = std::make_shared<COLLISION::CollisionSystem>();
+    CollisionSystem = std::make_shared<COLLISION::CollisionSystem>();
 
     // INITIALIZE THE STATE MANAGER.
-    m_stateManager = std::make_shared<STATES::StateManager>();
+    StateManager = std::make_shared<STATES::StateManager>();
     
     // RETURN THE RESULT OF INITIALIZATION.
     // This will always be true for now.
@@ -233,11 +242,11 @@ bool NoahArkGame::InitializeSubsystems()
 
 void NoahArkGame::Update(const sf::Time& elapsedTime)
 {   
-    m_stateManager->Update(elapsedTime.asSeconds());
+    StateManager->Update(elapsedTime.asSeconds());
 }
 
 void NoahArkGame::Render()
 {
     // RENDER THE GAME.
-    m_graphicsSystem->Render();
-}
+    GraphicsSystem->Render();
+}*/

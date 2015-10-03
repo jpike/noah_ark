@@ -80,9 +80,6 @@
     <ClInclude Include="src\States\StateManager.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\OverworldMap.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Math\Vector2.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
@@ -120,9 +117,6 @@
       <Filter>Header Files\Processes</Filter>
     </ClInclude>
     <ClInclude Include="src\Maps\SurroundingTileMapLoader.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Maps\TileMapBuilder.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
     <ClInclude Include="src\Objects\Noah.h">
@@ -215,6 +209,15 @@
     <ClInclude Include="src\Collision\Movement.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="src\Maps\OverworldMapFile.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\TileMapFile.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\Overworld.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\States\OverworldState.cpp">
@@ -233,9 +236,6 @@
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\TileMap.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\OverworldMap.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\Texture.cpp">
@@ -257,9 +257,6 @@
       <Filter>Source Files\Processes</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\SurroundingTileMapLoader.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\TileMapBuilder.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\AnimationSequence.cpp">
@@ -330,6 +327,15 @@
     </ClCompile>
     <ClCompile Include="src\Collision\Movement.cpp">
       <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\OverworldMapFile.cpp">
+      <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\TileMapFile.cpp">
+      <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\Overworld.cpp">
+      <Filter>Source Files\Maps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

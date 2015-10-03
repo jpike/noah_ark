@@ -1,5 +1,5 @@
 {
-    "WidthInTilesMaps": 7,
+    "WidthInTileMaps": 7,
     "HeightInTileMaps": 7,
     "StartingTileMapFilepath": "res/maps/map_0_0.json",
     "TileMaps": [

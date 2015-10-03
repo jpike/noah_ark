@@ -2,9 +2,7 @@
 
 #include <memory>
 #include "Graphics/GraphicsSystem.h"
-#include "Maps/OverworldMap.h"
 #include "Maps/SurroundingTileMapLoader.h"
-#include "Maps/TileMapBuilder.h"
 #include "Processes/ScrollProcess.h"
 
 /// Holds code related to maps in the game.
@@ -23,7 +21,7 @@ namespace MAPS
     ///         Other methods are provided to allow checking the
     ///         status of scrolling.
     ///////////////////////////////////////////////////////////
-    class ScrollableOverworldMap
+    /*class ScrollableOverworldMap
     {
     public:
         /// @brief  The maximum time to spend scrolling between two individual tile maps.
@@ -98,5 +96,5 @@ namespace MAPS
         std::unique_ptr<MAPS::SurroundingTileMapLoader> m_surroundingMapLoader;  ///< The loader of maps surrounding the center one.
         std::shared_ptr<TileMapBuilder> m_tileMapBuilder;   ///< The builder of new tile maps loaded during scrolling.
         std::shared_ptr<GRAPHICS::GraphicsSystem> m_graphicsSystem; ///< The graphics system responsible for rendering tile maps.
-    };
+    };*/
 }

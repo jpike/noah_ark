@@ -55,8 +55,7 @@ namespace MAPS
         /// @return The size of the ground area.
         MATH::Vector2f GetSizeInPixels() const;
 
-    private:
-
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The world position of the center of the layer.
         MATH::Vector2f CenterWorldPosition;
         /// The dimensions of the layer in tiles.

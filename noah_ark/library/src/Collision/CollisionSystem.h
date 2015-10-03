@@ -6,7 +6,6 @@
 #include "Collision/BoxCollider.h"
 #include "Collision/ICollisionComponent.h"
 #include "Events/AxeSwingEvent.h"
-#include "Maps/OverworldMap.h"
 #include "Math/Rectangle.h"
 
 /// Holds code related to collisions.
@@ -21,7 +20,7 @@ namespace COLLISION
     /// Calling SimulateMovement will handle movement
     /// and collision detection/handling for a specified
     /// amount of time for any managed collision components.
-    class CollisionSystem
+    /*class CollisionSystem
     {
     public:
         /// Constructor.
@@ -125,5 +124,5 @@ namespace COLLISION
         std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings;
 
         std::shared_ptr<MAPS::OverworldMap> OverworldMap; ///< The overworld map supplying tile map collision data.
-    };
+    };*/
 }

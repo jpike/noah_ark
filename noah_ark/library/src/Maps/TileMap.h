@@ -1,160 +1,40 @@
 #pragma once
 
-#include <map>
-#include <memory>
 #include <vector>
-#include "Graphics/GraphicsSystem.h"
-#include "Graphics/IGraphicsComponent.h"
 #include "Maps/GroundLayer.h"
-#include "Maps/ITileMapData.h"
-#include "Maps/Tile.h"
-#include "Maps/TileMapLayers.h"
-#include "Maps/Tileset.h"
 #include "Math/Vector2.h"
 #include "Objects/Tree.h"
 
 namespace MAPS
-{
-    /// Represents the position of a tile map in the overworld's "grid".
-    /// These positions are relative to each other.  For example, a map
-    /// at x,y position 1,1 is to the right of a map at position 0,1, and
-    /// a map at position 0,0 is above a map at position 0,1.
-    typedef MATH::Vector2ui OverworldGridPosition;
-    
+{    
     /// A single 2D map composed of individual tiles and any objects
     /// that may located on the map.
-    ///
-    /// It is constructed from data in a Tiled map.
-    ///
-    /// @todo   Document implementing the IGraphicsComponent interface.
-    class TileMap : public GRAPHICS::IGraphicsComponent
+    class TileMap
     {
     public:
-        /// Constructor.  The map won't be visible by default.
-        /// @param[in]      overworld_grid_position - The position of the tile map within the overworld grid.
-        /// @param[in]      top_left_world_position_in_pixels - The top-left position of the map within the world.
-        /// @param[in]      map_data - The underlying map that has already been loaded.
-        /// @param[in,out]  graphics_system - The graphics system used to manage graphics for this tile map.
-        /// @param[in,out]  assets - The assets from which to get graphical tile map data.
-        /// @throws std::invalid_argument - Thrown if any pointer parameters are null.
+        // CONSTRUCTION.
+        /// Creates an empty tile map.
+        /// @param[in]  center_world_position - The world position of the center
+        ///     of the tile map.
+        /// @param[in]  dimensions_in_tiles - The dimensions of the map in tiles.
         explicit TileMap(
-            const OverworldGridPosition& overworld_grid_position,
-            const MATH::Vector2f& top_left_world_position_in_pixels,
-            const std::shared_ptr<ITileMapData>& map_data,
-            std::shared_ptr<GRAPHICS::GraphicsSystem>& graphics_system,
-            std::shared_ptr<RESOURCES::Assets>& assets);
-        
-        /// @brief  Destructor.
-        virtual ~TileMap();
+            const MATH::Vector2f& center_world_position,
+            const MATH::Vector2ui& dimensions_in_tiles);
 
-        /// @brief  Gets the position of the tile map within the overworld grid.
-        /// @return The overworld grid position of the tile map.
-        OverworldGridPosition GetOverworldGridPosition() const;
-        
-        /// @brief  Gets the top-left world position of the tile map, in pixels.
-        /// @return The top-left position of the map.
-        MATH::Vector2f GetTopLeftWorldPosition() const;
-
-        /// @brief  Gets the bottom-right world position of the tile map, in pixels.
-        /// @return The bottom-right position of the map.
-        MATH::Vector2f GetBottomRightWorldPosition() const;
-
-        /// @brief  Gets the center world position of the tile map, in pixels.
-        /// @return The center position of the map.
+        // POSITIONING.
+        /// Gets the center world position of the tile map.
+        /// @return The center world position of the tile map.
         MATH::Vector2f GetCenterWorldPosition() const;
 
-        /// Gets the world bounding box of the tile map.
-        /// @return The world boundaries of the tile map.
-        MATH::FloatRectangle GetWorldBounds() const;
+        // DIMENSIONS.
+        /// Gets the dimensions (width, height) of the tile map, in units of tiles.
+        /// @return The dimensions of the tile map, in tiles.
+        MATH::Vector2ui GetDimensionsInTiles() const;
 
-        /// Determines if the provided world position is within this tile map.
-        /// @param[in]  world_position - The world position to check.
-        /// @return True if the position is within this tile map; false otherwise.
-        bool ContainsPosition(const MATH::Vector2f& world_position) const;
-
-        /// @brief  Gets the width of the map, in tiles.
-        /// @return The width of the map, in tiles.
-        unsigned int GetWidthInTiles() const;
-
-        /// @brief  Gets the height of the map, in tiles.
-        /// @return The height of the map, in tiles.
-        unsigned int GetHeightInTiles() const;
-
-        /// @brief  Gets the width of a tile in the map, in pixels.
-        /// @return The width of a single tile.
-        unsigned int GetTileWidthInPixels() const;
-
-        /// @brief  Gets the height of a tile in the map, in pixels.
-        /// @return The height of single tile.
-        unsigned int GetTileHeightInPixels() const;
-
-        /// @brief  Gets the width and height of the tile map, in pixels.
-        /// @return The size of the tile map.
-        MATH::Vector2f GetSizeInPixels() const;
-
-        /// @brief      Gets the tile at the specified world position.
-        /// @param[in]  world_x_position - The world X position at which to get the tile.
-        /// @param[in]  world_y_position - The world Y position at which to get the tile.
-        /// @return     The tile at the specified world position, if one exists.
-        std::shared_ptr<Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const;
-
-        /// Gets trees within this tile map.
-        /// @return Trees within this tile map.  The pointer will not be null
-        /// but will point to internal data within this object, so the pointer
-        /// will only be valid as long as this tile map exists.
-        std::vector< std::shared_ptr<OBJECTS::Tree> >* GetTrees();
-
-        /// Changes the visibility of this tile map.
-        /// @param[in]  visible - True if this tile map should be visible;
-        ///     false if this tile map should be hidden.
-        void SetVisible(const bool visible);
-
-        // INTERFACE IMPLEMENTATION - IGraphicsComponent
-        /// @copydoc    GRAPHICS::IGraphicsComponent::IsVisible
-        virtual bool IsVisible() const;
-        /// @copydoc    GRAPHICS::IGraphicsComponent::Render
-        virtual void Render(sf::RenderTarget& render_target);
-        /// @copydoc    GRAPHICS::IGraphicsComponent::Update
-        virtual void Update(const float elapsed_time_in_seconds);
-
-    private:
-        TileMap(const TileMap& map_to_copy);  ///< Private to disallow copying.
-        TileMap& operator= (const TileMap& rhs_map); ///< Private to disallow assignment.
-
-        /// Populates this tile map from the provided data.
-        /// @param[in]      top_left_world_position_in_pixels - The top-left position of the map within the world.
-        /// @param[in]      map_data - The underlying map that has already been loaded.
-        /// @param[in,out]  graphics_system - The graphics system used to manage graphics for this tile map.
-        /// @param[in,out]  assets - The assets from which to get graphical tile map data.
-        void BuildFromMapData(
-            const MATH::Vector2f& top_left_world_position_in_pixels,
-            const ITileMapData& map_data,
-            GRAPHICS::GraphicsSystem& graphics_system,
-            RESOURCES::Assets& assets);
-
-        /// Whether or not the tile map is currently visible.
-        bool Visible;
-        /// The position of the tile map in the overworld map's grid.
-        OverworldGridPosition OverworldPosition;
-        ///< The top-left world position of the tile map.
-        MATH::Vector2f TopLeftWorldPositionInPixels;
-        /// The width of the map in tiles.
-        unsigned int WidthInTiles;
-        /// The height of the map in tiles.
-        unsigned int HeightInTiles;
-        /// The width (in pixels) of a tile in the map.  This only defines
-        /// the general grid size of the map - individual tiles may have
-        /// different sizes.
-        unsigned int TileWidthInPixels;
-        /// The height (in pixels) of a tile in the map.  This only defines
-        /// the general grid size of the map - individual tiles may have
-        /// different sizes.
-        unsigned int TileHeightInPixels;
-        /// The set of tiles used in this map.
-        MAPS::Tileset Tileset;
-        /// The ground in this area.
-        std::shared_ptr<GroundLayer> Ground;
-        /// Trees in this area.
-        std::vector< std::shared_ptr<OBJECTS::Tree> > Trees;
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The ground in this tile map.
+        GroundLayer Ground;
+        /// Trees in this tile map.
+        std::vector<OBJECTS::Tree> Trees;
     };
 }

@@ -4,15 +4,16 @@
 #include <SFML/Graphics.hpp>
 #include "Collision/CollisionSystem.h"
 #include "Graphics/GraphicsSystem.h"
+#include "Resources/Assets.h"
 #include "Resources/ResourceManager.h"
 #include "States/StateManager.h"
 
-///////////////////////////////////////////////////////////
-/// @brief  Encapsulates the logic for running the entire Noah's Ark game.
-///         Only one instance of the game should be created due to limitations
-///         in the underlying game engine.
-///////////////////////////////////////////////////////////
-class NoahArkGame
+/// Encapsulates the logic for running the entire Noah's Ark game.
+/// Only one instance of the game should be created due to limitations
+/// in the underlying game engine.
+/// @todo   The above statement may not be strictly true since
+/// moving away from HGE.  Re-examine this later.
+/*class NoahArkGame
 {
 public:
     // CONSTANTS.
@@ -79,9 +80,10 @@ private:
     void Render();
 
     // MEMBER VARIABLES.
-    std::shared_ptr<sf::RenderWindow> m_window; ///< The window displaying the game.
-    std::shared_ptr<RESOURCES::ResourceManager> m_resourceManager;    ///< The resource manager.
-    std::shared_ptr<GRAPHICS::GraphicsSystem> m_graphicsSystem; ///< The graphics system.
-    std::shared_ptr<COLLISION::CollisionSystem> m_collisionSystem;  ///< The collision system.
-    std::shared_ptr<STATES::StateManager> m_stateManager; ///< The game state manager.
-};
+    std::shared_ptr<sf::RenderWindow> Window; ///< The window displaying the game.
+    std::shared_ptr<RESOURCES::Assets> Assets;  ///< Assets (images, etc.) for the game.
+    std::shared_ptr<RESOURCES::ResourceManager> ResourceManager;    ///< The resource manager.
+    std::shared_ptr<GRAPHICS::GraphicsSystem> GraphicsSystem; ///< The graphics system.
+    std::shared_ptr<COLLISION::CollisionSystem> CollisionSystem;  ///< The collision system.
+    std::shared_ptr<STATES::StateManager> StateManager; ///< The game state manager.
+};*/

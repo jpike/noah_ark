@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <stdexcept>
 #include "Core/Array2D.h"
 
@@ -145,6 +146,26 @@ namespace ARRAY_2D_TESTS
         const unsigned int ORIGINAL_WIDTH = 4;
         const unsigned int ORIGINAL_HEIGHT = 3;
         CORE::Array2D<int> array_2d(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
+
+        // RESIZE THE ARRAY.
+        const unsigned int NEW_WIDTH = 24;
+        const unsigned int NEW_HEIGHT = 37;
+        array_2d.Resize(NEW_WIDTH, NEW_HEIGHT);
+
+        // VALIDATE THE DIMENSIONS.
+        unsigned int actual_width = array_2d.GetWidth();
+        REQUIRE(NEW_WIDTH == actual_width);
+
+        unsigned int actual_height = array_2d.GetHeight();
+        REQUIRE(NEW_HEIGHT == actual_height);
+    }
+
+    TEST_CASE("An array with elements that can only be moved can be resized.", "[Array2D]")
+    {
+        // CREATE A 2D ARRAY.
+        const unsigned int ORIGINAL_WIDTH = 4;
+        const unsigned int ORIGINAL_HEIGHT = 3;
+        CORE::Array2D< std::unique_ptr<int> > array_2d(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
 
         // RESIZE THE ARRAY.
         const unsigned int NEW_WIDTH = 24;

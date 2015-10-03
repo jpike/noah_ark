@@ -5,7 +5,6 @@
 #include "Collision/CollisionSystem.h"
 #include "Graphics/GraphicsSystem.h"
 #include "Input/KeyboardInputController.h"
-#include "Maps/OverworldMap.h"
 #include "Maps/ScrollableOverworldMap.h"
 #include "Objects/Noah.h"
 #include "States/IGameState.h"
@@ -14,7 +13,7 @@ namespace STATES
 {
     /// The main gameplay state that involves the player (Noah)
     /// moving over an overworld.
-    class OverworldState : public IGameState
+    /*class OverworldState : public IGameState
     {
     public:
         /// Constructor.
@@ -64,5 +63,5 @@ namespace STATES
         std::unique_ptr<MAPS::ScrollableOverworldMap> ScrollingOverworld;  ///< Wraps the overworld map to manage scrolling.
 
         OBJECTS::Noah NoahPlayer; ///< Noah, the main character controlled by the player.
-    };
+    };*/
 }

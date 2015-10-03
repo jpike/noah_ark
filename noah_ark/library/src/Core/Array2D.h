@@ -39,6 +39,16 @@ namespace CORE
         ///     not match the size indicated by the width and height.
         explicit Array2D(const unsigned int width, const unsigned int height, const std::initializer_list<T>& data);
 
+        // ASSIGNMENT OPERATORS.
+        /// Copy assignment operator.
+        /// @param[in]  rhs - The array to assign from.
+        /// @return This array after assignment.
+        Array2D& operator=(const Array2D& rhs);
+        /// Move assignment operator.
+        /// @param[in,out]  rhs - The array to assign from.
+        /// @return This array after assignment.
+        Array2D& operator=(Array2D&& rhs);
+
         // COMPARISON OPERATORS.
         /// Equality operator.
         /// @param[in]  rhs - The array to compare with.
@@ -137,6 +147,36 @@ namespace CORE
     }
 
     template <typename T>
+    Array2D<T>& Array2D<T>::operator=(const Array2D<T>& rhs)
+    {
+        // ONLY COPY FIELDS IF SELF-ASSIGNMENT ISN'T OCCURRING.
+        bool self_assignment = (this == &rhs);
+        if (!self_assignment)
+        {
+            Width = rhs.Width;
+            Height = rhs.Height;
+            Data = rhs.Data;
+        }
+
+        return (*this);
+    }
+
+    template <typename T>
+    Array2D<T>& Array2D<T>::operator=(Array2D<T>&& rhs)
+    {
+        // ONLY MOVE FIELDS IF SELF-ASSIGNMENT ISN'T OCCURRING.
+        bool self_assignment = (this == &rhs);
+        if (!self_assignment)
+        {
+            Width = std::move(rhs.Width);
+            Height = std::move(rhs.Height);
+            Data = std::move(rhs.Data);
+        }
+
+        return (*this);
+    }
+
+    template <typename T>
     bool Array2D<T>::operator==(const Array2D<T>& rhs) const
     {
         // Make sure all fields are equal.
@@ -174,7 +214,9 @@ namespace CORE
         Array2D<T> resized_array(width, height);
 
         // REPLACE THIS ARRAY WITH THE RESIZED ARRAY.
-        (*this) = resized_array;
+        // Move assignment is used because some types stored in an array
+        // (like unique_ptr) may be move assignable but not copy assignable.
+        (*this) = std::move(resized_array);
     }
 
     template <typename T>

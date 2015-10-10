@@ -22,6 +22,8 @@ namespace GRAPHICS
     {
     public:
         // CONSTRUCTION/DESTRUCTION.
+        /// @todo   Temporary constructor to get things compiling...should be removed/changed later.
+        explicit AnimatedSprite() {}
         /// Constructor to wrap the provided sprite.
         /// @param[in]  sprite - The sprite being animated.  Must not be null.
         /// @throws std::invalid_argument - Thrown if the provided sprite is null.

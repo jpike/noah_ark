@@ -1,10 +1,7 @@
 #pragma once
 
-#include <string>
-#include "Collision/BoxCollider.h"
-#include "Events/AxeSwingEvent.h"
 #include "Graphics/AnimatedSprite.h"
-#include "Objects/Axe.h"
+#include "Math/Vector2.h"
 
 /// Holds codes for specific objects in the game.
 namespace OBJECTS
@@ -12,6 +9,44 @@ namespace OBJECTS
     /// Represents the character of Noah, typically controlled
     /// by the player in the game.
     class Noah
+    {
+    public:
+
+        // POSITIONING.
+        /// Gets the world position of Noah.
+        /// @return The world position of Noah.
+        MATH::Vector2f GetWorldPosition() const;
+        /// Sets the world position of Noah.
+        /// @param[in]  world_position - The new world position to set.
+        void SetWorldPosition(const MATH::Vector2f& world_position);
+
+        // MOVEMENT.
+        /// Moves Noah up based on the specified amount of time.
+        /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to move Noah.
+        void MoveUp(const float elapsed_time_in_seconds);
+        /// Moves Noah down based on the specified amount of time.
+        /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to move Noah.
+        void MoveDown(const float elapsed_time_in_seconds);
+        /// Moves Noah left based on the specified amount of time.
+        /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to move Noah.
+        void MoveLeft(const float elapsed_time_in_seconds);
+        /// Moves Noah right based on the specified amount of time.
+        /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to move Noah.
+        void MoveRight(const float elapsed_time_in_seconds);
+
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        ///< The sprite used for rendering Noah.
+        GRAPHICS::AnimatedSprite Sprite = GRAPHICS::AnimatedSprite();
+
+    private:
+        // MOVEMENT.
+        /// Gets the distance Noah should move for the elapsed time.
+        /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to move Noah.
+        /// @return The distance to move (in world coordinates/pixels) for the given time.
+        float GetMoveDistance(const float elapsed_time_in_seconds) const;
+    };
+
+    /*class Noah
     {
     public:
         // STATIC CONSTANTS.
@@ -30,16 +65,6 @@ namespace OBJECTS
         /// Updates Noah for a frame based on the elapsed amount of time.
         /// @param[in]  elapsed_time_in_seconds - The amount of time to update by.
         void Update(const float elapsed_time_in_seconds);
-
-        /// Sets the animated sprite used for rendering Noah on screen.
-        /// @param[in]  sprite - The sprite to set.
-        void SetSprite(const std::shared_ptr<GRAPHICS::AnimatedSprite>& sprite);
-
-        /// @todo   Temporary?
-        std::shared_ptr<GRAPHICS::AnimatedSprite> GetSprite() const
-        {
-            return Sprite;
-        }
 
         /// Sets the axe that can be used by Noah.
         /// @param[in]  axe - The axe to set.
@@ -83,6 +108,10 @@ namespace OBJECTS
         /// @return The event describing the axe swing, if an axe swing is started.
         std::shared_ptr<EVENTS::AxeSwingEvent> SwingAxe() const;
 
+        
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        GRAPHICS::AnimatedSprite Sprite; ///< The sprite used for rendering Noah.
+
     private:
         Noah(const Noah&);   ///< Private to disallow copying.
         Noah& operator=(const Noah&);   ///< Private to disallow copying.
@@ -93,8 +122,7 @@ namespace OBJECTS
         float GetMoveDistance(const float elapsedTimeInSeconds) const;
 
         CORE::Direction FacingDirection;    ///< The direction Noah is currently facing.
-        std::shared_ptr<GRAPHICS::AnimatedSprite> Sprite; ///< The sprite used for rendering Noah.
         std::shared_ptr<COLLISION::BoxCollider> Collider; ///< The collider used to colliding with Noah.
         std::shared_ptr<OBJECTS::Axe> Axe;  ///< The axe that can be swung by Noah.
-    };
+    };*/
 }

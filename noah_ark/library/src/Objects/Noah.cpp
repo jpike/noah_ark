@@ -4,8 +4,51 @@
 
 namespace OBJECTS
 {
+    MATH::Vector2f Noah::GetWorldPosition() const
+    {
+        MATH::Vector2f world_position = Sprite.GetWorldPosition();
+        return world_position;
+    }
+
+    void Noah::SetWorldPosition(const MATH::Vector2f& world_position)
+    {
+        Sprite.SetWorldPosition(world_position.X, world_position.Y);
+    }
+
+    void Noah::MoveUp(const float elapsed_time_in_seconds)
+    {
+        float distance_to_move_in_pixels = GetMoveDistance(elapsed_time_in_seconds);
+        Sprite.MoveUp(distance_to_move_in_pixels);
+    }
+
+    void Noah::MoveDown(const float elapsed_time_in_seconds)
+    {
+        float distance_to_move_in_pixels = GetMoveDistance(elapsed_time_in_seconds);
+        Sprite.MoveDown(distance_to_move_in_pixels);
+    }
+
+    void Noah::MoveLeft(const float elapsed_time_in_seconds)
+    {
+        float distance_to_move_in_pixels = GetMoveDistance(elapsed_time_in_seconds);
+        Sprite.MoveLeft(distance_to_move_in_pixels);
+    }
+
+    void Noah::MoveRight(const float elapsed_time_in_seconds)
+    {
+        float distance_to_move_in_pixels = GetMoveDistance(elapsed_time_in_seconds);
+        Sprite.MoveRight(distance_to_move_in_pixels);
+    }
+
+    float Noah::GetMoveDistance(const float elapsed_time_in_seconds) const
+    {
+        // The speed is chosen just based on what has felt right so far.
+        const float MOVE_SPEED_IN_PIXELS_PER_SECOND = 64.0f;
+        float distance_to_move_in_pixels = MOVE_SPEED_IN_PIXELS_PER_SECOND * elapsed_time_in_seconds;
+        return distance_to_move_in_pixels;
+    }
+
     // STATIC CLASS CONSTANT INITIALIZATION.
-    const std::string Noah::WALK_FRONT_ANIMATION_NAME = "noah_walk_front";
+    /*const std::string Noah::WALK_FRONT_ANIMATION_NAME = "noah_walk_front";
     const std::string Noah::WALK_BACK_ANIMATION_NAME = "noah_walk_back";
     const std::string Noah::WALK_LEFT_ANIMATION_NAME = "noah_walk_left";
     const std::string Noah::WALK_RIGHT_ANIMATION_NAME = "noah_walk_right";
@@ -15,7 +58,7 @@ namespace OBJECTS
     Noah::Noah() :
     /// @todo   This facing direction may need to be changed...
     FacingDirection(CORE::Direction::DOWN),
-    Sprite(),
+    Sprite(std::make_shared<GRAPHICS::Sprite>()),
     Collider(),
     Axe()
     {}
@@ -31,11 +74,6 @@ namespace OBJECTS
         {
             Axe->Update(elapsed_time_in_seconds);
         }
-    }
-
-    void Noah::SetSprite(const std::shared_ptr<GRAPHICS::AnimatedSprite>& sprite)
-    {
-        Sprite = sprite;
     }
 
     void Noah::SetAxe(const std::shared_ptr<OBJECTS::Axe>& axe)
@@ -63,7 +101,7 @@ namespace OBJECTS
         Collider->SetCenterPosition(xPositionInPixels, yPositionInPixels);
 
         /// @todo   Find a better way to synchronize the positions.
-        Sprite->SetWorldPosition(xPositionInPixels, yPositionInPixels);
+        Sprite.SetWorldPosition(xPositionInPixels, yPositionInPixels);
     }
 
     void Noah::MoveUp(const float elapsedTimeInSeconds)
@@ -87,8 +125,8 @@ namespace OBJECTS
         //m_sprite->MoveUp(distanceToMoveInPixels);
 
         // PLAY THE WALKING-UP ANIMATION.
-        Sprite->UseAnimationSequence(WALK_BACK_ANIMATION_NAME);
-        Sprite->Play();
+        Sprite.UseAnimationSequence(WALK_BACK_ANIMATION_NAME);
+        Sprite.Play();
     }
 
     void Noah::MoveDown(const float elapsedTimeInSeconds)
@@ -112,8 +150,8 @@ namespace OBJECTS
         //m_sprite->MoveDown(distanceToMoveInPixels);
 
         // PLAY THE WALKING-DOWN ANIMATION.
-        Sprite->UseAnimationSequence(WALK_FRONT_ANIMATION_NAME);
-        Sprite->Play();
+        Sprite.UseAnimationSequence(WALK_FRONT_ANIMATION_NAME);
+        Sprite.Play();
     }
 
     void Noah::MoveLeft(const float elapsedTimeInSeconds)
@@ -137,8 +175,8 @@ namespace OBJECTS
         //m_sprite->MoveLeft(distanceToMoveInPixels);
 
         // PLAY THE WALKING-LEFT ANIMATION.
-        Sprite->UseAnimationSequence(WALK_LEFT_ANIMATION_NAME);
-        Sprite->Play();
+        Sprite.UseAnimationSequence(WALK_LEFT_ANIMATION_NAME);
+        Sprite.Play();
     }
 
     void Noah::MoveRight(const float elapsedTimeInSeconds)
@@ -162,14 +200,14 @@ namespace OBJECTS
         //m_sprite->MoveRight(distanceToMoveInPixels);
 
         // PLAY THE WALKING-RIGHT ANIMATION.
-        Sprite->UseAnimationSequence(WALK_RIGHT_ANIMATION_NAME);
-        Sprite->Play();
+        Sprite.UseAnimationSequence(WALK_RIGHT_ANIMATION_NAME);
+        Sprite.Play();
     }
 
     void Noah::Idle()
     {
         // RESET NOAH'S ANIMATION SO THAT NOAH STOPS MOVING.
-        Sprite->ResetAnimation();
+        Sprite.ResetAnimation();
     }
 
     std::shared_ptr<EVENTS::AxeSwingEvent> Noah::SwingAxe() const
@@ -282,11 +320,5 @@ namespace OBJECTS
                 // Don't swing an axe since a valid direction isn't known.
                 return nullptr;
         }
-    }
-
-    float Noah::GetMoveDistance(const float elapsedTimeInSeconds) const
-    {
-        float distanceToMoveInPixels = MOVE_SPEED_IN_PIXELS_PER_SECOND * elapsedTimeInSeconds;
-        return distanceToMoveInPixels;
-    }
+    }*/
 }

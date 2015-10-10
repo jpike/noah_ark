@@ -170,12 +170,6 @@
     <ClInclude Include="src\Maps\ITileMapLayer.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\TileMapTileLayer.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Maps\TileMapObjectLayer.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Objects\Tree.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
@@ -293,12 +287,6 @@
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\Tileset.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\TileMapTileLayer.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\TileMapObjectLayer.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Objects\Tree.cpp">

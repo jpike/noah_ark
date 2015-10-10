@@ -173,7 +173,7 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
                                 float tree_world_y_position = static_cast<float>(object_description.TopLeftPositionInPixels.Y) + tree_local_center_y;
                                 tree_sprite_resource->setPosition(tree_world_x_position, tree_world_y_position);
 
-                                std::shared_ptr<GRAPHICS::Sprite> tree_sprite = std::make_shared<GRAPHICS::Sprite>(tree_sprite_resource);
+                                GRAPHICS::Sprite tree_sprite(tree_sprite_resource);
 
                                 // CREATE THE TREE.
                                 OBJECTS::Tree tree(tree_sprite);
@@ -197,7 +197,7 @@ void Render(GRAPHICS::Sprite& sprite, sf::RenderTarget& render_target)
     sprite.Render(render_target);
 }
 
-void Render(const MAPS::TileMap& tile_map, sf::RenderTarget& render_target)
+void Render(MAPS::TileMap& tile_map, sf::RenderTarget& render_target)
 {
     // RENDER THE CURRENT TILE MAP'S GROUND LAYER.
     MATH::Vector2ui ground_dimensions_in_tiles = tile_map.GetDimensionsInTiles();
@@ -206,16 +206,14 @@ void Render(const MAPS::TileMap& tile_map, sf::RenderTarget& render_target)
         for (unsigned int tile_column = 0; tile_column < ground_dimensions_in_tiles.X; ++tile_column)
         {
             std::shared_ptr<MAPS::Tile> tile = tile_map.Ground.Tiles(tile_column, tile_row);
-            std::shared_ptr<GRAPHICS::Sprite> tile_sprite = tile->GetSprite();
-            Render(*tile_sprite, render_target);
+            Render(tile->Sprite, render_target);
         }
     }
 
     // RENDER THE CURRENT TILE MAP'S TREES.
-    for (const auto& tree : tile_map.Trees)
+    for (auto& tree : tile_map.Trees)
     {
-        std::shared_ptr<GRAPHICS::Sprite> tree_sprite = tree.GetSprite();
-        Render(*tree_sprite, render_target);
+        Render(tree.Sprite, render_target);
     }
 }
 

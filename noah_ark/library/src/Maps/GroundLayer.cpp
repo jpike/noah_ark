@@ -47,10 +47,7 @@ namespace MAPS
         float tile_y_offset_in_pixels = y_offset_from_top_in_tiles * tile_height_in_pixels;
         float tile_world_y_position = layer_top_y_position + tile_y_offset_in_pixels;
 
-        /// @todo   Avoid setting world position directly like this?  In other words,
-        /// don't directly reach through to the sprite and instead have a method for
-        /// setting the world position?
-        tile->GetSprite()->SetWorldPosition(tile_world_x_position, tile_world_y_position);
+        tile->SetWorldPosition(tile_world_x_position, tile_world_y_position);
         
         // STORE THE TILE IN THE LAYER.
         Tiles(x_offset_from_left_in_tiles, y_offset_from_top_in_tiles) = tile;

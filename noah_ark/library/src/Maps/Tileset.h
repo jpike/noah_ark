@@ -2,10 +2,8 @@
 
 #include <memory>
 #include <unordered_map>
-#include "Graphics/GraphicsSystem.h"
+#include "Graphics/Texture.h"
 #include "Maps/Tile.h"
-#include "Maps/TilesetDescription.h"
-#include "Math/Vector2.h"
 
 namespace MAPS
 {
@@ -15,14 +13,6 @@ namespace MAPS
     public:
         /// Constructor to create an empty tileset.
         explicit Tileset();
-
-        /// Populates the tileset based on the provided descriptions.
-        /// Any previous data in this tileset will be cleared first.
-        /// @param[in]  tileset_descriptions - Descriptions of tilesets to include in this tileset.
-        /// @param[in,out]  graphics_system - Supplies graphics data for tiles in the set.
-        void Populate(
-            const std::vector<TilesetDescription>& tileset_descriptions,
-            GRAPHICS::GraphicsSystem& graphics_system);
 
         /// Sets the data in the set for the tile with the specified ID.
         /// @param[in]  tile_id - The unique ID of the tile.

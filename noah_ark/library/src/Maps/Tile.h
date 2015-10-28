@@ -39,6 +39,25 @@ namespace MAPS
         /// @return The height of the tile in pixels.
         float GetHeightInPixels() const;
 
+        // BOUNDARIES.
+        /// Gets the left X position of the tile's bounding box, in world coordinates.
+        /// @return The left X position of the tile.
+        float GetLeftXPosition() const;
+        /// Gets the right X position of the tile's bounding box, in world coordinates.
+        /// @return The right X position of the tile.
+        float GetRightXPosition() const;
+        /// Gets the top Y position of the tile's bounding box, in world coordinates.
+        /// @return The top Y position of the tile.
+        float GetTopYPosition() const;
+        /// Gets the bottomt Y position of the tile's bounding box, in world coordinates.
+        /// @return The bottom Y position of the tile.
+        float GetBottomYPosition() const;
+
+        // STATE CHECKING.
+        /// Determines if the tile is walkable.
+        /// @return True if the tile is walkable; false otherwise.
+        bool IsWalkable() const;
+
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         TileId Id;  ///< The numeric ID for the tile in a tile set.
         GRAPHICS::Sprite Sprite;   ///< The sprite used for rendering the tile.

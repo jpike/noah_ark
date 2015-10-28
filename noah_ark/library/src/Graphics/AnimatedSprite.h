@@ -69,7 +69,7 @@ namespace GRAPHICS
         // BOUNDING BOXES.
         /// Gets the bounding box of the sprite in the world.
         /// @return The bounding box of the sprite.
-        MATH::FloatRectangle GetWorldBoundingBox();
+        MATH::FloatRectangle GetWorldBoundingBox() const;
 
         // ANIMATION.
         /// Sets the animation sequence for the sprite with the given name.

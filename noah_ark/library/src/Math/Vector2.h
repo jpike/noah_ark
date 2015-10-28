@@ -48,6 +48,12 @@ namespace MATH
         /// @return     True if the vectors are unequal; false otherwise.
         bool operator!= (const Vector2& rhsVector) const;
 
+        /// Subtraction operator.
+        /// @param[in]  rhs - The vector on the right-hand side of the operator to
+        ///     subtract from this vector.
+        /// @return A new vector created by subtracting the provided vector from this vector.
+        Vector2 operator- (const Vector2& rhs) const;
+
         ComponentType X;    ///< The x component of the vector.  Public for easy access.
         ComponentType Y;    ///< The y component of the vector.  Public for easy access.
 
@@ -103,6 +109,15 @@ namespace MATH
     {
         bool vectorsEqual = ((*this) == rhsVector);
         return !vectorsEqual;
+    }
+
+    template <typename ComponentType>
+    Vector2<ComponentType> Vector2<ComponentType>::operator- (const Vector2<ComponentType>& rhs) const
+    {
+        MATH::Vector2f resulting_vector;
+        resulting_vector.X = this->X - rhs.X;
+        resulting_vector.Y = this->Y - rhs.Y;
+        return resulting_vector;
     }
 
     template <typename ComponentType>

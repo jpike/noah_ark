@@ -11,6 +11,9 @@ namespace OBJECTS
     class Noah
     {
     public:
+        // STATIC CONSTANTS.
+        /// How fast Noah can move in pixels per second.
+        static const float MOVE_SPEED_IN_PIXELS_PER_SECOND;
 
         // POSITIONING.
         /// Gets the world position of Noah.
@@ -19,6 +22,11 @@ namespace OBJECTS
         /// Sets the world position of Noah.
         /// @param[in]  world_position - The new world position to set.
         void SetWorldPosition(const MATH::Vector2f& world_position);
+
+        // BOUNDING BOX.
+        /// Gets the bounding box of Noah in the world.
+        /// @return The bounding box of Noah.
+        MATH::FloatRectangle GetWorldBoundingBox() const;
 
         // MOVEMENT.
         /// Moves Noah up based on the specified amount of time.

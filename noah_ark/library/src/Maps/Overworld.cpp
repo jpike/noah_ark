@@ -44,4 +44,20 @@ namespace MAPS
         std::shared_ptr<MAPS::TileMap> tile_map = GetTileMap(row_index, column_index);
         return tile_map;
     }
+
+    std::shared_ptr<MAPS::Tile> Overworld::GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const
+    {
+        // GET THE TILE MAP AT THE SPECIFIED WORLD POSITION.
+        std::shared_ptr<MAPS::TileMap> tile_map = GetTileMap(world_x_position, world_y_position);
+        bool tile_map_exists = (nullptr != tile_map);
+        if (!tile_map_exists)
+        {
+            // No tile map exists that could contain a tile at the specified world position.
+            return nullptr;
+        }
+
+        // GET THE TILE IN THE TILE MAP AT THE SPECIFIED WORLD POSITION.
+        std::shared_ptr<MAPS::Tile> tile = tile_map->GetTileAtWorldPosition(world_x_position, world_y_position);
+        return tile;
+    }
 }

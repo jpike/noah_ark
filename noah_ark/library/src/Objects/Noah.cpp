@@ -4,6 +4,9 @@
 
 namespace OBJECTS
 {
+    // The speed is chosen just based on what has felt right so far.
+    const float Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND = 64.0f;
+
     MATH::Vector2f Noah::GetWorldPosition() const
     {
         MATH::Vector2f world_position = Sprite.GetWorldPosition();
@@ -13,6 +16,12 @@ namespace OBJECTS
     void Noah::SetWorldPosition(const MATH::Vector2f& world_position)
     {
         Sprite.SetWorldPosition(world_position.X, world_position.Y);
+    }
+
+    MATH::FloatRectangle Noah::GetWorldBoundingBox() const
+    {
+        MATH::FloatRectangle bounding_box = Sprite.GetWorldBoundingBox();
+        return bounding_box;
     }
 
     void Noah::MoveUp(const float elapsed_time_in_seconds)
@@ -41,9 +50,7 @@ namespace OBJECTS
 
     float Noah::GetMoveDistance(const float elapsed_time_in_seconds) const
     {
-        // The speed is chosen just based on what has felt right so far.
-        const float MOVE_SPEED_IN_PIXELS_PER_SECOND = 64.0f;
-        float distance_to_move_in_pixels = MOVE_SPEED_IN_PIXELS_PER_SECOND * elapsed_time_in_seconds;
+        float distance_to_move_in_pixels = Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND * elapsed_time_in_seconds;
         return distance_to_move_in_pixels;
     }
 

@@ -86,7 +86,7 @@ namespace GRAPHICS
         Sprite->SetWorldPosition(x_position_in_pixels, y_position_in_pixels);
     }
 
-    MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox()
+    MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox() const
     {
         MATH::FloatRectangle boundingBox = Sprite->GetBoundingBox();
         return boundingBox;

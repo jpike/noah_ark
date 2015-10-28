@@ -89,6 +89,11 @@ namespace MATH
         /// @param[in]  center_y_position - The center Y position of the rectangle.
         void SetCenterPosition(const CoordinateType center_x_position, const CoordinateType center_y_position);
 
+        // MOVEMENT.
+        /// Moves the rectangle based on the specified vector.
+        /// @param[in]  movement - The vector to move the rectangle by.
+        void Move(const MATH::Vector2<CoordinateType>& movement);
+
         // DIMENSIONS.
         /// Gets the width of the rectangle.
         /// @return The width of the rectangle.
@@ -253,6 +258,13 @@ namespace MATH
             center_y_position,
             GetWidth(),
             GetHeight());
+    }
+
+    template <typename CoordinateType>
+    void Rectangle<CoordinateType>::Move(const MATH::Vector2<CoordinateType>& movement)
+    {
+        SfmlRectangle.left += movement.X;
+        SfmlRectangle.top += movement.Y;
     }
 
     template <typename CoordinateType>

@@ -12,10 +12,10 @@ namespace RESOURCES
     const std::string GROUND_TILESET_TEXTURE_ID = "res/images/ground_tile_set.png";
     const std::string NOAH_TEXTURE_ID = "res/images/noah_sprite1.png";
     const std::string TREE_TEXTURE_ID = "res/images/tree_sprite1.png";
-    const std::string AXE_SWING_RIGHT_ANIMATION_ID = "axe_swing_right";
-    const std::string AXE_SWING_LEFT_ANIMATION_ID = "axe_swing_left";
-    const std::string AXE_SWING_UP_ANIMATION_ID = "axe_swing_up";
-    const std::string AXE_SWING_DOWN_ANIMATION_ID = "axe_swing_down";
+    const std::string NOAH_WALK_FRONT_ANIMATION_ID = "noah_walk_front";
+    const std::string NOAH_WALK_BACK_ANIMATION_ID = "noah_walk_back";
+    const std::string NOAH_WALK_LEFT_ANIMATION_ID = "noah_walk_left";
+    const std::string NOAH_WALK_RIGHT_ANIMATION_ID = "noah_walk_right";
 
     Assets::Assets() :
         Textures(),
@@ -154,12 +154,75 @@ namespace RESOURCES
 
     std::shared_ptr<GRAPHICS::AnimationSequence> Assets::GetAnimationSequence(const std::string& animation_id)
     {
-        if (AXE_SWING_RIGHT_ANIMATION_ID == animation_id)
+        if (NOAH_WALK_FRONT_ANIMATION_ID == animation_id)
         {
-            /// @todo   Remove this soon...It is no longer needed
-            /// since we moved to using rotation for axe swings.
-            assert(false);
-            return nullptr;
+            // RETURN THE ANIMATION SEQUENCE.
+            const bool IS_LOOPING = true;
+            const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
+            const std::vector<MATH::IntRectangle> FRAMES =
+            {
+                MATH::IntRectangle::FromTopLeftAndDimensions(0, 0, 16, 16),
+                MATH::IntRectangle::FromTopLeftAndDimensions(16, 0, 16, 16),
+                MATH::IntRectangle::FromTopLeftAndDimensions(32, 0, 16, 16)
+            };
+            const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_FRONT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+                NOAH_WALK_FRONT_ANIMATION_ID,
+                IS_LOOPING,
+                TOTAL_DURATION,
+                FRAMES);
+            return NOAH_WALK_FRONT_ANIMATION;
+        }
+        else if (NOAH_WALK_BACK_ANIMATION_ID == animation_id)
+        {
+            // RETURN THE ANIMATION SEQUENCE.
+            const bool IS_LOOPING = true;
+            const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
+            const std::vector<MATH::IntRectangle> FRAMES = 
+            {
+                MATH::IntRectangle::FromTopLeftAndDimensions(0, 16, 16, 16),
+                MATH::IntRectangle::FromTopLeftAndDimensions(16, 16, 16, 16),
+                MATH::IntRectangle::FromTopLeftAndDimensions(32, 16, 16, 16)
+            };
+            const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_BACK_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+                NOAH_WALK_BACK_ANIMATION_ID,
+                IS_LOOPING,
+                TOTAL_DURATION,
+                FRAMES);
+            return NOAH_WALK_BACK_ANIMATION;
+        }
+        else if (NOAH_WALK_LEFT_ANIMATION_ID == animation_id)
+        {
+            // RETURN THE ANIMATION SEQUENCE.
+            const bool IS_LOOPING = true;
+            const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
+            const std::vector<MATH::IntRectangle> FRAMES =
+            {
+                MATH::IntRectangle::FromTopLeftAndDimensions(0, 32, 16, 16),
+                MATH::IntRectangle::FromTopLeftAndDimensions(16, 32, 16, 16)
+            };
+            const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_LEFT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+                NOAH_WALK_LEFT_ANIMATION_ID,
+                IS_LOOPING,
+                TOTAL_DURATION,
+                FRAMES);
+            return NOAH_WALK_LEFT_ANIMATION;
+        }
+        else if (NOAH_WALK_RIGHT_ANIMATION_ID == animation_id)
+        {
+            // RETURN THE ANIMATION SEQUENCE.
+            const bool IS_LOOPING = true;
+            const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
+            const std::vector<MATH::IntRectangle> FRAMES =
+            {
+                MATH::IntRectangle::FromTopLeftAndDimensions(0, 48, 16, 16),
+                MATH::IntRectangle::FromTopLeftAndDimensions(16, 48, 16, 16)
+            };
+            const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_RIGHT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+                NOAH_WALK_RIGHT_ANIMATION_ID,
+                IS_LOOPING,
+                TOTAL_DURATION,
+                FRAMES);
+            return NOAH_WALK_RIGHT_ANIMATION;
         }
         else
         {

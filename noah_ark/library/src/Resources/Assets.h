@@ -17,10 +17,10 @@ namespace RESOURCES
     extern const std::string GROUND_TILESET_TEXTURE_ID;
     extern const std::string NOAH_TEXTURE_ID;
     extern const std::string TREE_TEXTURE_ID;
-    extern const std::string AXE_SWING_RIGHT_ANIMATION_ID;
-    extern const std::string AXE_SWING_LEFT_ANIMATION_ID;
-    extern const std::string AXE_SWING_UP_ANIMATION_ID;
-    extern const std::string AXE_SWING_DOWN_ANIMATION_ID;
+    extern const std::string NOAH_WALK_FRONT_ANIMATION_ID;
+    extern const std::string NOAH_WALK_BACK_ANIMATION_ID;
+    extern const std::string NOAH_WALK_LEFT_ANIMATION_ID;
+    extern const std::string NOAH_WALK_RIGHT_ANIMATION_ID;
 
     /// Provides access to all assets needed for the game.
     /// When first requesting an asset, it will be loaded

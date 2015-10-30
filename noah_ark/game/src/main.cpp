@@ -200,6 +200,39 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
 
 void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::Assets& assets, OBJECTS::Noah& noah_player)
 {
+    // LOAD THE ANIMATION SEQUENCES.
+    std::shared_ptr<GRAPHICS::AnimationSequence> walk_front_animation = assets.GetAnimationSequence(RESOURCES::NOAH_WALK_FRONT_ANIMATION_ID);
+    bool walk_front_animation_loaded = (nullptr != walk_front_animation);
+    if (!walk_front_animation_loaded)
+    {
+        assert(walk_front_animation_loaded);
+        return;
+    }
+
+    std::shared_ptr<GRAPHICS::AnimationSequence> walk_back_animation = assets.GetAnimationSequence(RESOURCES::NOAH_WALK_BACK_ANIMATION_ID);
+    bool walk_back_animation_loaded = (nullptr != walk_back_animation);
+    if (!walk_back_animation_loaded)
+    {
+        assert(walk_back_animation_loaded);
+        return;
+    }
+
+    std::shared_ptr<GRAPHICS::AnimationSequence> walk_left_animation = assets.GetAnimationSequence(RESOURCES::NOAH_WALK_LEFT_ANIMATION_ID);
+    bool walk_left_animation_loaded = (nullptr != walk_left_animation);
+    if (!walk_left_animation_loaded)
+    {
+        assert(walk_left_animation_loaded);
+        return;
+    }
+
+    std::shared_ptr<GRAPHICS::AnimationSequence> walk_right_animation = assets.GetAnimationSequence(RESOURCES::NOAH_WALK_RIGHT_ANIMATION_ID);
+    bool walk_right_animation_loaded = (nullptr != walk_right_animation);
+    if (!walk_right_animation_loaded)
+    {
+        assert(walk_right_animation_loaded);
+        return;
+    }
+
     // GET THE TEXTURE FOR NOAH.
     std::shared_ptr<GRAPHICS::Texture> texture = assets.GetTexture(RESOURCES::NOAH_TEXTURE_ID);
     bool texture_loaded = (nullptr != texture);
@@ -217,6 +250,15 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
     sprite_resource->setOrigin(8.0f, 8.0f);
     std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>(sprite_resource);
     GRAPHICS::AnimatedSprite animated_sprite(sprite);
+
+    // SET ANIMATION SEQUENCES.
+    animated_sprite.AddAnimationSequence(RESOURCES::NOAH_WALK_FRONT_ANIMATION_ID, walk_front_animation);
+    animated_sprite.AddAnimationSequence(RESOURCES::NOAH_WALK_BACK_ANIMATION_ID, walk_back_animation);
+    animated_sprite.AddAnimationSequence(RESOURCES::NOAH_WALK_LEFT_ANIMATION_ID, walk_left_animation);
+    animated_sprite.AddAnimationSequence(RESOURCES::NOAH_WALK_RIGHT_ANIMATION_ID, walk_right_animation);
+
+    // Set the initial animation sequence to have the player facing forward (downward).
+    animated_sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_FRONT_ANIMATION_ID);
 
     // SET NOAH'S INITIAL POSITION.
     animated_sprite.SetWorldPosition(initial_world_position.X, initial_world_position.Y);
@@ -969,10 +1011,17 @@ int main(int argumentCount, char* arguments[])
                 assert(current_tile_map);
 
                 // MOVE NOAH IN RESPONSE TO USER INPUT.
+                bool noah_moved_this_frame = false;
                 const float PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS = 8.0f;
                 MATH::Vector2f old_noah_position = noah_player.GetWorldPosition();
                 if (input_controller.UpButtonPressed())
                 {
+                    noah_moved_this_frame = true;
+
+                    // PLAY THE WALKING UP ANIMATION.
+                    noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_BACK_ANIMATION_ID);
+                    noah_player.Sprite.Play();
+
                     //noah_player.MoveUp(elapsed_time_in_seconds);
                     MATH::Vector2f new_position = MoveWithCollisionDetection(
                         overworld,
@@ -1022,6 +1071,12 @@ int main(int argumentCount, char* arguments[])
                 }
                 if (input_controller.DownButtonPressed())
                 {
+                    noah_moved_this_frame = true;
+
+                    // PLAY THE WALKING DOWN ANIMATION.
+                    noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_FRONT_ANIMATION_ID);
+                    noah_player.Sprite.Play();
+
                     //noah_player.MoveDown(elapsed_time_in_seconds);
                     MATH::Vector2f new_position = MoveWithCollisionDetection(
                         overworld,
@@ -1071,6 +1126,12 @@ int main(int argumentCount, char* arguments[])
                 }
                 if (input_controller.LeftButtonPressed())
                 {
+                    noah_moved_this_frame = true;
+
+                    // PLAY THE WALKING UP ANIMATION.
+                    noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_LEFT_ANIMATION_ID);
+                    noah_player.Sprite.Play();
+
                     //noah_player.MoveLeft(elapsed_time_in_seconds);
                     MATH::Vector2f new_position = MoveWithCollisionDetection(
                         overworld,
@@ -1120,6 +1181,12 @@ int main(int argumentCount, char* arguments[])
                 }
                 if (input_controller.RightButtonPressed())
                 {
+                    noah_moved_this_frame = true;
+
+                    // PLAY THE WALKING UP ANIMATION.
+                    noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_RIGHT_ANIMATION_ID);
+                    noah_player.Sprite.Play();
+
                     //noah_player.MoveRight(elapsed_time_in_seconds);
                     MATH::Vector2f new_position = MoveWithCollisionDetection(
                         overworld,
@@ -1167,6 +1234,12 @@ int main(int argumentCount, char* arguments[])
                             noah_player.SetWorldPosition(noah_world_position);
                         }
                     }
+                }
+
+                // STOP NOAH'S ANIMATION FROM PLAYING IF THE PLAYER DIDN'T MOVE THIS FRAME.
+                if (!noah_moved_this_frame)
+                {
+                    noah_player.Sprite.ResetAnimation();
                 }
 
                 /// @todo   Camera.
@@ -1234,6 +1307,7 @@ int main(int argumentCount, char* arguments[])
                 }
                 
                 // RENDER THE PLAYER.
+                noah_player.Sprite.Update(elapsed_time_in_seconds);
                 Render(noah_player.Sprite, window);
 
                 window.display();

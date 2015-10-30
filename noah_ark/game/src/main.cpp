@@ -256,6 +256,49 @@ void Render(MAPS::TileMap& tile_map, sf::RenderTarget& render_target)
 }
 
 
+bool CollidesWithTree(const MAPS::Overworld& overworld, const MATH::FloatRectangle& rectangle, MATH::FloatRectangle& tree_rectangle)
+{
+    // CLEAR THE OUT PARAMETER.
+    tree_rectangle = MATH::FloatRectangle();
+
+    // GET THE TREES NEAR THE RECTANGLE.
+    MATH::Vector2f object_center_position = rectangle.GetCenterPosition();
+    std::shared_ptr<MAPS::TileMap> current_tile_map = overworld.GetTileMap(object_center_position.X, object_center_position.Y);
+    bool tile_map_exists = (nullptr != current_tile_map);
+    if (!tile_map_exists)
+    {
+        // No tile map exists with trees to collide with.
+        return false;
+    }
+
+    // CHECK IF ANY OF THE TREES COLLIDE WITH THE RECTANGLE.
+    for (auto tree = current_tile_map->Trees.cbegin(); current_tile_map->Trees.cend() != tree; ++tree)
+    {
+        // SHRINK THE TREE'S BOUNDING BOX SO THAT OBJECTS DON'T GET CAUGHT ON EDGES.
+        const float TREE_DIMENSION_SHRINK_AMOUNT = 2.0f;
+        MATH::FloatRectangle tree_bounds = tree->GetBoundingBox();
+        float new_tree_width = tree_bounds.GetWidth() - TREE_DIMENSION_SHRINK_AMOUNT;
+        float new_tree_height = tree_bounds.GetHeight() - TREE_DIMENSION_SHRINK_AMOUNT;
+        MATH::FloatRectangle new_tree_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
+            tree_bounds.GetCenterXPosition(),
+            tree_bounds.GetCenterYPosition(),
+            new_tree_width,
+            new_tree_height);
+
+        // CHECK IF A COLLISION OCCURS WITH THE CURRENT TREE.
+        bool collides_with_tree = rectangle.Intersects(new_tree_bounds);
+        if (collides_with_tree)
+        {
+            // RETURN THAT A COLLISION OCCURRED WITH THE CURRENT TREE.
+            tree_rectangle = new_tree_bounds;
+            return true;
+        }
+    }
+
+    // No trees were found to collide with the rectangle.
+    return false;
+}
+
 MATH::Vector2f MoveUpWithCollisionDetection(const MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
 {
     // INITIALIZE THE NEW POSITION FOR THE OBJECT.
@@ -312,6 +355,41 @@ MATH::Vector2f MoveUpWithCollisionDetection(const MAPS::Overworld& overworld, co
         {
             // At least one of the top tiles isn't walkable, so it is blocking any further upward movement.
             break;
+        }
+
+        // CHECK IF THE OBJECT COLLIDES WITH A TREE.
+        MATH::FloatRectangle tree_rectangle;
+        bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
+        if (collides_with_tree)
+        {
+            // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
+            // A collision could have occurred with a tree that isn't being moved toward,
+            // in which case movement should not be stopped.
+            // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
+            const float MIN_UP_MOVEMENT = -1.0f;
+            float old_collision_box_bottom = object_current_bounding_box.GetBottomYPosition();
+            float old_collision_box_top = object_current_bounding_box.GetTopYPosition();
+            float new_collision_box_top = old_collision_box_top + MIN_UP_MOVEMENT;
+            float tree_bottom = tree_rectangle.GetBottomYPosition();
+
+            // A minimum distance between the collision box's center and the tree's
+            // center is enforced so that moving objects don't get stuck on
+            // parts of trees not directly related to their current movement.
+            float min_object_tree_distance = tree_rectangle.GetWidth() / 2.0f;
+            float object_center_x = object_current_bounding_box.GetCenterXPosition();
+            float tree_center_x = tree_rectangle.GetCenterXPosition();
+            float object_to_tree_distance = fabs(object_center_x - tree_center_x);
+            bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
+
+            bool moving_up_collides_with_tree = (
+                collision_distance_met &&
+                (old_collision_box_bottom >= tree_bottom) &&
+                (new_collision_box_top <= tree_bottom));
+            if (moving_up_collides_with_tree)
+            {
+                // A tree is blocking further movement.
+                break;
+            }
         }
 
         // CHECK IF THE TOTAL MOVEMENT IS CONFINED TO THE CURRENT TILE.
@@ -415,6 +493,41 @@ MATH::Vector2f MoveDownWithCollisionDetection(const MAPS::Overworld& overworld, 
             break;
         }
 
+        // CHECK IF THE OBJECT COLLIDES WITH A TREE.
+        MATH::FloatRectangle tree_rectangle;
+        bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
+        if (collides_with_tree)
+        {
+            // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
+            // A collision could have occurred with a tree that isn't being moved toward,
+            // in which case movement should not be stopped.
+            // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
+            const float MIN_DOWN_MOVEMENT = 1.0f;
+            float old_collision_box_top = object_current_bounding_box.GetTopYPosition();
+            float old_collision_box_bottom = object_current_bounding_box.GetBottomYPosition();
+            float new_collision_box_bottom = old_collision_box_bottom + MIN_DOWN_MOVEMENT;
+            float tree_top = tree_rectangle.GetTopYPosition();
+
+            // A minimum distance between the collision box's center and the tree's
+            // center is enforced so that moving objects don't get stuck on
+            // parts of trees not directly related to their current movement.
+            float min_object_tree_distance = tree_rectangle.GetWidth() / 2.0f;
+            float object_center_x = object_current_bounding_box.GetCenterXPosition();
+            float tree_center_x = tree_rectangle.GetCenterXPosition();
+            float object_to_tree_distance = fabs(object_center_x - tree_center_x);
+            bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
+
+            bool moving_down_collides_with_tree = (
+                collision_distance_met &&
+                (old_collision_box_top <= tree_top) &&
+                (new_collision_box_bottom >= tree_top));
+            if (moving_down_collides_with_tree)
+            {
+                // A tree is blocking further movement.
+                break;
+            }
+        }
+
         // CHECK IF THE TOTAL MOVEMENT IS CONFINED TO THE CURRENT TILE.
         float bottom_tile_bottom_y_position = bottom_center_tile->GetBottomYPosition();
         float distance_from_bottom_of_collision_box_to_bottom_of_tile = fabs(bottom_tile_bottom_y_position - collision_box_bottom_y_position);
@@ -511,6 +624,41 @@ MATH::Vector2f MoveLeftWithCollisionDetection(const MAPS::Overworld& overworld, 
             break;
         }
 
+        // CHECK IF THE OBJECT COLLIDES WITH A TREE.
+        MATH::FloatRectangle tree_rectangle;
+        bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
+        if (collides_with_tree)
+        {
+            // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
+            // A collision could have occurred with a tree that isn't being moved toward,
+            // in which case movement should not be stopped.
+            // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
+            const float MIN_LEFT_MOVEMENT = -1.0f;
+            float old_collision_box_right = object_current_bounding_box.GetRightXPosition();
+            float old_collision_box_left = object_current_bounding_box.GetLeftXPosition();
+            float new_collision_box_left = old_collision_box_left + MIN_LEFT_MOVEMENT;
+            float tree_right = tree_rectangle.GetRightXPosition();
+
+            // A minimum distance between the collision box's center and the tree's
+            // center is enforced so that moving objects don't get stuck on
+            // parts of trees not directly related to their current movement.
+            float min_object_tree_distance = tree_rectangle.GetHeight() / 2.0f;
+            float object_center_y = object_current_bounding_box.GetCenterYPosition();
+            float tree_center_y = tree_rectangle.GetCenterYPosition();
+            float object_to_tree_distance = fabs(object_center_y - tree_center_y);
+            bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
+
+            bool moving_left_collides_with_tree = (
+                collision_distance_met &&
+                (old_collision_box_right >= tree_right) &&
+                (new_collision_box_left <= tree_right));
+            if (moving_left_collides_with_tree)
+            {
+                // A tree is blocking further movement.
+                break;
+            }
+        }
+
         // CHECK IF THE TOTAL MOVEMENT IS CONFINED TO THE CURRENT TILE.
         float left_tile_left_x_position = center_left_tile->GetLeftXPosition();
         float distance_from_left_of_collision_box_to_left_of_tile = fabs(collision_box_left_x_position - left_tile_left_x_position);
@@ -603,6 +751,41 @@ MATH::Vector2f MoveRightWithCollisionDetection(const MAPS::Overworld& overworld,
         {
             // At least one of the right tiles isn't walkable, so it is blocking any further rightward movement.
             break;
+        }
+
+        // CHECK IF THE OBJECT COLLIDES WITH A TREE.
+        MATH::FloatRectangle tree_rectangle;
+        bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
+        if (collides_with_tree)
+        {
+            // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
+            // A collision could have occurred with a tree that isn't being moved toward,
+            // in which case movement should not be stopped.
+            // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
+            const float MIN_RIGHT_MOVEMENT = 1.0f;
+            float old_collision_box_left = object_current_bounding_box.GetLeftXPosition();
+            float old_collision_box_right = object_current_bounding_box.GetRightXPosition();
+            float new_collision_box_right = old_collision_box_right + MIN_RIGHT_MOVEMENT;
+            float tree_left = tree_rectangle.GetLeftXPosition();
+
+            // A minimum distance between the collision box's center and the tree's
+            // center is enforced so that moving objects don't get stuck on
+            // parts of trees not directly related to their current movement.
+            float min_object_tree_distance = tree_rectangle.GetHeight() / 2.0f;
+            float object_center_y = object_current_bounding_box.GetCenterYPosition();
+            float tree_center_y = tree_rectangle.GetCenterYPosition();
+            float object_to_tree_distance = fabs(object_center_y - tree_center_y);
+            bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
+
+            bool moving_right_collides_with_tree = (
+                collision_distance_met &&
+                (old_collision_box_left <= tree_left) &&
+                (new_collision_box_right >= tree_left));
+            if (moving_right_collides_with_tree)
+            {
+                // A tree is blocking further movement.
+                break;
+            }
         }
 
         // CHECK IF THE TOTAL MOVEMENT IS CONFINED TO THE CURRENT TILE.

@@ -110,24 +110,12 @@ xcopy /Y /S "$(SolutionDir)noah_ark\resources\res\*" "$(TargetDir)res\"</Command
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\ResourcesTests\ResourceManagerTestConstants.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\CollisionTests\CollisionSystemTests.h" />
     <ClInclude Include="src\CoreTests\Array2DTests.h" />
     <ClInclude Include="src\GraphicsTests\AnimatedSpriteTests.h" />
     <ClInclude Include="src\GraphicsTests\AnimationSequenceTests.h" />
-    <ClInclude Include="src\GraphicsTests\CameraTests.h" />
-    <ClInclude Include="src\GraphicsTests\GraphicsSystemTests.h" />
-    <ClInclude Include="src\MapsTests\OverworldMapSpecificationTests.h" />
-    <ClInclude Include="src\MapsTests\SurroundingMapLoaderTests.h" />
-    <ClInclude Include="src\MapsTests\TiledMapJsonFileTests.h" />
-    <ClInclude Include="src\MapsTests\TileMapTests.h" />
     <ClInclude Include="src\MathTests\FloatRectangleTests.h" />
-    <ClInclude Include="src\ResourcesTests\ResourceManagerTestConstants.h" />
-    <ClInclude Include="src\ResourcesTests\ResourceManagerTests.h" />
-    <ClInclude Include="src\StatesTests\MockGameState.h" />
-    <ClInclude Include="src\StatesTests\StateManagerTests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

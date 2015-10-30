@@ -5,9 +5,7 @@
 /// be primitive and common data types.
 namespace CORE
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  Defines the different directions supported by the game.
-    ///////////////////////////////////////////////////////////
+    /// Defines the different directions supported by the game.
     enum class Direction
     {
         INVALID, ///< An invalid direction.

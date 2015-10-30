@@ -12,10 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\NoahArkGame.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\NoahArkGame.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0021B634-865C-4E17-9D99-6B13900EDA2E}</ProjectGuid>

@@ -9,57 +9,24 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\StatesTests">
-      <UniqueIdentifier>{33df51f5-532a-4db7-b2fe-d4d3cc0e5bc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\MapsTests">
-      <UniqueIdentifier>{019a74d1-b79e-4ad7-95dd-4b5ae35f0d08}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\MathTests">
       <UniqueIdentifier>{ec556b3b-8a28-4371-81e2-2e5142dc7162}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ResourcesTests">
-      <UniqueIdentifier>{d7949f33-46d9-4466-a7fd-7b8417751a74}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\GraphicsTests">
       <UniqueIdentifier>{5d9a28d3-d5d9-429e-b7d6-179218bff8e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ResourcesTests">
-      <UniqueIdentifier>{73b4922b-0cd5-4000-aaa5-6d605142ac1e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\CoreTests">
       <UniqueIdentifier>{9c00cad2-0fa5-48ce-abd7-1357a3bd26e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\CollisionTests">
-      <UniqueIdentifier>{16ffa336-2c27-4297-bc47-52529e9928e1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ResourcesTests\ResourceManagerTestConstants.cpp">
-      <Filter>Source Files\ResourcesTests</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\StatesTests\StateManagerTests.h">
-      <Filter>Header Files\StatesTests</Filter>
-    </ClInclude>
-    <ClInclude Include="src\StatesTests\MockGameState.h">
-      <Filter>Header Files\StatesTests</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MapsTests\OverworldMapSpecificationTests.h">
-      <Filter>Header Files\MapsTests</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MapsTests\SurroundingMapLoaderTests.h">
-      <Filter>Header Files\MapsTests</Filter>
-    </ClInclude>
     <ClInclude Include="src\MathTests\FloatRectangleTests.h">
       <Filter>Header Files\MathTests</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ResourcesTests\ResourceManagerTests.h">
-      <Filter>Header Files\ResourcesTests</Filter>
     </ClInclude>
     <ClInclude Include="src\GraphicsTests\AnimatedSpriteTests.h">
       <Filter>Header Files\GraphicsTests</Filter>
@@ -67,26 +34,8 @@
     <ClInclude Include="src\GraphicsTests\AnimationSequenceTests.h">
       <Filter>Header Files\GraphicsTests</Filter>
     </ClInclude>
-    <ClInclude Include="src\GraphicsTests\CameraTests.h">
-      <Filter>Header Files\GraphicsTests</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GraphicsTests\GraphicsSystemTests.h">
-      <Filter>Header Files\GraphicsTests</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ResourcesTests\ResourceManagerTestConstants.h">
-      <Filter>Header Files\ResourcesTests</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MapsTests\TiledMapJsonFileTests.h">
-      <Filter>Header Files\MapsTests</Filter>
-    </ClInclude>
     <ClInclude Include="src\CoreTests\Array2DTests.h">
       <Filter>Header Files\CoreTests</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MapsTests\TileMapTests.h">
-      <Filter>Header Files\MapsTests</Filter>
-    </ClInclude>
-    <ClInclude Include="src\CollisionTests\CollisionSystemTests.h">
-      <Filter>Header Files\CollisionTests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

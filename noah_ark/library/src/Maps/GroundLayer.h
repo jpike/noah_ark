@@ -3,7 +3,6 @@
 #include <memory>
 #include <vector>
 #include "Core/Array2D.h"
-#include "Graphics/IGraphicsComponent.h"
 #include "Maps/Tile.h"
 #include "Math/Vector2.h"
 

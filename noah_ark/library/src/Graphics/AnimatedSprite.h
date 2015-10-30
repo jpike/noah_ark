@@ -5,9 +5,7 @@
 #include <unordered_map>
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Sprite.h"
-#include "Graphics/IGraphicsComponent.h"
 #include "Math/Rectangle.h"
-#include "Math/ITransformable.h"
 #include "Math/Vector2.h"
 
 namespace GRAPHICS
@@ -18,7 +16,7 @@ namespace GRAPHICS
     /// over time according to frames in animation sequences.
     /// Multiple animation sequences, each identified by
     /// unique names, may be added to the sprite.
-    class AnimatedSprite : public IGraphicsComponent, public MATH::ITransformable
+    class AnimatedSprite
     {
     public:
         // CONSTRUCTION/DESTRUCTION.

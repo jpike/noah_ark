@@ -9,12 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\States">
-      <UniqueIdentifier>{ad8c0196-cb6d-443b-90da-f9481339e4e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\States">
-      <UniqueIdentifier>{dcef9554-fcf2-4097-9dac-2cd965c56fa7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Maps">
       <UniqueIdentifier>{2a911036-7086-4164-b04a-41e9b622b581}</UniqueIdentifier>
     </Filter>
@@ -42,12 +36,6 @@
     <Filter Include="Source Files\Input">
       <UniqueIdentifier>{b4ad34dc-8b87-451a-bd4f-2ab16c50043e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Processes">
-      <UniqueIdentifier>{5de459dc-fcab-49f3-b360-2bb668425dbc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Processes">
-      <UniqueIdentifier>{ec215c39-e600-47b9-99fc-fa2a5e62f128}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Core">
       <UniqueIdentifier>{e76c2b04-1771-48f1-9384-a661f3d2445c}</UniqueIdentifier>
     </Filter>
@@ -71,15 +59,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\States\OverworldState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="src\States\IGameState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="src\States\StateManager.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
     <ClInclude Include="src\Math\Vector2.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
@@ -89,35 +68,14 @@
     <ClInclude Include="src\Maps\Tile.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\GraphicsSystem.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\Sprite.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\IGraphicsComponent.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics\Texture.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\OverworldMapSpecification.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Input\Keyboard.h">
       <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Maps\TileMapLoader.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\Camera.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Processes\ScrollProcess.h">
-      <Filter>Header Files\Processes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Maps\SurroundingTileMapLoader.h">
-      <Filter>Header Files\Maps</Filter>
     </ClInclude>
     <ClInclude Include="src\Objects\Noah.h">
       <Filter>Header Files\Objects</Filter>
@@ -128,23 +86,11 @@
     <ClInclude Include="src\Graphics\AnimationSequence.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\ScrollableOverworldMap.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Input\KeyboardInputController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Direction.h">
       <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Math\ITransformable.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Resources\ResourceManager.h">
-      <Filter>Header Files\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Maps\TiledMapJsonFile.h">
-      <Filter>Header Files\Maps</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Array2D.h">
       <Filter>Header Files\Core</Filter>
@@ -158,22 +104,10 @@
     <ClInclude Include="src\Maps\TilesetDescription.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\ITileMapData.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Maps\Tileset.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\TileMapLayers.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Maps\ITileMapLayer.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Objects\Tree.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Objects\ObjectType.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="src\Events\AxeSwingEvent.h">
@@ -191,15 +125,6 @@
     <ClInclude Include="src\Maps\GroundLayer.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
-    <ClInclude Include="src\Collision\BoxCollider.h">
-      <Filter>Header Files\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Collision\CollisionSystem.h">
-      <Filter>Header Files\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Collision\ICollisionComponent.h">
-      <Filter>Header Files\Collision</Filter>
-    </ClInclude>
     <ClInclude Include="src\Collision\Movement.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
@@ -214,19 +139,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\States\OverworldState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="src\States\StateManager.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
     <ClCompile Include="src\Maps\Tile.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\Sprite.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\GraphicsSystem.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\TileMap.cpp">
@@ -235,23 +151,8 @@
     <ClCompile Include="src\Graphics\Texture.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Maps\OverworldMapSpecification.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
     <ClCompile Include="src\Input\Keyboard.cpp">
       <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\TileMapLoader.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\Camera.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Processes\ScrollProcess.cpp">
-      <Filter>Source Files\Processes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\SurroundingTileMapLoader.cpp">
-      <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\AnimationSequence.cpp">
       <Filter>Source Files\Graphics</Filter>
@@ -262,17 +163,8 @@
     <ClCompile Include="src\Objects\Noah.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\Maps\ScrollableOverworldMap.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
     <ClCompile Include="src\Input\KeyboardInputController.cpp">
       <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Resources\ResourceManager.cpp">
-      <Filter>Source Files\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\TiledMapJsonFile.cpp">
-      <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\TileMapObjectDescription.cpp">
       <Filter>Source Files\Maps</Filter>
@@ -283,16 +175,10 @@
     <ClCompile Include="src\Maps\TilesetDescription.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
-    <ClCompile Include="src\Maps\TileMapLayers.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
     <ClCompile Include="src\Maps\Tileset.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Objects\Tree.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Objects\ObjectType.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="src\Events\AxeSwingEvent.cpp">
@@ -306,12 +192,6 @@
     </ClCompile>
     <ClCompile Include="src\Maps\GroundLayer.cpp">
       <Filter>Source Files\Maps</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Collision\BoxCollider.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Collision\CollisionSystem.cpp">
-      <Filter>Source Files\Collision</Filter>
     </ClCompile>
     <ClCompile Include="src\Collision\Movement.cpp">
       <Filter>Source Files\Collision</Filter>

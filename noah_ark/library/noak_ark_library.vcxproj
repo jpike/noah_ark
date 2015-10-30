@@ -11,18 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Collision\BoxCollider.h" />
-    <ClInclude Include="src\Collision\CollisionSystem.h" />
-    <ClInclude Include="src\Collision\ICollisionComponent.h" />
     <ClInclude Include="src\Collision\Movement.h" />
     <ClInclude Include="src\Core\Array2D.h" />
     <ClInclude Include="src\Core\Direction.h" />
     <ClInclude Include="src\Events\AxeSwingEvent.h" />
     <ClInclude Include="src\Graphics\AnimatedSprite.h" />
     <ClInclude Include="src\Graphics\AnimationSequence.h" />
-    <ClInclude Include="src\Graphics\Camera.h" />
-    <ClInclude Include="src\Graphics\GraphicsSystem.h" />
-    <ClInclude Include="src\Graphics\IGraphicsComponent.h" />
     <ClInclude Include="src\Graphics\Sprite.h" />
     <ClInclude Include="src\Graphics\Texture.h" />
     <ClInclude Include="src\Input\Keyboard.h" />
@@ -30,44 +24,25 @@
     <ClInclude Include="src\Maps\GroundLayer.h" />
     <ClInclude Include="src\Maps\Overworld.h" />
     <ClInclude Include="src\Maps\OverworldMapFile.h" />
-    <ClInclude Include="src\Maps\OverworldMapSpecification.h" />
-    <ClInclude Include="src\Maps\ScrollableOverworldMap.h" />
-    <ClInclude Include="src\Maps\SurroundingTileMapLoader.h" />
     <ClInclude Include="src\Maps\Tile.h" />
-    <ClInclude Include="src\Maps\TiledMapJsonFile.h" />
     <ClInclude Include="src\Maps\TileMap.h" />
-    <ClInclude Include="src\Maps\ITileMapData.h" />
-    <ClInclude Include="src\Maps\ITileMapLayer.h" />
     <ClInclude Include="src\Maps\TileMapFile.h" />
     <ClInclude Include="src\Maps\TileMapLayerDescription.h" />
-    <ClInclude Include="src\Maps\TileMapLayers.h" />
-    <ClInclude Include="src\Maps\TileMapLoader.h" />
     <ClInclude Include="src\Maps\TileMapObjectDescription.h" />
     <ClInclude Include="src\Maps\Tileset.h" />
     <ClInclude Include="src\Maps\TilesetDescription.h" />
     <ClInclude Include="src\Math\Rectangle.h" />
-    <ClInclude Include="src\Math\ITransformable.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Objects\Axe.h" />
     <ClInclude Include="src\Objects\Noah.h" />
-    <ClInclude Include="src\Objects\ObjectType.h" />
     <ClInclude Include="src\Objects\Tree.h" />
-    <ClInclude Include="src\Processes\ScrollProcess.h" />
     <ClInclude Include="src\Resources\Assets.h" />
-    <ClInclude Include="src\Resources\ResourceManager.h" />
-    <ClInclude Include="src\States\IGameState.h" />
-    <ClInclude Include="src\States\OverworldState.h" />
-    <ClInclude Include="src\States\StateManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Collision\BoxCollider.cpp" />
-    <ClCompile Include="src\Collision\CollisionSystem.cpp" />
     <ClCompile Include="src\Collision\Movement.cpp" />
     <ClCompile Include="src\Events\AxeSwingEvent.cpp" />
     <ClCompile Include="src\Graphics\AnimatedSprite.cpp" />
     <ClCompile Include="src\Graphics\AnimationSequence.cpp" />
-    <ClCompile Include="src\Graphics\Camera.cpp" />
-    <ClCompile Include="src\Graphics\GraphicsSystem.cpp" />
     <ClCompile Include="src\Graphics\Sprite.cpp" />
     <ClCompile Include="src\Graphics\Texture.cpp" />
     <ClCompile Include="src\Input\Keyboard.cpp" />
@@ -75,28 +50,17 @@
     <ClCompile Include="src\Maps\GroundLayer.cpp" />
     <ClCompile Include="src\Maps\Overworld.cpp" />
     <ClCompile Include="src\Maps\OverworldMapFile.cpp" />
-    <ClCompile Include="src\Maps\OverworldMapSpecification.cpp" />
-    <ClCompile Include="src\Maps\ScrollableOverworldMap.cpp" />
-    <ClCompile Include="src\Maps\SurroundingTileMapLoader.cpp" />
     <ClCompile Include="src\Maps\Tile.cpp" />
-    <ClCompile Include="src\Maps\TiledMapJsonFile.cpp" />
     <ClCompile Include="src\Maps\TileMap.cpp" />
     <ClCompile Include="src\Maps\TileMapFile.cpp" />
     <ClCompile Include="src\Maps\TileMapLayerDescription.cpp" />
-    <ClCompile Include="src\Maps\TileMapLayers.cpp" />
-    <ClCompile Include="src\Maps\TileMapLoader.cpp" />
     <ClCompile Include="src\Maps\TileMapObjectDescription.cpp" />
     <ClCompile Include="src\Maps\Tileset.cpp" />
     <ClCompile Include="src\Maps\TilesetDescription.cpp" />
     <ClCompile Include="src\Objects\Axe.cpp" />
     <ClCompile Include="src\Objects\Noah.cpp" />
-    <ClCompile Include="src\Objects\ObjectType.cpp" />
     <ClCompile Include="src\Objects\Tree.cpp" />
-    <ClCompile Include="src\Processes\ScrollProcess.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
-    <ClCompile Include="src\Resources\ResourceManager.cpp" />
-    <ClCompile Include="src\States\OverworldState.cpp" />
-    <ClCompile Include="src\States\StateManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D615E35-8F41-44B6-BE1B-FED957017972}</ProjectGuid>

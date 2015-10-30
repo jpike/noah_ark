@@ -1,7 +1,10 @@
 #pragma once
 
+#include "Core/Direction.h"
+#include "Events/AxeSwingEvent.h"
 #include "Graphics/AnimatedSprite.h"
 #include "Math/Vector2.h"
+#include "Objects/Axe.h"
 
 /// Holds codes for specific objects in the game.
 namespace OBJECTS
@@ -42,9 +45,19 @@ namespace OBJECTS
         /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to move Noah.
         void MoveRight(const float elapsed_time_in_seconds);
 
+        // AXE SWINGING.
+        /// Causes Noah to begin swinging his axe, if he has one and isn't already swinging it.
+        /// @return The event describing the axe swing, if an axe swing is started.
+        std::shared_ptr<EVENTS::AxeSwingEvent> SwingAxe() const;
+
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
-        ///< The sprite used for rendering Noah.
+        /// The direction Noah is currently facing.
+        CORE::Direction FacingDirection = CORE::Direction::INVALID;
+        /// The sprite used for rendering Noah.
         GRAPHICS::AnimatedSprite Sprite = GRAPHICS::AnimatedSprite();
+        /// The axe that can be swung by Noah.
+        /// @todo   Don't initialize to null?
+        std::shared_ptr<OBJECTS::Axe> Axe = nullptr;
 
     private:
         // MOVEMENT.

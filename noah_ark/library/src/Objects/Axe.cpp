@@ -71,7 +71,7 @@ namespace OBJECTS
         if (!sprite_exists)
         {
             // REPORT THE UNEXPECTED ERROR.
-            throw std::invalid_argument("Null sprite cannot be provided to axe constructor.");
+            /// @todo Remove - throw std::invalid_argument("Null sprite cannot be provided to axe constructor.");
         }
     }
 

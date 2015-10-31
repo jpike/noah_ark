@@ -23,16 +23,16 @@ namespace TEST_ANIMATION_SEQUENCE
 
         // VERIFY THAT THE FIELDS ARE PROPERLY SET.
         // Verify the animation name.
-        REQUIRE( TEST_ANIMATION_SEQUENCE_NAME == animationSequence.GetName() );
+        REQUIRE( TEST_ANIMATION_SEQUENCE_NAME == animationSequence.AnimationName );
 
         // Verify the looping status.
-        REQUIRE( IS_LOOPING == animationSequence.IsLooping() );
+        REQUIRE( IS_LOOPING == animationSequence.Loops );
 
         // Verify the duration.
-        REQUIRE( TEST_DURATION == animationSequence.GetDuration() );
+        REQUIRE( TEST_DURATION == animationSequence.TotalDuration );
 
         // Verify the frames.
-        REQUIRE( TEST_FRAMES == animationSequence.GetFrames() );
+        REQUIRE( TEST_FRAMES == animationSequence.Frames );
     }
 
     TEST_CASE( "Constructor.  Not looping.", "[AnimationSequence][Constructor][NotLooping]" )
@@ -53,15 +53,15 @@ namespace TEST_ANIMATION_SEQUENCE
 
         // VERIFY THAT THE FIELDS ARE PROPERLY SET.
         // Verify the animation name.
-        REQUIRE( TEST_ANIMATION_SEQUENCE_NAME == animationSequence.GetName() );
+        REQUIRE( TEST_ANIMATION_SEQUENCE_NAME == animationSequence.AnimationName );
 
         // Verify the looping status.
-        REQUIRE( IS_NOT_LOOPING == animationSequence.IsLooping() );
+        REQUIRE( IS_NOT_LOOPING == animationSequence.Loops );
 
         // Verify the duration.
-        REQUIRE( TEST_DURATION == animationSequence.GetDuration() );
+        REQUIRE( TEST_DURATION == animationSequence.TotalDuration );
 
         // Verify the frames.
-        REQUIRE( TEST_FRAMES == animationSequence.GetFrames() );
+        REQUIRE( TEST_FRAMES == animationSequence.Frames );
     }
 }

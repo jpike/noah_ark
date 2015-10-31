@@ -72,7 +72,8 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
                 row,
                 column,
                 map_center_world_position,
-                map_dimensions_in_tiles);
+                map_dimensions_in_tiles,
+                overworld_map_file.TileDimensionInPixels);
 
             // POPULATE THE TILE MAP FROM THE CURRENT FILE'S LAYERS.
             for (const auto& layer_description : tile_map_file->Layers)

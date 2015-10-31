@@ -6,10 +6,11 @@ namespace MAPS
         const unsigned int overworld_row_index,
         const unsigned int overworld_column_index,
         const MATH::Vector2f& center_world_position,
-        const MATH::Vector2ui& dimensions_in_tiles) :
+        const MATH::Vector2ui& dimensions_in_tiles,
+        const unsigned int tile_dimension_in_pixels) :
     OverworldRowIndex(overworld_row_index),
     OverworldColumnIndex(overworld_column_index),
-    Ground(center_world_position, dimensions_in_tiles),
+    Ground(center_world_position, dimensions_in_tiles, tile_dimension_in_pixels),
     Trees()
     {}
 
@@ -29,20 +30,20 @@ namespace MAPS
 
     MATH::FloatRectangle TileMap::GetWorldBoundingBox() const
     {
+        // GET THE CENTER OF THE TILE MAP.
         MATH::Vector2f center_world_position = GetCenterWorldPosition();
 
-        /// @todo   This probably shouldn't be hardcoded...Perhaps include in overworld map file and pass in during construction.
-        const float TILE_DIMENSION_IN_PIXELS = 16.0f;
+        // GET THE FULL DIMENSIONS OF THE TILE MAP.
         MATH::Vector2ui dimensions_in_tiles = GetDimensionsInTiles();
-        MATH::Vector2f dimensions_in_pixels;
-        dimensions_in_pixels.X = static_cast<float>(dimensions_in_tiles.X) * TILE_DIMENSION_IN_PIXELS;
-        dimensions_in_pixels.Y = static_cast<float>(dimensions_in_tiles.Y) * TILE_DIMENSION_IN_PIXELS;
+        float width_in_pixels = static_cast<float>(dimensions_in_tiles.X * Ground.TileDimensionInPixels);
+        float height_in_pixels = static_cast<float>(dimensions_in_tiles.Y * Ground.TileDimensionInPixels);
 
+        // FORM THE WORLD BOUNDING BOX.
         MATH::FloatRectangle world_bounding_box = MATH::FloatRectangle::FromCenterAndDimensions(
             center_world_position.X,
             center_world_position.Y,
-            dimensions_in_pixels.X,
-            dimensions_in_pixels.Y);
+            width_in_pixels,
+            height_in_pixels);
         return world_bounding_box;
     }
 

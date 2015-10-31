@@ -22,11 +22,14 @@ namespace MAPS
         /// @param[in]  center_world_position - The world position of the center
         ///     of the tile map.
         /// @param[in]  dimensions_in_tiles - The dimensions of the map in tiles.
+        /// @param[in]  tile_dimension_in_pixels - The dimensions (both width and height)
+        ///     of an individual tile in the map (in units of pixels).
         explicit TileMap(
             const unsigned int overworld_row_index = 0,
             const unsigned int overworld_column_index = 0,
             const MATH::Vector2f& center_world_position = MATH::Vector2f(),
-            const MATH::Vector2ui& dimensions_in_tiles = MATH::Vector2ui());
+            const MATH::Vector2ui& dimensions_in_tiles = MATH::Vector2ui(),
+            const unsigned int tile_dimension_in_pixels = 0);
 
         // POSITIONING.
         /// Gets the center world position of the tile map.

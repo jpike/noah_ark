@@ -17,9 +17,12 @@ namespace MAPS
         /// @param[in]  center_world_position - The world position of the center
         ///     of the ground layer.
         /// @param[in]  dimensions_in_tiles - The dimensions of the layer in tiles.
+        /// @param[in]  tile_dimension_in_pixels - The dimensions (both width and height)
+        ///     of an individual tile in the map (in units of pixels).
         explicit GroundLayer(
             const MATH::Vector2f& center_world_position,
-            const MATH::Vector2ui& dimensions_in_tiles);
+            const MATH::Vector2ui& dimensions_in_tiles,
+            const unsigned int tile_dimension_in_pixels);
 
         /// Gets the tile that includes the specified world coordinates.
         /// @param[in]  world_x_position - The world x position of the tile to retrieve.
@@ -41,6 +44,8 @@ namespace MAPS
             const std::shared_ptr<MAPS::Tile>& tile);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The dimension (both width and height) of an individual tile in the map (in units of pixels).
+        unsigned int TileDimensionInPixels;
         /// The world position of the center of the layer.
         MATH::Vector2f CenterWorldPosition;
         /// The tiles in this layer.  Stored as offsets from top-left corner,

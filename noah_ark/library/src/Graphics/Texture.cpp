@@ -1,3 +1,4 @@
+#include <cassert>
 #include "Graphics/Texture.h"
 
 namespace GRAPHICS
@@ -28,64 +29,18 @@ namespace GRAPHICS
         image.createMaskFromColor(TRANSPARENT_COLOR, MAKE_COMPLETELY_TRANSPARENT);
 
         // CREATE THE TEXTURE FROM THE IMAGE.
-        std::shared_ptr<sf::Texture> texture_resource = std::make_shared<sf::Texture>();
-        bool texture_loaded_from_image = texture_resource->loadFromImage(image);
-        if (!texture_loaded_from_image)
-        {
-            // Continue processing so that the calling code can continue to execute.
-            // It will just have an "empty" texture tohave to deal with.
-        }
-
-        // WRAP THE SFML TEXTURE.
-        std::shared_ptr<GRAPHICS::Texture> texture = std::make_shared<GRAPHICS::Texture>(texture_resource);
+        std::shared_ptr<GRAPHICS::Texture> texture = std::make_shared<GRAPHICS::Texture>();
+        bool texture_loaded_from_image = texture->TextureResource.loadFromImage(image);
+        // The return value is ignored in non-debug builds so that the code can continue
+        // to exeute.  It will just have an "empty" texture to have to deal with.
+        assert(texture_loaded_from_image);
         return texture;
-    }
-
-    Texture::Texture(const std::shared_ptr<sf::Texture>& texture_resource) :
-        TextureResource(texture_resource)
-    {
-        // Nothing else to do.
-    }
-
-    Texture::Texture(const Texture& other) :
-        TextureResource()
-    {
-        Copy(other);
-    }
-
-    Texture::~Texture()
-    {
-        // Nothing else to do.
-    }
-
-    Texture& Texture::operator= (const Texture& rhs)
-    {
-        // CHECK FOR SELF-ASSIGNMENT.
-        bool self_assignment = (this == &rhs);
-        if (!self_assignment)
-        {
-            // Copy the values of the right-hand side texture into this texture.
-            Copy(rhs);
-        }
-
-        // RETURN THIS OBJECT.
-        return (*this);
     }
 
     MATH::Vector2ui Texture::GetSize() const
     {
-        sf::Vector2u texture_resource_size = TextureResource->getSize();
+        sf::Vector2u texture_resource_size = TextureResource.getSize();
         MATH::Vector2ui texture_size(texture_resource_size.x, texture_resource_size.y);
         return texture_size;
-    }
-
-    const std::shared_ptr<sf::Texture> Texture::GetTextureResource() const
-    {
-        return TextureResource;
-    }
-
-    void Texture::Copy(const Texture& texture_to_copy)
-    {
-        this->TextureResource = texture_to_copy.TextureResource;
     }
 }

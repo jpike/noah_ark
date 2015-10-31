@@ -16,38 +16,10 @@ namespace GRAPHICS
     ElapsedTimeForCurrentFrame(sf::Time::Zero)
     {}
 
-    AnimationSequence::~AnimationSequence()
-    {}
-
-    std::string AnimationSequence::GetName() const
-    {
-        return AnimationName;
-    }
-
-    bool AnimationSequence::IsLooping() const
-    {
-        return Loops;
-    }
-
-    sf::Time AnimationSequence::GetDuration() const
-    {
-        return TotalDuration;
-    }
-
     unsigned int AnimationSequence::GetFrameCount() const
     {
         unsigned int frame_count = Frames.size();
         return frame_count;
-    }
-
-    unsigned int AnimationSequence::GetCurrentFrameIndex() const
-    {
-        return CurrentFrameIndex;
-    }
-
-    std::vector<MATH::IntRectangle> AnimationSequence::GetFrames() const
-    {
-        return Frames;
     }
 
     MATH::IntRectangle AnimationSequence::GetFrame(const unsigned int frame_index) const

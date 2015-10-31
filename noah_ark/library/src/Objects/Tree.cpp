@@ -8,6 +8,6 @@ namespace OBJECTS
 
     MATH::FloatRectangle Tree::GetWorldBoundingBox() const
     {
-        return Sprite.GetBoundingBox();
+        return Sprite.GetWorldBoundingBox();
     }
 }

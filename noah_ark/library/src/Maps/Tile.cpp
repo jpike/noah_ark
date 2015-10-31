@@ -23,37 +23,37 @@ namespace MAPS
 
     float Tile::GetWidthInPixels() const
     {
-        MATH::FloatRectangle tile_bounding_box = Sprite.GetBoundingBox();
+        MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetWidth();
     }
 
     float Tile::GetHeightInPixels() const
     {
-        MATH::FloatRectangle tile_bounding_box = Sprite.GetBoundingBox();
+        MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetHeight();
     }
 
     float Tile::GetLeftXPosition() const
     {
-        MATH::FloatRectangle tile_bounding_box = Sprite.GetBoundingBox();
+        MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetLeftXPosition();
     }
 
     float Tile::GetRightXPosition() const
     {
-        MATH::FloatRectangle tile_bounding_box = Sprite.GetBoundingBox();
+        MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetRightXPosition();
     }
 
     float Tile::GetTopYPosition() const
     {
-        MATH::FloatRectangle tile_bounding_box = Sprite.GetBoundingBox();
+        MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetTopYPosition();
     }
 
     float Tile::GetBottomYPosition() const
     {
-        MATH::FloatRectangle tile_bounding_box = Sprite.GetBoundingBox();
+        MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetBottomYPosition();
     }
 

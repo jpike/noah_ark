@@ -169,18 +169,18 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
                                 }
 
                                 // CREATE THE TREE'S SPRITE.
-                                std::shared_ptr<sf::Sprite> tree_sprite_resource = std::make_shared<sf::Sprite>(
-                                    *tree_texture->GetTextureResource(),
+                                sf::Sprite tree_sprite_resource(
+                                    tree_texture->TextureResource,
                                     tree_texture_sub_rectangle);
 
                                 // The center of the sprite should be the center of its visible portion of the texture.
                                 float tree_local_center_x = static_cast<float>(tree_texture_sub_rectangle.width) / 2.0f;
                                 float tree_local_center_y = static_cast<float>(tree_texture_sub_rectangle.height) / 2.0f;
-                                tree_sprite_resource->setOrigin(tree_local_center_x, tree_local_center_y);
+                                tree_sprite_resource.setOrigin(tree_local_center_x, tree_local_center_y);
 
                                 float tree_world_x_position = static_cast<float>(object_description.TopLeftPositionInPixels.X) + tree_local_center_x;
                                 float tree_world_y_position = static_cast<float>(object_description.TopLeftPositionInPixels.Y) + tree_local_center_y;
-                                tree_sprite_resource->setPosition(tree_world_x_position, tree_world_y_position);
+                                tree_sprite_resource.setPosition(tree_world_x_position, tree_world_y_position);
 
                                 GRAPHICS::Sprite tree_sprite(tree_sprite_resource);
 
@@ -248,10 +248,10 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
     // CREATE THE SPRITE FOR NOAH.
     /// @todo   Better way to determine initial subrect.
     const sf::IntRect TEXTURE_SUB_RECT(0, 0, 16, 16);
-    std::shared_ptr<sf::Sprite> sprite_resource = std::make_shared<sf::Sprite>(*texture->GetTextureResource(), TEXTURE_SUB_RECT);
+    sf::Sprite sprite_resource(texture->TextureResource, TEXTURE_SUB_RECT);
     /// @todo better way to set center.
-    sprite_resource->setOrigin(8.0f, 8.0f);
-    std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>(sprite_resource);
+    sprite_resource.setOrigin(8.0f, 8.0f);
+    GRAPHICS::Sprite sprite(sprite_resource);
     GRAPHICS::AnimatedSprite animated_sprite(sprite);
 
     // SET ANIMATION SEQUENCES.

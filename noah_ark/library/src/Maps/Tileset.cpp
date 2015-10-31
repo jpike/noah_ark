@@ -41,8 +41,8 @@ namespace MAPS
             id_with_sub_rectangle->second.GetTopYPosition(),
             id_with_sub_rectangle->second.GetWidth(),
             id_with_sub_rectangle->second.GetHeight());
-        std::shared_ptr<sf::Sprite> sprite_resource = std::make_shared<sf::Sprite>(
-            *id_with_texture->second->GetTextureResource(),
+        sf::Sprite sprite_resource(
+            id_with_texture->second->TextureResource,
             texture_sub_rectangle);
         GRAPHICS::Sprite sprite(sprite_resource);
 

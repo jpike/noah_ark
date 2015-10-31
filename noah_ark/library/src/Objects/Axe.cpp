@@ -56,7 +56,7 @@ namespace OBJECTS
         CurrentRotationAngleInDegrees = CurrentSwingParameters.InitialRotationAngleInDegrees;
 
         // MAKE THE AXE VISIBLE.
-        Sprite.SetVisible(true);
+        Sprite.IsVisible = true;
 
         // SET THE SPRITE'S TRANSFORMATIONS.
         Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
@@ -96,7 +96,7 @@ namespace OBJECTS
         CurrentRotationAngleInDegrees = CurrentSwingParameters.InitialRotationAngleInDegrees;
 
         // MAKE THE AXE VISIBLE.
-        Sprite.SetVisible(true);
+        Sprite.IsVisible = true;
 
         // SET THE SPRITE'S TRANSFORMATIONS.
         Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
@@ -135,7 +135,7 @@ namespace OBJECTS
         CurrentRotationAngleInDegrees = CurrentSwingParameters.InitialRotationAngleInDegrees;
 
         // MAKE THE AXE VISIBLE.
-        Sprite.SetVisible(true);
+        Sprite.IsVisible = true;
 
         // SET THE SPRITE'S TRANSFORMATIONS.
         Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
@@ -174,7 +174,7 @@ namespace OBJECTS
         CurrentRotationAngleInDegrees = CurrentSwingParameters.InitialRotationAngleInDegrees;
 
         // MAKE THE AXE VISIBLE.
-        Sprite.SetVisible(true);
+        Sprite.IsVisible = true;
 
         // SET THE SPRITE'S TRANSFORMATIONS.
         Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
@@ -301,7 +301,7 @@ namespace OBJECTS
         else
         {
             // HIDE THE AXE TO PREVENT IT FROM BEING DRAWN SINCE IT ISN'T BEING SWUNG.
-            Sprite.SetVisible(false);
+            Sprite.IsVisible = false;
         }
     }
 
@@ -317,7 +317,7 @@ namespace OBJECTS
 
         /// @todo   Think of more advanced collision.  Blade is 7x7.
         /// For now, the entire sprite bounds seems to feel/look the best.
-        return Sprite.GetBoundingBox();
+        return Sprite.GetWorldBoundingBox();
     }
 
     void Axe::SetWorldPosition(const MATH::Vector2f& world_position)

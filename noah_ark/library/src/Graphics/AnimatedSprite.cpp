@@ -3,48 +3,16 @@
 
 namespace GRAPHICS
 {
-    AnimatedSprite::AnimatedSprite(const std::shared_ptr<GRAPHICS::Sprite>& sprite) :
+    AnimatedSprite::AnimatedSprite(const GRAPHICS::Sprite& sprite) :
     Sprite(sprite),
     AnimationSequences(),
     CurrentAnimationSequenceName()
-    {
-        // REQUIRE THAT THE SPRITE ISN'T NULL.
-        bool sprite_provided = (nullptr != sprite);
-        if (!sprite_provided)
-        {
-            throw std::invalid_argument("Sprite provided for the animated sprite cannot be null.");
-        }
-    }
-
-    AnimatedSprite::~AnimatedSprite()
     {}
 
-    bool AnimatedSprite::IsVisible() const
+    void AnimatedSprite::Render(sf::RenderTarget& render_target) const
     {
-        bool is_visible = Sprite->IsVisible();
-        return is_visible;
-    }
-
-    void AnimatedSprite::SetVisible(const bool is_visible)
-    {
-        Sprite->SetVisible(is_visible);
-    }
-
-    void AnimatedSprite::Render(sf::RenderTarget& render_target)
-    {
-        // APPLY ANY ANIMATIONS TO THE SPRITE.
-        std::shared_ptr<AnimationSequence> current_animation = GetCurrentAnimationSequence();
-        bool animation_exists = (nullptr != current_animation);
-        if (animation_exists)
-        {
-            // Make sure the correct portion of the sprite's texture for the
-            // current frame of animation gets displayed.
-            MATH::IntRectangle animation_rectangle = current_animation->GetCurrentFrame();
-            Sprite->SetTextureRectangle(animation_rectangle);
-        }
-
         // RENDER THE SPRITE.
-        Sprite->Render(render_target);
+        Sprite.Render(render_target);
     }
 
     void AnimatedSprite::Update(const float elapsed_time_in_seconds)
@@ -60,56 +28,33 @@ namespace GRAPHICS
             sf::Time elapsedTime = sf::seconds(elapsed_time_in_seconds);
             current_animation->Progress(elapsedTime);
         }
-    }
 
-    void AnimatedSprite::SetPositionComponent(const std::shared_ptr<MATH::Vector2f>& position_component)
-    {
-        // MAKE SURE THE PROVIDED POSITION COMPONENT EXISTS.
-        bool new_position_component_exists = (nullptr != position_component);
-        if (!new_position_component_exists)
+        // APPLY ANY ANIMATIONS TO THE SPRITE.
+        bool animation_exists = (nullptr != current_animation);
+        if (animation_exists)
         {
-            throw std::invalid_argument("Position component provided for the animated sprite cannot be null.");
+            // Make sure the correct portion of the sprite's texture for the
+            // current frame of animation gets displayed.
+            MATH::IntRectangle animation_rectangle = current_animation->GetCurrentFrame();
+            Sprite.SetTextureRectangle(animation_rectangle);
         }
-
-        // UPDATE THE SPRITE TO USE THE NEW POSITION COMPONENT.
-        Sprite->SetPositionComponent(position_component);
     }
 
     MATH::Vector2f AnimatedSprite::GetWorldPosition() const
     {
-        MATH::Vector2f world_position = Sprite->GetWorldPosition();
+        MATH::Vector2f world_position = Sprite.GetWorldPosition();
         return world_position;
     }
 
     void AnimatedSprite::SetWorldPosition(const float x_position_in_pixels, const float y_position_in_pixels)
     {
-        Sprite->SetWorldPosition(x_position_in_pixels, y_position_in_pixels);
+        Sprite.SetWorldPosition(x_position_in_pixels, y_position_in_pixels);
     }
 
     MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox() const
     {
-        MATH::FloatRectangle boundingBox = Sprite->GetBoundingBox();
+        MATH::FloatRectangle boundingBox = Sprite.GetWorldBoundingBox();
         return boundingBox;
-    }
-
-    void AnimatedSprite::MoveUp(const float distance_to_move_in_pixels)
-    {
-        Sprite->MoveUp(distance_to_move_in_pixels);
-    }
-
-    void AnimatedSprite::MoveDown(const float distance_to_move_in_pixels)
-    {
-        Sprite->MoveDown(distance_to_move_in_pixels);
-    }
-
-    void AnimatedSprite::MoveLeft(const float distance_to_move_in_pixels)
-    {
-        Sprite->MoveLeft(distance_to_move_in_pixels);
-    }
-
-    void AnimatedSprite::MoveRight(const float distance_to_move_in_pixels)
-    {
-        Sprite->MoveRight(distance_to_move_in_pixels);
     }
 
     void AnimatedSprite::AddAnimationSequence(
@@ -171,7 +116,7 @@ namespace GRAPHICS
                 // This is necessary so that the sprite isn't left with a frame in the middle of the animation sequence.
                 current_animation_sequence->Reset();
                 MATH::IntRectangle first_frame = current_animation_sequence->GetCurrentFrame();
-                Sprite->SetTextureRectangle(first_frame);
+                Sprite.SetTextureRectangle(first_frame);
             }
         }
     }

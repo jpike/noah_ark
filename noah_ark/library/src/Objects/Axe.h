@@ -61,20 +61,10 @@ namespace OBJECTS
     };
 
     /// An axe that can be swung to hit objects in the world.
-    /// The axe swinging is visualized via an animation sequence.
+    /// The axe swinging is visualized via rotation defined by axe swing parameters.
     class Axe
     {
     public:
-        // CONSTRUCTION.
-        /// Attempts to create an axe.
-        /// @param[in,out]  assets - The collection of assets from which
-        ///     to retrieve graphics for the axe.
-        /// @return An axe, if successfully created; null otherwise.
-        static std::shared_ptr<Axe> Create(RESOURCES::Assets& assets);
-        /// Constructor.
-        /// @param[in]  sprite - The sprite for the tree.
-        explicit Axe(const std::shared_ptr<GRAPHICS::Sprite>& sprite);
-
         // SWINGING METHODS.
         /// Swings the axe up.
         void SwingUp();
@@ -105,24 +95,25 @@ namespace OBJECTS
         /// @param[in]  world_position - The world position to set.
         void SetWorldPosition(const MATH::Vector2f& world_position);
 
-        /// Gets the sprite for the axe.
-        /// @return The axe's sprite.
-        std::shared_ptr<GRAPHICS::Sprite> GetSprite() const;
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The sprite for the axe.
+        GRAPHICS::Sprite Sprite = GRAPHICS::Sprite();
 
     private:
-        /// The animated sprite for the axe.
-        std::shared_ptr<GRAPHICS::Sprite> Sprite;
-
+        // MEMBER VARIABLES.
         /// The direction the axe is currently being swung.
-        CORE::Direction SwingingDirection;
-
-        bool CurrentlySwinging;
-        bool SwingingOut;
-        bool SwingingBack;
-        float CurrentRotationAngleInDegrees;
+        CORE::Direction SwingingDirection = CORE::Direction::INVALID;
+        /// True if the axe is currently swinging; false otherwise.
+        bool CurrentlySwinging = false;
+        /// True if the axe is currently swinging out; false otherwise.
+        bool SwingingOut = false;
+        /// True if the axe is currently swinging back in from its out position; false otherwise.
+        bool SwingingBack = false;
+        /// The current rotation angle of the axe in its swing.
+        float CurrentRotationAngleInDegrees = 0.0f;
 
         /// Parameters defining the axe swing currently in-progress,
         /// if a swing is occurring.  Undefined if the axe is not being swung.
-        AxeSwingParameters CurrentSwingParameters;
+        AxeSwingParameters CurrentSwingParameters = AxeSwingParameters();
     };
 }

@@ -6,7 +6,7 @@ namespace OBJECTS
     Sprite(sprite)
     {}
 
-    MATH::FloatRectangle Tree::GetBoundingBox() const
+    MATH::FloatRectangle Tree::GetWorldBoundingBox() const
     {
         return Sprite.GetBoundingBox();
     }

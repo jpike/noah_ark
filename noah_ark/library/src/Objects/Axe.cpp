@@ -11,6 +11,7 @@ namespace OBJECTS
 
     bool AxeSwingParameters::SwingOutIsPositiveRotation() const
     {
+        // If the swinging out rotation angle is greater than the initial rotation angle, then a positive rotation occurs.
         float swing_out_rotation_in_degrees = (FullySwungOutRotationAngleInDegrees - InitialRotationAngleInDegrees);
         bool swing_out_is_positive_rotation = (swing_out_rotation_in_degrees > 0.0f);
         return swing_out_is_positive_rotation;
@@ -18,61 +19,10 @@ namespace OBJECTS
     
     bool AxeSwingParameters::SwingBackIsPositiveRotation() const
     {
+        // If the final rotation angle is greater than the fully swung out angle, then a positive rotation occurs.
         float swing_back_rotation_in_degrees = (FinalRotationAngleInDegrees - FullySwungOutRotationAngleInDegrees);
         bool swing_back_is_positive_rotation = (swing_back_rotation_in_degrees > 0.0f);
         return swing_back_is_positive_rotation;
-    }
-
-    std::shared_ptr<Axe> Axe::Create(RESOURCES::Assets& assets)
-    {
-        // GET RESOURCES FOR THE AXE.
-        std::shared_ptr<GRAPHICS::Texture> axe_texture = assets.GetTexture(RESOURCES::AXE_TEXTURE_ID);
-        bool axe_resources_loaded = (nullptr != axe_texture);
-        if (!axe_resources_loaded)
-        {
-            // The axe cannot be created without its resources.
-            return nullptr;
-        }
-
-        // CREATE THE AXE SPRITE.
-        //const float AXE_SPRITE_X_OFFSET_IN_PIXELS = 3.0f;
-        //const float AXE_SPRITE_Y_OFFSET_IN_PIXELS = 66.0f;
-        //const float AXE_WIDTH_IN_PIXELS = 9.0f;
-        //const float AXE_HEIGHT_IN_PIXELS = 11.0f;
-        const float AXE_SPRITE_X_OFFSET_IN_PIXELS = 52.0f;
-        const float AXE_SPRITE_Y_OFFSET_IN_PIXELS = 0.0f;
-        const float AXE_WIDTH_IN_PIXELS = 11.0f;
-        const float AXE_HEIGHT_IN_PIXELS = 14.0f;
-        MATH::FloatRectangle texture_sub_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
-            AXE_SPRITE_X_OFFSET_IN_PIXELS,
-            AXE_SPRITE_Y_OFFSET_IN_PIXELS,
-            AXE_WIDTH_IN_PIXELS,
-            AXE_HEIGHT_IN_PIXELS);
-        std::shared_ptr<GRAPHICS::Sprite> sprite = std::make_shared<GRAPHICS::Sprite>(
-            *axe_texture,
-            texture_sub_rectangle);
-
-        // CREATE THE AXE.
-        std::shared_ptr<Axe> axe = std::make_shared<Axe>(sprite);
-        return axe;
-    }
-
-    Axe::Axe(const std::shared_ptr<GRAPHICS::Sprite>& sprite) :
-    Sprite(sprite),
-    SwingingDirection(CORE::Direction::INVALID),
-    CurrentlySwinging(false),
-    SwingingOut(false),
-    SwingingBack(false),
-    CurrentRotationAngleInDegrees(0.0f),
-    CurrentSwingParameters()
-    {
-        // MAKE SURE A SPRITE WAS PROVIDED.
-        bool sprite_exists = (nullptr != Sprite);
-        if (!sprite_exists)
-        {
-            // REPORT THE UNEXPECTED ERROR.
-            /// @todo Remove - throw std::invalid_argument("Null sprite cannot be provided to axe constructor.");
-        }
     }
 
     void Axe::SwingUp()
@@ -84,7 +34,7 @@ namespace OBJECTS
         // The origin should be at the bottom of the axe handle
         // so that the axe appears to rotate about this point.
         const float LEFT_BOUNDARY_IN_PIXELS = 0.0f;
-        float axe_sprite_height_in_pixels = Sprite->GetHeightInPixels();
+        float axe_sprite_height_in_pixels = Sprite.GetHeightInPixels();
         CurrentSwingParameters.SpriteOriginInPixels = MATH::Vector2f(
             LEFT_BOUNDARY_IN_PIXELS,
             axe_sprite_height_in_pixels);
@@ -106,12 +56,12 @@ namespace OBJECTS
         CurrentRotationAngleInDegrees = CurrentSwingParameters.InitialRotationAngleInDegrees;
 
         // MAKE THE AXE VISIBLE.
-        Sprite->SetVisible(true);
+        Sprite.SetVisible(true);
 
         // SET THE SPRITE'S TRANSFORMATIONS.
-        Sprite->SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
-        Sprite->SetRotation(CurrentRotationAngleInDegrees);
-        Sprite->SetScale(CurrentSwingParameters.SpriteScale);
+        Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
+        Sprite.SetRotation(CurrentRotationAngleInDegrees);
+        Sprite.SetScale(CurrentSwingParameters.SpriteScale);
     }
     
     void Axe::SwingDown()
@@ -122,11 +72,11 @@ namespace OBJECTS
         // DEFINE THE PARAMETERS FOR SWINGING THE AXE DOWN.
         // The origin should be at the bottom of the axe handle
         // so that the axe appears to rotate about this point.
-        const float TOP_BOUNDARY_IN_PIXELS = 0.0f;
-        float axe_sprite_width_in_pixels = Sprite->GetWidthInPixels();
+        const float LEFT_BOUNDARY_IN_PIXELS = 0.0f;
+        float axe_sprite_height_in_pixels = Sprite.GetHeightInPixels();
         CurrentSwingParameters.SpriteOriginInPixels = MATH::Vector2f(
-            0.0f, /// @todo - Document
-            Sprite->GetHeightInPixels());
+            LEFT_BOUNDARY_IN_PIXELS,
+            axe_sprite_height_in_pixels);
 
         // The axe sprite needs to be flipped both horizontally and
         // vertically to have it facing down for the swing.
@@ -146,12 +96,12 @@ namespace OBJECTS
         CurrentRotationAngleInDegrees = CurrentSwingParameters.InitialRotationAngleInDegrees;
 
         // MAKE THE AXE VISIBLE.
-        Sprite->SetVisible(true);
+        Sprite.SetVisible(true);
 
         // SET THE SPRITE'S TRANSFORMATIONS.
-        Sprite->SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
-        Sprite->SetRotation(CurrentRotationAngleInDegrees);
-        Sprite->SetScale(CurrentSwingParameters.SpriteScale);
+        Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
+        Sprite.SetRotation(CurrentRotationAngleInDegrees);
+        Sprite.SetScale(CurrentSwingParameters.SpriteScale);
     }
     
     void Axe::SwingLeft()
@@ -163,7 +113,7 @@ namespace OBJECTS
         // The origin should be at the bottom of the axe handle
         // so that the axe appears to rotate about this point.
         const float LEFT_BOUNDARY_IN_PIXELS = 0.0f;
-        float axe_sprite_height_in_pixels = Sprite->GetHeightInPixels();
+        float axe_sprite_height_in_pixels = Sprite.GetHeightInPixels();
         CurrentSwingParameters.SpriteOriginInPixels = MATH::Vector2f(
             LEFT_BOUNDARY_IN_PIXELS,
             axe_sprite_height_in_pixels);
@@ -185,12 +135,12 @@ namespace OBJECTS
         CurrentRotationAngleInDegrees = CurrentSwingParameters.InitialRotationAngleInDegrees;
 
         // MAKE THE AXE VISIBLE.
-        Sprite->SetVisible(true);
+        Sprite.SetVisible(true);
 
         // SET THE SPRITE'S TRANSFORMATIONS.
-        Sprite->SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
-        Sprite->SetRotation(CurrentRotationAngleInDegrees);
-        Sprite->SetScale(CurrentSwingParameters.SpriteScale);
+        Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
+        Sprite.SetRotation(CurrentRotationAngleInDegrees);
+        Sprite.SetScale(CurrentSwingParameters.SpriteScale);
     }
 
     void Axe::SwingRight()
@@ -201,10 +151,10 @@ namespace OBJECTS
         // DEFINE THE PARAMETERS FOR SWINGING THE AXE RIGHT.
         // The origin should be at the bottom of the axe handle
         // so that the axe appears to rotate about this point.
-        float axe_sprite_width_in_pixels = Sprite->GetWidthInPixels();
-        float axe_sprite_height_in_pixels = Sprite->GetHeightInPixels();
+        const float LEFT_BOUNDARY_IN_PIXELS = 0.0f;
+        float axe_sprite_height_in_pixels = Sprite.GetHeightInPixels();
         CurrentSwingParameters.SpriteOriginInPixels = MATH::Vector2f(
-            0.0f,//axe_sprite_width_in_pixels,
+            LEFT_BOUNDARY_IN_PIXELS,
             axe_sprite_height_in_pixels);
 
         // Flip the axe so that it is facing right.
@@ -224,12 +174,12 @@ namespace OBJECTS
         CurrentRotationAngleInDegrees = CurrentSwingParameters.InitialRotationAngleInDegrees;
 
         // MAKE THE AXE VISIBLE.
-        Sprite->SetVisible(true);
+        Sprite.SetVisible(true);
 
         // SET THE SPRITE'S TRANSFORMATIONS.
-        Sprite->SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
-        Sprite->SetRotation(CurrentRotationAngleInDegrees);
-        Sprite->SetScale(CurrentSwingParameters.SpriteScale);
+        Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
+        Sprite.SetRotation(CurrentRotationAngleInDegrees);
+        Sprite.SetScale(CurrentSwingParameters.SpriteScale);
     }
 
     bool Axe::IsSwinging() const
@@ -239,19 +189,23 @@ namespace OBJECTS
 
     bool Axe::FullySwungOut() const
     {
+        // The axe isn't fully swung out if it isn't being swung at all.
         if (!CurrentlySwinging)
         {
             return false;
         }
 
+        // DETERMINE THE SWINGING DIRECTION OF THE AXE.
         bool swinging_out_is_positive_rotation = CurrentSwingParameters.SwingOutIsPositiveRotation();
         if (swinging_out_is_positive_rotation)
         {
+            // The axe is fully swung out if it's rotation angle is at least its fully swung out angle.
             bool fully_swung_out = (CurrentRotationAngleInDegrees >= CurrentSwingParameters.FullySwungOutRotationAngleInDegrees);
             return fully_swung_out;
         }
         else
         {
+            // The axe is fully swung out if it's rotation angle has at least reached its fully swung out angle.
             bool fully_swung_out = (CurrentRotationAngleInDegrees <= CurrentSwingParameters.FullySwungOutRotationAngleInDegrees);
             return fully_swung_out;
         }
@@ -268,14 +222,19 @@ namespace OBJECTS
             float rotation_amount_for_update_in_degrees = ROTATION_SPEED_IN_DEGREES_PER_SECOND * elapsed_time_in_seconds;
             if (SwingingOut)
             {
+                // DETERMINE THE DIRECTION OF THE AXE SWING.
                 bool swinging_out_is_positive_rotation = CurrentSwingParameters.SwingOutIsPositiveRotation();
                 if (swinging_out_is_positive_rotation)
                 {
+                    // CONTINUE SWINGING OF THE AXE.
+                    // For a positive rotation, the rotation angle needs to be increased.
                     CurrentRotationAngleInDegrees += rotation_amount_for_update_in_degrees;
 
+                    // STOP SWINGING THE AXE OUT IF IT HAS REACHED ITS MAX ROTATION ANGLE.
                     bool fully_swung_out = (CurrentRotationAngleInDegrees >= CurrentSwingParameters.FullySwungOutRotationAngleInDegrees);
                     if (fully_swung_out)
                     {
+                        // START SWINGING THE AXE BACK TO ITS ORIGINAL POSITION.
                         /// @todo   Clamp to the max rotation angle?
                         SwingingOut = false;
                         SwingingBack = true;
@@ -283,11 +242,15 @@ namespace OBJECTS
                 }
                 else
                 {
+                    // CONTINUE SWINGING OF THE AXE.
+                    // For a negative rotation, the rotation angle needs to be decreased.
                     CurrentRotationAngleInDegrees -= rotation_amount_for_update_in_degrees;
 
+                    // STOP SWINGING THE AXE OUT IF IT HAS REACHED ITS MAX ROTATION ANGLE.
                     bool fully_swung_out = (CurrentRotationAngleInDegrees <= CurrentSwingParameters.FullySwungOutRotationAngleInDegrees);
                     if (fully_swung_out)
                     {
+                        // START SWINGING THE AXE BACK TO ITS ORIGINAL POSITION.
                         /// @todo   Clamp to the max rotation angle?
                         SwingingOut = false;
                         SwingingBack = true;
@@ -296,14 +259,19 @@ namespace OBJECTS
             }
             else if (SwingingBack)
             {
+                // DETERMINE THE DIRECTION OF THE AXE SWING.
                 bool swinging_back_is_positive_rotation = CurrentSwingParameters.SwingBackIsPositiveRotation();
                 if (swinging_back_is_positive_rotation)
                 {
+                    // CONTINUE SWINGING OF THE AXE.
+                    // For a positive rotation, the rotation angle needs to be increased.
                     CurrentRotationAngleInDegrees += rotation_amount_for_update_in_degrees;
 
+                    // STOP SWINGING THE AXE BACK IF IT HAS REACHED ITS MAX ROTATION ANGLE.
                     bool fully_swung_back = (CurrentRotationAngleInDegrees >= CurrentSwingParameters.FinalRotationAngleInDegrees);
                     if (fully_swung_back)
                     {
+                        // STOP THE AXE FROM SWINGING SINCE THE SWING HAS COMPLETED.
                         /// @todo   Clamp to the max rotation angle?
                         SwingingBack = false;
                         CurrentlySwinging = false;
@@ -311,11 +279,15 @@ namespace OBJECTS
                 }
                 else
                 {
+                    // CONTINUE SWINGING OF THE AXE.
+                    // For a negative rotation, the rotation angle needs to be decreased.
                     CurrentRotationAngleInDegrees -= rotation_amount_for_update_in_degrees;
 
+                    // STOP SWINGING THE AXE BACK IF IT HAS REACHED ITS MAX ROTATION ANGLE.
                     bool fully_swung_back = (CurrentRotationAngleInDegrees <= CurrentSwingParameters.FinalRotationAngleInDegrees);
                     if (fully_swung_back)
                     {
+                        // STOP SWINGING THE AXE BACK IF IT HAS REACHED ITS MAX ROTATION ANGLE.
                         /// @todo   Clamp to the max rotation angle?
                         SwingingBack = false;
                         CurrentlySwinging = false;
@@ -323,12 +295,13 @@ namespace OBJECTS
                 }
             }
             
-            Sprite->SetRotation(CurrentRotationAngleInDegrees);
+            // UPDATE THE ROTATION OF THE AXE SPRITE>
+            Sprite.SetRotation(CurrentRotationAngleInDegrees);
         }
         else
         {
-            // HIDE THE AXE TO PREVENT IT FROM BEING DRAWN.
-            Sprite->SetVisible(false);
+            // HIDE THE AXE TO PREVENT IT FROM BEING DRAWN SINCE IT ISN'T BEING SWUNG.
+            Sprite.SetVisible(false);
         }
     }
 
@@ -342,18 +315,13 @@ namespace OBJECTS
             return MATH::FloatRectangle();
         }
 
-        /// @todo   Think of more advanced collision.
-        /// Blade is 7x7.
-        return Sprite->GetBoundingBox();
+        /// @todo   Think of more advanced collision.  Blade is 7x7.
+        /// For now, the entire sprite bounds seems to feel/look the best.
+        return Sprite.GetBoundingBox();
     }
 
     void Axe::SetWorldPosition(const MATH::Vector2f& world_position)
     {
-        Sprite->SetWorldPosition(world_position.X, world_position.Y);
-    }
-
-    std::shared_ptr<GRAPHICS::Sprite> Axe::GetSprite() const
-    {
-        return Sprite;
+        Sprite.SetWorldPosition(world_position.X, world_position.Y);
     }
 }

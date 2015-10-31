@@ -22,7 +22,7 @@ namespace OBJECTS
         // POSITIONING/BOUNDARIES.
         /// Gets the bounding box of the tree, in world coordinates.
         /// @return The tree's bounding box.
-        MATH::FloatRectangle GetBoundingBox() const;
+        MATH::FloatRectangle GetWorldBoundingBox() const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The graphical sprite for the tree.

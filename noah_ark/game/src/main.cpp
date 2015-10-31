@@ -289,10 +289,7 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
         AXE_SPRITE_Y_OFFSET_IN_PIXELS,
         AXE_WIDTH_IN_PIXELS,
         AXE_HEIGHT_IN_PIXELS);
-    std::shared_ptr<GRAPHICS::Sprite> axe_sprite = std::make_shared<GRAPHICS::Sprite>(
-        *axe_texture,
-        axe_texture_sub_rectangle);
-    noah_player.Axe = std::make_shared<OBJECTS::Axe>(axe_sprite);
+    noah_player.Axe->Sprite = GRAPHICS::Sprite(*axe_texture, axe_texture_sub_rectangle);
 }
 
 void Render(GRAPHICS::Sprite& sprite, sf::RenderTarget& render_target)
@@ -346,7 +343,7 @@ bool CollidesWithTree(MAPS::Overworld& overworld, const MATH::FloatRectangle& re
     {
         // SHRINK THE TREE'S BOUNDING BOX SO THAT OBJECTS DON'T GET CAUGHT ON EDGES.
         const float TREE_DIMENSION_SHRINK_AMOUNT = 2.0f;
-        MATH::FloatRectangle tree_bounds = tree->GetBoundingBox();
+        MATH::FloatRectangle tree_bounds = tree->GetWorldBoundingBox();
         float new_tree_width = tree_bounds.GetWidth() - TREE_DIMENSION_SHRINK_AMOUNT;
         float new_tree_height = tree_bounds.GetHeight() - TREE_DIMENSION_SHRINK_AMOUNT;
         MATH::FloatRectangle new_tree_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
@@ -946,7 +943,7 @@ void HandleAxeCollisionsWithTrees(const MATH::FloatRectangle& axe_blade_bounds, 
     assert(tile_map);
     for (auto tree = tile_map->Trees.cbegin(); tile_map->Trees.cend() != tree;)
     {
-        MATH::FloatRectangle tree_bounds = tree->GetBoundingBox();
+        MATH::FloatRectangle tree_bounds = tree->GetWorldBoundingBox();
         bool axe_hit_tree = axe_blade_bounds.Intersects(tree_bounds);
         if (axe_hit_tree)
         {
@@ -1473,7 +1470,7 @@ int main(int argumentCount, char* arguments[])
                 Render(noah_player.Sprite, window);
                 if (noah_player.Axe->IsSwinging())
                 {
-                    Render(*noah_player.Axe->GetSprite(), window);
+                    Render(noah_player.Axe->Sprite, window);
                 }
 
                 window.display();

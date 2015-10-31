@@ -13,7 +13,8 @@ namespace MAPS
     {
     public:
         // CONSTRUCTION.
-        /// Creates an empty tile map.
+        /// Creates an empty tile map.  Parameters have default values to allow
+        /// for default construction.
         /// @param[in]  overworld_row_index - The 0-based index (from the top) of
         ///     the tile map as located in the overworld.
         /// @param[in]  overworld_column_index - The 0-based index (from the left) of
@@ -22,10 +23,10 @@ namespace MAPS
         ///     of the tile map.
         /// @param[in]  dimensions_in_tiles - The dimensions of the map in tiles.
         explicit TileMap(
-            const unsigned int overworld_row_index,
-            const unsigned int overworld_column_index,
-            const MATH::Vector2f& center_world_position,
-            const MATH::Vector2ui& dimensions_in_tiles);
+            const unsigned int overworld_row_index = 0,
+            const unsigned int overworld_column_index = 0,
+            const MATH::Vector2f& center_world_position = MATH::Vector2f(),
+            const MATH::Vector2ui& dimensions_in_tiles = MATH::Vector2ui());
 
         // POSITIONING.
         /// Gets the center world position of the tile map.

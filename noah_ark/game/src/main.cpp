@@ -1,4 +1,5 @@
 #include <cassert>
+#include <chrono>
 #include <exception>
 #include <iostream>
 #include <memory>
@@ -67,7 +68,7 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
             MATH::Vector2ui map_dimensions_in_tiles(
                 tile_map_file->MapWidthInTiles,
                 tile_map_file->MapHeightInTiles);
-            std::shared_ptr<MAPS::TileMap> tile_map = std::make_shared<MAPS::TileMap>(
+            MAPS::TileMap tile_map(
                 row,
                 column,
                 map_center_world_position,
@@ -109,7 +110,7 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
                                     }
 
                                     // SET THE TILE IN THE GROUND LAYER.
-                                    tile_map->Ground.SetTile(current_tile_x, current_tile_y, tile);
+                                    tile_map.Ground.SetTile(current_tile_x, current_tile_y, tile);
                                 }
                             }
                         }
@@ -184,7 +185,7 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
 
                                 // CREATE THE TREE.
                                 OBJECTS::Tree tree(tree_sprite);
-                                tile_map->Trees.push_back(tree);
+                                tile_map.Trees.push_back(tree);
                             }
                         }
 
@@ -194,7 +195,7 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
             }
 
             // SET THE TILE MAP IN THE OVERWORLD.
-            overworld.TileMaps(column, row) = tile_map;
+            overworld.TileMaps(column, row) = std::move(tile_map);
         }
     }
 }
@@ -324,14 +325,14 @@ void Render(MAPS::TileMap& tile_map, sf::RenderTarget& render_target)
 }
 
 
-bool CollidesWithTree(const MAPS::Overworld& overworld, const MATH::FloatRectangle& rectangle, MATH::FloatRectangle& tree_rectangle)
+bool CollidesWithTree(MAPS::Overworld& overworld, const MATH::FloatRectangle& rectangle, MATH::FloatRectangle& tree_rectangle)
 {
     // CLEAR THE OUT PARAMETER.
     tree_rectangle = MATH::FloatRectangle();
 
     // GET THE TREES NEAR THE RECTANGLE.
     MATH::Vector2f object_center_position = rectangle.GetCenterPosition();
-    std::shared_ptr<MAPS::TileMap> current_tile_map = overworld.GetTileMap(object_center_position.X, object_center_position.Y);
+    MAPS::TileMap* current_tile_map = overworld.GetTileMap(object_center_position.X, object_center_position.Y);
     bool tile_map_exists = (nullptr != current_tile_map);
     if (!tile_map_exists)
     {
@@ -367,7 +368,7 @@ bool CollidesWithTree(const MAPS::Overworld& overworld, const MATH::FloatRectang
     return false;
 }
 
-MATH::Vector2f MoveUpWithCollisionDetection(const MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
+MATH::Vector2f MoveUpWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
 {
     // INITIALIZE THE NEW POSITION FOR THE OBJECT.
     // The object should remain at its current position if no movement occurs.
@@ -501,7 +502,7 @@ MATH::Vector2f MoveUpWithCollisionDetection(const MAPS::Overworld& overworld, co
     return object_new_world_position;
 }
 
-MATH::Vector2f MoveDownWithCollisionDetection(const MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
+MATH::Vector2f MoveDownWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
 {
     // INITIALIZE THE NEW POSITION OF THE OBJECT.
     // The object should remain at its current position if no movement occurs.
@@ -632,7 +633,7 @@ MATH::Vector2f MoveDownWithCollisionDetection(const MAPS::Overworld& overworld, 
     return object_new_world_position;
 }
 
-MATH::Vector2f MoveLeftWithCollisionDetection(const MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
+MATH::Vector2f MoveLeftWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
 {
     // INITIALIZE THE NEW POSITION FOR THE OBJECT.
     // The object should remain at its current position if no movement occurs.
@@ -761,7 +762,7 @@ MATH::Vector2f MoveLeftWithCollisionDetection(const MAPS::Overworld& overworld, 
     return object_new_world_position;
 }
 
-MATH::Vector2f MoveRightWithCollisionDetection(const MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
+MATH::Vector2f MoveRightWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
 {
     // INITIALIZE THE NEW POSITION FOR THE OBJECT.
     // The object should remain at its current position if no movement occurs.
@@ -892,7 +893,7 @@ MATH::Vector2f MoveRightWithCollisionDetection(const MAPS::Overworld& overworld,
 }
 
 MATH::Vector2f MoveWithCollisionDetection(
-    const MAPS::Overworld& overworld, 
+    MAPS::Overworld& overworld, 
     const float elapsed_time_in_seconds, 
     const CORE::Direction direction, 
     const float move_speed_in_pixels_per_second, 
@@ -940,7 +941,7 @@ void HandleAxeCollisionsWithTrees(const MATH::FloatRectangle& axe_blade_bounds, 
     /// @todo   Change overworld map to world area?
     //WorldArea world_area = OverworldMap->GetArea(axe_blade_bounds.GetCenterXPosition(), axe_blade_bounds.GetCenterYPosition());
     MATH::Vector2f axe_center_position = axe_blade_bounds.GetCenterPosition();
-    std::shared_ptr<MAPS::TileMap> tile_map = overworld.GetTileMap(axe_center_position.X, axe_center_position.Y);
+    MAPS::TileMap* tile_map = overworld.GetTileMap(axe_center_position.X, axe_center_position.Y);
     assert(tile_map);
     for (auto tree = tile_map->Trees.cbegin(); tile_map->Trees.cend() != tree;)
     {
@@ -1011,7 +1012,11 @@ int main(int argumentCount, char* arguments[])
         // This will prevent slowdowns from having to wait on disk I/O later
         // for reading assets in the middle of gameplay.
         RESOURCES::Assets assets;
+        std::chrono::time_point<std::chrono::system_clock> asset_load_start_time = std::chrono::system_clock::now();
         bool assets_loaded = assets.LoadAll();
+        std::chrono::time_point<std::chrono::system_clock> asset_load_end_time = std::chrono::system_clock::now();
+        std::chrono::duration<double> asset_load_time_in_seconds = asset_load_end_time - asset_load_start_time;
+        std::cout << "Asset load time (seconds): " << asset_load_time_in_seconds.count() << std::endl;
         if (!assets_loaded)
         {
             /// @todo   Provide a more specific error from Assets class for loading failures?
@@ -1021,13 +1026,18 @@ int main(int argumentCount, char* arguments[])
 
         // CREATE THE OVERWORLD.
         const MAPS::OverworldMapFile* const overworld_map_file = assets.GetOverworldMapFile();
-        MAPS::Overworld overworld(overworld_map_file->OverworldWidthInTileMaps, overworld_map_file->OverworldHeightInTileMaps);
+        MAPS::Overworld overworld(
+            overworld_map_file->OverworldWidthInTileMaps, 
+            overworld_map_file->OverworldHeightInTileMaps,
+            overworld_map_file->TileMapWidthInTiles,
+            overworld_map_file->TileMapHeightInTiles,
+            overworld_map_file->TileDimensionInPixels);
         PopulateOverworld(*overworld_map_file, assets, overworld);
 
         // INITIALIZE THE PLAYER NOAH CHARACTER.
         /// @todo   Need to figure out a different way to determine initial position.
-        std::shared_ptr<MAPS::TileMap> starting_tile_map = overworld.TileMaps(0, 0);
-        MATH::Vector2f noah_initial_position = starting_tile_map->GetCenterWorldPosition();
+        const MAPS::TileMap& starting_tile_map = overworld.TileMaps(0, 0);
+        MATH::Vector2f noah_initial_position = starting_tile_map.GetCenterWorldPosition();
         OBJECTS::Noah noah_player;
         InitializePlayer(noah_initial_position, assets, noah_player);
 
@@ -1046,7 +1056,7 @@ int main(int argumentCount, char* arguments[])
 
         // INITIALIZE THE CAMERA.
         auto view = window.getView();
-        MATH::Vector2f center_world_position = starting_tile_map->GetCenterWorldPosition();
+        MATH::Vector2f center_world_position = starting_tile_map.GetCenterWorldPosition();
         view.setCenter(center_world_position.X, center_world_position.Y);
         window.setView(view);
 
@@ -1104,7 +1114,7 @@ int main(int argumentCount, char* arguments[])
                     view_center.y,
                     view_size.x,
                     view_size.y);
-                std::shared_ptr<MAPS::TileMap> current_tile_map = overworld.GetTileMap(view_center.x, view_center.y);
+                MAPS::TileMap* current_tile_map = overworld.GetTileMap(view_center.x, view_center.y);
                 assert(current_tile_map);
 
                 // MOVE NOAH IN RESPONSE TO USER INPUT.
@@ -1158,7 +1168,7 @@ int main(int argumentCount, char* arguments[])
                         {
                             unsigned int top_tile_map_row_index = current_tile_map->OverworldRowIndex - 1;
                             unsigned int top_tile_map_column_index = current_tile_map->OverworldColumnIndex;
-                            std::shared_ptr<MAPS::TileMap> top_tile_map = overworld.GetTileMap(
+                            MAPS::TileMap* top_tile_map = overworld.GetTileMap(
                                 top_tile_map_row_index,
                                 top_tile_map_column_index);
                             bool top_tile_map_exists = (nullptr != top_tile_map);
@@ -1222,7 +1232,7 @@ int main(int argumentCount, char* arguments[])
                         {
                             unsigned int bottom_tile_map_row_index = current_tile_map->OverworldRowIndex + 1;
                             unsigned int bottom_tile_map_column_index = current_tile_map->OverworldColumnIndex;
-                            std::shared_ptr<MAPS::TileMap> bottom_tile_map = overworld.GetTileMap(
+                            MAPS::TileMap* bottom_tile_map = overworld.GetTileMap(
                                 bottom_tile_map_row_index,
                                 bottom_tile_map_column_index);
                             bool bottom_tile_map_exists = (nullptr != bottom_tile_map);
@@ -1286,7 +1296,7 @@ int main(int argumentCount, char* arguments[])
                         {
                             unsigned int left_tile_map_row_index = current_tile_map->OverworldRowIndex;
                             unsigned int left_tile_map_column_index = current_tile_map->OverworldColumnIndex - 1;
-                            std::shared_ptr<MAPS::TileMap> left_tile_map = overworld.GetTileMap(
+                            MAPS::TileMap* left_tile_map = overworld.GetTileMap(
                                 left_tile_map_row_index,
                                 left_tile_map_column_index);
                             bool left_tile_map_exists = (nullptr != left_tile_map);
@@ -1351,7 +1361,7 @@ int main(int argumentCount, char* arguments[])
                         {
                             unsigned int right_tile_map_row_index = current_tile_map->OverworldRowIndex;
                             unsigned int right_tile_map_column_index = current_tile_map->OverworldColumnIndex + 1;
-                            std::shared_ptr<MAPS::TileMap> right_tile_map = overworld.GetTileMap(
+                            MAPS::TileMap* right_tile_map = overworld.GetTileMap(
                                 right_tile_map_row_index,
                                 right_tile_map_column_index);
                             bool right_tile_map_exists = (nullptr != right_tile_map);
@@ -1443,7 +1453,7 @@ int main(int argumentCount, char* arguments[])
                     for (unsigned int tile_map_column = min_tile_map_column; tile_map_column <= max_tile_map_column; ++tile_map_column)
                     {
                         // GET THE CURRENT TILE MAP.
-                        std::shared_ptr<MAPS::TileMap> tile_map = overworld.GetTileMap(tile_map_row, tile_map_column);
+                        MAPS::TileMap* tile_map = overworld.GetTileMap(tile_map_row, tile_map_column);
                         bool tile_map_exists = (nullptr != tile_map);
                         if (!tile_map_exists)
                         {

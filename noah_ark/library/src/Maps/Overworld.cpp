@@ -4,19 +4,20 @@ namespace MAPS
 {
     Overworld::Overworld(
         const unsigned int width_in_tile_maps,
-        const unsigned int height_in_tile_maps) :
-    TileMaps(width_in_tile_maps, height_in_tile_maps)
+        const unsigned int height_in_tile_maps,
+        const unsigned int tile_map_width_in_tiles,
+        const unsigned int tile_map_height_in_tiles,
+        const unsigned int tile_dimension_in_pixels) :
+    TileMaps(width_in_tile_maps, height_in_tile_maps),
+    TileMapWidthInTiles(tile_map_width_in_tiles),
+    TileMapHeightInTiles(tile_map_height_in_tiles),
+    TileDimensionInPixels(tile_dimension_in_pixels)
     {}
 
-    std::shared_ptr<MAPS::TileMap> Overworld::GetTileMap(const unsigned int row, const unsigned int column) const
+    MAPS::TileMap* Overworld::GetTileMap(const unsigned int row, const unsigned int column)
     {
         // MAKE SURE THE PROVIDED INDICES ARE IN RANGE.
-        /// @todo   Make a similar method on the Array2D class?
-        unsigned int row_count = TileMaps.GetHeight();
-        unsigned int column_count = TileMaps.GetWidth();
-        bool row_valid = (row < row_count);
-        bool column_valid = (column < column_count);
-        bool tile_map_indices_valid = (row_valid && column_valid);
+        bool tile_map_indices_valid = TileMaps.IndicesInRange(column, row);
         if (!tile_map_indices_valid)
         {
             // No tile map exists at an invalid location.
@@ -24,31 +25,27 @@ namespace MAPS
         }
 
         // GET THE TILE MAP AT THE SPECIFIED LOCATION.
-        std::shared_ptr<MAPS::TileMap> tile_map = TileMaps(column, row);
-        return tile_map;
+        MAPS::TileMap& tile_map = TileMaps(column, row);
+        return &tile_map;
     }
     
-    std::shared_ptr<MAPS::TileMap> Overworld::GetTileMap(const float world_x_position, const float world_y_position) const
+    MAPS::TileMap* Overworld::GetTileMap(const float world_x_position, const float world_y_position)
     {
         // CONVERT THE WORLD POSITIONS TO ROW/COLUMN INDICES.
-        /// @todo   This probably shouldn't be hardcoded...Perhaps include in overworld map file and pass in during construction.
-        const float TILE_DIMENSION_IN_PIXELS = 16.0f;
-        const float TILE_MAP_WIDTH_IN_TILES = 32.0f;
-        const float TILE_MAP_WIDTH_IN_PIXELS = TILE_MAP_WIDTH_IN_TILES * TILE_DIMENSION_IN_PIXELS;
-        const float TILE_MAP_HEIGHT_IN_TILES = 24.0f;
-        const float TILE_MAP_HEIGHT_IN_PIXELS = TILE_MAP_HEIGHT_IN_TILES * TILE_DIMENSION_IN_PIXELS;
-        unsigned int column_index = static_cast<unsigned int>(world_x_position / TILE_MAP_WIDTH_IN_PIXELS);
-        unsigned int row_index = static_cast<unsigned int>(world_y_position / TILE_MAP_HEIGHT_IN_PIXELS);
+        float tile_map_width_in_pixels = static_cast<float>(TileMapWidthInTiles * TileDimensionInPixels);
+        float tile_map_height_in_pixels = static_cast<float>(TileMapHeightInTiles * TileDimensionInPixels);
+        unsigned int column_index = static_cast<unsigned int>(world_x_position / tile_map_width_in_pixels);
+        unsigned int row_index = static_cast<unsigned int>(world_y_position / tile_map_height_in_pixels);
 
         // GET THE TILE MAP AT THE SPECIFIED LOCATION.
-        std::shared_ptr<MAPS::TileMap> tile_map = GetTileMap(row_index, column_index);
+        MAPS::TileMap* tile_map = GetTileMap(row_index, column_index);
         return tile_map;
     }
 
-    std::shared_ptr<MAPS::Tile> Overworld::GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const
+    std::shared_ptr<MAPS::Tile> Overworld::GetTileAtWorldPosition(const float world_x_position, const float world_y_position)
     {
         // GET THE TILE MAP AT THE SPECIFIED WORLD POSITION.
-        std::shared_ptr<MAPS::TileMap> tile_map = GetTileMap(world_x_position, world_y_position);
+        MAPS::TileMap* tile_map = GetTileMap(world_x_position, world_y_position);
         bool tile_map_exists = (nullptr != tile_map);
         if (!tile_map_exists)
         {

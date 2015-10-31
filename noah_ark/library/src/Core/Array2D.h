@@ -72,6 +72,13 @@ namespace CORE
         /// @param[in]  height - The height of the array (number of rows).
         void Resize(const unsigned int width, const unsigned int height);
 
+        // BOUNDS CHECKING.
+        /// Determines if the provided indices are in range of this array's bounds.
+        /// @param[in]  x - The horizontal coordinate (or column) to check.
+        /// @param[in]  y - The vertical coordinate (or row) to check.
+        /// @return True if both indices are in range; false otherwise.
+        bool IndicesInRange(const unsigned int x, const unsigned int y) const;
+
         // ELEMENT ACCESS.
         /// Retrieves a reference to the element at the specified 2D coordinates.
         /// operator() is overloaded because it can take multiple parameters,
@@ -220,6 +227,16 @@ namespace CORE
     }
 
     template <typename T>
+    bool Array2D<T>::IndicesInRange(const unsigned int x, const unsigned int y) const
+    {
+        // CHECK IF BOTH INDICES ARE IN BOUNDS.
+        bool x_within_bounds = (x < Width);
+        bool y_within_bounds = (y < Height);
+        bool indices_within_bounds = (x_within_bounds && y_within_bounds);
+        return indices_within_bounds;
+    }
+
+    template <typename T>
     T& Array2D<T>::operator()(const unsigned int x, const unsigned int y)
     {
         // CONVERT THE 2D INDEX INTO A 1D INDEX.
@@ -247,9 +264,7 @@ namespace CORE
     unsigned int Array2D<T>::Get1DArrayIndex(const unsigned int x, const unsigned int y) const
     {
         // MAKE SURE THE COORDINATES ARE WITHIN THE ARRAY'S BOUNDS.
-        bool x_within_bounds = (x < Width);
-        bool y_within_bounds = (y < Height);
-        bool coordinates_within_bounds = (x_within_bounds && y_within_bounds);
+        bool coordinates_within_bounds = IndicesInRange(x, y);
         if (!coordinates_within_bounds)
         {
             throw std::out_of_range("Array2D coordinates out-of-range.");

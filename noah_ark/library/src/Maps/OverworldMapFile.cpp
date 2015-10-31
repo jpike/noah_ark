@@ -30,6 +30,27 @@ namespace MAPS
                 return nullptr;
             }
 
+            unsigned int tile_map_width_in_tiles = overworld_map_data.get<unsigned int>("TileMapWidthInTiles");
+            bool map_width_valid = (tile_map_width_in_tiles > 0);
+            if (!map_width_valid)
+            {
+                return nullptr;
+            }
+
+            unsigned int tile_map_height_in_tiles = overworld_map_data.get<unsigned int>("TileMapHeightInTiles");
+            bool map_height_valid = (tile_map_height_in_tiles > 0);
+            if (!map_height_valid)
+            {
+                return nullptr;
+            }
+
+            unsigned int tile_dimension_in_pixels = overworld_map_data.get<unsigned int>("TileDimensionInPixels");
+            bool tile_dimension_valid = (tile_dimension_in_pixels > 0);
+            if (!tile_dimension_valid)
+            {
+                return nullptr;
+            }
+
             // READ THE STARTING TILE MAP'S FILEPATH.
             std::string starting_tile_map_filepath = overworld_map_data.get<std::string>("StartingTileMapFilepath");
             bool starting_tile_map_filepath_valid = (!starting_tile_map_filepath.empty());
@@ -96,6 +117,9 @@ namespace MAPS
             std::unique_ptr<OverworldMapFile> overworld_map_file = std::make_unique<OverworldMapFile>();
             overworld_map_file->OverworldWidthInTileMaps = width_in_tile_maps;
             overworld_map_file->OverworldHeightInTileMaps = height_in_tile_maps;
+            overworld_map_file->TileMapWidthInTiles = tile_map_width_in_tiles;
+            overworld_map_file->TileMapHeightInTiles = tile_map_height_in_tiles;
+            overworld_map_file->TileDimensionInPixels = tile_dimension_in_pixels;
             overworld_map_file->StartingTileMapFilepath = starting_tile_map_filepath;
             overworld_map_file->StartingTileMapPosition = starting_tile_map_position;
             overworld_map_file->TileMapFilepaths = tile_map_filepaths;
@@ -117,14 +141,8 @@ namespace MAPS
         // VALIDATE THE ROW AND COLUMN COORDINATES.
         // We expect that the container containing the actual filepaths was previously validated
         // to have dimensions matching the separate height/width members of this object.
-        bool rowNumberValid = (OverworldHeightInTileMaps > row);
-        if (!rowNumberValid)
-        {
-            return MISSING_TILE_MAP_FILEPATH;
-        }
-
-        bool columnNumberValid = (OverworldWidthInTileMaps > column);
-        if (!columnNumberValid)
+        bool tile_map_indices_valid = TileMapFilepaths.IndicesInRange(column, row);
+        if (!tile_map_indices_valid)
         {
             return MISSING_TILE_MAP_FILEPATH;
         }

@@ -1,6 +1,9 @@
 {
     "WidthInTileMaps": 7,
     "HeightInTileMaps": 7,
+    "TileMapWidthInTiles": 32,
+    "TileMapHeightInTiles": 24,
+    "TileDimensionInPixels": 16,
     "StartingTileMapFilepath": "res/maps/map_0_0.json",
     "TileMaps": [
         { "Filepath": "res/maps/map_0_0.json" },

@@ -36,21 +36,6 @@ namespace RESOURCES
         /// @return True if loading completely succeeds; false otherwise.
         bool LoadAll();
 
-        /// Gets the overworld map file.
-        /// @return The overworld map file, if successfully loaded; null otherwise.
-        ///     The pointer is only valid as long as these assets are still in
-        ///     memory and haven't been reloaded.
-        const MAPS::OverworldMapFile* GetOverworldMapFile() const;
-
-        /// Gets the tile map file at the specified 2D grid coordinates (x = column, y = row).
-        /// Positioning starts at (0,0) at the top-left of the overworld.
-        /// @param[in]  row - The row for which to get the tile map file (in units of tile maps).
-        /// @param[in]  column - The column for which to get the tile map file (in units of tile maps).
-        /// @return The tile map file, if successfully loaded; null otherwise.
-        ///     The pointer is only valid as long as these assets are still in
-        ///     memory and haven't been reloaded.
-        const MAPS::TileMapFile* GetTileMapFile(const unsigned int row, const unsigned int column) const;
-
         /// Gets a tileset created from the provided descriptions.
         /// @param[in]  tileset_descriptions - Descriptions of the tileset to create.
         /// @return The tileset created from the provided descriptions; null if an error occurs.

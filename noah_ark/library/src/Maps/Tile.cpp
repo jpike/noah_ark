@@ -5,15 +5,15 @@
 namespace MAPS
 {
     Tile::Tile() :
-        Id(std::numeric_limits<TileId>::max()),
-        Sprite()
+    Id(std::numeric_limits<TileId>::max()),
+    Sprite()
     {}
 
     Tile::Tile(
         const TileId id,
         const GRAPHICS::Sprite& sprite) :
-        Id(id),
-        Sprite(sprite)
+    Id(id),
+    Sprite(sprite)
     {}
 
     void Tile::SetWorldPosition(const float world_x_position, const float world_y_position)

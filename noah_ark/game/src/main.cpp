@@ -1026,7 +1026,7 @@ int main(int argumentCount, char* arguments[])
         }
 
         // CREATE THE OVERWORLD.
-        const MAPS::OverworldMapFile* const overworld_map_file = assets.GetOverworldMapFile();
+        const std::unique_ptr<MAPS::OverworldMapFile>& overworld_map_file = assets.OverworldMapFile;
         MAPS::Overworld overworld(
             overworld_map_file->OverworldWidthInTileMaps, 
             overworld_map_file->OverworldHeightInTileMaps,

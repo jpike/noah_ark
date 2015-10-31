@@ -18,9 +18,9 @@ namespace RESOURCES
     const std::string NOAH_WALK_RIGHT_ANIMATION_ID = "noah_walk_right";
 
     Assets::Assets() :
-        Textures(),
-        OverworldMapFile(),
-        TileMapFiles()
+    Textures(),
+    OverworldMapFile(),
+    TileMapFiles()
     {}
 
     bool Assets::LoadAll()
@@ -50,25 +50,6 @@ namespace RESOURCES
         return true;
     }
 
-    const MAPS::OverworldMapFile* Assets::GetOverworldMapFile() const
-    {
-        return OverworldMapFile.get();
-    }
-
-    const MAPS::TileMapFile* Assets::GetTileMapFile(const unsigned int row, const unsigned int column) const
-    {
-        // FIND THE TILE MAP FILE AT THE SPECIFIED LOCATION.
-        try
-        {
-            const auto& tile_map_file = TileMapFiles(column, row);
-            return tile_map_file.get();
-        }
-        catch (const std::exception&)
-        {
-            return nullptr;
-        }
-    }
-
     std::shared_ptr<MAPS::Tileset> Assets::GetTileset(const std::vector<MAPS::TilesetDescription>& tileset_descriptions)
     {
         /// @todo   Consider caching this? - There's some "name" property in the JSON files.
@@ -90,7 +71,6 @@ namespace RESOURCES
             // CREATE AND STORE EACH TILE IN THE CURRENT DESCRIPTION.
             MAPS::TileId current_tile_id = tileset_description.FirstTileId;
             MATH::Vector2ui tileset_texture_dimensions = tileset_texture->GetSize();
-            /// @todo   Avoid truncation?
             unsigned int row_count_of_tiles = tileset_texture_dimensions.Y / tileset_description.TileHeightInPixels;
             unsigned int column_count_of_tiles = tileset_texture_dimensions.X / tileset_description.TileWidthInPixels;
             for (unsigned int tile_row_index = 0;
@@ -106,7 +86,7 @@ namespace RESOURCES
                     int tile_top_texture_offset_in_texels = tile_row_index * tileset_description.TileHeightInPixels;
 
                     // CREATE A SPRITE FOR THE CURRENT TILE.
-                    sf::IntRect tile_texture_rect(
+                    MATH::IntRectangle tile_texture_rect = MATH::IntRectangle::FromTopLeftAndDimensions(
                         tile_left_texture_offset_in_texels,
                         tile_top_texture_offset_in_texels,
                         tileset_description.TileWidthInPixels,

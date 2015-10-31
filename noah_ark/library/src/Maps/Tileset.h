@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "Graphics/Texture.h"
 #include "Maps/Tile.h"
+#include "Math/Rectangle.h"
 
 namespace MAPS
 {
@@ -22,7 +23,7 @@ namespace MAPS
         void SetTile(
             const TileId tile_id, 
             const std::shared_ptr<GRAPHICS::Texture>& texture,
-            const sf::IntRect& texture_sub_rectangle);
+            const MATH::IntRectangle& texture_sub_rectangle);
 
         /// Creates an unpositioned tile based on the data in the tileset
         /// identified by the given tile ID.
@@ -35,6 +36,6 @@ namespace MAPS
         /// Textures for tiles mapped by tile ID.
         std::unordered_map< TileId, std::shared_ptr<GRAPHICS::Texture> > TileTextures;
         /// Sub-rectangles within textures for tiles mapped by tile ID.
-        std::unordered_map<TileId, sf::IntRect> TileTextureSubRectangles;
+        std::unordered_map<TileId, MATH::IntRectangle> TileTextureSubRectangles;
     };
 }

@@ -5,9 +5,11 @@
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "Collision/Collisions.h"
 #include "Collision/Movement.h"
 #include "Core/Direction.h"
 #include "Events/AxeSwingEvent.h"
+#include "Graphics/Rendering.h"
 #include "Input/KeyboardInputController.h"
 #include "Maps/Overworld.h"
 #include "Maps/TileMap.h"
@@ -23,6 +25,7 @@ int EXIT_CODE_FAILURE_UNKNOWN_EXCEPTION_IN_MAIN = 2;
 /// Game assets failed to be loaded.
 int EXIT_CODE_FAILURE_LOADING_ASSETS = 3;
 
+/// @todo   Document this function.  It looks like it can probably stay in this file for now.
 void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURCES::Assets& assets, MAPS::Overworld& overworld)
 {
     // LOAD TILE MAPS FOR EACH ROW.
@@ -140,24 +143,24 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
 
                                 // DETERMINE THE SUB-RECTANGLE OF THE TEXTURE TO USE FOR THE TREE.
                                 // Different sub-rectangles are used depending on the tree's size.
-                                sf::IntRect tree_texture_sub_rectangle;
+                                MATH::FloatRectangle tree_texture_sub_rectangle;
                                 const MATH::Vector2ui SMALL_TREE_DIMENSIONS_IN_PIXELS(16, 16);
                                 const MATH::Vector2ui TALL_TREE_DIMENSIONS_IN_PIXELS(16, 32);
                                 const MATH::Vector2ui LARGE_TREE_DIMENSIONS_IN_PIXELS(32, 32);
                                 MATH::Vector2ui tree_dimensions_in_pixels(object_description.WidthInPixels, object_description.HeightInPixels);
                                 if (SMALL_TREE_DIMENSIONS_IN_PIXELS == tree_dimensions_in_pixels)
                                 {
-                                    sf::IntRect SMALL_TREE_TEXTURE_SUB_RECTANGLE(0, 0, 16, 16);
+                                    MATH::FloatRectangle SMALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(0.0f, 0.0f, 16.0f, 16.0f);
                                     tree_texture_sub_rectangle = SMALL_TREE_TEXTURE_SUB_RECTANGLE;
                                 }
                                 else if (TALL_TREE_DIMENSIONS_IN_PIXELS == tree_dimensions_in_pixels)
                                 {
-                                    sf::IntRect TALL_TREE_TEXTURE_SUB_RECTANGLE(32, 0, 16, 32);
+                                    MATH::FloatRectangle TALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(32.0f, 0.0f, 16.0f, 32.0f);
                                     tree_texture_sub_rectangle = TALL_TREE_TEXTURE_SUB_RECTANGLE;
                                 }
                                 else if (LARGE_TREE_DIMENSIONS_IN_PIXELS == tree_dimensions_in_pixels)
                                 {
-                                    sf::IntRect LARGE_TREE_TEXTURE_SUB_RECTANGLE(0, 16, 32, 32);
+                                    MATH::FloatRectangle LARGE_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(0.0f, 16.0f, 32.0f, 32.0f);
                                     tree_texture_sub_rectangle = LARGE_TREE_TEXTURE_SUB_RECTANGLE;
                                 }
                                 else
@@ -169,20 +172,18 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
                                 }
 
                                 // CREATE THE TREE'S SPRITE.
-                                sf::Sprite tree_sprite_resource(
-                                    tree_texture->TextureResource,
-                                    tree_texture_sub_rectangle);
+                                GRAPHICS::Sprite tree_sprite(*tree_texture, tree_texture_sub_rectangle);
 
                                 // The center of the sprite should be the center of its visible portion of the texture.
-                                float tree_local_center_x = static_cast<float>(tree_texture_sub_rectangle.width) / 2.0f;
-                                float tree_local_center_y = static_cast<float>(tree_texture_sub_rectangle.height) / 2.0f;
-                                tree_sprite_resource.setOrigin(tree_local_center_x, tree_local_center_y);
+                                /// @todo   This is basically being done in the constructor too, but the origin is need for calculating
+                                /// the world position too...
+                                float tree_local_center_x = static_cast<float>(tree_texture_sub_rectangle.GetWidth()) / 2.0f;
+                                float tree_local_center_y = static_cast<float>(tree_texture_sub_rectangle.GetHeight()) / 2.0f;
+                                tree_sprite.SetOrigin(MATH::Vector2f(tree_local_center_x, tree_local_center_y));
 
                                 float tree_world_x_position = static_cast<float>(object_description.TopLeftPositionInPixels.X) + tree_local_center_x;
                                 float tree_world_y_position = static_cast<float>(object_description.TopLeftPositionInPixels.Y) + tree_local_center_y;
-                                tree_sprite_resource.setPosition(tree_world_x_position, tree_world_y_position);
-
-                                GRAPHICS::Sprite tree_sprite(tree_sprite_resource);
+                                tree_sprite.SetWorldPosition(tree_world_x_position, tree_world_y_position);
 
                                 // CREATE THE TREE.
                                 OBJECTS::Tree tree(tree_sprite);
@@ -247,11 +248,10 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
 
     // CREATE THE SPRITE FOR NOAH.
     /// @todo   Better way to determine initial subrect.
-    const sf::IntRect TEXTURE_SUB_RECT(0, 0, 16, 16);
-    sf::Sprite sprite_resource(texture->TextureResource, TEXTURE_SUB_RECT);
+    const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromTopLeftAndDimensions(0, 0, 16, 16);
+    GRAPHICS::Sprite sprite(*texture, TEXTURE_SUB_RECT);
     /// @todo better way to set center.
-    sprite_resource.setOrigin(8.0f, 8.0f);
-    GRAPHICS::Sprite sprite(sprite_resource);
+    sprite.SetOrigin(MATH::Vector2f(8.0f, 8.0f));
     GRAPHICS::AnimatedSprite animated_sprite(sprite);
 
     // SET ANIMATION SEQUENCES.
@@ -290,710 +290,6 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
         AXE_WIDTH_IN_PIXELS,
         AXE_HEIGHT_IN_PIXELS);
     noah_player.Axe->Sprite = GRAPHICS::Sprite(*axe_texture, axe_texture_sub_rectangle);
-}
-
-void Render(GRAPHICS::Sprite& sprite, sf::RenderTarget& render_target)
-{
-    sprite.Render(render_target);
-}
-
-void Render(GRAPHICS::AnimatedSprite& sprite, sf::RenderTarget& render_target)
-{
-    sprite.Render(render_target);
-}
-
-void Render(MAPS::TileMap& tile_map, sf::RenderTarget& render_target)
-{
-    // RENDER THE CURRENT TILE MAP'S GROUND LAYER.
-    MATH::Vector2ui ground_dimensions_in_tiles = tile_map.GetDimensionsInTiles();
-    for (unsigned int tile_row = 0; tile_row < ground_dimensions_in_tiles.Y; ++tile_row)
-    {
-        for (unsigned int tile_column = 0; tile_column < ground_dimensions_in_tiles.X; ++tile_column)
-        {
-            std::shared_ptr<MAPS::Tile> tile = tile_map.Ground.Tiles(tile_column, tile_row);
-            Render(tile->Sprite, render_target);
-        }
-    }
-
-    // RENDER THE CURRENT TILE MAP'S TREES.
-    for (auto& tree : tile_map.Trees)
-    {
-        Render(tree.Sprite, render_target);
-    }
-}
-
-
-bool CollidesWithTree(MAPS::Overworld& overworld, const MATH::FloatRectangle& rectangle, MATH::FloatRectangle& tree_rectangle)
-{
-    // CLEAR THE OUT PARAMETER.
-    tree_rectangle = MATH::FloatRectangle();
-
-    // GET THE TREES NEAR THE RECTANGLE.
-    MATH::Vector2f object_center_position = rectangle.GetCenterPosition();
-    MAPS::TileMap* current_tile_map = overworld.GetTileMap(object_center_position.X, object_center_position.Y);
-    bool tile_map_exists = (nullptr != current_tile_map);
-    if (!tile_map_exists)
-    {
-        // No tile map exists with trees to collide with.
-        return false;
-    }
-
-    // CHECK IF ANY OF THE TREES COLLIDE WITH THE RECTANGLE.
-    for (auto tree = current_tile_map->Trees.cbegin(); current_tile_map->Trees.cend() != tree; ++tree)
-    {
-        // SHRINK THE TREE'S BOUNDING BOX SO THAT OBJECTS DON'T GET CAUGHT ON EDGES.
-        const float TREE_DIMENSION_SHRINK_AMOUNT = 2.0f;
-        MATH::FloatRectangle tree_bounds = tree->GetWorldBoundingBox();
-        float new_tree_width = tree_bounds.GetWidth() - TREE_DIMENSION_SHRINK_AMOUNT;
-        float new_tree_height = tree_bounds.GetHeight() - TREE_DIMENSION_SHRINK_AMOUNT;
-        MATH::FloatRectangle new_tree_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
-            tree_bounds.GetCenterXPosition(),
-            tree_bounds.GetCenterYPosition(),
-            new_tree_width,
-            new_tree_height);
-
-        // CHECK IF A COLLISION OCCURS WITH THE CURRENT TREE.
-        bool collides_with_tree = rectangle.Intersects(new_tree_bounds);
-        if (collides_with_tree)
-        {
-            // RETURN THAT A COLLISION OCCURRED WITH THE CURRENT TREE.
-            tree_rectangle = new_tree_bounds;
-            return true;
-        }
-    }
-
-    // No trees were found to collide with the rectangle.
-    return false;
-}
-
-MATH::Vector2f MoveUpWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
-{
-    // INITIALIZE THE NEW POSITION FOR THE OBJECT.
-    // The object should remain at its current position if no movement occurs.
-    MATH::Vector2f object_new_world_position = object_world_bounding_box.GetCenterPosition();
-
-    // VERIFY THAT THE MOVEMENT IS FOR THE 'UP' DIRECTION.
-    bool movement_for_up_direction = (CORE::Direction::UP == movement.Direction);
-    if (!movement_for_up_direction)
-    {
-        // An invalid movement was provided to this method since the direction was not up.
-        assert(movement_for_up_direction);
-        return object_new_world_position;
-    }
-
-    // GRADUALLY MOVE THE OBJECT UPWARD UNTIL WE COLLIDE WITH SOMETHING.
-    // The bounding box of the object will be modified through multiple iterations of movement
-    // to calculate the final position.
-    MATH::FloatRectangle object_current_bounding_box = object_world_bounding_box;
-    float distance_left_to_move = movement.DistanceInPixels;
-    while (distance_left_to_move > 0.0f)
-    {
-        // GET THE CURRENT TILES THAT THE TOP OF THE OBJECT'S BOUNDING BOX IS TOUCHING.
-        float collision_box_top_y_position = object_current_bounding_box.GetTopYPosition();
-
-        // Get the tile for the top-left corner.
-        float collision_box_left_x_position = object_current_bounding_box.GetLeftXPosition();
-        // The horizonal tiles retrieved will be adjusted so that small corners touching won't be detected as collisions.
-        float collision_box_width = object_current_bounding_box.GetWidth();
-        float horizontal_corner_tiles_adjustment_amount = collision_box_width / 4.0f;
-        collision_box_left_x_position += horizontal_corner_tiles_adjustment_amount;
-        std::shared_ptr<MAPS::Tile> top_left_tile = overworld.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_top_y_position);
-
-        // Get the tile right above the collision box's center.
-        float collison_box_center_x_position = object_current_bounding_box.GetCenterXPosition();
-        std::shared_ptr<MAPS::Tile> top_center_tile = overworld.GetTileAtWorldPosition(collison_box_center_x_position, collision_box_top_y_position);
-
-        // Get the tile for the top-right corner.
-        float collision_box_right_x_position = object_current_bounding_box.GetRightXPosition();
-        collision_box_right_x_position -= horizontal_corner_tiles_adjustment_amount;
-        std::shared_ptr<MAPS::Tile> top_right_tile = overworld.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_top_y_position);
-
-        // MAKE SURE THE TOP TILES EXIST.
-        bool top_tiles_exist = (nullptr != top_left_tile) && (nullptr != top_center_tile) && (nullptr != top_right_tile);
-        if (!top_tiles_exist)
-        {
-            // There aren't any tiles above the collision box to move to.
-            break;
-        }
-
-        // CHECK IF THE TOP TILES ARE WALKABLE.
-        bool top_tiles_walkable = (top_left_tile->IsWalkable()) && (top_center_tile->IsWalkable()) && (top_right_tile->IsWalkable());
-        if (!top_tiles_walkable)
-        {
-            // At least one of the top tiles isn't walkable, so it is blocking any further upward movement.
-            break;
-        }
-
-        // CHECK IF THE OBJECT COLLIDES WITH A TREE.
-        MATH::FloatRectangle tree_rectangle;
-        bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
-        if (collides_with_tree)
-        {
-            // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
-            // A collision could have occurred with a tree that isn't being moved toward,
-            // in which case movement should not be stopped.
-            // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
-            const float MIN_UP_MOVEMENT = -1.0f;
-            float old_collision_box_bottom = object_current_bounding_box.GetBottomYPosition();
-            float old_collision_box_top = object_current_bounding_box.GetTopYPosition();
-            float new_collision_box_top = old_collision_box_top + MIN_UP_MOVEMENT;
-            float tree_bottom = tree_rectangle.GetBottomYPosition();
-
-            // A minimum distance between the collision box's center and the tree's
-            // center is enforced so that moving objects don't get stuck on
-            // parts of trees not directly related to their current movement.
-            float min_object_tree_distance = tree_rectangle.GetWidth() / 2.0f;
-            float object_center_x = object_current_bounding_box.GetCenterXPosition();
-            float tree_center_x = tree_rectangle.GetCenterXPosition();
-            float object_to_tree_distance = fabs(object_center_x - tree_center_x);
-            bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
-
-            bool moving_up_collides_with_tree = (
-                collision_distance_met &&
-                (old_collision_box_bottom >= tree_bottom) &&
-                (new_collision_box_top <= tree_bottom));
-            if (moving_up_collides_with_tree)
-            {
-                // A tree is blocking further movement.
-                break;
-            }
-        }
-
-        // CHECK IF THE TOTAL MOVEMENT IS CONFINED TO THE CURRENT TILE.
-        float top_tile_top_y_position = top_center_tile->GetTopYPosition();
-        float distance_from_top_of_collision_box_to_top_of_tile = fabs(collision_box_top_y_position - top_tile_top_y_position);
-        bool remaining_movement_confined_to_current_tile = (distance_left_to_move <= distance_from_top_of_collision_box_to_top_of_tile);
-        if (remaining_movement_confined_to_current_tile)
-        {
-            // Move the collision box the total movement amount since it is confined to a walkable tile.
-            // Upward movement is in the negative Y direction.
-            object_current_bounding_box.Move(MATH::Vector2f(0.0f, -1.0f * distance_left_to_move));
-
-            // The entire movement has completed, so exit the movement loop.
-            break;
-        }
-        else
-        {
-            // Ensure that we move up at least 1 pixel to prevent an infinite loop.
-            float distance_to_move_for_current_tile = std::max(distance_from_top_of_collision_box_to_top_of_tile, 1.0f);
-
-            // Move the collision box to the top of the current top tile.
-            // Upward movement is in the negative Y direction.
-            object_current_bounding_box.Move(MATH::Vector2f(0.0f, -1.0f * distance_to_move_for_current_tile));
-
-            // Track the distance we just moved.
-            distance_left_to_move -= distance_to_move_for_current_tile;
-
-            // At this point, the loop will continue another iteration.
-            // New top tiles should be detected for the new position of the collision box,
-            // allowing movement to be simulated for the next set of top tiles.
-        }
-    }
-
-    // RETURN THE OBJECT'S NEW POSITION.
-    object_new_world_position = object_current_bounding_box.GetCenterPosition();
-
-    float original_x_position = object_world_bounding_box.GetCenterPosition().X;
-    float new_x_position = object_new_world_position.X;
-    assert(original_x_position == new_x_position);
-
-    return object_new_world_position;
-}
-
-MATH::Vector2f MoveDownWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
-{
-    // INITIALIZE THE NEW POSITION OF THE OBJECT.
-    // The object should remain at its current position if no movement occurs.
-    MATH::Vector2f object_new_world_position = object_world_bounding_box.GetCenterPosition();
-
-    // VERIFY THAT THE MOVEMENT IS FOR THE 'DOWN' DIRECTION.
-    bool movement_for_down_direction = (CORE::Direction::DOWN == movement.Direction);
-    if (!movement_for_down_direction)
-    {
-        // An invalid movement was provided to this method since the direction was not down.
-        assert(movement_for_down_direction);
-        return object_new_world_position;
-    }
-
-    // GRADUALLY MOVE THE OBJECT DOWNWARD UNTIL WE COLLIDE WITH SOMETHING.
-    // The bounding box of the object will be modified through multiple iterations of movement
-    // to calculate the final position.
-    MATH::FloatRectangle object_current_bounding_box = object_world_bounding_box;
-    float distance_left_to_move = movement.DistanceInPixels;
-    while (distance_left_to_move > 0.0f)
-    {
-        // GET THE CURRENT TILES THAT THE BOTTOM OF THE OBJECT'S BOUNDING BOX IS TOUCHING.
-        float collision_box_bottom_y_position = object_current_bounding_box.GetBottomYPosition();
-
-        // The horizonal tiles retrieved will be adjusted so that small corners touching won't be detected as collisions.
-        // We will adjust the corners to move them closer to the center of the collision box.
-        float collision_box_width = object_current_bounding_box.GetWidth();
-        float horizontal_corner_tiles_adjustment_amount = collision_box_width / 4.0f;
-
-        // Get the tile for the bottom-left corner.
-        float collision_box_left_x_position = object_current_bounding_box.GetLeftXPosition();
-        collision_box_left_x_position += horizontal_corner_tiles_adjustment_amount;
-        std::shared_ptr<MAPS::Tile> bottom_left_tile = overworld.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_bottom_y_position);
-
-        // Get the tile right below the collision box's center.
-        float collison_box_center_x_position = object_current_bounding_box.GetCenterXPosition();
-        std::shared_ptr<MAPS::Tile> bottom_center_tile = overworld.GetTileAtWorldPosition(collison_box_center_x_position, collision_box_bottom_y_position);
-
-        // Get the tile for the bottom-right corner.
-        float collision_box_right_x_position = object_current_bounding_box.GetRightXPosition();
-        collision_box_right_x_position -= horizontal_corner_tiles_adjustment_amount;
-        std::shared_ptr<MAPS::Tile> bottom_right_tile = overworld.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_bottom_y_position);
-
-        // MAKE SURE THE BOTTOM TILES EXIST.
-        bool bottom_tiles_exist = (nullptr != bottom_left_tile) && (nullptr != bottom_center_tile) && (nullptr != bottom_right_tile);
-        if (!bottom_tiles_exist)
-        {
-            // There aren't any tiles below the collision box to move to.
-            break;
-        }
-
-        // CHECK IF THE BOTTOM TILES ARE WALKABLE.
-        bool bottom_tiles_walkable = (bottom_left_tile->IsWalkable()) && (bottom_center_tile->IsWalkable()) && (bottom_right_tile->IsWalkable());
-        if (!bottom_tiles_walkable)
-        {
-            // At least one of the bottom tiles isn't walkable, so it is blocking any further downward movement.
-            break;
-        }
-
-        // CHECK IF THE OBJECT COLLIDES WITH A TREE.
-        MATH::FloatRectangle tree_rectangle;
-        bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
-        if (collides_with_tree)
-        {
-            // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
-            // A collision could have occurred with a tree that isn't being moved toward,
-            // in which case movement should not be stopped.
-            // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
-            const float MIN_DOWN_MOVEMENT = 1.0f;
-            float old_collision_box_top = object_current_bounding_box.GetTopYPosition();
-            float old_collision_box_bottom = object_current_bounding_box.GetBottomYPosition();
-            float new_collision_box_bottom = old_collision_box_bottom + MIN_DOWN_MOVEMENT;
-            float tree_top = tree_rectangle.GetTopYPosition();
-
-            // A minimum distance between the collision box's center and the tree's
-            // center is enforced so that moving objects don't get stuck on
-            // parts of trees not directly related to their current movement.
-            float min_object_tree_distance = tree_rectangle.GetWidth() / 2.0f;
-            float object_center_x = object_current_bounding_box.GetCenterXPosition();
-            float tree_center_x = tree_rectangle.GetCenterXPosition();
-            float object_to_tree_distance = fabs(object_center_x - tree_center_x);
-            bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
-
-            bool moving_down_collides_with_tree = (
-                collision_distance_met &&
-                (old_collision_box_top <= tree_top) &&
-                (new_collision_box_bottom >= tree_top));
-            if (moving_down_collides_with_tree)
-            {
-                // A tree is blocking further movement.
-                break;
-            }
-        }
-
-        // CHECK IF THE TOTAL MOVEMENT IS CONFINED TO THE CURRENT TILE.
-        float bottom_tile_bottom_y_position = bottom_center_tile->GetBottomYPosition();
-        float distance_from_bottom_of_collision_box_to_bottom_of_tile = fabs(bottom_tile_bottom_y_position - collision_box_bottom_y_position);
-        bool remaining_movement_confined_to_current_tile = (distance_left_to_move <= distance_from_bottom_of_collision_box_to_bottom_of_tile);
-        if (remaining_movement_confined_to_current_tile)
-        {
-            // Move the collision box the total movement amount since it is confined to a walkable tile.
-            // Downward movement is in the positive Y direction.
-            object_current_bounding_box.Move(MATH::Vector2f(0.0f, distance_left_to_move));
-
-            // The entire movement has completed, so exit the movement loop.
-            break;
-        }
-        else
-        {
-            // Ensure that we move down at least 1 pixel to prevent an infinite loop.
-            float distance_to_move_for_current_tile = std::max(distance_from_bottom_of_collision_box_to_bottom_of_tile, 1.0f);
-
-            // Move the collision box to the bottom of the current bottom tile.
-            // Downward movement is in the positive Y direction.
-            object_current_bounding_box.Move(MATH::Vector2f(0.0f, distance_to_move_for_current_tile));
-
-            // Track the distance we just moved.
-            distance_left_to_move -= distance_to_move_for_current_tile;
-
-            // At this point, the loop will continue another iteration.
-            // New bottom tiles should be detected for the new position of the collision box,
-            // allowing movement to be simulated for the next set of bottom tiles.
-        }
-    }
-
-    // RETURN THE OBJECT'S NEW POSITION.
-    object_new_world_position = object_current_bounding_box.GetCenterPosition();
-    return object_new_world_position;
-}
-
-MATH::Vector2f MoveLeftWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
-{
-    // INITIALIZE THE NEW POSITION FOR THE OBJECT.
-    // The object should remain at its current position if no movement occurs.
-    MATH::Vector2f object_new_world_position = object_world_bounding_box.GetCenterPosition();
-
-    // VERIFY THAT THE MOVEMENT IS FOR THE 'LEFT' DIRECTION.
-    bool movement_for_left_direction = (CORE::Direction::LEFT == movement.Direction);
-    if (!movement_for_left_direction)
-    {
-        // An invalid movement was provided to this method since the direction was not left.
-        assert(movement_for_left_direction);
-        return object_new_world_position;
-    }
-
-    // GRADUALLY MOVE THE OBJECT LEFTWARD UNTIL WE COLLIDE WITH SOMETHING.
-    // The bounding box of the object will be modified through multiple iterations of movement
-    // to calculate the final position.
-    MATH::FloatRectangle object_current_bounding_box = object_world_bounding_box;
-    float distance_left_to_move = movement.DistanceInPixels;
-    while (distance_left_to_move > 0.0f)
-    {
-        // GET THE CURRENT TILES THAT THE LEFT OF THE OBJECT'S BOUNDING BOX IS TOUCHING.
-        float collision_box_left_x_position = object_current_bounding_box.GetLeftXPosition();
-
-        // The vertical tiles retrieved will be adjusted so that small corners touching won't be detected as collisions.
-        // We will adjust the corners to move them closer to the center of the collision box.
-        float collision_box_height = object_current_bounding_box.GetHeight();
-        float vertical_corner_tiles_adjustment_amount = collision_box_height / 4.0f;
-
-        // Get the tile for the top-left corner.
-        float collision_box_top_y_position = object_current_bounding_box.GetTopYPosition();
-        collision_box_top_y_position += vertical_corner_tiles_adjustment_amount;
-        std::shared_ptr<MAPS::Tile> top_left_tile = overworld.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_top_y_position);
-
-        // Get the tile to the direct left of the collision box's center.
-        float collision_box_center_y_position = object_current_bounding_box.GetCenterYPosition();
-        std::shared_ptr<MAPS::Tile> center_left_tile = overworld.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_center_y_position);
-
-        // Get the tile for the bottom-left corner.
-        float collision_box_bottom_y_position = object_current_bounding_box.GetBottomYPosition();
-        collision_box_bottom_y_position -= vertical_corner_tiles_adjustment_amount;
-        std::shared_ptr<MAPS::Tile> bottom_left_tile = overworld.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_bottom_y_position);
-
-        // MAKE SURE THE LEFT TILES EXIST.
-        bool left_tiles_exist = (nullptr != top_left_tile) && (nullptr != center_left_tile) && (nullptr != bottom_left_tile);
-        if (!left_tiles_exist)
-        {
-            // There aren't any tiles left of the collision box to move to.
-            break;
-        }
-
-        // CHECK IF THE LEFT TILES ARE WALKABLE.
-        bool left_tiles_walkable = (top_left_tile->IsWalkable()) && (center_left_tile->IsWalkable()) && (bottom_left_tile->IsWalkable());
-        if (!left_tiles_walkable)
-        {
-            // At least one of the left tiles isn't walkable, so it is blocking any further leftward movement.
-            break;
-        }
-
-        // CHECK IF THE OBJECT COLLIDES WITH A TREE.
-        MATH::FloatRectangle tree_rectangle;
-        bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
-        if (collides_with_tree)
-        {
-            // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
-            // A collision could have occurred with a tree that isn't being moved toward,
-            // in which case movement should not be stopped.
-            // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
-            const float MIN_LEFT_MOVEMENT = -1.0f;
-            float old_collision_box_right = object_current_bounding_box.GetRightXPosition();
-            float old_collision_box_left = object_current_bounding_box.GetLeftXPosition();
-            float new_collision_box_left = old_collision_box_left + MIN_LEFT_MOVEMENT;
-            float tree_right = tree_rectangle.GetRightXPosition();
-
-            // A minimum distance between the collision box's center and the tree's
-            // center is enforced so that moving objects don't get stuck on
-            // parts of trees not directly related to their current movement.
-            float min_object_tree_distance = tree_rectangle.GetHeight() / 2.0f;
-            float object_center_y = object_current_bounding_box.GetCenterYPosition();
-            float tree_center_y = tree_rectangle.GetCenterYPosition();
-            float object_to_tree_distance = fabs(object_center_y - tree_center_y);
-            bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
-
-            bool moving_left_collides_with_tree = (
-                collision_distance_met &&
-                (old_collision_box_right >= tree_right) &&
-                (new_collision_box_left <= tree_right));
-            if (moving_left_collides_with_tree)
-            {
-                // A tree is blocking further movement.
-                break;
-            }
-        }
-
-        // CHECK IF THE TOTAL MOVEMENT IS CONFINED TO THE CURRENT TILE.
-        float left_tile_left_x_position = center_left_tile->GetLeftXPosition();
-        float distance_from_left_of_collision_box_to_left_of_tile = fabs(collision_box_left_x_position - left_tile_left_x_position);
-        bool remaining_movement_confined_to_current_tile = (distance_left_to_move <= distance_from_left_of_collision_box_to_left_of_tile);
-        if (remaining_movement_confined_to_current_tile)
-        {
-            // Move the collision box the total movement amount since it is confined to a walkable tile.
-            object_current_bounding_box.Move(MATH::Vector2f(-1.0f * distance_left_to_move, 0.0f));
-
-            // The entire movement has completed, so exit the movement lop.
-            break;
-        }
-        else
-        {
-            // Ensure that we move left at least 1 pixel to prevent an infinite loop.
-            float distance_to_move_for_current_tile = std::max(distance_from_left_of_collision_box_to_left_of_tile, 1.0f);
-
-            // Move the collision box to the left of the current left tile.
-            object_current_bounding_box.Move(MATH::Vector2f(-1.0f * distance_to_move_for_current_tile, 0.0f));
-
-            // Track the distance we just moved.
-            distance_left_to_move -= distance_to_move_for_current_tile;
-
-            // At this point, the loop will continue another iteration.
-            // New left tiles should be detected for the new position of the collision box,
-            // allowing movement to be simulated for the next set of left tiles.
-        }
-    }
-
-    // RETURN THE OBJECT'S NEW POSITION.
-    object_new_world_position = object_current_bounding_box.GetCenterPosition();
-    return object_new_world_position;
-}
-
-MATH::Vector2f MoveRightWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
-{
-    // INITIALIZE THE NEW POSITION FOR THE OBJECT.
-    // The object should remain at its current position if no movement occurs.
-    MATH::Vector2f object_new_world_position = object_world_bounding_box.GetCenterPosition();
-
-    // VERIFY THAT THE MOVEMENT IS FOR THE 'RIGHT' DIRECTION.
-    bool movement_for_right_direction = (CORE::Direction::RIGHT == movement.Direction);
-    if (!movement_for_right_direction)
-    {
-        // An invalid movement was provided to this method since the direction was not right.
-        assert(movement_for_right_direction);
-        return object_new_world_position;
-    }
-
-    // GRADUALLY MOVE THE OBJECT RIGHTWARD UNTIL WE COLLIDE WITH SOMETHING.
-    // The bounding box of the object will be modified through multiple iterations of movement
-    // to calculate the final position.
-    MATH::FloatRectangle object_current_bounding_box = object_world_bounding_box;
-    float distance_left_to_move = movement.DistanceInPixels;
-    while (distance_left_to_move > 0.0f)
-    {
-        // GET THE CURRENT TILES THAT THE RIGHT OF THE OBJECT'S BOUNDING BOX IS TOUCHING.
-        float collision_box_right_x_position = object_current_bounding_box.GetRightXPosition();
-
-        // The vertical tiles retrieved will be adjusted so that small corners touching won't be detected as collisions.
-        // We will adjust the corners to move them closer to the center of the collision box.
-        float collision_box_height = object_current_bounding_box.GetHeight();
-        float vertical_corner_tiles_adjustment_amount = collision_box_height / 4.0f;
-
-        // Get the tile for the top-right corner.
-        float collision_box_top_y_position = object_current_bounding_box.GetTopYPosition();
-        collision_box_top_y_position += vertical_corner_tiles_adjustment_amount;
-        std::shared_ptr<MAPS::Tile> top_right_tile = overworld.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_top_y_position);
-
-        // Get the tile to the direct right of the collision box's center.
-        float collision_box_center_y_position = object_current_bounding_box.GetCenterYPosition();
-        std::shared_ptr<MAPS::Tile> center_right_tile = overworld.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_center_y_position);
-
-        // Get the tile for the bottom-right corner.
-        float collision_box_bottom_y_position = object_current_bounding_box.GetBottomYPosition();
-        collision_box_bottom_y_position -= vertical_corner_tiles_adjustment_amount;
-        std::shared_ptr<MAPS::Tile> bottom_right_tile = overworld.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_bottom_y_position);
-
-        // MAKE SURE THE RIGHT TILES EXIST.
-        bool right_tiles_exist = (nullptr != top_right_tile) && (nullptr != center_right_tile) && (nullptr != bottom_right_tile);
-        if (!right_tiles_exist)
-        {
-            // There aren't any tiles right of the collision box to move to.
-            break;
-        }
-
-        // CHECK IF THE RIGHT TILES ARE WALKABLE.
-        bool right_tiles_walkable = (top_right_tile->IsWalkable()) && (center_right_tile->IsWalkable()) && (bottom_right_tile->IsWalkable());
-        if (!right_tiles_walkable)
-        {
-            // At least one of the right tiles isn't walkable, so it is blocking any further rightward movement.
-            break;
-        }
-
-        // CHECK IF THE OBJECT COLLIDES WITH A TREE.
-        MATH::FloatRectangle tree_rectangle;
-        bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
-        if (collides_with_tree)
-        {
-            // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
-            // A collision could have occurred with a tree that isn't being moved toward,
-            // in which case movement should not be stopped.
-            // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
-            const float MIN_RIGHT_MOVEMENT = 1.0f;
-            float old_collision_box_left = object_current_bounding_box.GetLeftXPosition();
-            float old_collision_box_right = object_current_bounding_box.GetRightXPosition();
-            float new_collision_box_right = old_collision_box_right + MIN_RIGHT_MOVEMENT;
-            float tree_left = tree_rectangle.GetLeftXPosition();
-
-            // A minimum distance between the collision box's center and the tree's
-            // center is enforced so that moving objects don't get stuck on
-            // parts of trees not directly related to their current movement.
-            float min_object_tree_distance = tree_rectangle.GetHeight() / 2.0f;
-            float object_center_y = object_current_bounding_box.GetCenterYPosition();
-            float tree_center_y = tree_rectangle.GetCenterYPosition();
-            float object_to_tree_distance = fabs(object_center_y - tree_center_y);
-            bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
-
-            bool moving_right_collides_with_tree = (
-                collision_distance_met &&
-                (old_collision_box_left <= tree_left) &&
-                (new_collision_box_right >= tree_left));
-            if (moving_right_collides_with_tree)
-            {
-                // A tree is blocking further movement.
-                break;
-            }
-        }
-
-        // CHECK IF THE TOTAL MOVEMENT IS CONFINED TO THE CURRENT TILE.
-        float right_tile_right_x_position = center_right_tile->GetRightXPosition();
-        float distance_from_right_of_collision_box_to_right_of_tile = fabs(right_tile_right_x_position - collision_box_right_x_position);
-        bool remaining_movement_confined_to_current_tile = (distance_left_to_move <= distance_from_right_of_collision_box_to_right_of_tile);
-        if (remaining_movement_confined_to_current_tile)
-        {
-            // Move the collision box the total movement amount since it is confined
-            // to a walkable tile.
-            object_current_bounding_box.Move(MATH::Vector2f(distance_left_to_move, 0.0f));
-
-            // The entire movement has completed, so exit the movement loop.
-            break;
-        }
-        else
-        {
-            // Ensure that we move right at least 1 pixel to prevent an infinite loop.
-            float distance_to_move_for_current_tile = std::max(distance_from_right_of_collision_box_to_right_of_tile, 1.0f);
-
-            // Move the collision box to the right of the current right tile.
-            object_current_bounding_box.Move(MATH::Vector2f(distance_from_right_of_collision_box_to_right_of_tile, 0.0f));
-
-            // Track the distance we just moved.
-            distance_left_to_move -= distance_to_move_for_current_tile;
-
-            // At this point, the loop will continue another iteration.
-            // New right tiles should be detected for the new position of the collision box,
-            // allowing movement to be simulated for the next set of right tiles.
-        }
-    }
-
-    // RETURN THE OBJECT'S NEW POSITION.
-    object_new_world_position = object_current_bounding_box.GetCenterPosition();
-    return object_new_world_position;
-}
-
-MATH::Vector2f MoveWithCollisionDetection(
-    MAPS::Overworld& overworld, 
-    const float elapsed_time_in_seconds, 
-    const CORE::Direction direction, 
-    const float move_speed_in_pixels_per_second, 
-    const MATH::FloatRectangle& object_world_bounding_box)
-{
-    float movement_distance_in_pixels = move_speed_in_pixels_per_second * elapsed_time_in_seconds;
-    COLLISION::Movement movement(direction, movement_distance_in_pixels);
-
-    // SIMULATE MOVEMENT BASED ON THE PARTICULAR DIRECTION.
-    MATH::Vector2f new_world_position = object_world_bounding_box.GetCenterPosition();
-    //std::cout << "Original position: (" << new_world_position.X << "," << new_world_position.Y << ")" << std::endl;
-    switch (direction)
-    {
-        case CORE::Direction::UP:
-            new_world_position = MoveUpWithCollisionDetection(overworld, movement, object_world_bounding_box);
-            break;
-        case CORE::Direction::DOWN:
-            new_world_position = MoveDownWithCollisionDetection(overworld, movement, object_world_bounding_box);
-            break;
-        case CORE::Direction::LEFT:
-            new_world_position = MoveLeftWithCollisionDetection(overworld, movement, object_world_bounding_box);
-            break;
-        case CORE::Direction::RIGHT:
-            new_world_position = MoveRightWithCollisionDetection(overworld, movement, object_world_bounding_box);
-            break;
-        case CORE::Direction::INVALID:
-            // Intentionally fall through.
-        default:
-            // No movement can be simulated for an invalid direction.
-            break;
-    }
-    //std::cout << "New position: (" << new_world_position.X << "," << new_world_position.Y << ")" << std::endl;
-
-    return new_world_position;
-}
-
-void HandleAxeCollisionsWithTrees(const MATH::FloatRectangle& axe_blade_bounds, MAPS::Overworld& overworld)
-{
-    // GET THE WORLD AREA CONTAING THE AXE BLADE.
-    // While it is technically possible for the axe to intersect multiple world areas,
-    // the axe is relatively small, and the player shouldn't be able to see more than
-    // one world area.  Therefore, it should be safe to get just the area for the
-    // axe blade's center.
-    /// @todo   Maybe the world should just encapsulate the above?
-    /// @todo   Change overworld map to world area?
-    //WorldArea world_area = OverworldMap->GetArea(axe_blade_bounds.GetCenterXPosition(), axe_blade_bounds.GetCenterYPosition());
-    MATH::Vector2f axe_center_position = axe_blade_bounds.GetCenterPosition();
-    MAPS::TileMap* tile_map = overworld.GetTileMap(axe_center_position.X, axe_center_position.Y);
-    assert(tile_map);
-    for (auto tree = tile_map->Trees.cbegin(); tile_map->Trees.cend() != tree;)
-    {
-        MATH::FloatRectangle tree_bounds = tree->GetWorldBoundingBox();
-        bool axe_hit_tree = axe_blade_bounds.Intersects(tree_bounds);
-        if (axe_hit_tree)
-        {
-            tree = tile_map->Trees.erase(tree);
-        }
-        else
-        {
-            ++tree;
-        }
-    }
-}
-
-void HandleAxeSwingCollisions(MAPS::Overworld& overworld, std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings)
-{
-    // HANDLE COLLISIONS FOR ALL AXE SWINGS.
-    for (auto axe_swing_event = axe_swings.cbegin(); axe_swings.cend() != axe_swing_event;)
-    {
-        // MAKE SURE THE CURRENT AXE SWING EXISTS.
-        bool axe_swing_exists = (nullptr != axe_swing_event->get());
-        if (!axe_swing_exists)
-        {
-            // Remove the invalid event so that it no longer takes up space.
-            axe_swing_event = axe_swings.erase(axe_swing_event);
-
-            // Silently skip over this missing axe swing to allow
-            // the game to continue running.
-            continue;
-        }
-
-        const EVENTS::AxeSwingEvent axe_swing = (**axe_swing_event);
-
-        // CHECK IF THE AXE SWING EVENT HAS REACHED ITS MAXIMUM EXTENSION POINT.
-        // The axe swing event should only be processed once it has finish
-        // being fully swung out to its maximum point.
-        bool axe_swing_at_max_extension_point = axe_swing.FullySwungOut();
-        if (!axe_swing_at_max_extension_point)
-        {
-            // The current axe swing event is not ready to be processed,
-            // so skip to the next event.
-            ++axe_swing_event;
-            continue;
-        }
-
-        // HANDLE COLLISIONS OF THE AXE WITH TREES.
-        MATH::FloatRectangle axe_blade_bounds = axe_swing.GetBladeBounds();
-        HandleAxeCollisionsWithTrees(axe_blade_bounds, overworld);
-
-        // REMOVE THE PROCESSED AXE SWING EVENT.
-        axe_swing_event = axe_swings.erase(axe_swing_event);
-    }
 }
 
 /// The main entry point for the game.
@@ -1150,7 +446,7 @@ int main(int argumentCount, char* arguments[])
                         noah_player.Sprite.Play();
 
                         //noah_player.MoveUp(elapsed_time_in_seconds);
-                        MATH::Vector2f new_position = MoveWithCollisionDetection(
+                        MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                             overworld,
                             elapsed_time_in_seconds,
                             CORE::Direction::UP,
@@ -1214,7 +510,7 @@ int main(int argumentCount, char* arguments[])
                         noah_player.Sprite.Play();
 
                         //noah_player.MoveDown(elapsed_time_in_seconds);
-                        MATH::Vector2f new_position = MoveWithCollisionDetection(
+                        MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                             overworld,
                             elapsed_time_in_seconds,
                             CORE::Direction::DOWN,
@@ -1278,7 +574,7 @@ int main(int argumentCount, char* arguments[])
                         noah_player.Sprite.Play();
 
                         //noah_player.MoveLeft(elapsed_time_in_seconds);
-                        MATH::Vector2f new_position = MoveWithCollisionDetection(
+                        MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                             overworld,
                             elapsed_time_in_seconds,
                             CORE::Direction::LEFT,
@@ -1342,7 +638,7 @@ int main(int argumentCount, char* arguments[])
                         noah_player.Sprite.Play();
 
                         //noah_player.MoveRight(elapsed_time_in_seconds);
-                        MATH::Vector2f new_position = MoveWithCollisionDetection(
+                        MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                             overworld,
                             elapsed_time_in_seconds,
                             CORE::Direction::RIGHT,
@@ -1425,7 +721,7 @@ int main(int argumentCount, char* arguments[])
                 }
 
                 // HANDLE AXE SWINGS.
-                HandleAxeSwingCollisions(overworld, axe_swings);
+                COLLISION::HandleAxeSwingCollisions(overworld, axe_swings);
 
                 // Render the current state of the game.
                 window.clear();
@@ -1460,17 +756,17 @@ int main(int argumentCount, char* arguments[])
                         }
 
                         // RENDER THE TILE MAP.
-                        Render(*tile_map, window);
+                        GRAPHICS::Render(*tile_map, window);
                     }
                 }
                 
                 // RENDER THE PLAYER.
                 noah_player.Axe->Update(elapsed_time_in_seconds);
                 noah_player.Sprite.Update(elapsed_time_in_seconds);
-                Render(noah_player.Sprite, window);
+                GRAPHICS::Render(noah_player.Sprite, window);
                 if (noah_player.Axe->IsSwinging())
                 {
-                    Render(noah_player.Axe->Sprite, window);
+                    GRAPHICS::Render(noah_player.Axe->Sprite, window);
                 }
 
                 window.display();

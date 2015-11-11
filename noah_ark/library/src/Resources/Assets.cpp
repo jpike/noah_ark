@@ -86,11 +86,11 @@ namespace RESOURCES
                     int tile_top_texture_offset_in_texels = tile_row_index * tileset_description.TileHeightInPixels;
 
                     // CREATE A SPRITE FOR THE CURRENT TILE.
-                    MATH::IntRectangle tile_texture_rect = MATH::IntRectangle::FromTopLeftAndDimensions(
-                        tile_left_texture_offset_in_texels,
-                        tile_top_texture_offset_in_texels,
-                        tileset_description.TileWidthInPixels,
-                        tileset_description.TileHeightInPixels);
+                    MATH::FloatRectangle tile_texture_rect = MATH::FloatRectangle::FromTopLeftAndDimensions(
+                        static_cast<float>(tile_left_texture_offset_in_texels),
+                        static_cast<float>(tile_top_texture_offset_in_texels),
+                        static_cast<float>(tileset_description.TileWidthInPixels),
+                        static_cast<float>(tileset_description.TileHeightInPixels));
 
                     // STORE THE CURRENT TILE.
                     tileset->SetTile(current_tile_id, tileset_texture, tile_texture_rect);

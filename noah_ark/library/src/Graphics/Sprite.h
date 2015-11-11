@@ -17,17 +17,11 @@ namespace GRAPHICS
         explicit Sprite();
         /// Creates an invisible sprite based on the provided texture information.
         /// @param[in]  texture - The texture containing graphics for the sprite.
-        ///     The texture must remain in memory (managed externally) as long
-        ///     as this sprite remains in memory.
-        ///     @todo   Convert to shared_ptr?
         /// @param[in]  texture_sub_rectangle - The sub-rectangle of the texture
         /// defining which portion should be used for the sprite.
         explicit Sprite(
-            const Texture& texture,
+            const std::shared_ptr<Texture>& texture,
             const MATH::FloatRectangle& texture_sub_rectangle);
-        /// Constructor.  The sprite is visible by default.
-        /// @param[in]  sprite - The SFML sprite resource to use.
-        explicit Sprite(const sf::Sprite& sprite);
 
         /// Sets the sub-rectangle of the sprite's texture that should be used
         /// for rendering.
@@ -75,6 +69,11 @@ namespace GRAPHICS
         void SetScale(const MATH::Vector2f& scale);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The texture providing graphics for this sprite.
+        /// Stored here to ensure the texture stays in memory as long as the sprite
+        /// is in memory.  Does not seem to result in any noticeable increases in
+        /// memory usage.
+        std::shared_ptr<Texture> SpriteTexture;
         /// The underlying SFML sprite resource.
         sf::Sprite SpriteResource;
         /// Whether or not the sprite is visible.

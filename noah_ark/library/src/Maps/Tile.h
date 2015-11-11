@@ -9,9 +9,9 @@ namespace MAPS
     typedef unsigned int TileId;
 
     /// A 2D graphical tile intended to be used as a building block for tile maps.
-    /// Tile's are positioned in the world based on their top-left positions.
-    /// @todo   Rethink if tiles should instead be positioned by center
-    /// since this is inconsistent with other positioning.
+    /// Tile's are positioned in the world based on their center positions,
+    /// rather than top-left corners, to be consistent with placement of
+    /// other objects.
     class Tile
     {
     public:
@@ -26,9 +26,9 @@ namespace MAPS
             const GRAPHICS::Sprite& sprite);
 
         // POSITIONING.
-        /// Sets the world position of the top-left of the tile.
-        /// @param[in]  world_x_position - The world x position of the left of the tile.
-        /// @param[in]  world_y_position - The world y position of the top of the tile.
+        /// Sets the world position of the center of the tile.
+        /// @param[in]  world_x_position - The world x position of the center of the tile.
+        /// @param[in]  world_y_position - The world y position of the center of the tile.
         void SetWorldPosition(const float world_x_position, const float world_y_position);
 
         // DIMENSIONS.

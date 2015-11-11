@@ -581,7 +581,6 @@ namespace COLLISION
 
         // SIMULATE MOVEMENT BASED ON THE PARTICULAR DIRECTION.
         MATH::Vector2f new_world_position = object_world_bounding_box.GetCenterPosition();
-        //std::cout << "Original position: (" << new_world_position.X << "," << new_world_position.Y << ")" << std::endl;
         switch (direction)
         {
             case CORE::Direction::UP:
@@ -602,7 +601,6 @@ namespace COLLISION
                 // No movement can be simulated for an invalid direction.
                 break;
         }
-        //std::cout << "New position: (" << new_world_position.X << "," << new_world_position.Y << ")" << std::endl;
 
         return new_world_position;
     }
@@ -610,13 +608,10 @@ namespace COLLISION
     void HandleAxeCollisionsWithTrees(const MATH::FloatRectangle& axe_blade_bounds, MAPS::Overworld& overworld)
     {
         // GET THE WORLD AREA CONTAING THE AXE BLADE.
-        // While it is technically possible for the axe to intersect multiple world areas,
+        // While it is technically possible for the axe to intersect multiple tile maps,
         // the axe is relatively small, and the player shouldn't be able to see more than
-        // one world area.  Therefore, it should be safe to get just the area for the
+        // one tile map.  Therefore, it should be safe to get just the tile map for the
         // axe blade's center.
-        /// @todo   Maybe the world should just encapsulate the above?
-        /// @todo   Change overworld map to world area?
-        //WorldArea world_area = OverworldMap->GetArea(axe_blade_bounds.GetCenterXPosition(), axe_blade_bounds.GetCenterYPosition());
         MATH::Vector2f axe_center_position = axe_blade_bounds.GetCenterPosition();
         MAPS::TileMap* tile_map = overworld.GetTileMap(axe_center_position.X, axe_center_position.Y);
         assert(tile_map);

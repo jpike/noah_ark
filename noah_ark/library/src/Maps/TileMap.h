@@ -50,7 +50,7 @@ namespace MAPS
         /// Gets the tile that includes the specified world coordinates.
         /// @param[in]  world_x_position - The world x position of the tile to retrieve.
         /// @param[in]  world_y_position - The world y position of the tile to retrieve.
-        /// @param[in]  The tile at the specified location, if one exists; null otherwise.
+        /// @return The tile at the specified location, if one exists; null otherwise.
         std::shared_ptr<MAPS::Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

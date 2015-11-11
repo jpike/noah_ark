@@ -20,8 +20,9 @@ namespace GRAPHICS
     {
     public:
         // CONSTRUCTION.
-        /// @todo   Temporary constructor to get things compiling...should be removed/changed later.
-        explicit AnimatedSprite() {}
+        /// Constructor to create an uninitialized animated sprite.
+        /// Exact properties are expected to be set later.
+        explicit AnimatedSprite();
         /// Constructor to wrap the provided sprite.
         /// @param[in]  sprite - The sprite being animated.
         explicit AnimatedSprite(const GRAPHICS::Sprite& sprite);

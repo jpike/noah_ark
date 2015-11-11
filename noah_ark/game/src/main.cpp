@@ -172,7 +172,7 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
                                 }
 
                                 // CREATE THE TREE'S SPRITE.
-                                GRAPHICS::Sprite tree_sprite(*tree_texture, tree_texture_sub_rectangle);
+                                GRAPHICS::Sprite tree_sprite(tree_texture, tree_texture_sub_rectangle);
 
                                 // The center of the sprite should be the center of its visible portion of the texture.
                                 /// @todo   This is basically being done in the constructor too, but the origin is need for calculating
@@ -249,7 +249,7 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
     // CREATE THE SPRITE FOR NOAH.
     /// @todo   Better way to determine initial subrect.
     const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromTopLeftAndDimensions(0, 0, 16, 16);
-    GRAPHICS::Sprite sprite(*texture, TEXTURE_SUB_RECT);
+    GRAPHICS::Sprite sprite(texture, TEXTURE_SUB_RECT);
     /// @todo better way to set center.
     sprite.SetOrigin(MATH::Vector2f(8.0f, 8.0f));
     GRAPHICS::AnimatedSprite animated_sprite(sprite);
@@ -289,7 +289,7 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
         AXE_SPRITE_Y_OFFSET_IN_PIXELS,
         AXE_WIDTH_IN_PIXELS,
         AXE_HEIGHT_IN_PIXELS);
-    noah_player.Axe->Sprite = GRAPHICS::Sprite(*axe_texture, axe_texture_sub_rectangle);
+    noah_player.Axe->Sprite = GRAPHICS::Sprite(axe_texture, axe_texture_sub_rectangle);
 }
 
 /// The main entry point for the game.
@@ -445,7 +445,6 @@ int main(int argumentCount, char* arguments[])
                         noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_BACK_ANIMATION_ID);
                         noah_player.Sprite.Play();
 
-                        //noah_player.MoveUp(elapsed_time_in_seconds);
                         MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                             overworld,
                             elapsed_time_in_seconds,
@@ -481,7 +480,6 @@ int main(int argumentCount, char* arguments[])
                             }
                             else
                             {
-                                /// @todo Better handling of edges.
                                 MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
                                 float tile_map_top_boundary = tile_map_bounding_box.GetTopYPosition();
                                 float noah_half_height = noah_player.GetWorldBoundingBox().GetHeight() / 2.0f;
@@ -509,7 +507,6 @@ int main(int argumentCount, char* arguments[])
                         noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_FRONT_ANIMATION_ID);
                         noah_player.Sprite.Play();
 
-                        //noah_player.MoveDown(elapsed_time_in_seconds);
                         MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                             overworld,
                             elapsed_time_in_seconds,
@@ -545,7 +542,6 @@ int main(int argumentCount, char* arguments[])
                             }
                             else
                             {
-                                /// @todo Better handling of edges.
                                 MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
                                 float tile_map_bottom_boundary = tile_map_bounding_box.GetBottomYPosition();
                                 float noah_half_height = noah_player.GetWorldBoundingBox().GetHeight() / 2.0f;
@@ -573,7 +569,6 @@ int main(int argumentCount, char* arguments[])
                         noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_LEFT_ANIMATION_ID);
                         noah_player.Sprite.Play();
 
-                        //noah_player.MoveLeft(elapsed_time_in_seconds);
                         MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                             overworld,
                             elapsed_time_in_seconds,
@@ -609,7 +604,6 @@ int main(int argumentCount, char* arguments[])
                             }
                             else
                             {
-                                /// @todo Better handling of edges.
                                 MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
                                 float tile_map_left_boundary = tile_map_bounding_box.GetLeftXPosition();
                                 float noah_half_width = noah_player.GetWorldBoundingBox().GetWidth() / 2.0f;
@@ -637,7 +631,6 @@ int main(int argumentCount, char* arguments[])
                         noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_RIGHT_ANIMATION_ID);
                         noah_player.Sprite.Play();
 
-                        //noah_player.MoveRight(elapsed_time_in_seconds);
                         MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                             overworld,
                             elapsed_time_in_seconds,
@@ -674,7 +667,6 @@ int main(int argumentCount, char* arguments[])
                             }
                             else
                             {
-                                /// @todo Better handling of edges.
                                 MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
                                 float tile_map_right_boundary = tile_map_bounding_box.GetRightXPosition();
                                 float noah_half_width = noah_player.GetWorldBoundingBox().GetWidth() / 2.0f;

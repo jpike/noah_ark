@@ -3,6 +3,12 @@
 
 namespace GRAPHICS
 {
+    AnimatedSprite::AnimatedSprite() :
+    Sprite(),
+    AnimationSequences(),
+    CurrentAnimationSequenceName()
+    {}
+
     AnimatedSprite::AnimatedSprite(const GRAPHICS::Sprite& sprite) :
     Sprite(sprite),
     AnimationSequences(),

@@ -10,7 +10,7 @@ namespace MAPS
     void Tileset::SetTile(
         const TileId tile_id,
         const std::shared_ptr<GRAPHICS::Texture>& texture,
-        const MATH::IntRectangle& texture_sub_rectangle)
+        const MATH::FloatRectangle& texture_sub_rectangle)
     {
         TileTextures[tile_id] = texture;
         TileTextureSubRectangles[tile_id] = texture_sub_rectangle;
@@ -35,16 +35,9 @@ namespace MAPS
         }
 
         // CREATE A SPRITE FOR THE TILE.
-        /// @todo   This needs to be cleaner.
-        sf::IntRect texture_sub_rectangle(
-            id_with_sub_rectangle->second.GetLeftXPosition(),
-            id_with_sub_rectangle->second.GetTopYPosition(),
-            id_with_sub_rectangle->second.GetWidth(),
-            id_with_sub_rectangle->second.GetHeight());
-        sf::Sprite sprite_resource(
-            id_with_texture->second->TextureResource,
-            texture_sub_rectangle);
-        GRAPHICS::Sprite sprite(sprite_resource);
+        GRAPHICS::Sprite sprite(
+            id_with_texture->second,
+            id_with_sub_rectangle->second);
 
         // CREATE THE TILE.
         std::shared_ptr<Tile> tile = std::make_shared<Tile>(tile_id, sprite);

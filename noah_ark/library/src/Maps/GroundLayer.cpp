@@ -77,11 +77,14 @@ namespace MAPS
         float layer_top_y_position = CenterWorldPosition.Y - layer_half_height_in_pixels;
 
         // SET THE TILE'S WORLD POSITION.
+        // The half width/height are added to position the tile based on its center rather than top-left.
         float tile_x_offset_in_pixels = x_offset_from_left_in_tiles * tile_width_in_pixels;
-        float tile_world_x_position = layer_left_x_position + tile_x_offset_in_pixels;
+        float tile_half_width_in_pixels = tile_width_in_pixels / 2.0f;
+        float tile_world_x_position = layer_left_x_position + tile_x_offset_in_pixels + tile_half_width_in_pixels;
 
         float tile_y_offset_in_pixels = y_offset_from_top_in_tiles * tile_height_in_pixels;
-        float tile_world_y_position = layer_top_y_position + tile_y_offset_in_pixels;
+        float tile_half_height_in_pixels = tile_height_in_pixels / 2.0f;
+        float tile_world_y_position = layer_top_y_position + tile_y_offset_in_pixels + tile_half_height_in_pixels;
 
         tile->SetWorldPosition(tile_world_x_position, tile_world_y_position);
         

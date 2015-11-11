@@ -4,6 +4,7 @@
 namespace GRAPHICS
 {
     Sprite::Sprite() :
+    SpriteTexture(),
     SpriteResource(),
     IsVisible(false)
     {
@@ -12,8 +13,9 @@ namespace GRAPHICS
     }
 
     Sprite::Sprite(
-        const Texture& texture,
+        const std::shared_ptr<Texture>& texture,
         const MATH::FloatRectangle& texture_sub_rectangle) :
+    SpriteTexture(texture),
     SpriteResource(),
     IsVisible(false)
     {
@@ -25,7 +27,7 @@ namespace GRAPHICS
             static_cast<int>(texture_sub_rectangle.GetHeight()));
 
         // CREATE THE SFML SPRITE.
-        SpriteResource = sf::Sprite(texture.TextureResource);
+        SpriteResource = sf::Sprite(SpriteTexture->TextureResource);
         SpriteResource.setTextureRect(texture_rectangle);
 
         // Sprites should be centered within their texture rectangle by default.
@@ -33,11 +35,6 @@ namespace GRAPHICS
         float texture_half_height_in_pixels = texture_sub_rectangle.GetHeight() / 2.0f;
         SpriteResource.setOrigin(texture_half_width_in_pixels, texture_half_height_in_pixels);
     }
-
-    Sprite::Sprite(const sf::Sprite& sprite) :
-    SpriteResource(sprite),
-    IsVisible(true)
-    {}
 
     void Sprite::SetTextureRectangle(const MATH::IntRectangle& texture_rectangle)
     {

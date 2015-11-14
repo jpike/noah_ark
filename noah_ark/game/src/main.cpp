@@ -750,6 +750,13 @@ int main(int argumentCount, char* arguments[])
                             continue;
                         }
 
+                        // UPDATE THE CURRENT TILE MAP'S TREES.
+                        /// @todo   Figure out if this maybe should be handled elsewhere.
+                        for (auto tree = tile_map->Trees.begin(); tree != tile_map->Trees.end(); ++tree)
+                        {
+                            tree->Update(elapsed_time_in_seconds);
+                        }
+
                         // RENDER THE TILE MAP.
                         GRAPHICS::Render(*tile_map, *window);
                     }

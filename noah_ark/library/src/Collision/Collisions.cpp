@@ -627,6 +627,9 @@ namespace COLLISION
 
                 // DAMAGE THE TREE.
                 tree->TakeHit();
+                
+                // SHAKE THE TREE.
+                tree->StartShaking();
 
                 // CHECK IF THE TREE STILL HAS ANY HIT POINTS.
                 bool tree_still_has_hit_points = (tree->HitPoints > 0);

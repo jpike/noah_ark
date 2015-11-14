@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Collision/Collisions.h"
 
 namespace COLLISION
@@ -615,16 +616,34 @@ namespace COLLISION
         MATH::Vector2f axe_center_position = axe_blade_bounds.GetCenterPosition();
         MAPS::TileMap* tile_map = overworld.GetTileMap(axe_center_position.X, axe_center_position.Y);
         assert(tile_map);
-        for (auto tree = tile_map->Trees.cbegin(); tile_map->Trees.cend() != tree;)
+        for (auto tree = tile_map->Trees.begin(); tile_map->Trees.end() != tree;)
         {
             MATH::FloatRectangle tree_bounds = tree->GetWorldBoundingBox();
             bool axe_hit_tree = axe_blade_bounds.Intersects(tree_bounds);
             if (axe_hit_tree)
             {
-                tree = tile_map->Trees.erase(tree);
+                /// @todo   This is temporary for debugging.
+                std::cout << "Hit tree" << std::endl;
+
+                // DAMAGE THE TREE.
+                tree->TakeHit();
+
+                // CHECK IF THE TREE STILL HAS ANY HIT POINTS.
+                bool tree_still_has_hit_points = (tree->HitPoints > 0);
+                if (tree_still_has_hit_points)
+                {
+                    // MOVE TO THE NEXT TREE FOR DETECTING COLLISIONS.
+                    ++tree;
+                }
+                else
+                {
+                    // REMOVE THE TREE SINCE IT NO LONGER HAS ANY HIT POINTS.
+                    tree = tile_map->Trees.erase(tree);
+                }
             }
             else
             {
+                // MOVE TO THE NEXT TREE FOR DETECTING COLLISIONS.
                 ++tree;
             }
         }

@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cstdint>
+#include <future>
 #include <vector>
 #include "Resources/Assets.h"
 
@@ -285,21 +286,55 @@ namespace RESOURCES
         unsigned int tile_map_column_count = OverworldMapFile->OverworldWidthInTileMaps;
         TileMapFiles.Resize(tile_map_column_count, tile_map_row_count);
 
-        // LOAD ALL TILE MAP FILES IN THE OVERWORLD MAP FILE.
+        // DEFINE AN ARRAY OF FUTURES FOR LOADING THE TILE MAPS IN PARALLEL.
+        // Asynchronous loading is done since it is a little faster than synchronous loading
+        // (about 7-8 seconds of total asset load time as opposed to 12-13 seconds total).
+        /// @todo   Determine if this asynchronous loading is worth it.  In the final
+        /// game, we'll probably have an intro sequence playing before the title screen
+        /// where this time for loading tile maps won't matter so much.
+        CORE::Array2D< std::future< std::unique_ptr<MAPS::TileMapFile> > > tile_map_loaders(
+            tile_map_column_count,
+            tile_map_row_count);
+
+        // START TO LOAD ALL TILE MAP FILES IN THE OVERWORLD MAP FILE.
         for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
         {
             for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
             {
-                // LOAD THE CURRENT TILE MAP.
+                // STARTING LOADING THE CURRENT TILE MAP.
                 std::string tile_map_filepath = OverworldMapFile->GetTileMapFilepath(tile_map_row, tile_map_column);
-                std::unique_ptr<MAPS::TileMapFile> tile_map_file = MAPS::TileMapFile::Load(tile_map_filepath);
-                bool tile_map_file_loaded = (nullptr != tile_map_file);
-                if (tile_map_file_loaded)
+                tile_map_loaders(tile_map_column, tile_map_row) = std::async(MAPS::TileMapFile::Load, tile_map_filepath);
+            }
+        }
+
+        // OBTAIN ALL OF THE TILE MAP FILES BEING LOADED ASYNCHRONOUSLY.
+        for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
+        {
+            for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
+            {
+                try
                 {
-                    // STORE THE TILE MAP FILE IN THIS COLLECTION OF ASSETS.
-                    TileMapFiles(tile_map_column, tile_map_row) = std::move(tile_map_file);
+                    // CHECK IF THE TILE MAP LOADER FOR THE CURRENT ROW/COLUMN IS VALID.
+                    auto& tile_map_loader = tile_map_loaders(tile_map_column, tile_map_row);
+                    if (tile_map_loader.valid())
+                    {
+                        // WAIT AND GET THE LOADED TILE MAP FILE.
+                        std::unique_ptr<MAPS::TileMapFile> tile_map_file = tile_map_loader.get();
+                        bool tile_map_file_loaded = (nullptr != tile_map_file);
+                        if (tile_map_file_loaded)
+                        {
+                            // STORE THE TILE MAP FILE IN THIS COLLECTION OF ASSETS.
+                            TileMapFiles(tile_map_column, tile_map_row) = std::move(tile_map_file);
+                        }
+                        else
+                        {
+                            assert(false);
+                            // All tile map files could not be loaded.
+                            return false;
+                        }
+                    }
                 }
-                else
+                catch (const std::exception&)
                 {
                     assert(false);
                     // All tile map files could not be loaded.

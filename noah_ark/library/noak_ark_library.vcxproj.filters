@@ -143,6 +143,9 @@
     <ClInclude Include="src\Collision\Collisions.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="src\Graphics\Camera.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -216,6 +219,9 @@
     </ClCompile>
     <ClCompile Include="src\Collision\Collisions.cpp">
       <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Camera.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

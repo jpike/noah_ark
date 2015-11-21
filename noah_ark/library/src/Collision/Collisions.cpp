@@ -1,4 +1,3 @@
-#include <iostream>
 #include "Collision/Collisions.h"
 
 namespace COLLISION
@@ -622,9 +621,6 @@ namespace COLLISION
             bool axe_hit_tree = axe_blade_bounds.Intersects(tree_bounds);
             if (axe_hit_tree)
             {
-                /// @todo   This is temporary for debugging.
-                std::cout << "Hit tree" << std::endl;
-
                 // DAMAGE THE TREE.
                 tree->TakeHit();
                 

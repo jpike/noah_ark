@@ -1,11 +1,29 @@
 #pragma once
 
-#include "Core/Direction.h"
+#include <vector>
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
 
 namespace OBJECTS
 {
+    /// Defines a sub-rotation that is used to partially shake a tree.
+    /// Multiple sub-rotations may be stringed together to form a complete shake.
+    struct TreeShakeSubRotation
+    {
+        /// The signed speed in which the tree should rotate during
+        /// this sub-rotation of the shaking.  Should move the tree's
+        /// rotation angle toward the destination rotation angle.
+        /// Each time the tree's shaking is updated, the tree's rotation
+        /// angle will be added to by this velocity.
+        float RotationVelocityInDegreesPerSecond = 0.0f;
+        /// The final destination rotation angle in degrees for this
+        /// sub-rotation of the tree's shake.  May be positive or
+        /// negative.  When the rotation angle of the tree reaches
+        /// or exceeds this angle, the sub-rotation is defined as
+        /// to have stopped.
+        float DestinationRotationAngleInDegrees = 0.0f;
+    };
+
     /// A tree that can be placed in the overworld.
     /// Trees will provide a source of wood and potentially fruit.
     /// Types of supported trees:
@@ -51,20 +69,13 @@ namespace OBJECTS
     private:
         /// True if the tree is currently shaking; false otherwise.
         bool Shaking;
-        /// True if the tree is currently shaking outward; false otherwise.
-        bool ShakingOut;
         /// The current rotation angle for the tree's sprite, if the tree is currently shaking.
         float CurrentShakeRotationInDegrees;
-        /// The current elapsed time for the tree shaking outward, if the tree is currently shaking outward.
-        float CurrentShakeOutElapsedTimeInSeconds;
-        /// The current elapsed time for the tree shaking inward, if the tree is currently shaking inward.
-        float CurrentShakeInElapsedTimeInSeconds;
-        /// The current direction for the tree shaking outward, if the tree is currently shaking.
-        /// Only left and right are valid.  The shaking in direction is opposite of this direction.
-        CORE::Direction ShakeOutDirection;
-        /// The initial shake out direction for a tree shake, if the tree is currently shaking.
-        /// Only left and right are valid.  This is tracked separately to allow the tree to
-        /// shake in both directions for a given shake.
-        CORE::Direction InitialShakeOutDirection;
+        /// The index of the current sub-rotation for shaking the tree, if the tree is currently
+        /// shaking.
+        unsigned int CurrentShakeSubRotationIndex;
+        /// The sequence of sub-rotations to use for shaking the tree, if the tree should currently
+        /// be shaking.
+        std::vector<TreeShakeSubRotation> ShakeSubRotations;
     };
 }

@@ -1,5 +1,3 @@
-#include <cassert>
-#include <random>
 #include "Objects/Tree.h"
 
 namespace OBJECTS
@@ -8,12 +6,9 @@ namespace OBJECTS
     Sprite(sprite),
     HitPoints(Tree::INITIAL_HIT_POINTS),
     Shaking(false),
-    ShakingOut(false),
     CurrentShakeRotationInDegrees(0.0f),
-    CurrentShakeOutElapsedTimeInSeconds(0.0f),
-    CurrentShakeInElapsedTimeInSeconds(0.0f),
-    ShakeOutDirection(CORE::Direction::INVALID),
-    InitialShakeOutDirection(CORE::Direction::INVALID)
+    CurrentShakeSubRotationIndex(0),
+    ShakeSubRotations()
     {}
 
     MATH::FloatRectangle Tree::GetWorldBoundingBox() const
@@ -38,27 +33,36 @@ namespace OBJECTS
     {
         // INITIALIZE THE SHAKING PARAMETERS FOR A NEW SHAKE.
         Shaking = true;
-        ShakingOut = true;
         CurrentShakeRotationInDegrees = 0.0f;
-        CurrentShakeOutElapsedTimeInSeconds = 0.0f;
-        CurrentShakeInElapsedTimeInSeconds = 0.0f;
+        CurrentShakeSubRotationIndex = 0;
+        ShakeSubRotations.clear();
 
-        // DETERMINE A RANDOM DIRECTION.
-        std::random_device random_number_generator;
-        unsigned int random_number = random_number_generator();
-        bool even_random_number = (0 == (random_number % 2));
-        if (even_random_number)
-        {
-            ShakeOutDirection = CORE::Direction::LEFT;
-        }
-        else
-        {
-            ShakeOutDirection = CORE::Direction::RIGHT;
-        }
+        // DEFINE THE SEQUENCE OF ROTATIONS FOR THE SHAKE.
+        const float SHAKE_ROTATION_SPEED_IN_DEGREES_PER_SECOND = 30.0f;
+        const float FULLY_SHAKED_OUT_ROTATION_ANGLE_MAGNITUDE = 10.0f;
 
-        // To have the tree shake out in both directions,
-        // the initial shake direction also needs to be preserved.
-        InitialShakeOutDirection = ShakeOutDirection;
+        /// @todo   Consider if randomness should be used here to make things
+        /// more interesting or if we could have some additional direction
+        /// parameter to have the tree shake in a more realistic way
+        /// depending on how it was hit.
+        
+        // Rotate out to the right.
+        TreeShakeSubRotation first_rotation;
+        first_rotation.RotationVelocityInDegreesPerSecond = SHAKE_ROTATION_SPEED_IN_DEGREES_PER_SECOND;
+        first_rotation.DestinationRotationAngleInDegrees = FULLY_SHAKED_OUT_ROTATION_ANGLE_MAGNITUDE;
+        ShakeSubRotations.push_back(first_rotation);
+
+        // Rotate back to the left.
+        TreeShakeSubRotation second_rotation;
+        second_rotation.RotationVelocityInDegreesPerSecond = -SHAKE_ROTATION_SPEED_IN_DEGREES_PER_SECOND;
+        second_rotation.DestinationRotationAngleInDegrees = -FULLY_SHAKED_OUT_ROTATION_ANGLE_MAGNITUDE;
+        ShakeSubRotations.push_back(second_rotation);
+
+        // Rotate back to the center.
+        TreeShakeSubRotation third_rotation;
+        third_rotation.RotationVelocityInDegreesPerSecond = SHAKE_ROTATION_SPEED_IN_DEGREES_PER_SECOND;
+        second_rotation.DestinationRotationAngleInDegrees = 0.0f;
+        ShakeSubRotations.push_back(third_rotation);
     }
 
     void Tree::Update(const float elapsed_time_in_seconds)
@@ -69,102 +73,40 @@ namespace OBJECTS
             return;
         }
 
-        // DETERMINE THE AMOUNT OF ROTATION FOR THE ELAPSED TIME.
-        const float SHAKE_ROTATION_SPEED_IN_DEGREES_PER_SECOND = 30.0f;
-        float shake_rotation_increase_in_degrees = SHAKE_ROTATION_SPEED_IN_DEGREES_PER_SECOND * elapsed_time_in_seconds;
+        // UPDATE THE TREE'S ROTATION BASED ON THE CURRENT SHAKING PARAMETERS.
+        const TreeShakeSubRotation& current_shake_rotation = ShakeSubRotations[CurrentShakeSubRotationIndex];
+        float shake_rotation_change_in_degrees = current_shake_rotation.RotationVelocityInDegreesPerSecond * elapsed_time_in_seconds;
+        CurrentShakeRotationInDegrees += shake_rotation_change_in_degrees;
 
-        // DETERMINE IF THE TREE IS SHAKING OUT OR IN.
-        if (ShakingOut)
+        // CHECK IF THE TREE'S CURRENT SUB-ROTATION IS COMPLETE.
+        // Assume that the current rotation is complete by default (if a rotation change of 0 is detected)
+        // to reduce the length of the if/else block handling.
+        // This shouldn't ever happen (it indicates an error in constructing the sub-rotations)
+        bool current_shake_sub_rotation_complete = true;
+        bool positive_shake_rotation = (shake_rotation_change_in_degrees > 0.0f);
+        bool negative_shake_rotation = (shake_rotation_change_in_degrees < 0.0f);
+        if (positive_shake_rotation)
         {
-            // UPDATE THE SHAKE ROTATION BASED ON THE DIRECTION.
-            switch (ShakeOutDirection)
-            {
-                case CORE::Direction::LEFT:
-                    // Rotating out to the left is negative.
-                    CurrentShakeRotationInDegrees -= shake_rotation_increase_in_degrees;
-                    break;
-                case CORE::Direction::RIGHT:
-                    // Rotating out to the right is positive.
-                    CurrentShakeRotationInDegrees += shake_rotation_increase_in_degrees;
-                    break;
-                default:
-                    // Don't shake at all since an invalid direction was specified.
-                    assert(false);
-                    break;
-            }
-
-            // CHECK IF SHAKING OUT HAS FINISHED.
-            const float MAX_SHAKE_OUT_TIME_IN_SECONDS = 0.25f;
-            CurrentShakeOutElapsedTimeInSeconds += elapsed_time_in_seconds;
-            bool shaking_out_finished = (CurrentShakeOutElapsedTimeInSeconds >= MAX_SHAKE_OUT_TIME_IN_SECONDS);
-            if (shaking_out_finished)
-            {
-                // STOP SHAKING OUT.
-                ShakingOut = false;
-
-                // START SHAKING BACK IN.
-                CurrentShakeInElapsedTimeInSeconds = 0.0f;
-            }
+            current_shake_sub_rotation_complete = (CurrentShakeRotationInDegrees >= current_shake_rotation.DestinationRotationAngleInDegrees);
+            
         }
-        else
+        else if (negative_shake_rotation)
         {
-            // UPDATE THE SHAKE ROTATION BASED ON THE DIRECTION.
-            switch (ShakeOutDirection)
-            {
-                case CORE::Direction::LEFT:
-                    // Rotating back from the left is positive.
-                    CurrentShakeRotationInDegrees += shake_rotation_increase_in_degrees;
-                    break;
-                case CORE::Direction::RIGHT:
-                    // Rotating back from the right is negative.
-                    CurrentShakeRotationInDegrees -= shake_rotation_increase_in_degrees;
-                    break;
-                default:
-                    // Don't shake at all since an invalid direction was specified.
-                    assert(false);
-                    break;
-            }
+            current_shake_sub_rotation_complete = (CurrentShakeRotationInDegrees <= current_shake_rotation.DestinationRotationAngleInDegrees);
+        }
 
-            // CHECK IF SHAKING BACK IN HAS FINISHED.
-            const float MAX_SHAKE_IN_TIME_IN_SECONDS = 0.25f;
-            CurrentShakeInElapsedTimeInSeconds += elapsed_time_in_seconds;
-            bool shaking_in_finished = (CurrentShakeInElapsedTimeInSeconds >= MAX_SHAKE_IN_TIME_IN_SECONDS);
-            if (shaking_in_finished)
-            {
-                // START SHAKING BACK OUT IN THE OPPOSITE DIRECTION IF NEEDED.
-                // When shaking, the tree should shake out in both directions.
-                // If this is only the first time shaking back in (the shake out
-                // direction hasn't changed from its initial direction), then
-                // we need to switch to swinging out in the opposite direction.
-                bool only_first_shake_in_finished = (InitialShakeOutDirection == ShakeOutDirection);
-                if (only_first_shake_in_finished)
-                {
-                    // START SHAKING BACK OUT.
-                    ShakingOut = true;
-                    CurrentShakeOutElapsedTimeInSeconds = 0.0f;
+        // MOVE TO THE NEXT SHAKE SUB-ROTATION IF THE CURRENT ONE IS COMPLETE.
+        if (current_shake_sub_rotation_complete)
+        {
+            // MOVE TO THE NEXT SUB-ROTATION FOR THE TREE SHAKE.
+            ++CurrentShakeSubRotationIndex;
 
-                    // Switch directions.
-                    switch (ShakeOutDirection)
-                    {
-                        case CORE::Direction::LEFT:
-                            ShakeOutDirection = CORE::Direction::RIGHT;
-                            break;
-                        case CORE::Direction::RIGHT:
-                            ShakeOutDirection = CORE::Direction::LEFT;
-                            break;
-                        default:
-                            // Don't doing anything since an invalid direction was specified.
-                            assert(false);
-                            break;
-                    }
-                }
-                else
-                {
-                    // STOP SHAKING.
-                    // The tree has finished shaking in both directions.
-                    Shaking = false;
-                    CurrentShakeRotationInDegrees = 0.0f;
-                }
+            // STOP THE TREE FROM SHAKING IF THE LAST SUB-ROTATION HAS COMPLETED.
+            Shaking = (CurrentShakeSubRotationIndex < ShakeSubRotations.size());
+            if (!Shaking)
+            {
+                // When the tree finishes shaking, it should be set to its default state of no rotation.
+                CurrentShakeRotationInDegrees = 0.0f;
             }
         }
 

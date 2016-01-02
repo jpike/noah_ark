@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "Audio/SoundEffect.h"
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
 
@@ -37,11 +38,6 @@ namespace OBJECTS
         /// The initial number of hit points a tree has.
         static const unsigned int INITIAL_HIT_POINTS = 3;
 
-        // CONSTRUCTION.
-        /// Constructor.
-        /// @param[in]  sprite - The visual sprite for the tree.
-        explicit Tree(const GRAPHICS::Sprite& sprite);
-
         // POSITIONING/BOUNDARIES.
         /// Gets the bounding box of the tree, in world coordinates.
         /// @return The tree's bounding box.
@@ -62,20 +58,22 @@ namespace OBJECTS
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The graphical sprite for the tree.
-        GRAPHICS::Sprite Sprite;
+        GRAPHICS::Sprite Sprite = GRAPHICS::Sprite();
+        /// The sound effect to play when the tree is shaking.
+        std::shared_ptr<AUDIO::SoundEffect> TreeShakeSound = nullptr;
         /// The number of hit points the tree currently has.
-        unsigned int HitPoints;
+        unsigned int HitPoints = INITIAL_HIT_POINTS;
 
     private:
         /// True if the tree is currently shaking; false otherwise.
-        bool Shaking;
+        bool Shaking = false;
         /// The current rotation angle for the tree's sprite, if the tree is currently shaking.
-        float CurrentShakeRotationInDegrees;
+        float CurrentShakeRotationInDegrees = 0.0f;
         /// The index of the current sub-rotation for shaking the tree, if the tree is currently
         /// shaking.
-        unsigned int CurrentShakeSubRotationIndex;
+        unsigned int CurrentShakeSubRotationIndex = 0;
         /// The sequence of sub-rotations to use for shaking the tree, if the tree should currently
         /// be shaking.
-        std::vector<TreeShakeSubRotation> ShakeSubRotations;
+        std::vector<TreeShakeSubRotation> ShakeSubRotations = std::vector<TreeShakeSubRotation>();
     };
 }

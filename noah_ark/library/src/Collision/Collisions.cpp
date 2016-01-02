@@ -1,4 +1,5 @@
 #include "Collision/Collisions.h"
+#include "Resources/AudioClips.h"
 
 namespace COLLISION
 {
@@ -605,13 +606,14 @@ namespace COLLISION
         return new_world_position;
     }
 
-    void HandleAxeCollisionsWithTrees(const MATH::FloatRectangle& axe_blade_bounds, MAPS::Overworld& overworld)
+    void HandleAxeCollisionsWithTrees(const OBJECTS::Axe& axe, MAPS::Overworld& overworld)
     {
         // GET THE WORLD AREA CONTAING THE AXE BLADE.
         // While it is technically possible for the axe to intersect multiple tile maps,
         // the axe is relatively small, and the player shouldn't be able to see more than
         // one tile map.  Therefore, it should be safe to get just the tile map for the
         // axe blade's center.
+        MATH::FloatRectangle axe_blade_bounds = axe.GetBladeBounds();
         MATH::Vector2f axe_center_position = axe_blade_bounds.GetCenterPosition();
         MAPS::TileMap* tile_map = overworld.GetTileMap(axe_center_position.X, axe_center_position.Y);
         assert(tile_map);
@@ -621,6 +623,16 @@ namespace COLLISION
             bool axe_hit_tree = axe_blade_bounds.Intersects(tree_bounds);
             if (axe_hit_tree)
             {
+                // PLAY THE SOUND EFFECT FOR THE AXE HITTING A TREE.
+                // If it wasn't loaded, the game will continue without a sound being played
+                // since sound effects are a relatively minor part.
+                std::shared_ptr<AUDIO::SoundEffect> axe_hit_sound = axe.AxeHitSound;
+                bool axe_hit_sound_loaded = (nullptr != axe_hit_sound);
+                if (axe_hit_sound_loaded)
+                {
+                    axe_hit_sound->Play();
+                }
+
                 // DAMAGE THE TREE.
                 tree->TakeHit();
                 
@@ -680,8 +692,7 @@ namespace COLLISION
             }
 
             // HANDLE COLLISIONS OF THE AXE WITH TREES.
-            MATH::FloatRectangle axe_blade_bounds = axe_swing.GetBladeBounds();
-            HandleAxeCollisionsWithTrees(axe_blade_bounds, overworld);
+            HandleAxeCollisionsWithTrees(*axe_swing.Axe, overworld);
 
             // REMOVE THE PROCESSED AXE SWING EVENT.
             axe_swing_event = axe_swings.erase(axe_swing_event);

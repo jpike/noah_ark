@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Audio/SoundEffect.h"
 #include "Core/Direction.h"
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
@@ -98,6 +99,8 @@ namespace OBJECTS
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The sprite for the axe.
         GRAPHICS::Sprite Sprite = GRAPHICS::Sprite();
+        /// The sound effect to play when the axe hits something.
+        std::shared_ptr<AUDIO::SoundEffect> AxeHitSound = nullptr;
 
     private:
         // MEMBER VARIABLES.

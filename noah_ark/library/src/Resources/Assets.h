@@ -3,6 +3,9 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <SFML/Audio.hpp>
+#include "Audio/AudioClip.h"
+#include "Audio/SoundEffect.h"
 #include "Core/Array2D.h"
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Texture.h"
@@ -51,10 +54,22 @@ namespace RESOURCES
         /// @return The requested animation sequence, if successfully loaded; null otherwise.
         std::shared_ptr<GRAPHICS::AnimationSequence> GetAnimationSequence(const std::string& animation_id);
 
+        /// Attempts to retrieve the sound effect identified by the specified ID.
+        /// The returned sound effect will be a new instance of a sound effect,
+        /// but it may share the same buffer of audio samples as another instance.
+        /// @param[in]  sound_id - The ID of the sound to load.
+        /// @return The requested sound effect, if successfully loaded; null otherwise.
+        std::shared_ptr<AUDIO::SoundEffect> GetSound(const AUDIO::AudioClipId sound_id);
+
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// Textures that have been loaded.  They need to remain in memory to allow them to be used.
         /// They are mapped by the texture resource IDs.
         std::unordered_map< std::string, std::shared_ptr<GRAPHICS::Texture> > Textures;
+        /// Audio samples for sounds that have been loaded.  They need to remain in memory to allow them to be used.
+        /// They are mapped by the sound resource IDs.
+        /// @todo   Rethink about storing things here.  Maybe we should just have the sound buffers
+        /// stored directly in the AudioClips and then loaded automatically during initialization?
+        std::unordered_map< AUDIO::AudioClipId, std::shared_ptr<sf::SoundBuffer> > AudioSamples;
         /// The overworld map file, if successfully loaded.
         std::unique_ptr<MAPS::OverworldMapFile> OverworldMapFile;
         /// The tile map files, mapped by their 2D grid coordinates (x = column, y = row) in the overworld.
@@ -67,6 +82,10 @@ namespace RESOURCES
         /// Any previous textures will be cleared.
         /// @return True if all textures are loaded; false otherwise.
         bool LoadTextures();
+        /// Attempts to load all sound resources into this collection of assets.
+        /// Any previous sound resources will be cleared.
+        /// @return True if all sounds are loaded; false otherwise.
+        bool LoadSounds();
         /// Attempts to load the overworld map file into this collection of assets.
         /// Any previous overworld map file will be cleared.
         /// @return True if the overworld map file is loaded; false otherwise.

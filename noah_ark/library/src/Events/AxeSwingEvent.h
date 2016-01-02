@@ -13,6 +13,7 @@ namespace EVENTS
     class AxeSwingEvent
     {
     public:
+        // METHODS.
         /// Constructor.
         /// @param[in]  axe - The axe that is being swung.
         explicit AxeSwingEvent(const std::shared_ptr<OBJECTS::Axe>& axe);
@@ -25,10 +26,8 @@ namespace EVENTS
         /// @return The world boundaries of the axe's blade.
         MATH::FloatRectangle GetBladeBounds() const;
 
-    private:
-        
+        // PUBLIC MEMBER VARIBLES FOR EASY ACCESS.
         /// The axe that was swung for this event.
         std::shared_ptr<OBJECTS::Axe> Axe;
-
     };
 }

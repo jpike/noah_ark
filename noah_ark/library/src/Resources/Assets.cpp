@@ -3,6 +3,7 @@
 #include <future>
 #include <vector>
 #include "Resources/Assets.h"
+#include "Resources/AudioClips.h"
 
 namespace RESOURCES
 {
@@ -20,6 +21,7 @@ namespace RESOURCES
 
     Assets::Assets() :
     Textures(),
+    AudioSamples(),
     OverworldMapFile(),
     TileMapFiles()
     {}
@@ -29,6 +31,13 @@ namespace RESOURCES
         // LOAD TEXTURES.
         bool textures_loaded = LoadTextures();
         if (!textures_loaded)
+        {
+            return false;
+        }
+
+        // LOAD SOUNDS.
+        bool sounds_loaded = LoadSounds();
+        if (!sounds_loaded)
         {
             return false;
         }
@@ -214,6 +223,44 @@ namespace RESOURCES
         }
     }
 
+    std::shared_ptr<AUDIO::SoundEffect> Assets::GetSound(const AUDIO::AudioClipId sound_id)
+    {
+        // CHECK IF THE AUDIO SAMPLES HAVE ALREADY BEEN LOADED.
+        auto id_with_audio_samples = AudioSamples.find(sound_id);
+        bool audio_samples_already_loaded = (AudioSamples.cend() != id_with_audio_samples);
+        if (audio_samples_already_loaded)
+        {
+            // RETURN THE SOUND EFFECT USING THE PREVIOUSLY LOADED AUDIO SAMPLES.
+            std::shared_ptr<AUDIO::SoundEffect> sound_effect = std::make_shared<AUDIO::SoundEffect>(id_with_audio_samples->second);
+            return sound_effect;
+        }
+
+        // GET THE AUDIO CLIP WITH THE SAMPLES.
+        // It currently maps directly to an audio clip.
+        const AUDIO::AudioClip* audio_clip = sound_id;
+
+        // LOAD THE AUDIO SAMPLES INTO A BUFFER.
+        /// @todo   Should this channel count be variable?
+        const unsigned int CHANNEL_COUNT = 1;
+        std::shared_ptr<sf::SoundBuffer> sound_buffer = std::make_shared<sf::SoundBuffer>();
+        bool audio_samples_loaded = sound_buffer->loadFromSamples(
+            audio_clip->Samples.data(),
+            audio_clip->Samples.size(),
+            CHANNEL_COUNT,
+            audio_clip->SampleRateInSamplesPerSecond);
+        if (!audio_samples_loaded)
+        {
+            return nullptr;
+        }
+
+        // SAVE THE SOUND TO AVOID TAKING TIME TO LOAD IT IN THE FUTURE.
+        AudioSamples[sound_id] = sound_buffer;
+
+        // RETURN THE SOUND EFFECT.
+        std::shared_ptr<AUDIO::SoundEffect> sound_effect = std::make_shared<AUDIO::SoundEffect>(sound_buffer);
+        return sound_effect;
+    }
+
     bool Assets::LoadTextures()
     {
         // CLEAR ANY PREVIOUSLY LOADED TEXTURES.
@@ -260,6 +307,46 @@ namespace RESOURCES
         }
 
         // INDICATE THAT ALL TEXTURES WERE LOADED.
+        return true;
+    }
+
+    bool Assets::LoadSounds()
+    {
+        // CLEAR ANY PREVIOUSLY LOADED AUDIO SAMPLES.
+        AudioSamples.clear();
+
+        // DEFINE THE AUDIO SAMPLES TO BE LOADED.
+        const std::vector<AUDIO::AudioClipId> AUDIO_CLIPS =
+        {
+            &RESOURCES::AXE_HIT_AUDIO_CLIP,
+            &RESOURCES::TREE_SHAKE_AUDIO_CLIP
+        };
+
+        // LOAD ALL OF THE AUDIO SAMPLES.
+        for (const auto& audio_clip : AUDIO_CLIPS)
+        {
+            // LOAD THE CURRENT AUDIO SAMPLES.
+            /// @todo   Should this channel count be variable?
+            const unsigned int CHANNEL_COUNT = 1;
+            std::shared_ptr<sf::SoundBuffer> sound_buffer = std::make_shared<sf::SoundBuffer>();
+            bool audio_samples_loaded = sound_buffer->loadFromSamples(
+                audio_clip->Samples.data(),
+                audio_clip->Samples.size(),
+                CHANNEL_COUNT,
+                audio_clip->SampleRateInSamplesPerSecond);
+            if (audio_samples_loaded)
+            {
+                // STORE THE AUDIO SAMPLE BUFFER IN THIS COLLECTION.
+                AudioSamples[audio_clip] = sound_buffer;
+            }
+            else
+            {
+                // INDICATE THAT A SOUND FAILED TO LOAD.
+                return false;
+            }
+        }
+
+        // INDICATE THAT ALL SOUNDS WERE LOADED.
         return true;
     }
     

@@ -7,6 +7,7 @@
 #include "Events/AxeSwingEvent.h"
 #include "Maps/Overworld.h"
 #include "Math/Rectangle.h"
+#include "Objects/Axe.h"
 
 namespace COLLISION
 {
@@ -27,7 +28,7 @@ namespace COLLISION
         const float move_speed_in_pixels_per_second,
         const MATH::FloatRectangle& object_world_bounding_box);
 
-    void HandleAxeCollisionsWithTrees(const MATH::FloatRectangle& axe_blade_bounds, MAPS::Overworld& overworld);
+    void HandleAxeCollisionsWithTrees(const OBJECTS::Axe& axe, MAPS::Overworld& overworld);
 
     void HandleAxeSwingCollisions(MAPS::Overworld& overworld, std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings);
 }

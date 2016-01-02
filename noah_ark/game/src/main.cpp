@@ -16,6 +16,7 @@
 #include "Maps/TileMap.h"
 #include "Objects/Noah.h"
 #include "Resources/Assets.h"
+#include "Resources/AudioClips.h"
 
 /// The game exited successfully.
 int EXIT_CODE_SUCCESS = 0;
@@ -186,8 +187,20 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
                                 float tree_world_y_position = static_cast<float>(object_description.TopLeftPositionInPixels.Y) + tree_local_center_y;
                                 tree_sprite.SetWorldPosition(tree_world_x_position, tree_world_y_position);
 
+                                // GET THE TREE SHAKING SOUND EFFECT.
+                                std::shared_ptr<AUDIO::SoundEffect> tree_shake_sound = assets.GetSound(&RESOURCES::TREE_SHAKE_AUDIO_CLIP);
+                                bool tree_shake_sound_retrieved = (nullptr != tree_shake_sound);
+                                if (!tree_shake_sound_retrieved)
+                                {
+                                    /// @todo   Allow creating tree with no sound effect?
+                                    assert(false);
+                                    continue;
+                                }
+
                                 // CREATE THE TREE.
-                                OBJECTS::Tree tree(tree_sprite);
+                                OBJECTS::Tree tree;
+                                tree.Sprite = tree_sprite;
+                                tree.TreeShakeSound = tree_shake_sound;
                                 tile_map.Trees.push_back(tree);
                             }
                         }
@@ -291,6 +304,8 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
         AXE_WIDTH_IN_PIXELS,
         AXE_HEIGHT_IN_PIXELS);
     noah_player.Axe->Sprite = GRAPHICS::Sprite(axe_texture, axe_texture_sub_rectangle);
+
+    noah_player.Axe->AxeHitSound = assets.GetSound(&RESOURCES::AXE_HIT_AUDIO_CLIP);
 }
 
 /// The main entry point for the game.

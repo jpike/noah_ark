@@ -256,5 +256,8 @@
     <ClCompile Include="src\Objects\DustCloud.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="src\Objects\WoodLogs.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

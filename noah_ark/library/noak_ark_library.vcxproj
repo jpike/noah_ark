@@ -74,6 +74,7 @@
     <ClCompile Include="src\Objects\DustCloud.cpp" />
     <ClCompile Include="src\Objects\Noah.cpp" />
     <ClCompile Include="src\Objects\Tree.cpp" />
+    <ClCompile Include="src\Objects\WoodLogs.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
     <ClCompile Include="src\Resources\AudioClips.cpp" />
   </ItemGroup>

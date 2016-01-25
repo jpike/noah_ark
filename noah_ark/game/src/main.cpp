@@ -729,8 +729,39 @@ int main(int argumentCount, char* arguments[])
                     camera.SetCenter(center_world_position);
                 }
 
-                // HANDLE AXE SWINGS.
+                // HANDLE OTHER COLLISIONS.
                 COLLISION::HandleAxeSwingCollisions(overworld, axe_swings, assets);
+                for (auto wood_logs = current_tile_map->WoodLogs.begin(); wood_logs != current_tile_map->WoodLogs.end();)
+                {
+                    // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
+                    MATH::FloatRectangle wood_log_bounding_box = wood_logs->GetWorldBoundingBox();
+                    MATH::FloatRectangle noah_bounding_box = noah_player.GetWorldBoundingBox();
+                    /// @todo   Re-examine this later.  For now, we are forcing players to run over the center of
+                    /// the wood logs to collect them.  This mostly seems fine.  However, it doesn't fully
+                    /// solve the problem (it is still possible for the player to collect the wood without
+                    /// ever actually seeing it).
+                    bool noah_collided_with_wood_logs = noah_bounding_box.Contains(
+                        wood_log_bounding_box.GetCenterXPosition(), 
+                        wood_log_bounding_box.GetCenterYPosition());
+                    if (noah_collided_with_wood_logs)
+                    {
+                        // ADD THE WOOD TO NOAH'S INVENTORY.
+                        /// @todo   Make the wood logs have a random amount of wood?
+                        noah_player.Inventory.AddWood();
+
+                        /// @todo   Remove this debug printing.
+                        /// Just temporary until time is dedicated to creating a graphical version.
+                        std::cout << "Wood count: " << noah_player.Inventory.WoodCount << std::endl;
+
+                        // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
+                        wood_logs = current_tile_map->WoodLogs.erase(wood_logs);
+                    }
+                    else
+                    {
+                        // MOVE TO CHECKING COLLISIONS WITH THE NEXT SET OF WOOD LOGS.
+                        ++wood_logs;
+                    }
+                }
 
                 // RENDER THE CURRENT STATE OF THE GAME.
                 window->clear();

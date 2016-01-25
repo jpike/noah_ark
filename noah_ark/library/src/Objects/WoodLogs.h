@@ -10,6 +10,11 @@ namespace OBJECTS
     class WoodLogs
     {
     public:
+        // POSITIONING/BOUNDARIES.
+        /// Gets the bounding box of the wood logs, in world coordinates.
+        /// @return The wood logs' bounding box.
+        MATH::FloatRectangle GetWorldBoundingBox() const;
+
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The graphical sprite for the wood logs.
         GRAPHICS::Sprite Sprite = GRAPHICS::Sprite();

@@ -63,6 +63,12 @@
     <Filter Include="Source Files\Audio">
       <UniqueIdentifier>{26eae858-da4e-458f-a49f-16a1f77514e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Bible">
+      <UniqueIdentifier>{5486ee80-fadd-4998-b1c2-7f4e968c8d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Bible">
+      <UniqueIdentifier>{d61e792a-cb7d-4ff4-930e-7bc0d910999d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector2.h">
@@ -170,6 +176,9 @@
     <ClInclude Include="src\Graphics\Color.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Bible\BibleVerses.h">
+      <Filter>Header Files\Bible</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -258,6 +267,9 @@
     </ClCompile>
     <ClCompile Include="src\Objects\WoodLogs.cpp">
       <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bible\BibleVerses.cpp">
+      <Filter>Source Files\Bible</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

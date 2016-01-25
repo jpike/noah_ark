@@ -3,7 +3,9 @@
 #include <vector>
 #include "Maps/GroundLayer.h"
 #include "Math/Vector2.h"
+#include "Objects/DustCloud.h"
 #include "Objects/Tree.h"
+#include "Objects/WoodLogs.h"
 
 namespace MAPS
 {    
@@ -62,5 +64,9 @@ namespace MAPS
         GroundLayer Ground;
         /// Trees in this tile map.
         std::vector<OBJECTS::Tree> Trees;
+        /// Dust clouds for trees that are disappearing and becoming wooden logs.
+        std::vector<OBJECTS::DustCloud> TreeDustClouds;
+        /// Wooden logs that have appeared in the map from chopped down trees.
+        std::vector<OBJECTS::WoodLogs> WoodLogs;
     };
 }

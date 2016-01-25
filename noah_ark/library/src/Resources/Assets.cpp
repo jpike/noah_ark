@@ -11,9 +11,12 @@ namespace RESOURCES
     // For assets that require accessing the filesystem, IDs are currently set to filepaths
     // (relative to the working directory) to simplify loading.
     const std::string AXE_TEXTURE_ID = "res/images/noah_sprite1.png";
+    const std::string DUST_CLOUD_TEXTURE_ID = "res/images/tree_sprite1.png";
     const std::string GROUND_TILESET_TEXTURE_ID = "res/images/ground_tile_set.png";
     const std::string NOAH_TEXTURE_ID = "res/images/noah_sprite1.png";
     const std::string TREE_TEXTURE_ID = "res/images/tree_sprite1.png";
+    const std::string WOOD_LOG_TEXTURE_ID = "res/images/tree_sprite1.png";
+    const std::string DUST_CLOUD_ANIMATION_ID = "dust_cloud";
     const std::string NOAH_WALK_FRONT_ANIMATION_ID = "noah_walk_front";
     const std::string NOAH_WALK_BACK_ANIMATION_ID = "noah_walk_back";
     const std::string NOAH_WALK_LEFT_ANIMATION_ID = "noah_walk_left";
@@ -144,7 +147,28 @@ namespace RESOURCES
 
     std::shared_ptr<GRAPHICS::AnimationSequence> Assets::GetAnimationSequence(const std::string& animation_id)
     {
-        if (NOAH_WALK_FRONT_ANIMATION_ID == animation_id)
+        if (DUST_CLOUD_ANIMATION_ID == animation_id)
+        {
+            // RETURN THE ANIMATION SEQUENCE.
+            const bool IS_LOOPING = false;
+            const sf::Time TOTAL_DURATION = sf::seconds(2.0f);
+            const std::vector<MATH::IntRectangle> FRAMES =
+            {
+                // Frames are duplicated some so that things appear to loop a few times.
+                /// @todo   Consider having a max loop count for animation sequences?
+                MATH::IntRectangle::FromTopLeftAndDimensions(48, 0, 16, 16),
+                MATH::IntRectangle::FromTopLeftAndDimensions(48, 16, 16, 16),
+                MATH::IntRectangle::FromTopLeftAndDimensions(48, 0, 16, 16),
+                MATH::IntRectangle::FromTopLeftAndDimensions(48, 16, 16, 16)
+            };
+            const std::shared_ptr<GRAPHICS::AnimationSequence> DUST_CLOUD_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+                DUST_CLOUD_ANIMATION_ID,
+                IS_LOOPING,
+                TOTAL_DURATION,
+                FRAMES);
+            return DUST_CLOUD_ANIMATION;
+        }
+        else if (NOAH_WALK_FRONT_ANIMATION_ID == animation_id)
         {
             // RETURN THE ANIMATION SEQUENCE.
             const bool IS_LOOPING = true;
@@ -272,7 +296,9 @@ namespace RESOURCES
             AXE_TEXTURE_ID,
             GROUND_TILESET_TEXTURE_ID,
             NOAH_TEXTURE_ID,
-            TREE_TEXTURE_ID
+            TREE_TEXTURE_ID,
+            DUST_CLOUD_TEXTURE_ID,
+            WOOD_LOG_TEXTURE_ID
         };
 
         // LOAD ALL OF THE TEXTURES.

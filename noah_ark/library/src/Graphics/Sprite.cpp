@@ -60,6 +60,11 @@ namespace GRAPHICS
         return world_position;
     }
 
+    void Sprite::SetWorldPosition(const MATH::Vector2f& world_position)
+    {
+        SetWorldPosition(world_position.X, world_position.Y);
+    }
+
     void Sprite::SetWorldPosition(const float x_position_in_pixels, const float y_position_in_pixels)
     {
         SpriteResource.setPosition(x_position_in_pixels, y_position_in_pixels);
@@ -98,8 +103,32 @@ namespace GRAPHICS
         SpriteResource.setRotation(angle_in_degrees);
     }
 
+    void Sprite::SetScale(const float scale)
+    {
+        SpriteResource.setScale(scale, scale);
+    }
+
     void Sprite::SetScale(const MATH::Vector2f& scale)
     {
         SpriteResource.setScale(scale.X, scale.Y);
+    }
+
+    GRAPHICS::Color Sprite::GetColor() const
+    {
+        // CONVERT THE COLOR FROM ITS SFML FORMAT.
+        sf::Color sfml_color = SpriteResource.getColor();
+        
+        GRAPHICS::Color color;
+        color.Red = sfml_color.r;
+        color.Green = sfml_color.g;
+        color.Blue = sfml_color.b;
+        color.Alpha = sfml_color.a;
+        return color;
+    }
+
+    void Sprite::SetColor(const GRAPHICS::Color& color)
+    {
+        SpriteResource.setColor(
+            sf::Color(color.Red, color.Green, color.Blue, color.Alpha));
     }
 }

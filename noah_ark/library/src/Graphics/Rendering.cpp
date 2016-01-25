@@ -25,10 +25,22 @@ namespace GRAPHICS
             }
         }
 
+        // RENDER THE CURRENT TILE MAP'S WOOD LOGS.
+        for (const auto& wood_log : tile_map.WoodLogs)
+        {
+            Render(wood_log.Sprite, render_target);
+        }
+
         // RENDER THE CURRENT TILE MAP'S TREES.
         for (const auto& tree : tile_map.Trees)
         {
             Render(tree.Sprite, render_target);
+        }
+
+        // RENDER THE CURRENT TILE MAP'S DUST CLOUDS.
+        for (const auto& dust_cloud : tile_map.TreeDustClouds)
+        {
+            Render(dust_cloud.Sprite, render_target);
         }
     }
 }

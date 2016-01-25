@@ -606,7 +606,7 @@ namespace COLLISION
         return new_world_position;
     }
 
-    void HandleAxeCollisionsWithTrees(const OBJECTS::Axe& axe, MAPS::Overworld& overworld)
+    void HandleAxeCollisionsWithTrees(const OBJECTS::Axe& axe, MAPS::Overworld& overworld, RESOURCES::Assets& assets)
     {
         // GET THE WORLD AREA CONTAING THE AXE BLADE.
         // While it is technically possible for the axe to intersect multiple tile maps,
@@ -648,6 +648,50 @@ namespace COLLISION
                 }
                 else
                 {
+                    // PLACE WOOD LOGS WHERE THE TREE WAS
+                    // If the texture can't be loaded, then wood logs simply won't be added.
+                    // The game will just continue as if no wood could be obtained from the tree.
+                    std::shared_ptr<GRAPHICS::Texture> wood_log_texture = assets.GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID);
+                    bool wood_log_texture_retrieved = (nullptr != wood_log_texture);
+                    if (wood_log_texture_retrieved)
+                    {
+                        // ADD A GROUP OF WOOD LOGS AT THE DUST CLOUD'S POSITION.
+                        OBJECTS::WoodLogs wood_logs;
+
+                        const MATH::FloatRectangle WOOD_LOG_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(
+                            32.0f, 32.0f, 16.0f, 16.0f);
+                        wood_logs.Sprite = GRAPHICS::Sprite(wood_log_texture, WOOD_LOG_TEXTURE_SUB_RECTANGLE);
+
+                        MATH::Vector2f wood_log_center_world_position = tree->GetTrunkCenterWorldPosition();
+                        wood_logs.Sprite.SetWorldPosition(wood_log_center_world_position);
+
+                        tile_map->WoodLogs.push_back(wood_logs);
+                    }
+
+                    // PLACE A DUST CLOUD WHERE THE TREE WAS.
+                    // This signifies the tree being chopped down and turning into wood.
+                    // If the resources can't be loaded, then a dust cloud simply won't be added.
+                    // The game will just continue as if no wood could be obtained from the tree.
+                    std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = assets.GetTexture(RESOURCES::DUST_CLOUD_TEXTURE_ID);
+                    std::shared_ptr<GRAPHICS::AnimationSequence> dust_cloud_animation = assets.GetAnimationSequence(RESOURCES::DUST_CLOUD_ANIMATION_ID);
+                    bool dust_cloud_resources_retrieved = (dust_cloud_texture != nullptr) && (dust_cloud_animation != nullptr);
+                    if (dust_cloud_resources_retrieved)
+                    {
+                        OBJECTS::DustCloud dust_cloud;
+                                               
+                        dust_cloud.Sprite = GRAPHICS::AnimatedSprite(dust_cloud_texture, dust_cloud_animation);
+
+                        // The dust cloud should be positioned to cover the base of the tree.
+                        MATH::Vector2f dust_cloud_center_world_position = tree->GetTrunkCenterWorldPosition();
+                        dust_cloud.Sprite.SetWorldPosition(dust_cloud_center_world_position);
+
+                        // The dust cloud should start animating immediately.
+                        dust_cloud.Sprite.Play();
+
+                        // The dust cloud needs to be added to the tile map so that it gets updated.
+                        tile_map->TreeDustClouds.push_back(dust_cloud);
+                    }
+
                     // REMOVE THE TREE SINCE IT NO LONGER HAS ANY HIT POINTS.
                     tree = tile_map->Trees.erase(tree);
                 }
@@ -660,7 +704,10 @@ namespace COLLISION
         }
     }
 
-    void HandleAxeSwingCollisions(MAPS::Overworld& overworld, std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings)
+    void HandleAxeSwingCollisions(
+        MAPS::Overworld& overworld, 
+        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings,
+        RESOURCES::Assets& assets)
     {
         // HANDLE COLLISIONS FOR ALL AXE SWINGS.
         for (auto axe_swing_event = axe_swings.cbegin(); axe_swings.cend() != axe_swing_event;)
@@ -692,7 +739,7 @@ namespace COLLISION
             }
 
             // HANDLE COLLISIONS OF THE AXE WITH TREES.
-            HandleAxeCollisionsWithTrees(*axe_swing.Axe, overworld);
+            HandleAxeCollisionsWithTrees(*axe_swing.Axe, overworld, assets);
 
             // REMOVE THE PROCESSED AXE SWING EVENT.
             axe_swing_event = axe_swings.erase(axe_swing_event);

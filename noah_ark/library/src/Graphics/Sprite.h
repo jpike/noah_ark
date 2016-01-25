@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include "Graphics/Color.h"
 #include "Graphics/Texture.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
@@ -38,6 +39,9 @@ namespace GRAPHICS
         /// @return The world position of the sprite, in pixels.
         MATH::Vector2f GetWorldPosition() const;
         /// Sets the world position of the sprite.
+        /// @param[in]  world_position - The position of the sprite in the world.
+        void SetWorldPosition(const MATH::Vector2f& world_position);
+        /// Sets the world position of the sprite.
         /// @param[in]  x_position_in_pixels - The x-coordinate of the sprite in the world.
         /// @param[in]  y_position_in_pixels - The y-coordinate of the sprite in the world.
         void SetWorldPosition(const float x_position_in_pixels, const float y_position_in_pixels);
@@ -63,10 +67,24 @@ namespace GRAPHICS
         void SetOrigin(const MATH::Vector2f& origin);
 
         // SCALING.
+        /// Sets the scaling of the sprite (in both X and Y dimensions).
+        /// 1.0f represents the normal, unscaled value for a dimension.
+        /// @param[in]  scale - The scaling amount for the sprite.
+        void SetScale(const float scale);
         /// Sets the scaling of the sprite.  1.0f represents
         /// the normal, unscaled value for a dimension.
         /// @param[in]  scale - The scaling amount for the sprite.
         void SetScale(const MATH::Vector2f& scale);
+
+        // COLOR.
+        /// Gets the color of the sprite.
+        /// @return The color of the sprite.
+        GRAPHICS::Color GetColor() const;
+        /// Sets the color of the sprite.  This color modulates the
+        /// sprite's texture values and can be used for things like
+        /// changing its tint or opacity.
+        /// @param[in]  color - The color to set for the sprite.
+        void SetColor(const GRAPHICS::Color& color);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The texture providing graphics for this sprite.

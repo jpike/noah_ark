@@ -42,6 +42,9 @@ namespace OBJECTS
         /// Gets the bounding box of the tree, in world coordinates.
         /// @return The tree's bounding box.
         MATH::FloatRectangle GetWorldBoundingBox() const;
+        /// Gets the center world position of the tree's trunk.
+        /// @return The center world position of the tree's trunk.
+        MATH::Vector2f GetTrunkCenterWorldPosition() const;
 
         // HITTING.
         /// Damages the tree by taking one hit.

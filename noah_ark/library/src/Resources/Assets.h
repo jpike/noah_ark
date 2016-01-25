@@ -17,9 +17,12 @@ namespace RESOURCES
 {
     // ASSET IDs.
     extern const std::string AXE_TEXTURE_ID;
+    extern const std::string DUST_CLOUD_TEXTURE_ID;
     extern const std::string GROUND_TILESET_TEXTURE_ID;
     extern const std::string NOAH_TEXTURE_ID;
     extern const std::string TREE_TEXTURE_ID;
+    extern const std::string WOOD_LOG_TEXTURE_ID;
+    extern const std::string DUST_CLOUD_ANIMATION_ID;
     extern const std::string NOAH_WALK_FRONT_ANIMATION_ID;
     extern const std::string NOAH_WALK_BACK_ANIMATION_ID;
     extern const std::string NOAH_WALK_LEFT_ANIMATION_ID;

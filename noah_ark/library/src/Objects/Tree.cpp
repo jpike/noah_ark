@@ -7,6 +7,28 @@ namespace OBJECTS
         return Sprite.GetWorldBoundingBox();
     }
 
+    MATH::Vector2f Tree::GetTrunkCenterWorldPosition() const
+    {
+        // GET THE BOUNDING BOX OF THE TREE.
+        MATH::FloatRectangle world_bounding_box = GetWorldBoundingBox();
+
+        // CALCULATE THE CENTER OF THE TREE'S TRUNK.
+        /// @todo   This can be hardcoded once we switch to a single
+        /// size of tree.
+        // The center will be set so that it works for all current tree sizes.
+        // It is vertically placed halfway up the pixel grid for the smallest
+        // tree size, which also works well for other tree sizes.
+        const float OFFSET_FROM_TREE_BOTTOM_TO_TRUNK_CENTER_IN_PIXELS = 8.0f;
+        float tree_bottom_world_y_position = world_bounding_box.GetBottomYPosition();
+        // Y gets smaller going up.
+        float trunk_center_y_position = tree_bottom_world_y_position - OFFSET_FROM_TREE_BOTTOM_TO_TRUNK_CENTER_IN_PIXELS;
+        float trunk_center_x_position = world_bounding_box.GetCenterXPosition();
+        MATH::Vector2f trunk_center_world_position(
+            trunk_center_x_position,
+            trunk_center_y_position);
+        return trunk_center_world_position;
+    }
+
     void Tree::TakeHit()
     {
         // CHECK IF THE TREE HAS ANY REMAINING HIT POINTS.

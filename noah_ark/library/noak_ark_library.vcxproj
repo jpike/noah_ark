@@ -21,6 +21,7 @@
     <ClInclude Include="src\Graphics\AnimatedSprite.h" />
     <ClInclude Include="src\Graphics\AnimationSequence.h" />
     <ClInclude Include="src\Graphics\Camera.h" />
+    <ClInclude Include="src\Graphics\Color.h" />
     <ClInclude Include="src\Graphics\Rendering.h" />
     <ClInclude Include="src\Graphics\Sprite.h" />
     <ClInclude Include="src\Graphics\Texture.h" />
@@ -39,8 +40,10 @@
     <ClInclude Include="src\Math\Rectangle.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Objects\Axe.h" />
+    <ClInclude Include="src\Objects\DustCloud.h" />
     <ClInclude Include="src\Objects\Noah.h" />
     <ClInclude Include="src\Objects\Tree.h" />
+    <ClInclude Include="src\Objects\WoodLogs.h" />
     <ClInclude Include="src\Resources\Assets.h" />
     <ClInclude Include="src\Resources\AudioClips.h" />
   </ItemGroup>
@@ -68,6 +71,7 @@
     <ClCompile Include="src\Maps\Tileset.cpp" />
     <ClCompile Include="src\Maps\TilesetDescription.cpp" />
     <ClCompile Include="src\Objects\Axe.cpp" />
+    <ClCompile Include="src\Objects\DustCloud.cpp" />
     <ClCompile Include="src\Objects\Noah.cpp" />
     <ClCompile Include="src\Objects\Tree.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />

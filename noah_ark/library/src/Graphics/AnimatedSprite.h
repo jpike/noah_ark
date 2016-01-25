@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include "Graphics/AnimationSequence.h"
+#include "Graphics/Color.h"
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
@@ -26,6 +27,15 @@ namespace GRAPHICS
         /// Constructor to wrap the provided sprite.
         /// @param[in]  sprite - The sprite being animated.
         explicit AnimatedSprite(const GRAPHICS::Sprite& sprite);
+        /// Constructor to create an animated sprite with a single initial animation sequence.
+        /// @param[in]  texture - The texture to use for the sprite.
+        /// @param[in]  animation_sequence - The initial animation sequence for the sprite.
+        ///     The first frame of the animation sequence defines the initial sub-rectangle
+        ///     of the texture to use for the sprite.
+        /// @throws std::exception - Thrown if a parameter is invalid.
+        explicit AnimatedSprite(
+            const std::shared_ptr<GRAPHICS::Texture>& texture,
+            const std::shared_ptr<GRAPHICS::AnimationSequence>& animation_sequence);
 
         // INTERFACE IMPLEMENTATION - IGraphicsComponent.
         /// @copydoc    IGraphicsComponent::Render
@@ -37,6 +47,9 @@ namespace GRAPHICS
         /// Gets the world position of the sprite.
         /// @return The world position of the sprite, in pixels.
         MATH::Vector2f GetWorldPosition() const;
+        /// Sets the world position of the sprite.
+        /// @param[in]  world_position - The position of the sprite in the world.
+        void SetWorldPosition(const MATH::Vector2f& world_position);
         /// Sets the world position of the sprite.
         /// @param[in]  x_position_in_pixels - The x-coordinate of the sprite in the world.
         /// @param[in]  y_position_in_pixels - The y-coordinate of the sprite in the world.
@@ -64,18 +77,40 @@ namespace GRAPHICS
         void Play();
         /// Resets the current animation to its first frame and stops it from playing.
         void ResetAnimation();
+        /// Determines if an animation sequence is currently playing for the sprite.
+        /// @return True if the sprite is animating; false otherwise.
+        bool IsAnimating() const;
+        /// Returns the animation sequence currently in use.
+        /// If the current animation sequence name is not mapped to a valid
+        /// sequence, then nullptr may be returned.
+        /// @return     The current animation sequence, if it exists.
+        std::shared_ptr<AnimationSequence> GetCurrentAnimationSequence() const;
+
+        // ROTATION.
+        /// Sets the rotation of the sprite, relative to its origin.
+        /// @param[in]  angle_in_degrees - The angle for the rotation.
+        void SetRotation(const float angle_in_degrees);
+
+        // SCALING.
+        /// Sets the scaling of the sprite (in both X and Y dimensions).
+        /// 1.0f represents the normal, unscaled value for a dimension.
+        /// @param[in]  scale - The scaling amount for the sprite.
+        void SetScale(const float scale);
+
+        // COLOR.
+        /// Gets the color of the sprite.
+        /// @return The color of the sprite.
+        GRAPHICS::Color GetColor() const;
+        /// Sets the color of the sprite.  This color modulates the
+        /// sprite's texture values and can be used for things like
+        /// changing its tint or opacity.
+        /// @param[in]  color - The color to set for the sprite.
+        void SetColor(const GRAPHICS::Color& color);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         GRAPHICS::Sprite Sprite;   ///< The underlying sprite being animated.
 
     private:
-        // PRIVATE METHODS.
-        /// Returns the animation sequence currently in use.
-        /// If the current animation sequence name is not mapped to a valid
-        /// sequence, then nullptr may be returned.
-        /// @return     The current animation sequence, if it exists.
-        std::shared_ptr<AnimationSequence> GetCurrentAnimationSequence();
-
         // MEMBER VARIABLES.
         /// A mapping of animation sequence names to actual animation sequences.
         /// Allows switching between different animation sequences.

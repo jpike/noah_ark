@@ -730,7 +730,7 @@ int main(int argumentCount, char* arguments[])
                 }
 
                 // HANDLE AXE SWINGS.
-                COLLISION::HandleAxeSwingCollisions(overworld, axe_swings);
+                COLLISION::HandleAxeSwingCollisions(overworld, axe_swings, assets);
 
                 // RENDER THE CURRENT STATE OF THE GAME.
                 window->clear();
@@ -770,6 +770,28 @@ int main(int argumentCount, char* arguments[])
                         for (auto tree = tile_map->Trees.begin(); tree != tile_map->Trees.end(); ++tree)
                         {
                             tree->Update(elapsed_time_in_seconds);
+                        }
+
+                        // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
+                        /// @todo   Maybe we only need a single dust cloud?  At least in theory, it shouldn't be
+                        /// possible for more than one tree to in this state at a given time.
+                        for (auto dust_cloud = tile_map->TreeDustClouds.begin(); dust_cloud != tile_map->TreeDustClouds.end();)
+                        {
+                            // UPDATE THE CURRENT DUST CLOUD.
+                            dust_cloud->Update(elapsed_time_in_seconds);
+
+                            // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
+                            bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
+                            if (dust_cloud_disappeared)
+                            {
+                                // REMOVE THE DUST CLOUD.
+                                dust_cloud = tile_map->TreeDustClouds.erase(dust_cloud);
+                            }
+                            else
+                            {
+                                // MOVE TO UPDATING THE NEXT DUST CLOUD.
+                                ++dust_cloud;
+                            }
                         }
 
                         // RENDER THE TILE MAP.

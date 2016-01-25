@@ -161,6 +161,15 @@
     <ClInclude Include="src\Resources\AudioClips.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="src\Objects\DustCloud.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Objects\WoodLogs.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Color.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -243,6 +252,9 @@
     </ClCompile>
     <ClCompile Include="src\Resources\AudioClips.cpp">
       <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Objects\DustCloud.cpp">
+      <Filter>Source Files\Objects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

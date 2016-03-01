@@ -52,4 +52,7 @@ namespace BIBLE
         Text(text)
         {}
     };
+
+    /// The collection of all Bible verses that can be found during the game.
+    extern const std::vector<BibleVerse> BIBLE_VERSES;
 }

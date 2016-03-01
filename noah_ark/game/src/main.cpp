@@ -3,8 +3,10 @@
 #include <exception>
 #include <iostream>
 #include <memory>
+#include <random>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "Bible/BibleVerses.h"
 #include "Collision/Collisions.h"
 #include "Collision/Movement.h"
 #include "Core/Direction.h"
@@ -371,6 +373,9 @@ int main(int argumentCount, char* arguments[])
 
         // CREATE A COLLECTION OF AXE SWING EVENTS.
         std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > axe_swings;
+
+        // CREATE THE RANDOM NUMBER GENERATOR.
+        std::random_device random_number_generator;
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         sf::Clock game_loop_clock;
@@ -755,6 +760,44 @@ int main(int argumentCount, char* arguments[])
 
                         // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
                         wood_logs = current_tile_map->WoodLogs.erase(wood_logs);
+
+                        // SEE IF A BIBLE VERSE SHOULD BE COLLECTED ALONG WITH THE WOOD.
+                        // There should be a random chance that a Bible verse can be collected.
+                        const unsigned int EVENLY_DIVISIBLE = 0;
+                        /// @todo   Tweak this value later as needed.  Somewhere between 2 and 3
+                        /// seems about right, but the value that feels best will have to be
+                        /// determined based on experience within the context of the full
+                        /// game.
+                        const unsigned int BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS = 2;
+                        unsigned int random_number = random_number_generator();
+                        bool bible_verse_exists_with_wood = ((random_number % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
+                        if (bible_verse_exists_with_wood)
+                        {
+                            // SELECT A RANDOM BIBLE VERSE.
+                            /// @todo   Only select a random bible verse that hasn't been collected yet.
+                            unsigned int random_bible_verse_index = random_number_generator() % BIBLE::BIBLE_VERSES.size();
+                            const BIBLE::BibleVerse& bible_verse = BIBLE::BIBLE_VERSES[random_bible_verse_index];
+
+                            // ONLY COLLECT THE BIBLE VERSE IF THE PLAYER HASN'T COLLECTED IT YET.
+                            /// @todo   Do we somehow want to reduce the size of the "pool" from which random Bible verses
+                            /// are selected such that eventually there isn't a danger of a verse being randomly chosen
+                            /// more than once?  This could probably be accomplished fairly easily by simply making a
+                            /// copy of the global collection for the "remaining" verses.  If we do this, then we
+                            /// can't use pointers to the Bible verses since they'd be temporary.
+                            bool bible_verse_already_collected = noah_player.Inventory.ContainsBibleVerse(&bible_verse);
+                            if (!bible_verse_already_collected)
+                            {
+                                std::cout
+                                    << "You got a Bible verse!\n"
+                                    /// @todo   Make Bible book names printable!
+                                    << static_cast<int>(bible_verse.Book) << " " << bible_verse.Chapter << ":" << bible_verse.Verse
+                                    << " - " << bible_verse.Text
+                                    << std::endl;
+
+                                // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
+                                noah_player.Inventory.AddBibleVerse(&bible_verse);
+                            }
+                        }
                     }
                     else
                     {

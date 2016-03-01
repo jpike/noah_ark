@@ -1,5 +1,8 @@
 #pragma once
 
+#include <algorithm>
+#include <vector>
+#include "Bible/BibleVerses.h"
 #include "Core/Direction.h"
 #include "Events/AxeSwingEvent.h"
 #include "Graphics/AnimatedSprite.h"
@@ -21,9 +24,52 @@ namespace OBJECTS
             ++WoodCount;
         }
 
+        // BIBLE VERSES.
+        /// Adds the provided Bible verse to the inventory.
+        /// @param[in]  bible_verse - The Bible verse to add (if not null).
+        ///     Provided as a pointer since Bible verses stored in this
+        ///     class are stored as pointers to help quickly determine
+        ///     if an existing Bible verse has already been added
+        ///     without requiring slower checks or copying.
+        void AddBibleVerse(const BIBLE::BibleVerse* bible_verse)
+        {
+            // A null Bible verse shouldn't be added because it is useless
+            // and would just take up space in the container.
+            bool bible_verse_exists = (nullptr != bible_verse);
+            if (bible_verse_exists)
+            {
+                BibleVerses.push_back(bible_verse);
+            }
+        }
+
+        /// Determines if the provided Bible verse is already in the inventory.
+        /// @param[in]  bible_verse - The Bible verse to check if included in the inventory.
+        ///     Provided as a pointer since Bible verses stored in this
+        ///     class are stored as pointers to help quickly determine
+        ///     if an existing Bible verse has already been added
+        ///     without requiring slower checks or copying.
+        bool ContainsBibleVerse(const BIBLE::BibleVerse* bible_verse)
+        {
+            auto existing_bible_verse_in_inventory = std::find(
+                BibleVerses.cbegin(),
+                BibleVerses.cend(),
+                bible_verse);
+            bool bible_verse_already_in_inventory = (BibleVerses.cend() != existing_bible_verse_in_inventory);
+            return bible_verse_already_in_inventory;
+        }
+
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The number of wooden logs in the inventory.
         unsigned int WoodCount = 0;
+        /// Bible verses collected so far by the player.
+        /// Pointers are stored to the single global instances of
+        /// the verses in memory to allow easily checking if
+        /// a verse has already been collected.
+        /// @todo   Revisit how these Bible verses are stored.
+        /// It may be better to store them in some kind of set
+        /// and/or not store pointers, but that is uncertain
+        /// and may require profiling.
+        std::vector<const BIBLE::BibleVerse*> BibleVerses = std::vector<const BIBLE::BibleVerse*>();
     };
 
     /// Represents the character of Noah, typically controlled

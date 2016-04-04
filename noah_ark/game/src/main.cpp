@@ -4,7 +4,9 @@
 #include <iostream>
 #include <memory>
 #include <random>
+#include <set>
 #include <string>
+#include <unordered_set>
 #include <SFML/Graphics.hpp>
 #include "Bible/BibleVerses.h"
 #include "Collision/Collisions.h"
@@ -335,6 +337,9 @@ int main(int argumentCount, char* arguments[])
             std::cerr << "Failed to load assets." << std::endl;
             return EXIT_CODE_FAILURE_LOADING_ASSETS;
         }
+
+        // INITIALIZE THE BIBLE VERSES LEFT TO BE FOUND.
+        std::vector<BIBLE::BibleVerse> bible_verses_left_to_find = BIBLE::BIBLE_VERSES;
 
         // CREATE THE OVERWORLD.
         const std::unique_ptr<MAPS::OverworldMapFile>& overworld_map_file = assets.OverworldMapFile;
@@ -773,29 +778,29 @@ int main(int argumentCount, char* arguments[])
                         bool bible_verse_exists_with_wood = ((random_number % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
                         if (bible_verse_exists_with_wood)
                         {
-                            // SELECT A RANDOM BIBLE VERSE.
-                            /// @todo   Only select a random bible verse that hasn't been collected yet.
-                            unsigned int random_bible_verse_index = random_number_generator() % BIBLE::BIBLE_VERSES.size();
-                            const BIBLE::BibleVerse& bible_verse = BIBLE::BIBLE_VERSES[random_bible_verse_index];
-
-                            // ONLY COLLECT THE BIBLE VERSE IF THE PLAYER HASN'T COLLECTED IT YET.
-                            /// @todo   Do we somehow want to reduce the size of the "pool" from which random Bible verses
-                            /// are selected such that eventually there isn't a danger of a verse being randomly chosen
-                            /// more than once?  This could probably be accomplished fairly easily by simply making a
-                            /// copy of the global collection for the "remaining" verses.  If we do this, then we
-                            /// can't use pointers to the Bible verses since they'd be temporary.
-                            bool bible_verse_already_collected = noah_player.Inventory.ContainsBibleVerse(&bible_verse);
-                            if (!bible_verse_already_collected)
+                            // CHECK IF ANY BIBLE VERSES REMAIN.
+                            // This check helps protect against a mod by 0 below.
+                            bool bible_verses_remain_to_be_found = !bible_verses_left_to_find.empty();
+                            if (bible_verses_remain_to_be_found)
                             {
+                                // SELECT A RANDOM BIBLE VERSE.
+                                unsigned int random_bible_verse_index = random_number_generator() % bible_verses_left_to_find.size();
+                                auto bible_verse = bible_verses_left_to_find.begin() + random_bible_verse_index;
+
+                                // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
+                                noah_player.Inventory.BibleVerses.push_back(*bible_verse);
+
+                                /// @todo   Remove this debug printing.
+                                /// Just temporary until graphical inventory is implemented.
                                 std::cout
                                     << "You got a Bible verse!\n"
                                     /// @todo   Make Bible book names printable!
-                                    << static_cast<int>(bible_verse.Book) << " " << bible_verse.Chapter << ":" << bible_verse.Verse
-                                    << " - " << bible_verse.Text
+                                    << static_cast<int>(bible_verse->Book) << " " << bible_verse->Chapter << ":" << bible_verse->Verse
+                                    << " - " << bible_verse->Text
                                     << std::endl;
 
-                                // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
-                                noah_player.Inventory.AddBibleVerse(&bible_verse);
+                                // REMOVE THE VERSE SINCE IT HAS BEEN FOUND.
+                                bible_verses_left_to_find.erase(bible_verse);
                             }
                         }
                     }

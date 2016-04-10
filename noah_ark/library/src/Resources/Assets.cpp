@@ -3,7 +3,6 @@
 #include <future>
 #include <vector>
 #include "Resources/Assets.h"
-#include "Resources/AudioClips.h"
 
 namespace RESOURCES
 {
@@ -21,6 +20,8 @@ namespace RESOURCES
     const std::string NOAH_WALK_BACK_ANIMATION_ID = "noah_walk_back";
     const std::string NOAH_WALK_LEFT_ANIMATION_ID = "noah_walk_left";
     const std::string NOAH_WALK_RIGHT_ANIMATION_ID = "noah_walk_right";
+    const std::string AXE_HIT_SOUND_ID = "res/sounds/axe_tree_hit1.wav";
+    const std::string TREE_SHAKE_SOUND_ID = "res/sounds/tree_shake3.wav";
 
     Assets::Assets() :
     Textures(),
@@ -247,7 +248,7 @@ namespace RESOURCES
         }
     }
 
-    std::shared_ptr<AUDIO::SoundEffect> Assets::GetSound(const AUDIO::AudioClipId sound_id)
+    std::shared_ptr<AUDIO::SoundEffect> Assets::GetSound(const std::string& sound_id)
     {
         // CHECK IF THE AUDIO SAMPLES HAVE ALREADY BEEN LOADED.
         auto id_with_audio_samples = AudioSamples.find(sound_id);
@@ -259,19 +260,10 @@ namespace RESOURCES
             return sound_effect;
         }
 
-        // GET THE AUDIO CLIP WITH THE SAMPLES.
-        // It currently maps directly to an audio clip.
-        const AUDIO::AudioClip* audio_clip = sound_id;
-
         // LOAD THE AUDIO SAMPLES INTO A BUFFER.
-        /// @todo   Should this channel count be variable?
-        const unsigned int CHANNEL_COUNT = 1;
+        // The sound ID maps directly to a filepath.
         std::shared_ptr<sf::SoundBuffer> sound_buffer = std::make_shared<sf::SoundBuffer>();
-        bool audio_samples_loaded = sound_buffer->loadFromSamples(
-            audio_clip->Samples.data(),
-            audio_clip->Samples.size(),
-            CHANNEL_COUNT,
-            audio_clip->SampleRateInSamplesPerSecond);
+        bool audio_samples_loaded = sound_buffer->loadFromFile(sound_id);
         if (!audio_samples_loaded)
         {
             return nullptr;
@@ -342,28 +334,23 @@ namespace RESOURCES
         AudioSamples.clear();
 
         // DEFINE THE AUDIO SAMPLES TO BE LOADED.
-        const std::vector<AUDIO::AudioClipId> AUDIO_CLIPS =
+        const std::vector<std::string> SOUND_IDS =
         {
-            &RESOURCES::AXE_HIT_AUDIO_CLIP,
-            &RESOURCES::TREE_SHAKE_AUDIO_CLIP
+            AXE_HIT_SOUND_ID,
+            TREE_SHAKE_SOUND_ID
         };
 
         // LOAD ALL OF THE AUDIO SAMPLES.
-        for (const auto& audio_clip : AUDIO_CLIPS)
+        for (const auto& sound_id : SOUND_IDS)
         {
             // LOAD THE CURRENT AUDIO SAMPLES.
-            /// @todo   Should this channel count be variable?
-            const unsigned int CHANNEL_COUNT = 1;
+            // Sound IDs map directly to filepaths.
             std::shared_ptr<sf::SoundBuffer> sound_buffer = std::make_shared<sf::SoundBuffer>();
-            bool audio_samples_loaded = sound_buffer->loadFromSamples(
-                audio_clip->Samples.data(),
-                audio_clip->Samples.size(),
-                CHANNEL_COUNT,
-                audio_clip->SampleRateInSamplesPerSecond);
+            bool audio_samples_loaded = sound_buffer->loadFromFile(sound_id);
             if (audio_samples_loaded)
             {
                 // STORE THE AUDIO SAMPLE BUFFER IN THIS COLLECTION.
-                AudioSamples[audio_clip] = sound_buffer;
+                AudioSamples[sound_id] = sound_buffer;
             }
             else
             {

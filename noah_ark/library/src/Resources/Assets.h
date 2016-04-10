@@ -4,7 +4,6 @@
 #include <string>
 #include <unordered_map>
 #include <SFML/Audio.hpp>
-#include "Audio/AudioClip.h"
 #include "Audio/SoundEffect.h"
 #include "Core/Array2D.h"
 #include "Graphics/AnimationSequence.h"
@@ -27,6 +26,8 @@ namespace RESOURCES
     extern const std::string NOAH_WALK_BACK_ANIMATION_ID;
     extern const std::string NOAH_WALK_LEFT_ANIMATION_ID;
     extern const std::string NOAH_WALK_RIGHT_ANIMATION_ID;
+    extern const std::string AXE_HIT_SOUND_ID;
+    extern const std::string TREE_SHAKE_SOUND_ID;
 
     /// Provides access to all assets needed for the game.
     /// When first requesting an asset, it will be loaded
@@ -62,7 +63,7 @@ namespace RESOURCES
         /// but it may share the same buffer of audio samples as another instance.
         /// @param[in]  sound_id - The ID of the sound to load.
         /// @return The requested sound effect, if successfully loaded; null otherwise.
-        std::shared_ptr<AUDIO::SoundEffect> GetSound(const AUDIO::AudioClipId sound_id);
+        std::shared_ptr<AUDIO::SoundEffect> GetSound(const std::string& sound_id);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// Textures that have been loaded.  They need to remain in memory to allow them to be used.
@@ -70,9 +71,7 @@ namespace RESOURCES
         std::unordered_map< std::string, std::shared_ptr<GRAPHICS::Texture> > Textures;
         /// Audio samples for sounds that have been loaded.  They need to remain in memory to allow them to be used.
         /// They are mapped by the sound resource IDs.
-        /// @todo   Rethink about storing things here.  Maybe we should just have the sound buffers
-        /// stored directly in the AudioClips and then loaded automatically during initialization?
-        std::unordered_map< AUDIO::AudioClipId, std::shared_ptr<sf::SoundBuffer> > AudioSamples;
+        std::unordered_map< std::string, std::shared_ptr<sf::SoundBuffer> > AudioSamples;
         /// The overworld map file, if successfully loaded.
         std::unique_ptr<MAPS::OverworldMapFile> OverworldMapFile;
         /// The tile map files, mapped by their 2D grid coordinates (x = column, y = row) in the overworld.

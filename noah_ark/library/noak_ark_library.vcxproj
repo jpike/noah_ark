@@ -11,7 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Audio\AudioClip.h" />
     <ClInclude Include="src\Audio\SoundEffect.h" />
     <ClInclude Include="src\Bible\BibleVerses.h" />
     <ClInclude Include="src\Collision\Collisions.h" />
@@ -46,7 +45,6 @@
     <ClInclude Include="src\Objects\Tree.h" />
     <ClInclude Include="src\Objects\WoodLogs.h" />
     <ClInclude Include="src\Resources\Assets.h" />
-    <ClInclude Include="src\Resources\AudioClips.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio\SoundEffect.cpp" />
@@ -78,7 +76,6 @@
     <ClCompile Include="src\Objects\Tree.cpp" />
     <ClCompile Include="src\Objects\WoodLogs.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
-    <ClCompile Include="src\Resources\AudioClips.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D615E35-8F41-44B6-BE1B-FED957017972}</ProjectGuid>

@@ -4,9 +4,7 @@
 #include <iostream>
 #include <memory>
 #include <random>
-#include <set>
 #include <string>
-#include <unordered_set>
 #include <SFML/Graphics.hpp>
 #include "Bible/BibleVerses.h"
 #include "Collision/Collisions.h"
@@ -20,7 +18,6 @@
 #include "Maps/TileMap.h"
 #include "Objects/Noah.h"
 #include "Resources/Assets.h"
-#include "Resources/AudioClips.h"
 
 /// The game exited successfully.
 int EXIT_CODE_SUCCESS = 0;
@@ -192,7 +189,7 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
                                 tree_sprite.SetWorldPosition(tree_world_x_position, tree_world_y_position);
 
                                 // GET THE TREE SHAKING SOUND EFFECT.
-                                std::shared_ptr<AUDIO::SoundEffect> tree_shake_sound = assets.GetSound(&RESOURCES::TREE_SHAKE_AUDIO_CLIP);
+                                std::shared_ptr<AUDIO::SoundEffect> tree_shake_sound = assets.GetSound(RESOURCES::TREE_SHAKE_SOUND_ID);
                                 bool tree_shake_sound_retrieved = (nullptr != tree_shake_sound);
                                 if (!tree_shake_sound_retrieved)
                                 {
@@ -200,6 +197,11 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
                                     assert(false);
                                     continue;
                                 }
+
+                                /// @todo   Create a better tree shaking sound effect so that stuff
+                                /// doesn't have to be manually modified here.
+                                tree_shake_sound->Sound.setVolume(25);
+                                tree_shake_sound->Sound.setPitch(2);
 
                                 // CREATE THE TREE.
                                 OBJECTS::Tree tree;
@@ -309,7 +311,7 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
         AXE_HEIGHT_IN_PIXELS);
     noah_player.Axe->Sprite = GRAPHICS::Sprite(axe_texture, axe_texture_sub_rectangle);
 
-    noah_player.Axe->AxeHitSound = assets.GetSound(&RESOURCES::AXE_HIT_AUDIO_CLIP);
+    noah_player.Axe->AxeHitSound = assets.GetSound(RESOURCES::AXE_HIT_SOUND_ID);
 }
 
 /// The main entry point for the game.

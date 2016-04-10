@@ -13,6 +13,9 @@
     <Filter Include="Resources\Maps\Testing">
       <UniqueIdentifier>{19042ea5-347a-4c54-9ca1-6d2ea37ba297}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources\Sounds">
+      <UniqueIdentifier>{f7a60b5f-8488-402a-a070-cb656aec4b8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\res_images.txt">

@@ -8,6 +8,7 @@
 #include "Maps/Overworld.h"
 #include "Math/Rectangle.h"
 #include "Objects/Axe.h"
+#include "Resources/Assets.h"
 
 namespace COLLISION
 {

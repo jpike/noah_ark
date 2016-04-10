@@ -27,7 +27,7 @@ namespace OBJECTS
     std::shared_ptr<EVENTS::AxeSwingEvent> Noah::SwingAxe() const
     {
         // CHECK IF NOAH HAS AN AXE.
-        bool axe_exists = (nullptr != Axe);
+        bool axe_exists = (nullptr != Inventory.Axe);
         if (!axe_exists)
         {
             // An axe can't be swung since it isn't equipped.
@@ -38,7 +38,7 @@ namespace OBJECTS
         // The prevent the axe from being swung too quickly,
         // it should not be possible to swing it again
         // if it is already being swung.
-        bool axe_already_swinging = Axe->IsSwinging();
+        bool axe_already_swinging = Inventory.Axe->IsSwinging();
         if (axe_already_swinging)
         {
             // The axe is already being swung,
@@ -59,13 +59,13 @@ namespace OBJECTS
                 axe_position.X += noah_half_width;
                 axe_position.X -= 1.5f;
                 axe_position.Y += 3;
-                Axe->SetWorldPosition(axe_position);
+                Inventory.Axe->SetWorldPosition(axe_position);
 
                 // START SWINGING THE AXE.
-                Axe->SwingUp();
+                Inventory.Axe->SwingUp();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Axe);
+                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Inventory.Axe);
                 return axe_swing;
             }
             case CORE::Direction::DOWN:
@@ -79,13 +79,13 @@ namespace OBJECTS
                 axe_position.X -= noah_half_width;
                 axe_position.X += 2;
                 axe_position.Y += 2;
-                Axe->SetWorldPosition(axe_position);
+                Inventory.Axe->SetWorldPosition(axe_position);
 
                 // START SWINGING THE AXE.
-                Axe->SwingDown();
+                Inventory.Axe->SwingDown();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Axe);
+                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Inventory.Axe);
                 return axe_swing;
             }
             case CORE::Direction::LEFT:
@@ -96,13 +96,13 @@ namespace OBJECTS
                 // The position is slightly tweaked solely based on what looks best.
                 axe_position.X += 1;
                 axe_position.Y += 6;
-                Axe->SetWorldPosition(axe_position);
+                Inventory.Axe->SetWorldPosition(axe_position);
 
                 // START SWINGING THE AXE.
-                Axe->SwingLeft();
+                Inventory.Axe->SwingLeft();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Axe);
+                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Inventory.Axe);
                 return axe_swing;
             }
             case CORE::Direction::RIGHT:
@@ -113,13 +113,13 @@ namespace OBJECTS
                 // The position is slightly tweaked solely based on what looks best.
                 axe_position.X -= 1;
                 axe_position.Y += 6;
-                Axe->SetWorldPosition(axe_position);
+                Inventory.Axe->SetWorldPosition(axe_position);
 
                 // START SWINGING THE AXE.
-                Axe->SwingRight();
+                Inventory.Axe->SwingRight();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Axe);
+                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Inventory.Axe);
                 return axe_swing;
             }
             default:

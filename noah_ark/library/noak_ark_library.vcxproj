@@ -41,6 +41,7 @@
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Objects\Axe.h" />
     <ClInclude Include="src\Objects\DustCloud.h" />
+    <ClInclude Include="src\Objects\Inventory.h" />
     <ClInclude Include="src\Objects\Noah.h" />
     <ClInclude Include="src\Objects\Tree.h" />
     <ClInclude Include="src\Objects\WoodLogs.h" />

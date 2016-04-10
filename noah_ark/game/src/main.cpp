@@ -309,9 +309,9 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
         AXE_SPRITE_Y_OFFSET_IN_PIXELS,
         AXE_WIDTH_IN_PIXELS,
         AXE_HEIGHT_IN_PIXELS);
-    noah_player.Axe->Sprite = GRAPHICS::Sprite(axe_texture, axe_texture_sub_rectangle);
+    noah_player.Inventory.Axe->Sprite = GRAPHICS::Sprite(axe_texture, axe_texture_sub_rectangle);
 
-    noah_player.Axe->AxeHitSound = assets.GetSound(RESOURCES::AXE_HIT_SOUND_ID);
+    noah_player.Inventory.Axe->AxeHitSound = assets.GetSound(RESOURCES::AXE_HIT_SOUND_ID);
 }
 
 /// The main entry point for the game.
@@ -442,7 +442,7 @@ int main(int argumentCount, char* arguments[])
                 // so that we can stop any walking animations for
                 // him if he didn't move.
                 bool noah_moved_this_frame = false;
-                bool axe_is_swinging = (nullptr != noah_player.Axe) && noah_player.Axe->IsSwinging();
+                bool axe_is_swinging = (nullptr != noah_player.Inventory.Axe) && noah_player.Inventory.Axe->IsSwinging();
                 if (!axe_is_swinging)
                 {
                     // MOVE NOAH IN RESPONSE TO USER INPUT.
@@ -882,14 +882,14 @@ int main(int argumentCount, char* arguments[])
                 
                 // RENDER THE PLAYER.
                 // Make sure his axe/sprite are updated.
-                noah_player.Axe->Update(elapsed_time_in_seconds);
+                noah_player.Inventory.Axe->Update(elapsed_time_in_seconds);
                 noah_player.Sprite.Update(elapsed_time_in_seconds);
                 GRAPHICS::Render(noah_player.Sprite, *window);
 
                 // The axe should only be rendered if it is swinging.
-                if (noah_player.Axe->IsSwinging())
+                if (noah_player.Inventory.Axe->IsSwinging())
                 {
-                    GRAPHICS::Render(noah_player.Axe->Sprite, *window);
+                    GRAPHICS::Render(noah_player.Inventory.Axe->Sprite, *window);
                 }
 
                 // DISPLAY THE RENDERED FRAME IN THE WINDOW.

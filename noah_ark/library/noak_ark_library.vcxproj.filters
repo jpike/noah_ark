@@ -173,6 +173,9 @@
     <ClInclude Include="src\Bible\BibleVerses.h">
       <Filter>Header Files\Bible</Filter>
     </ClInclude>
+    <ClInclude Include="src\Objects\Inventory.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">

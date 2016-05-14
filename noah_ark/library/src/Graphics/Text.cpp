@@ -6,7 +6,7 @@
 namespace GRAPHICS
 {
     Text::Text(
-        const std::shared_ptr<GRAPHICS::Font>& font, 
+        const std::shared_ptr<const GRAPHICS::Font>& font,
         const std::string& characters,
         const MATH::Vector2ui& screen_top_left_position_in_pixels) :
         Font(font),

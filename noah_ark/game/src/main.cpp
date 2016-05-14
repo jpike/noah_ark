@@ -13,6 +13,7 @@
 #include "Events/AxeSwingEvent.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Rendering.h"
+#include "Graphics/TextBox.h"
 #include "Input/KeyboardInputController.h"
 #include "Maps/Overworld.h"
 #include "Maps/TileMap.h"
@@ -27,6 +28,8 @@ int EXIT_CODE_FAILURE_STANDARD_EXCEPTION_IN_MAIN = 1;
 int EXIT_CODE_FAILURE_UNKNOWN_EXCEPTION_IN_MAIN = 2;
 /// Game assets failed to be loaded.
 int EXIT_CODE_FAILURE_LOADING_ASSETS = 3;
+/// The font failed to be loaded.
+int EXIT_CODE_FAILURE_LOADING_FONT = 4;
 
 /// @todo   Document this function.  It looks like it can probably stay in this file for now.
 void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURCES::Assets& assets, MAPS::Overworld& overworld)
@@ -373,6 +376,17 @@ int main(int argumentCount, char* arguments[])
             sf::VideoMode(SCREEN_WIDTH_IN_PIXELS, SCREEN_HEIGHT_IN_PIXELS),
             GAME_TITLE);
 
+        // CREATE THE MAIN TEXT BOX FOR DISPLAYING MESSAGES TO THE PLAYER.
+        std::shared_ptr<GRAPHICS::Font> font = assets.GetFont(RESOURCES::FONT_TEXTURE_ID);
+        bool font_loaded = (nullptr != font);
+        if (!font_loaded)
+        {
+            std::cerr << "Failed to load font." << std::endl;
+            return EXIT_CODE_FAILURE_LOADING_FONT;
+        }
+
+        GRAPHICS::TextBox text_box(font, SCREEN_WIDTH_IN_PIXELS);
+
         // INITIALIZE THE CAMERA.
         GRAPHICS::Camera camera(window);
         MATH::Vector2f center_world_position = starting_tile_map.GetCenterWorldPosition();
@@ -420,22 +434,48 @@ int main(int argumentCount, char* arguments[])
                 MAPS::TileMap* current_tile_map = overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
                 assert(current_tile_map);
 
-                // SWING THE PLAYER'S AXE IF THE APPROPRIATE BUTTON WAS PRESSED.
+                // UPDATE THE TEXT BOX IF IT IS VISIBLE.
+                // If the text box is currently being displayed, then it should capture any user input.
+                if (text_box.IsVisible)
+                {
+                    /// @todo   Maybe this should be moved to after the MoveToNextText() below
+                    /// to prevent the last character from not being seen?
+                    text_box.Update(elapsed_time_in_seconds);
+                }
+
+                // CHECK IF THE PRIMARY ACTION BUTTON WAS PRESSED.
                 if (input_controller.PrimaryActionButtonPressed())
                 {
-                    // A new axe swing may not be created if the player's
-                    // axe is already being swung.
-                    std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = noah_player.SwingAxe();
-                    bool axe_swing_occurred = (nullptr != axe_swing);
-                    if (axe_swing_occurred)
+                    if (text_box.IsVisible)
                     {
-                        // Allow the axe to collide with other objects.
-                        axe_swings.push_back(axe_swing);
+                        // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT SET OF TEXT.
+                        // If the current lines of text have not yet all been displayed, the next
+                        // set of lines of text should not be moved to so that the user can finish
+                        // seeing the complete message.
+                        bool current_text_finished_being_displayed = text_box.CurrentLinesOfTextFinishedBeingDisplayed();
+                        if (current_text_finished_being_displayed)
+                        {
+                            // MOVE THE TEXT BOX TO THE NEXT SET OF TEXT.
+                            text_box.MoveToNextText();
+                        }
+                    }
+                    else
+                    {
+                        // SWING THE PLAYER'S AXE.
+                        // A new axe swing may not be created if the player's
+                        // axe is already being swung.
+                        std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = noah_player.SwingAxe();
+                        bool axe_swing_occurred = (nullptr != axe_swing);
+                        if (axe_swing_occurred)
+                        {
+                            // Allow the axe to collide with other objects.
+                            axe_swings.push_back(axe_swing);
+                        }
                     }
                 }
 
-                // CHECK IF THE AXE IS SWINGING.
-                // Noah can't move while the axe is swinging.
+                // CHECK IF THE PLAYER IS ALLOWED TO MOVE.
+                // Noah can't move if the text box is capturing input or while the axe is swinging.
                 // Movement is prevented to have the axe's position
                 // remain attached to Noah.
                 // We need to keep track if Noah moved this frame
@@ -443,7 +483,8 @@ int main(int argumentCount, char* arguments[])
                 // him if he didn't move.
                 bool noah_moved_this_frame = false;
                 bool axe_is_swinging = (nullptr != noah_player.Inventory.Axe) && noah_player.Inventory.Axe->IsSwinging();
-                if (!axe_is_swinging)
+                bool player_movement_allowed = (!axe_is_swinging && !text_box.IsVisible);
+                if (player_movement_allowed)
                 {
                     // MOVE NOAH IN RESPONSE TO USER INPUT.
                     const float PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS = 8.0f;
@@ -794,12 +835,16 @@ int main(int argumentCount, char* arguments[])
 
                                 /// @todo   Remove this debug printing.
                                 /// Just temporary until graphical inventory is implemented.
-                                std::cout
+                                std::stringstream bible_verse_message;
+                                bible_verse_message
                                     << "You got a Bible verse!\n"
                                     /// @todo   Make Bible book names printable!
                                     << static_cast<int>(bible_verse->Book) << " " << bible_verse->Chapter << ":" << bible_verse->Verse
-                                    << " - " << bible_verse->Text
-                                    << std::endl;
+                                    << " - " << bible_verse->Text;
+
+                                text_box.StartDisplayingText(bible_verse_message.str());
+
+                                std::cout << bible_verse_message.str() << std::endl;
 
                                 // REMOVE THE VERSE SINCE IT HAS BEEN FOUND.
                                 bible_verses_left_to_find.erase(bible_verse);
@@ -890,6 +935,12 @@ int main(int argumentCount, char* arguments[])
                 if (noah_player.Inventory.Axe->IsSwinging())
                 {
                     GRAPHICS::Render(noah_player.Inventory.Axe->Sprite, *window);
+                }
+
+                // RENDER THE TEXT BOX IF IT IS VISIBLE.
+                if (text_box.IsVisible)
+                {
+                    text_box.Render(*window);
                 }
 
                 // DISPLAY THE RENDERED FRAME IN THE WINDOW.

@@ -9,6 +9,13 @@ namespace GRAPHICS
     class Glyph
     {
     public:
+        // CONSTANTS.
+        /// The width of a glyph, in pixels.
+        static const unsigned int WIDTH_IN_PIXELS = 16;
+        /// The heght of a glyph, in pixels.
+        static const unsigned int HEIGHT_IN_PIXELS = 16;
+
+        // MEMBER VARIABLES.
         /// The texture containing this glyph.
         std::shared_ptr<Texture> Texture = nullptr;
         /// The sub-rectangle of the texture identifying the boundaries of the glyph.

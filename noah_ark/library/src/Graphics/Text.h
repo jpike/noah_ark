@@ -19,17 +19,17 @@ namespace GRAPHICS
         ///     of where the text should be rendered, in units of pixels.
         /// @throws std::exception - Thrown if the font is null.
         explicit Text(
-            const std::shared_ptr<GRAPHICS::Font>& font, 
+            const std::shared_ptr<const GRAPHICS::Font>& font, 
             const std::string& characters,
             const MATH::Vector2ui& screen_top_left_position_in_pixels);
 
         /// Renders the text to the specified render target.
-        /// @param[in]  render_target - The target to render to.
+        /// @param[in,out]  render_target - The target to render to.
         void Render(sf::RenderTarget& render_target) const;
 
     private:
         /// The font for rendering the text.
-        std::shared_ptr<GRAPHICS::Font> Font = nullptr;
+        std::shared_ptr<const GRAPHICS::Font> Font = nullptr;
         /// The sequence of characters in the text.
         std::string Characters = "";
         /// THe top-left screen position of where the text should be rendered, in units of pixels.

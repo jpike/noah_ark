@@ -18,13 +18,11 @@ namespace GRAPHICS
     {
         // CALCULATE THE TOP-LEFT COORDINATES OF THE GLYPH.
         const char CHARACTERS_PER_ROW_COUNT = 16;
-        const char GLYPH_WIDTH_IN_PIXELS = 16;
         char character_horizontal_index = character % CHARACTERS_PER_ROW_COUNT;
-        float glyph_left_position = static_cast<float>(character_horizontal_index * GLYPH_WIDTH_IN_PIXELS);
+        float glyph_left_position = static_cast<float>(character_horizontal_index * Glyph::WIDTH_IN_PIXELS);
         
-        const char GLYPH_HEIGHT_IN_PIXELS = 16;
         char character_vertical_index = character / CHARACTERS_PER_ROW_COUNT;
-        float glyph_top_position = static_cast<float>(character_vertical_index * GLYPH_HEIGHT_IN_PIXELS);
+        float glyph_top_position = static_cast<float>(character_vertical_index * Glyph::HEIGHT_IN_PIXELS);
 
         // RETURN THE GLYPH.
         Glyph glyph;
@@ -32,8 +30,8 @@ namespace GRAPHICS
         glyph.TextureSubRectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
             glyph_left_position,
             glyph_top_position,
-            GLYPH_WIDTH_IN_PIXELS,
-            GLYPH_HEIGHT_IN_PIXELS);
+            static_cast<float>(Glyph::WIDTH_IN_PIXELS),
+            static_cast<float>(Glyph::HEIGHT_IN_PIXELS));
         return glyph;
     }
 }

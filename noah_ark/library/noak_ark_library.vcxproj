@@ -27,6 +27,7 @@
     <ClInclude Include="src\Graphics\Rendering.h" />
     <ClInclude Include="src\Graphics\Sprite.h" />
     <ClInclude Include="src\Graphics\Text.h" />
+    <ClInclude Include="src\Graphics\TextBox.h" />
     <ClInclude Include="src\Graphics\Texture.h" />
     <ClInclude Include="src\Input\Keyboard.h" />
     <ClInclude Include="src\Input\KeyboardInputController.h" />
@@ -63,6 +64,7 @@
     <ClCompile Include="src\Graphics\Rendering.cpp" />
     <ClCompile Include="src\Graphics\Sprite.cpp" />
     <ClCompile Include="src\Graphics\Text.cpp" />
+    <ClCompile Include="src\Graphics\TextBox.cpp" />
     <ClCompile Include="src\Graphics\Texture.cpp" />
     <ClCompile Include="src\Input\Keyboard.cpp" />
     <ClCompile Include="src\Input\KeyboardInputController.cpp" />

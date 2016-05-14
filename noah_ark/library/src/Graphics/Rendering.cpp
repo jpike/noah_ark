@@ -12,6 +12,11 @@ namespace GRAPHICS
         sprite.Render(render_target);
     }
 
+    void Render(const GRAPHICS::Text& text, sf::RenderTarget& render_target)
+    {
+        text.Render(render_target);
+    }
+
     void Render(const MAPS::TileMap& tile_map, sf::RenderTarget& render_target)
     {
         // RENDER THE CURRENT TILE MAP'S GROUND LAYER.

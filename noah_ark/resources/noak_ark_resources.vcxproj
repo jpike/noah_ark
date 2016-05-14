@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\images\ground_tile_set.png" />
+    <Image Include="res\images\main_font1.png" />
     <Image Include="res\images\tree_sprite_32x32.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

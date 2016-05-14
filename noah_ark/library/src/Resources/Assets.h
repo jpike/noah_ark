@@ -7,6 +7,7 @@
 #include "Audio/SoundEffect.h"
 #include "Core/Array2D.h"
 #include "Graphics/AnimationSequence.h"
+#include "Graphics/Font.h"
 #include "Graphics/Texture.h"
 #include "Maps/OverworldMapFile.h"
 #include "Maps/TileMapFile.h"
@@ -17,6 +18,7 @@ namespace RESOURCES
     // ASSET IDs.
     extern const std::string AXE_TEXTURE_ID;
     extern const std::string DUST_CLOUD_TEXTURE_ID;
+    extern const std::string FONT_TEXTURE_ID;
     extern const std::string GROUND_TILESET_TEXTURE_ID;
     extern const std::string NOAH_TEXTURE_ID;
     extern const std::string TREE_TEXTURE_ID;
@@ -57,6 +59,11 @@ namespace RESOURCES
         /// @param[in]  animation_id - The ID of the animation sequence to load.
         /// @return The requested animation sequence, if successfully loaded; null otherwise.
         std::shared_ptr<GRAPHICS::AnimationSequence> GetAnimationSequence(const std::string& animation_id);
+
+        /// Attempts to retrieve the font identified by the specified texture ID.
+        /// @param[in]  font_texture_id - The ID of the texture associated with the font.
+        /// @return The requested font, if successfully loaded; null otherwise.
+        std::shared_ptr<GRAPHICS::Font> GetFont(const std::string& font_texture_id);
 
         /// Attempts to retrieve the sound effect identified by the specified ID.
         /// The returned sound effect will be a new instance of a sound effect,

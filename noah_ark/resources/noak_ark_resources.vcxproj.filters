@@ -248,5 +248,8 @@
     <Image Include="res\images\tree_sprite_32x32.png">
       <Filter>Resources\Images</Filter>
     </Image>
+    <Image Include="res\images\main_font1.png">
+      <Filter>Resources\Images</Filter>
+    </Image>
   </ItemGroup>
 </Project>

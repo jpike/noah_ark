@@ -11,6 +11,7 @@ namespace RESOURCES
     // (relative to the working directory) to simplify loading.
     const std::string AXE_TEXTURE_ID = "res/images/noah_sprite1.png";
     const std::string DUST_CLOUD_TEXTURE_ID = "res/images/tree_sprite1.png";
+    const std::string FONT_TEXTURE_ID = "res/images/main_font1.png";
     const std::string GROUND_TILESET_TEXTURE_ID = "res/images/ground_tile_set.png";
     const std::string NOAH_TEXTURE_ID = "res/images/noah_sprite1.png";
     const std::string TREE_TEXTURE_ID = "res/images/tree_sprite1.png";
@@ -248,6 +249,25 @@ namespace RESOURCES
         }
     }
 
+    std::shared_ptr<GRAPHICS::Font> Assets::GetFont(const std::string& font_texture_id)
+    {
+        // GET THE FONT'S TEXTURE.
+        std::shared_ptr<GRAPHICS::Texture> font_texture = GetTexture(font_texture_id);
+        bool font_texture_loaded = (nullptr != font_texture);
+        if (font_texture_loaded)
+        {
+            // RETURN THE FONT.
+            /// @todo Should we store loaded fonts somewhere instead of creating new instances each time?
+            std::shared_ptr<GRAPHICS::Font> font = std::make_shared<GRAPHICS::Font>(font_texture);
+            return font;
+        }
+        else
+        {
+            // INDICATE THAT THE FONT COULD NOT BE LOADED.
+            return nullptr;
+        }
+    }
+
     std::shared_ptr<AUDIO::SoundEffect> Assets::GetSound(const std::string& sound_id)
     {
         // CHECK IF THE AUDIO SAMPLES HAVE ALREADY BEEN LOADED.
@@ -286,6 +306,7 @@ namespace RESOURCES
         const std::vector<std::string> TEXTURE_IDS =
         {
             AXE_TEXTURE_ID,
+            FONT_TEXTURE_ID,
             GROUND_TILESET_TEXTURE_ID,
             NOAH_TEXTURE_ID,
             TREE_TEXTURE_ID,

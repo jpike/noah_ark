@@ -1,19 +1,12 @@
-#include <algorithm>
+#include <cassert>
 #include <stdexcept>
-#include "Graphics/Text.h"
+#include "Core/String.h"
 #include "Graphics/TextBox.h"
 
 namespace GRAPHICS
 {
-    TextBox::TextBox(
-        const std::shared_ptr<const GRAPHICS::Font>& font,
-        const unsigned int width_in_pixels) :
-    Font(font),
-    IsVisible(false),
-    WidthInPixels(width_in_pixels),
-    /// @todo   Think about better way to calculate this.
-    MaxCharacterCountPerLine(width_in_pixels / Glyph::WIDTH_IN_PIXELS - 2),
-    TimeSinceLastCharacterDisplayedInSeconds(0.0f)
+    TextBox::TextBox(const std::shared_ptr<const GRAPHICS::Font>& font) :
+    Font(font)
     {
         // MAKE SURE A FONT EXISTS.
         bool font_exists = (nullptr != Font);
@@ -25,89 +18,115 @@ namespace GRAPHICS
 
     void TextBox::StartDisplayingText(const std::string& text)
     {
-        FullTextToDisplay = text;
-        FirstDisplayedCharacterIndex = 0;
-        LastDisplayedCharacterIndex = 0;
-        TimeSinceLastCharacterDisplayedInSeconds = 0.0f;
+        // CLEAR ANY DATA FROM THE LAST TIME TEXT WAS DISPLAYED.
+        Pages.clear();
+
+        // SPLIT THE TEXT INTO WORDS.
+        // In order to avoid having a word broken up onto multiple lines,
+        // word boundaries need to be determined.  Splitting the text
+        // into words is a simple way to do that.  This will discard
+        // multiple sequences of spaces, but that is acceptable
+        // since space in the text box is more efficiently used by
+        // only having one space between words.  There also is not
+        // a use case yet where having multiple sequential spaces
+        // is valuable.
+        std::deque<std::string> words = CORE::String::SplitIntoWords(text, TextPage::MAX_CHARACTER_COUNT);
+
+        bool words_exist = !words.empty();
+        if (!words_exist)
+        {
+            // With no words, additional work doesn't need to be performed
+            // since there is nothing to display.
+            return;
+        }
+
+        // DIVIDE THE WORDS INTO APPROPRIATE PAGES.
+        // The text might not all fit onto a single page, so multiple pages
+        // of text might be needed.  At least one initial page will be needed.
+        Pages.push_back(TextPage());
+        TextPage* current_page = &Pages.back();
+        CurrentPageIndex = 0;
+        while (!words.empty())
+        {
+            // TRY TO ADD THE CURRENT WORD TO THE CURRENT PAGE.
+            const std::string& current_word = words.front();
+            bool word_added = current_page->Add(current_word);
+
+            // ADD THE WORD TO A NEW PAGE IF IT WASN'T ADDED TO THE CURRENT PAGE.
+            // If it wasn't added, there wasn't room on the current page.
+            if (!word_added)
+            {
+                Pages.push_back(TextPage());
+                current_page = &Pages.back();
+                word_added = current_page->Add(current_word);   
+            }
+
+            // The current word has been added to a page, so it is no longer needed.
+            assert(word_added);
+            words.pop_front();
+        }
+
+        // MAKE THE TEXT BOX VISIBLE SO THAT TEXT CAN BE RENDERED.
         IsVisible = true;
     }
 
     void TextBox::Update(const float elapsed_time_in_seconds)
     {
-        // CHECK IF THE TEXT BOX'S CURRENT LINES ARE FULL.
-        bool text_box_currently_full = CurrentLinesOfTextFinishedBeingDisplayed();
-        if (text_box_currently_full)
+        // CHECK IF ANY PAGES OF TEXT EXIST.
+        bool text_pages_exist = !Pages.empty();
+        if (!text_pages_exist)
         {
-            // The text box is currently awaiting user input to progress
-            // to the next lines of text, so don't do anything to ensure
-            // that the user can properly read the message.
+            // No updates are required if no pages exist.
             return;
         }
 
-        // UPDATE THE TIME SINCE THE LAST CHARACTER WAS DISPLAYED.
-        TimeSinceLastCharacterDisplayedInSeconds += elapsed_time_in_seconds;
-
-        // CHECK IF ENOUGH TIME HAS PASSED FOR DISPLAYING THE NEXT CHARACTER.
-        // This ensures a consistent speed in how fast text is displayed
-        // along with making sure it doesn't get displayed too quickly.
-        const float ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS = 0.1f;
-        bool enough_time_elapsed_since_last_displayed_character = (TimeSinceLastCharacterDisplayedInSeconds >= ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS);
-        if (!enough_time_elapsed_since_last_displayed_character)
-        {
-            // Don't do anything since enough time hasn't elapsed since the last character was displayed.
-            return;
-        }
-
-        // INCLUDE THE NEXT CHARACTER IN THE DISPLAYED TEXT.
-        /// @todo   Add a number of characters proportional to the elapsed time.
-        ++LastDisplayedCharacterIndex;
-        TimeSinceLastCharacterDisplayedInSeconds = 0.0f;
-
-        // CLAMP THE LAST CHARACTER INDEX TO WITHIN THE VALID RANGE.
-        bool all_text_displayed = (LastDisplayedCharacterIndex >= FullTextToDisplay.length());
-        if (all_text_displayed)
-        {
-            LastDisplayedCharacterIndex = FullTextToDisplay.length() - 1;
-        }
+        // UPDATE THE CURRENT PAGE OF TEXT.
+        auto& current_text_page = Pages[CurrentPageIndex];
+        current_text_page.Update(elapsed_time_in_seconds);
     }
 
-    void TextBox::MoveToNextText()
+    void TextBox::MoveToNextPage()
     {
-        // START DISPLAYING TEXT AT THE NEXT AVAILABLE CHARACTER.
-        FirstDisplayedCharacterIndex = ++LastDisplayedCharacterIndex;
+        // MOVE TO THE NEXT PAGE OF TEXT.
+        ++CurrentPageIndex;
 
         // HIDE THE TEXT BOX IF THERE IS NO MORE TEXT.
-        bool all_text_displayed = (FirstDisplayedCharacterIndex >= FullTextToDisplay.length());
+        bool all_text_displayed = (CurrentPageIndex >= Pages.size());
         if (all_text_displayed)
         {
             IsVisible = false;
+
+            // CLEAR THE PAGES OF TEXT.
+            CurrentPageIndex = 0;
+            Pages.clear();
         }
     }
 
-    bool TextBox::CurrentLinesOfTextFinishedBeingDisplayed() const
+    bool TextBox::CurrentPageOfTextFinishedBeingDisplayed() const
     {
-        // CHECK IF ALL OF THE TEXT HAS BEEN DISPLAYED.
-        unsigned int last_actual_character_index = FullTextToDisplay.length() - 1;
-        bool all_text_displayed = (LastDisplayedCharacterIndex >= last_actual_character_index);
-        if (all_text_displayed)
+        // CHECK IF ANY PAGES OF TEXT EXIST.
+        bool text_pages_exist = !Pages.empty();
+        if (!text_pages_exist)
         {
-            // If all of the text has been displayed, then all of the current lines
-            // must have been displayed.
+            // All text has been displayed if no pages exist.
             return true;
         }
 
-        // CHECK IF THE MAXIMUM NUMBER OF CHARACTERS FOR THE CURRENT SET OF LINES HAS BEEN DISPLAYED.
-        unsigned int max_character_count_displayed_at_once = LINE_COUNT * MaxCharacterCountPerLine;
-        unsigned int actual_displayed_character_count = (LastDisplayedCharacterIndex - FirstDisplayedCharacterIndex) + 1;
-        bool current_lines_of_text_fully_displayed = (actual_displayed_character_count >= max_character_count_displayed_at_once);
-        return current_lines_of_text_fully_displayed;
+        // CHECK IF ALL TEXT HAS BEEN DISPLAYED FOR THE CURRENT PAGE.
+        auto& current_text_page = Pages[CurrentPageIndex];
+        bool current_page_of_text_fully_displayed = current_text_page.AllTextDisplayed();
+        return current_page_of_text_fully_displayed;
     }
 
     void TextBox::Render(sf::RenderTarget& render_target)
     {
-        /// @todo   Rework this class to used an approach that uses fixed-size buffers
-        /// for characters.  That seems like it would be simpler, particularly when
-        /// trying to account for not breaking up words onto separate lines in the middle.
+        // CHECK IF ANY PAGES OF TEXT EXIST.
+        bool text_pages_exist = !Pages.empty();
+        if (!text_pages_exist)
+        {
+            // There is nothing to render if no pages exist.
+            return;
+        }
 
         // DRAW A BOX TO HOLD THE TEXT.
         sf::RectangleShape box;
@@ -115,12 +134,12 @@ namespace GRAPHICS
         box.setOutlineColor(sf::Color::Black);
         const float OUTLINE_THICKNESS_IN_PIXELS = 4.0f;
         box.setOutlineThickness(OUTLINE_THICKNESS_IN_PIXELS);
-        
+
         const float VERTICAL_PADDING_IN_PIXELS = 16.0f;
-        float height_in_pixels = (LINE_COUNT * Glyph::HEIGHT_IN_PIXELS) + VERTICAL_PADDING_IN_PIXELS - OUTLINE_THICKNESS_IN_PIXELS * 2;
-        float width_in_pixels = static_cast<float>(WidthInPixels) - OUTLINE_THICKNESS_IN_PIXELS * 2;
+        float height_in_pixels = (TextPage::LINE_COUNT * Glyph::HEIGHT_IN_PIXELS) + VERTICAL_PADDING_IN_PIXELS - OUTLINE_THICKNESS_IN_PIXELS * 2;
+        float width_in_pixels = (Screen::WIDTH_IN_PIXELS) - OUTLINE_THICKNESS_IN_PIXELS * 2;
         box.setSize(sf::Vector2f(width_in_pixels, height_in_pixels));
-        
+
         const sf::Vector2i SCREEN_TOP_LEFT_CORNER(0, 0);
         sf::Vector2f top_left_corner_world_position = render_target.mapPixelToCoords(SCREEN_TOP_LEFT_CORNER);
         top_left_corner_world_position.x += OUTLINE_THICKNESS_IN_PIXELS;
@@ -129,33 +148,29 @@ namespace GRAPHICS
 
         render_target.draw(box);
 
-        // DRAW THE FIRST LINE OF TEXT.
-        /// @todo   Handle not breaking words up across multiple lines.
-        unsigned int actual_character_count_to_display = (LastDisplayedCharacterIndex - FirstDisplayedCharacterIndex) + 1;
-        unsigned int character_count_for_first_line = std::min(MaxCharacterCountPerLine, actual_character_count_to_display);
-        std::string first_line_to_display = FullTextToDisplay.substr(FirstDisplayedCharacterIndex, character_count_for_first_line);
+        // DRAW THE CURRENT PAGE OF TEXT.
+        auto& current_text_page = Pages[CurrentPageIndex];
 
         const unsigned int FIRST_LINE_VERTICAL_PADDING_IN_PIXELS = static_cast<unsigned int>(VERTICAL_PADDING_IN_PIXELS / 2.0f);
-        MATH::Vector2ui first_line_top_left_screen_position_in_pixels;
-        first_line_top_left_screen_position_in_pixels.X = SCREEN_TOP_LEFT_CORNER.x + Glyph::WIDTH_IN_PIXELS;
-        first_line_top_left_screen_position_in_pixels.Y = SCREEN_TOP_LEFT_CORNER.y + FIRST_LINE_VERTICAL_PADDING_IN_PIXELS;
-        Text first_line(Font, first_line_to_display, first_line_top_left_screen_position_in_pixels);
-        first_line.Render(render_target);
+        MATH::Vector2ui text_page_top_left_screen_position_in_pixels;
+        text_page_top_left_screen_position_in_pixels.X = SCREEN_TOP_LEFT_CORNER.x + Glyph::WIDTH_IN_PIXELS;
+        text_page_top_left_screen_position_in_pixels.Y = SCREEN_TOP_LEFT_CORNER.y + FIRST_LINE_VERTICAL_PADDING_IN_PIXELS;
 
-        // DRAW THE SECOND LINE OF TEXT, IF NEEDED.
-        bool second_line_exists = (actual_character_count_to_display > character_count_for_first_line);
-        if (second_line_exists)
+        current_text_page.Render(text_page_top_left_screen_position_in_pixels, Font, render_target);
+    }
+
+    void TextBox::Render(std::ostream& output_stream)
+    {
+        // CHECK IF ANY PAGES OF TEXT EXIST.
+        bool text_pages_exist = !Pages.empty();
+        if (!text_pages_exist)
         {
-            unsigned int second_line_first_character_start_index = FirstDisplayedCharacterIndex + character_count_for_first_line;
-            unsigned int character_count_for_second_line = (LastDisplayedCharacterIndex - second_line_first_character_start_index) + 1;
-            std::string second_line_to_display = FullTextToDisplay.substr(second_line_first_character_start_index, character_count_for_second_line);
-
-            MATH::Vector2ui second_line_top_left_screen_position_in_pixels = first_line_top_left_screen_position_in_pixels;
-            second_line_top_left_screen_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;
-            Text second_line(Font, second_line_to_display, second_line_top_left_screen_position_in_pixels);
-            second_line.Render(render_target);
+            // There is nothing to render if no pages exist.
+            return;
         }
 
-        /// @todo   Draw upside down triangle to let user know to press button to continue.
+        // DRAW THE CURRENT PAGE OF TEXT.
+        auto& current_text_page = Pages[CurrentPageIndex];
+        current_text_page.Render(output_stream);
     }
 }

@@ -3,6 +3,8 @@
 #include "CoreTests/Array2DTests.h"
 #include "GraphicsTests/AnimatedSpriteTests.h"
 #include "GraphicsTests/AnimationSequenceTests.h"
+#include "GraphicsTests/TextBoxTests.h"
+#include "GraphicsTests/TextPageTests.h"
 #include "MathTests/FloatRectangleTests.h"
 
 TEST_CASE( "Final test case to use for debugging." )

@@ -13,6 +13,7 @@
 #include "Events/AxeSwingEvent.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Rendering.h"
+#include "Graphics/Screen.h"
 #include "Graphics/TextBox.h"
 #include "Input/KeyboardInputController.h"
 #include "Maps/Overworld.h"
@@ -367,13 +368,9 @@ int main(int argumentCount, char* arguments[])
         INPUT_CONTROL::KeyboardInputController input_controller;
 
         // CREATE THE WINDOW.
-        // The width and height are currently set to match the dimensions
-        // of a single tile map in the game.
-        const unsigned int SCREEN_WIDTH_IN_PIXELS = 512;
-        const unsigned int SCREEN_HEIGHT_IN_PIXELS = 384;
         const std::string GAME_TITLE = "Bible Games - Noah's Ark";
         std::shared_ptr<sf::RenderWindow> window = std::make_shared<sf::RenderWindow>(
-            sf::VideoMode(SCREEN_WIDTH_IN_PIXELS, SCREEN_HEIGHT_IN_PIXELS),
+            sf::VideoMode(GRAPHICS::Screen::WIDTH_IN_PIXELS, GRAPHICS::Screen::HEIGHT_IN_PIXELS),
             GAME_TITLE);
 
         // CREATE THE MAIN TEXT BOX FOR DISPLAYING MESSAGES TO THE PLAYER.
@@ -385,7 +382,7 @@ int main(int argumentCount, char* arguments[])
             return EXIT_CODE_FAILURE_LOADING_FONT;
         }
 
-        GRAPHICS::TextBox text_box(font, SCREEN_WIDTH_IN_PIXELS);
+        GRAPHICS::TextBox text_box(font);
 
         // INITIALIZE THE CAMERA.
         GRAPHICS::Camera camera(window);
@@ -448,15 +445,15 @@ int main(int argumentCount, char* arguments[])
                 {
                     if (text_box.IsVisible)
                     {
-                        // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT SET OF TEXT.
-                        // If the current lines of text have not yet all been displayed, the next
-                        // set of lines of text should not be moved to so that the user can finish
+                        // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
+                        // If the current page of text has not yet all been displayed, the next
+                        // page of text should not be moved to so that the user can finish
                         // seeing the complete message.
-                        bool current_text_finished_being_displayed = text_box.CurrentLinesOfTextFinishedBeingDisplayed();
+                        bool current_text_finished_being_displayed = text_box.CurrentPageOfTextFinishedBeingDisplayed();
                         if (current_text_finished_being_displayed)
                         {
-                            // MOVE THE TEXT BOX TO THE NEXT SET OF TEXT.
-                            text_box.MoveToNextText();
+                            // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
+                            text_box.MoveToNextPage();
                         }
                     }
                     else

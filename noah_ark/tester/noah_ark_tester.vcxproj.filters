@@ -37,5 +37,11 @@
     <ClInclude Include="src\CoreTests\Array2DTests.h">
       <Filter>Header Files\CoreTests</Filter>
     </ClInclude>
+    <ClInclude Include="src\GraphicsTests\TextPageTests.h">
+      <Filter>Header Files\GraphicsTests</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GraphicsTests\TextBoxTests.h">
+      <Filter>Header Files\GraphicsTests</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

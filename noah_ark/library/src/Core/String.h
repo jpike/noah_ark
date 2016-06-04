@@ -2,6 +2,7 @@
 
 #include <deque>
 #include <string>
+#include <vector>
 
 namespace CORE
 {
@@ -13,6 +14,13 @@ namespace CORE
     class String
     {
     public:
+        /// Splits the provided string into separate lines based on newline
+        /// characters embedded in the string.  Only '\n' is currently supported
+        /// since that is all tha is currently needed.
+        /// @param[in]  text - The text to split into lines.
+        /// @return The lines from the provided text, in original order.
+        static std::vector<std::string> SplitIntoWords(const std::string& text);
+
         /// Splits the provided string into separate words.
         /// Any whitespace character is considered a delimiter.
         /// Punctuation is included in adjacent words.

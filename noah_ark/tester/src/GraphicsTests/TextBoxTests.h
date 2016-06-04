@@ -35,8 +35,7 @@ namespace TEST_TEXT_BOX
 
         // VERIFY THAT THE FIRST PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
         const std::string EXPECTED_FIRST_PAGE_TEXT =
-            "You got a Bible verse! 1 7:7 -\n"
-            "And Noah went in, and his \n";
+            "You got a Bible verse!\n";
         float elapsed_time_in_seconds_for_first_page = elapsed_time_in_seconds_for_next_character * EXPECTED_FIRST_PAGE_TEXT.length();
         text_box.Update(elapsed_time_in_seconds_for_first_page);
         std::stringstream first_page_output;
@@ -53,8 +52,8 @@ namespace TEST_TEXT_BOX
 
         // VERIFY THAT THE SECOND PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
         const std::string EXPECTED_SECOND_PAGE_TEXT =
-            "sons, and his wife, and his \n"
-            "sons' wives with him, into the\n";
+            "1 7:7 - And Noah went in, and \n"
+            "his sons, and his wife, and \n";
         float elapsed_time_in_seconds_for_second_page = elapsed_time_in_seconds_for_next_character * EXPECTED_SECOND_PAGE_TEXT.length();
         text_box.Update(elapsed_time_in_seconds_for_second_page);
         std::stringstream second_page_output;
@@ -71,8 +70,8 @@ namespace TEST_TEXT_BOX
 
         // VERIFY THAT THE THIRD PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
         const std::string EXPECTED_THIRD_PAGE_TEXT =
-            "ark, because of the waters of \n"
-            "the flood.\n";
+            "his sons' wives with him, into\n"
+            "the ark, because of the waters\n";
         float elapsed_time_in_seconds_for_third_page = elapsed_time_in_seconds_for_next_character * EXPECTED_THIRD_PAGE_TEXT.length();
         text_box.Update(elapsed_time_in_seconds_for_third_page);
         std::stringstream third_page_output;
@@ -83,5 +82,22 @@ namespace TEST_TEXT_BOX
         // VERIFY THAT THE THIRD PAGE IS FINISHED BEING DISPLAYED.
         bool third_page_finished_being_displayed = text_box.CurrentPageOfTextFinishedBeingDisplayed();
         REQUIRE(third_page_finished_being_displayed);
+
+        // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
+        text_box.MoveToNextPage();
+
+        // VERIFY THAT THE FOURTH PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
+        const std::string EXPECTED_FOURTH_PAGE_TEXT =
+            "of the flood.\n";
+        float elapsed_time_in_seconds_for_fourth_page = elapsed_time_in_seconds_for_next_character * EXPECTED_FOURTH_PAGE_TEXT.length();
+        text_box.Update(elapsed_time_in_seconds_for_fourth_page);
+        std::stringstream fourth_page_output;
+        text_box.Render(fourth_page_output);
+        std::string rendered_fourth_page_text = fourth_page_output.str();
+        REQUIRE(EXPECTED_FOURTH_PAGE_TEXT == rendered_fourth_page_text);
+
+        // VERIFY THAT THE FOURTH PAGE IS FINISHED BEING DISPLAYED.
+        bool fourth_page_finished_being_displayed = text_box.CurrentPageOfTextFinishedBeingDisplayed();
+        REQUIRE(fourth_page_finished_being_displayed);
     }
 }

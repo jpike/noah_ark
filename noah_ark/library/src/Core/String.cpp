@@ -3,6 +3,52 @@
 
 namespace CORE
 {
+    std::vector<std::string> String::SplitIntoWords(const std::string& text)
+    {
+        std::vector<std::string> lines;
+
+        // EXTRACT ALL LINES FROM THE TEXT.
+        std::string current_line;
+        for (const char character : text)
+        {
+            // CHECK IF THE CURRENT CHARACTER IS A NEWLINE.
+            const char NEWLINE = '\n';
+            bool end_of_line_reached = (NEWLINE == character);
+            if (end_of_line_reached)
+            {
+                // ADD THE LINE FROM THE MOST RECENT SEQUENCE OF CHARACTERS IF ONE EXISTS.
+                bool line_exists = !current_line.empty();
+                if (line_exists)
+                {
+                    lines.push_back(current_line);
+
+                    // To prepare for a new line, the current line must be cleared.
+                    current_line.clear();
+                }
+
+                // CONTINUE TO THE NEXT CHARACTER.
+                // A newline isn't considered part of the line itself and can be discarded.
+                continue;
+            }
+            else
+            {
+                // ADD THE CURRENT CHARACTER TO THE CURRENT LINE.
+                current_line += character;
+            }
+        }
+
+        // ADD THE FINAL LINE IF ONE EXISTS.
+        // If the above loop ended without a newline,
+        // a line may still exist that needs to be added.
+        bool final_line_exists = !current_line.empty();
+        if (final_line_exists)
+        {
+            lines.push_back(current_line);
+        }
+
+        return lines;
+    }
+
     std::deque<std::string> String::SplitIntoWords(
         const std::string& text,
         const unsigned int max_length_per_word_in_characters)

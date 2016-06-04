@@ -21,49 +21,58 @@ namespace GRAPHICS
         // CLEAR ANY DATA FROM THE LAST TIME TEXT WAS DISPLAYED.
         Pages.clear();
 
-        // SPLIT THE TEXT INTO WORDS.
-        // In order to avoid having a word broken up onto multiple lines,
-        // word boundaries need to be determined.  Splitting the text
-        // into words is a simple way to do that.  This will discard
-        // multiple sequences of spaces, but that is acceptable
-        // since space in the text box is more efficiently used by
-        // only having one space between words.  There also is not
-        // a use case yet where having multiple sequential spaces
-        // is valuable.
-        std::deque<std::string> words = CORE::String::SplitIntoWords(text, TextPage::MAX_CHARACTER_COUNT);
+        // SPLIT THE TEXT INTO SEPARATE LINES.
+        // This allows newline characters in the text to be properly
+        // preserved when rendered in the text box.
+        std::vector<std::string> lines = CORE::String::SplitIntoWords(text);
 
-        bool words_exist = !words.empty();
-        if (!words_exist)
+        // ADD EACH LINE OF TEXT TO APPROPRIATE PAGES IN THE TEXT BOX.
+        for (const std::string& line : lines)
         {
-            // With no words, additional work doesn't need to be performed
-            // since there is nothing to display.
-            return;
-        }
+            // SPLIT THE LINE INTO WORDS.
+            // In order to avoid having a word broken up onto multiple lines,
+            // word boundaries need to be determined.  Splitting the text
+            // into words is a simple way to do that.  This will discard
+            // multiple sequences of spaces, but that is acceptable
+            // since space in the text box is more efficiently used by
+            // only having one space between words.  There also is not
+            // a use case yet where having multiple sequential spaces
+            // is valuable.
+            std::deque<std::string> words = CORE::String::SplitIntoWords(line, TextPage::MAX_CHARACTER_COUNT);
 
-        // DIVIDE THE WORDS INTO APPROPRIATE PAGES.
-        // The text might not all fit onto a single page, so multiple pages
-        // of text might be needed.  At least one initial page will be needed.
-        Pages.push_back(TextPage());
-        TextPage* current_page = &Pages.back();
-        CurrentPageIndex = 0;
-        while (!words.empty())
-        {
-            // TRY TO ADD THE CURRENT WORD TO THE CURRENT PAGE.
-            const std::string& current_word = words.front();
-            bool word_added = current_page->Add(current_word);
-
-            // ADD THE WORD TO A NEW PAGE IF IT WASN'T ADDED TO THE CURRENT PAGE.
-            // If it wasn't added, there wasn't room on the current page.
-            if (!word_added)
+            bool words_exist = !words.empty();
+            if (!words_exist)
             {
-                Pages.push_back(TextPage());
-                current_page = &Pages.back();
-                word_added = current_page->Add(current_word);   
+                // With no words, additional work doesn't need to be performed
+                // since there is nothing to display.
+                return;
             }
 
-            // The current word has been added to a page, so it is no longer needed.
-            assert(word_added);
-            words.pop_front();
+            // DIVIDE THE WORDS INTO APPROPRIATE PAGES.
+            // The text might not all fit onto a single page, so multiple pages
+            // of text might be needed.  At least one initial page will be needed.
+            Pages.push_back(TextPage());
+            TextPage* current_page = &Pages.back();
+            CurrentPageIndex = 0;
+            while (!words.empty())
+            {
+                // TRY TO ADD THE CURRENT WORD TO THE CURRENT PAGE.
+                const std::string& current_word = words.front();
+                bool word_added = current_page->Add(current_word);
+
+                // ADD THE WORD TO A NEW PAGE IF IT WASN'T ADDED TO THE CURRENT PAGE.
+                // If it wasn't added, there wasn't room on the current page.
+                if (!word_added)
+                {
+                    Pages.push_back(TextPage());
+                    current_page = &Pages.back();
+                    word_added = current_page->Add(current_word);
+                }
+
+                // The current word has been added to a page, so it is no longer needed.
+                assert(word_added);
+                words.pop_front();
+            }
         }
 
         // MAKE THE TEXT BOX VISIBLE SO THAT TEXT CAN BE RENDERED.
@@ -157,6 +166,45 @@ namespace GRAPHICS
         text_page_top_left_screen_position_in_pixels.Y = SCREEN_TOP_LEFT_CORNER.y + FIRST_LINE_VERTICAL_PADDING_IN_PIXELS;
 
         current_text_page.Render(text_page_top_left_screen_position_in_pixels, Font, render_target);
+
+        // CHECK IF THE CURRENT PAGE OF TEXT IS FINISHED BEING DISPLAYED.
+        bool current_page_finished_being_displayed = current_text_page.AllTextDisplayed();
+        if (current_page_finished_being_displayed)
+        {
+            // DRAW A TRIANGLE TO LET THE USER KNOW TO PRESS A BUTTON TO CONTINUE TO THE NEXT PAGE.
+            // The SFML circle shape class can represent any regular polygon with any number of
+            // sides (with more sides getting close to a circle), so it is a quick way to draw
+            // a triangle.
+            const float TRIANGLE_DIMENSION = Glyph::HEIGHT_IN_PIXELS;
+            const float RADIUS = TRIANGLE_DIMENSION / 2.0f;
+            const unsigned int TRIANGLE_VERTEX_COUNT = 3;
+            sf::CircleShape press_button_triangle(RADIUS, TRIANGLE_VERTEX_COUNT);
+            press_button_triangle.setFillColor(sf::Color::Black);
+            
+            // Make sure the triangle is positioned based on its center.
+            // This makes some calculations later easier.
+            press_button_triangle.setOrigin(RADIUS, RADIUS);
+
+            // The triangle needs to be flipped to appear that is is pointed down.
+            const float NO_HORIZONTAL_FLIP = 1.0f;
+            const float FLIP_VERTICALLY = -1.0f;
+            press_button_triangle.setScale(NO_HORIZONTAL_FLIP, FLIP_VERTICALLY);
+
+            // The triangle should be in the bottom-right corner.
+            sf::Vector2i text_box_bottom_right_corner(
+                static_cast<int>(width_in_pixels), 
+                static_cast<int>(height_in_pixels));
+            sf::Vector2f bottom_right_corner_world_position = render_target.mapPixelToCoords(text_box_bottom_right_corner);
+
+            // The triangle should not overlap with the outline of the text box.
+            bottom_right_corner_world_position.x -= (OUTLINE_THICKNESS_IN_PIXELS);
+            bottom_right_corner_world_position.y -= (OUTLINE_THICKNESS_IN_PIXELS);
+
+            press_button_triangle.setPosition(bottom_right_corner_world_position);
+
+            /// @todo   Make this triangle blink?
+            render_target.draw(press_button_triangle);
+        }
     }
 
     void TextBox::Render(std::ostream& output_stream)

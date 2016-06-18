@@ -5,7 +5,7 @@
 
 namespace GRAPHICS
 {
-    const float TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS = 0.1f;
+    const float TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS = 0.05f;
 
     bool TextPage::Add(const std::string& word)
     {

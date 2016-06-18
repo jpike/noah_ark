@@ -1,11 +1,13 @@
 #include <cassert>
 #include <stdexcept>
 #include "Core/String.h"
-#include "Graphics/TextBox.h"
+#include "Graphics/Gui/TextBox.h"
 
 namespace GRAPHICS
 {
-    TextBox::TextBox(const std::shared_ptr<const GRAPHICS::Font>& font) :
+namespace GUI
+{
+    TextBox::TextBox(const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
     Font(font)
     {
         // MAKE SURE A FONT EXISTS.
@@ -221,4 +223,5 @@ namespace GRAPHICS
         auto& current_text_page = Pages[CurrentPageIndex];
         current_text_page.Render(output_stream);
     }
+}
 }

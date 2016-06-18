@@ -249,7 +249,7 @@ namespace RESOURCES
         }
     }
 
-    std::shared_ptr<GRAPHICS::Font> Assets::GetFont(const std::string& font_texture_id)
+    std::shared_ptr<GRAPHICS::GUI::Font> Assets::GetFont(const std::string& font_texture_id)
     {
         // GET THE FONT'S TEXTURE.
         std::shared_ptr<GRAPHICS::Texture> font_texture = GetTexture(font_texture_id);
@@ -258,7 +258,7 @@ namespace RESOURCES
         {
             // RETURN THE FONT.
             /// @todo Should we store loaded fonts somewhere instead of creating new instances each time?
-            std::shared_ptr<GRAPHICS::Font> font = std::make_shared<GRAPHICS::Font>(font_texture);
+            std::shared_ptr<GRAPHICS::GUI::Font> font = std::make_shared<GRAPHICS::GUI::Font>(font_texture);
             return font;
         }
         else

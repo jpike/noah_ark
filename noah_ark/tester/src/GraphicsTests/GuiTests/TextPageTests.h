@@ -6,12 +6,12 @@
 #include <string>
 #include <vector>
 #include "Core/String.h"
-#include "Graphics/TextPage.h"
+#include "Graphics/Gui/TextPage.h"
 
 /// A namespace for testing the TextPage class.
 namespace TEST_TEXT_PAGE
 {
-    using namespace GRAPHICS;
+    using namespace GRAPHICS::GUI;
 
     TEST_CASE("An empty string can be rendered.", "[TextPage]")
     {

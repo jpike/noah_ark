@@ -6,12 +6,13 @@
 #include <string>
 #include <vector>
 #include "Core/String.h"
-#include "Graphics/TextBox.h"
+#include "Graphics/Gui/TextBox.h"
 
 /// A namespace for testing the TextBox class.
 namespace TEST_TEXT_BOX
 {
     using namespace GRAPHICS;
+    using namespace GRAPHICS::GUI;
 
     TEST_CASE("A multipage Bible verse message can be properly rendered.", "[TextBox]")
     {

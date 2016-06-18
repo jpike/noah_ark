@@ -7,8 +7,8 @@
 #include "Audio/SoundEffect.h"
 #include "Core/Array2D.h"
 #include "Graphics/AnimationSequence.h"
-#include "Graphics/Font.h"
 #include "Graphics/Texture.h"
+#include "Graphics/Gui/Font.h"
 #include "Maps/OverworldMapFile.h"
 #include "Maps/TileMapFile.h"
 #include "Maps/Tileset.h"
@@ -63,7 +63,7 @@ namespace RESOURCES
         /// Attempts to retrieve the font identified by the specified texture ID.
         /// @param[in]  font_texture_id - The ID of the texture associated with the font.
         /// @return The requested font, if successfully loaded; null otherwise.
-        std::shared_ptr<GRAPHICS::Font> GetFont(const std::string& font_texture_id);
+        std::shared_ptr<GRAPHICS::GUI::Font> GetFont(const std::string& font_texture_id);
 
         /// Attempts to retrieve the sound effect identified by the specified ID.
         /// The returned sound effect will be a new instance of a sound effect,

@@ -6,12 +6,14 @@
 #include <string>
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include "Graphics/Glyph.h"
-#include "Graphics/Font.h"
 #include "Graphics/Screen.h"
+#include "Graphics/Gui/Glyph.h"
+#include "Graphics/Gui/Font.h"
 #include "Math/Vector2.h"
 
 namespace GRAPHICS
+{
+namespace GUI
 {
     /// A single page of text displayed in a text box.
     /// A page encompasses text that may be displayed in
@@ -65,7 +67,7 @@ namespace GRAPHICS
         /// @param[in,out]  render_target - The render target to render to.
         void Render(
             const MATH::Vector2ui& top_left_screen_position_in_pixels,
-            const std::shared_ptr<const GRAPHICS::Font>& font,
+            const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
             sf::RenderTarget& render_target);
         /// Renders the text page to the provided stream.
         /// @param[in,out]  output_stream - The output stream to render to.
@@ -107,4 +109,5 @@ namespace GRAPHICS
         /// The total elapsed time (in seconds) that text in this page has been displayed.
         float TotalElapsedTimeInSecondsTextHasBeenDisplayed = 0.0f;
     };
+}
 }

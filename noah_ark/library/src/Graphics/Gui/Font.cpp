@@ -1,7 +1,9 @@
 #include <stdexcept>
-#include "Graphics/Font.h"
+#include "Graphics/Gui/Font.h"
 
 namespace GRAPHICS
+{
+namespace GUI
 {
     Font::Font(const std::shared_ptr<GRAPHICS::Texture>& texture) :
         Texture(texture)
@@ -34,4 +36,5 @@ namespace GRAPHICS
             static_cast<float>(Glyph::HEIGHT_IN_PIXELS));
         return glyph;
     }
+}
 }

@@ -14,7 +14,7 @@
 #include "Graphics/Camera.h"
 #include "Graphics/Rendering.h"
 #include "Graphics/Screen.h"
-#include "Graphics/TextBox.h"
+#include "Graphics/Gui/TextBox.h"
 #include "Input/KeyboardInputController.h"
 #include "Maps/Overworld.h"
 #include "Maps/TileMap.h"
@@ -374,7 +374,7 @@ int main(int argumentCount, char* arguments[])
             GAME_TITLE);
 
         // CREATE THE MAIN TEXT BOX FOR DISPLAYING MESSAGES TO THE PLAYER.
-        std::shared_ptr<GRAPHICS::Font> font = assets.GetFont(RESOURCES::FONT_TEXTURE_ID);
+        std::shared_ptr<GRAPHICS::GUI::Font> font = assets.GetFont(RESOURCES::FONT_TEXTURE_ID);
         bool font_loaded = (nullptr != font);
         if (!font_loaded)
         {
@@ -382,7 +382,7 @@ int main(int argumentCount, char* arguments[])
             return EXIT_CODE_FAILURE_LOADING_FONT;
         }
 
-        GRAPHICS::TextBox text_box(font);
+        GRAPHICS::GUI::TextBox text_box(font);
 
         // INITIALIZE THE CAMERA.
         GRAPHICS::Camera camera(window);

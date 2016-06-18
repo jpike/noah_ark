@@ -12,7 +12,7 @@ namespace GRAPHICS
         sprite.Render(render_target);
     }
 
-    void Render(const GRAPHICS::Text& text, sf::RenderTarget& render_target)
+    void Render(const GRAPHICS::GUI::Text& text, sf::RenderTarget& render_target)
     {
         text.Render(render_target);
     }

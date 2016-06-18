@@ -1,9 +1,11 @@
 #include <algorithm>
 #include <cassert>
-#include "Graphics/Text.h"
-#include "Graphics/TextPage.h"
+#include "Graphics/Gui/Text.h"
+#include "Graphics/Gui/TextPage.h"
 
 namespace GRAPHICS
+{
+namespace GUI
 {
     const float TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS = 0.05f;
 
@@ -95,7 +97,7 @@ namespace GRAPHICS
 
     void TextPage::Render(
         const MATH::Vector2ui& top_left_screen_position_in_pixels,
-        const std::shared_ptr<const GRAPHICS::Font>& font,
+        const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
         sf::RenderTarget& render_target)
     {
         // MAKE SURE THE FONT EXISTS.
@@ -239,4 +241,5 @@ namespace GRAPHICS
 
         return current_line;
     }
+}
 }

@@ -5,6 +5,8 @@
 
 namespace GRAPHICS
 {
+namespace GUI
+{
     /// A glyph is a graphical representation of a single character within a font.
     class Glyph
     {
@@ -23,4 +25,5 @@ namespace GRAPHICS
         /// from left-to-right and y coordinates increasing from top-to-bottom.
         MATH::FloatRectangle TextureSubRectangle = MATH::FloatRectangle();
     };
+}
 }

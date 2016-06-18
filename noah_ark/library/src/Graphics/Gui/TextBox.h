@@ -5,10 +5,12 @@
 #include <string>
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include "Graphics/Font.h"
-#include "Graphics/TextPage.h"
+#include "Graphics/Gui/Font.h"
+#include "Graphics/Gui/TextPage.h"
 
 namespace GRAPHICS
+{
+namespace GUI
 {
     /// A text box for displaying messages to a player.
     /// The text box can display up to 2 lines of text at a time.
@@ -67,4 +69,5 @@ namespace GRAPHICS
         /// The index of the current page of text displayed in the text box.
         unsigned int CurrentPageIndex = 0;
     };
+}
 }

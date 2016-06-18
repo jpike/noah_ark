@@ -18,6 +18,9 @@
     <Filter Include="Header Files\CoreTests">
       <UniqueIdentifier>{9c00cad2-0fa5-48ce-abd7-1357a3bd26e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GraphicsTests\GuiTests">
+      <UniqueIdentifier>{f858e3c1-c701-4b77-a9c9-fca6f4b2ca93}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -37,11 +40,11 @@
     <ClInclude Include="src\CoreTests\Array2DTests.h">
       <Filter>Header Files\CoreTests</Filter>
     </ClInclude>
-    <ClInclude Include="src\GraphicsTests\TextPageTests.h">
-      <Filter>Header Files\GraphicsTests</Filter>
+    <ClInclude Include="src\GraphicsTests\GuiTests\TextBoxTests.h">
+      <Filter>Header Files\GraphicsTests\GuiTests</Filter>
     </ClInclude>
-    <ClInclude Include="src\GraphicsTests\TextBoxTests.h">
-      <Filter>Header Files\GraphicsTests</Filter>
+    <ClInclude Include="src\GraphicsTests\GuiTests\TextPageTests.h">
+      <Filter>Header Files\GraphicsTests\GuiTests</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

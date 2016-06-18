@@ -1,10 +1,13 @@
 #pragma once
 
 #include <memory>
-#include "Graphics/Glyph.h"
 #include "Graphics/Texture.h"
+#include "Graphics/Gui/Glyph.h"
 
 namespace GRAPHICS
+{
+/// Holds code related to graphical user interfaces.
+namespace GUI
 {
     /// A font is a particular styling of characters that can be used for rendering text.
     /// Each character is represented by a glyph within the font.
@@ -31,4 +34,5 @@ namespace GRAPHICS
         /// The font's texture.
         std::shared_ptr<Texture> Texture = nullptr;
     };
+}
 }

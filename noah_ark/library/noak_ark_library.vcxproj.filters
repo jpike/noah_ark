@@ -72,6 +72,12 @@
     <Filter Include="Source Files\Core">
       <UniqueIdentifier>{b5f7dda5-1184-41a7-8497-b469ee876c29}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphics\Gui">
+      <UniqueIdentifier>{f610c1fb-7b0c-46ff-a5ce-bf6eef850608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\Gui">
+      <UniqueIdentifier>{96d3959c-0c63-4c22-a1cb-832d28132bf2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector2.h">
@@ -179,26 +185,26 @@
     <ClInclude Include="src\Objects\Inventory.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\Font.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\Text.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\Glyph.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\TextBox.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\Screen.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\String.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\TextPage.h">
-      <Filter>Header Files\Graphics</Filter>
+    <ClInclude Include="src\Graphics\Gui\Font.h">
+      <Filter>Header Files\Graphics\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Gui\Glyph.h">
+      <Filter>Header Files\Graphics\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Gui\Text.h">
+      <Filter>Header Files\Graphics\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Gui\TextBox.h">
+      <Filter>Header Files\Graphics\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Gui\TextPage.h">
+      <Filter>Header Files\Graphics\Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -289,20 +295,20 @@
     <ClCompile Include="src\Bible\BibleVerses.cpp">
       <Filter>Source Files\Bible</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\Font.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\Text.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\TextBox.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\String.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\TextPage.cpp">
-      <Filter>Source Files\Graphics</Filter>
+    <ClCompile Include="src\Graphics\Gui\Font.cpp">
+      <Filter>Source Files\Graphics\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Gui\Text.cpp">
+      <Filter>Source Files\Graphics\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Gui\TextBox.cpp">
+      <Filter>Source Files\Graphics\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Gui\TextPage.cpp">
+      <Filter>Source Files\Graphics\Gui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,12 +1,14 @@
 #include <stdexcept>
-#include "Graphics/Glyph.h"
 #include "Graphics/Sprite.h"
-#include "Graphics/Text.h"
+#include "Graphics/Gui/Glyph.h"
+#include "Graphics/Gui/Text.h"
 
 namespace GRAPHICS
 {
+namespace GUI
+{
     Text::Text(
-        const std::shared_ptr<const GRAPHICS::Font>& font,
+        const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
         const std::string& characters,
         const MATH::Vector2ui& screen_top_left_position_in_pixels) :
         Font(font),
@@ -60,4 +62,5 @@ namespace GRAPHICS
             current_character_top_left_world_position.X += glyph_width;
         }
     }
+}
 }

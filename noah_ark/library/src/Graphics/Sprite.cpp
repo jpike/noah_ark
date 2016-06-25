@@ -13,7 +13,7 @@ namespace GRAPHICS
     }
 
     Sprite::Sprite(
-        const std::shared_ptr<Texture>& texture,
+        const std::shared_ptr<const Texture>& texture,
         const MATH::FloatRectangle& texture_sub_rectangle) :
     SpriteTexture(texture),
     SpriteResource(),

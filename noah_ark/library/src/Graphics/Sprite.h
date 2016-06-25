@@ -21,7 +21,7 @@ namespace GRAPHICS
         /// @param[in]  texture_sub_rectangle - The sub-rectangle of the texture
         /// defining which portion should be used for the sprite.
         explicit Sprite(
-            const std::shared_ptr<Texture>& texture,
+            const std::shared_ptr<const Texture>& texture,
             const MATH::FloatRectangle& texture_sub_rectangle);
 
         /// Sets the sub-rectangle of the sprite's texture that should be used
@@ -91,7 +91,7 @@ namespace GRAPHICS
         /// Stored here to ensure the texture stays in memory as long as the sprite
         /// is in memory.  Does not seem to result in any noticeable increases in
         /// memory usage.
-        std::shared_ptr<Texture> SpriteTexture;
+        std::shared_ptr<const Texture> SpriteTexture;
         /// The underlying SFML sprite resource.
         sf::Sprite SpriteResource;
         /// Whether or not the sprite is visible.

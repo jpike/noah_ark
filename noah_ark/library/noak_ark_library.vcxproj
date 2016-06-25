@@ -17,6 +17,7 @@
     <ClInclude Include="src\Collision\Movement.h" />
     <ClInclude Include="src\Core\Array2D.h" />
     <ClInclude Include="src\Core\Direction.h" />
+    <ClInclude Include="src\Core\NullChecking.h" />
     <ClInclude Include="src\Core\String.h" />
     <ClInclude Include="src\Events\AxeSwingEvent.h" />
     <ClInclude Include="src\Graphics\AnimatedSprite.h" />
@@ -25,6 +26,7 @@
     <ClInclude Include="src\Graphics\Color.h" />
     <ClInclude Include="src\Graphics\Gui\Font.h" />
     <ClInclude Include="src\Graphics\Gui\Glyph.h" />
+    <ClInclude Include="src\Graphics\Gui\HeadsUpDisplay.h" />
     <ClInclude Include="src\Graphics\Gui\Text.h" />
     <ClInclude Include="src\Graphics\Gui\TextBox.h" />
     <ClInclude Include="src\Graphics\Gui\TextPage.h" />
@@ -65,6 +67,7 @@
     <ClCompile Include="src\Graphics\AnimationSequence.cpp" />
     <ClCompile Include="src\Graphics\Camera.cpp" />
     <ClCompile Include="src\Graphics\Gui\Font.cpp" />
+    <ClCompile Include="src\Graphics\Gui\HeadsUpDisplay.cpp" />
     <ClCompile Include="src\Graphics\Gui\Text.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextBox.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextPage.cpp" />

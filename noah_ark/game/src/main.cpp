@@ -14,6 +14,7 @@
 #include "Graphics/Camera.h"
 #include "Graphics/Rendering.h"
 #include "Graphics/Screen.h"
+#include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Gui/TextBox.h"
 #include "Input/KeyboardInputController.h"
 #include "Maps/Overworld.h"
@@ -383,6 +384,13 @@ int main(int argumentCount, char* arguments[])
         }
 
         GRAPHICS::GUI::TextBox text_box(font);
+
+        // INITIALIZE THE HUD.
+        /// @todo   Re-examine how we get resources to display in the HUD.
+        GRAPHICS::GUI::HeadsUpDisplay hud(
+            font,
+            assets.GetTexture(RESOURCES::AXE_TEXTURE_ID),
+            assets.GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID));
 
         // INITIALIZE THE CAMERA.
         GRAPHICS::Camera camera(window);
@@ -855,6 +863,9 @@ int main(int argumentCount, char* arguments[])
                     }
                 }
 
+                // UPDATE THE HUD BASED ON THE PLAYER'S INVENTORY.
+                hud.Update(noah_player.Inventory);
+
                 // RENDER THE CURRENT STATE OF THE GAME.
                 window->clear();
 
@@ -933,6 +944,9 @@ int main(int argumentCount, char* arguments[])
                 {
                     GRAPHICS::Render(noah_player.Inventory.Axe->Sprite, *window);
                 }
+
+                // RENDER THE HUD.
+                hud.Render(*window);
 
                 // RENDER THE TEXT BOX IF IT IS VISIBLE.
                 if (text_box.IsVisible)

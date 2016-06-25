@@ -62,5 +62,11 @@ namespace GUI
             current_character_top_left_world_position.X += glyph_width;
         }
     }
+
+    unsigned int Text::GetWidthInPixels() const
+    {
+        unsigned int width_in_pixels = Glyph::WIDTH_IN_PIXELS * Characters.size();
+        return width_in_pixels;
+    }
 }
 }

@@ -29,6 +29,10 @@ namespace GUI
         /// @param[in,out]  render_target - The target to render to.
         void Render(sf::RenderTarget& render_target) const;
 
+        /// Gets the width of the text, in pixels.
+        /// @return The width of the text, in pixels.
+        unsigned int GetWidthInPixels() const;
+
     private:
         /// The font for rendering the text.
         std::shared_ptr<const GRAPHICS::GUI::Font> Font = nullptr;

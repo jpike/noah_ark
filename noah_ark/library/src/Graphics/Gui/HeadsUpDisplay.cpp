@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include "Core/NullChecking.h"
+#include "Graphics/Rendering.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
@@ -37,89 +38,81 @@ namespace GUI
 
     void HeadsUpDisplay::Render(sf::RenderTarget& render_target)
     {
-        // CREATE A RECTANGLE TO RESEMBLE A KEY ON A KEYBOARD.
-        const sf::Color DARK_GRAY(128, 128, 128);
-        const sf::Color LIGHT_GRAY(176, 176, 176);
-        sf::RectangleShape key_background_icon;
-        key_background_icon.setFillColor(LIGHT_GRAY);
-        key_background_icon.setOutlineColor(DARK_GRAY);
-        key_background_icon.setOutlineThickness(2.0f);
-        key_background_icon.setSize(sf::Vector2f(
-            static_cast<float>(Glyph::WIDTH_IN_PIXELS), 
-            static_cast<float>(Glyph::HEIGHT_IN_PIXELS)));
-
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
+        // An icon is rendered to help players know which key to press.
+        /// @todo   Couple this somehow to the input controller so that it remains in-sync?
+        const char SWING_AXE_KEY = 'Z';
         MATH::Vector2ui TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0, 0);
-        key_background_icon.setPosition(
-            static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.X),
-            static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
-        render_target.draw(key_background_icon);
-        Text axe_text(Font, "Z", TOP_LEFT_SCREEN_POSITION_IN_PIXELS);
-        axe_text.Render(render_target);
+        RenderKeyIcon(SWING_AXE_KEY, *Font, TOP_LEFT_SCREEN_POSITION_IN_PIXELS, render_target);
 
+        // An axe icon is rendered to help players know what the previously rendered key icon is for.
         /// @todo   This stuff was copied from main.cpp.
         /// Find a way so that it is centralized, not duplicated.
         const float AXE_SPRITE_X_OFFSET_IN_PIXELS = 52.0f;
         const float AXE_SPRITE_Y_OFFSET_IN_PIXELS = 0.0f;
         const float AXE_WIDTH_IN_PIXELS = 11.0f;
         const float AXE_HEIGHT_IN_PIXELS = 14.0f;
-        MATH::FloatRectangle axe_texture_sub_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        const MATH::FloatRectangle AXE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(
             AXE_SPRITE_X_OFFSET_IN_PIXELS,
             AXE_SPRITE_Y_OFFSET_IN_PIXELS,
             AXE_WIDTH_IN_PIXELS,
             AXE_HEIGHT_IN_PIXELS);
-        Sprite axe_sprite(AxeTexture, axe_texture_sub_rectangle);
-        sf::Vector2i axe_text_screen_position(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.X, TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y);
-        sf::Vector2f axe_sprite_world_position = render_target.mapPixelToCoords(axe_text_screen_position);
-        axe_sprite_world_position.x += axe_text.GetWidthInPixels();
-        axe_sprite_world_position.x += axe_texture_sub_rectangle.GetWidth() / 2.0f;
-        axe_sprite_world_position.y += axe_texture_sub_rectangle.GetHeight() / 2.0f;
-        MATH::Vector2f axe_icon_world_position(axe_sprite_world_position.x, axe_sprite_world_position.y);
-        axe_sprite.SetWorldPosition(axe_icon_world_position);
-        axe_sprite.Render(render_target);
+        // The axe icon should be positioned just to the right of its key icon.
+        // Since a single character (glyph) is rendered for the key icon,
+        // the width of the icon is the width of a single glyph.
+        const unsigned int KEY_ICON_WIDTH_IN_PIXELS = Glyph::WIDTH_IN_PIXELS;
+        MATH::Vector2ui axe_icon_screen_position = TOP_LEFT_SCREEN_POSITION_IN_PIXELS;
+        axe_icon_screen_position.X += KEY_ICON_WIDTH_IN_PIXELS;
+        RenderGuiIcon(*AxeTexture, AXE_TEXTURE_SUB_RECTANGLE, axe_icon_screen_position, render_target);
 
         // RENDER COMPONENTS INDICATING HOW MUCH WOOD HAS BEEN COLLECTED.
+        // A wood icon is rendered to help players know what the text next to it corresponds to.
         /// @todo   This has been duplicated from Collisions.cpp.
         /// Find a way so that it is centralized, not duplicated.
         const MATH::FloatRectangle WOOD_LOG_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(
             32.0f, 32.0f, 16.0f, 16.0f);
-        GRAPHICS::Sprite wood_log_sprite(WoodTexture, WOOD_LOG_TEXTURE_SUB_RECTANGLE);
+        // The wood icon should be next to the axe icon but with a little additional blank space
+        // so that the two icons aren't too close together.
+        const unsigned int PIXEL_BUFFER_SPACE_BETWEEN_AXE_ICON_AND_WOOD_ICON = 16;
+        MATH::Vector2ui wood_icon_screen_position = axe_icon_screen_position;
+        wood_icon_screen_position.X += static_cast<unsigned int>(AXE_TEXTURE_SUB_RECTANGLE.GetWidth());
+        wood_icon_screen_position.X += PIXEL_BUFFER_SPACE_BETWEEN_AXE_ICON_AND_WOOD_ICON;
+        RenderGuiIcon(*WoodTexture, WOOD_LOG_TEXTURE_SUB_RECTANGLE, wood_icon_screen_position, render_target);
 
-        MATH::Vector2f wood_log_sprite_world_position = axe_icon_world_position;
-        wood_log_sprite_world_position.X += axe_sprite.GetWidthInPixels();
-        wood_log_sprite_world_position.X += axe_text.GetWidthInPixels();
-        wood_log_sprite_world_position.X += WOOD_LOG_TEXTURE_SUB_RECTANGLE.GetWidth() / 2.0f;
-        wood_log_sprite.SetWorldPosition(wood_log_sprite_world_position);
-        wood_log_sprite.Render(render_target);
-
-        std::string wood_count_string = "x" + std::to_string(WoodCount);
-        sf::Vector2i wood_icon_screen_position = render_target.mapCoordsToPixel(
-            sf::Vector2f(wood_log_sprite_world_position.X, wood_log_sprite_world_position.Y));
-        MATH::Vector2ui wood_text_top_left_screen_position_in_pixels(wood_icon_screen_position.x, TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y);
-        wood_text_top_left_screen_position_in_pixels.X += static_cast<unsigned int>(wood_log_sprite.GetWidthInPixels());
+        // Text is rendered for "x#" to communicate how much wood has been collected.
+        // For example, "x10" (no quotes) would be rendered if the player has collected
+        // 10 wood logs.
+        const std::string TIMES_COUNT_TEXT = "x";
+        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(WoodCount);
+        // This text should be placed just to the right of the wood icon.
+        MATH::Vector2ui wood_text_top_left_screen_position_in_pixels(wood_icon_screen_position.X, TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y);
+        wood_text_top_left_screen_position_in_pixels.X += static_cast<unsigned int>(WOOD_LOG_TEXTURE_SUB_RECTANGLE.GetWidth());
         Text wood_count_text(Font, wood_count_string, wood_text_top_left_screen_position_in_pixels);
         wood_count_text.Render(render_target);
 
         // RENDER COMPONENTS INDICATING HOW TO OPEN THE INVENTORY.
+        // This text is rendered to the far-right of the screen so that its position isn't changed
+        // if the space for other GUI elements (like the count of collected wood) changes such
+        // that they could distractingly shift the position of this text.
         MATH::Vector2ui TOP_RIGHT_SCREEN_POSITION_IN_PIXELS(
             GRAPHICS::Screen::WIDTH_IN_PIXELS,
             TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y);
         const std::string OPEN_INVENTORY_TEXT = "Inventory";
+        // One glyph is rendered per character.
         const unsigned int OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS = (Glyph::WIDTH_IN_PIXELS * OPEN_INVENTORY_TEXT.size());
         MATH::Vector2ui open_inventory_text_top_left_screen_position_in_pixels = TOP_RIGHT_SCREEN_POSITION_IN_PIXELS;
         open_inventory_text_top_left_screen_position_in_pixels.X -= OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS;
         Text open_inventory_text(Font, OPEN_INVENTORY_TEXT, open_inventory_text_top_left_screen_position_in_pixels);
         open_inventory_text.Render(render_target);
 
-        /// @todo   Figure out what key is to be pressed.
+        // An icon is rendered to help players know which key to press.  It is rendered after
+        // the above text for the inventory since it is easier to correctly position here
+        // such that it appears just to the left of the text.
+        /// @todo   Figure out what key is to be pressed here.  This is just a temporary placeholder.
+        const char OPEN_INVENTORY_KEY = 'X';
         MATH::Vector2ui open_inventory_key_text_top_left_screen_position_in_pixels = open_inventory_text_top_left_screen_position_in_pixels;
-        open_inventory_key_text_top_left_screen_position_in_pixels.X -= Glyph::WIDTH_IN_PIXELS;
-        key_background_icon.setPosition(
-            static_cast<float>(open_inventory_key_text_top_left_screen_position_in_pixels.X),
-            static_cast<float>(open_inventory_key_text_top_left_screen_position_in_pixels.Y));
-        render_target.draw(key_background_icon);
-        Text open_inventory_key_text(Font, "X", open_inventory_key_text_top_left_screen_position_in_pixels);
-        open_inventory_key_text.Render(render_target);
+        open_inventory_key_text_top_left_screen_position_in_pixels.X -= KEY_ICON_WIDTH_IN_PIXELS;
+        RenderKeyIcon(OPEN_INVENTORY_KEY, *Font, open_inventory_key_text_top_left_screen_position_in_pixels, render_target);
     }
 }
 }

@@ -2,10 +2,12 @@
 
 #include <SFML/Graphics.hpp>
 #include "Graphics/AnimatedSprite.h"
+#include "Graphics/Color.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/Text.h"
 #include "Maps/TileMap.h"
+#include "Math/Rectangle.h"
 #include "Math/Vector2.h"
 
 namespace GRAPHICS
@@ -13,6 +15,11 @@ namespace GRAPHICS
     void Render(const GRAPHICS::Sprite& sprite, sf::RenderTarget& render_target);
 
     void Render(const GRAPHICS::AnimatedSprite& sprite, sf::RenderTarget& render_target);
+
+    void RenderScreenRectangle(
+        const MATH::FloatRectangle& rectangle,
+        const GRAPHICS::Color& color,
+        sf::RenderTarget& render_target);
 
     void Render(const GRAPHICS::GUI::Text& text, sf::RenderTarget& render_target);
 

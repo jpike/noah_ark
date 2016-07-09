@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <memory>
 #include <vector>
 #include "Bible/BibleVerses.h"
 #include "Core/Direction.h"
@@ -46,6 +47,6 @@ namespace OBJECTS
         GRAPHICS::AnimatedSprite Sprite = GRAPHICS::AnimatedSprite();
         /// The inventory of items held by Noah.
         /// @todo   Should the axe go in here?
-        OBJECTS::Inventory Inventory = OBJECTS::Inventory();
+        std::shared_ptr<OBJECTS::Inventory> Inventory = std::make_shared<OBJECTS::Inventory>();
     };
 }

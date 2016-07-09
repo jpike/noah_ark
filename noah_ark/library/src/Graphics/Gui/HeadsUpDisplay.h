@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "Graphics/Texture.h"
 #include "Graphics/Gui/Font.h"
+#include "Graphics/Gui/InventoryGui.h"
 #include "Objects/Inventory.h"
 
 namespace GRAPHICS
@@ -17,7 +18,9 @@ namespace GUI
     class HeadsUpDisplay
     {
     public:
+        // CONSTRUCTION.
         /// Constructor.
+        /// @param[in]  inventory - The inventory to display in the HUD.
         /// @param[in]  font - The font to use for rendering text on the HUD.
         /// @param[in]  axe_texture - The texture to use for rendering an
         ///     axe icon on the HUD.
@@ -26,20 +29,24 @@ namespace GUI
         /// @throws std::exception - Thrown if a parameter is null.
         /// @todo   Re-think how we pass assets to this class.
         explicit HeadsUpDisplay(
+            const std::shared_ptr<const OBJECTS::Inventory>& inventory,
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
             const std::shared_ptr<const Texture>& axe_texture,
             const std::shared_ptr<const Texture>& wood_texture);
 
-        /// Updates the inventory information displayed in the HUD.
-        /// @param[in]  inventory - The inventory whose information
-        ///     to display in the HUD.
-        void Update(const OBJECTS::Inventory& inventory);
-
+        // RENDERING.
         /// Renders the HUD to the provided target.
         /// @param[in]  render_target - The target to render to.
         void Render(sf::RenderTarget& render_target);
 
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// True if the full inventory GUI is displayed; false otherwise.
+        bool InventoryOpened;
+        /// The GUI for displaying the full inventory.
+        GRAPHICS::GUI::InventoryGui InventoryGui;
+
     private:
+        // PRIVATE MEMBER VARIABLES.
         /// The font to use for rendering text.
         std::shared_ptr<const GRAPHICS::GUI::Font> Font;
         /// The texture to use for rendering an axe icon.
@@ -47,8 +54,8 @@ namespace GUI
         /// The texture to use for rendering a wood icon.
         std::shared_ptr<const Texture> WoodTexture;
 
-        /// The amount of wood collected by the player.
-        unsigned int WoodCount;
+        /// The player's inventory to display in the HUD.
+        std::shared_ptr<const OBJECTS::Inventory> Inventory;
     };
 }
 }

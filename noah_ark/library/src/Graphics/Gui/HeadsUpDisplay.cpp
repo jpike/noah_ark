@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include "Core/NullChecking.h"
 #include "Graphics/Rendering.h"
 #include "Graphics/Screen.h"
@@ -11,15 +10,21 @@ namespace GRAPHICS
 namespace GUI
 {
     HeadsUpDisplay::HeadsUpDisplay(
+        const std::shared_ptr<const OBJECTS::Inventory>& inventory,
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
         const std::shared_ptr<const Texture>& axe_texture,
         const std::shared_ptr<const Texture>& wood_texture) :
+    InventoryOpened(false),
+    InventoryGui(inventory, font),
     Font(font),
     AxeTexture(axe_texture),
     WoodTexture(wood_texture),
-    WoodCount(0)
+    Inventory(inventory)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
+        CORE::ThrowInvalidArgumentExceptionIfNull(
+            Inventory,
+            "Null inventory provided to HUD.");
         CORE::ThrowInvalidArgumentExceptionIfNull(
             Font,
             "Null font provided to HUD.");
@@ -29,11 +34,6 @@ namespace GUI
         CORE::ThrowInvalidArgumentExceptionIfNull(
             WoodTexture,
             "Null wood texture provided to HUD.");
-    }
-
-    void HeadsUpDisplay::Update(const OBJECTS::Inventory& inventory)
-    {
-        WoodCount = inventory.WoodCount;
     }
 
     void HeadsUpDisplay::Render(sf::RenderTarget& render_target)
@@ -83,7 +83,7 @@ namespace GUI
         // For example, "x10" (no quotes) would be rendered if the player has collected
         // 10 wood logs.
         const std::string TIMES_COUNT_TEXT = "x";
-        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(WoodCount);
+        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(Inventory->WoodCount);
         // This text should be placed just to the right of the wood icon.
         MATH::Vector2ui wood_text_top_left_screen_position_in_pixels(wood_icon_screen_position.X, TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y);
         wood_text_top_left_screen_position_in_pixels.X += static_cast<unsigned int>(WOOD_LOG_TEXTURE_SUB_RECTANGLE.GetWidth());
@@ -113,6 +113,12 @@ namespace GUI
         MATH::Vector2ui open_inventory_key_text_top_left_screen_position_in_pixels = open_inventory_text_top_left_screen_position_in_pixels;
         open_inventory_key_text_top_left_screen_position_in_pixels.X -= KEY_ICON_WIDTH_IN_PIXELS;
         RenderKeyIcon(OPEN_INVENTORY_KEY, *Font, open_inventory_key_text_top_left_screen_position_in_pixels, render_target);
+
+        // RENDER THE INVENTORY GUI IF IT IS OPENED.
+        if (InventoryOpened)
+        {
+            InventoryGui.Render(render_target);
+        }
     }
 }
 }

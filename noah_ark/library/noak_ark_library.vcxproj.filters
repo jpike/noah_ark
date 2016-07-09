@@ -212,6 +212,9 @@
     <ClInclude Include="src\Core\NullChecking.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Graphics\Gui\InventoryGui.h">
+      <Filter>Header Files\Graphics\Gui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -317,6 +320,9 @@
       <Filter>Source Files\Graphics\Gui</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\Gui\HeadsUpDisplay.cpp">
+      <Filter>Source Files\Graphics\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Gui\InventoryGui.cpp">
       <Filter>Source Files\Graphics\Gui</Filter>
     </ClCompile>
   </ItemGroup>

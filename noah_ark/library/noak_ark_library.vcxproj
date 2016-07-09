@@ -27,6 +27,7 @@
     <ClInclude Include="src\Graphics\Gui\Font.h" />
     <ClInclude Include="src\Graphics\Gui\Glyph.h" />
     <ClInclude Include="src\Graphics\Gui\HeadsUpDisplay.h" />
+    <ClInclude Include="src\Graphics\Gui\InventoryGui.h" />
     <ClInclude Include="src\Graphics\Gui\Text.h" />
     <ClInclude Include="src\Graphics\Gui\TextBox.h" />
     <ClInclude Include="src\Graphics\Gui\TextPage.h" />
@@ -68,6 +69,7 @@
     <ClCompile Include="src\Graphics\Camera.cpp" />
     <ClCompile Include="src\Graphics\Gui\Font.cpp" />
     <ClCompile Include="src\Graphics\Gui\HeadsUpDisplay.cpp" />
+    <ClCompile Include="src\Graphics\Gui\InventoryGui.cpp" />
     <ClCompile Include="src\Graphics\Gui\Text.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextBox.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextPage.cpp" />

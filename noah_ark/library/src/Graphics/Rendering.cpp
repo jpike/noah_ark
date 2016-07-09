@@ -17,6 +17,35 @@ namespace GRAPHICS
         text.Render(render_target);
     }
 
+    void RenderScreenRectangle(
+        const MATH::FloatRectangle& rectangle,
+        const GRAPHICS::Color& color,
+        sf::RenderTarget& render_target)
+    {
+        // CONVERT THE RECTANGLE POSITION TO A WORLD POSITION.
+        // This is necessary so that the rectangle can be rendered
+        // appropriately on the screen regardless of how the camera
+        // might move around the world.
+        int left_screen_position = static_cast<int>(rectangle.GetLeftXPosition());
+        int top_screen_position = static_cast<int>(rectangle.GetTopYPosition());
+        sf::Vector2f top_left_world_position = render_target.mapPixelToCoords(sf::Vector2i(
+            left_screen_position,
+            top_screen_position));
+
+        // CREATE THE RECTANGLE TO RENDER.
+        sf::RectangleShape renderable_rectangle;
+        renderable_rectangle.setFillColor(sf::Color(color.Red, color.Green, color.Blue));
+
+        float width = rectangle.GetWidth();
+        float height = rectangle.GetHeight();
+        renderable_rectangle.setSize(sf::Vector2f(width, height));
+
+        renderable_rectangle.setPosition(top_left_world_position);
+
+        // RENDER THE RECTANGLE.
+        render_target.draw(renderable_rectangle);
+    }
+
     void RenderKeyIcon(
         const char key,
         const GRAPHICS::GUI::Font& font,

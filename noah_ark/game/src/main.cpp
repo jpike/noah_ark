@@ -314,9 +314,9 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
         AXE_SPRITE_Y_OFFSET_IN_PIXELS,
         AXE_WIDTH_IN_PIXELS,
         AXE_HEIGHT_IN_PIXELS);
-    noah_player.Inventory.Axe->Sprite = GRAPHICS::Sprite(axe_texture, axe_texture_sub_rectangle);
+    noah_player.Inventory->Axe->Sprite = GRAPHICS::Sprite(axe_texture, axe_texture_sub_rectangle);
 
-    noah_player.Inventory.Axe->AxeHitSound = assets.GetSound(RESOURCES::AXE_HIT_SOUND_ID);
+    noah_player.Inventory->Axe->AxeHitSound = assets.GetSound(RESOURCES::AXE_HIT_SOUND_ID);
 }
 
 /// The main entry point for the game.
@@ -374,6 +374,9 @@ int main(int argumentCount, char* arguments[])
             sf::VideoMode(GRAPHICS::Screen::WIDTH_IN_PIXELS, GRAPHICS::Screen::HEIGHT_IN_PIXELS),
             GAME_TITLE);
 
+        // Ensure that only one key event is generated for each key press.
+        window->setKeyRepeatEnabled(false);
+
         // CREATE THE MAIN TEXT BOX FOR DISPLAYING MESSAGES TO THE PLAYER.
         std::shared_ptr<GRAPHICS::GUI::Font> font = assets.GetFont(RESOURCES::FONT_TEXTURE_ID);
         bool font_loaded = (nullptr != font);
@@ -388,6 +391,7 @@ int main(int argumentCount, char* arguments[])
         // INITIALIZE THE HUD.
         /// @todo   Re-examine how we get resources to display in the HUD.
         GRAPHICS::GUI::HeadsUpDisplay hud(
+            noah_player.Inventory,
             font,
             assets.GetTexture(RESOURCES::AXE_TEXTURE_ID),
             assets.GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID));
@@ -414,6 +418,24 @@ int main(int argumentCount, char* arguments[])
                 // Handle the current event based on its type.
                 switch (event.type)
                 {
+                    case sf::Event::KeyPressed:
+                    {
+                        // CHECK IF THE KEY FOR THE INVENTORY WAS PRESSED.
+                        // This is done here as a simple way to easily check if a key has
+                        // been pressed and released (as opposed to whether it is down
+                        // or not).  This prevents a scenario where the inventory could
+                        // repeatedly open or close if the key was held down.
+                        /// @todo   I'm not sure I like separating these key presses
+                        /// from the rest of the keyboard controls.
+                        bool inventory_key_pressed = (sf::Keyboard::X == event.key.code);
+                        if (inventory_key_pressed)
+                        {
+                            // OPEN OR CLOSE THE INVENTORY.
+                            // The inventory key acts like a toggle button for the inventory.
+                            hud.InventoryOpened = !hud.InventoryOpened;
+                        }
+                        break;
+                    }
                     case sf::Event::Closed:
                         window->close();
                         break;
@@ -439,432 +461,431 @@ int main(int argumentCount, char* arguments[])
                 MAPS::TileMap* current_tile_map = overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
                 assert(current_tile_map);
 
-                // UPDATE THE TEXT BOX IF IT IS VISIBLE.
-                // If the text box is currently being displayed, then it should capture any user input.
-                if (text_box.IsVisible)
+                // CHECK IF THE INVENTORY GUI IS DISPLAYED.
+                // If the inventory GUI is displayed, then the regular controls for the player
+                // in the world shouldn't work.
+                if (!hud.InventoryOpened)
                 {
-                    /// @todo   Maybe this should be moved to after the MoveToNextText() below
-                    /// to prevent the last character from not being seen?
-                    text_box.Update(elapsed_time_in_seconds);
-                }
-
-                // CHECK IF THE PRIMARY ACTION BUTTON WAS PRESSED.
-                if (input_controller.PrimaryActionButtonPressed())
-                {
+                    // UPDATE THE TEXT BOX IF IT IS VISIBLE.
+                    // If the text box is currently being displayed, then it should capture any user input.
                     if (text_box.IsVisible)
                     {
-                        // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
-                        // If the current page of text has not yet all been displayed, the next
-                        // page of text should not be moved to so that the user can finish
-                        // seeing the complete message.
-                        bool current_text_finished_being_displayed = text_box.CurrentPageOfTextFinishedBeingDisplayed();
-                        if (current_text_finished_being_displayed)
+                        /// @todo   Maybe this should be moved to after the MoveToNextText() below
+                        /// to prevent the last character from not being seen?
+                        text_box.Update(elapsed_time_in_seconds);
+                    }
+
+                    // CHECK IF THE PRIMARY ACTION BUTTON WAS PRESSED.
+                    if (input_controller.PrimaryActionButtonPressed())
+                    {
+                        if (text_box.IsVisible)
                         {
-                            // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
-                            text_box.MoveToNextPage();
+                            // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
+                            // If the current page of text has not yet all been displayed, the next
+                            // page of text should not be moved to so that the user can finish
+                            // seeing the complete message.
+                            bool current_text_finished_being_displayed = text_box.CurrentPageOfTextFinishedBeingDisplayed();
+                            if (current_text_finished_being_displayed)
+                            {
+                                // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
+                                text_box.MoveToNextPage();
+                            }
+                        }
+                        else
+                        {
+                            // SWING THE PLAYER'S AXE.
+                            // A new axe swing may not be created if the player's
+                            // axe is already being swung.
+                            std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = noah_player.SwingAxe();
+                            bool axe_swing_occurred = (nullptr != axe_swing);
+                            if (axe_swing_occurred)
+                            {
+                                // Allow the axe to collide with other objects.
+                                axe_swings.push_back(axe_swing);
+                            }
+                        }
+                    }
+
+                    // CHECK IF THE PLAYER IS ALLOWED TO MOVE.
+                    // Noah can't move if the text box is capturing input or while the axe is swinging.
+                    // Movement is prevented to have the axe's position
+                    // remain attached to Noah.
+                    // We need to keep track if Noah moved this frame
+                    // so that we can stop any walking animations for
+                    // him if he didn't move.
+                    bool noah_moved_this_frame = false;
+                    bool axe_is_swinging = (nullptr != noah_player.Inventory->Axe) && noah_player.Inventory->Axe->IsSwinging();
+                    bool player_movement_allowed = (!axe_is_swinging && !text_box.IsVisible);
+                    if (player_movement_allowed)
+                    {
+                        // MOVE NOAH IN RESPONSE TO USER INPUT.
+                        const float PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS = 8.0f;
+                        MATH::Vector2f old_noah_position = noah_player.GetWorldPosition();
+                        if (input_controller.UpButtonPressed())
+                        {
+                            // TRACK NOAH AS MOVING THIS FRAME.
+                            noah_moved_this_frame = true;
+
+                            // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
+                            noah_player.FacingDirection = CORE::Direction::UP;
+
+                            // PLAY THE WALKING UP ANIMATION.
+                            noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_BACK_ANIMATION_ID);
+                            noah_player.Sprite.Play();
+
+                            // MOVE NOAH WHILE HANDLING COLLISIONS.
+                            MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
+                                overworld,
+                                elapsed_time_in_seconds,
+                                CORE::Direction::UP,
+                                OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
+                                noah_player.GetWorldBoundingBox());
+                            noah_player.SetWorldPosition(new_position);
+
+                            // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
+                            MATH::FloatRectangle noah_world_bounding_box = noah_player.GetWorldBoundingBox();
+                            float camera_top_y_position = camera_bounds.GetTopYPosition();
+                            bool player_moved_out_of_view = (noah_world_bounding_box.GetTopYPosition() < camera_top_y_position);
+                            if (player_moved_out_of_view)
+                            {
+                                // CHECK IF A TOP TILE MAP EXISTS FOR NOAH TO MOVE TO.
+                                unsigned int top_tile_map_row_index = current_tile_map->OverworldRowIndex - 1;
+                                unsigned int top_tile_map_column_index = current_tile_map->OverworldColumnIndex;
+                                MAPS::TileMap* top_tile_map = overworld.GetTileMap(
+                                    top_tile_map_row_index,
+                                    top_tile_map_column_index);
+                                bool top_tile_map_exists = (nullptr != top_tile_map);
+                                if (top_tile_map_exists)
+                                {
+                                    // MOVE NOAH A FEW MORE PIXELS UP SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
+                                    MATH::Vector2f noah_world_position = noah_player.GetWorldPosition();
+                                    noah_world_position.Y -= PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
+                                    noah_player.SetWorldPosition(noah_world_position);
+
+                                    // START SCROLLING TO THE TOP TILE MAP.
+                                    MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
+                                    MATH::Vector2f scroll_end_position = top_tile_map->GetCenterWorldPosition();
+                                    camera.StartScrolling(scroll_start_position, scroll_end_position);
+
+                                    // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
+                                    input_controller.DisableInput();
+                                }
+                                else
+                                {
+                                    // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
+                                    // Since there is no top tile map to scroll to, this will keep Noah on-screen.
+                                    MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
+                                    float tile_map_top_boundary = tile_map_bounding_box.GetTopYPosition();
+
+                                    // To keep Noah completely on screen, his center position should be half
+                                    // his height below the top tile map boundary.
+                                    MATH::Vector2f noah_world_position = old_noah_position;
+                                    float noah_half_height = noah_world_bounding_box.GetHeight() / 2.0f;
+                                    noah_world_position.Y = tile_map_top_boundary + noah_half_height;
+
+                                    noah_player.SetWorldPosition(noah_world_position);
+                                }
+                            } // end if (player_moved_out_of_view)
+                        } // end if (input_controller.UpButtonPressed())
+                        if (input_controller.DownButtonPressed())
+                        {
+                            // TRACK NOAH AS MOVING THIS FRAME.
+                            noah_moved_this_frame = true;
+
+                            // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
+                            noah_player.FacingDirection = CORE::Direction::DOWN;
+
+                            // PLAY THE WALKING DOWN ANIMATION.
+                            noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_FRONT_ANIMATION_ID);
+                            noah_player.Sprite.Play();
+
+                            // MOVE NOAH WHILE HANDLING COLLISIONS.
+                            MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
+                                overworld,
+                                elapsed_time_in_seconds,
+                                CORE::Direction::DOWN,
+                                OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
+                                noah_player.GetWorldBoundingBox());
+                            noah_player.SetWorldPosition(new_position);
+
+                            // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
+                            MATH::FloatRectangle noah_world_bounding_box = noah_player.GetWorldBoundingBox();
+                            float camera_bottom_y_position = camera_bounds.GetBottomYPosition();
+                            bool player_moved_out_of_view = (noah_world_bounding_box.GetBottomYPosition() > camera_bottom_y_position);
+                            if (player_moved_out_of_view)
+                            {
+                                // CHECK IF A BOTTOM TILE MAP EXISTS FOR NOAH TO MOVE TO.
+                                unsigned int bottom_tile_map_row_index = current_tile_map->OverworldRowIndex + 1;
+                                unsigned int bottom_tile_map_column_index = current_tile_map->OverworldColumnIndex;
+                                MAPS::TileMap* bottom_tile_map = overworld.GetTileMap(
+                                    bottom_tile_map_row_index,
+                                    bottom_tile_map_column_index);
+                                bool bottom_tile_map_exists = (nullptr != bottom_tile_map);
+                                if (bottom_tile_map_exists)
+                                {
+                                    // MOVE NOAH A FEW MORE PIXELS DOWN SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
+                                    MATH::Vector2f noah_world_position = noah_player.GetWorldPosition();
+                                    noah_world_position.Y += PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
+                                    noah_player.SetWorldPosition(noah_world_position);
+
+                                    // START SCROLLING TO THE BOTTOM TILE MAP.
+                                    MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
+                                    MATH::Vector2f scroll_end_position = bottom_tile_map->GetCenterWorldPosition();
+                                    camera.StartScrolling(scroll_start_position, scroll_end_position);
+
+                                    // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
+                                    input_controller.DisableInput();
+                                }
+                                else
+                                {
+                                    // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
+                                    // Since there is no bottom tile map to scroll to, this will keep Noah on-screen.
+                                    MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
+                                    float tile_map_bottom_boundary = tile_map_bounding_box.GetBottomYPosition();
+
+                                    // To keep Noah completely on screen, his center position should be half
+                                    // his height above the bottom tile map boundary.
+                                    MATH::Vector2f noah_world_position = old_noah_position;
+                                    float noah_half_height = noah_player.GetWorldBoundingBox().GetHeight() / 2.0f;
+                                    noah_world_position.Y = tile_map_bottom_boundary - noah_half_height;
+
+                                    noah_player.SetWorldPosition(noah_world_position);
+                                }
+                            } // end if (player_moved_out_of_view)
+                        } // end if (input_controller.DownButtonPressed())
+                        if (input_controller.LeftButtonPressed())
+                        {
+                            // TRACK NOAH AS MOVING THIS FRAME.
+                            noah_moved_this_frame = true;
+
+                            // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
+                            noah_player.FacingDirection = CORE::Direction::LEFT;
+
+                            // PLAY THE WALKING UP ANIMATION.
+                            noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_LEFT_ANIMATION_ID);
+                            noah_player.Sprite.Play();
+
+                            // MOVE NOAH WHILE HANDLING COLLISIONS.
+                            MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
+                                overworld,
+                                elapsed_time_in_seconds,
+                                CORE::Direction::LEFT,
+                                OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
+                                noah_player.GetWorldBoundingBox());
+                            noah_player.SetWorldPosition(new_position);
+
+                            // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
+                            MATH::FloatRectangle noah_world_bounding_box = noah_player.GetWorldBoundingBox();
+                            float camera_left_x_position = camera_bounds.GetLeftXPosition();
+                            bool player_moved_out_of_view = (noah_world_bounding_box.GetLeftXPosition() < camera_left_x_position);
+                            if (player_moved_out_of_view)
+                            {
+                                // CHECK IF A LEFT TILE MAP EXISTS FOR NOAH TO MOVE TO.
+                                unsigned int left_tile_map_row_index = current_tile_map->OverworldRowIndex;
+                                unsigned int left_tile_map_column_index = current_tile_map->OverworldColumnIndex - 1;
+                                MAPS::TileMap* left_tile_map = overworld.GetTileMap(
+                                    left_tile_map_row_index,
+                                    left_tile_map_column_index);
+                                bool left_tile_map_exists = (nullptr != left_tile_map);
+                                if (left_tile_map_exists)
+                                {
+                                    // MOVE NOAH A FEW MORE PIXELS LEFT SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
+                                    MATH::Vector2f noah_world_position = noah_player.GetWorldPosition();
+                                    noah_world_position.X -= PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
+                                    noah_player.SetWorldPosition(noah_world_position);
+
+                                    // START SCROLLING TO THE LEFT TILE MAP.
+                                    MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
+                                    MATH::Vector2f scroll_end_position = left_tile_map->GetCenterWorldPosition();
+                                    camera.StartScrolling(scroll_start_position, scroll_end_position);
+
+                                    // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
+                                    input_controller.DisableInput();
+                                }
+                                else
+                                {
+                                    // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
+                                    // Since there is no left tile map to scroll to, this will keep Noah on-screen.
+                                    MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
+                                    float tile_map_left_boundary = tile_map_bounding_box.GetLeftXPosition();
+
+                                    // To keep Noah completely on screen, his center position should be half
+                                    // his width to the right of the left tile map boundary.
+                                    MATH::Vector2f noah_world_position = old_noah_position;
+                                    float noah_half_width = noah_player.GetWorldBoundingBox().GetWidth() / 2.0f;
+                                    noah_world_position.X = tile_map_left_boundary + noah_half_width;
+
+                                    noah_player.SetWorldPosition(noah_world_position);
+                                }
+                            } // end if (player_moved_out_of_view)
+                        } // end if (input_controller.LeftButtonPressed())
+                        if (input_controller.RightButtonPressed())
+                        {
+                            // TRACK NOAH AS MOVING THIS FRAME.
+                            noah_moved_this_frame = true;
+
+                            // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
+                            noah_player.FacingDirection = CORE::Direction::RIGHT;
+
+                            // PLAY THE WALKING UP ANIMATION.
+                            noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_RIGHT_ANIMATION_ID);
+                            noah_player.Sprite.Play();
+
+                            // MOVE NOAH WHILE HANDLING COLLISIONS.
+                            MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
+                                overworld,
+                                elapsed_time_in_seconds,
+                                CORE::Direction::RIGHT,
+                                OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
+                                noah_player.GetWorldBoundingBox());
+                            noah_player.SetWorldPosition(new_position);
+
+                            // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
+                            MATH::FloatRectangle noah_world_bounding_box = noah_player.GetWorldBoundingBox();
+                            float camera_right_x_position = camera_bounds.GetRightXPosition();
+                            bool player_moved_out_of_view = (noah_world_bounding_box.GetRightXPosition() > camera_right_x_position);
+                            if (player_moved_out_of_view)
+                            {
+                                // CHECK IF A RIGHT TILE MAP EXISTS FOR NOAH TO MOVE TO.
+                                unsigned int right_tile_map_row_index = current_tile_map->OverworldRowIndex;
+                                unsigned int right_tile_map_column_index = current_tile_map->OverworldColumnIndex + 1;
+                                MAPS::TileMap* right_tile_map = overworld.GetTileMap(
+                                    right_tile_map_row_index,
+                                    right_tile_map_column_index);
+                                bool right_tile_map_exists = (nullptr != right_tile_map);
+                                if (right_tile_map_exists)
+                                {
+                                    // MOVE NOAH A FEW MORE PIXELS RIGHT SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
+                                    MATH::Vector2f noah_world_position = noah_player.GetWorldPosition();
+                                    noah_world_position.X += PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
+                                    noah_player.SetWorldPosition(noah_world_position);
+
+                                    // START SCROLLING TO THE RIGHT TILE MAP.
+                                    MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
+                                    MATH::Vector2f scroll_end_position = right_tile_map->GetCenterWorldPosition();
+                                    camera.StartScrolling(scroll_start_position, scroll_end_position);
+
+                                    // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
+                                    input_controller.DisableInput();
+                                }
+                                else
+                                {
+                                    // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
+                                    // Since there is no right tile map to scroll to, this will keep Noah on-screen.
+                                    MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
+                                    float tile_map_right_boundary = tile_map_bounding_box.GetRightXPosition();
+
+                                    // To keep Noah completely on screen, his center position should be half
+                                    // his width to the left of the right tile map boundary.
+                                    MATH::Vector2f noah_world_position = old_noah_position;
+                                    float noah_half_width = noah_player.GetWorldBoundingBox().GetWidth() / 2.0f;
+                                    noah_world_position.X = tile_map_right_boundary - noah_half_width;
+
+                                    noah_player.SetWorldPosition(noah_world_position);
+                                }
+                            } // end if (player_moved_out_of_view)
+                        } // end if (input_controller.RightButtonPressed())
+                    } // end if (!axe_is_swinging)
+
+                    // STOP NOAH'S ANIMATION FROM PLAYING IF THE PLAYER DIDN'T MOVE THIS FRAME.
+                    if (!noah_moved_this_frame)
+                    {
+                        noah_player.Sprite.ResetAnimation();
+                    }
+
+                    // UPDATE THE CAMERA BASED ON SCROLLING.
+                    if (camera.IsScrolling)
+                    {
+                        // SCROLL BASED ON THE ELAPSED FRAME TIME.
+                        camera.Scroll(elapsed_time_in_seconds);
+
+                        // CHECK IF SCROLLING HAS FINISHED.
+                        bool scrolling_finished = !camera.IsScrolling;
+                        if (scrolling_finished)
+                        {
+                            // RE-ENABLE PLAYER INPUT.
+                            input_controller.EnableInput();
                         }
                     }
                     else
                     {
-                        // SWING THE PLAYER'S AXE.
-                        // A new axe swing may not be created if the player's
-                        // axe is already being swung.
-                        std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = noah_player.SwingAxe();
-                        bool axe_swing_occurred = (nullptr != axe_swing);
-                        if (axe_swing_occurred)
+                        // POSITION THE CAMERA TO FOCUS ON THE CENTER OF THE CURRENT TILE MAP.
+                        MATH::Vector2f center_world_position = current_tile_map->GetCenterWorldPosition();
+                        camera.SetCenter(center_world_position);
+                    }
+
+                    // HANDLE OTHER COLLISIONS.
+                    COLLISION::HandleAxeSwingCollisions(overworld, axe_swings, assets);
+                    for (auto wood_logs = current_tile_map->WoodLogs.begin(); wood_logs != current_tile_map->WoodLogs.end();)
+                    {
+                        // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
+                        MATH::FloatRectangle wood_log_bounding_box = wood_logs->GetWorldBoundingBox();
+                        MATH::FloatRectangle noah_bounding_box = noah_player.GetWorldBoundingBox();
+                        /// @todo   Re-examine this later.  For now, we are forcing players to run over the center of
+                        /// the wood logs to collect them.  This mostly seems fine.  However, it doesn't fully
+                        /// solve the problem (it is still possible for the player to collect the wood without
+                        /// ever actually seeing it).
+                        bool noah_collided_with_wood_logs = noah_bounding_box.Contains(
+                            wood_log_bounding_box.GetCenterXPosition(),
+                            wood_log_bounding_box.GetCenterYPosition());
+                        if (noah_collided_with_wood_logs)
                         {
-                            // Allow the axe to collide with other objects.
-                            axe_swings.push_back(axe_swing);
+                            // ADD THE WOOD TO NOAH'S INVENTORY.
+                            /// @todo   Make the wood logs have a random amount of wood?
+                            noah_player.Inventory->AddWood();
+
+                            // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
+                            wood_logs = current_tile_map->WoodLogs.erase(wood_logs);
+
+                            // SEE IF A BIBLE VERSE SHOULD BE COLLECTED ALONG WITH THE WOOD.
+                            // There should be a random chance that a Bible verse can be collected.
+                            const unsigned int EVENLY_DIVISIBLE = 0;
+                            /// @todo   Tweak this value later as needed.  Somewhere between 2 and 3
+                            /// seems about right, but the value that feels best will have to be
+                            /// determined based on experience within the context of the full
+                            /// game.
+                            const unsigned int BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS = 2;
+                            unsigned int random_number = random_number_generator();
+                            bool bible_verse_exists_with_wood = ((random_number % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
+                            if (bible_verse_exists_with_wood)
+                            {
+                                // CHECK IF ANY BIBLE VERSES REMAIN.
+                                // This check helps protect against a mod by 0 below.
+                                bool bible_verses_remain_to_be_found = !bible_verses_left_to_find.empty();
+                                if (bible_verses_remain_to_be_found)
+                                {
+                                    // SELECT A RANDOM BIBLE VERSE.
+                                    unsigned int random_bible_verse_index = random_number_generator() % bible_verses_left_to_find.size();
+                                    auto bible_verse = bible_verses_left_to_find.begin() + random_bible_verse_index;
+
+                                    // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
+                                    noah_player.Inventory->BibleVerses.push_back(*bible_verse);
+
+                                    /// @todo   Remove this debug printing.
+                                    /// Just temporary until graphical inventory is implemented.
+                                    std::stringstream bible_verse_message;
+                                    bible_verse_message
+                                        << "You got a Bible verse!\n"
+                                        /// @todo   Make Bible book names printable!
+                                        << static_cast<int>(bible_verse->Book) << " " << bible_verse->Chapter << ":" << bible_verse->Verse
+                                        << " - " << bible_verse->Text;
+
+                                    text_box.StartDisplayingText(bible_verse_message.str());
+
+                                    std::cout << bible_verse_message.str() << std::endl;
+
+                                    // REMOVE THE VERSE SINCE IT HAS BEEN FOUND.
+                                    bible_verses_left_to_find.erase(bible_verse);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // MOVE TO CHECKING COLLISIONS WITH THE NEXT SET OF WOOD LOGS.
+                            ++wood_logs;
                         }
                     }
                 }
-
-                // CHECK IF THE PLAYER IS ALLOWED TO MOVE.
-                // Noah can't move if the text box is capturing input or while the axe is swinging.
-                // Movement is prevented to have the axe's position
-                // remain attached to Noah.
-                // We need to keep track if Noah moved this frame
-                // so that we can stop any walking animations for
-                // him if he didn't move.
-                bool noah_moved_this_frame = false;
-                bool axe_is_swinging = (nullptr != noah_player.Inventory.Axe) && noah_player.Inventory.Axe->IsSwinging();
-                bool player_movement_allowed = (!axe_is_swinging && !text_box.IsVisible);
-                if (player_movement_allowed)
-                {
-                    // MOVE NOAH IN RESPONSE TO USER INPUT.
-                    const float PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS = 8.0f;
-                    MATH::Vector2f old_noah_position = noah_player.GetWorldPosition();
-                    if (input_controller.UpButtonPressed())
-                    {
-                        // TRACK NOAH AS MOVING THIS FRAME.
-                        noah_moved_this_frame = true;
-
-                        // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
-                        noah_player.FacingDirection = CORE::Direction::UP;
-
-                        // PLAY THE WALKING UP ANIMATION.
-                        noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_BACK_ANIMATION_ID);
-                        noah_player.Sprite.Play();
-
-                        // MOVE NOAH WHILE HANDLING COLLISIONS.
-                        MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
-                            overworld,
-                            elapsed_time_in_seconds,
-                            CORE::Direction::UP,
-                            OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
-                            noah_player.GetWorldBoundingBox());
-                        noah_player.SetWorldPosition(new_position);
-
-                        // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
-                        MATH::FloatRectangle noah_world_bounding_box = noah_player.GetWorldBoundingBox();
-                        float camera_top_y_position = camera_bounds.GetTopYPosition();
-                        bool player_moved_out_of_view = (noah_world_bounding_box.GetTopYPosition() < camera_top_y_position);
-                        if (player_moved_out_of_view)
-                        {
-                            // CHECK IF A TOP TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                            unsigned int top_tile_map_row_index = current_tile_map->OverworldRowIndex - 1;
-                            unsigned int top_tile_map_column_index = current_tile_map->OverworldColumnIndex;
-                            MAPS::TileMap* top_tile_map = overworld.GetTileMap(
-                                top_tile_map_row_index,
-                                top_tile_map_column_index);
-                            bool top_tile_map_exists = (nullptr != top_tile_map);
-                            if (top_tile_map_exists)
-                            {
-                                // MOVE NOAH A FEW MORE PIXELS UP SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
-                                MATH::Vector2f noah_world_position = noah_player.GetWorldPosition();
-                                noah_world_position.Y -= PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
-                                noah_player.SetWorldPosition(noah_world_position);
-
-                                // START SCROLLING TO THE TOP TILE MAP.
-                                MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
-                                MATH::Vector2f scroll_end_position = top_tile_map->GetCenterWorldPosition();
-                                camera.StartScrolling(scroll_start_position, scroll_end_position);
-
-                                // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
-                                input_controller.DisableInput();
-                            }
-                            else
-                            {
-                                // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
-                                // Since there is no top tile map to scroll to, this will keep Noah on-screen.
-                                MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
-                                float tile_map_top_boundary = tile_map_bounding_box.GetTopYPosition();
-
-                                // To keep Noah completely on screen, his center position should be half
-                                // his height below the top tile map boundary.
-                                MATH::Vector2f noah_world_position = old_noah_position;
-                                float noah_half_height = noah_world_bounding_box.GetHeight() / 2.0f;
-                                noah_world_position.Y = tile_map_top_boundary + noah_half_height;
-
-                                noah_player.SetWorldPosition(noah_world_position);
-                            }
-                        } // end if (player_moved_out_of_view)
-                    } // end if (input_controller.UpButtonPressed())
-                    if (input_controller.DownButtonPressed())
-                    {
-                        // TRACK NOAH AS MOVING THIS FRAME.
-                        noah_moved_this_frame = true;
-
-                        // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
-                        noah_player.FacingDirection = CORE::Direction::DOWN;
-
-                        // PLAY THE WALKING DOWN ANIMATION.
-                        noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_FRONT_ANIMATION_ID);
-                        noah_player.Sprite.Play();
-
-                        // MOVE NOAH WHILE HANDLING COLLISIONS.
-                        MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
-                            overworld,
-                            elapsed_time_in_seconds,
-                            CORE::Direction::DOWN,
-                            OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
-                            noah_player.GetWorldBoundingBox());
-                        noah_player.SetWorldPosition(new_position);
-
-                        // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
-                        MATH::FloatRectangle noah_world_bounding_box = noah_player.GetWorldBoundingBox();
-                        float camera_bottom_y_position = camera_bounds.GetBottomYPosition();
-                        bool player_moved_out_of_view = (noah_world_bounding_box.GetBottomYPosition() > camera_bottom_y_position);
-                        if (player_moved_out_of_view)
-                        {
-                            // CHECK IF A BOTTOM TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                            unsigned int bottom_tile_map_row_index = current_tile_map->OverworldRowIndex + 1;
-                            unsigned int bottom_tile_map_column_index = current_tile_map->OverworldColumnIndex;
-                            MAPS::TileMap* bottom_tile_map = overworld.GetTileMap(
-                                bottom_tile_map_row_index,
-                                bottom_tile_map_column_index);
-                            bool bottom_tile_map_exists = (nullptr != bottom_tile_map);
-                            if (bottom_tile_map_exists)
-                            {
-                                // MOVE NOAH A FEW MORE PIXELS DOWN SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
-                                MATH::Vector2f noah_world_position = noah_player.GetWorldPosition();
-                                noah_world_position.Y += PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
-                                noah_player.SetWorldPosition(noah_world_position);
-
-                                // START SCROLLING TO THE BOTTOM TILE MAP.
-                                MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
-                                MATH::Vector2f scroll_end_position = bottom_tile_map->GetCenterWorldPosition();
-                                camera.StartScrolling(scroll_start_position, scroll_end_position);
-
-                                // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
-                                input_controller.DisableInput();
-                            }
-                            else
-                            {
-                                // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
-                                // Since there is no bottom tile map to scroll to, this will keep Noah on-screen.
-                                MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
-                                float tile_map_bottom_boundary = tile_map_bounding_box.GetBottomYPosition();
-
-                                // To keep Noah completely on screen, his center position should be half
-                                // his height above the bottom tile map boundary.
-                                MATH::Vector2f noah_world_position = old_noah_position;
-                                float noah_half_height = noah_player.GetWorldBoundingBox().GetHeight() / 2.0f;
-                                noah_world_position.Y = tile_map_bottom_boundary - noah_half_height;
-
-                                noah_player.SetWorldPosition(noah_world_position);
-                            }
-                        } // end if (player_moved_out_of_view)
-                    } // end if (input_controller.DownButtonPressed())
-                    if (input_controller.LeftButtonPressed())
-                    {
-                        // TRACK NOAH AS MOVING THIS FRAME.
-                        noah_moved_this_frame = true;
-
-                        // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
-                        noah_player.FacingDirection = CORE::Direction::LEFT;
-
-                        // PLAY THE WALKING UP ANIMATION.
-                        noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_LEFT_ANIMATION_ID);
-                        noah_player.Sprite.Play();
-
-                        // MOVE NOAH WHILE HANDLING COLLISIONS.
-                        MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
-                            overworld,
-                            elapsed_time_in_seconds,
-                            CORE::Direction::LEFT,
-                            OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
-                            noah_player.GetWorldBoundingBox());
-                        noah_player.SetWorldPosition(new_position);
-
-                        // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
-                        MATH::FloatRectangle noah_world_bounding_box = noah_player.GetWorldBoundingBox();
-                        float camera_left_x_position = camera_bounds.GetLeftXPosition();
-                        bool player_moved_out_of_view = (noah_world_bounding_box.GetLeftXPosition() < camera_left_x_position);
-                        if (player_moved_out_of_view)
-                        {
-                            // CHECK IF A LEFT TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                            unsigned int left_tile_map_row_index = current_tile_map->OverworldRowIndex;
-                            unsigned int left_tile_map_column_index = current_tile_map->OverworldColumnIndex - 1;
-                            MAPS::TileMap* left_tile_map = overworld.GetTileMap(
-                                left_tile_map_row_index,
-                                left_tile_map_column_index);
-                            bool left_tile_map_exists = (nullptr != left_tile_map);
-                            if (left_tile_map_exists)
-                            {
-                                // MOVE NOAH A FEW MORE PIXELS LEFT SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
-                                MATH::Vector2f noah_world_position = noah_player.GetWorldPosition();
-                                noah_world_position.X -= PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
-                                noah_player.SetWorldPosition(noah_world_position);
-
-                                // START SCROLLING TO THE LEFT TILE MAP.
-                                MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
-                                MATH::Vector2f scroll_end_position = left_tile_map->GetCenterWorldPosition();
-                                camera.StartScrolling(scroll_start_position, scroll_end_position);
-
-                                // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
-                                input_controller.DisableInput();
-                            }
-                            else
-                            {
-                                // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
-                                // Since there is no left tile map to scroll to, this will keep Noah on-screen.
-                                MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
-                                float tile_map_left_boundary = tile_map_bounding_box.GetLeftXPosition();
-
-                                // To keep Noah completely on screen, his center position should be half
-                                // his width to the right of the left tile map boundary.
-                                MATH::Vector2f noah_world_position = old_noah_position;
-                                float noah_half_width = noah_player.GetWorldBoundingBox().GetWidth() / 2.0f;
-                                noah_world_position.X = tile_map_left_boundary + noah_half_width;
-
-                                noah_player.SetWorldPosition(noah_world_position);
-                            }
-                        } // end if (player_moved_out_of_view)
-                    } // end if (input_controller.LeftButtonPressed())
-                    if (input_controller.RightButtonPressed())
-                    {
-                        // TRACK NOAH AS MOVING THIS FRAME.
-                        noah_moved_this_frame = true;
-
-                        // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
-                        noah_player.FacingDirection = CORE::Direction::RIGHT;
-
-                        // PLAY THE WALKING UP ANIMATION.
-                        noah_player.Sprite.UseAnimationSequence(RESOURCES::NOAH_WALK_RIGHT_ANIMATION_ID);
-                        noah_player.Sprite.Play();
-
-                        // MOVE NOAH WHILE HANDLING COLLISIONS.
-                        MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
-                            overworld,
-                            elapsed_time_in_seconds,
-                            CORE::Direction::RIGHT,
-                            OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
-                            noah_player.GetWorldBoundingBox());
-                        noah_player.SetWorldPosition(new_position);
-
-                        // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
-                        MATH::FloatRectangle noah_world_bounding_box = noah_player.GetWorldBoundingBox();
-                        float camera_right_x_position = camera_bounds.GetRightXPosition();
-                        bool player_moved_out_of_view = (noah_world_bounding_box.GetRightXPosition() > camera_right_x_position);
-                        if (player_moved_out_of_view)
-                        {
-                            // CHECK IF A RIGHT TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                            unsigned int right_tile_map_row_index = current_tile_map->OverworldRowIndex;
-                            unsigned int right_tile_map_column_index = current_tile_map->OverworldColumnIndex + 1;
-                            MAPS::TileMap* right_tile_map = overworld.GetTileMap(
-                                right_tile_map_row_index,
-                                right_tile_map_column_index);
-                            bool right_tile_map_exists = (nullptr != right_tile_map);
-                            if (right_tile_map_exists)
-                            {
-                                // MOVE NOAH A FEW MORE PIXELS RIGHT SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
-                                MATH::Vector2f noah_world_position = noah_player.GetWorldPosition();
-                                noah_world_position.X += PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
-                                noah_player.SetWorldPosition(noah_world_position);
-
-                                // START SCROLLING TO THE RIGHT TILE MAP.
-                                MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
-                                MATH::Vector2f scroll_end_position = right_tile_map->GetCenterWorldPosition();
-                                camera.StartScrolling(scroll_start_position, scroll_end_position);
-
-                                // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
-                                input_controller.DisableInput();
-                            }
-                            else
-                            {
-                                // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
-                                // Since there is no right tile map to scroll to, this will keep Noah on-screen.
-                                MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
-                                float tile_map_right_boundary = tile_map_bounding_box.GetRightXPosition();
-
-                                // To keep Noah completely on screen, his center position should be half
-                                // his width to the left of the right tile map boundary.
-                                MATH::Vector2f noah_world_position = old_noah_position;
-                                float noah_half_width = noah_player.GetWorldBoundingBox().GetWidth() / 2.0f;
-                                noah_world_position.X = tile_map_right_boundary - noah_half_width;
-
-                                noah_player.SetWorldPosition(noah_world_position);
-                            }
-                        } // end if (player_moved_out_of_view)
-                    } // end if (input_controller.RightButtonPressed())
-                } // end if (!axe_is_swinging)
-
-                // STOP NOAH'S ANIMATION FROM PLAYING IF THE PLAYER DIDN'T MOVE THIS FRAME.
-                if (!noah_moved_this_frame)
-                {
-                    noah_player.Sprite.ResetAnimation();
-                }
-
-                // UPDATE THE CAMERA BASED ON SCROLLING.
-                if (camera.IsScrolling)
-                {
-                    // SCROLL BASED ON THE ELAPSED FRAME TIME.
-                    camera.Scroll(elapsed_time_in_seconds);
-
-                    // CHECK IF SCROLLING HAS FINISHED.
-                    bool scrolling_finished = !camera.IsScrolling;
-                    if (scrolling_finished)
-                    {
-                        // RE-ENABLE PLAYER INPUT.
-                        input_controller.EnableInput();
-                    }
-                }
-                else
-                {
-                    // POSITION THE CAMERA TO FOCUS ON THE CENTER OF THE CURRENT TILE MAP.
-                    MATH::Vector2f center_world_position = current_tile_map->GetCenterWorldPosition();
-                    camera.SetCenter(center_world_position);
-                }
-
-                // HANDLE OTHER COLLISIONS.
-                COLLISION::HandleAxeSwingCollisions(overworld, axe_swings, assets);
-                for (auto wood_logs = current_tile_map->WoodLogs.begin(); wood_logs != current_tile_map->WoodLogs.end();)
-                {
-                    // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
-                    MATH::FloatRectangle wood_log_bounding_box = wood_logs->GetWorldBoundingBox();
-                    MATH::FloatRectangle noah_bounding_box = noah_player.GetWorldBoundingBox();
-                    /// @todo   Re-examine this later.  For now, we are forcing players to run over the center of
-                    /// the wood logs to collect them.  This mostly seems fine.  However, it doesn't fully
-                    /// solve the problem (it is still possible for the player to collect the wood without
-                    /// ever actually seeing it).
-                    bool noah_collided_with_wood_logs = noah_bounding_box.Contains(
-                        wood_log_bounding_box.GetCenterXPosition(), 
-                        wood_log_bounding_box.GetCenterYPosition());
-                    if (noah_collided_with_wood_logs)
-                    {
-                        // ADD THE WOOD TO NOAH'S INVENTORY.
-                        /// @todo   Make the wood logs have a random amount of wood?
-                        noah_player.Inventory.AddWood();
-
-                        /// @todo   Remove this debug printing.
-                        /// Just temporary until time is dedicated to creating a graphical version.
-                        std::cout << "Wood count: " << noah_player.Inventory.WoodCount << std::endl;
-
-                        // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
-                        wood_logs = current_tile_map->WoodLogs.erase(wood_logs);
-
-                        // SEE IF A BIBLE VERSE SHOULD BE COLLECTED ALONG WITH THE WOOD.
-                        // There should be a random chance that a Bible verse can be collected.
-                        const unsigned int EVENLY_DIVISIBLE = 0;
-                        /// @todo   Tweak this value later as needed.  Somewhere between 2 and 3
-                        /// seems about right, but the value that feels best will have to be
-                        /// determined based on experience within the context of the full
-                        /// game.
-                        const unsigned int BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS = 2;
-                        unsigned int random_number = random_number_generator();
-                        bool bible_verse_exists_with_wood = ((random_number % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
-                        if (bible_verse_exists_with_wood)
-                        {
-                            // CHECK IF ANY BIBLE VERSES REMAIN.
-                            // This check helps protect against a mod by 0 below.
-                            bool bible_verses_remain_to_be_found = !bible_verses_left_to_find.empty();
-                            if (bible_verses_remain_to_be_found)
-                            {
-                                // SELECT A RANDOM BIBLE VERSE.
-                                unsigned int random_bible_verse_index = random_number_generator() % bible_verses_left_to_find.size();
-                                auto bible_verse = bible_verses_left_to_find.begin() + random_bible_verse_index;
-
-                                // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
-                                noah_player.Inventory.BibleVerses.push_back(*bible_verse);
-
-                                /// @todo   Remove this debug printing.
-                                /// Just temporary until graphical inventory is implemented.
-                                std::stringstream bible_verse_message;
-                                bible_verse_message
-                                    << "You got a Bible verse!\n"
-                                    /// @todo   Make Bible book names printable!
-                                    << static_cast<int>(bible_verse->Book) << " " << bible_verse->Chapter << ":" << bible_verse->Verse
-                                    << " - " << bible_verse->Text;
-
-                                text_box.StartDisplayingText(bible_verse_message.str());
-
-                                std::cout << bible_verse_message.str() << std::endl;
-
-                                // REMOVE THE VERSE SINCE IT HAS BEEN FOUND.
-                                bible_verses_left_to_find.erase(bible_verse);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // MOVE TO CHECKING COLLISIONS WITH THE NEXT SET OF WOOD LOGS.
-                        ++wood_logs;
-                    }
-                }
-
-                // UPDATE THE HUD BASED ON THE PLAYER'S INVENTORY.
-                hud.Update(noah_player.Inventory);
 
                 // RENDER THE CURRENT STATE OF THE GAME.
                 window->clear();
@@ -935,14 +956,14 @@ int main(int argumentCount, char* arguments[])
                 
                 // RENDER THE PLAYER.
                 // Make sure his axe/sprite are updated.
-                noah_player.Inventory.Axe->Update(elapsed_time_in_seconds);
+                noah_player.Inventory->Axe->Update(elapsed_time_in_seconds);
                 noah_player.Sprite.Update(elapsed_time_in_seconds);
                 GRAPHICS::Render(noah_player.Sprite, *window);
 
                 // The axe should only be rendered if it is swinging.
-                if (noah_player.Inventory.Axe->IsSwinging())
+                if (noah_player.Inventory->Axe->IsSwinging())
                 {
-                    GRAPHICS::Render(noah_player.Inventory.Axe->Sprite, *window);
+                    GRAPHICS::Render(noah_player.Inventory->Axe->Sprite, *window);
                 }
 
                 // RENDER THE HUD.

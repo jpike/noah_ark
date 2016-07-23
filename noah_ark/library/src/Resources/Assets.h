@@ -29,6 +29,7 @@ namespace RESOURCES
     extern const std::string NOAH_WALK_LEFT_ANIMATION_ID;
     extern const std::string NOAH_WALK_RIGHT_ANIMATION_ID;
     extern const std::string AXE_HIT_SOUND_ID;
+    extern const std::string COLLECT_BIBLE_VERSE_SOUND_ID;
     extern const std::string TREE_SHAKE_SOUND_ID;
 
     /// Provides access to all assets needed for the game.

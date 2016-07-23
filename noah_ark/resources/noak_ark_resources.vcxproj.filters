@@ -252,4 +252,18 @@
       <Filter>Resources\Images</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\sounds\axe_tree_hit1.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\collect_bible_verse1.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\temp_background_music.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\tree_shake3.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+  </ItemGroup>
 </Project>

@@ -22,6 +22,7 @@ namespace RESOURCES
     const std::string NOAH_WALK_LEFT_ANIMATION_ID = "noah_walk_left";
     const std::string NOAH_WALK_RIGHT_ANIMATION_ID = "noah_walk_right";
     const std::string AXE_HIT_SOUND_ID = "res/sounds/axe_tree_hit1.wav";
+    const std::string COLLECT_BIBLE_VERSE_SOUND_ID = "res/sounds/collect_bible_verse1.wav";
     const std::string TREE_SHAKE_SOUND_ID = "res/sounds/tree_shake3.wav";
 
     Assets::Assets() :

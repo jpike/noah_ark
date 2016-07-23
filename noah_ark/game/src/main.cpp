@@ -368,6 +368,34 @@ int main(int argumentCount, char* arguments[])
         // CREATE THE CONTROLLER USING THE KEYBOARD.
         INPUT_CONTROL::KeyboardInputController input_controller;
 
+        // LOAD MISCELLANEOUS AUDIO RESOURCES.
+        std::shared_ptr<AUDIO::SoundEffect> collected_bible_verse_sound = assets.GetSound(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
+        bool collect_bible_verse_sound_loaded = (nullptr != collected_bible_verse_sound);
+        if (!collect_bible_verse_sound_loaded)
+        {
+            std::cerr << "Failed to load collected Bible verse sound." << std::endl;
+            /// @todo   More specific exit code.  A specific exit code hasn't been
+            /// created yet since this specific loading code is likely temporary.
+            return EXIT_FAILURE;
+        }
+
+        /// @todo   Create actual music class?  This background music stuff
+        /// is just temporary for now to get something in to see exactly
+        /// how music might have to work.  The temporary background music
+        /// is pretty horrible.
+        sf::Music background_music;
+        if (!background_music.openFromFile("res/sounds/temp_background_music.wav"))
+        {
+            std::cerr << "Failed to load background music." << std::endl;
+            /// @todo   More specific exit code.  A specific exit code hasn't been
+            /// created yet since this specific loading code is likely temporary.
+            return EXIT_FAILURE;
+        }
+        background_music.setVolume(50.0f);
+        background_music.setPitch(0.5f);
+        background_music.setLoop(true);
+        background_music.play();
+
         // CREATE THE WINDOW.
         const std::string GAME_TITLE = "Bible Games - Noah's Ark";
         std::shared_ptr<sf::RenderWindow> window = std::make_shared<sf::RenderWindow>(
@@ -862,6 +890,9 @@ int main(int argumentCount, char* arguments[])
                                 bool bible_verses_remain_to_be_found = !bible_verses_left_to_find.empty();
                                 if (bible_verses_remain_to_be_found)
                                 {
+                                    // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
+                                    collected_bible_verse_sound->Play();
+
                                     // SELECT A RANDOM BIBLE VERSE.
                                     unsigned int random_bible_verse_index = random_number_generator() % bible_verses_left_to_find.size();
                                     auto bible_verse = bible_verses_left_to_find.begin() + random_bible_verse_index;

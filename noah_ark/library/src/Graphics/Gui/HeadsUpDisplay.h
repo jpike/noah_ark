@@ -34,6 +34,11 @@ namespace GUI
             const std::shared_ptr<const Texture>& axe_texture,
             const std::shared_ptr<const Texture>& wood_texture);
 
+        // INPUT.
+        /// Has the HUD respond to the provided key being pressed.
+        /// @param[in]  key - The key that was pressed.
+        void RespondToInput(const sf::Keyboard::Key key);
+
         // RENDERING.
         /// Renders the HUD to the provided target.
         /// @param[in]  render_target - The target to render to.

@@ -4,6 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include "Graphics/Color.h"
 #include "Graphics/Gui/Font.h"
+/// #@todo  Create inventory sub-namespace?
+#include "Graphics/Gui/InventoryBibleVerseListBox.h"
+#include "Graphics/Gui/InventoryBibleVerseTextBox.h"
 #include "Objects/Inventory.h"
 
 namespace GRAPHICS
@@ -49,6 +52,11 @@ namespace GUI
             const std::shared_ptr<const OBJECTS::Inventory>& inventory,
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font);
 
+        // INPUT.
+        /// Has the inventory GUI respond to the provided key being pressed.
+        /// @param[in]  key - The key that was pressed.
+        void RespondToInput(const sf::Keyboard::Key key);
+
         // RENDERING.
         /// Renders the inventory GUI to the provided target.
         /// @param[in]  render_target - The target to render to.
@@ -83,6 +91,13 @@ namespace GUI
         GRAPHICS::Color AnimalsTabColor;
         /// The color of the food tab and page.
         GRAPHICS::Color FoodTabColor;
+        /// The GUI text box for displaying the currently selected Bible verse
+        /// in the player's inventory.
+        /// @todo   Factor out to some Bible page class?
+        InventoryBibleVerseTextBox BibleVerseTextBox;
+        /// The GUI list box for displaying a list of Bible verses in the
+        /// player's inventory.
+        InventoryBibleVerseListBox BibleVerseListBox;
     };
 }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <set>
 #include "Bible/BibleVerses.h"
 #include "Objects/Axe.h"
 
@@ -51,12 +52,8 @@ namespace OBJECTS
         /// The number of wooden logs in the inventory.
         unsigned int WoodCount = 0;
         /// Bible verses collected so far by the player.
-        /// Storage of the verses in a vector seems to
-        /// be sufficient so far in terms of performance.
-        /// Storing pointers (rather than full objects)
-        /// or using some kind of set data structure
-        /// has not yielded any notable performance
-        /// improvements.
-        std::vector<BIBLE::BibleVerse> BibleVerses = std::vector<BIBLE::BibleVerse>();
+        /// A set is used to allow easily determining
+        /// if a verse is already in the inventory.
+        std::set<BIBLE::BibleVerse> BibleVerses = std::set<BIBLE::BibleVerse>();
     };
 }

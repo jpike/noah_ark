@@ -21,6 +21,11 @@ namespace BIBLE
         SECOND_PETER ///< The book of 2 Peter.
     };
 
+    /// Gets a string for the name of the book.
+    /// @param[in]  book - The book of the Bible to get the string name of.
+    /// @return The string name for the book.
+    std::string ToString(const BibleBook book);
+
     /// A Bible verse, with book, chapter, and verse information
     /// in addition to content.
     struct BibleVerse
@@ -45,12 +50,27 @@ namespace BIBLE
             const BibleBook book,
             const unsigned int chapter,
             const unsigned int verse,
-            const std::string& text) :
-        Book(book),
-        Chapter(chapter),
-        Verse(verse),
-        Text(text)
-        {}
+            const std::string& text);
+
+        // OPERATORS.
+        /// Less than operator to allow sorting Bible verses
+        /// by book, chapter, and then verse.
+        /// @param[in]   rhs - The Bible verse on the right hand side
+        ///     of the less than operator to compare with.
+        /// @return True if this Bible verse comes before the provided
+        ///     verse; false otherwise.
+        bool operator< (const BibleVerse& rhs) const;
+
+        // STRING RETRIEVAL.
+        /// Gets a string identifying the Bible verse, commonly used
+        /// for citation purposes (book, chapter, verse).
+        /// @return A citation string identifying the verse.
+        std::string GetCitationString() const;
+
+        /// Gets the full string representation of the verse for display:
+        ///     VerseText - Book Chapter:VerseNumber
+        /// @return     The full string representation of the verse.
+        std::string ToString() const;
     };
 
     /// The collection of all Bible verses that can be found during the game.

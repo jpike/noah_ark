@@ -3,7 +3,7 @@
 
 namespace CORE
 {
-    std::vector<std::string> String::SplitIntoWords(const std::string& text)
+    std::vector<std::string> String::SplitIntoLines(const std::string& text)
     {
         std::vector<std::string> lines;
 

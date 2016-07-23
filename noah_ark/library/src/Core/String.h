@@ -19,7 +19,7 @@ namespace CORE
         /// since that is all tha is currently needed.
         /// @param[in]  text - The text to split into lines.
         /// @return The lines from the provided text, in original order.
-        static std::vector<std::string> SplitIntoWords(const std::string& text);
+        static std::vector<std::string> SplitIntoLines(const std::string& text);
 
         /// Splits the provided string into separate words.
         /// Any whitespace character is considered a delimiter.

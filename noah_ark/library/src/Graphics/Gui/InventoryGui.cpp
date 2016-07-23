@@ -14,7 +14,9 @@ namespace GUI
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
     Font(font),
     Inventory(inventory),
-    CurrentTab(TabType::BIBLE)
+    CurrentTab(TabType::BIBLE),
+    BibleVerseTextBox(font),
+    BibleVerseListBox(inventory, font)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(
@@ -39,6 +41,65 @@ namespace GUI
         FoodTabColor.Red = 0;
         FoodTabColor.Green = 255;
         FoodTabColor.Blue = 0;
+    }
+
+    void InventoryGui::RespondToInput(const sf::Keyboard::Key key)
+    {
+        // CHECK WHICH TAB IS OPENED.
+        switch (CurrentTab)
+        {
+            case TabType::BIBLE:
+            {
+                // CHECK WHICH KEY WAS PRESSED.
+                switch (key)
+                {
+                    case sf::Keyboard::Up:
+                        // SELECT THE PREVIOUS BIBLE VERSE.
+                        BibleVerseListBox.SelectPreviousVerse();
+                        break;
+                    case sf::Keyboard::Down:
+                        // SELECT THE NEXT BIBLE VERSE.
+                        BibleVerseListBox.SelectNextVerse();
+                        break;
+                    case sf::Keyboard::Right:
+                        // SWITCH TO THE ANIMALS TAB ON THE RIGHT.
+                        CurrentTab = TabType::ANIMALS;
+                        break;
+                }
+                break;
+            }
+            case TabType::ANIMALS:
+            {
+                // CHECK WHICH KEY WAS PRESSED.
+                switch (key)
+                {
+                    case sf::Keyboard::Left:
+                        // SWITCH TO THE BIBLE TAB ON THE LEFT.
+                        CurrentTab = TabType::BIBLE;
+                        break;
+                    case sf::Keyboard::Right:
+                        // SWITCH TO THE FOOD TAB ON THE RIGHT.
+                        CurrentTab = TabType::FOOD;
+                        break;
+                }
+                break;
+            }
+            case TabType::FOOD:
+            {
+                // CHECK WHICH KEY WAS PRESSED.
+                switch (key)
+                {
+                    case sf::Keyboard::Left:
+                        // SWITCH TO THE ANIMALS TAB ON THE LEFT.
+                        CurrentTab = TabType::ANIMALS;
+                        break;
+                }
+                break;
+            }
+            default:
+                // Nothing to do.
+                break;
+        }
     }
 
     void InventoryGui::Render(sf::RenderTarget& render_target)
@@ -187,6 +248,46 @@ namespace GUI
         RenderScreenRectangle(
             background_rectangle,
             BibleTabColor,
+            render_target);
+
+        // RENDER THE BOX FOR THE MAIN BIBLE VERSE DISPLAY.
+        const BIBLE::BibleVerse* const selected_bible_verse = BibleVerseListBox.GetSelectedVerse();
+
+        // The exact positioning/size of this box is tentative.
+        const float BIBLE_VERSE_TEXT_BOX_SINGLE_SIDE_PADDING_IN_PIXELS = 4.0f;
+        float bible_verse_text_box_left_screen_position_in_pixels = background_rectangle.GetLeftXPosition() + BIBLE_VERSE_TEXT_BOX_SINGLE_SIDE_PADDING_IN_PIXELS;
+        float bible_verse_text_box_top_screen_position_in_pixels = background_rectangle.GetTopYPosition() + BIBLE_VERSE_TEXT_BOX_SINGLE_SIDE_PADDING_IN_PIXELS;
+        float bible_verse_text_box_width_in_pixels = background_rectangle.GetWidth() / 2.0f;
+        const float BIBLE_VERSE_TEXT_BOX_BOTH_SIDES_PADDING_IN_PIXELS = 2.0f * BIBLE_VERSE_TEXT_BOX_SINGLE_SIDE_PADDING_IN_PIXELS;
+        float bible_verse_text_box_height_in_pixels = background_rectangle.GetHeight() - BIBLE_VERSE_TEXT_BOX_BOTH_SIDES_PADDING_IN_PIXELS;
+        MATH::FloatRectangle bible_verse_text_box_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+            bible_verse_text_box_left_screen_position_in_pixels,
+            bible_verse_text_box_top_screen_position_in_pixels,
+            bible_verse_text_box_width_in_pixels,
+            bible_verse_text_box_height_in_pixels);
+
+        BibleVerseTextBox.Render(
+            selected_bible_verse, 
+            bible_verse_text_box_rectangle, 
+            render_target);
+
+        // RENDER THE BOX FOR THE LIST OF ALL BIBLE VERSES.
+        // The exact positioning/size of this box is tentative.
+        float bible_verse_list_box_left_screen_position_in_pixels = 
+            (bible_verse_text_box_rectangle.GetRightXPosition() + BIBLE_VERSE_TEXT_BOX_SINGLE_SIDE_PADDING_IN_PIXELS);
+        float bible_verse_list_box_top_screen_position_in_pixels = bible_verse_text_box_rectangle.GetTopYPosition();
+        // Take up the remaining width (minus padding on the right).
+        float bible_verse_list_box_width_in_pixels = 
+            background_rectangle.GetWidth() - bible_verse_list_box_left_screen_position_in_pixels - BIBLE_VERSE_TEXT_BOX_SINGLE_SIDE_PADDING_IN_PIXELS;
+        float bible_verse_list_box_height_in_pixels = bible_verse_text_box_rectangle.GetHeight();
+        MATH::FloatRectangle bible_verse_list_box_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+            bible_verse_list_box_left_screen_position_in_pixels,
+            bible_verse_list_box_top_screen_position_in_pixels,
+            bible_verse_list_box_width_in_pixels,
+            bible_verse_list_box_height_in_pixels);
+
+       BibleVerseListBox.Render(
+            bible_verse_list_box_rectangle,
             render_target);
     }
     

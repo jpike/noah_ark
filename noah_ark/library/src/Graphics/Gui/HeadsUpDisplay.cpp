@@ -36,6 +36,15 @@ namespace GUI
             "Null wood texture provided to HUD.");
     }
 
+    void HeadsUpDisplay::RespondToInput(const sf::Keyboard::Key key)
+    {
+        // FORWARD INPUT TO THE INVENTORY GUI IF IT IS OPENED.
+        if (InventoryOpened)
+        {
+            InventoryGui.RespondToInput(key);
+        }
+    }
+
     void HeadsUpDisplay::Render(sf::RenderTarget& render_target)
     {
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.

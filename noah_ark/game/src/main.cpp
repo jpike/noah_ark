@@ -433,6 +433,14 @@ int main(int argumentCount, char* arguments[])
                             // OPEN OR CLOSE THE INVENTORY.
                             // The inventory key acts like a toggle button for the inventory.
                             hud.InventoryOpened = !hud.InventoryOpened;
+                            break;
+                        }
+
+                        // CHECK IF THE INVENTORY IS OPENED.
+                        if (hud.InventoryOpened)
+                        {
+                            // FORWARD THE KEY PRESS TO THE HUD.
+                            hud.RespondToInput(event.key.code);
                         }
                         break;
                     }
@@ -859,16 +867,14 @@ int main(int argumentCount, char* arguments[])
                                     auto bible_verse = bible_verses_left_to_find.begin() + random_bible_verse_index;
 
                                     // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
-                                    noah_player.Inventory->BibleVerses.push_back(*bible_verse);
+                                    noah_player.Inventory->BibleVerses.insert(*bible_verse);
 
                                     /// @todo   Remove this debug printing.
                                     /// Just temporary until graphical inventory is implemented.
                                     std::stringstream bible_verse_message;
                                     bible_verse_message
                                         << "You got a Bible verse!\n"
-                                        /// @todo   Make Bible book names printable!
-                                        << static_cast<int>(bible_verse->Book) << " " << bible_verse->Chapter << ":" << bible_verse->Verse
-                                        << " - " << bible_verse->Text;
+                                        << bible_verse->ToString();
 
                                     text_box.StartDisplayingText(bible_verse_message.str());
 

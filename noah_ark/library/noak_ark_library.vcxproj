@@ -27,6 +27,8 @@
     <ClInclude Include="src\Graphics\Gui\Font.h" />
     <ClInclude Include="src\Graphics\Gui\Glyph.h" />
     <ClInclude Include="src\Graphics\Gui\HeadsUpDisplay.h" />
+    <ClInclude Include="src\Graphics\Gui\InventoryBibleVerseListBox.h" />
+    <ClInclude Include="src\Graphics\Gui\InventoryBibleVerseTextBox.h" />
     <ClInclude Include="src\Graphics\Gui\InventoryGui.h" />
     <ClInclude Include="src\Graphics\Gui\Text.h" />
     <ClInclude Include="src\Graphics\Gui\TextBox.h" />
@@ -69,6 +71,8 @@
     <ClCompile Include="src\Graphics\Camera.cpp" />
     <ClCompile Include="src\Graphics\Gui\Font.cpp" />
     <ClCompile Include="src\Graphics\Gui\HeadsUpDisplay.cpp" />
+    <ClCompile Include="src\Graphics\Gui\InventoryBibleVerseListBox.cpp" />
+    <ClCompile Include="src\Graphics\Gui\InventoryBibleVerseTextBox.cpp" />
     <ClCompile Include="src\Graphics\Gui\InventoryGui.cpp" />
     <ClCompile Include="src\Graphics\Gui\Text.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextBox.cpp" />

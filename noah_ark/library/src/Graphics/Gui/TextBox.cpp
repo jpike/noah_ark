@@ -26,7 +26,7 @@ namespace GUI
         // SPLIT THE TEXT INTO SEPARATE LINES.
         // This allows newline characters in the text to be properly
         // preserved when rendered in the text box.
-        std::vector<std::string> lines = CORE::String::SplitIntoWords(text);
+        std::vector<std::string> lines = CORE::String::SplitIntoLines(text);
 
         // ADD EACH LINE OF TEXT TO APPROPRIATE PAGES IN THE TEXT BOX.
         for (const std::string& line : lines)

@@ -68,11 +68,11 @@ namespace GUI
         void Render(
             const MATH::Vector2ui& top_left_screen_position_in_pixels,
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
-            sf::RenderTarget& render_target);
+            sf::RenderTarget& render_target) const;
         /// Renders the text page to the provided stream.
         /// @param[in,out]  output_stream - The output stream to render to.
         /// @todo   Create a textual render target?
-        void Render(std::ostream& output_stream);
+        void Render(std::ostream& output_stream) const;
 
     private:
         // PRIVATE METHODS.

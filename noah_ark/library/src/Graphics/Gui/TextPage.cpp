@@ -98,7 +98,7 @@ namespace GUI
     void TextPage::Render(
         const MATH::Vector2ui& top_left_screen_position_in_pixels,
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
-        sf::RenderTarget& render_target)
+        sf::RenderTarget& render_target) const
     {
         // MAKE SURE THE FONT EXISTS.
         assert(font);
@@ -125,7 +125,7 @@ namespace GUI
             current_line_top_left_screen_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;
         }
     }
-    void TextPage::Render(std::ostream& output_stream)
+    void TextPage::Render(std::ostream& output_stream) const
     {
         // RENDER EACH LINE OF TEXT.
         for (unsigned int line_index = 0; line_index < LINE_COUNT; ++line_index)

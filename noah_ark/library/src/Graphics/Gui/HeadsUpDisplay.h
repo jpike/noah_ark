@@ -43,7 +43,7 @@ namespace GUI
         // RENDERING.
         /// Renders the HUD to the provided target.
         /// @param[in]  render_target - The target to render to.
-        void Render(sf::RenderTarget& render_target);
+        void Render(sf::RenderTarget& render_target) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main text box for displaying messages to the player.

@@ -23,7 +23,7 @@ namespace GUI
     void InventoryBibleVerseTextBox::Render(
         const BIBLE::BibleVerse* const bible_verse,
         const MATH::FloatRectangle& bounding_rectangle,
-        sf::RenderTarget& render_target)
+        sf::RenderTarget& render_target) const
     {
         // RENDER THE BACKGROUND BOX.
         /// @todo   Centralize this color.

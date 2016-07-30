@@ -33,6 +33,7 @@
     <ClInclude Include="src\Graphics\Gui\Text.h" />
     <ClInclude Include="src\Graphics\Gui\TextBox.h" />
     <ClInclude Include="src\Graphics\Gui\TextPage.h" />
+    <ClInclude Include="src\Graphics\Renderer.h" />
     <ClInclude Include="src\Graphics\Rendering.h" />
     <ClInclude Include="src\Graphics\Screen.h" />
     <ClInclude Include="src\Graphics\Sprite.h" />
@@ -77,6 +78,7 @@
     <ClCompile Include="src\Graphics\Gui\Text.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextBox.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextPage.cpp" />
+    <ClCompile Include="src\Graphics\Renderer.cpp" />
     <ClCompile Include="src\Graphics\Rendering.cpp" />
     <ClCompile Include="src\Graphics\Sprite.cpp" />
     <ClCompile Include="src\Graphics\Texture.cpp" />

@@ -46,7 +46,7 @@ namespace GUI
         }
     }
 
-    void HeadsUpDisplay::Render(sf::RenderTarget& render_target)
+    void HeadsUpDisplay::Render(sf::RenderTarget& render_target) const
     {
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
         // An icon is rendered to help players know which key to press.
@@ -128,6 +128,12 @@ namespace GUI
         if (InventoryOpened)
         {
             InventoryGui.Render(render_target);
+        }
+
+        // RENDER THE TEXT BOX IF IT IS VISIBLE.
+        if (MainTextBox.IsVisible)
+        {
+            MainTextBox.Render(render_target);
         }
     }
 }

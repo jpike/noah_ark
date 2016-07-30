@@ -29,7 +29,7 @@ namespace GUI
 
     void InventoryBibleVerseListBox::Render(
         const MATH::FloatRectangle& bounding_rectangle,
-        sf::RenderTarget& render_target)
+        sf::RenderTarget& render_target) const
     {
         // RENDER THE BACKGROUND BOX.
         /// @todo   Centralize this color.

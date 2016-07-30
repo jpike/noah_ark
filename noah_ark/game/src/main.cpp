@@ -12,6 +12,7 @@
 #include "Core/Direction.h"
 #include "Events/AxeSwingEvent.h"
 #include "Graphics/Camera.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/Rendering.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
@@ -411,10 +412,11 @@ int main(int argumentCount, char* arguments[])
             assets.GetTexture(RESOURCES::AXE_TEXTURE_ID),
             assets.GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID));
 
+        // INITIALIZE THE RENDERER.
+        GRAPHICS::Renderer renderer(window);
         // INITIALIZE THE CAMERA.
-        GRAPHICS::Camera camera(window);
         MATH::Vector2f player_start_world_position = overworld.NoahPlayer.GetWorldPosition();
-        camera.SetCenter(player_start_world_position);
+        renderer.Camera.SetCenter(player_start_world_position);
 
         // CREATE THE RANDOM NUMBER GENERATOR.
         std::random_device random_number_generator;
@@ -475,12 +477,6 @@ int main(int argumentCount, char* arguments[])
                 sf::Time elapsed_time = game_loop_clock.restart();
                 float elapsed_time_in_seconds = elapsed_time.asSeconds();
 
-                MATH::FloatRectangle camera_bounds = camera.GetViewBounds();
-                MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
-
-                MAPS::TileMap* current_tile_map = overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
-                assert(current_tile_map);
-
                 // CHECK IF THE INVENTORY GUI IS DISPLAYED.
                 // If the inventory GUI is displayed, then the regular controls for the player
                 // in the world shouldn't work.
@@ -519,7 +515,7 @@ int main(int argumentCount, char* arguments[])
                             input_controller,
                             bible_verses_left_to_find,
                             assets,
-                            camera,
+                            renderer.Camera,
                             message_for_text_box);
 
                         // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
@@ -534,90 +530,11 @@ int main(int argumentCount, char* arguments[])
                 // RENDER THE CURRENT STATE OF THE GAME.
                 window->clear();
 
-                // RENDER THE CURRENT TILE MAP.
-                /// @todo   Consider signed ints.  Right now, we're just
-                /// rendering a few surrounding tile maps.
-                unsigned int min_tile_map_row = current_tile_map->OverworldRowIndex;
-                bool top_tile_map_exists = (min_tile_map_row > 0);
-                if (top_tile_map_exists)
-                {
-                    --min_tile_map_row;
-                }
-                unsigned int min_tile_map_column = current_tile_map->OverworldColumnIndex;
-                bool left_tile_map_exists = (min_tile_map_column > 0);
-                if (left_tile_map_exists)
-                {
-                    --min_tile_map_column;
-                }
-                unsigned int max_tile_map_row = min_tile_map_row + 2;
-                unsigned int max_tile_map_column = min_tile_map_column + 2;
-                for (unsigned int tile_map_row = min_tile_map_row; tile_map_row <= max_tile_map_row; ++tile_map_row)
-                {
-                    for (unsigned int tile_map_column = min_tile_map_column; tile_map_column <= max_tile_map_column; ++tile_map_column)
-                    {
-                        // GET THE CURRENT TILE MAP.
-                        MAPS::TileMap* tile_map = overworld.GetTileMap(tile_map_row, tile_map_column);
-                        bool tile_map_exists = (nullptr != tile_map);
-                        if (!tile_map_exists)
-                        {
-                            // Continue trying to render other tile maps.
-                            continue;
-                        }
-
-                        // UPDATE THE CURRENT TILE MAP'S TREES.
-                        /// @todo   Figure out if this maybe should be handled elsewhere.
-                        for (auto tree = tile_map->Trees.begin(); tree != tile_map->Trees.end(); ++tree)
-                        {
-                            tree->Update(elapsed_time_in_seconds);
-                        }
-
-                        // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
-                        /// @todo   Maybe we only need a single dust cloud?  At least in theory, it shouldn't be
-                        /// possible for more than one tree to in this state at a given time.
-                        for (auto dust_cloud = tile_map->TreeDustClouds.begin(); dust_cloud != tile_map->TreeDustClouds.end();)
-                        {
-                            // UPDATE THE CURRENT DUST CLOUD.
-                            dust_cloud->Update(elapsed_time_in_seconds);
-
-                            // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
-                            bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
-                            if (dust_cloud_disappeared)
-                            {
-                                // REMOVE THE DUST CLOUD.
-                                dust_cloud = tile_map->TreeDustClouds.erase(dust_cloud);
-                            }
-                            else
-                            {
-                                // MOVE TO UPDATING THE NEXT DUST CLOUD.
-                                ++dust_cloud;
-                            }
-                        }
-
-                        // RENDER THE TILE MAP.
-                        GRAPHICS::Render(*tile_map, *window);
-                    }
-                }
-                
-                // RENDER THE PLAYER.
-                // Make sure his axe/sprite are updated.
-                overworld.NoahPlayer.Inventory->Axe->Update(elapsed_time_in_seconds);
-                overworld.NoahPlayer.Sprite.Update(elapsed_time_in_seconds);
-                GRAPHICS::Render(overworld.NoahPlayer.Sprite, *window);
-
-                // The axe should only be rendered if it is swinging.
-                if (overworld.NoahPlayer.Inventory->Axe->IsSwinging())
-                {
-                    GRAPHICS::Render(overworld.NoahPlayer.Inventory->Axe->Sprite, *window);
-                }
+                // RENDER THE OVERWORLD.
+                renderer.Render(elapsed_time_in_seconds, overworld, *window);
 
                 // RENDER THE HUD.
-                hud.Render(*window);
-
-                // RENDER THE TEXT BOX IF IT IS VISIBLE.
-                if (hud.MainTextBox.IsVisible)
-                {
-                    hud.MainTextBox.Render(*window);
-                }
+                renderer.Render(hud, *window);
 
                 // DISPLAY THE RENDERED FRAME IN THE WINDOW.
                 window->display();

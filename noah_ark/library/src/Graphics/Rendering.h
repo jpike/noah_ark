@@ -12,10 +12,6 @@
 
 namespace GRAPHICS
 {
-    void Render(const GRAPHICS::Sprite& sprite, sf::RenderTarget& render_target);
-
-    void Render(const GRAPHICS::AnimatedSprite& sprite, sf::RenderTarget& render_target);
-
     void RenderScreenRectangle(
         const MATH::FloatRectangle& rectangle,
         const GRAPHICS::Color& color,
@@ -34,6 +30,4 @@ namespace GRAPHICS
         const MATH::FloatRectangle& texture_sub_rectangle, 
         const MATH::Vector2ui& top_left_screen_position_in_pixels,
         sf::RenderTarget& render_target);
-
-    void Render(const MAPS::TileMap& tile_map, sf::RenderTarget& render_target);
 }

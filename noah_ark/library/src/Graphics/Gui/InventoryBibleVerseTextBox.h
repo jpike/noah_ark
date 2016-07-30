@@ -35,7 +35,7 @@ namespace GUI
         void Render(
             const BIBLE::BibleVerse* const bible_verse,
             const MATH::FloatRectangle& bounding_rectangle,
-            sf::RenderTarget& render_target);
+            sf::RenderTarget& render_target) const;
 
     private:
         // MEMBER VARIABLES.

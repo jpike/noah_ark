@@ -129,7 +129,7 @@ namespace GUI
         return current_page_of_text_fully_displayed;
     }
 
-    void TextBox::Render(sf::RenderTarget& render_target)
+    void TextBox::Render(sf::RenderTarget& render_target) const
     {
         // CHECK IF ANY PAGES OF TEXT EXIST.
         bool text_pages_exist = !Pages.empty();
@@ -209,7 +209,7 @@ namespace GUI
         }
     }
 
-    void TextBox::Render(std::ostream& output_stream)
+    void TextBox::Render(std::ostream& output_stream) const
     {
         // CHECK IF ANY PAGES OF TEXT EXIST.
         bool text_pages_exist = !Pages.empty();

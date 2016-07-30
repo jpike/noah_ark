@@ -36,7 +36,7 @@ namespace GUI
         /// @param[in,out]  render_target - The target to render to.
         void Render(
             const MATH::FloatRectangle& bounding_rectangle,
-            sf::RenderTarget& render_target);
+            sf::RenderTarget& render_target) const;
 
         // VERSE METHODS.
         /// Gets the currently selected verse, if available in the inventory.

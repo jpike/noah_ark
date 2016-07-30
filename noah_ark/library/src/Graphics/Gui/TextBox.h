@@ -50,11 +50,11 @@ namespace GUI
 
         /// Renders the text box to the provided render target.
         /// @param[in,out]  render_target - The render target to render to.
-        void Render(sf::RenderTarget& render_target);
+        void Render(sf::RenderTarget& render_target) const;
         /// Renders the current text page to the provided stream.
         /// @param[in,out]  output_stream - The output stream to render to.
         /// @todo   Create a textual render target?
-        void Render(std::ostream& output_stream);
+        void Render(std::ostream& output_stream) const;
 
         // PUBLIC MEMBER VARIABLES.
         /// True if the text box is visible; false otherwise.

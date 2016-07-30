@@ -221,6 +221,9 @@
     <ClInclude Include="src\Graphics\Gui\InventoryBibleVerseListBox.h">
       <Filter>Header Files\Graphics\Gui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Graphics\Renderer.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -336,6 +339,9 @@
     </ClCompile>
     <ClCompile Include="src\Graphics\Gui\InventoryBibleVerseTextBox.cpp">
       <Filter>Source Files\Graphics\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Renderer.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

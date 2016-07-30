@@ -60,22 +60,22 @@ namespace GUI
         // RENDERING.
         /// Renders the inventory GUI to the provided target.
         /// @param[in]  render_target - The target to render to.
-        void Render(sf::RenderTarget& render_target);
+        void Render(sf::RenderTarget& render_target) const;
 
     private:
         // RENDERING.
         /// Renders the page of the inventory for the Bible tab.
         /// This page allows browsing Bible verses in the inventory.
         /// @param[in]  render_target - The target to render to.
-        void RenderBiblePage(sf::RenderTarget& render_target);
+        void RenderBiblePage(sf::RenderTarget& render_target) const;
         /// Renders the page of the inventory for the animals tab.
         /// This page allows browsing animals in the inventory.
         /// @param[in]  render_target - The target to render to.
-        void RenderAnimalsPage(sf::RenderTarget& render_target);
+        void RenderAnimalsPage(sf::RenderTarget& render_target) const;
         /// Renders the page of the inventory for the food tab.
         /// This page allows browsing food in the inventory.
         /// @param[in]  render_target - The target to render to.
-        void RenderFoodPage(sf::RenderTarget& render_target);
+        void RenderFoodPage(sf::RenderTarget& render_target) const;
 
         // MEMBER VARIABLES.
         /// The font to use for rendering text.

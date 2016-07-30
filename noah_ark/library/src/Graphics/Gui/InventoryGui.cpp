@@ -102,7 +102,7 @@ namespace GUI
         }
     }
 
-    void InventoryGui::Render(sf::RenderTarget& render_target)
+    void InventoryGui::Render(sf::RenderTarget& render_target) const
     {
         // RENDER A RECTANGLE FOR THE BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -228,7 +228,7 @@ namespace GUI
         }
     }
 
-    void InventoryGui::RenderBiblePage(sf::RenderTarget& render_target)
+    void InventoryGui::RenderBiblePage(sf::RenderTarget& render_target) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -291,7 +291,7 @@ namespace GUI
             render_target);
     }
     
-    void InventoryGui::RenderAnimalsPage(sf::RenderTarget& render_target)
+    void InventoryGui::RenderAnimalsPage(sf::RenderTarget& render_target) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -314,7 +314,7 @@ namespace GUI
             render_target);
     }
 
-    void InventoryGui::RenderFoodPage(sf::RenderTarget& render_target)
+    void InventoryGui::RenderFoodPage(sf::RenderTarget& render_target) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the

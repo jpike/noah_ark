@@ -413,8 +413,6 @@ int main(int argumentCount, char* arguments[])
             return EXIT_CODE_FAILURE_LOADING_FONT;
         }
 
-        GRAPHICS::GUI::TextBox text_box(font);
-
         // INITIALIZE THE HUD.
         /// @todo   Re-examine how we get resources to display in the HUD.
         GRAPHICS::GUI::HeadsUpDisplay hud(
@@ -503,27 +501,27 @@ int main(int argumentCount, char* arguments[])
                 {
                     // UPDATE THE TEXT BOX IF IT IS VISIBLE.
                     // If the text box is currently being displayed, then it should capture any user input.
-                    if (text_box.IsVisible)
+                    if (hud.MainTextBox.IsVisible)
                     {
-                        /// @todo   Maybe this should be moved to after the MoveToNextText() below
+                        /// @todo   Maybe this should be moved to after the MoveToNextPage() below
                         /// to prevent the last character from not being seen?
-                        text_box.Update(elapsed_time_in_seconds);
+                        hud.MainTextBox.Update(elapsed_time_in_seconds);
                     }
 
                     // CHECK IF THE PRIMARY ACTION BUTTON WAS PRESSED.
                     if (input_controller.PrimaryActionButtonPressed())
                     {
-                        if (text_box.IsVisible)
+                        if (hud.MainTextBox.IsVisible)
                         {
                             // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
                             // If the current page of text has not yet all been displayed, the next
                             // page of text should not be moved to so that the user can finish
                             // seeing the complete message.
-                            bool current_text_finished_being_displayed = text_box.CurrentPageOfTextFinishedBeingDisplayed();
+                            bool current_text_finished_being_displayed = hud.MainTextBox.CurrentPageOfTextFinishedBeingDisplayed();
                             if (current_text_finished_being_displayed)
                             {
                                 // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
-                                text_box.MoveToNextPage();
+                                hud.MainTextBox.MoveToNextPage();
                             }
                         }
                         else
@@ -550,7 +548,7 @@ int main(int argumentCount, char* arguments[])
                     // him if he didn't move.
                     bool noah_moved_this_frame = false;
                     bool axe_is_swinging = (nullptr != overworld.NoahPlayer.Inventory->Axe) && overworld.NoahPlayer.Inventory->Axe->IsSwinging();
-                    bool player_movement_allowed = (!axe_is_swinging && !text_box.IsVisible);
+                    bool player_movement_allowed = (!axe_is_swinging && !hud.MainTextBox.IsVisible);
                     if (player_movement_allowed)
                     {
                         // MOVE NOAH IN RESPONSE TO USER INPUT.
@@ -906,7 +904,7 @@ int main(int argumentCount, char* arguments[])
                                         << "You got a Bible verse!\n"
                                         << bible_verse->ToString();
 
-                                    text_box.StartDisplayingText(bible_verse_message.str());
+                                    hud.MainTextBox.StartDisplayingText(bible_verse_message.str());
 
                                     std::cout << bible_verse_message.str() << std::endl;
 
@@ -1006,9 +1004,9 @@ int main(int argumentCount, char* arguments[])
                 hud.Render(*window);
 
                 // RENDER THE TEXT BOX IF IT IS VISIBLE.
-                if (text_box.IsVisible)
+                if (hud.MainTextBox.IsVisible)
                 {
-                    text_box.Render(*window);
+                    hud.MainTextBox.Render(*window);
                 }
 
                 // DISPLAY THE RENDERED FRAME IN THE WINDOW.

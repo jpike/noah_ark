@@ -2,9 +2,10 @@
 
 #include <memory>
 #include <SFML/Graphics.hpp>
-#include "Graphics/Texture.h"
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/InventoryGui.h"
+#include "Graphics/Gui/TextBox.h"
+#include "Graphics/Texture.h"
 #include "Objects/Inventory.h"
 
 namespace GRAPHICS
@@ -45,6 +46,8 @@ namespace GUI
         void Render(sf::RenderTarget& render_target);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The main text box for displaying messages to the player.
+        GRAPHICS::GUI::TextBox MainTextBox;
         /// True if the full inventory GUI is displayed; false otherwise.
         bool InventoryOpened;
         /// The GUI for displaying the full inventory.
@@ -58,7 +61,7 @@ namespace GUI
         std::shared_ptr<const Texture> AxeTexture;
         /// The texture to use for rendering a wood icon.
         std::shared_ptr<const Texture> WoodTexture;
-
+        
         /// The player's inventory to display in the HUD.
         std::shared_ptr<const OBJECTS::Inventory> Inventory;
     };

@@ -14,6 +14,7 @@ namespace GUI
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
         const std::shared_ptr<const Texture>& axe_texture,
         const std::shared_ptr<const Texture>& wood_texture) :
+    MainTextBox(font),
     InventoryOpened(false),
     InventoryGui(inventory, font),
     Font(font),

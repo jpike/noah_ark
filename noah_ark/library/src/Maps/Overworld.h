@@ -1,9 +1,17 @@
 #pragma once
 
 #include <memory>
+#include <random>
+#include <string>
+#include <vector>
+#include "Bible/BibleVerses.h"
 #include "Core/Array2D.h"
+#include "Events/AxeSwingEvent.h"
+#include "Graphics/Camera.h"
+#include "Input/KeyboardInputController.h"
 #include "Maps/TileMap.h"
 #include "Objects/Noah.h"
+#include "Resources/Assets.h"
 
 namespace MAPS
 {
@@ -27,6 +35,27 @@ namespace MAPS
             const unsigned int tile_map_width_in_tiles,
             const unsigned int tile_map_height_in_tiles,
             const unsigned int tile_dimension_in_pixels);
+
+        // UPDATING.
+        /// Updates the entire overworld for the elapsed time.
+        /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to update the world.
+        /// @param[in,out]  random_number_generator - The generator for any random numbers needed
+        ///     during the update.
+        /// @param[in,out]  input_controller - The controller supplying player input.
+        /// @param[in,out]  bible_verses_left_to_find - The Bible verses that haven't been collected
+        ///     yet by the player.
+        /// @param[in,out]  assets - The game assets.
+        /// @param[in,out]  camera - The camera defining the viewable region of the overworld.
+        /// @param[out] message_for_text_box - The message to display in the main text box,
+        ///     if one needs to start being displayed; empty if no new message needs to be displayed.
+        void Update(
+            const float elapsed_time_in_seconds,
+            std::random_device& random_number_generator,
+            INPUT_CONTROL::KeyboardInputController& input_controller,
+            std::vector<BIBLE::BibleVerse>& bible_verses_left_to_find,
+            RESOURCES::Assets& assets,
+            GRAPHICS::Camera& camera,
+            std::string& message_for_text_box);
 
         // TILE MAP RETRIEVAL.
         /// Gets the tile map at the specified row and column indices.
@@ -62,5 +91,7 @@ namespace MAPS
         unsigned int TileDimensionInPixels;
         /// Noah (the player) character within the world.
         OBJECTS::Noah NoahPlayer;
+        /// Axe swings currently occurring in the world.
+        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings;
     };
 }

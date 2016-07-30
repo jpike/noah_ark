@@ -11,7 +11,8 @@ namespace MAPS
     TileMaps(width_in_tile_maps, height_in_tile_maps),
     TileMapWidthInTiles(tile_map_width_in_tiles),
     TileMapHeightInTiles(tile_map_height_in_tiles),
-    TileDimensionInPixels(tile_dimension_in_pixels)
+    TileDimensionInPixels(tile_dimension_in_pixels),
+    NoahPlayer()
     {}
 
     MAPS::TileMap* Overworld::GetTileMap(const unsigned int row, const unsigned int column)

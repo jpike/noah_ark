@@ -3,6 +3,7 @@
 #include <memory>
 #include "Core/Array2D.h"
 #include "Maps/TileMap.h"
+#include "Objects/Noah.h"
 
 namespace MAPS
 {
@@ -59,5 +60,7 @@ namespace MAPS
         /// The dimension (both width and height) of a single tile in the overworld
         /// (in units of pixels).
         unsigned int TileDimensionInPixels;
+        /// Noah (the player) character within the world.
+        OBJECTS::Noah NoahPlayer;
     };
 }

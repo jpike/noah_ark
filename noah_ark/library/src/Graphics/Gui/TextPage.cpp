@@ -9,6 +9,11 @@ namespace GUI
 {
     const float TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS = 0.05f;
 
+    /// Adds the provided word to the text page.
+    /// If this is not the first word being added to the page, 
+    /// a space will be added before the new word.
+    /// @param[in]  word - The word to add.
+    /// @return True if the word is added; false otherwise.
     bool TextPage::Add(const std::string& word)
     {
         // MAKE SURE THERE IS ROOM FOR THE NEW WORD.
@@ -70,6 +75,8 @@ namespace GUI
         return true;
     }
 
+    /// Checks if all text in this page has been displayed.
+    /// @return True if all text in the page has been displayed; false otherwise.
     bool TextPage::AllTextDisplayed() const
     {
         // CHECK IF THE ALL CHARACTERS HAVE BEEN DISPLAYED.
@@ -79,6 +86,10 @@ namespace GUI
         return all_text_displayed;
     }
 
+    /// Updates the text displayed in the text page based on the provided
+    /// elapsed amount of time.
+    /// @param[in]  elapsed_time_in_seconds - The amount of time elapsed
+    ///     since the last update of the text page.
     void TextPage::Update(const float elapsed_time_in_seconds)
     {
         // CHECK IF THE PAGE OF TEXT HAS BEEN FULLY DISPLAYED.
@@ -95,6 +106,11 @@ namespace GUI
         TotalElapsedTimeInSecondsTextHasBeenDisplayed += elapsed_time_in_seconds;
     }
 
+    /// Renders the text page to the provided render target.
+    /// @param[in]  top_left_screen_position_in_pixels - The top-left screen position of
+    ///     the text page (in pixels).
+    /// @param[in]  font - The font to use to render text.
+    /// @param[in,out]  render_target - The render target to render to.
     void TextPage::Render(
         const MATH::Vector2ui& top_left_screen_position_in_pixels,
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
@@ -125,6 +141,10 @@ namespace GUI
             current_line_top_left_screen_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;
         }
     }
+
+    /// Renders the text page to the provided stream.
+    /// @param[in,out]  output_stream - The output stream to render to.
+    /// @todo   Create a textual render target?
     void TextPage::Render(std::ostream& output_stream) const
     {
         // RENDER EACH LINE OF TEXT.
@@ -144,6 +164,9 @@ namespace GUI
         }
     }
 
+    /// Gets the total number of characters in the page, including both those that
+    /// have and haven't been displayed.
+    /// @return The total number of characters in the page.
     unsigned int TextPage::GetTotalCharacterCount() const
     {
         unsigned int total_character_count = 0;
@@ -157,6 +180,10 @@ namespace GUI
         return total_character_count;
     }
 
+    /// Gets the number of characters that have been displayed so far on previous lines.
+    /// @param[in]  line_index - Lines with an index less than this value will have their
+    ///     character counts included in the returned sum.
+    /// @return The number of characters displayed so far on previous lines.
     unsigned int TextPage::GetCharacterCountForPreviousLines(const unsigned int line_index) const
     {
         unsigned int character_count_for_previous_lines = 0;
@@ -170,6 +197,8 @@ namespace GUI
         return character_count_for_previous_lines;
     }
 
+    /// Gets the number of characters that have been displayed in the text page so far.
+    /// @return The number of characters displayed so far in the text page.
     unsigned int TextPage::GetDisplayedCharacterCount() const
     {
         unsigned int displayed_character_count = 0;
@@ -183,6 +212,9 @@ namespace GUI
         return displayed_character_count;
     }
 
+    /// Gets the number of characters that have been displayed on the specified line so far.
+    /// @param[in]  line_index - The index of the line whose displayed character count to retrieve.
+    /// @return The number of characters displayed so far on the specified line.
     unsigned int TextPage::GetDisplayedCharacterCount(const unsigned int line_index) const
     {
         /// @todo   This method is way to messy and complicated.
@@ -220,6 +252,9 @@ namespace GUI
         return displayed_character_count_for_current_line;
     }
 
+    /// Gets the line of text for the specified line index.
+    /// @param[in]  line_index - The index of the line for which to get the text.
+    /// @return The line of text at the specified line; empty if no text.
     std::string TextPage::GetTextLine(const unsigned int line_index) const
     {
         // MAKE SURE THE TEXT LINE IS VALID.

@@ -47,20 +47,9 @@ namespace MAPS
     {
     public:
         // CONSTRUCTION.
-        /// Attempts to load the overworld map file at the specified filepath into memory.
-        /// @param[in]  filepath - The path to the overworld map file to load.
-        ///     May be relative or absolute but must be accessible from the working
-        ///     directory of this game.
-        /// @return The overworld map file, if successfully loaded; false otherwise.
         static std::unique_ptr<OverworldMapFile> Load(const std::string& filepath);
 
         // DATA RETRIEVAL.
-        /// Gets the filepath of the tile map at the specified row and column of the overworld.
-        /// Row and column coordinates are 0-based, with (0,0) being at the top-left corner.
-        /// @param[in]  row - The row for which to get the tile map filepath (in units of tile maps).
-        /// @param[in]  column - The column for which to get the tile map filepath (in units of tile maps).
-        /// @return The filepath to the tile map at the specified location;
-        ///     an empty string if an error occurs.
         std::string GetTileMapFilepath(const unsigned int row, const unsigned int column) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

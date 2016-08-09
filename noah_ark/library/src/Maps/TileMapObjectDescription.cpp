@@ -2,6 +2,10 @@
 
 namespace MAPS
 {
+    /// Determines if two object descriptions are equal.
+    /// @param[in]  rhs - The object to compare with.
+    /// @return True if this object and the provided object are equal;
+    ///     false otherwise.
     bool TileMapObjectDescription::operator == (const TileMapObjectDescription& rhs) const
     {
         // The descriptions aren't equal if a single field differs.

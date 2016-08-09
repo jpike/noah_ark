@@ -2,10 +2,20 @@
 
 namespace GRAPHICS
 {
+    /// Constructor.
+    /// @param[in]  render_target - The target to render to.
+    ///     @todo   Try and decouple the camera from the render target
+    ///     so that it doesn't have to be passed here.
     Renderer::Renderer(const std::shared_ptr<sf::RenderTarget>& render_target) :
         Camera(render_target)
     {}
 
+    /// Renders an overworld.
+    /// @param[in]  elapsed_time_in_seconds - The elapsed time since the last rendering of the world.
+    ///     @todo   Look at ways to remove this parameter.
+    /// @param[in]  overworld - The overworld to render.
+    ///     @todo   Look at how to make overworld parameter const.
+    /// @param[in,out]  render_target - The target to render to.
     void Renderer::Render(
         const float elapsed_time_in_seconds, 
         MAPS::Overworld& overworld, 
@@ -96,6 +106,9 @@ namespace GRAPHICS
         }
     }
 
+    /// Renders a tile map.
+    /// @param[in]  tile_map - The tile map to render.
+    /// @param[in,out]  render_target - The target to render to.
     void Renderer::Render(const MAPS::TileMap& tile_map, sf::RenderTarget& render_target)
     {
         // RENDER THE CURRENT TILE MAP'S GROUND LAYER.
@@ -128,16 +141,25 @@ namespace GRAPHICS
         }
     }
 
+    /// Renders a sprite.
+    /// @param[in]  sprite - The sprite to render.
+    /// @param[in,out]  render_target - The target to render to.
     void Renderer::Render(const GRAPHICS::Sprite& sprite, sf::RenderTarget& render_target)
     {
         sprite.Render(render_target);
     }
 
+    /// Renders an animated sprite.
+    /// @param[in]  sprite - The animated sprite to render.
+    /// @param[in,out]  render_target - The target to render to.
     void Renderer::Render(const GRAPHICS::AnimatedSprite& sprite, sf::RenderTarget& render_target)
     {
         sprite.Render(render_target);
     }
 
+    /// Renders a HUD.
+    /// @param[in]  hud - The HUD to render.
+    /// @param[in,out]  render_target - The target to render to.
     void Renderer::Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, sf::RenderTarget& render_target)
     {
         hud.Render(render_target);

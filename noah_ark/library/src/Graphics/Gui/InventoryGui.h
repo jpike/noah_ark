@@ -43,38 +43,20 @@ namespace GUI
         };
 
         // CONSTRUCTION.
-        /// Constructor.
-        /// @param[in]  inventory - The inventory to display in the GUI.
-        /// @param[in]  font - The font to use for rendering text on the GUI.
-        /// @throws std::exception - Thrown if a parameter is null.
-        /// @todo   Re-think how we pass assets to this class.
         explicit InventoryGui(
             const std::shared_ptr<const OBJECTS::Inventory>& inventory,
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font);
 
         // INPUT.
-        /// Has the inventory GUI respond to the provided key being pressed.
-        /// @param[in]  key - The key that was pressed.
         void RespondToInput(const sf::Keyboard::Key key);
 
         // RENDERING.
-        /// Renders the inventory GUI to the provided target.
-        /// @param[in]  render_target - The target to render to.
         void Render(sf::RenderTarget& render_target) const;
 
     private:
-        // RENDERING.
-        /// Renders the page of the inventory for the Bible tab.
-        /// This page allows browsing Bible verses in the inventory.
-        /// @param[in]  render_target - The target to render to.
+        // RENDERING.        
         void RenderBiblePage(sf::RenderTarget& render_target) const;
-        /// Renders the page of the inventory for the animals tab.
-        /// This page allows browsing animals in the inventory.
-        /// @param[in]  render_target - The target to render to.
         void RenderAnimalsPage(sf::RenderTarget& render_target) const;
-        /// Renders the page of the inventory for the food tab.
-        /// This page allows browsing food in the inventory.
-        /// @param[in]  render_target - The target to render to.
         void RenderFoodPage(sf::RenderTarget& render_target) const;
 
         // MEMBER VARIABLES.
@@ -84,7 +66,7 @@ namespace GUI
         std::shared_ptr<const OBJECTS::Inventory> Inventory;
         /// The type of tab currently being displayed.
         TabType CurrentTab;
-        /// \todo   Make the colors below constants.
+        /// @todo   Make the colors below constants.
         /// The color of the Bible tab and page.
         GRAPHICS::Color BibleTabColor;
         /// The color of the animals tab and page.

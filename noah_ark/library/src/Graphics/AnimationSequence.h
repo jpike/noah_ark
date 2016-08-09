@@ -15,11 +15,6 @@ namespace GRAPHICS
     {
     public:
         // CONSTRUCTION.
-        /// Constructor.
-        /// @param[in]  name - The name to identify the animation sequence.
-        /// @param[in]  is_looping - Whether the animation sequence loops or not.
-        /// @param[in]  total_duration - The total duration of the animation sequence.
-        /// @param[in]  frames - The frames in the sequence.
         explicit AnimationSequence(
             const std::string& name,
             const bool is_looping,
@@ -27,29 +22,14 @@ namespace GRAPHICS
             const std::vector<MATH::IntRectangle>& frames);
 
         // FRAME RETREIVAL.
-        /// Gets the total number of frames in the animation sequence.
-        /// @return The total number of frames.
         unsigned int GetFrameCount() const;
-        /// Gets the frame at the specified index.
-        /// @param[in]  frame_index - The 0-based index of the frame to retrieve.
-        /// @return The rectangular frame at the specified index.
-        /// @throws std::out_of_range - Thrown if the index is out of bounds.
         MATH::IntRectangle GetFrame(const unsigned int frame_index) const;
-        /// Gets the current frame within the playing of the animation sequence.
-        /// @return The current frame.
         MATH::IntRectangle GetCurrentFrame() const;
 
         // ANIMATING.
-        /// Starts playing the animation sequence from the beginning.
         void Start();
-        /// Determines if the animation sequence is currently playing.
-        /// @return True if the animation sequence is playing; false otherwise.
         bool IsPlaying() const;
-        /// Progresses the animation the specified amount of time.
-        /// @param[in]  elapsed_time - The amount of time to progress the animation.
         void Progress(const sf::Time elapsed_time);
-        /// Stops the animation sequence from playing, resetting it back
-        /// to the first frame.
         void Reset();
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
@@ -60,8 +40,6 @@ namespace GRAPHICS
 
     private:
         // HELPER METHODS.
-        /// Gets the time duration for a single frame of the animation sequence.
-        /// @return The duration per frame.
         sf::Time GetDurationPerFrame() const;
 
         // MEMBER VARIABLES.

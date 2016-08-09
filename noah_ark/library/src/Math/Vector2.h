@@ -3,40 +3,38 @@
 /// A namespace to hold math utilities.
 namespace MATH
 {
-    ///////////////////////////////////////////////////////////
-    /// @brief  A 2D mathematical vector.  It currently only has the minimal functionality needed,
-    ///         so it cannot directly perform all common vector operations.
+    /// A 2D mathematical vector.  It currently only has the minimal functionality needed,
+    /// so it cannot directly perform all common vector operations.
     ///
-    ///         The ComponentType template parameter is intended to be replaced with
-    ///         any numerical type that is typically used for vectors (int, float, etc.).
-    ///////////////////////////////////////////////////////////
+    /// The ComponentType template parameter is intended to be replaced with
+    /// any numerical type that is typically used for vectors (int, float, etc.).
     template <typename ComponentType>
     class Vector2
     {
     public:
-        /// @brief  Default constructor.
+        /// Default constructor.
         explicit Vector2() : X(), Y() {};
 
-        /// @brief      Constructor that accepts initial values.
+        /// Constructor that accepts initial values.
         /// @param[in]  x - The x component value.
         /// @param[in]  y - The y component value.
         explicit Vector2(const ComponentType x, const ComponentType y) : X(x), Y(y) {};
 
-        /// @brief      Copy constructor.
+        /// Copy constructor.
         /// @param[in]  vectorToCopy - The vector to copy values from.
         Vector2(const Vector2& vectorToCopy);
 
-        /// @brief  Destructor.
+        /// Destructor.
         ~Vector2() {};
 
-        /// @brief      Assignment operator.
+        /// Assignment operator.
         /// @param[in]  rhsVector - The vector on the right-hand side of the assignment.
         /// @return     This vector with values copied from the provided vector.
         Vector2& operator= (const Vector2& rhsVector);
 
-        /// @brief      Equality operator.  Direct equality comparison is used for components,
-        ///             so the precision of components types should be considered when using
-        ///             this operator.
+        /// Equality operator.  Direct equality comparison is used for components,
+        /// so the precision of components types should be considered when using
+        /// this operator.
         /// @param[in]  rhsVector - The vector on the right-hand side of the operator.
         /// @return     True if the vectors are equal; false otherwise.
         bool operator== (const Vector2& rhsVector) const;
@@ -58,7 +56,7 @@ namespace MATH
         ComponentType Y;    ///< The y component of the vector.  Public for easy access.
 
     private:
-        /// @brief      Copies values from the provided vector into this vector.
+        /// Copies values from the provided vector into this vector.
         /// @param[in]  vectorToCopy - The vector to copy values from.
         void Copy(const Vector2& vectorToCopy);
     };

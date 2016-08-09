@@ -6,6 +6,11 @@
 
 namespace MAPS
 {
+    /// Attempts to load the overworld map file at the specified filepath into memory.
+    /// @param[in]  filepath - The path to the overworld map file to load.
+    ///     May be relative or absolute but must be accessible from the working
+    ///     directory of this game.
+    /// @return The overworld map file, if successfully loaded; false otherwise.
     std::unique_ptr<OverworldMapFile> OverworldMapFile::Load(const std::string& filepath)
     {
         // LOAD THE OVERWORLD MAP FILE.
@@ -133,6 +138,12 @@ namespace MAPS
         }
     }
 
+    /// Gets the filepath of the tile map at the specified row and column of the overworld.
+    /// Row and column coordinates are 0-based, with (0,0) being at the top-left corner.
+    /// @param[in]  row - The row for which to get the tile map filepath (in units of tile maps).
+    /// @param[in]  column - The column for which to get the tile map filepath (in units of tile maps).
+    /// @return The filepath to the tile map at the specified location;
+    ///     an empty string if an error occurs.
     std::string OverworldMapFile::GetTileMapFilepath(const unsigned int row, const unsigned int column) const
     {
         // An empty string should be returned if the coordinates are invalid.
@@ -149,7 +160,7 @@ namespace MAPS
 
         // GET THE REQUEST FILEPATH.
         // We expect that any empty values were not added in population of the member.
-        const std::string& tileMapFilepath = TileMapFilepaths(column, row);
-        return tileMapFilepath;
+        const std::string& tile_map_filepath = TileMapFilepaths(column, row);
+        return tile_map_filepath;
     }
 }

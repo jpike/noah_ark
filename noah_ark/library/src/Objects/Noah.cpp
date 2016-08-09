@@ -7,23 +7,31 @@ namespace OBJECTS
     // The speed is chosen just based on what has felt right so far.
     const float Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND = 64.0f;
 
+    /// Gets the world position of Noah.
+    /// @return The world position of Noah.
     MATH::Vector2f Noah::GetWorldPosition() const
     {
         MATH::Vector2f world_position = Sprite.GetWorldPosition();
         return world_position;
     }
 
+    /// Sets the world position of Noah.
+    /// @param[in]  world_position - The new world position to set.
     void Noah::SetWorldPosition(const MATH::Vector2f& world_position)
     {
         Sprite.SetWorldPosition(world_position.X, world_position.Y);
     }
 
+    /// Gets the bounding box of Noah in the world.
+    /// @return The bounding box of Noah.
     MATH::FloatRectangle Noah::GetWorldBoundingBox() const
     {
         MATH::FloatRectangle bounding_box = Sprite.GetWorldBoundingBox();
         return bounding_box;
     }
 
+    /// Causes Noah to begin swinging his axe, if he has one and isn't already swinging it.
+    /// @return The event describing the axe swing, if an axe swing is started.
     std::shared_ptr<EVENTS::AxeSwingEvent> Noah::SwingAxe() const
     {
         // CHECK IF NOAH HAS AN AXE.

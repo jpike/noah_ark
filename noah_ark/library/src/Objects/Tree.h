@@ -39,24 +39,14 @@ namespace OBJECTS
         static const unsigned int INITIAL_HIT_POINTS = 3;
 
         // POSITIONING/BOUNDARIES.
-        /// Gets the bounding box of the tree, in world coordinates.
-        /// @return The tree's bounding box.
         MATH::FloatRectangle GetWorldBoundingBox() const;
-        /// Gets the center world position of the tree's trunk.
-        /// @return The center world position of the tree's trunk.
         MATH::Vector2f GetTrunkCenterWorldPosition() const;
 
         // HITTING.
-        /// Damages the tree by taking one hit.
         void TakeHit();
-        /// Starts shaking the tree.  Intended
-        /// for whenever the tree gets hit.
         void StartShaking();
 
         // UPDATING.
-        /// Updates the shaking of the tree, if the tree is currently shaking.
-        /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to
-        ///     update the tree's shaking.
         void Update(const float elapsed_time_in_seconds);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

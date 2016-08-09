@@ -43,62 +43,24 @@ namespace GUI
         static const float ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS;
 
         // PUBLIC METHODS.
-        /// Adds the provided word to the text page.
-        /// If this is not the first word being added to the page, 
-        /// a space will be added before the new word.
-        /// @param[in]  word - The word to add.
-        /// @return True if the word is added; false otherwise.
         bool Add(const std::string& word);
 
-        /// Checks if all text in this page has been displayed.
-        /// @return True if all text in the page has been displayed; false otherwise.
         bool AllTextDisplayed() const;
 
-        /// Updates the text displayed in the text page based on the provided
-        /// elapsed amount of time.
-        /// @param[in]  elapsed_time_in_seconds - The amount of time elapsed
-        ///     since the last update of the text page.
         void Update(const float elapsed_time_in_seconds);
 
-        /// Renders the text page to the provided render target.
-        /// @param[in]  top_left_screen_position_in_pixels - The top-left screen position of
-        ///     the text page (in pixels).
-        /// @param[in]  font - The font to use to render text.
-        /// @param[in,out]  render_target - The render target to render to.
         void Render(
             const MATH::Vector2ui& top_left_screen_position_in_pixels,
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
             sf::RenderTarget& render_target) const;
-        /// Renders the text page to the provided stream.
-        /// @param[in,out]  output_stream - The output stream to render to.
-        /// @todo   Create a textual render target?
         void Render(std::ostream& output_stream) const;
 
     private:
         // PRIVATE METHODS.
-        /// Gets the total number of characters in the page, including both those that
-        /// have and haven't been displayed.
-        /// @return The total number of characters in the page.
         unsigned int GetTotalCharacterCount() const;
-
-        /// Gets the number of characters that have been displayed so far on previous lines.
-        /// @param[in]  line_index - Lines with an index less than this value will have their
-        ///     character counts included in the returned sum.
-        /// @return The number of characters displayed so far on previous lines.
         unsigned int GetCharacterCountForPreviousLines(const unsigned int line_index) const;
-
-        /// Gets the number of characters that have been displayed in the text page so far.
-        /// @return The number of characters displayed so far in the text page.
         unsigned int GetDisplayedCharacterCount() const;
-
-        /// Gets the number of characters that have been displayed on the specified line so far.
-        /// @param[in]  line_index - The index of the line whose displayed character count to retrieve.
-        /// @return The number of characters displayed so far on the specified line.
         unsigned int GetDisplayedCharacterCount(const unsigned int line_index) const;
-
-        /// Gets the line of text for the specified line index.
-        /// @param[in]  line_index - The index of the line for which to get the text.
-        /// @return The line of text at the specified line; empty if no text.
         std::string GetTextLine(const unsigned int line_index) const;
 
         // MEMBER VARIABLES.

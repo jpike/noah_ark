@@ -3,6 +3,14 @@
 
 namespace GRAPHICS
 {
+    /// Attempts to load a texture from the provided filepath.
+    /// Pixels in the texture with a color of magenta will be
+    /// considered transparent.
+    /// @param[in]  filepath - The path to the texture file to load.
+    ///     May be absolute or relative but must be accessible
+    ///     from the program executing this code.
+    /// @return The texture, if successfully loaded; a dummy
+    ///     texture will be returned if part of loading fails.
     std::shared_ptr<Texture> Texture::Load(const std::string& filepath)
     {
         // LOAD THE IMAGE FOR THE TEXTURE.
@@ -37,6 +45,8 @@ namespace GRAPHICS
         return texture;
     }
 
+    /// Gets the dimensions of the texture, in pixels.
+    /// @return The dimensions of the texture image.
     MATH::Vector2ui Texture::GetSize() const
     {
         sf::Vector2u texture_resource_size = TextureResource.getSize();

@@ -12,6 +12,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Audio\SoundEffect.h" />
+    <ClInclude Include="src\Bible\BibleBook.h" />
+    <ClInclude Include="src\Bible\BibleVerse.h" />
     <ClInclude Include="src\Bible\BibleVerses.h" />
     <ClInclude Include="src\Collision\Collisions.h" />
     <ClInclude Include="src\Collision\Movement.h" />
@@ -62,6 +64,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio\SoundEffect.cpp" />
+    <ClCompile Include="src\Bible\BibleBook.cpp" />
+    <ClCompile Include="src\Bible\BibleVerse.cpp" />
     <ClCompile Include="src\Bible\BibleVerses.cpp" />
     <ClCompile Include="src\Collision\Collisions.cpp" />
     <ClCompile Include="src\Collision\Movement.cpp" />

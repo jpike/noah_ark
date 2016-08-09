@@ -2,6 +2,10 @@
 
 namespace MAPS
 {
+    /// Determines if two tileset descriptions are equal.
+    /// @param[in]  rhs - The tileset to compare with.
+    /// @return True if this tileset and the provided tileset are equal;
+    ///     false otherwise.
     bool TilesetDescription::operator == (const TilesetDescription& rhs) const
     {
         // The descriptions aren't equal if a single field differs.

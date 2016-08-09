@@ -51,13 +51,7 @@ namespace OBJECTS
         float FinalRotationAngleInDegrees;
 
         // METHODS.
-        /// Determines if the rotation performed by swinging out is
-        /// positive or not.
-        /// @return True if the swing out rotation is positive; false otherwise.
         bool SwingOutIsPositiveRotation() const;
-        /// Determines if the rotation performed by swinging back is
-        /// positive or not.
-        /// @return True if the swing back rotation is positive; false otherwise.
         bool SwingBackIsPositiveRotation() const;
     };
 
@@ -67,33 +61,17 @@ namespace OBJECTS
     {
     public:
         // SWINGING METHODS.
-        /// Swings the axe up.
         void SwingUp();
-        /// Swings the axe down.
         void SwingDown();
-        /// Swings the axe left.
         void SwingLeft();
-        /// Swings the axe up.
         void SwingRight();
 
-        /// Determines if the axe is currently being swung.
-        /// @return True if the axe is being swung; false otherwise.
         bool IsSwinging() const;
-        /// Determines if the axe is fully swung out.
-        /// @return True if the axe is fully swung out; false otherwise.
         bool FullySwungOut() const;
 
         // OTHER METHODS.
-        /// Updates the axe for a frame based on the elapsed amount of time.
-        /// @param[in]  elapsed_time_in_seconds - The amount of time to update by.
         void Update(const float elapsed_time_in_seconds);
-
-        /// Gets the world boundaries of the axe's blade.
-        /// @return The world boundaries of the axe's blade.
         MATH::FloatRectangle GetBladeBounds() const;
-
-        /// Sets the world position of the axe.
-        /// @param[in]  world_position - The world position to set.
         void SetWorldPosition(const MATH::Vector2f& world_position);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

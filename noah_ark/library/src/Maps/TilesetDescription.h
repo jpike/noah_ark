@@ -24,10 +24,6 @@ namespace MAPS
         /// code like #00ffcc.  Capitalization doesn't matter.
         std::string TransparentColor;
 
-        /// Determines if two tileset descriptions are equal.
-        /// @param[in]  rhs - The tileset to compare with.
-        /// @return True if this tileset and the provided tileset are equal;
-        ///     false otherwise.
         bool operator==(const TilesetDescription& rhs) const;
     };
 }

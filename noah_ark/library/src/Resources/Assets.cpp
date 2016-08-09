@@ -25,6 +25,7 @@ namespace RESOURCES
     const std::string COLLECT_BIBLE_VERSE_SOUND_ID = "res/sounds/collect_bible_verse1.wav";
     const std::string TREE_SHAKE_SOUND_ID = "res/sounds/tree_shake3.wav";
 
+    /// Constructor to initialize an empty collection of assets.
     Assets::Assets() :
     Textures(),
     AudioSamples(),
@@ -32,6 +33,8 @@ namespace RESOURCES
     TileMapFiles()
     {}
 
+    /// Loads all assets needed for the game.
+    /// @return True if loading completely succeeds; false otherwise.
     bool Assets::LoadAll()
     {
         // LOAD TEXTURES.
@@ -66,6 +69,9 @@ namespace RESOURCES
         return true;
     }
 
+    /// Gets a tileset created from the provided descriptions.
+    /// @param[in]  tileset_descriptions - Descriptions of the tileset to create.
+    /// @return The tileset created from the provided descriptions; null if an error occurs.
     std::shared_ptr<MAPS::Tileset> Assets::GetTileset(const std::vector<MAPS::TilesetDescription>& tileset_descriptions)
     {
         /// @todo   Consider caching this? - There's some "name" property in the JSON files.
@@ -120,6 +126,9 @@ namespace RESOURCES
         return tileset;
     }
 
+    /// Attempts to retrieve the texture identified by the specified ID.
+    /// @param[in]  texture_id - The ID of the texture to load.
+    /// @return The requested texture, if successfully loaded; null otherwise.
     std::shared_ptr<GRAPHICS::Texture> Assets::GetTexture(const std::string& texture_id)
     {
         // RETURN THE TEXTURE IF IT HAS ALREADY BEEN LOADED.
@@ -148,6 +157,9 @@ namespace RESOURCES
         }
     }
 
+    /// Attempts to retrieve the animation sequence identified by the specified ID.
+    /// @param[in]  animation_id - The ID of the animation sequence to load.
+    /// @return The requested animation sequence, if successfully loaded; null otherwise.
     std::shared_ptr<GRAPHICS::AnimationSequence> Assets::GetAnimationSequence(const std::string& animation_id)
     {
         if (DUST_CLOUD_ANIMATION_ID == animation_id)
@@ -250,6 +262,9 @@ namespace RESOURCES
         }
     }
 
+    /// Attempts to retrieve the font identified by the specified texture ID.
+    /// @param[in]  font_texture_id - The ID of the texture associated with the font.
+    /// @return The requested font, if successfully loaded; null otherwise.
     std::shared_ptr<GRAPHICS::GUI::Font> Assets::GetFont(const std::string& font_texture_id)
     {
         // GET THE FONT'S TEXTURE.
@@ -269,6 +284,11 @@ namespace RESOURCES
         }
     }
 
+    /// Attempts to retrieve the sound effect identified by the specified ID.
+    /// The returned sound effect will be a new instance of a sound effect,
+    /// but it may share the same buffer of audio samples as another instance.
+    /// @param[in]  sound_id - The ID of the sound to load.
+    /// @return The requested sound effect, if successfully loaded; null otherwise.
     std::shared_ptr<AUDIO::SoundEffect> Assets::GetSound(const std::string& sound_id)
     {
         // CHECK IF THE AUDIO SAMPLES HAVE ALREADY BEEN LOADED.
@@ -298,6 +318,9 @@ namespace RESOURCES
         return sound_effect;
     }
 
+    /// Attempts to load all textures into this collection of assets.
+    /// Any previous textures will be cleared.
+    /// @return True if all textures are loaded; false otherwise.
     bool Assets::LoadTextures()
     {
         // CLEAR ANY PREVIOUSLY LOADED TEXTURES.
@@ -350,6 +373,9 @@ namespace RESOURCES
         return true;
     }
 
+    /// Attempts to load all sound resources into this collection of assets.
+    /// Any previous sound resources will be cleared.
+    /// @return True if all sounds are loaded; false otherwise.
     bool Assets::LoadSounds()
     {
         // CLEAR ANY PREVIOUSLY LOADED AUDIO SAMPLES.
@@ -385,6 +411,9 @@ namespace RESOURCES
         return true;
     }
     
+    /// Attempts to load the overworld map file into this collection of assets.
+    /// Any previous overworld map file will be cleared.
+    /// @return True if the overworld map file is loaded; false otherwise.
     bool Assets::LoadOverworldMapFile()
     {
         // CLEAR ANY PREVIOUSLY LOADED OVERWORLD MAP FILE.
@@ -399,6 +428,9 @@ namespace RESOURCES
         return overworld_map_file_loaded;
     }
     
+    /// Attempts to load the all tile map files in the overworld map file into this collection of assets.
+    /// Any previous tile map files will be cleared.
+    /// @return True if the all tile map files are loaded; false otherwise.
     bool Assets::LoadTileMapFiles()
     {
         // CLEAR ANY PREVIOUSLY LOADED TILE MAP FILES.

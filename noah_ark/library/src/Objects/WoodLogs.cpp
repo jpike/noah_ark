@@ -2,6 +2,8 @@
 
 namespace OBJECTS
 {
+    /// Gets the bounding box of the wood logs, in world coordinates.
+    /// @return The wood logs' bounding box.
     MATH::FloatRectangle WoodLogs::GetWorldBoundingBox() const
     {
         // The bounding box is shrunk some from its visible representation.

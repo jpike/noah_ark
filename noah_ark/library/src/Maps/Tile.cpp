@@ -4,11 +4,15 @@
 
 namespace MAPS
 {
+    /// Constructor to create an invalid tile.
     Tile::Tile() :
     Id(std::numeric_limits<TileId>::max()),
     Sprite()
     {}
 
+    /// Constructor accepting all of a tile's data.
+    /// @param[in]  id - A numeric ID identifying the tile in a tileset.
+    /// @param[in]  sprite - The sprite used for rendering the tile.
     Tile::Tile(
         const TileId id,
         const GRAPHICS::Sprite& sprite) :
@@ -16,47 +20,64 @@ namespace MAPS
     Sprite(sprite)
     {}
 
+    /// Sets the world position of the center of the tile.
+    /// @param[in]  world_x_position - The world x position of the center of the tile.
+    /// @param[in]  world_y_position - The world y position of the center of the tile.
     void Tile::SetWorldPosition(const float world_x_position, const float world_y_position)
     {
         Sprite.SetWorldPosition(world_x_position, world_y_position);
     }
 
+    /// Gets the width of the tile, in pixels.
+    /// @return The width of the tile in pixels.
     float Tile::GetWidthInPixels() const
     {
         MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetWidth();
     }
 
+    /// Gets the height of the tile, in pixels.
+    /// @return The height of the tile in pixels.
     float Tile::GetHeightInPixels() const
     {
         MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetHeight();
     }
 
+    /// Gets the left X position of the tile's bounding box, in world coordinates.
+    /// @return The left X position of the tile.
     float Tile::GetLeftXPosition() const
     {
         MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetLeftXPosition();
     }
 
+    /// Gets the right X position of the tile's bounding box, in world coordinates.
+    /// @return The right X position of the tile.
     float Tile::GetRightXPosition() const
     {
         MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetRightXPosition();
     }
 
+    /// Gets the top Y position of the tile's bounding box, in world coordinates.
+    /// @return The top Y position of the tile.
     float Tile::GetTopYPosition() const
     {
         MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetTopYPosition();
     }
 
+    /// Gets the bottomt Y position of the tile's bounding box, in world coordinates.
+    /// @return The bottom Y position of the tile.
     float Tile::GetBottomYPosition() const
     {
         MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
         return tile_bounding_box.GetBottomYPosition();
     }
 
+    /// Determines if the tile is walkable.
+    /// @return True if the tile is walkable; false otherwise.
     bool Tile::IsWalkable() const
     {
         // DEFINE ID CONSTANTS FOR EACH TILE IN THE TILESET.

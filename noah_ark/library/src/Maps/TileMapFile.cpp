@@ -5,6 +5,11 @@
 
 namespace MAPS
 {
+    /// Attempts to load the tile map file at the specified filepath into memory.
+    /// @param[in]  filepath - The path to the tile map file to load.
+    ///     May be relative or absolute but must be accessible from the working
+    ///     directory of this game.
+    /// @return The tile map file, if successfully loaded; false otherwise.
     std::unique_ptr<TileMapFile> TileMapFile::Load(const std::string& filepath)
     {
         // LOAD THE MAP FROM FILE.
@@ -78,6 +83,10 @@ namespace MAPS
         }
     }
 
+    /// Reads tileset data from the map property tree.
+    /// @param[in]  map_file_data - The tile map data.
+    /// @return The tilesets in the map.
+    /// @throws std::exception - Thrown if an error occurs.
     std::vector<TilesetDescription> TileMapFile::ReadTilesets(const boost::property_tree::ptree& map_file_data)
     {
         std::vector<TilesetDescription> tilesets;
@@ -106,6 +115,12 @@ namespace MAPS
         return tilesets;
     }
 
+    /// Reads layer data from the map property tree.
+    /// @param[in]  map_file_data - The tile map data.
+    /// @param[in]  width_in_tiles - The width of the layer (in tiles).
+    /// @param[in]  height_in_tiles - The height of the layer (in tiles).
+    /// @return The layers in the map, in order from bottom to top.
+    /// @throws std::exception - Thrown if an error occurs.
     std::vector<TileMapLayerDescription> TileMapFile::ReadLayers(
         const boost::property_tree::ptree& map_file_data,
         const unsigned int width_in_tiles,
@@ -154,6 +169,12 @@ namespace MAPS
         return layers;
     }
 
+    /// Reads tile IDs from the provided layer property tree data.
+    /// @param[in]  layer_data - The layer data.
+    /// @param[in]  width_in_tiles - The width of the layer (in tiles).
+    /// @param[in]  height_in_tiles - The height of the layer (in tiles).
+    /// @return The tile IDs in the layer.
+    /// @throws std::exception - Thrown if an error occurs.
     CORE::Array2D<TileId> TileMapFile::ReadTileIds(
         const boost::property_tree::ptree::value_type& layer_data,
         const unsigned int width_in_tiles,
@@ -195,6 +216,10 @@ namespace MAPS
         return tile_ids;
     }
 
+    /// Reads object descriptions from the provided layer property tree data.
+    /// @param[in]  layerData - The layer data.
+    /// @return The descriptions of all objects in the layer.
+    /// @throws std::exception - Thrown if an error occurs.
     std::vector<TileMapObjectDescription> TileMapFile::ReadObjects(const boost::property_tree::ptree::value_type& layerData)
     {
         std::vector<TileMapObjectDescription> objects;

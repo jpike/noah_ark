@@ -11,22 +11,13 @@ namespace AUDIO
     {
     public:
         // CONSTRUCTION.
-        /// Constructs a sound effect using the provided audio samples.
-        /// @param[in]  audio_samples - The audio samples for the sound effect.
-        /// @throws std::invalid_argument - Thrown if the audio samples are null.
         explicit SoundEffect(const std::shared_ptr<sf::SoundBuffer>& audio_samples);
 
         // PLAYING.
-        /// Starts playing the sound effect from the beginning if
-        /// it was stopped or currently playing.  If paused,
-        /// the sound resumes playing from where it was paused.
         void Play();
-        /// Stops playing the sound effect.
         void Stop();
 
         // STATUS QUERYING.
-        /// Checks if the sound effect is currently playing.
-        /// @return True if the sound effect is currently playing; false otherwise.
         bool IsPlaying() const;
 
         // MEMBER VARIABLES.

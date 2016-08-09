@@ -21,10 +21,6 @@ namespace MAPS
         /// The height of the object in pixels.
         unsigned int HeightInPixels;
 
-        /// Determines if two object descriptions are equal.
-        /// @param[in]  rhs - The object to compare with.
-        /// @return True if this object and the provided object are equal;
-        ///     false otherwise.
         bool operator==(const TileMapObjectDescription& rhs) const;
     };
 }

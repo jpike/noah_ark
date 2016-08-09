@@ -7,6 +7,9 @@ namespace GRAPHICS
 {
 namespace GUI
 {
+    /// Constructor.  The text box is invisible by default.
+    /// @param[in]  font - The font to use for rendering text.
+    /// @throws std::exception - Thrown if the font is null.
     TextBox::TextBox(const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
     Font(font)
     {
@@ -18,6 +21,9 @@ namespace GUI
         }
     }
 
+    /// Configures the text box to start displaying the provided text.
+    /// The text box will be made visible.
+    /// @param[in]  text - The text to start displaying.
     void TextBox::StartDisplayingText(const std::string& text)
     {
         // CLEAR ANY DATA FROM THE LAST TIME TEXT WAS DISPLAYED.
@@ -81,6 +87,10 @@ namespace GUI
         IsVisible = true;
     }
 
+    /// Updates the text displayed in the text box based on the provided
+    /// elapsed amount of time.
+    /// @param[in]  elapsed_time_in_seconds - The amount of time elapsed
+    ///     since the last update of the text box.
     void TextBox::Update(const float elapsed_time_in_seconds)
     {
         // CHECK IF ANY PAGES OF TEXT EXIST.
@@ -96,6 +106,8 @@ namespace GUI
         current_text_page.Update(elapsed_time_in_seconds);
     }
 
+    /// Moves to the next page of text for the text box.
+    /// If there is no more text, the text box will be made invisible.
     void TextBox::MoveToNextPage()
     {
         // MOVE TO THE NEXT PAGE OF TEXT.
@@ -113,6 +125,10 @@ namespace GUI
         }
     }
 
+    /// Determines if the current page of text has finished being displayed
+    /// in the text box.  Once a page has been displayed, a player can
+    /// press a button to move to the next page of text.
+    /// @return True if the page of text has finished being displayed; false otherwise.
     bool TextBox::CurrentPageOfTextFinishedBeingDisplayed() const
     {
         // CHECK IF ANY PAGES OF TEXT EXIST.
@@ -129,6 +145,8 @@ namespace GUI
         return current_page_of_text_fully_displayed;
     }
 
+    /// Renders the text box to the provided render target.
+    /// @param[in,out]  render_target - The render target to render to.
     void TextBox::Render(sf::RenderTarget& render_target) const
     {
         // CHECK IF ANY PAGES OF TEXT EXIST.
@@ -209,6 +227,9 @@ namespace GUI
         }
     }
 
+    /// Renders the current text page to the provided stream.
+    /// @param[in,out]  output_stream - The output stream to render to.
+    /// @todo   Create a textual render target?
     void TextBox::Render(std::ostream& output_stream) const
     {
         // CHECK IF ANY PAGES OF TEXT EXIST.

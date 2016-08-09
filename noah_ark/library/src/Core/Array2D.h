@@ -20,93 +20,32 @@ namespace CORE
     {
     public:
         // CONSTRUCTION.
-        /// Constructor to create an empty array.  It must be
-        /// resized later before use.
         explicit Array2D();
-        /// Constructor.  The array will be filled with default
-        /// constructed elements to fill its maximum capacity.
-        /// @param[in]  width - The width of the array (number of columns).
-        /// @param[in]  height - The height of the array (number of rows).
         explicit Array2D(const unsigned int width, const unsigned int height);
-        /// Constructor to fill the array with the provided data.
-        /// @param[in]  width - The width of the array (number of columns).
-        /// @param[in]  height - The height of the array (number of rows).
-        /// @param[in]  data - The data to fill in the array.  The data should
-        ///     be ordered such that the first width number of elements are
-        ///     for the first row, with subsequent rows following.  Within
-        ///     each row, elements should go from left to right across columns.
-        /// @throws std::invalid_argument - Thrown if the data's size does
-        ///     not match the size indicated by the width and height.
         explicit Array2D(const unsigned int width, const unsigned int height, const std::initializer_list<T>& data);
 
         // ASSIGNMENT OPERATORS.
-        /// Copy assignment operator.
-        /// @param[in]  rhs - The array to assign from.
-        /// @return This array after assignment.
         Array2D& operator=(const Array2D& rhs);
-        /// Move assignment operator.
-        /// @param[in,out]  rhs - The array to assign from.
-        /// @return This array after assignment.
         Array2D& operator=(Array2D&& rhs);
 
         // COMPARISON OPERATORS.
-        /// Equality operator.
-        /// @param[in]  rhs - The array to compare with.
-        /// @return True if this array and the provided array are equal; false otherwise.
         bool operator==(const Array2D& rhs) const;
-        /// Inequality operator.
-        /// @param[in]  rhs - The array to compare with.
-        /// @return True if this array and the provided array aren't equal; false otherwise.
         bool operator!=(const Array2D& rhs) const;
 
         // DIMENSION ACCESS/MODIFICATION.
-        /// Gets the width (number of columns) in the array.
-        /// @return The width of the array.
         unsigned int GetWidth() const;
-        /// Gets the height (number of rows) in the array.
-        /// @return The height of the array.
         unsigned int GetHeight() const;
-        /// Resizes the array.  Existing data is cleared and replaced
-        /// with default constructed elements.
-        /// @param[in]  width - The width of the array (number of columns).
-        /// @param[in]  height - The height of the array (number of rows).
         void Resize(const unsigned int width, const unsigned int height);
 
         // BOUNDS CHECKING.
-        /// Determines if the provided indices are in range of this array's bounds.
-        /// @param[in]  x - The horizontal coordinate (or column) to check.
-        /// @param[in]  y - The vertical coordinate (or row) to check.
-        /// @return True if both indices are in range; false otherwise.
         bool IndicesInRange(const unsigned int x, const unsigned int y) const;
 
         // ELEMENT ACCESS.
-        /// Retrieves a reference to the element at the specified 2D coordinates.
-        /// operator() is overloaded because it can take multiple parameters,
-        /// unlike operator[].
-        /// @param[in]  x - The horizontal coordinate (or column) of the element to retrieve.
-        /// @param[in]  y - The vertical coordinate (or row) of the element to retrieve.
-        /// @return A reference to the element at the specified 2D position.
-        /// @throws std::out_of_range - Thrown if the coordinates are out of range
-        ///     of the array's bounds.
         T& operator()(const unsigned int x, const unsigned int y);
-        /// Retrieves a constant reference to the element at the specified 2D coordinates.
-        /// operator() is overloaded because it can take multiple parameters,
-        /// unlike operator[].
-        /// @param[in]  x - The horizontal coordinate (or column) of the element to retrieve.
-        /// @param[in]  y - The vertical coordinate (or row) of the element to retrieve.
-        /// @return A constant reference to the element at the specified 2D position.
-        /// @throws std::out_of_range - Thrown if the coordinates are out of range
-        ///     of the array's bounds.
         const T& operator()(const unsigned int x, const unsigned int y) const;
 
     private:
         // HELPER METHODS.
-        /// Converts the provided 2D coordinates to a 1D array index.
-        /// @param[in]  x - The horizontal coordinate (or column) of the element index.
-        /// @param[in]  y - The vertical coordinate (or row) of the element index.
-        /// @return The 1D array index for the provided 2D coordinates.
-        /// @throws std::out_of_range - Thrown if the coordinates are out of range
-        ///     of the array's bounds.
         unsigned int Get1DArrayIndex(const unsigned int x, const unsigned int y) const;
 
         // MEMBER VARIABLES.
@@ -121,6 +60,8 @@ namespace CORE
         std::vector<T> Data;
     };
 
+    /// Constructor to create an empty array.  It must be
+    /// resized later before use.
     template <typename T>
     Array2D<T>::Array2D() :
     Width(0),
@@ -128,6 +69,10 @@ namespace CORE
     Data()
     {}
 
+    /// Constructor.  The array will be filled with default
+    /// constructed elements to fill its maximum capacity.
+    /// @param[in]  width - The width of the array (number of columns).
+    /// @param[in]  height - The height of the array (number of rows).
     template <typename T>
     Array2D<T>::Array2D(const unsigned int width, const unsigned int height) :
     Width(width),
@@ -135,6 +80,15 @@ namespace CORE
     Data(Width * Height)
     {}
 
+    /// Constructor to fill the array with the provided data.
+    /// @param[in]  width - The width of the array (number of columns).
+    /// @param[in]  height - The height of the array (number of rows).
+    /// @param[in]  data - The data to fill in the array.  The data should
+    ///     be ordered such that the first width number of elements are
+    ///     for the first row, with subsequent rows following.  Within
+    ///     each row, elements should go from left to right across columns.
+    /// @throws std::invalid_argument - Thrown if the data's size does
+    ///     not match the size indicated by the width and height.
     template <typename T>
     Array2D<T>::Array2D(const unsigned int width, const unsigned int height, const std::initializer_list<T>& data) :
     Width(width),
@@ -153,6 +107,9 @@ namespace CORE
         }
     }
 
+    /// Copy assignment operator.
+    /// @param[in]  rhs - The array to assign from.
+    /// @return This array after assignment.
     template <typename T>
     Array2D<T>& Array2D<T>::operator=(const Array2D<T>& rhs)
     {
@@ -168,6 +125,9 @@ namespace CORE
         return (*this);
     }
 
+    /// Move assignment operator.
+    /// @param[in,out]  rhs - The array to assign from.
+    /// @return This array after assignment.
     template <typename T>
     Array2D<T>& Array2D<T>::operator=(Array2D<T>&& rhs)
     {
@@ -183,6 +143,9 @@ namespace CORE
         return (*this);
     }
 
+    /// Equality operator.
+    /// @param[in]  rhs - The array to compare with.
+    /// @return True if this array and the provided array are equal; false otherwise.
     template <typename T>
     bool Array2D<T>::operator==(const Array2D<T>& rhs) const
     {
@@ -195,6 +158,9 @@ namespace CORE
         return true;
     }
 
+    /// Inequality operator.
+    /// @param[in]  rhs - The array to compare with.
+    /// @return True if this array and the provided array aren't equal; false otherwise.
     template <typename T>
     bool Array2D<T>::operator!=(const Array2D<T>& rhs) const
     {
@@ -202,18 +168,26 @@ namespace CORE
         return !arrays_equal;
     }
 
+    /// Gets the width (number of columns) in the array.
+    /// @return The width of the array.
     template <typename T>
     unsigned int Array2D<T>::GetWidth() const
     {
         return Width;
     }
     
+    /// Gets the height (number of rows) in the array.
+    /// @return The height of the array.
     template <typename T>
     unsigned int Array2D<T>::GetHeight() const
     {
         return Height;
     }
 
+    /// Resizes the array.  Existing data is cleared and replaced
+    /// with default constructed elements.
+    /// @param[in]  width - The width of the array (number of columns).
+    /// @param[in]  height - The height of the array (number of rows).
     template <typename T>
     void Array2D<T>::Resize(const unsigned int width, const unsigned int height)
     {
@@ -226,6 +200,10 @@ namespace CORE
         (*this) = std::move(resized_array);
     }
 
+    /// Determines if the provided indices are in range of this array's bounds.
+    /// @param[in]  x - The horizontal coordinate (or column) to check.
+    /// @param[in]  y - The vertical coordinate (or row) to check.
+    /// @return True if both indices are in range; false otherwise.
     template <typename T>
     bool Array2D<T>::IndicesInRange(const unsigned int x, const unsigned int y) const
     {
@@ -236,6 +214,14 @@ namespace CORE
         return indices_within_bounds;
     }
 
+    /// Retrieves a reference to the element at the specified 2D coordinates.
+    /// operator() is overloaded because it can take multiple parameters,
+    /// unlike operator[].
+    /// @param[in]  x - The horizontal coordinate (or column) of the element to retrieve.
+    /// @param[in]  y - The vertical coordinate (or row) of the element to retrieve.
+    /// @return A reference to the element at the specified 2D position.
+    /// @throws std::out_of_range - Thrown if the coordinates are out of range
+    ///     of the array's bounds.
     template <typename T>
     T& Array2D<T>::operator()(const unsigned int x, const unsigned int y)
     {
@@ -248,6 +234,14 @@ namespace CORE
         return Data.at(element_index);
     }
 
+    /// Retrieves a constant reference to the element at the specified 2D coordinates.
+    /// operator() is overloaded because it can take multiple parameters,
+    /// unlike operator[].
+    /// @param[in]  x - The horizontal coordinate (or column) of the element to retrieve.
+    /// @param[in]  y - The vertical coordinate (or row) of the element to retrieve.
+    /// @return A constant reference to the element at the specified 2D position.
+    /// @throws std::out_of_range - Thrown if the coordinates are out of range
+    ///     of the array's bounds.
     template <typename T>
     const T& Array2D<T>::operator()(const unsigned int x, const unsigned int y) const
     {
@@ -260,6 +254,12 @@ namespace CORE
         return Data.at(element_index);
     }
 
+    /// Converts the provided 2D coordinates to a 1D array index.
+    /// @param[in]  x - The horizontal coordinate (or column) of the element index.
+    /// @param[in]  y - The vertical coordinate (or row) of the element index.
+    /// @return The 1D array index for the provided 2D coordinates.
+    /// @throws std::out_of_range - Thrown if the coordinates are out of range
+    ///     of the array's bounds.
     template <typename T>
     unsigned int Array2D<T>::Get1DArrayIndex(const unsigned int x, const unsigned int y) const
     {

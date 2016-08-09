@@ -2,24 +2,21 @@
 
 namespace INPUT_CONTROL
 {
-    KeyboardInputController::KeyboardInputController() :
-    Enabled(true),
-    Keyboard()
-    {}
-
-    KeyboardInputController::~KeyboardInputController()
-    {}
-
+    /// Disables input from the controller.
     void KeyboardInputController::DisableInput()
     {
         Enabled = false;
     }
 
+    /// Enables input from the controller.
     void KeyboardInputController::EnableInput()
     {
         Enabled = true;
     }
 
+    /// Checks if the up button is pressed.
+    /// @return True if the up button is pressed (and input is enabled).
+    ///     False otherwise.
     bool KeyboardInputController::UpButtonPressed() const
     {
         if (Enabled)
@@ -32,6 +29,9 @@ namespace INPUT_CONTROL
         }
     }
 
+    /// Checks if the down button is pressed.
+    /// @return True if the down button is pressed (and input is enabled).
+    ///     False otherwise.
     bool KeyboardInputController::DownButtonPressed() const
     {
         if (Enabled)
@@ -44,6 +44,9 @@ namespace INPUT_CONTROL
         }
     }
 
+    /// Checks if the left button is pressed.
+    /// @return True if the left button is pressed (and input is enabled).
+    ///     False otherwise.
     bool KeyboardInputController::LeftButtonPressed() const
     {
         if (Enabled)
@@ -56,6 +59,9 @@ namespace INPUT_CONTROL
         }
     }
 
+    /// Checks if the right button is pressed.
+    /// @return True if the right button is pressed (and input is enabled).
+    ///     False otherwise.
     bool KeyboardInputController::RightButtonPressed() const
     {
         if (Enabled)
@@ -68,6 +74,9 @@ namespace INPUT_CONTROL
         }
     }
 
+    /// Checks if the primary action button is pressed.
+    /// @return True if the primary action button is pressed (and input is enabled).
+    ///     False otherwise.
     bool KeyboardInputController::PrimaryActionButtonPressed() const
     {
         if (Enabled)

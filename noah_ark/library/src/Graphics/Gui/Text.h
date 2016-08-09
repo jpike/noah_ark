@@ -14,23 +14,13 @@ namespace GUI
     class Text
     {
     public:
-        /// Constructor.
-        /// @param[in]  font - The font to use for the text.
-        /// @param[in]  characters - The sequence characters in the text.
-        /// @param[in]  screen_top_left_position_in_pixels - The top-left screen position
-        ///     of where the text should be rendered, in units of pixels.
-        /// @throws std::exception - Thrown if the font is null.
         explicit Text(
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font, 
             const std::string& characters,
             const MATH::Vector2ui& screen_top_left_position_in_pixels);
 
-        /// Renders the text to the specified render target.
-        /// @param[in,out]  render_target - The target to render to.
         void Render(sf::RenderTarget& render_target) const;
 
-        /// Gets the width of the text, in pixels.
-        /// @return The width of the text, in pixels.
         unsigned int GetWidthInPixels() const;
 
     private:

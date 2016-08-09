@@ -2,11 +2,15 @@
 
 namespace OBJECTS
 {
+    /// Gets the bounding box of the tree, in world coordinates.
+    /// @return The tree's bounding box.
     MATH::FloatRectangle Tree::GetWorldBoundingBox() const
     {
         return Sprite.GetWorldBoundingBox();
     }
 
+    /// Gets the center world position of the tree's trunk.
+    /// @return The center world position of the tree's trunk.
     MATH::Vector2f Tree::GetTrunkCenterWorldPosition() const
     {
         // GET THE BOUNDING BOX OF THE TREE.
@@ -29,6 +33,7 @@ namespace OBJECTS
         return trunk_center_world_position;
     }
 
+    /// Damages the tree by taking one hit.
     void Tree::TakeHit()
     {
         // CHECK IF THE TREE HAS ANY REMAINING HIT POINTS.
@@ -42,6 +47,8 @@ namespace OBJECTS
         }
     }
 
+    /// Starts shaking the tree.  Intended
+    /// for whenever the tree gets hit.
     void Tree::StartShaking()
     {
         // INITIALIZE THE SHAKING PARAMETERS FOR A NEW SHAKE.
@@ -78,6 +85,9 @@ namespace OBJECTS
         ShakeSubRotations.push_back(third_rotation);
     }
 
+    /// Updates the shaking of the tree, if the tree is currently shaking.
+    /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to
+    ///     update the tree's shaking.
     void Tree::Update(const float elapsed_time_in_seconds)
     {
         // ONLY UPDATE THE SHAKING IF THE TREE IS CURRENTLY SHAKING.

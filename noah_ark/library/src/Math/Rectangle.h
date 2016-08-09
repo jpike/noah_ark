@@ -26,101 +26,46 @@ namespace MATH
     {
     public:
         // CONSTRUCTION/DESTRUCTION.
-        /// Creates a rectangle from the top-left coordinates and dimensions.
-        /// @param[in]  left_position - The left position of the rectangle.
-        /// @param[in]  top_position - The top position of the rectangle.
-        /// @param[in]  width - The width of the rectangle.
-        /// @param[in]  height - The height of the rectangle.
-        /// @return A rectangle based on the provided values.
         static Rectangle FromTopLeftAndDimensions(
             const CoordinateType left_position,
             const CoordinateType top_position,
             const CoordinateType width,
             const CoordinateType height);
-        /// Creates a rectangle from center coordinates and dimensions.
-        /// @param[in]  center_x_position - The center X position of the rectangle.
-        /// @param[in]  center_y_position - The center Y position of the rectangle.
-        /// @param[in]  width - The width of the rectangle.
-        /// @param[in]  height - The height of the rectangle.
         static Rectangle FromCenterAndDimensions(
             const CoordinateType center_x_position,
             const CoordinateType center_y_position,
             const CoordinateType width,
             const CoordinateType height);
-        /// Default constructor to create an invalid rectangle
-        /// with 0 for all values.
         explicit Rectangle();
-        /// Constructor accepting an SFML rectangle.
-        /// @param[in]  sfml_rectangle - The SFML rectangle to use for this rectangle.
         explicit Rectangle(const sf::Rect<CoordinateType>& sfml_rectangle);
-        /// Destructor.
         ~Rectangle();
 
         // OPERATORS.
-        /// Equality operator.
-        /// @param[in]  rhs_rectangle - The rectangle on the right-hand side of the operator.
-        /// @return     True if the rectangles are equal; false otherwise.
         bool operator== (const Rectangle& rhs_rectangle) const;
 
         // POSITIONING.
-        /// @brief  Gets the center X position of the rectangle.
-        /// @return The center X position of the rectangle.
         CoordinateType GetCenterXPosition() const;
-        /// @brief  Gets the center Y position of the rectangle.
-        /// @return The center Y position of the rectangle.
         CoordinateType GetCenterYPosition() const;
-        /// Gets the center position of the rectangle.
-        /// @return The center position of the rectangle.
         MATH::Vector2<CoordinateType> GetCenterPosition() const;
-        /// Gets the left X position of the rectangle.
-        /// @return The left X position of the rectangle.
         CoordinateType GetLeftXPosition() const;
-        /// Gets the right X position of the rectangle.
-        /// @return The right X position of the rectangle.
         CoordinateType GetRightXPosition() const;
-        /// Gets the top Y position of the rectangle.
-        /// @return The top Y position of the rectangle.
         CoordinateType GetTopYPosition() const;
-        /// Gets the bottom Y position of the rectangle.
-        /// @return The bottom Y position of the rectangle.
         CoordinateType GetBottomYPosition() const;
-        /// Sets the center position of the rectangle.
-        /// @param[in]  center_x_position - The center X position of the rectangle.
-        /// @param[in]  center_y_position - The center Y position of the rectangle.
         void SetCenterPosition(const CoordinateType center_x_position, const CoordinateType center_y_position);
 
         // MOVEMENT.
-        /// Moves the rectangle based on the specified vector.
-        /// @param[in]  movement - The vector to move the rectangle by.
         void Move(const MATH::Vector2<CoordinateType>& movement);
 
         // DIMENSIONS.
-        /// Gets the width of the rectangle.
-        /// @return The width of the rectangle.
         CoordinateType GetWidth() const;
-        /// Gets the height of the rectangle.
-        /// @return The height of the rectangle.
         CoordinateType GetHeight() const;
 
         // COLLISION TESTING.
-        /// Determines if the specified point is contained in this rectangle.
-        /// @param[in]  x_position - The X position to check for containmnet in this rectangle.
-        /// @param[in]  y_position - The Y position to check for containmnet in this rectangle.
-        /// @return     True if the specified point is within this rectangle; false otherwise.
         bool Contains(const CoordinateType x_position, const CoordinateType y_position) const;
-        /// Checks if the other rectangle intersects any portion of this rectangle.
-        /// @param[in]  other_rectangle - The rectangle to test against this rectangle for intersection.
-        /// @return True if the rectangles intersect; false otherwise.
         bool Intersects(const Rectangle& other_rectangle) const;
 
     private:
         // HELPER METHODS.
-        /// Recalculates the rectangle based on the provided information.
-        /// @param[in]  center_x_position - The center X position of the rectangle.
-        /// @param[in]  center_y_position - The center Y position of the rectangle.
-        /// @param[in]  width - The width of the rectangle.
-        /// @param[in]  height - The height of the rectangle.
-        /// @return     The underlying SFML rectangle based on the provided parameters.
         static sf::Rect<CoordinateType> RecalculateRectangle(
             const CoordinateType center_x_position,
             const CoordinateType center_y_position,
@@ -139,6 +84,12 @@ namespace MATH
 
     // CLASS IMPLEMENTATION.
 
+    /// Creates a rectangle from the top-left coordinates and dimensions.
+    /// @param[in]  left_position - The left position of the rectangle.
+    /// @param[in]  top_position - The top position of the rectangle.
+    /// @param[in]  width - The width of the rectangle.
+    /// @param[in]  height - The height of the rectangle.
+    /// @return A rectangle based on the provided values.
     template <typename CoordinateType>
     Rectangle<CoordinateType> Rectangle<CoordinateType>::FromTopLeftAndDimensions(
         const CoordinateType left_position,
@@ -156,6 +107,11 @@ namespace MATH
         return rectangle;
     }
 
+    /// Creates a rectangle from center coordinates and dimensions.
+    /// @param[in]  center_x_position - The center X position of the rectangle.
+    /// @param[in]  center_y_position - The center Y position of the rectangle.
+    /// @param[in]  width - The width of the rectangle.
+    /// @param[in]  height - The height of the rectangle.
     template <typename CoordinateType>
     Rectangle<CoordinateType> Rectangle<CoordinateType>::FromCenterAndDimensions(
         const CoordinateType center_x_position,
@@ -173,20 +129,28 @@ namespace MATH
         return rectangle;
     }
 
+    /// Default constructor to create an invalid rectangle
+    /// with 0 for all values.
     template <typename CoordinateType>
     Rectangle<CoordinateType>::Rectangle() :
     SfmlRectangle()
     {}
 
+    /// Constructor accepting an SFML rectangle.
+    /// @param[in]  sfml_rectangle - The SFML rectangle to use for this rectangle.
     template <typename CoordinateType>
     Rectangle<CoordinateType>::Rectangle(const sf::Rect<CoordinateType>& sfml_rectangle) :
     SfmlRectangle(sfml_rectangle)
     {}
 
+    /// Destructor.
     template <typename CoordinateType>
     Rectangle<CoordinateType>::~Rectangle()
     {}
 
+    /// Equality operator.
+    /// @param[in]  rhs_rectangle - The rectangle on the right-hand side of the operator.
+    /// @return     True if the rectangles are equal; false otherwise.
     template <typename CoordinateType>
     bool Rectangle<CoordinateType>::operator== (const Rectangle<CoordinateType>& rhs_rectangle) const
     {
@@ -194,6 +158,8 @@ namespace MATH
         return equal;
     }
 
+    /// Gets the center X position of the rectangle.
+    /// @return The center X position of the rectangle.
     template <typename CoordinateType>
     CoordinateType Rectangle<CoordinateType>::GetCenterXPosition() const
     {
@@ -204,6 +170,8 @@ namespace MATH
         return horizontal_midpoint;
     }
 
+    /// Gets the center Y position of the rectangle.
+    /// @return The center Y position of the rectangle.
     template <typename CoordinateType>
     CoordinateType Rectangle<CoordinateType>::GetCenterYPosition() const
     {
@@ -214,6 +182,8 @@ namespace MATH
         return vertical_midpoint;
     }
 
+    /// Gets the center position of the rectangle.
+    /// @return The center position of the rectangle.
     template <typename CoordinateType>
     MATH::Vector2<CoordinateType> Rectangle<CoordinateType>::GetCenterPosition() const
     {
@@ -223,12 +193,16 @@ namespace MATH
         return center_position;
     }
 
+    /// Gets the left X position of the rectangle.
+    /// @return The left X position of the rectangle.
     template <typename CoordinateType>
     CoordinateType Rectangle<CoordinateType>::GetLeftXPosition() const
     {
         return SfmlRectangle.left;
     }
 
+    /// Gets the right X position of the rectangle.
+    /// @return The right X position of the rectangle.
     template <typename CoordinateType>
     CoordinateType Rectangle<CoordinateType>::GetRightXPosition() const
     {
@@ -236,12 +210,16 @@ namespace MATH
         return right_x_position;
     }
 
+    /// Gets the top Y position of the rectangle.
+    /// @return The top Y position of the rectangle.
     template <typename CoordinateType>
     CoordinateType Rectangle<CoordinateType>::GetTopYPosition() const
     {
         return SfmlRectangle.top;
     }
 
+    /// Gets the bottom Y position of the rectangle.
+    /// @return The bottom Y position of the rectangle.
     template <typename CoordinateType>
     CoordinateType Rectangle<CoordinateType>::GetBottomYPosition() const
     {
@@ -249,10 +227,13 @@ namespace MATH
         return bottom_y_position;
     }
 
+    /// Sets the center position of the rectangle.
+    /// @param[in]  center_x_position - The center X position of the rectangle.
+    /// @param[in]  center_y_position - The center Y position of the rectangle.
     template <typename CoordinateType>
     void Rectangle<CoordinateType>::SetCenterPosition(const CoordinateType center_x_position, const CoordinateType center_y_position)
     {
-        // RE-CREATE THE HGE RECTANGLE FROM THE PROVIDED PARAMETERS.
+        // RE-CREATE THE SFML RECTANGLE FROM THE PROVIDED PARAMETERS.
         SfmlRectangle = RecalculateRectangle(
             center_x_position,
             center_y_position,
@@ -260,6 +241,8 @@ namespace MATH
             GetHeight());
     }
 
+    /// Moves the rectangle based on the specified vector.
+    /// @param[in]  movement - The vector to move the rectangle by.
     template <typename CoordinateType>
     void Rectangle<CoordinateType>::Move(const MATH::Vector2<CoordinateType>& movement)
     {
@@ -267,30 +250,47 @@ namespace MATH
         SfmlRectangle.top += movement.Y;
     }
 
+    /// Gets the width of the rectangle.
+    /// @return The width of the rectangle.
     template <typename CoordinateType>
     CoordinateType Rectangle<CoordinateType>::GetWidth() const
     {
         return SfmlRectangle.width;
     }
 
+    /// Gets the height of the rectangle.
+    /// @return The height of the rectangle.
     template <typename CoordinateType>
     CoordinateType Rectangle<CoordinateType>::GetHeight() const
     {
         return SfmlRectangle.height;
     }
 
+    /// Determines if the specified point is contained in this rectangle.
+    /// @param[in]  x_position - The X position to check for containmnet in this rectangle.
+    /// @param[in]  y_position - The Y position to check for containmnet in this rectangle.
+    /// @return     True if the specified point is within this rectangle; false otherwise.
     template <typename CoordinateType>
     bool Rectangle<CoordinateType>::Contains(const CoordinateType x_position, const CoordinateType y_position) const
     {
         return SfmlRectangle.contains(x_position, y_position);
     }
 
+    /// Checks if the other rectangle intersects any portion of this rectangle.
+    /// @param[in]  other_rectangle - The rectangle to test against this rectangle for intersection.
+    /// @return True if the rectangles intersect; false otherwise.
     template <typename CoordinateType>
     bool Rectangle<CoordinateType>::Intersects(const Rectangle<CoordinateType>& other_rectangle) const
     {
         return SfmlRectangle.intersects(other_rectangle.SfmlRectangle);
     }
 
+    /// Recalculates the rectangle based on the provided information.
+    /// @param[in]  center_x_position - The center X position of the rectangle.
+    /// @param[in]  center_y_position - The center Y position of the rectangle.
+    /// @param[in]  width - The width of the rectangle.
+    /// @param[in]  height - The height of the rectangle.
+    /// @return     The underlying SFML rectangle based on the provided parameters.
     template <typename CoordinateType>
     sf::Rect<CoordinateType> Rectangle<CoordinateType>::RecalculateRectangle(
         const CoordinateType center_x_position,

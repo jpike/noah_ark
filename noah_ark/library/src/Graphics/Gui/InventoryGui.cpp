@@ -9,6 +9,11 @@ namespace GRAPHICS
 {
 namespace GUI
 {
+    /// Constructor.
+    /// @param[in]  inventory - The inventory to display in the GUI.
+    /// @param[in]  font - The font to use for rendering text on the GUI.
+    /// @throws std::exception - Thrown if a parameter is null.
+    /// @todo   Re-think how we pass assets to this class.
     InventoryGui::InventoryGui(
         const std::shared_ptr<const OBJECTS::Inventory>& inventory,
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
@@ -43,6 +48,8 @@ namespace GUI
         FoodTabColor.Blue = 0;
     }
 
+    /// Has the inventory GUI respond to the provided key being pressed.
+    /// @param[in]  key - The key that was pressed.
     void InventoryGui::RespondToInput(const sf::Keyboard::Key key)
     {
         // CHECK WHICH TAB IS OPENED.
@@ -102,6 +109,8 @@ namespace GUI
         }
     }
 
+    /// Renders the inventory GUI to the provided target.
+    /// @param[in]  render_target - The target to render to.
     void InventoryGui::Render(sf::RenderTarget& render_target) const
     {
         // RENDER A RECTANGLE FOR THE BACKGROUND.
@@ -228,6 +237,9 @@ namespace GUI
         }
     }
 
+    /// Renders the page of the inventory for the Bible tab.
+    /// This page allows browsing Bible verses in the inventory.
+    /// @param[in]  render_target - The target to render to.
     void InventoryGui::RenderBiblePage(sf::RenderTarget& render_target) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
@@ -291,6 +303,9 @@ namespace GUI
             render_target);
     }
     
+    /// Renders the page of the inventory for the animals tab.
+    /// This page allows browsing animals in the inventory.
+    /// @param[in]  render_target - The target to render to.
     void InventoryGui::RenderAnimalsPage(sf::RenderTarget& render_target) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
@@ -314,6 +329,9 @@ namespace GUI
             render_target);
     }
 
+    /// Renders the page of the inventory for the food tab.
+    /// This page allows browsing food in the inventory.
+    /// @param[in]  render_target - The target to render to.
     void InventoryGui::RenderFoodPage(sf::RenderTarget& render_target) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.

@@ -20,14 +20,8 @@ namespace GUI
     class Font
     {
     public:
-        /// Creates a font to use the specified texture.
-        /// @param[in]  texture - The texture to use for the font.
-        /// @throws std::exception - Thrown if the texture is null.
         explicit Font(const std::shared_ptr<Texture>& texture);
 
-        /// Gets the glyph for the specified character.
-        /// @param[in]  character - The character whose glyph to get.
-        /// @return     The glyph for the character.
         Glyph GetGlyph(const char character) const;
 
     private:

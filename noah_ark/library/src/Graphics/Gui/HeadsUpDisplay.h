@@ -20,15 +20,6 @@ namespace GUI
     {
     public:
         // CONSTRUCTION.
-        /// Constructor.
-        /// @param[in]  inventory - The inventory to display in the HUD.
-        /// @param[in]  font - The font to use for rendering text on the HUD.
-        /// @param[in]  axe_texture - The texture to use for rendering an
-        ///     axe icon on the HUD.
-        /// @param[in]  wood_texture - The texture to use for rendering a
-        ///     wood icon on the HUD.
-        /// @throws std::exception - Thrown if a parameter is null.
-        /// @todo   Re-think how we pass assets to this class.
         explicit HeadsUpDisplay(
             const std::shared_ptr<const OBJECTS::Inventory>& inventory,
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
@@ -36,13 +27,9 @@ namespace GUI
             const std::shared_ptr<const Texture>& wood_texture);
 
         // INPUT.
-        /// Has the HUD respond to the provided key being pressed.
-        /// @param[in]  key - The key that was pressed.
         void RespondToInput(const sf::Keyboard::Key key);
 
         // RENDERING.
-        /// Renders the HUD to the provided target.
-        /// @param[in]  render_target - The target to render to.
         void Render(sf::RenderTarget& render_target) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

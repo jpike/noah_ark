@@ -13,17 +13,11 @@ namespace EVENTS
     class AxeSwingEvent
     {
     public:
-        // METHODS.
-        /// Constructor.
-        /// @param[in]  axe - The axe that is being swung.
+        // CONSTRUCTION.
         explicit AxeSwingEvent(const std::shared_ptr<OBJECTS::Axe>& axe);
 
-        /// Determines if the axe is fully swung out.
-        /// @return True if the axe is fully swung out; false otherwise.
+        // OTHER METHODS.
         bool FullySwungOut() const;
-
-        /// Gets the world boundaries of the axe's blade.
-        /// @return The world boundaries of the axe's blade.
         MATH::FloatRectangle GetBladeBounds() const;
 
         // PUBLIC MEMBER VARIBLES FOR EASY ACCESS.

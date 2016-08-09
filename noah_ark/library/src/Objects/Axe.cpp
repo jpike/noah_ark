@@ -9,6 +9,9 @@ namespace OBJECTS
     const MATH::Vector2f AxeSwingParameters::FLIP_VERTICALLY = MATH::Vector2f(1.0f, -1.0f);
     const MATH::Vector2f AxeSwingParameters::FLIP_HORIZONTALLY_AND_VERTICALLY = MATH::Vector2f(-1.0f, -1.0f);
 
+    /// Determines if the rotation performed by swinging out is
+    /// positive or not.
+    /// @return True if the swing out rotation is positive; false otherwise.
     bool AxeSwingParameters::SwingOutIsPositiveRotation() const
     {
         // If the swinging out rotation angle is greater than the initial rotation angle, then a positive rotation occurs.
@@ -17,6 +20,9 @@ namespace OBJECTS
         return swing_out_is_positive_rotation;
     }
     
+    /// Determines if the rotation performed by swinging back is
+    /// positive or not.
+    /// @return True if the swing back rotation is positive; false otherwise.
     bool AxeSwingParameters::SwingBackIsPositiveRotation() const
     {
         // If the final rotation angle is greater than the fully swung out angle, then a positive rotation occurs.
@@ -25,6 +31,7 @@ namespace OBJECTS
         return swing_back_is_positive_rotation;
     }
 
+    /// Swings the axe up.
     void Axe::SwingUp()
     {
         // STORE THE DIRECTION OF THE SWING.
@@ -64,6 +71,7 @@ namespace OBJECTS
         Sprite.SetScale(CurrentSwingParameters.SpriteScale);
     }
     
+    /// Swings the axe down.
     void Axe::SwingDown()
     {
         // STORE THE DIRECTION OF THE SWING.
@@ -104,6 +112,7 @@ namespace OBJECTS
         Sprite.SetScale(CurrentSwingParameters.SpriteScale);
     }
     
+    /// Swings the axe left.
     void Axe::SwingLeft()
     {
         // STORE THE DIRECTION OF THE SWING.
@@ -143,6 +152,7 @@ namespace OBJECTS
         Sprite.SetScale(CurrentSwingParameters.SpriteScale);
     }
 
+    /// Swings the axe up.
     void Axe::SwingRight()
     {
         // STORE THE DIRECTION OF THE SWING.
@@ -182,11 +192,15 @@ namespace OBJECTS
         Sprite.SetScale(CurrentSwingParameters.SpriteScale);
     }
 
+    /// Determines if the axe is currently being swung.
+    /// @return True if the axe is being swung; false otherwise.
     bool Axe::IsSwinging() const
     {
         return CurrentlySwinging;
     }
 
+    /// Determines if the axe is fully swung out.
+    /// @return True if the axe is fully swung out; false otherwise.
     bool Axe::FullySwungOut() const
     {
         // The axe isn't fully swung out if it isn't being swung at all.
@@ -211,6 +225,8 @@ namespace OBJECTS
         }
     }
 
+    /// Updates the axe for a frame based on the elapsed amount of time.
+    /// @param[in]  elapsed_time_in_seconds - The amount of time to update by.
     void Axe::Update(const float elapsed_time_in_seconds)
     {
         // CHECK IF THE AXE IS SWINGING.
@@ -305,6 +321,8 @@ namespace OBJECTS
         }
     }
 
+    /// Gets the world boundaries of the axe's blade.
+    /// @return The world boundaries of the axe's blade.
     MATH::FloatRectangle Axe::GetBladeBounds() const
     {
         // CHECK IF THE AXE IS BEING SWUNG.
@@ -320,6 +338,8 @@ namespace OBJECTS
         return Sprite.GetWorldBoundingBox();
     }
 
+    /// Sets the world position of the axe.
+    /// @param[in]  world_position - The world position to set.
     void Axe::SetWorldPosition(const MATH::Vector2f& world_position)
     {
         Sprite.SetWorldPosition(world_position.X, world_position.Y);

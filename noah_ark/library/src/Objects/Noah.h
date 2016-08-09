@@ -23,21 +23,13 @@ namespace OBJECTS
         static const float MOVE_SPEED_IN_PIXELS_PER_SECOND;
 
         // POSITIONING.
-        /// Gets the world position of Noah.
-        /// @return The world position of Noah.
         MATH::Vector2f GetWorldPosition() const;
-        /// Sets the world position of Noah.
-        /// @param[in]  world_position - The new world position to set.
         void SetWorldPosition(const MATH::Vector2f& world_position);
 
         // BOUNDING BOX.
-        /// Gets the bounding box of Noah in the world.
-        /// @return The bounding box of Noah.
         MATH::FloatRectangle GetWorldBoundingBox() const;
 
         // AXE SWINGING.
-        /// Causes Noah to begin swinging his axe, if he has one and isn't already swinging it.
-        /// @return The event describing the axe swing, if an axe swing is started.
         std::shared_ptr<EVENTS::AxeSwingEvent> SwingAxe() const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

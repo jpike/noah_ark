@@ -3,6 +3,11 @@
 
 namespace CORE
 {
+    /// Splits the provided string into separate lines based on newline
+    /// characters embedded in the string.  Only '\n' is currently supported
+    /// since that is all tha is currently needed.
+    /// @param[in]  text - The text to split into lines.
+    /// @return The lines from the provided text, in original order.
     std::vector<std::string> String::SplitIntoLines(const std::string& text)
     {
         std::vector<std::string> lines;
@@ -49,6 +54,14 @@ namespace CORE
         return lines;
     }
 
+    /// Splits the provided string into separate words.
+    /// Any whitespace character is considered a delimiter.
+    /// Punctuation is included in adjacent words.
+    /// @param[in]  text - The text to split into words.
+    /// @param[in]  max_length_per_word_in_characters - The maximum length (in characters)
+    ///     for each word.  If a word is found that exceeds this maximum length, it will
+    ///     be broken up into separate words.
+    /// @return The words from the provided text, in original order.
     std::deque<std::string> String::SplitIntoWords(
         const std::string& text,
         const unsigned int max_length_per_word_in_characters)

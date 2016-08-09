@@ -16,46 +16,25 @@ namespace MAPS
     {
     public:
         // CONSTRUCTION.
-        /// Constructor to create an invalid tile.
         explicit Tile();
-        /// Constructor accepting all of a tile's data.
-        /// @param[in]  id - A numeric ID identifying the tile in a tileset.
-        /// @param[in]  sprite - The sprite used for rendering the tile.
         explicit Tile(
             const TileId id,
             const GRAPHICS::Sprite& sprite);
 
         // POSITIONING.
-        /// Sets the world position of the center of the tile.
-        /// @param[in]  world_x_position - The world x position of the center of the tile.
-        /// @param[in]  world_y_position - The world y position of the center of the tile.
         void SetWorldPosition(const float world_x_position, const float world_y_position);
 
         // DIMENSIONS.
-        /// Gets the width of the tile, in pixels.
-        /// @return The width of the tile in pixels.
         float GetWidthInPixels() const;
-        /// Gets the height of the tile, in pixels.
-        /// @return The height of the tile in pixels.
         float GetHeightInPixels() const;
 
         // BOUNDARIES.
-        /// Gets the left X position of the tile's bounding box, in world coordinates.
-        /// @return The left X position of the tile.
         float GetLeftXPosition() const;
-        /// Gets the right X position of the tile's bounding box, in world coordinates.
-        /// @return The right X position of the tile.
         float GetRightXPosition() const;
-        /// Gets the top Y position of the tile's bounding box, in world coordinates.
-        /// @return The top Y position of the tile.
         float GetTopYPosition() const;
-        /// Gets the bottomt Y position of the tile's bounding box, in world coordinates.
-        /// @return The bottom Y position of the tile.
         float GetBottomYPosition() const;
 
         // STATE CHECKING.
-        /// Determines if the tile is walkable.
-        /// @return True if the tile is walkable; false otherwise.
         bool IsWalkable() const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

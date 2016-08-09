@@ -224,6 +224,12 @@
     <ClInclude Include="src\Graphics\Renderer.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\Bible\BibleBook.h">
+      <Filter>Header Files\Bible</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Bible\BibleVerse.h">
+      <Filter>Header Files\Bible</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -342,6 +348,12 @@
     </ClCompile>
     <ClCompile Include="src\Graphics\Renderer.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bible\BibleBook.cpp">
+      <Filter>Source Files\Bible</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bible\BibleVerse.cpp">
+      <Filter>Source Files\Bible</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

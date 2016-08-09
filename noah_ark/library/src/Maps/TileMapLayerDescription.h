@@ -38,10 +38,6 @@ namespace MAPS
         /// of layer in this description is for an object layer.
         std::vector<TileMapObjectDescription> Objects;
 
-        /// Determines if two layer descriptions are equal.
-        /// @param[in]  rhs - The layer to compare with.
-        /// @return True if this layer and the provided layer are equal;
-        ///     false otherwise.
         bool operator==(const TileMapLayerDescription& rhs) const;
     };
 }

@@ -11,6 +11,11 @@ namespace GRAPHICS
 {
 namespace GUI
 {
+    /// Constructor.
+    /// @param[in]  inventory - The inventory indicating which
+    ///     Bible verses have been collected.
+    /// @param[in]  font - The font to use for rendering text in the box.
+    /// @throws std::exception - Thrown if any parameters are null.
     InventoryBibleVerseListBox::InventoryBibleVerseListBox(
         const std::shared_ptr<const OBJECTS::Inventory>& inventory,
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
@@ -27,6 +32,11 @@ namespace GUI
             "Font cannot be null for Bible verse list box.");
     }
 
+    /// Renders the text box, showing which Bible verse is selected
+    /// along with a few surrounding verses.
+    /// @param[in]  bounding_rectangle - The bounding rectangle
+    ///     of this text box (in screen coordinates).
+    /// @param[in,out]  render_target - The target to render to.
     void InventoryBibleVerseListBox::Render(
         const MATH::FloatRectangle& bounding_rectangle,
         sf::RenderTarget& render_target) const
@@ -104,6 +114,9 @@ namespace GUI
         }
     }
     
+    /// Gets the currently selected verse, if available in the inventory.
+    /// @return The currently selected verse, if available in the inventory;
+    ///     null otherwise.
     const BIBLE::BibleVerse* const InventoryBibleVerseListBox::GetSelectedVerse() const
     {
         // MAKE SURE THE SELECTED VERSE IS IN THE PLAYER'S INVENTORY.
@@ -122,6 +135,8 @@ namespace GUI
         }
     }
 
+    /// Selects the previous verse in the list, if one exists.
+    /// If a previous verse does not exist, the currently selected verse remains.
     void InventoryBibleVerseListBox::SelectPreviousVerse()
     {
         // If subtracting 1 causes the verse index to go negative,
@@ -134,6 +149,8 @@ namespace GUI
         std::cout << "SelectedVerseIndex: " << SelectedVerseIndex << std::endl;
     }
     
+    /// Selects the next verse in the list, if one exists.
+    /// If a next verse does not exist, the currently selected verse remains.
     void InventoryBibleVerseListBox::SelectNextVerse()
     {
         unsigned int next_verse_index = SelectedVerseIndex + 1;

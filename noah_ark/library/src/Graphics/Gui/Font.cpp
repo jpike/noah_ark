@@ -5,6 +5,9 @@ namespace GRAPHICS
 {
 namespace GUI
 {
+    /// Creates a font to use the specified texture.
+    /// @param[in]  texture - The texture to use for the font.
+    /// @throws std::exception - Thrown if the texture is null.
     Font::Font(const std::shared_ptr<GRAPHICS::Texture>& texture) :
         Texture(texture)
     {
@@ -16,6 +19,9 @@ namespace GUI
         }
     }
 
+    /// Gets the glyph for the specified character.
+    /// @param[in]  character - The character whose glyph to get.
+    /// @return     The glyph for the character.
     Glyph Font::GetGlyph(const char character) const
     {
         // CALCULATE THE TOP-LEFT COORDINATES OF THE GLYPH.

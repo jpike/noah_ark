@@ -11,15 +11,9 @@ namespace OBJECTS
     {
     public:
         // STATUS QUERYING.
-        /// Determines if the cloud has disappeared or faded away.
-        /// @return True if the cloud has disappeared; false otherwise.
         bool HasDisappeared() const;
 
         // UPDATING.
-        /// Updates the state of the dust cloud based on the elapsed time.
-        /// Dust clouds animate and disappear/fade away over time.
-        /// @param[in]  elapsed_time_in_seconds - The elapsed time for which
-        /// to update the dust cloud.
         void Update(const float elapsed_time_in_seconds);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

@@ -8,10 +8,18 @@ namespace GRAPHICS
 namespace GUI
 {
     /// Constructor.  The text box is invisible by default.
+    /// @param[in]  width_in_pixels - The width of the text box, in pixels.
+    /// @param[in]  height_in_pixels - The height of the text box, in pixels.
     /// @param[in]  font - The font to use for rendering text.
     /// @throws std::exception - Thrown if the font is null.
-    TextBox::TextBox(const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
-    Font(font)
+    TextBox::TextBox(
+        const unsigned int width_in_pixels,
+        const unsigned int height_in_pixels,
+        const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
+    WidthInPixels(width_in_pixels),
+    HeightInPixels(height_in_pixels),
+    Font(font),
+    MaxCharacterCountPerPage(0)
     {
         // MAKE SURE A FONT EXISTS.
         bool font_exists = (nullptr != Font);
@@ -19,6 +27,13 @@ namespace GUI
         {
             throw std::invalid_argument("Font provided for text box must not be null.");
         }
+
+        // CALCULATE THE MAXIMUM NUMBER OF CHARACTERS PER PAGE.
+        /// @todo   Figure out how to best de-duplicated this calculation
+        /// since it is also used in the TextPage class.
+        unsigned int line_count_per_page = (height_in_pixels / Glyph::HEIGHT_IN_PIXELS);
+        unsigned int max_character_count_per_line_per_age = (width_in_pixels / Glyph::WIDTH_IN_PIXELS) - TextPage::ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE;
+        MaxCharacterCountPerPage = (max_character_count_per_line_per_age * line_count_per_page);
     }
 
     /// Configures the text box to start displaying the provided text.
@@ -46,7 +61,7 @@ namespace GUI
             // only having one space between words.  There also is not
             // a use case yet where having multiple sequential spaces
             // is valuable.
-            std::deque<std::string> words = CORE::String::SplitIntoWords(line, TextPage::MAX_CHARACTER_COUNT);
+            std::deque<std::string> words = CORE::String::SplitIntoWords(line, MaxCharacterCountPerPage);
 
             bool words_exist = !words.empty();
             if (!words_exist)
@@ -59,7 +74,7 @@ namespace GUI
             // DIVIDE THE WORDS INTO APPROPRIATE PAGES.
             // The text might not all fit onto a single page, so multiple pages
             // of text might be needed.  At least one initial page will be needed.
-            Pages.push_back(TextPage());
+            Pages.push_back(TextPage(WidthInPixels, HeightInPixels));
             TextPage* current_page = &Pages.back();
             CurrentPageIndex = 0;
             while (!words.empty())
@@ -72,7 +87,7 @@ namespace GUI
                 // If it wasn't added, there wasn't room on the current page.
                 if (!word_added)
                 {
-                    Pages.push_back(TextPage());
+                    Pages.push_back(TextPage(WidthInPixels, HeightInPixels));
                     current_page = &Pages.back();
                     word_added = current_page->Add(current_word);
                 }
@@ -165,8 +180,8 @@ namespace GUI
         box.setOutlineThickness(OUTLINE_THICKNESS_IN_PIXELS);
 
         const float VERTICAL_PADDING_IN_PIXELS = 16.0f;
-        float height_in_pixels = (TextPage::LINE_COUNT * Glyph::HEIGHT_IN_PIXELS) + VERTICAL_PADDING_IN_PIXELS - OUTLINE_THICKNESS_IN_PIXELS * 2;
-        float width_in_pixels = (Screen::WIDTH_IN_PIXELS) - OUTLINE_THICKNESS_IN_PIXELS * 2;
+        float height_in_pixels = HeightInPixels + VERTICAL_PADDING_IN_PIXELS - OUTLINE_THICKNESS_IN_PIXELS * 2;
+        float width_in_pixels = screen.WidthInPixels<float>() - OUTLINE_THICKNESS_IN_PIXELS * 2;
         box.setSize(sf::Vector2f(width_in_pixels, height_in_pixels));
 
         const sf::Vector2i SCREEN_TOP_LEFT_CORNER(0, 0);

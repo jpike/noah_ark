@@ -9,6 +9,18 @@ namespace GUI
 {
     const float TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS = 0.05f;
 
+    /// Constructor.
+    /// @param[in]  width_in_pixels - The width of the text page, in pixels.
+    /// @param[in]  height_in_pixels - The height of the text page, in pixels.
+    TextPage::TextPage(const unsigned int width_in_pixels, const unsigned int height_in_pixels) :
+        LineCount(height_in_pixels / Glyph::HEIGHT_IN_PIXELS),
+        MaxCharacterCountPerLine((width_in_pixels / Glyph::WIDTH_IN_PIXELS) - ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE),
+        MaxCharacterCount(MaxCharacterCountPerLine * LineCount),
+        LinesOfText(LineCount),
+        LastUnfilledLineIndex(0),
+        TotalElapsedTimeInSecondsTextHasBeenDisplayed(0.0f)
+    {}
+
     /// Adds the provided word to the text page.
     /// If this is not the first word being added to the page, 
     /// a space will be added before the new word.
@@ -17,7 +29,7 @@ namespace GUI
     bool TextPage::Add(const std::string& word)
     {
         // MAKE SURE THERE IS ROOM FOR THE NEW WORD.
-        bool all_text_lines_full = (LastUnfilledLineIndex >= LINE_COUNT);
+        bool all_text_lines_full = (LastUnfilledLineIndex >= LineCount);
         if (all_text_lines_full)
         {
             return false;
@@ -34,7 +46,7 @@ namespace GUI
             // ADD THE SPACE IF THERE IS ROOM ON THE CURRENT LINE.
             const unsigned int CHARACTER_COUNT_FOR_SPACE = 1;
             unsigned int current_line_character_count_with_space = current_line_of_text->size() + CHARACTER_COUNT_FOR_SPACE;
-            bool current_line_can_hold_space = (current_line_character_count_with_space <= MAX_CHARACTER_COUNT_PER_LINE);
+            bool current_line_can_hold_space = (current_line_character_count_with_space <= MaxCharacterCountPerLine);
             if (current_line_can_hold_space)
             {
                 const char SPACE = ' ';
@@ -50,12 +62,12 @@ namespace GUI
 
         // CHECK IF THE CURRENT UNFILLED LINE OF TEXT CAN HOLD THE NEW WORD.
         unsigned int current_line_character_count_with_new_word = current_line_of_text->size() + word.size();
-        bool current_line_can_hold_new_word = (current_line_character_count_with_new_word <= MAX_CHARACTER_COUNT_PER_LINE);
+        bool current_line_can_hold_new_word = (current_line_character_count_with_new_word <= MaxCharacterCountPerLine);
         if (!current_line_can_hold_new_word)
         {
             // MOVE TO THE NEXT LINE.
             ++LastUnfilledLineIndex;
-            bool next_line_available = (LastUnfilledLineIndex < LINE_COUNT);
+            bool next_line_available = (LastUnfilledLineIndex < LineCount);
             if (!next_line_available)
             {
                 return false;
@@ -121,7 +133,7 @@ namespace GUI
 
         // RENDER EACH LINE OF TEXT.
         MATH::Vector2ui current_line_top_left_screen_position_in_pixels = top_left_screen_position_in_pixels;
-        for (unsigned int line_index = 0; line_index < LINE_COUNT; ++line_index)
+        for (unsigned int line_index = 0; line_index < LineCount; ++line_index)
         {
             // GET THE CURRENT LINE OF TEXT.
             std::string current_line_characters = GetTextLine(line_index);
@@ -148,7 +160,7 @@ namespace GUI
     void TextPage::Render(std::ostream& output_stream) const
     {
         // RENDER EACH LINE OF TEXT.
-        for (unsigned int line_index = 0; line_index < LINE_COUNT; ++line_index)
+        for (unsigned int line_index = 0; line_index < LineCount; ++line_index)
         {
             // GET THE CURRENT LINE OF TEXT.
             std::string current_line_characters = GetTextLine(line_index);
@@ -204,7 +216,7 @@ namespace GUI
         unsigned int displayed_character_count = 0;
 
         // COUNT THE CHARACTERS ON EACH LINE.
-        for (unsigned int line_index = 0; line_index < LINE_COUNT; ++line_index)
+        for (unsigned int line_index = 0; line_index < LineCount; ++line_index)
         {
             displayed_character_count += GetDisplayedCharacterCount(line_index);
         }

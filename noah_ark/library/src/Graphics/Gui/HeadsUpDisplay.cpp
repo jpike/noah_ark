@@ -11,6 +11,8 @@ namespace GUI
 {
     /// Constructor.
     /// @param[in]  inventory - The inventory to display in the HUD.
+    /// @param[in]  width_in_pixels - The width of the main text box, in pixels.
+    /// @param[in]  height_in_pixels - The height of the main text box, in pixels.
     /// @param[in]  font - The font to use for rendering text on the HUD.
     /// @param[in]  axe_texture - The texture to use for rendering an
     ///     axe icon on the HUD.
@@ -20,10 +22,12 @@ namespace GUI
     /// @todo   Re-think how we pass assets to this class.
     HeadsUpDisplay::HeadsUpDisplay(
         const std::shared_ptr<const OBJECTS::Inventory>& inventory,
+        const unsigned int main_text_box_width_in_pixels,
+        const unsigned int main_text_box_height_in_pixels,
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
         const std::shared_ptr<const Texture>& axe_texture,
         const std::shared_ptr<const Texture>& wood_texture) :
-    MainTextBox(font),
+    MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, font),
     InventoryOpened(false),
     InventoryGui(inventory, font),
     Font(font),
@@ -118,7 +122,7 @@ namespace GUI
         // if the space for other GUI elements (like the count of collected wood) changes such
         // that they could distractingly shift the position of this text.
         MATH::Vector2ui TOP_RIGHT_SCREEN_POSITION_IN_PIXELS(
-            GRAPHICS::Screen::WIDTH_IN_PIXELS,
+            screen.WidthInPixels<unsigned int>(),
             TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y);
         const std::string OPEN_INVENTORY_TEXT = "Inventory";
         // One glyph is rendered per character.

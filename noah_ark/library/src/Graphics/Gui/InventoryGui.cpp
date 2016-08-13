@@ -121,11 +121,11 @@ namespace GUI
         /// this assumption isn't baked into the code right here.
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = static_cast<float>(GRAPHICS::Screen::HEIGHT_IN_PIXELS) - TOP_SCREEN_OFFSET_IN_PIXELS;
+        const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
-            static_cast<float>(GRAPHICS::Screen::WIDTH_IN_PIXELS),
+            screen.WidthInPixels<float>(),
             BACKGROUND_HEIGHT_IN_PIXELS);
 
         // The background color is currently arbitrary.
@@ -251,11 +251,11 @@ namespace GUI
         /// this assumption isn't baked into the code right here.
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = static_cast<float>(GRAPHICS::Screen::HEIGHT_IN_PIXELS) - TOP_SCREEN_OFFSET_IN_PIXELS;
+        const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
-            static_cast<float>(GRAPHICS::Screen::WIDTH_IN_PIXELS),
+            screen.WidthInPixels<float>(),
             BACKGROUND_HEIGHT_IN_PIXELS);
 
         Renderer::RenderScreenRectangle(
@@ -317,11 +317,11 @@ namespace GUI
         /// this assumption isn't baked into the code right here.
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = static_cast<float>(GRAPHICS::Screen::HEIGHT_IN_PIXELS) - TOP_SCREEN_OFFSET_IN_PIXELS;
+        const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
-            static_cast<float>(GRAPHICS::Screen::WIDTH_IN_PIXELS),
+            screen.WidthInPixels<float>(),
             BACKGROUND_HEIGHT_IN_PIXELS);
 
         Renderer::RenderScreenRectangle(
@@ -343,11 +343,11 @@ namespace GUI
         /// this assumption isn't baked into the code right here.
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = static_cast<float>(GRAPHICS::Screen::HEIGHT_IN_PIXELS) - TOP_SCREEN_OFFSET_IN_PIXELS;
+        const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
-            static_cast<float>(GRAPHICS::Screen::WIDTH_IN_PIXELS),
+            screen.WidthInPixels<float>(),
             BACKGROUND_HEIGHT_IN_PIXELS);
 
         Renderer::RenderScreenRectangle(

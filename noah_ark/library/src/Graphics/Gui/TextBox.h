@@ -21,7 +21,10 @@ namespace GUI
     {
     public:
         // CONSTRUCTION.
-        explicit TextBox(const std::shared_ptr<const Font>& font);
+        explicit TextBox(
+            const unsigned int width_in_pixels, 
+            const unsigned int height_in_pixels,
+            const std::shared_ptr<const Font>& font);
 
         // OTHER PUBLIC METHODS.
         void StartDisplayingText(const std::string& text);
@@ -41,12 +44,18 @@ namespace GUI
 
     private:
         // PRIVATE MEMBER VARIABLES.
+        /// The width of the text box (excluding borders) in pixels.
+        unsigned int WidthInPixels = 0;
+        /// The height of the text box (excluding borders) in pixels.
+        unsigned int HeightInPixels = 0;
         /// The font used for rendering text.
         std::shared_ptr<const Font> Font = nullptr;
         /// The pages of text currently in the text box.
         std::vector<TextPage> Pages = std::vector<TextPage>();
         /// The index of the current page of text displayed in the text box.
         unsigned int CurrentPageIndex = 0;
+        /// The maximum number of characters allowed per page.
+        unsigned int MaxCharacterCountPerPage;
     };
 }
 }

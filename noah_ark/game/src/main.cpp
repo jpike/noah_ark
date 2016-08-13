@@ -386,9 +386,12 @@ int main(int argumentCount, char* arguments[])
         background_music.play();
 
         // CREATE THE WINDOW.
+        /// The display area is set to the dimensions of a single tile map.
+        const unsigned int SCREEN_WIDTH_IN_PIXELS = 512;
+        const unsigned int SCREEN_HEIGHT_IN_PIXELS = 384;
         const std::string GAME_TITLE = "Bible Games - Noah's Ark";
         std::shared_ptr<sf::RenderWindow> window = std::make_shared<sf::RenderWindow>(
-            sf::VideoMode(GRAPHICS::Screen::WIDTH_IN_PIXELS, GRAPHICS::Screen::HEIGHT_IN_PIXELS),
+            sf::VideoMode(SCREEN_WIDTH_IN_PIXELS, SCREEN_HEIGHT_IN_PIXELS),
             GAME_TITLE);
 
         // Ensure that only one key event is generated for each key press.
@@ -408,8 +411,13 @@ int main(int argumentCount, char* arguments[])
 
         // INITIALIZE THE HUD.
         /// @todo   Re-examine how we get resources to display in the HUD.
+        unsigned int text_box_width_in_pixels = SCREEN_WIDTH_IN_PIXELS;
+        const unsigned int LINE_COUNT = 2;
+        unsigned int text_box_height_in_pixels = GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS * LINE_COUNT;
         GRAPHICS::GUI::HeadsUpDisplay hud(
             overworld.NoahPlayer.Inventory,
+            text_box_width_in_pixels,
+            text_box_height_in_pixels,
             font,
             assets.GetTexture(RESOURCES::AXE_TEXTURE_ID),
             assets.GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID));

@@ -23,6 +23,8 @@ namespace GUI
         // CONSTRUCTION.
         explicit HeadsUpDisplay(
             const std::shared_ptr<const OBJECTS::Inventory>& inventory,
+            const unsigned int main_text_box_width_in_pixels,
+            const unsigned int main_text_box_height_in_pixels,
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
             const std::shared_ptr<const Texture>& axe_texture,
             const std::shared_ptr<const Texture>& wood_texture);

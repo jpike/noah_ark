@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Color.h"
+#include "Graphics/Screen.h"
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
@@ -28,7 +29,7 @@ namespace GRAPHICS
             const std::shared_ptr<GRAPHICS::AnimationSequence>& animation_sequence);
 
         // RENDERING/UPDATING.
-        void Render(sf::RenderTarget& render_target) const;
+        void Render(Screen& screen) const;
         void Update(const float elapsed_time_in_seconds);
 
         // POSITIONING.

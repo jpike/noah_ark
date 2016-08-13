@@ -13,7 +13,6 @@
 #include "Events/AxeSwingEvent.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Renderer.h"
-#include "Graphics/Rendering.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Gui/TextBox.h"
@@ -395,6 +394,9 @@ int main(int argumentCount, char* arguments[])
         // Ensure that only one key event is generated for each key press.
         window->setKeyRepeatEnabled(false);
 
+        // CREATE THE MAIN GAME SCREEN.
+        GRAPHICS::Screen screen(window);
+
         // CREATE THE MAIN TEXT BOX FOR DISPLAYING MESSAGES TO THE PLAYER.
         std::shared_ptr<GRAPHICS::GUI::Font> font = assets.GetFont(RESOURCES::FONT_TEXTURE_ID);
         bool font_loaded = (nullptr != font);
@@ -467,12 +469,6 @@ int main(int argumentCount, char* arguments[])
             // UPDATE AND DISPLAY THE GAME IN THE WINDOW.
             if (window->isOpen())
             {
-                /// @todo   Keep in mind possible ways to factor out the bulk of this logic
-                /// to a separate function (and hopefully make this main loop easier to understand).
-                /// Right now, most of this code is interconnected enough where factoring it out
-                /// wouldn't be that feasible (and could make things harder to understand or
-                /// change later).
-
                 // UPDATE THE GAME FOR THE NEW FRAME.
                 sf::Time elapsed_time = game_loop_clock.restart();
                 float elapsed_time_in_seconds = elapsed_time.asSeconds();
@@ -528,15 +524,16 @@ int main(int argumentCount, char* arguments[])
                 }
 
                 // RENDER THE CURRENT STATE OF THE GAME.
-                window->clear();
+                screen.Clear();
 
                 // RENDER THE OVERWORLD.
-                renderer.Render(elapsed_time_in_seconds, overworld, *window);
+                renderer.Render(elapsed_time_in_seconds, overworld, screen);
 
                 // RENDER THE HUD.
-                renderer.Render(hud, *window);
+                renderer.Render(hud, screen);
 
                 // DISPLAY THE RENDERED FRAME IN THE WINDOW.
+                /// @todo   I don't like how this can't be a method on the screen...
                 window->display();
             } // end if (window->isOpen())
         } // end while (window->isOpen())

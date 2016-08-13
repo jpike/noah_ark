@@ -4,9 +4,10 @@
 #include <SFML/Graphics.hpp>
 #include "Graphics/Color.h"
 #include "Graphics/Gui/Font.h"
-/// #@todo  Create inventory sub-namespace?
+/// @todo  Create inventory sub-namespace?
 #include "Graphics/Gui/InventoryBibleVerseListBox.h"
 #include "Graphics/Gui/InventoryBibleVerseTextBox.h"
+#include "Graphics/Screen.h"
 #include "Objects/Inventory.h"
 
 namespace GRAPHICS
@@ -51,13 +52,13 @@ namespace GUI
         void RespondToInput(const sf::Keyboard::Key key);
 
         // RENDERING.
-        void Render(sf::RenderTarget& render_target) const;
+        void Render(Screen& screen) const;
 
     private:
         // RENDERING.        
-        void RenderBiblePage(sf::RenderTarget& render_target) const;
-        void RenderAnimalsPage(sf::RenderTarget& render_target) const;
-        void RenderFoodPage(sf::RenderTarget& render_target) const;
+        void RenderBiblePage(Screen& screen) const;
+        void RenderAnimalsPage(Screen& screen) const;
+        void RenderFoodPage(Screen& screen) const;
 
         // MEMBER VARIABLES.
         /// The font to use for rendering text.

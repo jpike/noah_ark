@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include <SFML/Graphics.hpp>
 #include "Bible/BibleVerses.h"
 #include "Graphics/Gui/Font.h"
+#include "Graphics/Screen.h"
 #include "Math/Rectangle.h"
 
 namespace GRAPHICS
@@ -24,7 +24,7 @@ namespace GUI
         void Render(
             const BIBLE::BibleVerse* const bible_verse,
             const MATH::FloatRectangle& bounding_rectangle,
-            sf::RenderTarget& render_target) const;
+            GRAPHICS::Screen& screen) const;
 
     private:
         // MEMBER VARIABLES.

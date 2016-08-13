@@ -5,7 +5,7 @@
 #include "Graphics/Gui/Glyph.h"
 #include "Graphics/Gui/InventoryBibleVerseListBox.h"
 #include "Graphics/Gui/Text.h"
-#include "Graphics/Rendering.h"
+#include "Graphics/Renderer.h"
 
 namespace GRAPHICS
 {
@@ -36,10 +36,10 @@ namespace GUI
     /// along with a few surrounding verses.
     /// @param[in]  bounding_rectangle - The bounding rectangle
     ///     of this text box (in screen coordinates).
-    /// @param[in,out]  render_target - The target to render to.
+    /// @param[in,out]  screen - The screen to render to.
     void InventoryBibleVerseListBox::Render(
         const MATH::FloatRectangle& bounding_rectangle,
-        sf::RenderTarget& render_target) const
+        Screen& screen) const
     {
         // RENDER THE BACKGROUND BOX.
         /// @todo   Centralize this color.
@@ -47,10 +47,10 @@ namespace GUI
         background_color.Red = 128;
         background_color.Green = 64;
         background_color.Blue = 0;
-        RenderScreenRectangle(
+        Renderer::RenderScreenRectangle(
             bounding_rectangle,
             background_color,
-            render_target);
+            screen);
 
         // RENDER A DARKER BOX FOR THE SELECTED VERSE.
         GRAPHICS::Color selected_verse_background_color = background_color;
@@ -60,10 +60,10 @@ namespace GUI
             bounding_rectangle.GetTopYPosition(),
             bounding_rectangle.GetWidth(),
             static_cast<float>(Glyph::HEIGHT_IN_PIXELS));
-        RenderScreenRectangle(
+        Renderer::RenderScreenRectangle(
             selected_verse_background_rectangle,
             selected_verse_background_color,
-            render_target);
+            screen);
 
         // DETERMINE THE LIST OF VERSES TO RENDER.
         // The list should start at the currently selected verse
@@ -107,7 +107,7 @@ namespace GUI
 
             // RENDER TEXT FOR THE VERSE.
             Text bible_verse_text(Font, bible_verse_display_string, current_verse_screen_top_left_position_in_pixels);
-            bible_verse_text.Render(render_target);
+            bible_verse_text.Render(screen);
 
             // MOVE TO A NEW LINE FOR THE NEXT VERSE.
             current_verse_screen_top_left_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

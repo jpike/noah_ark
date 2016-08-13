@@ -3,7 +3,7 @@
 #include "Graphics/Color.h"
 #include "Graphics/Gui/InventoryBibleVerseTextBox.h"
 #include "Graphics/Gui/Text.h"
-#include "Graphics/Rendering.h"
+#include "Graphics/Renderer.h"
 
 namespace GRAPHICS
 {
@@ -29,11 +29,11 @@ namespace GUI
     ///     null if no verse should be rendered.
     /// @param[in]  bounding_rectangle - The bounding rectangle
     ///     of this text box (in screen coordinates).
-    /// @param[in,out]  render_target - The target to render to.
+    /// @param[in,out]  screen - The screen to render to.
     void InventoryBibleVerseTextBox::Render(
         const BIBLE::BibleVerse* const bible_verse,
         const MATH::FloatRectangle& bounding_rectangle,
-        sf::RenderTarget& render_target) const
+        GRAPHICS::Screen& screen) const
     {
         // RENDER THE BACKGROUND BOX.
         /// @todo   Centralize this color.
@@ -41,10 +41,10 @@ namespace GUI
         background_color.Red = 128;
         background_color.Green = 64;
         background_color.Blue = 0;
-        RenderScreenRectangle(
+        Renderer::RenderScreenRectangle(
             bounding_rectangle,
             background_color,
-            render_target);
+            screen);
 
         // CHECK IF A BIBLE VERSE EXISTS FOR RENDERING.
         bool bible_verse_exists = (nullptr != bible_verse);
@@ -105,7 +105,7 @@ namespace GUI
         {
             // RENDER THE CURRENT LINE.
             Text line_of_text(Font, line, current_line_screen_top_left_position_in_pixels);
-            line_of_text.Render(render_target);
+            line_of_text.Render(screen);
 
             // MOVE TO THE NEXT LINE.
             current_line_screen_top_left_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

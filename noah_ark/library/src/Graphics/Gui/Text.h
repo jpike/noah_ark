@@ -2,8 +2,8 @@
 
 #include <memory>
 #include <string>
-#include <SFML/Graphics.hpp>
 #include "Graphics/Gui/Font.h"
+#include "Graphics/Screen.h"
 #include "Math/Vector2.h"
 
 namespace GRAPHICS
@@ -19,7 +19,7 @@ namespace GUI
             const std::string& characters,
             const MATH::Vector2ui& screen_top_left_position_in_pixels);
 
-        void Render(sf::RenderTarget& render_target) const;
+        void Render(Screen& screen) const;
 
         unsigned int GetWidthInPixels() const;
 

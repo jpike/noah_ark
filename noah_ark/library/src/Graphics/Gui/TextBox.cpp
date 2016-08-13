@@ -145,9 +145,9 @@ namespace GUI
         return current_page_of_text_fully_displayed;
     }
 
-    /// Renders the text box to the provided render target.
-    /// @param[in,out]  render_target - The render target to render to.
-    void TextBox::Render(sf::RenderTarget& render_target) const
+    /// Renders the text box to the provided screen.
+    /// @param[in,out]  screen - The screen to render to.
+    void TextBox::Render(GRAPHICS::Screen& screen) const
     {
         // CHECK IF ANY PAGES OF TEXT EXIST.
         bool text_pages_exist = !Pages.empty();
@@ -170,12 +170,12 @@ namespace GUI
         box.setSize(sf::Vector2f(width_in_pixels, height_in_pixels));
 
         const sf::Vector2i SCREEN_TOP_LEFT_CORNER(0, 0);
-        sf::Vector2f top_left_corner_world_position = render_target.mapPixelToCoords(SCREEN_TOP_LEFT_CORNER);
+        sf::Vector2f top_left_corner_world_position = screen.RenderTarget->mapPixelToCoords(SCREEN_TOP_LEFT_CORNER);
         top_left_corner_world_position.x += OUTLINE_THICKNESS_IN_PIXELS;
         top_left_corner_world_position.y += OUTLINE_THICKNESS_IN_PIXELS;
         box.setPosition(top_left_corner_world_position);
 
-        render_target.draw(box);
+        screen.RenderTarget->draw(box);
 
         // DRAW THE CURRENT PAGE OF TEXT.
         auto& current_text_page = Pages[CurrentPageIndex];
@@ -185,7 +185,7 @@ namespace GUI
         text_page_top_left_screen_position_in_pixels.X = SCREEN_TOP_LEFT_CORNER.x + Glyph::WIDTH_IN_PIXELS;
         text_page_top_left_screen_position_in_pixels.Y = SCREEN_TOP_LEFT_CORNER.y + FIRST_LINE_VERTICAL_PADDING_IN_PIXELS;
 
-        current_text_page.Render(text_page_top_left_screen_position_in_pixels, Font, render_target);
+        current_text_page.Render(text_page_top_left_screen_position_in_pixels, Font, screen);
 
         // CHECK IF THE CURRENT PAGE OF TEXT IS FINISHED BEING DISPLAYED.
         bool current_page_finished_being_displayed = current_text_page.AllTextDisplayed();
@@ -214,7 +214,7 @@ namespace GUI
             sf::Vector2i text_box_bottom_right_corner(
                 static_cast<int>(width_in_pixels), 
                 static_cast<int>(height_in_pixels));
-            sf::Vector2f bottom_right_corner_world_position = render_target.mapPixelToCoords(text_box_bottom_right_corner);
+            sf::Vector2f bottom_right_corner_world_position = screen.RenderTarget->mapPixelToCoords(text_box_bottom_right_corner);
 
             // The triangle should not overlap with the outline of the text box.
             bottom_right_corner_world_position.x -= (OUTLINE_THICKNESS_IN_PIXELS);
@@ -223,7 +223,7 @@ namespace GUI
             press_button_triangle.setPosition(bottom_right_corner_world_position);
 
             /// @todo   Make this triangle blink?
-            render_target.draw(press_button_triangle);
+            screen.RenderTarget->draw(press_button_triangle);
         }
     }
 

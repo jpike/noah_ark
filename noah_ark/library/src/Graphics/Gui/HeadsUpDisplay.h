@@ -5,6 +5,7 @@
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/InventoryGui.h"
 #include "Graphics/Gui/TextBox.h"
+#include "Graphics/Screen.h"
 #include "Graphics/Texture.h"
 #include "Objects/Inventory.h"
 
@@ -30,7 +31,7 @@ namespace GUI
         void RespondToInput(const sf::Keyboard::Key key);
 
         // RENDERING.
-        void Render(sf::RenderTarget& render_target) const;
+        void Render(GRAPHICS::Screen& screen) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main text box for displaying messages to the player.

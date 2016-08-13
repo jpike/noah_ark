@@ -56,11 +56,11 @@ namespace GRAPHICS
         SpriteResource.setTextureRect(sfml_rectangle);
     }
 
-    /// Renders the sprite to the provided render target.
-    /// @param[in,out]  render_target - The target to render to.
-    void Sprite::Render(sf::RenderTarget& render_target) const
+    /// Renders the sprite to the provided screen.
+    /// @param[in,out]  screen - The screento render to.
+    void Sprite::Render(Screen& screen) const
     {
-        render_target.draw(SpriteResource);
+        screen.RenderTarget->draw(SpriteResource);
     }
 
     /// Gets the world position of the sprite.

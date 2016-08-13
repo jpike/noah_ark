@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include <SFML/Graphics.hpp>
 #include "Bible/BibleVerses.h"
 #include "Graphics/Gui/Font.h"
+#include "Graphics/Screen.h"
 #include "Math/Rectangle.h"
 #include "Objects/Inventory.h"
 
@@ -26,7 +26,7 @@ namespace GUI
         // RENDERING.
         void Render(
             const MATH::FloatRectangle& bounding_rectangle,
-            sf::RenderTarget& render_target) const;
+            GRAPHICS::Screen& screen) const;
 
         // VERSE METHODS.
         const BIBLE::BibleVerse* const GetSelectedVerse() const;

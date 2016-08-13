@@ -3,6 +3,7 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include "Graphics/Color.h"
+#include "Graphics/Screen.h"
 #include "Graphics/Texture.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
@@ -21,7 +22,7 @@ namespace GRAPHICS
 
         // OTHER METHODS.
         void SetTextureRectangle(const MATH::IntRectangle& texture_rectangle);
-        void Render(sf::RenderTarget& render_target) const;
+        void Render(Screen& screen) const;
 
         // POSITIONING.
         MATH::Vector2f GetWorldPosition() const;

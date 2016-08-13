@@ -106,15 +106,15 @@ namespace GUI
         TotalElapsedTimeInSecondsTextHasBeenDisplayed += elapsed_time_in_seconds;
     }
 
-    /// Renders the text page to the provided render target.
+    /// Renders the text page to the provided screen.
     /// @param[in]  top_left_screen_position_in_pixels - The top-left screen position of
     ///     the text page (in pixels).
     /// @param[in]  font - The font to use to render text.
-    /// @param[in,out]  render_target - The render target to render to.
+    /// @param[in,out]  screen - The screen to render to.
     void TextPage::Render(
         const MATH::Vector2ui& top_left_screen_position_in_pixels,
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
-        sf::RenderTarget& render_target) const
+        GRAPHICS::Screen& screen) const
     {
         // MAKE SURE THE FONT EXISTS.
         assert(font);
@@ -135,7 +135,7 @@ namespace GUI
             // RENDER THE CURRENT LINE.
             /// @todo   Make a version of text that takes in a font parameters for rendering?
             Text current_line(font, current_line_characters, current_line_top_left_screen_position_in_pixels);
-            current_line.Render(render_target);
+            current_line.Render(screen);
 
             // CALCULATE THE POSITION FOR THE NEXT LINE OF TEXT.
             current_line_top_left_screen_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

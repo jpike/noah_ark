@@ -4,9 +4,9 @@
 #include <ostream>
 #include <string>
 #include <vector>
-#include <SFML/Graphics.hpp>
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/TextPage.h"
+#include "Graphics/Screen.h"
 
 namespace GRAPHICS
 {
@@ -32,7 +32,7 @@ namespace GUI
 
         bool CurrentPageOfTextFinishedBeingDisplayed() const;
 
-        void Render(sf::RenderTarget& render_target) const;
+        void Render(GRAPHICS::Screen& screen) const;
         void Render(std::ostream& output_stream) const;
 
         // PUBLIC MEMBER VARIABLES.

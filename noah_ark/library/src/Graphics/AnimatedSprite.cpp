@@ -67,12 +67,12 @@ namespace GRAPHICS
         UseAnimationSequence(animation_sequence->AnimationName);
     }
 
-    /// Renders the sprite to the provided render target.
-    /// @param[in,out]  render_target - The target to render to.
-    void AnimatedSprite::Render(sf::RenderTarget& render_target) const
+    /// Renders the sprite to the provided screen.
+    /// @param[in,out]  screen - The screen to render to.
+    void AnimatedSprite::Render(Screen& screen) const
     {
         // RENDER THE SPRITE.
-        Sprite.Render(render_target);
+        Sprite.Render(screen);
     }
 
     /// Updates the animation based on the elapsed time.

@@ -1,9 +1,9 @@
 #include "Core/NullChecking.h"
-#include "Graphics/Rendering.h"
-#include "Graphics/Screen.h"
-#include "Graphics/Sprite.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Gui/Text.h"
+#include "Graphics/Renderer.h"
+#include "Graphics/Screen.h"
+#include "Graphics/Sprite.h"
 
 namespace GRAPHICS
 {
@@ -58,15 +58,15 @@ namespace GUI
     }
 
     /// Renders the HUD to the provided target.
-    /// @param[in]  render_target - The target to render to.
-    void HeadsUpDisplay::Render(sf::RenderTarget& render_target) const
+    /// @param[in,out]  screen - The screen to render to.
+    void HeadsUpDisplay::Render(GRAPHICS::Screen& screen) const
     {
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
         // An icon is rendered to help players know which key to press.
         /// @todo   Couple this somehow to the input controller so that it remains in-sync?
         const char SWING_AXE_KEY = 'Z';
         MATH::Vector2ui TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0, 0);
-        RenderKeyIcon(SWING_AXE_KEY, *Font, TOP_LEFT_SCREEN_POSITION_IN_PIXELS, render_target);
+        Renderer::RenderKeyIcon(SWING_AXE_KEY, *Font, TOP_LEFT_SCREEN_POSITION_IN_PIXELS, screen);
 
         // An axe icon is rendered to help players know what the previously rendered key icon is for.
         /// @todo   This stuff was copied from main.cpp.
@@ -86,7 +86,7 @@ namespace GUI
         const unsigned int KEY_ICON_WIDTH_IN_PIXELS = Glyph::WIDTH_IN_PIXELS;
         MATH::Vector2ui axe_icon_screen_position = TOP_LEFT_SCREEN_POSITION_IN_PIXELS;
         axe_icon_screen_position.X += KEY_ICON_WIDTH_IN_PIXELS;
-        RenderGuiIcon(*AxeTexture, AXE_TEXTURE_SUB_RECTANGLE, axe_icon_screen_position, render_target);
+        Renderer::RenderGuiIcon(*AxeTexture, AXE_TEXTURE_SUB_RECTANGLE, axe_icon_screen_position, screen);
 
         // RENDER COMPONENTS INDICATING HOW MUCH WOOD HAS BEEN COLLECTED.
         // A wood icon is rendered to help players know what the text next to it corresponds to.
@@ -100,7 +100,7 @@ namespace GUI
         MATH::Vector2ui wood_icon_screen_position = axe_icon_screen_position;
         wood_icon_screen_position.X += static_cast<unsigned int>(AXE_TEXTURE_SUB_RECTANGLE.GetWidth());
         wood_icon_screen_position.X += PIXEL_BUFFER_SPACE_BETWEEN_AXE_ICON_AND_WOOD_ICON;
-        RenderGuiIcon(*WoodTexture, WOOD_LOG_TEXTURE_SUB_RECTANGLE, wood_icon_screen_position, render_target);
+        Renderer::RenderGuiIcon(*WoodTexture, WOOD_LOG_TEXTURE_SUB_RECTANGLE, wood_icon_screen_position, screen);
 
         // Text is rendered for "x#" to communicate how much wood has been collected.
         // For example, "x10" (no quotes) would be rendered if the player has collected
@@ -111,7 +111,7 @@ namespace GUI
         MATH::Vector2ui wood_text_top_left_screen_position_in_pixels(wood_icon_screen_position.X, TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y);
         wood_text_top_left_screen_position_in_pixels.X += static_cast<unsigned int>(WOOD_LOG_TEXTURE_SUB_RECTANGLE.GetWidth());
         Text wood_count_text(Font, wood_count_string, wood_text_top_left_screen_position_in_pixels);
-        wood_count_text.Render(render_target);
+        wood_count_text.Render(screen);
 
         // RENDER COMPONENTS INDICATING HOW TO OPEN THE INVENTORY.
         // This text is rendered to the far-right of the screen so that its position isn't changed
@@ -126,7 +126,7 @@ namespace GUI
         MATH::Vector2ui open_inventory_text_top_left_screen_position_in_pixels = TOP_RIGHT_SCREEN_POSITION_IN_PIXELS;
         open_inventory_text_top_left_screen_position_in_pixels.X -= OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS;
         Text open_inventory_text(Font, OPEN_INVENTORY_TEXT, open_inventory_text_top_left_screen_position_in_pixels);
-        open_inventory_text.Render(render_target);
+        open_inventory_text.Render(screen);
 
         // An icon is rendered to help players know which key to press.  It is rendered after
         // the above text for the inventory since it is easier to correctly position here
@@ -135,18 +135,18 @@ namespace GUI
         const char OPEN_INVENTORY_KEY = 'X';
         MATH::Vector2ui open_inventory_key_text_top_left_screen_position_in_pixels = open_inventory_text_top_left_screen_position_in_pixels;
         open_inventory_key_text_top_left_screen_position_in_pixels.X -= KEY_ICON_WIDTH_IN_PIXELS;
-        RenderKeyIcon(OPEN_INVENTORY_KEY, *Font, open_inventory_key_text_top_left_screen_position_in_pixels, render_target);
+        Renderer::RenderKeyIcon(OPEN_INVENTORY_KEY, *Font, open_inventory_key_text_top_left_screen_position_in_pixels, screen);
 
         // RENDER THE INVENTORY GUI IF IT IS OPENED.
         if (InventoryOpened)
         {
-            InventoryGui.Render(render_target);
+            InventoryGui.Render(screen);
         }
 
         // RENDER THE TEXT BOX IF IT IS VISIBLE.
         if (MainTextBox.IsVisible)
         {
-            MainTextBox.Render(render_target);
+            MainTextBox.Render(screen);
         }
     }
 }

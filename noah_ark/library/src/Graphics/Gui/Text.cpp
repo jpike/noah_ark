@@ -30,14 +30,16 @@ namespace GUI
     }
 
     /// Renders the text to the specified render target.
-    /// @param[in,out]  render_target - The target to render to.
-    void Text::Render(sf::RenderTarget& render_target) const
+    /// @param[in,out]  screen - The screen to render to.
+    void Text::Render(Screen& screen) const
     {
         // CALCULATE THE WORLD COORDINATES OF THE TOP-LEFT STARTING POSITION OF THE TEXT.
         sf::Vector2i text_top_left_position_in_pixels(
             static_cast<int>(ScreenTopLeftPositionInPixels.X),
             static_cast<int>(ScreenTopLeftPositionInPixels.Y));
-        sf::Vector2f text_top_left_world_position = render_target.mapPixelToCoords(text_top_left_position_in_pixels);
+        /// @todo   Pass default identity transform to render target to render in screen space?
+        /// http://www.sfml-dev.org/tutorials/2.4/graphics-transform.php#custom-transforms
+        sf::Vector2f text_top_left_world_position = screen.RenderTarget->mapPixelToCoords(text_top_left_position_in_pixels);
         MATH::Vector2f current_character_top_left_world_position(text_top_left_world_position.x, text_top_left_world_position.y);
 
         // RENDER EACH CHARACTER.
@@ -64,7 +66,7 @@ namespace GUI
             current_character_sprite.SetWorldPosition(current_glyph_center_world_position);
 
             // RENDER THE CURRENT GLYPH.
-            current_character_sprite.Render(render_target);
+            current_character_sprite.Render(screen);
 
             // CALCULATE THE TOP-LEFT WORLD POSITION OF THE NEXT CHARACTER.
             current_character_top_left_world_position.X += glyph_width;

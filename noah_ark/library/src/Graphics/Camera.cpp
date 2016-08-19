@@ -1,47 +1,16 @@
-#include <stdexcept>
 #include "Graphics/Camera.h"
 
 namespace GRAPHICS
 {
-    /// Constructs a camera to manipulate the view of the provided render target.
-    /// @param[in]  render_target - The render target whose view to control
-    ///     via the camera.
-    /// @throws std::invalid_argument - Thrown if the provided render target is null.
-    /// @todo   Rethink passing render target here.  Maybe it would be better to
-    /// have the camera more decoupled and just set it in the main loop?
-    Camera::Camera(const std::shared_ptr<sf::RenderTarget>& render_target) :
-    RenderTarget(render_target),
+    /// Constructs a camera with the provided initial view.
+    /// @param[in]  view_bounds - The bounding rectangle (in world coordinates) of the camera's view.
+    Camera::Camera(const MATH::FloatRectangle& view_bounds) :
+    ViewBounds(view_bounds),
     IsScrolling(false),
     ScrollStartPosition(),
     ScrollEndPosition(),
     CurrentTotalScrollTimeInSeconds(0.0f)
-    {
-        // MAKE SURE A VALID RENDER TARGET WAS PROVIDED.
-        bool render_target_exists = (nullptr != RenderTarget);
-        if (!render_target_exists)
-        {
-            // A valid render target is required for construction.
-            throw std::invalid_argument("Null render target cannot be provided to Camera constructor.");
-        }
-    }
-
-    /// Gets the rectangle defining the view of the camera, in world coordinates.
-    /// @return The viewing rectangle of the camera.
-    MATH::FloatRectangle Camera::GetViewBounds() const
-    {
-        // GET THE RENDER TARGET'S VIEW PARAMETERS.
-        auto view = RenderTarget->getView();
-        sf::Vector2f view_center = view.getCenter();
-        sf::Vector2f view_size = view.getSize();
-
-        // RETURN THE VIEW'S BOUNDS.
-        MATH::FloatRectangle camera_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
-            view_center.x,
-            view_center.y,
-            view_size.x,
-            view_size.y);
-        return camera_bounds;
-    }
+    {}
 
     /// Sets the center world position upon which the camera should focus.
     /// @param[in]  center_x - The center world x position upon which
@@ -50,10 +19,7 @@ namespace GRAPHICS
     ///     the camera should focus.
     void Camera::SetCenter(const float center_x, const float center_y)
     {
-        // MODIFY THE RENDER TARGET'S VIEW.
-        auto view = RenderTarget->getView();
-        view.setCenter(center_x, center_y);
-        RenderTarget->setView(view);
+        ViewBounds.SetCenterPosition(center_x, center_y);
     }
 
     /// Sets the center world position upon which the camera should focus.

@@ -3,11 +3,9 @@
 namespace GRAPHICS
 {
     /// Constructor.
-    /// @param[in]  render_target - The target to render to.
-    ///     @todo   Try and decouple the camera from the render target
-    ///     so that it doesn't have to be passed here.
-    Renderer::Renderer(const std::shared_ptr<sf::RenderTarget>& render_target) :
-        Camera(render_target)
+    /// @param[in]  camera_view_bounds - The bounding rectangle (in world coordinates) of the camera's view.
+    Renderer::Renderer(const MATH::FloatRectangle& camera_view_bounds) :
+        Camera(camera_view_bounds)
     {}
 
     /// @todo   Document.
@@ -141,8 +139,15 @@ namespace GRAPHICS
     {
         /// @todo   Factor out updating from this method?
 
-        MATH::FloatRectangle camera_bounds = Camera.GetViewBounds();
+        MATH::FloatRectangle camera_bounds = Camera.ViewBounds;
         MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
+
+        /// @note   This view only needs to be set here.
+        /// Private methods assume it has already been set.
+        sf::View camera_view;
+        camera_view.setCenter(camera_view_center.X, camera_view_center.Y);
+        camera_view.setSize(camera_bounds.GetWidth(), camera_bounds.GetHeight());
+        screen.RenderTarget->setView(camera_view);
 
         MAPS::TileMap* current_tile_map = overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
         assert(current_tile_map);
@@ -224,6 +229,14 @@ namespace GRAPHICS
         }
     }
 
+    /// Renders a HUD.
+    /// @param[in]  hud - The HUD to render.
+    /// @param[in,out]  screen - The screen to render to.
+    void Renderer::Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen)
+    {
+        hud.Render(screen);
+    }
+
     /// Renders a tile map.
     /// @param[in]  tile_map - The tile map to render.
     /// @param[in,out]  screen - The screen to render to.
@@ -273,13 +286,5 @@ namespace GRAPHICS
     void Renderer::Render(const GRAPHICS::AnimatedSprite& sprite, Screen& screen)
     {
         sprite.Render(screen);
-    }
-
-    /// Renders a HUD.
-    /// @param[in]  hud - The HUD to render.
-    /// @param[in,out]  screen - The screen to render to.
-    void Renderer::Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen)
-    {
-        hud.Render(screen);
     }
 }

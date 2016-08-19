@@ -423,10 +423,13 @@ int main(int argumentCount, char* arguments[])
             assets.GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID));
 
         // INITIALIZE THE RENDERER.
-        GRAPHICS::Renderer renderer(window);
-        // INITIALIZE THE CAMERA.
         MATH::Vector2f player_start_world_position = overworld.NoahPlayer.GetWorldPosition();
-        renderer.Camera.SetCenter(player_start_world_position);
+        MATH::FloatRectangle camera_view_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
+            player_start_world_position.X,
+            player_start_world_position.Y,
+            window->getView().getSize().x,
+            window->getView().getSize().y);
+        GRAPHICS::Renderer renderer(camera_view_bounds);
 
         // CREATE THE RANDOM NUMBER GENERATOR.
         std::random_device random_number_generator;

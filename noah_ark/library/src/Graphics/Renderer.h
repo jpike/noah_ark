@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <SFML/Graphics.hpp>
 #include "Graphics/AnimatedSprite.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Color.h"
@@ -27,7 +26,7 @@ namespace GRAPHICS
     {
     public:
         // CONSTRUCTION.
-        explicit Renderer(const std::shared_ptr<sf::RenderTarget>& render_target);
+        explicit Renderer(const MATH::FloatRectangle& camera_view_bounds);
 
         // STATIC RENDERING.
         static void RenderScreenRectangle(
@@ -51,13 +50,16 @@ namespace GRAPHICS
             const float elapsed_time_in_seconds,
             MAPS::Overworld& overworld, 
             Screen& screen);
-        void Render(const MAPS::TileMap& tile_map, Screen& screen);
-        void Render(const GRAPHICS::Sprite& sprite, Screen& screen);
-        void Render(const GRAPHICS::AnimatedSprite& sprite, Screen& screen);
         void Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The camera defining what portion of the world is currently viewable.
         GRAPHICS::Camera Camera;
+
+    private:
+        // RENDERING.
+        void Render(const MAPS::TileMap& tile_map, Screen& screen);
+        void Render(const GRAPHICS::Sprite& sprite, Screen& screen);
+        void Render(const GRAPHICS::AnimatedSprite& sprite, Screen& screen);
     };
 }

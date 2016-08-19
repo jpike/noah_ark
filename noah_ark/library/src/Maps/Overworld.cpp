@@ -53,7 +53,7 @@ namespace MAPS
         /// of this update logic in the main loop, but trying to
         /// remove it immediately seemed like it might carry too
         /// high a risk of introducing bugs.
-        MATH::FloatRectangle camera_bounds = camera.GetViewBounds();
+        MATH::FloatRectangle camera_bounds = camera.ViewBounds;
         MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
 
         MAPS::TileMap* current_tile_map = GetTileMap(camera_view_center.X, camera_view_center.Y);

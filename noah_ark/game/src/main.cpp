@@ -445,32 +445,6 @@ int main(int argumentCount, char* arguments[])
                 // Handle the current event based on its type.
                 switch (event.type)
                 {
-                    case sf::Event::KeyPressed:
-                    {
-                        // CHECK IF THE KEY FOR THE INVENTORY WAS PRESSED.
-                        // This is done here as a simple way to easily check if a key has
-                        // been pressed and released (as opposed to whether it is down
-                        // or not).  This prevents a scenario where the inventory could
-                        // repeatedly open or close if the key was held down.
-                        /// @todo   I'm not sure I like separating these key presses
-                        /// from the rest of the keyboard controls.
-                        bool inventory_key_pressed = (sf::Keyboard::X == event.key.code);
-                        if (inventory_key_pressed)
-                        {
-                            // OPEN OR CLOSE THE INVENTORY.
-                            // The inventory key acts like a toggle button for the inventory.
-                            hud.InventoryOpened = !hud.InventoryOpened;
-                            break;
-                        }
-
-                        // CHECK IF THE INVENTORY IS OPENED.
-                        if (hud.InventoryOpened)
-                        {
-                            // FORWARD THE KEY PRESS TO THE HUD.
-                            hud.RespondToInput(event.key.code);
-                        }
-                        break;
-                    }
                     case sf::Event::Closed:
                         window->close();
                         break;
@@ -480,6 +454,12 @@ int main(int argumentCount, char* arguments[])
             // UPDATE AND DISPLAY THE GAME IN THE WINDOW.
             if (window->isOpen())
             {
+                // READ USER INPUT.
+                input_controller.ReadInput();
+
+                // UPDATE THE HUD IN RESPONSE TO USER INPUT.
+                hud.RespondToInput(input_controller);
+
                 // UPDATE THE GAME FOR THE NEW FRAME.
                 sf::Time elapsed_time = game_loop_clock.restart();
                 float elapsed_time_in_seconds = elapsed_time.asSeconds();
@@ -493,24 +473,8 @@ int main(int argumentCount, char* arguments[])
                     // If the text box is currently being displayed, then it should capture any user input.
                     if (hud.MainTextBox.IsVisible)
                     {
-                        /// @todo   Maybe this should be moved to after the MoveToNextPage() below
-                        /// to prevent the last character from not being seen?
+                        // UPDATE THE TEXT IN THE TEXT BOX.
                         hud.MainTextBox.Update(elapsed_time_in_seconds);
-
-                        // HAVE THE MAIN TEXT BOX RESPOND TO USER INPUT.
-                        if (input_controller.PrimaryActionButtonPressed())
-                        {
-                            // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
-                            // If the current page of text has not yet all been displayed, the next
-                            // page of text should not be moved to so that the user can finish
-                            // seeing the complete message.
-                            bool current_text_finished_being_displayed = hud.MainTextBox.CurrentPageOfTextFinishedBeingDisplayed();
-                            if (current_text_finished_being_displayed)
-                            {
-                                // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
-                                hud.MainTextBox.MoveToNextPage();
-                            }
-                        }
                     }
                     else
                     {
@@ -544,7 +508,6 @@ int main(int argumentCount, char* arguments[])
                 renderer.Render(hud, screen);
 
                 // DISPLAY THE RENDERED FRAME IN THE WINDOW.
-                /// @todo   I don't like how this can't be a method on the screen...
                 window->display();
             } // end if (window->isOpen())
         } // end while (window->isOpen())

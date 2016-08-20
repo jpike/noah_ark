@@ -50,14 +50,39 @@ namespace GUI
             "Null wood texture provided to HUD.");
     }
 
-    /// Has the HUD respond to the provided key being pressed.
-    /// @param[in]  key - The key that was pressed.
-    void HeadsUpDisplay::RespondToInput(const sf::Keyboard::Key key)
+    /// Has the HUD respond to the provided user input.
+    /// @param[in]  input_controller - The controller on which to check user input.
+    void HeadsUpDisplay::RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller)
     {
-        // FORWARD INPUT TO THE INVENTORY GUI IF IT IS OPENED.
-        if (InventoryOpened)
+        // CHECK IF THE SECONDARY ACTION BUTTON WAS PRESSED THIS FRAME.
+        // To prevent rapid opening/closing of the inventory, the button
+        // is checked to determine when it toggles to being pressed.
+        bool inventory_button_pressed = input_controller.SecondaryActionButtonWasPressed();
+        if (inventory_button_pressed)
         {
-            InventoryGui.RespondToInput(key);
+            // OPEN OR CLOSE THE INVENTORY.
+            InventoryOpened = !InventoryOpened;
+        }
+        else if (InventoryOpened)
+        {
+            InventoryGui.RespondToInput(input_controller);
+        }
+        else if (MainTextBox.IsVisible)
+        {
+            // HAVE THE MAIN TEXT BOX RESPOND TO USER INPUT.
+            if (input_controller.PrimaryActionButtonDown())
+            {
+                // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
+                // If the current page of text has not yet all been displayed, the next
+                // page of text should not be moved to so that the user can finish
+                // seeing the complete message.
+                bool current_text_finished_being_displayed = MainTextBox.CurrentPageOfTextFinishedBeingDisplayed();
+                if (current_text_finished_being_displayed)
+                {
+                    // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
+                    MainTextBox.MoveToNextPage();
+                }
+            }
         }
     }
 

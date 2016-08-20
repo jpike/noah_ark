@@ -1,13 +1,13 @@
 #pragma once
 
 #include <memory>
-#include <SFML/Graphics.hpp>
 #include "Graphics/Color.h"
 #include "Graphics/Gui/Font.h"
 /// @todo  Create inventory sub-namespace?
 #include "Graphics/Gui/InventoryBibleVerseListBox.h"
 #include "Graphics/Gui/InventoryBibleVerseTextBox.h"
 #include "Graphics/Screen.h"
+#include "Input/KeyboardInputController.h"
 #include "Objects/Inventory.h"
 
 namespace GRAPHICS
@@ -49,7 +49,7 @@ namespace GUI
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font);
 
         // INPUT.
-        void RespondToInput(const sf::Keyboard::Key key);
+        void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
 
         // RENDERING.
         void Render(Screen& screen) const;

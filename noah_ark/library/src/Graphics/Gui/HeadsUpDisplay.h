@@ -1,12 +1,12 @@
 #pragma once
 
 #include <memory>
-#include <SFML/Graphics.hpp>
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/InventoryGui.h"
 #include "Graphics/Gui/TextBox.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Texture.h"
+#include "Input/KeyboardInputController.h"
 #include "Objects/Inventory.h"
 
 namespace GRAPHICS
@@ -30,7 +30,7 @@ namespace GUI
             const std::shared_ptr<const Texture>& wood_texture);
 
         // INPUT.
-        void RespondToInput(const sf::Keyboard::Key key);
+        void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
 
         // RENDERING.
         void Render(GRAPHICS::Screen& screen) const;

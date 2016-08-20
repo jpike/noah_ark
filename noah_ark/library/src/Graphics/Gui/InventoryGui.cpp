@@ -48,58 +48,55 @@ namespace GUI
         FoodTabColor.Blue = 0;
     }
 
-    /// Has the inventory GUI respond to the provided key being pressed.
-    /// @param[in]  key - The key that was pressed.
-    void InventoryGui::RespondToInput(const sf::Keyboard::Key key)
+    /// Has the inventory GUI respond to the provided user input
+    /// @param[in]  input_controller - The controller on which to check user input.
+    void InventoryGui::RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller)
     {
         // CHECK WHICH TAB IS OPENED.
         switch (CurrentTab)
         {
             case TabType::BIBLE:
             {
-                // CHECK WHICH KEY WAS PRESSED.
-                switch (key)
+                // CHECK WHICH BUTTON WAS PRESSED.
+                if (input_controller.UpButtonWasPressed())
                 {
-                    case sf::Keyboard::Up:
-                        // SELECT THE PREVIOUS BIBLE VERSE.
-                        BibleVerseListBox.SelectPreviousVerse();
-                        break;
-                    case sf::Keyboard::Down:
-                        // SELECT THE NEXT BIBLE VERSE.
-                        BibleVerseListBox.SelectNextVerse();
-                        break;
-                    case sf::Keyboard::Right:
-                        // SWITCH TO THE ANIMALS TAB ON THE RIGHT.
-                        CurrentTab = TabType::ANIMALS;
-                        break;
+                    // SELECT THE PREVIOUS BIBLE VERSE.
+                    BibleVerseListBox.SelectPreviousVerse();
+                }
+                else if (input_controller.DownButtonWasPressed())
+                {
+                    // SELECT THE NEXT BIBLE VERSE.
+                    BibleVerseListBox.SelectNextVerse();
+                }
+                else if (input_controller.RightButtonWasPressed())
+                {
+                    // SWITCH TO THE ANIMALS TAB ON THE RIGHT.
+                    CurrentTab = TabType::ANIMALS;
                 }
                 break;
             }
             case TabType::ANIMALS:
             {
-                // CHECK WHICH KEY WAS PRESSED.
-                switch (key)
+                // CHECK WHICH BUTTON WAS PRESSED.
+                if (input_controller.LeftButtonWasPressed())
                 {
-                    case sf::Keyboard::Left:
-                        // SWITCH TO THE BIBLE TAB ON THE LEFT.
-                        CurrentTab = TabType::BIBLE;
-                        break;
-                    case sf::Keyboard::Right:
-                        // SWITCH TO THE FOOD TAB ON THE RIGHT.
-                        CurrentTab = TabType::FOOD;
-                        break;
+                    // SWITCH TO THE BIBLE TAB ON THE LEFT.
+                    CurrentTab = TabType::BIBLE;
+                }
+                else if (input_controller.RightButtonWasPressed())
+                {
+                    // SWITCH TO THE FOOD TAB ON THE RIGHT.
+                    CurrentTab = TabType::FOOD;
                 }
                 break;
             }
             case TabType::FOOD:
             {
-                // CHECK WHICH KEY WAS PRESSED.
-                switch (key)
+                // CHECK WHICH BUTTON WAS PRESSED.
+                if (input_controller.LeftButtonWasPressed())
                 {
-                    case sf::Keyboard::Left:
-                        // SWITCH TO THE ANIMALS TAB ON THE LEFT.
-                        CurrentTab = TabType::ANIMALS;
-                        break;
+                    // SWITCH TO THE ANIMALS TAB ON THE LEFT.
+                    CurrentTab = TabType::ANIMALS;
                 }
                 break;
             }

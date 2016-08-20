@@ -60,7 +60,7 @@ namespace MAPS
         assert(current_tile_map);
 
         // CHECK IF THE PRIMARY ACTION BUTTON WAS PRESSED.
-        if (input_controller.PrimaryActionButtonPressed())
+        if (input_controller.PrimaryActionButtonDown())
         {
             // SWING THE PLAYER'S AXE.
             // A new axe swing may not be created if the player's
@@ -89,7 +89,7 @@ namespace MAPS
             // MOVE NOAH IN RESPONSE TO USER INPUT.
             const float PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS = 8.0f;
             MATH::Vector2f old_noah_position = NoahPlayer.GetWorldPosition();
-            if (input_controller.UpButtonPressed())
+            if (input_controller.UpButtonDown())
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -155,7 +155,7 @@ namespace MAPS
                     }
                 } // end if (player_moved_out_of_view)
             } // end if (input_controller.UpButtonPressed())
-            if (input_controller.DownButtonPressed())
+            if (input_controller.DownButtonDown())
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -221,7 +221,7 @@ namespace MAPS
                     }
                 } // end if (player_moved_out_of_view)
             } // end if (input_controller.DownButtonPressed())
-            if (input_controller.LeftButtonPressed())
+            if (input_controller.LeftButtonDown())
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -287,7 +287,7 @@ namespace MAPS
                     }
                 } // end if (player_moved_out_of_view)
             } // end if (input_controller.LeftButtonPressed())
-            if (input_controller.RightButtonPressed())
+            if (input_controller.RightButtonDown())
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;

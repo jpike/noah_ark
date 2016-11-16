@@ -657,7 +657,7 @@ namespace COLLISION
                         // ADD A GROUP OF WOOD LOGS AT THE DUST CLOUD'S POSITION.
                         OBJECTS::WoodLogs wood_logs;
 
-                        const MATH::FloatRectangle WOOD_LOG_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(
+                        const MATH::FloatRectangle WOOD_LOG_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(
                             32.0f, 32.0f, 16.0f, 16.0f);
                         wood_logs.Sprite = GRAPHICS::Sprite(wood_log_texture, WOOD_LOG_TEXTURE_SUB_RECTANGLE);
 

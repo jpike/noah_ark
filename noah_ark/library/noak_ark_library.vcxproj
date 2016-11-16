@@ -60,6 +60,7 @@
     <ClInclude Include="src\Objects\Tree.h" />
     <ClInclude Include="src\Objects\WoodLogs.h" />
     <ClInclude Include="src\Resources\Assets.h" />
+    <ClInclude Include="src\States\IntroSequence.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio\SoundEffect.cpp" />
@@ -103,6 +104,7 @@
     <ClCompile Include="src\Objects\Tree.cpp" />
     <ClCompile Include="src\Objects\WoodLogs.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
+    <ClCompile Include="src\States\IntroSequence.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0D615E35-8F41-44B6-BE1B-FED957017972}</ProjectGuid>

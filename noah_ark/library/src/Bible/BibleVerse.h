@@ -5,6 +5,11 @@
 
 namespace BIBLE
 {
+    /// A type alias to identify the type of a chapter number.
+    using ChapterNumber = unsigned int;
+    /// A type alias to identify the type of a verse number.
+    using VerseNumber = unsigned int;
+
     /// A Bible verse, with book, chapter, and verse information
     /// in addition to content.
     class BibleVerse

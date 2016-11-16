@@ -55,7 +55,7 @@ namespace GUI
         // RENDER A DARKER BOX FOR THE SELECTED VERSE.
         GRAPHICS::Color selected_verse_background_color = background_color;
         selected_verse_background_color.Green = 32;
-        MATH::FloatRectangle selected_verse_background_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        MATH::FloatRectangle selected_verse_background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             bounding_rectangle.GetLeftXPosition(),
             bounding_rectangle.GetTopYPosition(),
             bounding_rectangle.GetWidth(),

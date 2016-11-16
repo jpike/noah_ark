@@ -119,7 +119,7 @@ namespace GUI
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
-        MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
             screen.WidthInPixels<float>(),
@@ -147,7 +147,7 @@ namespace GUI
         Text bible_tab_text(Font, "Bible", bible_tab_top_left_screen_position_in_pixels);
         unsigned int bible_tab_text_width_in_pixels = bible_tab_text.GetWidthInPixels();;
 
-        MATH::FloatRectangle bible_tab_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        MATH::FloatRectangle bible_tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             bible_tab_left_screen_position_in_pixels,
             bible_tab_top_screen_position_in_pixels,
             static_cast<float>(bible_tab_text_width_in_pixels),
@@ -176,7 +176,7 @@ namespace GUI
         // The tab should be big enough to hold the text on the tab.
         Text animals_tab_text(Font, ANIMALS_TAB_STRING, animals_tab_top_left_screen_position_in_pixels);
 
-        MATH::FloatRectangle animals_tab_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        MATH::FloatRectangle animals_tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             animals_tab_left_screen_position_in_pixels,
             animals_tab_top_screen_position_in_pixels,
             static_cast<float>(animals_tab_text_width_in_pixels),
@@ -204,7 +204,7 @@ namespace GUI
         // The tab should be big enough to hold the text on the tab.
         Text food_tab_text(Font, FOOD_TAB_STRING, food_tab_top_left_screen_position_in_pixels);
 
-        MATH::FloatRectangle food_tab_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        MATH::FloatRectangle food_tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             food_tab_left_screen_position_in_pixels,
             food_tab_top_screen_position_in_pixels,
             static_cast<float>(food_tab_text_width_in_pixels),
@@ -249,7 +249,7 @@ namespace GUI
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
-        MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
             screen.WidthInPixels<float>(),
@@ -270,7 +270,7 @@ namespace GUI
         float bible_verse_text_box_width_in_pixels = background_rectangle.GetWidth() / 2.0f;
         const float BIBLE_VERSE_TEXT_BOX_BOTH_SIDES_PADDING_IN_PIXELS = 2.0f * BIBLE_VERSE_TEXT_BOX_SINGLE_SIDE_PADDING_IN_PIXELS;
         float bible_verse_text_box_height_in_pixels = background_rectangle.GetHeight() - BIBLE_VERSE_TEXT_BOX_BOTH_SIDES_PADDING_IN_PIXELS;
-        MATH::FloatRectangle bible_verse_text_box_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        MATH::FloatRectangle bible_verse_text_box_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             bible_verse_text_box_left_screen_position_in_pixels,
             bible_verse_text_box_top_screen_position_in_pixels,
             bible_verse_text_box_width_in_pixels,
@@ -290,7 +290,7 @@ namespace GUI
         float bible_verse_list_box_width_in_pixels = 
             background_rectangle.GetWidth() - bible_verse_list_box_left_screen_position_in_pixels - BIBLE_VERSE_TEXT_BOX_SINGLE_SIDE_PADDING_IN_PIXELS;
         float bible_verse_list_box_height_in_pixels = bible_verse_text_box_rectangle.GetHeight();
-        MATH::FloatRectangle bible_verse_list_box_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        MATH::FloatRectangle bible_verse_list_box_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             bible_verse_list_box_left_screen_position_in_pixels,
             bible_verse_list_box_top_screen_position_in_pixels,
             bible_verse_list_box_width_in_pixels,
@@ -315,7 +315,7 @@ namespace GUI
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
-        MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
             screen.WidthInPixels<float>(),
@@ -341,7 +341,7 @@ namespace GUI
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
-        MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
             screen.WidthInPixels<float>(),

@@ -104,7 +104,7 @@ namespace GUI
         const float AXE_SPRITE_Y_OFFSET_IN_PIXELS = 0.0f;
         const float AXE_WIDTH_IN_PIXELS = 11.0f;
         const float AXE_HEIGHT_IN_PIXELS = 14.0f;
-        const MATH::FloatRectangle AXE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        const MATH::FloatRectangle AXE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(
             AXE_SPRITE_X_OFFSET_IN_PIXELS,
             AXE_SPRITE_Y_OFFSET_IN_PIXELS,
             AXE_WIDTH_IN_PIXELS,
@@ -121,7 +121,7 @@ namespace GUI
         // A wood icon is rendered to help players know what the text next to it corresponds to.
         /// @todo   This has been duplicated from Collisions.cpp.
         /// Find a way so that it is centralized, not duplicated.
-        const MATH::FloatRectangle WOOD_LOG_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        const MATH::FloatRectangle WOOD_LOG_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(
             32.0f, 32.0f, 16.0f, 16.0f);
         // The wood icon should be next to the axe icon but with a little additional blank space
         // so that the two icons aren't too close together.

@@ -229,7 +229,7 @@ namespace GUI
     /// @return The number of characters displayed so far on the specified line.
     unsigned int TextPage::GetDisplayedCharacterCount(const unsigned int line_index) const
     {
-        /// @todo   This method is way to messy and complicated.
+        /// @todo   This method is way too messy and complicated.
         /// Think about ways to simplify it, possibly by storing
         /// information per-line?
 

@@ -120,4 +120,33 @@ namespace BIBLE
         BibleVerse(BibleBook::FIRST_PETER, 3, 20, "Which sometime were disobedient, when once the longsuffering of God waited in the days of Noah, while the ark was a preparing, wherein few, that is, eight souls were saved by water."),
         BibleVerse(BibleBook::SECOND_PETER, 2, 5, "And spared not the old world, but saved Noah the eighth person, a preacher of righteousness, bringing in the flood upon the world of the ungodly;")
     };
+
+    /// Searches the global collection of Bible verses for the specified verse.
+    /// @param[in]  book - The book with the verse to find.
+    /// @param[in]  chapter - The chapter with the verse to find.
+    /// @param[in]  verse - The number of the verse to find.
+    /// @return The requested Bible verse, if found; nullptr if not found.
+    const BIBLE::BibleVerse* FindBibleVerse(
+        const BIBLE::BibleBook book,
+        const BIBLE::ChapterNumber chapter,
+        const BIBLE::VerseNumber verse)
+    {
+        // SEARCH FOR THE SPECIFIED VERSE.
+        for (const auto& current_verse : BIBLE_VERSES)
+        {
+            // CHECK IF THE CURRENT VERSE IS THE SPECIFIED ONE.
+            bool book_matches = (book == current_verse.Book);
+            bool chapter_matches = (chapter == current_verse.Chapter);
+            bool verse_matches = (verse == current_verse.Verse);
+            bool verse_found = (book_matches && chapter_matches && verse_matches);
+            if (verse_found)
+            {
+                // RETURN THE MATCHING VERSE.
+                return &current_verse;
+            }
+        }
+
+        // INDICATE THAT THE VERSE COULD NOT BE FOUND.
+        return nullptr;
+    }
 }

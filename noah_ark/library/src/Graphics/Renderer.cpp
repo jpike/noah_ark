@@ -1,3 +1,5 @@
+#include <iostream>
+#include "Core/String.h"
 #include "Graphics/Renderer.h"
 
 namespace GRAPHICS
@@ -5,7 +7,8 @@ namespace GRAPHICS
     /// Constructor.
     /// @param[in]  camera_view_bounds - The bounding rectangle (in world coordinates) of the camera's view.
     Renderer::Renderer(const MATH::FloatRectangle& camera_view_bounds) :
-        Camera(camera_view_bounds)
+        Camera(camera_view_bounds),
+        Font(nullptr)
     {}
 
     /// @todo   Document.
@@ -235,6 +238,287 @@ namespace GRAPHICS
     void Renderer::Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen)
     {
         hud.Render(screen);
+    }
+
+    /// Renders text to the screen at the specified position.
+    /// All text will be rendered on the same line.
+    /// @param[in]  text - The text to render.
+    /// @param[in]  left_top_screen_position_in_pixels - The left/top screen position
+    ///     at which to render the text.
+    /// @param[in,out]  screen - The screen to render to.
+    void Renderer::RenderText(
+        const std::string& text, 
+        const MATH::Vector2f& left_top_screen_position_in_pixels,
+        Screen& screen) const
+    {
+        // RENDER THE TEXT TO THE CONSOLE IF NO FONT EXISTS.
+        // This is intended primarily to provide debug support.
+        bool font_exists = (nullptr != Font);
+        if (!font_exists)
+        {
+            std::cout << text << std::endl;
+            return;
+        }
+
+        // RENDER EACH CHARACTER OF THE TEXT.
+        MATH::Vector2f current_character_left_top_screen_position = left_top_screen_position_in_pixels;
+        for (const char character : text)
+        {
+            // GET THE GLYPH FOR THE CURRENT CHARACTER.
+            GUI::Glyph glyph = Font->GetGlyph(character);
+
+            // CREATE A SPRITE FOR THE CURRENT GLYPH.
+            sf::Sprite current_character_sprite;
+            current_character_sprite.setTexture(glyph.Texture->TextureResource);
+            sf::IntRect texture_rectangle(
+                static_cast<int>(glyph.TextureSubRectangle.GetLeftXPosition()),
+                static_cast<int>(glyph.TextureSubRectangle.GetTopYPosition()),
+                static_cast<int>(glyph.TextureSubRectangle.GetWidth()),
+                static_cast<int>(glyph.TextureSubRectangle.GetHeight()));
+            current_character_sprite.setTextureRect(texture_rectangle);
+            current_character_sprite.setPosition(
+                current_character_left_top_screen_position.X,
+                current_character_left_top_screen_position.Y);
+
+            // RENDER THE CURRENT GLYPH.
+            /// @todo   Text colors!
+            /// @todo   Contemplate potential alternative interfaces for rendering sprites in screen-space.
+            const sf::Transform RENDER_IN_SCREEN_SPACE = sf::Transform::Identity;
+            screen.RenderTarget->draw(current_character_sprite, RENDER_IN_SCREEN_SPACE);
+
+            // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
+            float glyph_width = glyph.TextureSubRectangle.GetWidth();
+            current_character_left_top_screen_position.X += glyph_width;
+        }
+    }
+
+    /// Renders text to the screen within the specified rectangle.
+    /// Text is wrapped based on words and can be rendered on separate
+    /// lines based on newline characters.  If the amount of text to be
+    /// rendered exceeds the dimensions of the specified rectangle,
+    /// then it will be rendered outside of rectangle.
+    /// @param[in]  text - The text to render.
+    /// @param[in]  bounding_screen_rectangle - The bounding rectangle
+    ///     within the screen in which to render text.
+    /// @param[in,out]  screen - The screen to render to.
+    void Renderer::RenderText(
+        const std::string& text,
+        const MATH::FloatRectangle& bounding_screen_rectangle,
+        Screen& screen) const
+    {
+        // SPLIT THE PROVIDED TEXT INTO LINES BASED ON EMBEDDED LINE BREAKS.
+        std::vector<std::string> original_lines_from_text = CORE::String::SplitIntoLines(text);
+
+        // SPLIT EACH LINE BASED ON WORD BOUNDARIES.
+        // New lines will be created that ensure that words aren't broken up across
+        // lines (assuming that each word can fit on a single line).
+        std::vector<std::string> new_lines_of_text;
+        float line_width_in_pixels = bounding_screen_rectangle.GetWidth();
+        unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / GUI::Glyph::WIDTH_IN_PIXELS);
+        for (const auto& line : original_lines_from_text)
+        {
+            // SPLIT THE CURRENT LINE INTO INDIVIDUAL WORDS.
+            std::deque<std::string> words_in_current_line = CORE::String::SplitIntoWords(
+                line,
+                max_characters_per_line);
+
+            // CREATE NEW LINE(S) BASED ON THE CURRENT LINE'S WORDS.
+            std::string current_new_line;
+            while (!words_in_current_line.empty())
+            {
+                // GET THE NEXT WORD TO BE ADDED.
+                std::string next_word = words_in_current_line.front();
+                words_in_current_line.pop_front();
+
+                // CHECK IF THE CURRENT LINE IS EMPTY.
+                if (current_new_line.empty())
+                {
+                    // ADD THE CURRENT WORD TO THE NEW LINE.
+                    // An empty line should always be able to hold at least 1 word.
+                    current_new_line += next_word;
+                }
+                else
+                {
+                    // CHECK IF THE CURRENT LINE CAN HANDLE THE NEXT WORD.
+                    unsigned int current_line_length_in_characters = current_new_line.length();
+                    const unsigned int SPACE_CHARACTER_BETWEEN_WORDS_COUNT = 1;
+                    unsigned int line_length_with_next_word_in_characters =
+                        current_line_length_in_characters +
+                        SPACE_CHARACTER_BETWEEN_WORDS_COUNT +
+                        next_word.length();
+                    bool current_line_can_handle_next_word = (line_length_with_next_word_in_characters <= max_characters_per_line);
+                    if (current_line_can_handle_next_word)
+                    {
+                        // ADD A SPACE BEFORE ADDING THE NEW WORD.
+                        const char SPACE_BETWEEN_WORDS = ' ';
+                        current_new_line += SPACE_BETWEEN_WORDS + next_word;
+                    }
+                    else
+                    {
+                        // ADD THE CURRENT NEW LINE TO THE LIST OF LINES.
+                        new_lines_of_text.push_back(current_new_line);
+                        
+                        // PREPARE FOR THE NEXT NEW LINE OF TEXT.
+                        current_new_line.clear();
+
+                        // ADD THE CURRENT WORD TO THE NEW LINE.
+                        current_new_line += next_word;
+                    }
+                }
+
+                // CHECK IF THERE ARE ANY MORE WORDS TO ADD.
+                bool more_words_left = !words_in_current_line.empty();
+                if (!more_words_left)
+                {
+                    // ADD THE CURRENT NEW LINE IF IT ISN'T EMPTY.
+                    if (!current_new_line.empty())
+                    {
+                        new_lines_of_text.push_back(current_new_line);
+                        current_new_line.clear();
+                    }
+                }
+            }
+        }
+
+        // RENDER EACH LINE OF TEXT.
+        float bounding_rectangle_left_x_screen_position = bounding_screen_rectangle.GetLeftXPosition();
+        float bounding_rectangle_top_y_screen_position = bounding_screen_rectangle.GetTopYPosition();
+        MATH::Vector2f current_line_left_top_screen_position(
+            bounding_rectangle_left_x_screen_position,
+            bounding_rectangle_top_y_screen_position);
+        for (const auto& line : new_lines_of_text)
+        {
+            // RENDER THE CURRENT LINE.
+            RenderText(line, current_line_left_top_screen_position, screen);
+
+            // MOVE TO THE NEXT LINE.
+            current_line_left_top_screen_position.Y += GUI::Glyph::HEIGHT_IN_PIXELS;
+        }
+    }
+
+    /// Renders text to the screen centered horizontally and vertically within the specified rectangle.
+    /// Text is wrapped based on words and can be rendered on separate
+    /// lines based on newline characters.  If the amount of text to be
+    /// rendered exceeds the dimensions of the specified rectangle,
+    /// then it will be rendered outside of rectangle.
+    /// @param[in]  text - The text to render.
+    /// @param[in]  bounding_screen_rectangle - The bounding rectangle
+    ///     within the screen in which to render text.
+    /// @param[in,out]  screen - The screen to render to.
+    void Renderer::RenderCenteredText(
+        const std::string& text,
+        const MATH::FloatRectangle& bounding_screen_rectangle,
+        Screen& screen) const
+    {
+        // SPLIT THE PROVIDED TEXT INTO LINES BASED ON EMBEDDED LINE BREAKS.
+        std::vector<std::string> original_lines_from_text = CORE::String::SplitIntoLines(text);
+
+        // SPLIT EACH LINE BASED ON WORD BOUNDARIES.
+        // New lines will be created that ensure that words aren't broken up across
+        // lines (assuming that each word can fit on a single line).
+        std::vector<std::string> new_lines_of_text;
+        float line_width_in_pixels = bounding_screen_rectangle.GetWidth();
+        unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / GUI::Glyph::WIDTH_IN_PIXELS);
+        for (const auto& line : original_lines_from_text)
+        {
+            // SPLIT THE CURRENT LINE INTO INDIVIDUAL WORDS.
+            std::deque<std::string> words_in_current_line = CORE::String::SplitIntoWords(
+                line,
+                max_characters_per_line);
+
+            // CREATE NEW LINE(S) BASED ON THE CURRENT LINE'S WORDS.
+            std::string current_new_line;
+            while (!words_in_current_line.empty())
+            {
+                // GET THE NEXT WORD TO BE ADDED.
+                std::string next_word = words_in_current_line.front();
+                words_in_current_line.pop_front();
+
+                // CHECK IF THE CURRENT LINE IS EMPTY.
+                if (current_new_line.empty())
+                {
+                    // ADD THE CURRENT WORD TO THE NEW LINE.
+                    // An empty line should always be able to hold at least 1 word.
+                    current_new_line += next_word;
+                }
+                else
+                {
+                    // CHECK IF THE CURRENT LINE CAN HANDLE THE NEXT WORD.
+                    unsigned int current_line_length_in_characters = current_new_line.length();
+                    const unsigned int SPACE_CHARACTER_BETWEEN_WORDS_COUNT = 1;
+                    unsigned int line_length_with_next_word_in_characters =
+                        current_line_length_in_characters +
+                        SPACE_CHARACTER_BETWEEN_WORDS_COUNT +
+                        next_word.length();
+                    bool current_line_can_handle_next_word = (line_length_with_next_word_in_characters <= max_characters_per_line);
+                    if (current_line_can_handle_next_word)
+                    {
+                        // ADD A SPACE BEFORE ADDING THE NEW WORD.
+                        const char SPACE_BETWEEN_WORDS = ' ';
+                        current_new_line += SPACE_BETWEEN_WORDS + next_word;
+                    }
+                    else
+                    {
+                        // ADD THE CURRENT NEW LINE TO THE LIST OF LINES.
+                        new_lines_of_text.push_back(current_new_line);
+
+                        // PREPARE FOR THE NEXT NEW LINE OF TEXT.
+                        current_new_line.clear();
+
+                        // ADD THE CURRENT WORD TO THE NEW LINE.
+                        current_new_line += next_word;
+                    }
+                }
+
+                // CHECK IF THERE ARE ANY MORE WORDS TO ADD.
+                bool more_words_left = !words_in_current_line.empty();
+                if (!more_words_left)
+                {
+                    // ADD THE CURRENT NEW LINE IF IT ISN'T EMPTY.
+                    if (!current_new_line.empty())
+                    {
+                        new_lines_of_text.push_back(current_new_line);
+                        current_new_line.clear();
+                    }
+                }
+            }
+        }
+
+        // CALCULATE THE STARTING POSITION FOR THE FIRST LINE.
+        float bounding_rectangle_left_x_screen_position = bounding_screen_rectangle.GetLeftXPosition();
+        
+        // The starting y-position for the first line is offset from the bounding rectangle's
+        // top y-position such that half of the unused space appears before and after the text.
+        unsigned int bounding_rectangle_height_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetHeight());
+        unsigned int new_line_count = new_lines_of_text.size();
+        unsigned int total_text_height_in_pixels = new_line_count * GUI::Glyph::HEIGHT_IN_PIXELS;
+        unsigned int unused_vertical_space_in_pixels = bounding_rectangle_height_in_pixels - total_text_height_in_pixels;
+        unsigned int half_of_unused_vertical_space_in_pixels = unused_vertical_space_in_pixels / 2;
+        float bounding_rectangle_top_y_screen_position = bounding_screen_rectangle.GetTopYPosition();
+        float first_line_top_y_screen_position = bounding_rectangle_top_y_screen_position + half_of_unused_vertical_space_in_pixels;
+
+        MATH::Vector2f current_line_left_top_screen_position(
+            bounding_rectangle_left_x_screen_position,
+            first_line_top_y_screen_position);
+
+        // RENDER EACH LINE OF TEXT.
+        for (const auto& line : new_lines_of_text)
+        {
+            // CENTER THE CURRENT LINE HORIZONTALLY.
+            unsigned int current_line_character_count = line.length();
+            unsigned int current_line_width_in_pixels = current_line_character_count * GUI::Glyph::WIDTH_IN_PIXELS;
+            unsigned int bounding_rectangle_width_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetWidth());
+            unsigned int unused_space_on_current_line_in_pixels = bounding_rectangle_width_in_pixels - current_line_width_in_pixels;
+            unsigned int half_of_unused_space_on_current_line_in_pixels = unused_space_on_current_line_in_pixels / 2;
+            current_line_left_top_screen_position.X = bounding_screen_rectangle.GetLeftXPosition();
+            current_line_left_top_screen_position.X += half_of_unused_space_on_current_line_in_pixels;
+
+            // RENDER THE CURRENT LINE.
+            RenderText(line, current_line_left_top_screen_position, screen);
+
+            // MOVE TO THE NEXT LINE.
+            current_line_left_top_screen_position.Y += GUI::Glyph::HEIGHT_IN_PIXELS;
+        }
     }
 
     /// Renders a tile map.

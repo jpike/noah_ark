@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include "Graphics/AnimatedSprite.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Color.h"
@@ -18,10 +19,6 @@
 namespace GRAPHICS
 {
     /// The main renderer for the game.
-    /// @todo   This class has been designed to just hold all basic rendering functionality
-    /// so far.  It might be possible to move this functionality to some other well-named
-    /// classes, but the concept of a "renderer" seems well-defined enough to have this
-    /// class for now.
     class Renderer
     {
     public:
@@ -51,10 +48,24 @@ namespace GRAPHICS
             MAPS::Overworld& overworld, 
             Screen& screen);
         void Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen);
+        void RenderText(
+            const std::string& text, 
+            const MATH::Vector2f& left_top_screen_position_in_pixels,
+            Screen& screen) const;
+        void RenderText(
+            const std::string& text,
+            const MATH::FloatRectangle& bounding_screen_rectangle,
+            Screen& screen) const;
+        void RenderCenteredText(
+            const std::string& text,
+            const MATH::FloatRectangle& bounding_screen_rectangle,
+            Screen& screen) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The camera defining what portion of the world is currently viewable.
         GRAPHICS::Camera Camera;
+        /// The font to use for rendering text.
+        std::shared_ptr<GRAPHICS::GUI::Font> Font;
 
     private:
         // RENDERING.

@@ -38,7 +38,6 @@ namespace OBJECTS
         /// The sprite used for rendering Noah.
         GRAPHICS::AnimatedSprite Sprite = GRAPHICS::AnimatedSprite();
         /// The inventory of items held by Noah.
-        /// @todo   Should the axe go in here?
         std::shared_ptr<OBJECTS::Inventory> Inventory = std::make_shared<OBJECTS::Inventory>();
     };
 }

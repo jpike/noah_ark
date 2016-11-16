@@ -21,6 +21,7 @@
 #include "Maps/TileMap.h"
 #include "Objects/Noah.h"
 #include "Resources/Assets.h"
+#include "States/IntroSequence.h"
 
 /// The game exited successfully.
 int EXIT_CODE_SUCCESS = 0;
@@ -32,6 +33,15 @@ int EXIT_CODE_FAILURE_UNKNOWN_EXCEPTION_IN_MAIN = 2;
 int EXIT_CODE_FAILURE_LOADING_ASSETS = 3;
 /// The font failed to be loaded.
 int EXIT_CODE_FAILURE_LOADING_FONT = 4;
+
+/// Enumerates the different states the game could be in.
+enum class GameState
+{
+    /// The introductory sequence for the game.
+    INTRO_SEQUENCE,
+    /// The main gameplay state for the game.
+    GAMEPLAY
+};
 
 void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::Assets& assets, OBJECTS::Noah& noah_player)
 {
@@ -79,7 +89,7 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
 
     // CREATE THE SPRITE FOR NOAH.
     /// @todo   Better way to determine initial subrect.
-    const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromTopLeftAndDimensions(0, 0, 16, 16);
+    const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 16, 16);
     GRAPHICS::Sprite sprite(texture, TEXTURE_SUB_RECT);
     /// @todo better way to set center.
     sprite.SetOrigin(MATH::Vector2f(8.0f, 8.0f));
@@ -115,7 +125,7 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
     const float AXE_SPRITE_Y_OFFSET_IN_PIXELS = 0.0f;
     const float AXE_WIDTH_IN_PIXELS = 11.0f;
     const float AXE_HEIGHT_IN_PIXELS = 14.0f;
-    MATH::FloatRectangle axe_texture_sub_rectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+    MATH::FloatRectangle axe_texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
         AXE_SPRITE_X_OFFSET_IN_PIXELS,
         AXE_SPRITE_Y_OFFSET_IN_PIXELS,
         AXE_WIDTH_IN_PIXELS,
@@ -250,17 +260,17 @@ void PopulateOverworld(const MAPS::OverworldMapFile& overworld_map_file, RESOURC
                                 MATH::Vector2ui tree_dimensions_in_pixels(object_description.WidthInPixels, object_description.HeightInPixels);
                                 if (SMALL_TREE_DIMENSIONS_IN_PIXELS == tree_dimensions_in_pixels)
                                 {
-                                    MATH::FloatRectangle SMALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(0.0f, 0.0f, 16.0f, 16.0f);
+                                    MATH::FloatRectangle SMALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(0.0f, 0.0f, 16.0f, 16.0f);
                                     tree_texture_sub_rectangle = SMALL_TREE_TEXTURE_SUB_RECTANGLE;
                                 }
                                 else if (TALL_TREE_DIMENSIONS_IN_PIXELS == tree_dimensions_in_pixels)
                                 {
-                                    MATH::FloatRectangle TALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(32.0f, 0.0f, 16.0f, 32.0f);
+                                    MATH::FloatRectangle TALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(32.0f, 0.0f, 16.0f, 32.0f);
                                     tree_texture_sub_rectangle = TALL_TREE_TEXTURE_SUB_RECTANGLE;
                                 }
                                 else if (LARGE_TREE_DIMENSIONS_IN_PIXELS == tree_dimensions_in_pixels)
                                 {
-                                    MATH::FloatRectangle LARGE_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromTopLeftAndDimensions(0.0f, 16.0f, 32.0f, 32.0f);
+                                    MATH::FloatRectangle LARGE_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(0.0f, 16.0f, 32.0f, 32.0f);
                                     tree_texture_sub_rectangle = LARGE_TREE_TEXTURE_SUB_RECTANGLE;
                                 }
                                 else
@@ -354,6 +364,18 @@ int main(int argumentCount, char* arguments[])
         // INITIALIZE THE BIBLE VERSES LEFT TO BE FOUND.
         std::vector<BIBLE::BibleVerse> bible_verses_left_to_find = BIBLE::BIBLE_VERSES;
 
+        // GEt THE FONT FOR TEXT.
+        std::shared_ptr<GRAPHICS::GUI::Font> font = assets.GetFont(RESOURCES::FONT_TEXTURE_ID);
+        bool font_loaded = (nullptr != font);
+        if (!font_loaded)
+        {
+            std::cerr << "Failed to load font." << std::endl;
+            return EXIT_CODE_FAILURE_LOADING_FONT;
+        }
+
+        // INITIALIZE THE INTRO SEQUENCE.
+        STATES::IntroSequence intro_sequence(font);
+
         // CREATE THE OVERWORLD.
         const std::unique_ptr<MAPS::OverworldMapFile>& overworld_map_file = assets.OverworldMapFile;
         MAPS::Overworld overworld(
@@ -383,7 +405,9 @@ int main(int argumentCount, char* arguments[])
         background_music.setVolume(50.0f);
         background_music.setPitch(0.5f);
         background_music.setLoop(true);
-        background_music.play();
+        /// @todo   Start playing when we transition to gameplay state.
+        /// Commented out for now while we work on getting intro sequence working.
+        /// background_music.play();
 
         // CREATE THE WINDOW.
         /// The display area is set to the dimensions of a single tile map.
@@ -399,15 +423,6 @@ int main(int argumentCount, char* arguments[])
 
         // CREATE THE MAIN GAME SCREEN.
         GRAPHICS::Screen screen(window);
-
-        // CREATE THE MAIN TEXT BOX FOR DISPLAYING MESSAGES TO THE PLAYER.
-        std::shared_ptr<GRAPHICS::GUI::Font> font = assets.GetFont(RESOURCES::FONT_TEXTURE_ID);
-        bool font_loaded = (nullptr != font);
-        if (!font_loaded)
-        {
-            std::cerr << "Failed to load font." << std::endl;
-            return EXIT_CODE_FAILURE_LOADING_FONT;
-        }
 
         // INITIALIZE THE HUD.
         /// @todo   Re-examine how we get resources to display in the HUD.
@@ -430,11 +445,13 @@ int main(int argumentCount, char* arguments[])
             window->getView().getSize().x,
             window->getView().getSize().y);
         GRAPHICS::Renderer renderer(camera_view_bounds);
+        renderer.Font = font;
 
         // CREATE THE RANDOM NUMBER GENERATOR.
         std::random_device random_number_generator;
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
+        GameState game_state = GameState::INTRO_SEQUENCE;
         sf::Clock game_loop_clock;
         while (window->isOpen())
         {
@@ -457,58 +474,99 @@ int main(int argumentCount, char* arguments[])
                 // READ USER INPUT.
                 input_controller.ReadInput();
 
-                // UPDATE THE HUD IN RESPONSE TO USER INPUT.
-                hud.RespondToInput(input_controller);
-
-                // UPDATE THE GAME FOR THE NEW FRAME.
+                // GET THE ELAPSED TIME FOR THE NEW FRAME.
                 sf::Time elapsed_time = game_loop_clock.restart();
                 float elapsed_time_in_seconds = elapsed_time.asSeconds();
 
-                // CHECK IF THE INVENTORY GUI IS DISPLAYED.
-                // If the inventory GUI is displayed, then the regular controls for the player
-                // in the world shouldn't work.
-                if (!hud.InventoryOpened)
+                // UPDATE THE GAME'S CURRENT STATE.
+                switch (game_state)
                 {
-                    // UPDATE THE TEXT BOX IF IT IS VISIBLE.
-                    // If the text box is currently being displayed, then it should capture any user input.
-                    if (hud.MainTextBox.IsVisible)
+                    case GameState::INTRO_SEQUENCE:
                     {
-                        // UPDATE THE TEXT IN THE TEXT BOX.
-                        hud.MainTextBox.Update(elapsed_time_in_seconds);
+                        intro_sequence.Update(elapsed_time);
+                        break;
                     }
-                    else
+                    case GameState::GAMEPLAY:
                     {
-                        // UPDATE THE OVERWORLD.
-                        std::string message_for_text_box;
-                        overworld.Update(
-                            elapsed_time_in_seconds,
-                            random_number_generator,
-                            input_controller,
-                            bible_verses_left_to_find,
-                            assets,
-                            renderer.Camera,
-                            message_for_text_box);
+                        // UPDATE THE HUD IN RESPONSE TO USER INPUT.
+                        hud.RespondToInput(input_controller);
 
-                        // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
-                        bool text_box_message_exists = !message_for_text_box.empty();
-                        if (text_box_message_exists)
+                        // CHECK IF THE INVENTORY GUI IS DISPLAYED.
+                        // If the inventory GUI is displayed, then the regular controls for the player
+                        // in the world shouldn't work.
+                        if (!hud.InventoryOpened)
                         {
-                            hud.MainTextBox.StartDisplayingText(message_for_text_box);
+                            // UPDATE THE TEXT BOX IF IT IS VISIBLE.
+                            // If the text box is currently being displayed, then it should capture any user input.
+                            if (hud.MainTextBox.IsVisible)
+                            {
+                                // UPDATE THE TEXT IN THE TEXT BOX.
+                                hud.MainTextBox.Update(elapsed_time_in_seconds);
+                            }
+                            else
+                            {
+                                // UPDATE THE OVERWORLD.
+                                std::string message_for_text_box;
+                                overworld.Update(
+                                    elapsed_time_in_seconds,
+                                    random_number_generator,
+                                    input_controller,
+                                    bible_verses_left_to_find,
+                                    assets,
+                                    renderer.Camera,
+                                    message_for_text_box);
+
+                                // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
+                                bool text_box_message_exists = !message_for_text_box.empty();
+                                if (text_box_message_exists)
+                                {
+                                    hud.MainTextBox.StartDisplayingText(message_for_text_box);
+                                }
+                            }
                         }
+                        break;
                     }
                 }
 
                 // RENDER THE CURRENT STATE OF THE GAME.
                 screen.Clear();
 
-                // RENDER THE OVERWORLD.
-                renderer.Render(elapsed_time_in_seconds, overworld, screen);
+                switch (game_state)
+                {
+                    case GameState::INTRO_SEQUENCE:
+                    {
+                        intro_sequence.Render(renderer, screen);
+                        break;
+                    }
+                    case GameState::GAMEPLAY:
+                    {
+                        // RENDER THE OVERWORLD.
+                        renderer.Render(elapsed_time_in_seconds, overworld, screen);
 
-                // RENDER THE HUD.
-                renderer.Render(hud, screen);
+                        // RENDER THE HUD.
+                        renderer.Render(hud, screen);
+
+                        break;
+                    }
+                }
 
                 // DISPLAY THE RENDERED FRAME IN THE WINDOW.
                 window->display();
+
+                // MOVE TO A NEW GAME STATE IF THE APPROPRIATE CONDITIONS HAVE BEEN REACHED.
+                switch (game_state)
+                {
+                    case GameState::INTRO_SEQUENCE:
+                    {
+                        bool intro_sequence_finished = intro_sequence.Completed();
+                        if (intro_sequence_finished)
+                        {
+                            /// @todo   This should actually go to the title screen, once it exists.
+                            game_state = GameState::GAMEPLAY;
+                        }
+                    }
+                }
+
             } // end if (window->isOpen())
         } // end while (window->isOpen())
 

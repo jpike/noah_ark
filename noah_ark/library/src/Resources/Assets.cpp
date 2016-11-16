@@ -108,7 +108,7 @@ namespace RESOURCES
                     int tile_top_texture_offset_in_texels = tile_row_index * tileset_description.TileHeightInPixels;
 
                     // CREATE A SPRITE FOR THE CURRENT TILE.
-                    MATH::FloatRectangle tile_texture_rect = MATH::FloatRectangle::FromTopLeftAndDimensions(
+                    MATH::FloatRectangle tile_texture_rect = MATH::FloatRectangle::FromLeftTopAndDimensions(
                         static_cast<float>(tile_left_texture_offset_in_texels),
                         static_cast<float>(tile_top_texture_offset_in_texels),
                         static_cast<float>(tileset_description.TileWidthInPixels),
@@ -171,10 +171,10 @@ namespace RESOURCES
             {
                 // Frames are duplicated some so that things appear to loop a few times.
                 /// @todo   Consider having a max loop count for animation sequences?
-                MATH::IntRectangle::FromTopLeftAndDimensions(48, 0, 16, 16),
-                MATH::IntRectangle::FromTopLeftAndDimensions(48, 16, 16, 16),
-                MATH::IntRectangle::FromTopLeftAndDimensions(48, 0, 16, 16),
-                MATH::IntRectangle::FromTopLeftAndDimensions(48, 16, 16, 16)
+                MATH::IntRectangle::FromLeftTopAndDimensions(48, 0, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(48, 16, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(48, 0, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(48, 16, 16, 16)
             };
             const std::shared_ptr<GRAPHICS::AnimationSequence> DUST_CLOUD_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
                 DUST_CLOUD_ANIMATION_ID,
@@ -190,9 +190,9 @@ namespace RESOURCES
             const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
             const std::vector<MATH::IntRectangle> FRAMES =
             {
-                MATH::IntRectangle::FromTopLeftAndDimensions(0, 0, 16, 16),
-                MATH::IntRectangle::FromTopLeftAndDimensions(16, 0, 16, 16),
-                MATH::IntRectangle::FromTopLeftAndDimensions(32, 0, 16, 16)
+                MATH::IntRectangle::FromLeftTopAndDimensions(0, 0, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(16, 0, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(32, 0, 16, 16)
             };
             const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_FRONT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
                 NOAH_WALK_FRONT_ANIMATION_ID,
@@ -208,9 +208,9 @@ namespace RESOURCES
             const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
             const std::vector<MATH::IntRectangle> FRAMES = 
             {
-                MATH::IntRectangle::FromTopLeftAndDimensions(0, 16, 16, 16),
-                MATH::IntRectangle::FromTopLeftAndDimensions(16, 16, 16, 16),
-                MATH::IntRectangle::FromTopLeftAndDimensions(32, 16, 16, 16)
+                MATH::IntRectangle::FromLeftTopAndDimensions(0, 16, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(16, 16, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(32, 16, 16, 16)
             };
             const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_BACK_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
                 NOAH_WALK_BACK_ANIMATION_ID,
@@ -226,8 +226,8 @@ namespace RESOURCES
             const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
             const std::vector<MATH::IntRectangle> FRAMES =
             {
-                MATH::IntRectangle::FromTopLeftAndDimensions(0, 32, 16, 16),
-                MATH::IntRectangle::FromTopLeftAndDimensions(16, 32, 16, 16)
+                MATH::IntRectangle::FromLeftTopAndDimensions(0, 32, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(16, 32, 16, 16)
             };
             const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_LEFT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
                 NOAH_WALK_LEFT_ANIMATION_ID,
@@ -243,8 +243,8 @@ namespace RESOURCES
             const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
             const std::vector<MATH::IntRectangle> FRAMES =
             {
-                MATH::IntRectangle::FromTopLeftAndDimensions(0, 48, 16, 16),
-                MATH::IntRectangle::FromTopLeftAndDimensions(16, 48, 16, 16)
+                MATH::IntRectangle::FromLeftTopAndDimensions(0, 48, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(16, 48, 16, 16)
             };
             const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_RIGHT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
                 NOAH_WALK_RIGHT_ANIMATION_ID,

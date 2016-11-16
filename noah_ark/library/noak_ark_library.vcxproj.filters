@@ -78,6 +78,12 @@
     <Filter Include="Source Files\Graphics\Gui">
       <UniqueIdentifier>{96d3959c-0c63-4c22-a1cb-832d28132bf2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\States">
+      <UniqueIdentifier>{65834274-d9c3-499c-89d1-757091c7fc04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\States">
+      <UniqueIdentifier>{08447a04-daee-405f-a7fb-cf7e8dcbe7c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector2.h">
@@ -227,6 +233,9 @@
     <ClInclude Include="src\Bible\BibleVerse.h">
       <Filter>Header Files\Bible</Filter>
     </ClInclude>
+    <ClInclude Include="src\States\IntroSequence.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -351,6 +360,9 @@
     </ClCompile>
     <ClCompile Include="src\Graphics\Screen.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\States\IntroSequence.cpp">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

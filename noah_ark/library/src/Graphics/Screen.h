@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include "Math/Rectangle.h"
 
 namespace GRAPHICS
 {
@@ -25,6 +26,8 @@ namespace GRAPHICS
         T WidthInPixels() const;
         template <typename T>
         T HeightInPixels() const;
+        template <typename T>
+        MATH::Rectangle<T> GetBoundingRectangle() const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The actual render target for the screen.
@@ -56,5 +59,26 @@ namespace GRAPHICS
         sf::Vector2u size_in_pixels = RenderTarget->getSize();
         T height_in_pixels = static_cast<T>(size_in_pixels.y);
         return height_in_pixels;
+    }
+
+    /// Gets the bounding rectangle of the screen, in screen coordinates.
+    /// @tparam T - The type to return the rectangle coordinates as.
+    ///     The underlying dimension values must be implicitly convertible
+    ///     via a static cast to this type.
+    /// @return The bounding rectangle of the screen, in screen coordinates.
+    ///     This means that the left/top of the rectangle will always be (0, 0).
+    template <typename T>
+    MATH::Rectangle<T> Screen::GetBoundingRectangle() const
+    {
+        const T LEFT_X = 0;
+        const T TOP_Y = 0;
+        T width_in_pixels = WidthInPixels<T>();
+        T height_in_pixels = HeightInPixels<T>();
+        MATH::Rectangle<T> screen_bounding_rectangle = MATH::Rectangle<T>::FromLeftTopAndDimensions(
+            LEFT_X,
+            TOP_Y,
+            width_in_pixels,
+            height_in_pixels);
+        return screen_bounding_rectangle;
     }
 }

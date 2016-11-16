@@ -35,7 +35,7 @@ namespace GUI
         // RETURN THE GLYPH.
         Glyph glyph;
         glyph.Texture = Texture;
-        glyph.TextureSubRectangle = MATH::FloatRectangle::FromTopLeftAndDimensions(
+        glyph.TextureSubRectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             glyph_left_position,
             glyph_top_position,
             static_cast<float>(Glyph::WIDTH_IN_PIXELS),

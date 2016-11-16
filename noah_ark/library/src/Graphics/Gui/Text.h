@@ -14,6 +14,10 @@ namespace GUI
     class Text
     {
     public:
+        static Text CenteredOnScreen(
+            const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
+            const std::string& characters,
+            const Screen& screen);
         explicit Text(
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font, 
             const std::string& characters,

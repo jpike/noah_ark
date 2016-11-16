@@ -26,7 +26,7 @@ namespace MATH
     {
     public:
         // CONSTRUCTION/DESTRUCTION.
-        static Rectangle FromTopLeftAndDimensions(
+        static Rectangle FromLeftTopAndDimensions(
             const CoordinateType left_position,
             const CoordinateType top_position,
             const CoordinateType width,
@@ -84,14 +84,14 @@ namespace MATH
 
     // CLASS IMPLEMENTATION.
 
-    /// Creates a rectangle from the top-left coordinates and dimensions.
+    /// Creates a rectangle from the left-top coordinates and dimensions.
     /// @param[in]  left_position - The left position of the rectangle.
     /// @param[in]  top_position - The top position of the rectangle.
     /// @param[in]  width - The width of the rectangle.
     /// @param[in]  height - The height of the rectangle.
     /// @return A rectangle based on the provided values.
     template <typename CoordinateType>
-    Rectangle<CoordinateType> Rectangle<CoordinateType>::FromTopLeftAndDimensions(
+    Rectangle<CoordinateType> Rectangle<CoordinateType>::FromLeftTopAndDimensions(
         const CoordinateType left_position,
         const CoordinateType top_position,
         const CoordinateType width,

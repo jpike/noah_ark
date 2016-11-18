@@ -16,7 +16,9 @@ namespace TEST_TEXT_PAGE
     TEST_CASE("An empty string can be rendered.", "[TextPage]")
     {
         // ADD AN EMPTY STRING TO A TEXT PAGE.
-        TextPage text_page;
+        const unsigned int WIDTH_IN_PIXELS = 512;
+        const unsigned int HEIGHT_IN_PIXELS = 32;
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
 
         const std::string EMPTY_STRING = "";
         bool text_added = text_page.Add(EMPTY_STRING);
@@ -37,7 +39,9 @@ namespace TEST_TEXT_PAGE
     TEST_CASE("No characters are rendered if no time has elapsed.", "[TextPage]")
     {
         // ADD A SINGLE CHARACTER TO A TEXT PAGE.
-        TextPage text_page;
+        const unsigned int WIDTH_IN_PIXELS = 512;
+        const unsigned int HEIGHT_IN_PIXELS = 32;
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
 
         const std::string SINGLE_CHARACTER = "a";
         bool text_added = text_page.Add(SINGLE_CHARACTER);
@@ -56,7 +60,9 @@ namespace TEST_TEXT_PAGE
     TEST_CASE("A single character can be rendered.", "[TextPage]")
     {
         // ADD A SINGLE CHARACTER TO A TEXT PAGE.
-        TextPage text_page;
+        const unsigned int WIDTH_IN_PIXELS = 512;
+        const unsigned int HEIGHT_IN_PIXELS = 32;
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
 
         const std::string SINGLE_CHARACTER = "a";
         bool text_added = text_page.Add(SINGLE_CHARACTER);
@@ -79,7 +85,9 @@ namespace TEST_TEXT_PAGE
     TEST_CASE("A single word can be rendered on a single line.", "[TextPage]")
     {
         // ADD A SINGLE WORD TO A TEXT PAGE.
-        TextPage text_page;
+        const unsigned int WIDTH_IN_PIXELS = 512;
+        const unsigned int HEIGHT_IN_PIXELS = 32;
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
 
         const std::string SINGLE_WORD = "word";
         bool text_added = text_page.Add(SINGLE_WORD);
@@ -108,7 +116,9 @@ namespace TEST_TEXT_PAGE
     TEST_CASE("Multiple words can be rendered on a single line.", "[TextPage]")
     {
         // ADD MULTIPLE WORDS TO A TEXT PAGE.
-        TextPage text_page;
+        const unsigned int WIDTH_IN_PIXELS = 512;
+        const unsigned int HEIGHT_IN_PIXELS = 32;
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
 
         const std::vector<std::string> WORDS =
         {
@@ -177,14 +187,16 @@ namespace TEST_TEXT_PAGE
     TEST_CASE("A full line of text can be rendered on a single line.", "[TextPage]")
     {
         // ADD A FULL LINE OF TEXT TO A TEXT PAGE.
-        TextPage text_page;
+        const unsigned int WIDTH_IN_PIXELS = 512;
+        const unsigned int HEIGHT_IN_PIXELS = 32;
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
 
-        const std::string FULL_LINE_OF_TEXT(TextPage::MAX_CHARACTER_COUNT_PER_LINE, 'x');
-        bool text_added = text_page.Add(FULL_LINE_OF_TEXT);
+        std::string full_line_of_text(text_page.MaxCharacterCountPerLine, 'x');
+        bool text_added = text_page.Add(full_line_of_text);
         REQUIRE(text_added);
 
         // VERIFY EACH LETTER CAN BE RENDERED INDIVIDUALLY BASED ON TIME.
-        for (unsigned int character_index = 0; character_index < FULL_LINE_OF_TEXT.length(); ++character_index)
+        for (unsigned int character_index = 0; character_index < full_line_of_text.length(); ++character_index)
         {
             // ELAPSE ENOUGH TIME FOR THIS NEXT CHARACTER TO BE DISPLAYED.
             // Due to numerical precision issues, a small amount of buffer padding is added
@@ -203,7 +215,7 @@ namespace TEST_TEXT_PAGE
             // Since the text page renders text by lines, each line should end with a newline.
             const unsigned int START_OF_STRING = 0;
             unsigned int current_character_count = character_index + 1;
-            std::string expected_text = FULL_LINE_OF_TEXT.substr(START_OF_STRING, current_character_count) + "\n";
+            std::string expected_text = full_line_of_text.substr(START_OF_STRING, current_character_count) + "\n";
             std::string rendered_text = output_stream.str();
             REQUIRE(expected_text == rendered_text);
         }
@@ -212,14 +224,16 @@ namespace TEST_TEXT_PAGE
     TEST_CASE("2 full lines of text can be rendered on a separate lines.", "[TextPage]")
     {
         // ADD 2 FULL LINES OF TEXT TO A TEXT PAGE.
-        TextPage text_page;
+        const unsigned int WIDTH_IN_PIXELS = 512;
+        const unsigned int HEIGHT_IN_PIXELS = 32;
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
 
-        const std::vector<std::string> LINES =
+        std::vector<std::string> lines =
         {
-            std::string(TextPage::MAX_CHARACTER_COUNT_PER_LINE, 'x'),
-            std::string(TextPage::MAX_CHARACTER_COUNT_PER_LINE, 'y'),
+            std::string(text_page.MaxCharacterCountPerLine, 'x'),
+            std::string(text_page.MaxCharacterCountPerLine, 'y'),
         };
-        for (const std::string& line : LINES)
+        for (const std::string& line : lines)
         {
             bool line_added = text_page.Add(line);
             REQUIRE(line_added);
@@ -227,7 +241,7 @@ namespace TEST_TEXT_PAGE
 
         // VERIFY EACH LINE CAN BE RENDERED PROPERLY.
         std::string previously_rendered_lines;
-        for (auto line = LINES.cbegin(); line != LINES.cend(); ++line)
+        for (auto line = lines.cbegin(); line != lines.cend(); ++line)
         {
             // VERIFY EACH LETTER CAN BE RENDERED INDIVIDUALLY BASED ON TIME.
             for (unsigned int character_index = 0; character_index < line->length(); ++character_index)
@@ -272,12 +286,14 @@ namespace TEST_TEXT_PAGE
         float elapsed_time_in_seconds_for_next_character = 1.0001f * TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS;
 
         // ADD WORDS FROM A BIBLE VERSE TO A TEXT PAGE.
-        TextPage text_page;
+        const unsigned int WIDTH_IN_PIXELS = 512;
+        const unsigned int HEIGHT_IN_PIXELS = 32;
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
 
         // The Bible verse was chosen to fit within a single text page.
         std::deque<std::string> words = CORE::String::SplitIntoWords(
             "But Noah found grace in the eyes of the Lord.",
-            TextPage::MAX_CHARACTER_COUNT_PER_LINE);
+            text_page.MaxCharacterCountPerLine);
         for (const std::string& word : words)
         {
             bool word_added = text_page.Add(word);
@@ -325,7 +341,7 @@ namespace TEST_TEXT_PAGE
                 unsigned int previously_rendered_words_on_current_line_plus_space_character_count =
                     (previously_rendered_words_on_current_line.length() + CHARACTER_COUNT_FOR_SPACE);
                 bool space_fits_on_current_line = (
-                    previously_rendered_words_on_current_line_plus_space_character_count <= TextPage::MAX_CHARACTER_COUNT_PER_LINE);
+                    previously_rendered_words_on_current_line_plus_space_character_count <= text_page.MaxCharacterCountPerLine);
                 if (space_fits_on_current_line)
                 {
                     // ADD THE SPACE BEFORE THE NEXT WORD.
@@ -350,7 +366,7 @@ namespace TEST_TEXT_PAGE
                 unsigned int previously_rendered_words_plus_next_word_character_count =
                     (previously_rendered_words_on_current_line_plus_space_character_count + next_word->length());
                 bool next_word_fits_on_current_line = (
-                    previously_rendered_words_plus_next_word_character_count <= TextPage::MAX_CHARACTER_COUNT_PER_LINE);
+                    previously_rendered_words_plus_next_word_character_count <= text_page.MaxCharacterCountPerLine);
                 if (next_word_fits_on_current_line)
                 {
                     

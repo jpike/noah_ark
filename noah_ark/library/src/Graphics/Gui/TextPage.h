@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Gui/Glyph.h"
 #include "Graphics/Gui/Font.h"
@@ -48,6 +49,7 @@ namespace GUI
         void Render(
             const MATH::Vector2ui& top_left_screen_position_in_pixels,
             const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
+            GRAPHICS::Renderer& renderer,
             GRAPHICS::Screen& screen) const;
         void Render(std::ostream& output_stream) const;
 

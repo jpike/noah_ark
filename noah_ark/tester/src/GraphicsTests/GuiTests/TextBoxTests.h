@@ -25,7 +25,9 @@ namespace TEST_TEXT_BOX
         float elapsed_time_in_seconds_for_next_character = 1.5f * TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS;
 
         // CREATE A TEXT BOX.
-        TextBox text_box(std::make_shared<Font>(std::make_shared<Texture>()));
+        const unsigned int WIDTH_IN_PIXELS = 512;
+        const unsigned int HEIGHT_IN_PIXELS = 32;
+        TextBox text_box(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, std::make_shared<Font>(std::make_shared<Texture>()));
 
         // DEFINE THE MESSAGE TO START DISPLAYING.
         // The Bible verse message was chosen based on a realistic scenario where this was failing.

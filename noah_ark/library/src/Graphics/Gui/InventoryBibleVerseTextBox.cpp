@@ -29,10 +29,12 @@ namespace GUI
     ///     null if no verse should be rendered.
     /// @param[in]  bounding_rectangle - The bounding rectangle
     ///     of this text box (in screen coordinates).
+    /// @param[in,out]  renderer - The renderer to use for rendering.
     /// @param[in,out]  screen - The screen to render to.
     void InventoryBibleVerseTextBox::Render(
         const BIBLE::BibleVerse* const bible_verse,
         const MATH::FloatRectangle& bounding_rectangle,
+        GRAPHICS::Renderer& renderer,
         GRAPHICS::Screen& screen) const
     {
         // RENDER THE BACKGROUND BOX.
@@ -105,7 +107,7 @@ namespace GUI
         {
             // RENDER THE CURRENT LINE.
             Text line_of_text(Font, line, current_line_screen_top_left_position_in_pixels);
-            line_of_text.Render(screen);
+            line_of_text.Render(renderer, screen);
 
             // MOVE TO THE NEXT LINE.
             current_line_screen_top_left_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

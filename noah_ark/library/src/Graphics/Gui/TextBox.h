@@ -6,6 +6,7 @@
 #include <vector>
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/TextPage.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 
 namespace GRAPHICS
@@ -35,7 +36,7 @@ namespace GUI
 
         bool CurrentPageOfTextFinishedBeingDisplayed() const;
 
-        void Render(GRAPHICS::Screen& screen) const;
+        void Render(GRAPHICS::Renderer& renderer, GRAPHICS::Screen& screen) const;
         void Render(std::ostream& output_stream) const;
 
         // PUBLIC MEMBER VARIABLES.

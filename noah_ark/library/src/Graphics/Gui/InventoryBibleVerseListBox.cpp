@@ -36,9 +36,11 @@ namespace GUI
     /// along with a few surrounding verses.
     /// @param[in]  bounding_rectangle - The bounding rectangle
     ///     of this text box (in screen coordinates).
+    /// @param[in,out]  renderer - The renderer to use for rendering.
     /// @param[in,out]  screen - The screen to render to.
     void InventoryBibleVerseListBox::Render(
         const MATH::FloatRectangle& bounding_rectangle,
+        Renderer& renderer,
         Screen& screen) const
     {
         // RENDER THE BACKGROUND BOX.
@@ -107,7 +109,7 @@ namespace GUI
 
             // RENDER TEXT FOR THE VERSE.
             Text bible_verse_text(Font, bible_verse_display_string, current_verse_screen_top_left_position_in_pixels);
-            bible_verse_text.Render(screen);
+            bible_verse_text.Render(renderer, screen);
 
             // MOVE TO A NEW LINE FOR THE NEXT VERSE.
             current_verse_screen_top_left_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

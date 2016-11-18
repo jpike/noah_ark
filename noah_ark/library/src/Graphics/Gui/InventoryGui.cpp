@@ -107,8 +107,9 @@ namespace GUI
     }
 
     /// Renders the inventory GUI to the provided screen.
+    /// @param[in,out]  renderer - The renderer to use for rendering.
     /// @param[in,out]  screen - The screen to render to.
-    void InventoryGui::Render(Screen& screen) const
+    void InventoryGui::Render(Renderer& renderer, Screen& screen) const
     {
         // RENDER A RECTANGLE FOR THE BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -158,7 +159,7 @@ namespace GUI
             BibleTabColor,
             screen);
 
-        bible_tab_text.Render(screen);
+        bible_tab_text.Render(renderer, screen);
 
         // RENDER A TAB FOR THE ANIMAL PORTION OF THE GUI.
         /// @todo   Centralize tab rendering code in helper function.
@@ -187,7 +188,7 @@ namespace GUI
             AnimalsTabColor,
             screen);
 
-        animals_tab_text.Render(screen);
+        animals_tab_text.Render(renderer, screen);
 
         // RENDER A TAB FOR THE FOOD PORTION OF THE GUI.
         /// @todo   Centralize tab rendering code in helper function.
@@ -215,13 +216,13 @@ namespace GUI
             FoodTabColor,
             screen);
 
-        food_tab_text.Render(screen);
+        food_tab_text.Render(renderer, screen);
 
         // RENDER THE CURRENTLY DISPLAYED PAGE.
         switch (CurrentTab)
         {
             case GRAPHICS::GUI::InventoryGui::TabType::BIBLE:
-                RenderBiblePage(screen);
+                RenderBiblePage(renderer, screen);
                 break;
             case GRAPHICS::GUI::InventoryGui::TabType::ANIMALS:
                 RenderAnimalsPage(screen);
@@ -237,8 +238,9 @@ namespace GUI
 
     /// Renders the page of the inventory for the Bible tab.
     /// This page allows browsing Bible verses in the inventory.
+    /// @param[in,out]  renderer - The renderer to use for rendering.
     /// @param[in,out]  screen - The screen to render to.
-    void InventoryGui::RenderBiblePage(Screen& screen) const
+    void InventoryGui::RenderBiblePage(Renderer& renderer, Screen& screen) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -279,6 +281,7 @@ namespace GUI
         BibleVerseTextBox.Render(
             selected_bible_verse, 
             bible_verse_text_box_rectangle, 
+            renderer,
             screen);
 
         // RENDER THE BOX FOR THE LIST OF ALL BIBLE VERSES.
@@ -298,6 +301,7 @@ namespace GUI
 
         BibleVerseListBox.Render(
             bible_verse_list_box_rectangle,
+            renderer,
             screen);
     }
     

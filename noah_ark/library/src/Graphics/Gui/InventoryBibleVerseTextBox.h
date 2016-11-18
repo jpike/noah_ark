@@ -3,6 +3,7 @@
 #include <memory>
 #include "Bible/BibleVerses.h"
 #include "Graphics/Gui/Font.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Math/Rectangle.h"
 
@@ -24,6 +25,7 @@ namespace GUI
         void Render(
             const BIBLE::BibleVerse* const bible_verse,
             const MATH::FloatRectangle& bounding_rectangle,
+            GRAPHICS::Renderer& renderer,
             GRAPHICS::Screen& screen) const;
 
     private:

@@ -161,8 +161,9 @@ namespace GUI
     }
 
     /// Renders the text box to the provided screen.
+    /// @param[in,out]  renderer - The renderer to use for rendering.
     /// @param[in,out]  screen - The screen to render to.
-    void TextBox::Render(GRAPHICS::Screen& screen) const
+    void TextBox::Render(GRAPHICS::Renderer& renderer, GRAPHICS::Screen& screen) const
     {
         // CHECK IF ANY PAGES OF TEXT EXIST.
         bool text_pages_exist = !Pages.empty();
@@ -200,7 +201,7 @@ namespace GUI
         text_page_top_left_screen_position_in_pixels.X = SCREEN_TOP_LEFT_CORNER.x + Glyph::WIDTH_IN_PIXELS;
         text_page_top_left_screen_position_in_pixels.Y = SCREEN_TOP_LEFT_CORNER.y + FIRST_LINE_VERTICAL_PADDING_IN_PIXELS;
 
-        current_text_page.Render(text_page_top_left_screen_position_in_pixels, Font, screen);
+        current_text_page.Render(text_page_top_left_screen_position_in_pixels, Font, renderer, screen);
 
         // CHECK IF THE CURRENT PAGE OF TEXT IS FINISHED BEING DISPLAYED.
         bool current_page_finished_being_displayed = current_text_page.AllTextDisplayed();

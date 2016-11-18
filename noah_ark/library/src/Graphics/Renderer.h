@@ -6,8 +6,7 @@
 #include "Graphics/Camera.h"
 #include "Graphics/Color.h"
 #include "Graphics/Gui/Font.h"
-#include "Graphics/Gui/HeadsUpDisplay.h"
-#include "Graphics/Gui/Text.h"
+/// @todo #include "Graphics/Gui/Text.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Texture.h"
@@ -30,8 +29,9 @@ namespace GRAPHICS
             const MATH::FloatRectangle& rectangle,
             const GRAPHICS::Color& color,
             Screen& screen);
-        static void Render(const GRAPHICS::GUI::Text& text, Screen& screen);
-        static void RenderKeyIcon(
+        /// @todo static void Render(const GRAPHICS::GUI::Text& text, Screen& screen);
+        /// @todo   Move this method since it is no longer static.  In fact, remove all static methods?
+        void RenderKeyIcon(
             const char key,
             const GRAPHICS::GUI::Font& font,
             const MATH::Vector2ui& top_left_screen_position_in_pixels,
@@ -47,25 +47,30 @@ namespace GRAPHICS
             const float elapsed_time_in_seconds,
             MAPS::Overworld& overworld, 
             Screen& screen);
-        void Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen);
+        //void Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen);
         void RenderText(
             const std::string& text, 
             const MATH::Vector2f& left_top_screen_position_in_pixels,
-            Screen& screen) const;
+            const Color& text_color,
+            Screen& screen);
         void RenderText(
             const std::string& text,
             const MATH::FloatRectangle& bounding_screen_rectangle,
-            Screen& screen) const;
+            const Color& text_color,
+            Screen& screen);
         void RenderCenteredText(
             const std::string& text,
             const MATH::FloatRectangle& bounding_screen_rectangle,
-            Screen& screen) const;
+            const Color& text_color,
+            Screen& screen);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The camera defining what portion of the world is currently viewable.
         GRAPHICS::Camera Camera;
         /// The font to use for rendering text.
         std::shared_ptr<GRAPHICS::GUI::Font> Font;
+        /// The shader to use for colored text.
+        sf::Shader ColoredTextShader;
 
     private:
         // RENDERING.

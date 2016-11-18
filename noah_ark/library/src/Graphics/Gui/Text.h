@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include "Graphics/Gui/Font.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Math/Vector2.h"
 
@@ -23,7 +24,7 @@ namespace GUI
             const std::string& characters,
             const MATH::Vector2ui& screen_top_left_position_in_pixels);
 
-        void Render(Screen& screen) const;
+        void Render(Renderer& renderer, Screen& screen) const;
 
         unsigned int GetWidthInPixels() const;
 

@@ -90,8 +90,9 @@ namespace GUI
     }
 
     /// Renders the text to the specified render target.
+    /// @param[in,out]  renderer - The renderer to use for rendering.
     /// @param[in,out]  screen - The screen to render to.
-    void Text::Render(Screen& screen) const
+    void Text::Render(Renderer& renderer, Screen& screen) const
     {
         // CALCULATE THE WORLD COORDINATES OF THE TOP-LEFT STARTING POSITION OF THE TEXT.
         sf::Vector2i text_top_left_position_in_pixels(
@@ -102,8 +103,11 @@ namespace GUI
         sf::Vector2f text_top_left_world_position = screen.RenderTarget->mapPixelToCoords(text_top_left_position_in_pixels);
         MATH::Vector2f current_character_top_left_world_position(text_top_left_world_position.x, text_top_left_world_position.y);
 
+        GRAPHICS::Color black;
+        renderer.RenderText(Characters, current_character_top_left_world_position, black, screen);
+
         // RENDER EACH CHARACTER.
-        for (const char character : Characters)
+        /*for (const char character : Characters)
         {
             // GET THE GLYPH FOR THE CURRENT CHARACTER.
             Glyph glyph = Font->GetGlyph(character);
@@ -126,11 +130,11 @@ namespace GUI
             current_character_sprite.SetWorldPosition(current_glyph_center_world_position);
 
             // RENDER THE CURRENT GLYPH.
-            current_character_sprite.Render(screen);
+            screen.RenderTarget->draw(current_character_sprite.SpriteResource, render_states);
 
             // CALCULATE THE TOP-LEFT WORLD POSITION OF THE NEXT CHARACTER.
             current_character_top_left_world_position.X += glyph_width;
-        }
+        }*/
     }
 
     /// Gets the width of the text, in pixels.

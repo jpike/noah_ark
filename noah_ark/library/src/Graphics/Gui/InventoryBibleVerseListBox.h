@@ -3,6 +3,7 @@
 #include <memory>
 #include "Bible/BibleVerses.h"
 #include "Graphics/Gui/Font.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Math/Rectangle.h"
 #include "Objects/Inventory.h"
@@ -26,7 +27,8 @@ namespace GUI
         // RENDERING.
         void Render(
             const MATH::FloatRectangle& bounding_rectangle,
-            GRAPHICS::Screen& screen) const;
+            Renderer& renderer,
+            Screen& screen) const;
 
         // VERSE METHODS.
         const BIBLE::BibleVerse* const GetSelectedVerse() const;

@@ -25,7 +25,7 @@ namespace STATES
         // OTHER METHODS.
         bool Completed() const;
         void Update(const sf::Time& elapsed_time);
-        void Render(const GRAPHICS::Renderer& renderer, GRAPHICS::Screen& screen) const;
+        void Render(GRAPHICS::Renderer& renderer, GRAPHICS::Screen& screen) const;
 
     private:
         // STATIC CONSTANTS.

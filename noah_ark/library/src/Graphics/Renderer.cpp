@@ -8,14 +8,15 @@ namespace GRAPHICS
     /// @param[in]  camera_view_bounds - The bounding rectangle (in world coordinates) of the camera's view.
     Renderer::Renderer(const MATH::FloatRectangle& camera_view_bounds) :
         Camera(camera_view_bounds),
-        Font(nullptr)
+        Font(nullptr),
+        ColoredTextShader()
     {}
 
     /// @todo   Document.
-    void Renderer::Render(const GRAPHICS::GUI::Text& text, Screen& screen)
+    /*void Renderer::Render(const GRAPHICS::GUI::Text& text, Screen& screen)
     {
         text.Render(screen);
-    }
+    }*/
 
     /// @todo   Document.
     void Renderer::RenderScreenRectangle(
@@ -98,7 +99,14 @@ namespace GRAPHICS
         key_character_sprite.SetWorldPosition(glyph_center_world_position);
 
         // RENDER THE GLYPH FOR THE KEY.
-        key_character_sprite.Render(screen);
+        /// @todo   Remove this duplicated code.
+        sf::RenderStates render_states = sf::RenderStates::Default;
+        const sf::Transform RENDER_IN_SCREEN_SPACE = sf::Transform::Identity;
+        render_states.transform = RENDER_IN_SCREEN_SPACE;
+        ColoredTextShader.setParameter("color", sf::Color::Black);
+        ColoredTextShader.setParameter("texture", sf::Shader::CurrentTexture);
+        render_states.shader = &ColoredTextShader;
+        screen.RenderTarget->draw(key_character_sprite.SpriteResource, render_states);
     }
 
     /// @todo   Document.
@@ -235,21 +243,23 @@ namespace GRAPHICS
     /// Renders a HUD.
     /// @param[in]  hud - The HUD to render.
     /// @param[in,out]  screen - The screen to render to.
-    void Renderer::Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen)
+    /*void Renderer::Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen)
     {
         hud.Render(screen);
-    }
+    }*/
 
     /// Renders text to the screen at the specified position.
     /// All text will be rendered on the same line.
     /// @param[in]  text - The text to render.
     /// @param[in]  left_top_screen_position_in_pixels - The left/top screen position
     ///     at which to render the text.
+    /// @param[in]  text_color - The color of the text.
     /// @param[in,out]  screen - The screen to render to.
     void Renderer::RenderText(
         const std::string& text, 
         const MATH::Vector2f& left_top_screen_position_in_pixels,
-        Screen& screen) const
+        const Color& text_color,
+        Screen& screen)
     {
         // RENDER THE TEXT TO THE CONSOLE IF NO FONT EXISTS.
         // This is intended primarily to provide debug support.
@@ -281,10 +291,14 @@ namespace GRAPHICS
                 current_character_left_top_screen_position.Y);
 
             // RENDER THE CURRENT GLYPH.
-            /// @todo   Text colors!
             /// @todo   Contemplate potential alternative interfaces for rendering sprites in screen-space.
+            sf::RenderStates render_states = sf::RenderStates::Default;
             const sf::Transform RENDER_IN_SCREEN_SPACE = sf::Transform::Identity;
-            screen.RenderTarget->draw(current_character_sprite, RENDER_IN_SCREEN_SPACE);
+            render_states.transform = RENDER_IN_SCREEN_SPACE;
+            ColoredTextShader.setParameter("color", sf::Color(text_color.Red, text_color.Green, text_color.Blue, text_color.Alpha));
+            ColoredTextShader.setParameter("texture", sf::Shader::CurrentTexture);
+            render_states.shader = &ColoredTextShader;
+            screen.RenderTarget->draw(current_character_sprite, render_states);
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
             float glyph_width = glyph.TextureSubRectangle.GetWidth();
@@ -300,11 +314,13 @@ namespace GRAPHICS
     /// @param[in]  text - The text to render.
     /// @param[in]  bounding_screen_rectangle - The bounding rectangle
     ///     within the screen in which to render text.
+    /// @param[in]  text_color - The color of the text.
     /// @param[in,out]  screen - The screen to render to.
     void Renderer::RenderText(
         const std::string& text,
         const MATH::FloatRectangle& bounding_screen_rectangle,
-        Screen& screen) const
+        const Color& text_color,
+        Screen& screen)
     {
         // SPLIT THE PROVIDED TEXT INTO LINES BASED ON EMBEDDED LINE BREAKS.
         std::vector<std::string> original_lines_from_text = CORE::String::SplitIntoLines(text);
@@ -389,7 +405,7 @@ namespace GRAPHICS
         for (const auto& line : new_lines_of_text)
         {
             // RENDER THE CURRENT LINE.
-            RenderText(line, current_line_left_top_screen_position, screen);
+            RenderText(line, current_line_left_top_screen_position, text_color, screen);
 
             // MOVE TO THE NEXT LINE.
             current_line_left_top_screen_position.Y += GUI::Glyph::HEIGHT_IN_PIXELS;
@@ -404,11 +420,13 @@ namespace GRAPHICS
     /// @param[in]  text - The text to render.
     /// @param[in]  bounding_screen_rectangle - The bounding rectangle
     ///     within the screen in which to render text.
+    /// @param[in]  text_color - The color of the text.
     /// @param[in,out]  screen - The screen to render to.
     void Renderer::RenderCenteredText(
         const std::string& text,
         const MATH::FloatRectangle& bounding_screen_rectangle,
-        Screen& screen) const
+        const Color& text_color,
+        Screen& screen)
     {
         // SPLIT THE PROVIDED TEXT INTO LINES BASED ON EMBEDDED LINE BREAKS.
         std::vector<std::string> original_lines_from_text = CORE::String::SplitIntoLines(text);
@@ -514,7 +532,7 @@ namespace GRAPHICS
             current_line_left_top_screen_position.X += half_of_unused_space_on_current_line_in_pixels;
 
             // RENDER THE CURRENT LINE.
-            RenderText(line, current_line_left_top_screen_position, screen);
+            RenderText(line, current_line_left_top_screen_position, text_color, screen);
 
             // MOVE TO THE NEXT LINE.
             current_line_left_top_screen_position.Y += GUI::Glyph::HEIGHT_IN_PIXELS;

@@ -446,6 +446,27 @@ int main(int argumentCount, char* arguments[])
             window->getView().getSize().y);
         GRAPHICS::Renderer renderer(camera_view_bounds);
         renderer.Font = font;
+        
+        const std::string COLORED_TEXT_FRAGMENT_SHADER = R"(
+            uniform vec4 color; // Current color to use to tint texture.
+            uniform sampler2D texture;  // Current texture being rendered.
+
+            void main()
+            {
+                // GET THE CURRENT PIXEL FROM THE TEXTURE.
+                vec4 current_pixel_color = texture2D(texture, gl_TexCoord[0].xy);
+
+                // APPLY THE COLOR TO THE PIXEL.
+                gl_FragColor = color * current_pixel_color;
+            }
+        )";
+        bool shader_loaded = renderer.ColoredTextShader.loadFromMemory(COLORED_TEXT_FRAGMENT_SHADER, sf::Shader::Fragment);
+        if (!shader_loaded)
+        {
+            std::cerr << "Failed to load shader." << std::endl;
+            /// @todo   More specific exit code.
+            return EXIT_FAILURE;
+        }
 
         // CREATE THE RANDOM NUMBER GENERATOR.
         std::random_device random_number_generator;
@@ -544,7 +565,7 @@ int main(int argumentCount, char* arguments[])
                         renderer.Render(elapsed_time_in_seconds, overworld, screen);
 
                         // RENDER THE HUD.
-                        renderer.Render(hud, screen);
+                        hud.Render(renderer, screen);
 
                         break;
                     }

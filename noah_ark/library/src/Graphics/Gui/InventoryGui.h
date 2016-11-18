@@ -6,6 +6,7 @@
 /// @todo  Create inventory sub-namespace?
 #include "Graphics/Gui/InventoryBibleVerseListBox.h"
 #include "Graphics/Gui/InventoryBibleVerseTextBox.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Input/KeyboardInputController.h"
 #include "Objects/Inventory.h"
@@ -52,11 +53,11 @@ namespace GUI
         void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
 
         // RENDERING.
-        void Render(Screen& screen) const;
+        void Render(Renderer& renderer, Screen& screen) const;
 
     private:
         // RENDERING.        
-        void RenderBiblePage(Screen& screen) const;
+        void RenderBiblePage(Renderer& renderer, Screen& screen) const;
         void RenderAnimalsPage(Screen& screen) const;
         void RenderFoodPage(Screen& screen) const;
 

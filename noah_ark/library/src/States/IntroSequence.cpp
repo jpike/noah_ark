@@ -74,9 +74,9 @@ namespace STATES
     }
 
     /// Renders the current frame of the intro sequence on screen.
-    /// @param[in]  renderer - The renderer to use for rendering.
+    /// @param[in,out]  renderer - The renderer to use for rendering.
     /// @param[in,out]  screen - The screen to render to.
-    void IntroSequence::Render(const GRAPHICS::Renderer& renderer, GRAPHICS::Screen& screen) const
+    void IntroSequence::Render(GRAPHICS::Renderer& renderer, GRAPHICS::Screen& screen) const
     {
         // MAKE SURE THE INTRO SEQUENCE HASN'T COMPLETED.
         bool intro_sequence_completed = Completed();
@@ -97,6 +97,11 @@ namespace STATES
         // RENDER THE CURRENT BIBLE VERSE.
         const BIBLE::BibleVerse& current_bible_verse = IntroBibleVerses.at(CurrentFrameIndex);
         const std::string bible_verse_text = current_bible_verse.ToString();
-        renderer.RenderCenteredText(bible_verse_text, screen.GetBoundingRectangle<float>(), screen);
+        GRAPHICS::Color white;
+        white.Red = GRAPHICS::Color::MAX_COLOR_COMPONENT;
+        white.Green = GRAPHICS::Color::MAX_COLOR_COMPONENT;
+        white.Blue = GRAPHICS::Color::MAX_COLOR_COMPONENT;
+        white.Alpha = GRAPHICS::Color::MAX_COLOR_COMPONENT;
+        renderer.RenderCenteredText(bible_verse_text, screen.GetBoundingRectangle<float>(), white, screen);
     }
 }

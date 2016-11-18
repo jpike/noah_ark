@@ -4,6 +4,7 @@
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/InventoryGui.h"
 #include "Graphics/Gui/TextBox.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Texture.h"
 #include "Input/KeyboardInputController.h"
@@ -33,7 +34,7 @@ namespace GUI
         void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
 
         // RENDERING.
-        void Render(GRAPHICS::Screen& screen) const;
+        void Render(GRAPHICS::Renderer& renderer, GRAPHICS::Screen& screen) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main text box for displaying messages to the player.

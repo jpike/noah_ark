@@ -1,28 +1,46 @@
 #include <iostream>
+#include "Core/NullChecking.h"
 #include "Core/String.h"
 #include "Graphics/Renderer.h"
 
 namespace GRAPHICS
 {
     /// Constructor.
-    /// @param[in]  camera_view_bounds - The bounding rectangle (in world coordinates) of the camera's view.
-    Renderer::Renderer(const MATH::FloatRectangle& camera_view_bounds) :
-        Camera(camera_view_bounds),
-        Font(nullptr),
-        ColoredTextShader()
-    {}
-
-    /// @todo   Document.
-    /*void Renderer::Render(const GRAPHICS::GUI::Text& text, Screen& screen)
+    /// @param[in]  render_target - The target to render to.
+    /// @param[in]  camera_center_world_position - The center position (in world coordinates) of the camera's view.
+    /// @param[in]  font - The font to use for rendering.
+    /// @param[in]  colored_text_shader - The shader to use for coloring text.
+    /// @throws std::exception - Thrown if a parameter is null.
+    Renderer::Renderer(
+        const std::shared_ptr<sf::RenderTarget>& render_target,
+        const MATH::Vector2f& camera_center_world_position,
+        const std::shared_ptr<GRAPHICS::GUI::Font>& font,
+        const std::shared_ptr<sf::Shader>& colored_text_shader) :
+    Screen(render_target),
+    Camera(MATH::FloatRectangle::FromCenterAndDimensions(
+        camera_center_world_position.X,
+        camera_center_world_position.Y,
+        render_target->getView().getSize().x,
+        render_target->getView().getSize().y)),
+    Font(font),
+    ColoredTextShader(colored_text_shader)
     {
-        text.Render(screen);
-    }*/
+        // MAKE SURE REQUIRED PARAMETERS EXISTS.
+        CORE::ThrowInvalidArgumentExceptionIfNull(
+            Font,
+            "The font for the renderer cannot be null.");
+        
+        CORE::ThrowInvalidArgumentExceptionIfNull(
+            ColoredTextShader,
+            "The colored text shader for the renderer cannot be null.");
+    }
 
-    /// @todo   Document.
+    /// Renders a colored rectangle in screen coordinates.
+    /// @param[in]  rectangle - The rectangle (in screen coordinates) to render.
+    /// @param[in]  color - The color of the rectangle to render.
     void Renderer::RenderScreenRectangle(
         const MATH::FloatRectangle& rectangle,
-        const GRAPHICS::Color& color,
-        Screen& screen)
+        const GRAPHICS::Color& color)
     {
         // CONVERT THE RECTANGLE POSITION TO A WORLD POSITION.
         // This is necessary so that the rectangle can be rendered
@@ -30,7 +48,7 @@ namespace GRAPHICS
         // might move around the world.
         int left_screen_position = static_cast<int>(rectangle.GetLeftXPosition());
         int top_screen_position = static_cast<int>(rectangle.GetTopYPosition());
-        sf::Vector2f top_left_world_position = screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
+        sf::Vector2f top_left_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
             left_screen_position,
             top_screen_position));
 
@@ -45,21 +63,23 @@ namespace GRAPHICS
         renderable_rectangle.setPosition(top_left_world_position);
 
         // RENDER THE RECTANGLE.
-        screen.RenderTarget->draw(renderable_rectangle);
+        Screen.RenderTarget->draw(renderable_rectangle);
     }
 
-    /// @todo   Document.
+    /// Renders an icon on the screen that indicates that a specific key
+    /// should be pressed for something.
+    /// @param[in]  key - The character of the key for the icon.
+    /// @param[in]  top_left_screen_position_in_pixels - The top-left screen position
+    ///     of the key icon.
     void Renderer::RenderKeyIcon(
         const char key,
-        const GRAPHICS::GUI::Font& font,
-        const MATH::Vector2ui& top_left_screen_position_in_pixels,
-        Screen& screen)
+        const MATH::Vector2ui& top_left_screen_position_in_pixels)
     {
         // CONVERT THE SCREEN POSITION TO A WORLD POSITION.
         // This is necessary so that the key icon can be rendered
         // appropriately on the screen regardless of how the camera
         // might move around the world.
-        sf::Vector2f top_left_world_position = screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
+        sf::Vector2f top_left_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
             top_left_screen_position_in_pixels.X,
             top_left_screen_position_in_pixels.Y));
 
@@ -76,10 +96,10 @@ namespace GRAPHICS
         key_background_icon.setPosition(top_left_world_position);
 
         // RENDER THE BACKGROUND RECTANGLE FOR THE KEY.
-        screen.RenderTarget->draw(key_background_icon);
+        Screen.RenderTarget->draw(key_background_icon);
 
         // GET THE GLYPH FOR THE KEY.
-        GRAPHICS::GUI::Glyph glyph = font.GetGlyph(key);
+        GRAPHICS::GUI::Glyph glyph = Font->GetGlyph(key);
 
         // CALCULATE THE CENTER WORLD POSITION OF THE GLYPH.
         float glyph_width = glyph.TextureSubRectangle.GetWidth();
@@ -103,18 +123,22 @@ namespace GRAPHICS
         sf::RenderStates render_states = sf::RenderStates::Default;
         const sf::Transform RENDER_IN_SCREEN_SPACE = sf::Transform::Identity;
         render_states.transform = RENDER_IN_SCREEN_SPACE;
-        ColoredTextShader.setParameter("color", sf::Color::Black);
-        ColoredTextShader.setParameter("texture", sf::Shader::CurrentTexture);
-        render_states.shader = &ColoredTextShader;
-        screen.RenderTarget->draw(key_character_sprite.SpriteResource, render_states);
+        ColoredTextShader->setParameter("color", sf::Color::Black);
+        ColoredTextShader->setParameter("texture", sf::Shader::CurrentTexture);
+        render_states.shader = ColoredTextShader.get();
+        Screen.RenderTarget->draw(key_character_sprite.SpriteResource, render_states);
     }
 
-    /// @todo   Document.
+    /// Renders a GUI icon on the screen.
+    /// @param[in]  texture - The texture containing the icon to render.
+    /// @param[in]  texture_sub_rectangle - The sub-rectangle of the texture defining
+    ///     the bounding box of the icon to render.
+    /// @param[in]  top_left_screen_position_in_pixels - The top-left screen position
+    ///     of the icon.
     void Renderer::RenderGuiIcon(
         const GRAPHICS::Texture& texture,
         const MATH::FloatRectangle& texture_sub_rectangle,
-        const MATH::Vector2ui& top_left_screen_position_in_pixels,
-        Screen& screen)
+        const MATH::Vector2ui& top_left_screen_position_in_pixels)
     {
         // CREATE A SPRITE FOR THE ICON USING THE TEXTURE INFORMATION.
         sf::IntRect texture_rectangle;
@@ -128,125 +152,14 @@ namespace GRAPHICS
         // The screen position must be converted to a world position so that the GUI icon
         // can be rendered appropriately on screen regardless of how the camera might
         // move around the world.
-        sf::Vector2f top_left_world_position = screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
+        sf::Vector2f top_left_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
             top_left_screen_position_in_pixels.X,
             top_left_screen_position_in_pixels.Y));
         gui_icon.setPosition(top_left_world_position);
 
         // RENDER THE GUI ICON.
-        screen.RenderTarget->draw(gui_icon);
+        Screen.RenderTarget->draw(gui_icon);
     }
-
-    /// Renders an overworld.
-    /// @param[in]  elapsed_time_in_seconds - The elapsed time since the last rendering of the world.
-    ///     @todo   Look at ways to remove this parameter.
-    /// @param[in]  overworld - The overworld to render.
-    ///     @todo   Look at how to make overworld parameter const.
-    /// @param[in,out]  screen - The screen to render to.
-    void Renderer::Render(
-        const float elapsed_time_in_seconds, 
-        MAPS::Overworld& overworld, 
-        Screen& screen)
-    {
-        /// @todo   Factor out updating from this method?
-
-        MATH::FloatRectangle camera_bounds = Camera.ViewBounds;
-        MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
-
-        /// @note   This view only needs to be set here.
-        /// Private methods assume it has already been set.
-        sf::View camera_view;
-        camera_view.setCenter(camera_view_center.X, camera_view_center.Y);
-        camera_view.setSize(camera_bounds.GetWidth(), camera_bounds.GetHeight());
-        screen.RenderTarget->setView(camera_view);
-
-        MAPS::TileMap* current_tile_map = overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
-        assert(current_tile_map);
-
-        // RENDER THE CURRENT TILE MAP.
-        /// @todo   Consider signed ints.  Right now, we're just
-        /// rendering a few surrounding tile maps.
-        unsigned int min_tile_map_row = current_tile_map->OverworldRowIndex;
-        bool top_tile_map_exists = (min_tile_map_row > 0);
-        if (top_tile_map_exists)
-        {
-            --min_tile_map_row;
-        }
-        unsigned int min_tile_map_column = current_tile_map->OverworldColumnIndex;
-        bool left_tile_map_exists = (min_tile_map_column > 0);
-        if (left_tile_map_exists)
-        {
-            --min_tile_map_column;
-        }
-        unsigned int max_tile_map_row = min_tile_map_row + 2;
-        unsigned int max_tile_map_column = min_tile_map_column + 2;
-        for (unsigned int tile_map_row = min_tile_map_row; tile_map_row <= max_tile_map_row; ++tile_map_row)
-        {
-            for (unsigned int tile_map_column = min_tile_map_column; tile_map_column <= max_tile_map_column; ++tile_map_column)
-            {
-                // GET THE CURRENT TILE MAP.
-                MAPS::TileMap* tile_map = overworld.GetTileMap(tile_map_row, tile_map_column);
-                bool tile_map_exists = (nullptr != tile_map);
-                if (!tile_map_exists)
-                {
-                    // Continue trying to render other tile maps.
-                    continue;
-                }
-
-                // UPDATE THE CURRENT TILE MAP'S TREES.
-                /// @todo   Figure out if this maybe should be handled elsewhere.
-                for (auto tree = tile_map->Trees.begin(); tree != tile_map->Trees.end(); ++tree)
-                {
-                    tree->Update(elapsed_time_in_seconds);
-                }
-
-                // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
-                /// @todo   Maybe we only need a single dust cloud?  At least in theory, it shouldn't be
-                /// possible for more than one tree to in this state at a given time.
-                for (auto dust_cloud = tile_map->TreeDustClouds.begin(); dust_cloud != tile_map->TreeDustClouds.end();)
-                {
-                    // UPDATE THE CURRENT DUST CLOUD.
-                    dust_cloud->Update(elapsed_time_in_seconds);
-
-                    // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
-                    bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
-                    if (dust_cloud_disappeared)
-                    {
-                        // REMOVE THE DUST CLOUD.
-                        dust_cloud = tile_map->TreeDustClouds.erase(dust_cloud);
-                    }
-                    else
-                    {
-                        // MOVE TO UPDATING THE NEXT DUST CLOUD.
-                        ++dust_cloud;
-                    }
-                }
-
-                // RENDER THE TILE MAP.
-                Render(*tile_map, screen);
-            }
-        }
-
-        // RENDER THE PLAYER.
-        // Make sure his axe/sprite are updated.
-        overworld.NoahPlayer.Inventory->Axe->Update(elapsed_time_in_seconds);
-        overworld.NoahPlayer.Sprite.Update(elapsed_time_in_seconds);
-        Render(overworld.NoahPlayer.Sprite, screen);
-
-        // The axe should only be rendered if it is swinging.
-        if (overworld.NoahPlayer.Inventory->Axe->IsSwinging())
-        {
-            Render(overworld.NoahPlayer.Inventory->Axe->Sprite, screen);
-        }
-    }
-
-    /// Renders a HUD.
-    /// @param[in]  hud - The HUD to render.
-    /// @param[in,out]  screen - The screen to render to.
-    /*void Renderer::Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen)
-    {
-        hud.Render(screen);
-    }*/
 
     /// Renders text to the screen at the specified position.
     /// All text will be rendered on the same line.
@@ -254,12 +167,10 @@ namespace GRAPHICS
     /// @param[in]  left_top_screen_position_in_pixels - The left/top screen position
     ///     at which to render the text.
     /// @param[in]  text_color - The color of the text.
-    /// @param[in,out]  screen - The screen to render to.
     void Renderer::RenderText(
         const std::string& text, 
         const MATH::Vector2f& left_top_screen_position_in_pixels,
-        const Color& text_color,
-        Screen& screen)
+        const Color& text_color)
     {
         // RENDER THE TEXT TO THE CONSOLE IF NO FONT EXISTS.
         // This is intended primarily to provide debug support.
@@ -295,10 +206,10 @@ namespace GRAPHICS
             sf::RenderStates render_states = sf::RenderStates::Default;
             const sf::Transform RENDER_IN_SCREEN_SPACE = sf::Transform::Identity;
             render_states.transform = RENDER_IN_SCREEN_SPACE;
-            ColoredTextShader.setParameter("color", sf::Color(text_color.Red, text_color.Green, text_color.Blue, text_color.Alpha));
-            ColoredTextShader.setParameter("texture", sf::Shader::CurrentTexture);
-            render_states.shader = &ColoredTextShader;
-            screen.RenderTarget->draw(current_character_sprite, render_states);
+            ColoredTextShader->setParameter("color", sf::Color(text_color.Red, text_color.Green, text_color.Blue, text_color.Alpha));
+            ColoredTextShader->setParameter("texture", sf::Shader::CurrentTexture);
+            render_states.shader = ColoredTextShader.get();
+            Screen.RenderTarget->draw(current_character_sprite, render_states);
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
             float glyph_width = glyph.TextureSubRectangle.GetWidth();
@@ -315,12 +226,10 @@ namespace GRAPHICS
     /// @param[in]  bounding_screen_rectangle - The bounding rectangle
     ///     within the screen in which to render text.
     /// @param[in]  text_color - The color of the text.
-    /// @param[in,out]  screen - The screen to render to.
     void Renderer::RenderText(
         const std::string& text,
         const MATH::FloatRectangle& bounding_screen_rectangle,
-        const Color& text_color,
-        Screen& screen)
+        const Color& text_color)
     {
         // SPLIT THE PROVIDED TEXT INTO LINES BASED ON EMBEDDED LINE BREAKS.
         std::vector<std::string> original_lines_from_text = CORE::String::SplitIntoLines(text);
@@ -405,7 +314,7 @@ namespace GRAPHICS
         for (const auto& line : new_lines_of_text)
         {
             // RENDER THE CURRENT LINE.
-            RenderText(line, current_line_left_top_screen_position, text_color, screen);
+            RenderText(line, current_line_left_top_screen_position, text_color);
 
             // MOVE TO THE NEXT LINE.
             current_line_left_top_screen_position.Y += GUI::Glyph::HEIGHT_IN_PIXELS;
@@ -421,12 +330,10 @@ namespace GRAPHICS
     /// @param[in]  bounding_screen_rectangle - The bounding rectangle
     ///     within the screen in which to render text.
     /// @param[in]  text_color - The color of the text.
-    /// @param[in,out]  screen - The screen to render to.
     void Renderer::RenderCenteredText(
         const std::string& text,
         const MATH::FloatRectangle& bounding_screen_rectangle,
-        const Color& text_color,
-        Screen& screen)
+        const Color& text_color)
     {
         // SPLIT THE PROVIDED TEXT INTO LINES BASED ON EMBEDDED LINE BREAKS.
         std::vector<std::string> original_lines_from_text = CORE::String::SplitIntoLines(text);
@@ -532,17 +439,117 @@ namespace GRAPHICS
             current_line_left_top_screen_position.X += half_of_unused_space_on_current_line_in_pixels;
 
             // RENDER THE CURRENT LINE.
-            RenderText(line, current_line_left_top_screen_position, text_color, screen);
+            RenderText(line, current_line_left_top_screen_position, text_color);
 
             // MOVE TO THE NEXT LINE.
             current_line_left_top_screen_position.Y += GUI::Glyph::HEIGHT_IN_PIXELS;
         }
     }
 
+    /// Renders an overworld.
+    /// @param[in]  elapsed_time_in_seconds - The elapsed time since the last rendering of the world.
+    ///     @todo   Look at ways to remove this parameter.
+    /// @param[in]  overworld - The overworld to render.
+    ///     @todo   Look at how to make overworld parameter const.
+    void Renderer::Render(
+        const float elapsed_time_in_seconds,
+        MAPS::Overworld& overworld)
+    {
+        /// @todo   Factor out updating from this method?
+
+        MATH::FloatRectangle camera_bounds = Camera.ViewBounds;
+        MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
+
+        /// @note   This view only needs to be set here.
+        /// Private methods assume it has already been set.
+        sf::View camera_view;
+        camera_view.setCenter(camera_view_center.X, camera_view_center.Y);
+        camera_view.setSize(camera_bounds.GetWidth(), camera_bounds.GetHeight());
+        Screen.RenderTarget->setView(camera_view);
+
+        MAPS::TileMap* current_tile_map = overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
+        assert(current_tile_map);
+
+        // RENDER THE CURRENT TILE MAP.
+        /// @todo   Consider signed ints.  Right now, we're just
+        /// rendering a few surrounding tile maps.
+        unsigned int min_tile_map_row = current_tile_map->OverworldRowIndex;
+        bool top_tile_map_exists = (min_tile_map_row > 0);
+        if (top_tile_map_exists)
+        {
+            --min_tile_map_row;
+        }
+        unsigned int min_tile_map_column = current_tile_map->OverworldColumnIndex;
+        bool left_tile_map_exists = (min_tile_map_column > 0);
+        if (left_tile_map_exists)
+        {
+            --min_tile_map_column;
+        }
+        unsigned int max_tile_map_row = min_tile_map_row + 2;
+        unsigned int max_tile_map_column = min_tile_map_column + 2;
+        for (unsigned int tile_map_row = min_tile_map_row; tile_map_row <= max_tile_map_row; ++tile_map_row)
+        {
+            for (unsigned int tile_map_column = min_tile_map_column; tile_map_column <= max_tile_map_column; ++tile_map_column)
+            {
+                // GET THE CURRENT TILE MAP.
+                MAPS::TileMap* tile_map = overworld.GetTileMap(tile_map_row, tile_map_column);
+                bool tile_map_exists = (nullptr != tile_map);
+                if (!tile_map_exists)
+                {
+                    // Continue trying to render other tile maps.
+                    continue;
+                }
+
+                // UPDATE THE CURRENT TILE MAP'S TREES.
+                /// @todo   Figure out if this maybe should be handled elsewhere.
+                for (auto tree = tile_map->Trees.begin(); tree != tile_map->Trees.end(); ++tree)
+                {
+                    tree->Update(elapsed_time_in_seconds);
+                }
+
+                // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
+                /// @todo   Maybe we only need a single dust cloud?  At least in theory, it shouldn't be
+                /// possible for more than one tree to in this state at a given time.
+                for (auto dust_cloud = tile_map->TreeDustClouds.begin(); dust_cloud != tile_map->TreeDustClouds.end();)
+                {
+                    // UPDATE THE CURRENT DUST CLOUD.
+                    dust_cloud->Update(elapsed_time_in_seconds);
+
+                    // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
+                    bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
+                    if (dust_cloud_disappeared)
+                    {
+                        // REMOVE THE DUST CLOUD.
+                        dust_cloud = tile_map->TreeDustClouds.erase(dust_cloud);
+                    }
+                    else
+                    {
+                        // MOVE TO UPDATING THE NEXT DUST CLOUD.
+                        ++dust_cloud;
+                    }
+                }
+
+                // RENDER THE TILE MAP.
+                Render(*tile_map);
+            }
+        }
+
+        // RENDER THE PLAYER.
+        // Make sure his axe/sprite are updated.
+        overworld.NoahPlayer.Inventory->Axe->Update(elapsed_time_in_seconds);
+        overworld.NoahPlayer.Sprite.Update(elapsed_time_in_seconds);
+        overworld.NoahPlayer.Sprite.Render(Screen);
+
+        // The axe should only be rendered if it is swinging.
+        if (overworld.NoahPlayer.Inventory->Axe->IsSwinging())
+        {
+            overworld.NoahPlayer.Inventory->Axe->Sprite.Render(Screen);
+        }
+    }
+
     /// Renders a tile map.
     /// @param[in]  tile_map - The tile map to render.
-    /// @param[in,out]  screen - The screen to render to.
-    void Renderer::Render(const MAPS::TileMap& tile_map, Screen& screen)
+    void Renderer::Render(const MAPS::TileMap& tile_map)
     {
         // RENDER THE CURRENT TILE MAP'S GROUND LAYER.
         MATH::Vector2ui ground_dimensions_in_tiles = tile_map.GetDimensionsInTiles();
@@ -551,42 +558,26 @@ namespace GRAPHICS
             for (unsigned int tile_column = 0; tile_column < ground_dimensions_in_tiles.X; ++tile_column)
             {
                 const std::shared_ptr<MAPS::Tile>& tile = tile_map.Ground.Tiles(tile_column, tile_row);
-                Render(tile->Sprite, screen);
+                tile->Sprite.Render(Screen);
             }
         }
 
         // RENDER THE CURRENT TILE MAP'S WOOD LOGS.
         for (const auto& wood_log : tile_map.WoodLogs)
         {
-            Render(wood_log.Sprite, screen);
+            wood_log.Sprite.Render(Screen);
         }
 
         // RENDER THE CURRENT TILE MAP'S TREES.
         for (const auto& tree : tile_map.Trees)
         {
-            Render(tree.Sprite, screen);
+            tree.Sprite.Render(Screen);
         }
 
         // RENDER THE CURRENT TILE MAP'S DUST CLOUDS.
         for (const auto& dust_cloud : tile_map.TreeDustClouds)
         {
-            Render(dust_cloud.Sprite, screen);
+            dust_cloud.Sprite.Render(Screen);
         }
-    }
-
-    /// Renders a sprite.
-    /// @param[in]  sprite - The sprite to render.
-    /// @param[in,out]  screen - The screen to render to.
-    void Renderer::Render(const GRAPHICS::Sprite& sprite, Screen& screen)
-    {
-        sprite.Render(screen);
-    }
-
-    /// Renders an animated sprite.
-    /// @param[in]  sprite - The animated sprite to render.
-    /// @param[in,out]  screen - The screen to render to.
-    void Renderer::Render(const GRAPHICS::AnimatedSprite& sprite, Screen& screen)
-    {
-        sprite.Render(screen);
     }
 }

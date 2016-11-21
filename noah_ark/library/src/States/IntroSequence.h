@@ -5,7 +5,6 @@
 #include "Bible/BibleVerse.h"
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Renderer.h"
-#include "Graphics/Screen.h"
 
 /// Holds code related to different states in the game.
 /// A "state" is a distinct set of functionality or part of game that can be experienced.
@@ -25,7 +24,7 @@ namespace STATES
         // OTHER METHODS.
         bool Completed() const;
         void Update(const sf::Time& elapsed_time);
-        void Render(GRAPHICS::Renderer& renderer, GRAPHICS::Screen& screen) const;
+        void Render(GRAPHICS::Renderer& renderer) const;
 
     private:
         // STATIC CONSTANTS.

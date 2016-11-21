@@ -29,6 +29,7 @@ namespace RESOURCES
     Assets::Assets() :
     Textures(),
     AudioSamples(),
+    Shaders(),
     OverworldMapFile(),
     TileMapFiles()
     {}
@@ -280,6 +281,56 @@ namespace RESOURCES
         else
         {
             // INDICATE THAT THE FONT COULD NOT BE LOADED.
+            return nullptr;
+        }
+    }
+
+    /// Attempts to get the specified shader.
+    /// @param[in]  shader_id - The ID of the shader to get.
+    /// @return The specified shader, if successfully loaded; null otherwise.
+    std::shared_ptr<sf::Shader> Assets::GetShader(const ShaderId shader_id) const
+    {
+        // RETURN THE SHADER IF IT HAS ALREADY BEEN LOADED.
+        auto id_with_shader = Shaders.find(shader_id);
+        bool shader_already_loaded = (Shaders.cend() != id_with_shader);
+        if (shader_already_loaded)
+        {
+            return id_with_shader->second;
+        }
+
+        // TRY LOADING THE SHADER.
+        bool shader_loaded = false;
+        std::shared_ptr<sf::Shader> shader = std::make_shared<sf::Shader>();
+        switch (shader_id)
+        {
+            case ShaderId::COLORED_TEXTURE:
+            {
+                // LOAD THE SHADER FROM ITS CODE.
+                const std::string COLORED_TEXTURE_FRAGMENT_SHADER_CODE = R"(
+                    uniform vec4 color; // Current color to use to tint texture.
+                    uniform sampler2D texture;  // Current texture being rendered.
+
+                    void main()
+                    {
+                        // GET THE CURRENT PIXEL FROM THE TEXTURE.
+                        vec4 current_pixel_color = texture2D(texture, gl_TexCoord[0].xy);
+
+                        // APPLY THE COLOR TO THE PIXEL.
+                        gl_FragColor = color * current_pixel_color;
+                    }
+                )";
+                shader_loaded = shader->loadFromMemory(COLORED_TEXTURE_FRAGMENT_SHADER_CODE, sf::Shader::Fragment);
+                break;
+            }
+        }
+
+        // RETURN THE SHADER ONLY IF SUCCESSFULLY LOADED.
+        if (shader_loaded)
+        {
+            return shader;
+        }
+        else
+        {
             return nullptr;
         }
     }

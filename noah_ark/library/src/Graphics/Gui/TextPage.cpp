@@ -123,12 +123,10 @@ namespace GUI
     ///     the text page (in pixels).
     /// @param[in]  font - The font to use to render text.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    /// @param[in,out]  screen - The screen to render to.
     void TextPage::Render(
         const MATH::Vector2ui& top_left_screen_position_in_pixels,
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
-        GRAPHICS::Renderer& renderer,
-        GRAPHICS::Screen& screen) const
+        GRAPHICS::Renderer& renderer) const
     {
         // MAKE SURE THE FONT EXISTS.
         assert(font);
@@ -153,7 +151,7 @@ namespace GUI
             /*Text current_line(font, current_line_characters, current_line_top_left_screen_position_in_pixels);
             current_line.Render(screen);*/
             GRAPHICS::Color black;
-            renderer.RenderText(current_line_characters, current_line_top_left_screen_position_in_pixels, black, screen);
+            renderer.RenderText(current_line_characters, current_line_top_left_screen_position_in_pixels, black);
 
             // CALCULATE THE POSITION FOR THE NEXT LINE OF TEXT.
             current_line_top_left_screen_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

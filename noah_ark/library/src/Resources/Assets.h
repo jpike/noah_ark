@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 #include "Audio/SoundEffect.h"
 #include "Core/Array2D.h"
 #include "Graphics/AnimationSequence.h"
@@ -32,6 +33,13 @@ namespace RESOURCES
     extern const std::string COLLECT_BIBLE_VERSE_SOUND_ID;
     extern const std::string TREE_SHAKE_SOUND_ID;
 
+    /// Defines all of the available shaders.
+    enum class ShaderId
+    {
+        /// A shader that tints a texture based on a color parameter.
+        COLORED_TEXTURE
+    };
+
     /// Provides access to all assets needed for the game.
     /// When first requesting an asset, it will be loaded
     /// from the filesystem.  Afterwards, it may be cached
@@ -50,6 +58,7 @@ namespace RESOURCES
         std::shared_ptr<GRAPHICS::Texture> GetTexture(const std::string& texture_id);
         std::shared_ptr<GRAPHICS::AnimationSequence> GetAnimationSequence(const std::string& animation_id);
         std::shared_ptr<GRAPHICS::GUI::Font> GetFont(const std::string& font_texture_id);
+        std::shared_ptr<sf::Shader> GetShader(const ShaderId shader_id) const;
         std::shared_ptr<AUDIO::SoundEffect> GetSound(const std::string& sound_id);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
@@ -59,6 +68,9 @@ namespace RESOURCES
         /// Audio samples for sounds that have been loaded.  They need to remain in memory to allow them to be used.
         /// They are mapped by the sound resource IDs.
         std::unordered_map< std::string, std::shared_ptr<sf::SoundBuffer> > AudioSamples;
+        /// Shaders that have been loaded.  They need to remain in memory to allow them to be used.
+        /// They are mapped by shader ID.
+        std::unordered_map< ShaderId, std::shared_ptr<sf::Shader> > Shaders;
         /// The overworld map file, if successfully loaded.
         std::unique_ptr<MAPS::OverworldMapFile> OverworldMapFile;
         /// The tile map files, mapped by their 2D grid coordinates (x = column, y = row) in the overworld.

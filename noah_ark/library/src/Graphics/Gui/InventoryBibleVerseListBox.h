@@ -27,8 +27,7 @@ namespace GUI
         // RENDERING.
         void Render(
             const MATH::FloatRectangle& bounding_rectangle,
-            Renderer& renderer,
-            Screen& screen) const;
+            Renderer& renderer) const;
 
         // VERSE METHODS.
         const BIBLE::BibleVerse* const GetSelectedVerse() const;

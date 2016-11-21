@@ -30,12 +30,10 @@ namespace GUI
     /// @param[in]  bounding_rectangle - The bounding rectangle
     ///     of this text box (in screen coordinates).
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    /// @param[in,out]  screen - The screen to render to.
     void InventoryBibleVerseTextBox::Render(
         const BIBLE::BibleVerse* const bible_verse,
         const MATH::FloatRectangle& bounding_rectangle,
-        GRAPHICS::Renderer& renderer,
-        GRAPHICS::Screen& screen) const
+        GRAPHICS::Renderer& renderer) const
     {
         // RENDER THE BACKGROUND BOX.
         /// @todo   Centralize this color.
@@ -43,10 +41,9 @@ namespace GUI
         background_color.Red = 128;
         background_color.Green = 64;
         background_color.Blue = 0;
-        Renderer::RenderScreenRectangle(
+        renderer.RenderScreenRectangle(
             bounding_rectangle,
-            background_color,
-            screen);
+            background_color);
 
         // CHECK IF A BIBLE VERSE EXISTS FOR RENDERING.
         bool bible_verse_exists = (nullptr != bible_verse);
@@ -107,7 +104,7 @@ namespace GUI
         {
             // RENDER THE CURRENT LINE.
             Text line_of_text(Font, line, current_line_screen_top_left_position_in_pixels);
-            line_of_text.Render(renderer, screen);
+            line_of_text.Render(renderer);
 
             // MOVE TO THE NEXT LINE.
             current_line_screen_top_left_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

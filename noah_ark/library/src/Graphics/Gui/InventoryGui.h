@@ -7,7 +7,6 @@
 #include "Graphics/Gui/InventoryBibleVerseListBox.h"
 #include "Graphics/Gui/InventoryBibleVerseTextBox.h"
 #include "Graphics/Renderer.h"
-#include "Graphics/Screen.h"
 #include "Input/KeyboardInputController.h"
 #include "Objects/Inventory.h"
 
@@ -53,13 +52,21 @@ namespace GUI
         void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
 
         // RENDERING.
-        void Render(Renderer& renderer, Screen& screen) const;
+        void Render(Renderer& renderer) const;
 
     private:
+        // STATIC CONSTANTS.
+        /// The color of the Bible tab and page.
+        static const GRAPHICS::Color BIBLE_TAB_COLOR;
+        /// The color of the animals tab and page.
+        static const GRAPHICS::Color ANIMALS_TAB_COLOR;
+        /// The color of the food tab and page.
+        static const GRAPHICS::Color FOOD_TAB_COLOR;
+
         // RENDERING.        
-        void RenderBiblePage(Renderer& renderer, Screen& screen) const;
-        void RenderAnimalsPage(Screen& screen) const;
-        void RenderFoodPage(Screen& screen) const;
+        void RenderBiblePage(Renderer& renderer) const;
+        void RenderAnimalsPage(Renderer& renderer) const;
+        void RenderFoodPage(Renderer& renderer) const;
 
         // MEMBER VARIABLES.
         /// The font to use for rendering text.
@@ -68,13 +75,6 @@ namespace GUI
         std::shared_ptr<const OBJECTS::Inventory> Inventory;
         /// The type of tab currently being displayed.
         TabType CurrentTab;
-        /// @todo   Make the colors below constants.
-        /// The color of the Bible tab and page.
-        GRAPHICS::Color BibleTabColor;
-        /// The color of the animals tab and page.
-        GRAPHICS::Color AnimalsTabColor;
-        /// The color of the food tab and page.
-        GRAPHICS::Color FoodTabColor;
         /// The GUI text box for displaying the currently selected Bible verse
         /// in the player's inventory.
         /// @todo   Factor out to some Bible page class?

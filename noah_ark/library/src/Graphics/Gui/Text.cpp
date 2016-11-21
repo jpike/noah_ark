@@ -10,7 +10,6 @@ namespace GUI
     /// Creates text that is centered on the screen (both horizontally and vertically).
     /// @param[in]  font - The font to use for the text.
     /// @param[in]  characters - The sequence characters in the text.
-    /// @param[in]  screen - The screen on which to center the font.
     /// @throws std::exception - Thrown if the font is null.
     Text Text::CenteredOnScreen(
         const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
@@ -91,8 +90,7 @@ namespace GUI
 
     /// Renders the text to the specified render target.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    /// @param[in,out]  screen - The screen to render to.
-    void Text::Render(Renderer& renderer, Screen& screen) const
+    void Text::Render(Renderer& renderer) const
     {
         // CALCULATE THE WORLD COORDINATES OF THE TOP-LEFT STARTING POSITION OF THE TEXT.
         sf::Vector2i text_top_left_position_in_pixels(
@@ -100,11 +98,11 @@ namespace GUI
             static_cast<int>(ScreenTopLeftPositionInPixels.Y));
         /// @todo   Pass default identity transform to render target to render in screen space?
         /// http://www.sfml-dev.org/tutorials/2.4/graphics-transform.php#custom-transforms
-        sf::Vector2f text_top_left_world_position = screen.RenderTarget->mapPixelToCoords(text_top_left_position_in_pixels);
+        sf::Vector2f text_top_left_world_position = renderer.Screen.RenderTarget->mapPixelToCoords(text_top_left_position_in_pixels);
         MATH::Vector2f current_character_top_left_world_position(text_top_left_world_position.x, text_top_left_world_position.y);
 
         GRAPHICS::Color black;
-        renderer.RenderText(Characters, current_character_top_left_world_position, black, screen);
+        renderer.RenderText(Characters, current_character_top_left_world_position, black);
 
         // RENDER EACH CHARACTER.
         /*for (const char character : Characters)

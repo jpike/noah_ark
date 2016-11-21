@@ -421,9 +421,6 @@ int main(int argumentCount, char* arguments[])
         // Ensure that only one key event is generated for each key press.
         window->setKeyRepeatEnabled(false);
 
-        // CREATE THE MAIN GAME SCREEN.
-        GRAPHICS::Screen screen(window);
-
         // INITIALIZE THE HUD.
         /// @todo   Re-examine how we get resources to display in the HUD.
         unsigned int text_box_width_in_pixels = SCREEN_WIDTH_IN_PIXELS;
@@ -439,34 +436,11 @@ int main(int argumentCount, char* arguments[])
 
         // INITIALIZE THE RENDERER.
         MATH::Vector2f player_start_world_position = overworld.NoahPlayer.GetWorldPosition();
-        MATH::FloatRectangle camera_view_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
-            player_start_world_position.X,
-            player_start_world_position.Y,
-            window->getView().getSize().x,
-            window->getView().getSize().y);
-        GRAPHICS::Renderer renderer(camera_view_bounds);
-        renderer.Font = font;
-        
-        const std::string COLORED_TEXT_FRAGMENT_SHADER = R"(
-            uniform vec4 color; // Current color to use to tint texture.
-            uniform sampler2D texture;  // Current texture being rendered.
-
-            void main()
-            {
-                // GET THE CURRENT PIXEL FROM THE TEXTURE.
-                vec4 current_pixel_color = texture2D(texture, gl_TexCoord[0].xy);
-
-                // APPLY THE COLOR TO THE PIXEL.
-                gl_FragColor = color * current_pixel_color;
-            }
-        )";
-        bool shader_loaded = renderer.ColoredTextShader.loadFromMemory(COLORED_TEXT_FRAGMENT_SHADER, sf::Shader::Fragment);
-        if (!shader_loaded)
-        {
-            std::cerr << "Failed to load shader." << std::endl;
-            /// @todo   More specific exit code.
-            return EXIT_FAILURE;
-        }
+        GRAPHICS::Renderer renderer(
+            window, 
+            player_start_world_position, 
+            font,
+            assets.GetShader(RESOURCES::ShaderId::COLORED_TEXTURE));
 
         // CREATE THE RANDOM NUMBER GENERATOR.
         std::random_device random_number_generator;
@@ -550,22 +524,22 @@ int main(int argumentCount, char* arguments[])
                 }
 
                 // RENDER THE CURRENT STATE OF THE GAME.
-                screen.Clear();
+                renderer.Screen.Clear();
 
                 switch (game_state)
                 {
                     case GameState::INTRO_SEQUENCE:
                     {
-                        intro_sequence.Render(renderer, screen);
+                        intro_sequence.Render(renderer);
                         break;
                     }
                     case GameState::GAMEPLAY:
                     {
                         // RENDER THE OVERWORLD.
-                        renderer.Render(elapsed_time_in_seconds, overworld, screen);
+                        renderer.Render(elapsed_time_in_seconds, overworld);
 
                         // RENDER THE HUD.
-                        hud.Render(renderer, screen);
+                        hud.Render(renderer);
 
                         break;
                     }

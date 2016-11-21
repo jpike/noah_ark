@@ -2,11 +2,11 @@
 
 #include <memory>
 #include <string>
+#include <SFML/Graphics.hpp>
 #include "Graphics/AnimatedSprite.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Color.h"
 #include "Graphics/Gui/Font.h"
-/// @todo #include "Graphics/Gui/Text.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Texture.h"
@@ -22,60 +22,55 @@ namespace GRAPHICS
     {
     public:
         // CONSTRUCTION.
-        explicit Renderer(const MATH::FloatRectangle& camera_view_bounds);
+        explicit Renderer(
+            const std::shared_ptr<sf::RenderTarget>& render_target,
+            const MATH::Vector2f& camera_center_world_position,
+            const std::shared_ptr<GRAPHICS::GUI::Font>& font,
+            const std::shared_ptr<sf::Shader>& colored_text_shader);
 
-        // STATIC RENDERING.
-        static void RenderScreenRectangle(
+        // GENERIC SCREEN-SPACE RENDERING.
+        void RenderScreenRectangle(
             const MATH::FloatRectangle& rectangle,
-            const GRAPHICS::Color& color,
-            Screen& screen);
-        /// @todo static void Render(const GRAPHICS::GUI::Text& text, Screen& screen);
-        /// @todo   Move this method since it is no longer static.  In fact, remove all static methods?
+            const GRAPHICS::Color& color);
         void RenderKeyIcon(
             const char key,
-            const GRAPHICS::GUI::Font& font,
-            const MATH::Vector2ui& top_left_screen_position_in_pixels,
-            Screen& screen);
-        static void RenderGuiIcon(
+            const MATH::Vector2ui& top_left_screen_position_in_pixels);
+        void RenderGuiIcon(
             const GRAPHICS::Texture& texture,
             const MATH::FloatRectangle& texture_sub_rectangle,
-            const MATH::Vector2ui& top_left_screen_position_in_pixels,
-            Screen& screen);
+            const MATH::Vector2ui& top_left_screen_position_in_pixels);
 
-        // RENDERING.
-        void Render(
-            const float elapsed_time_in_seconds,
-            MAPS::Overworld& overworld, 
-            Screen& screen);
-        //void Render(const GRAPHICS::GUI::HeadsUpDisplay& hud, Screen& screen);
+        // TEXT RENDERING.
         void RenderText(
             const std::string& text, 
             const MATH::Vector2f& left_top_screen_position_in_pixels,
-            const Color& text_color,
-            Screen& screen);
+            const Color& text_color);
         void RenderText(
             const std::string& text,
             const MATH::FloatRectangle& bounding_screen_rectangle,
-            const Color& text_color,
-            Screen& screen);
+            const Color& text_color);
         void RenderCenteredText(
             const std::string& text,
             const MATH::FloatRectangle& bounding_screen_rectangle,
-            const Color& text_color,
-            Screen& screen);
+            const Color& text_color);
+
+        // OTHER RENDERING.
+        void Render(
+            const float elapsed_time_in_seconds,
+            MAPS::Overworld& overworld);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The screen that gets rendered to.
+        GRAPHICS::Screen Screen;
         /// The camera defining what portion of the world is currently viewable.
         GRAPHICS::Camera Camera;
         /// The font to use for rendering text.
         std::shared_ptr<GRAPHICS::GUI::Font> Font;
         /// The shader to use for colored text.
-        sf::Shader ColoredTextShader;
+        std::shared_ptr<sf::Shader> ColoredTextShader;
 
     private:
         // RENDERING.
-        void Render(const MAPS::TileMap& tile_map, Screen& screen);
-        void Render(const GRAPHICS::Sprite& sprite, Screen& screen);
-        void Render(const GRAPHICS::AnimatedSprite& sprite, Screen& screen);
+        void Render(const MAPS::TileMap& tile_map);
     };
 }

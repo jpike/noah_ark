@@ -2,13 +2,16 @@
 #include "Graphics/Color.h"
 #include "Graphics/Gui/InventoryGui.h"
 #include "Graphics/Gui/Text.h"
-#include "Graphics/Renderer.h"
-#include "Graphics/Screen.h"
 
 namespace GRAPHICS
 {
 namespace GUI
 {
+    // The colors right now are arbitrary.
+    const GRAPHICS::Color InventoryGui::BIBLE_TAB_COLOR(255, 127, 0);
+    const GRAPHICS::Color InventoryGui::ANIMALS_TAB_COLOR = GRAPHICS::Color::RED;
+    const GRAPHICS::Color InventoryGui::FOOD_TAB_COLOR = GRAPHICS::Color::GREEN;
+
     /// Constructor.
     /// @param[in]  inventory - The inventory to display in the GUI.
     /// @param[in]  font - The font to use for rendering text on the GUI.
@@ -30,22 +33,6 @@ namespace GUI
         CORE::ThrowInvalidArgumentExceptionIfNull(
             Font,
             "Null font provided to HUD.");
-
-        // INITIALIZE THE COLORS.
-        // The Bible tab color is currently an arbitrary orange.
-        BibleTabColor.Red = 255;
-        BibleTabColor.Green = 127;
-        BibleTabColor.Blue = 0;
-
-        // The animals tab color is currently an arbitrary red.
-        AnimalsTabColor.Red = 255;
-        AnimalsTabColor.Green = 0;
-        AnimalsTabColor.Blue = 0;
-        
-        // The food tab color is currently an arbitrary green.
-        FoodTabColor.Red = 0;
-        FoodTabColor.Green = 255;
-        FoodTabColor.Blue = 0;
     }
 
     /// Has the inventory GUI respond to the provided user input
@@ -108,8 +95,7 @@ namespace GUI
 
     /// Renders the inventory GUI to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    /// @param[in,out]  screen - The screen to render to.
-    void InventoryGui::Render(Renderer& renderer, Screen& screen) const
+    void InventoryGui::Render(Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -119,11 +105,11 @@ namespace GUI
         /// this assumption isn't baked into the code right here.
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
+        const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
-            screen.WidthInPixels<float>(),
+            renderer.Screen.WidthInPixels<float>(),
             BACKGROUND_HEIGHT_IN_PIXELS);
 
         // The background color is currently arbitrary.
@@ -131,10 +117,9 @@ namespace GUI
         background_color.Red = GRAPHICS::Color::MAX_COLOR_COMPONENT;
         background_color.Green = GRAPHICS::Color::MAX_COLOR_COMPONENT;
         background_color.Blue = GRAPHICS::Color::MAX_COLOR_COMPONENT;
-        Renderer::RenderScreenRectangle(
+        renderer.RenderScreenRectangle(
             background_rectangle,
-            background_color,
-            screen);
+            background_color);
 
         // RENDER A TAB FOR THE BIBLE PORTION OF THE GUI.
         // It should be positioned near the top-left of the GUI.
@@ -154,12 +139,11 @@ namespace GUI
             static_cast<float>(bible_tab_text_width_in_pixels),
             static_cast<float>(Glyph::HEIGHT_IN_PIXELS));
 
-        Renderer::RenderScreenRectangle(
+        renderer.RenderScreenRectangle(
             bible_tab_rectangle,
-            BibleTabColor,
-            screen);
+            BIBLE_TAB_COLOR);
 
-        bible_tab_text.Render(renderer, screen);
+        bible_tab_text.Render(renderer);
 
         // RENDER A TAB FOR THE ANIMAL PORTION OF THE GUI.
         /// @todo   Centralize tab rendering code in helper function.
@@ -183,12 +167,11 @@ namespace GUI
             static_cast<float>(animals_tab_text_width_in_pixels),
             static_cast<float>(Glyph::HEIGHT_IN_PIXELS));
 
-        Renderer::RenderScreenRectangle(
+        renderer.RenderScreenRectangle(
             animals_tab_rectangle,
-            AnimalsTabColor,
-            screen);
+            ANIMALS_TAB_COLOR);
 
-        animals_tab_text.Render(renderer, screen);
+        animals_tab_text.Render(renderer);
 
         // RENDER A TAB FOR THE FOOD PORTION OF THE GUI.
         /// @todo   Centralize tab rendering code in helper function.
@@ -211,24 +194,23 @@ namespace GUI
             static_cast<float>(food_tab_text_width_in_pixels),
             static_cast<float>(Glyph::HEIGHT_IN_PIXELS));
 
-        Renderer::RenderScreenRectangle(
+        renderer.RenderScreenRectangle(
             food_tab_rectangle,
-            FoodTabColor,
-            screen);
+            FOOD_TAB_COLOR);
 
-        food_tab_text.Render(renderer, screen);
+        food_tab_text.Render(renderer);
 
         // RENDER THE CURRENTLY DISPLAYED PAGE.
         switch (CurrentTab)
         {
             case GRAPHICS::GUI::InventoryGui::TabType::BIBLE:
-                RenderBiblePage(renderer, screen);
+                RenderBiblePage(renderer);
                 break;
             case GRAPHICS::GUI::InventoryGui::TabType::ANIMALS:
-                RenderAnimalsPage(screen);
+                RenderAnimalsPage(renderer);
                 break;
             case GRAPHICS::GUI::InventoryGui::TabType::FOOD:
-                RenderFoodPage(screen);
+                RenderFoodPage(renderer);
                 break;
             default:
                 /// @todo   Error-handling?
@@ -239,8 +221,7 @@ namespace GUI
     /// Renders the page of the inventory for the Bible tab.
     /// This page allows browsing Bible verses in the inventory.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    /// @param[in,out]  screen - The screen to render to.
-    void InventoryGui::RenderBiblePage(Renderer& renderer, Screen& screen) const
+    void InventoryGui::RenderBiblePage(Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -250,17 +231,16 @@ namespace GUI
         /// this assumption isn't baked into the code right here.
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
+        const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
-            screen.WidthInPixels<float>(),
+            renderer.Screen.WidthInPixels<float>(),
             BACKGROUND_HEIGHT_IN_PIXELS);
 
-        Renderer::RenderScreenRectangle(
+        renderer.RenderScreenRectangle(
             background_rectangle,
-            BibleTabColor,
-            screen);
+            BIBLE_TAB_COLOR);
 
         // RENDER THE BOX FOR THE MAIN BIBLE VERSE DISPLAY.
         const BIBLE::BibleVerse* const selected_bible_verse = BibleVerseListBox.GetSelectedVerse();
@@ -281,8 +261,7 @@ namespace GUI
         BibleVerseTextBox.Render(
             selected_bible_verse, 
             bible_verse_text_box_rectangle, 
-            renderer,
-            screen);
+            renderer);
 
         // RENDER THE BOX FOR THE LIST OF ALL BIBLE VERSES.
         // The exact positioning/size of this box is tentative.
@@ -301,14 +280,13 @@ namespace GUI
 
         BibleVerseListBox.Render(
             bible_verse_list_box_rectangle,
-            renderer,
-            screen);
+            renderer);
     }
     
     /// Renders the page of the inventory for the animals tab.
     /// This page allows browsing animals in the inventory.
-    /// @param[in,out]  screen - The screen to render to.
-    void InventoryGui::RenderAnimalsPage(Screen& screen) const
+    /// @param[in,out]  renderer - The renderer to use for rendering.
+    void InventoryGui::RenderAnimalsPage(Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -318,23 +296,22 @@ namespace GUI
         /// this assumption isn't baked into the code right here.
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
+        const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
-            screen.WidthInPixels<float>(),
+            renderer.Screen.WidthInPixels<float>(),
             BACKGROUND_HEIGHT_IN_PIXELS);
 
-        Renderer::RenderScreenRectangle(
+        renderer.RenderScreenRectangle(
             background_rectangle,
-            AnimalsTabColor,
-            screen);
+            ANIMALS_TAB_COLOR);
     }
 
     /// Renders the page of the inventory for the food tab.
     /// This page allows browsing food in the inventory.
-    /// @param[in,out]  screen - The screen to render to.
-    void InventoryGui::RenderFoodPage(Screen& screen) const
+    /// @param[in,out]  renderer - The renderer to use for rendering.
+    void InventoryGui::RenderFoodPage(Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -344,17 +321,16 @@ namespace GUI
         /// this assumption isn't baked into the code right here.
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
+        const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
-            screen.WidthInPixels<float>(),
+            renderer.Screen.WidthInPixels<float>(),
             BACKGROUND_HEIGHT_IN_PIXELS);
 
-        Renderer::RenderScreenRectangle(
+        renderer.RenderScreenRectangle(
             background_rectangle,
-            FoodTabColor,
-            screen);
+            FOOD_TAB_COLOR);
     }
 }
 }

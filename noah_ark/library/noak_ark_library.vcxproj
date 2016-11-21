@@ -74,6 +74,7 @@
     <ClCompile Include="src\Graphics\AnimatedSprite.cpp" />
     <ClCompile Include="src\Graphics\AnimationSequence.cpp" />
     <ClCompile Include="src\Graphics\Camera.cpp" />
+    <ClCompile Include="src\Graphics\Color.cpp" />
     <ClCompile Include="src\Graphics\Gui\Font.cpp" />
     <ClCompile Include="src\Graphics\Gui\HeadsUpDisplay.cpp" />
     <ClCompile Include="src\Graphics\Gui\InventoryBibleVerseListBox.cpp" />

@@ -23,8 +23,7 @@ namespace GUI
         // CONSTRUCTION.
         explicit TextBox(
             const unsigned int width_in_pixels, 
-            const unsigned int height_in_pixels,
-            const std::shared_ptr<const Font>& font);
+            const unsigned int height_in_pixels);
 
         // OTHER PUBLIC METHODS.
         void StartDisplayingText(const std::string& text);
@@ -48,8 +47,6 @@ namespace GUI
         unsigned int WidthInPixels = 0;
         /// The height of the text box (excluding borders) in pixels.
         unsigned int HeightInPixels = 0;
-        /// The font used for rendering text.
-        std::shared_ptr<const Font> Font = nullptr;
         /// The pages of text currently in the text box.
         std::vector<TextPage> Pages = std::vector<TextPage>();
         /// The index of the current page of text displayed in the text box.

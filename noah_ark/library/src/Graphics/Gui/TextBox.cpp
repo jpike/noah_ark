@@ -14,20 +14,11 @@ namespace GUI
     /// @throws std::exception - Thrown if the font is null.
     TextBox::TextBox(
         const unsigned int width_in_pixels,
-        const unsigned int height_in_pixels,
-        const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
+        const unsigned int height_in_pixels) :
     WidthInPixels(width_in_pixels),
     HeightInPixels(height_in_pixels),
-    Font(font),
     MaxCharacterCountPerPage(0)
     {
-        // MAKE SURE A FONT EXISTS.
-        bool font_exists = (nullptr != Font);
-        if (!font_exists)
-        {
-            throw std::invalid_argument("Font provided for text box must not be null.");
-        }
-
         // CALCULATE THE MAXIMUM NUMBER OF CHARACTERS PER PAGE.
         /// @todo   Figure out how to best de-duplicated this calculation
         /// since it is also used in the TextPage class.
@@ -200,7 +191,7 @@ namespace GUI
         text_page_top_left_screen_position_in_pixels.X = SCREEN_TOP_LEFT_CORNER.x + Glyph::WIDTH_IN_PIXELS;
         text_page_top_left_screen_position_in_pixels.Y = SCREEN_TOP_LEFT_CORNER.y + FIRST_LINE_VERTICAL_PADDING_IN_PIXELS;
 
-        current_text_page.Render(text_page_top_left_screen_position_in_pixels, Font, renderer);
+        current_text_page.Render(text_page_top_left_screen_position_in_pixels, renderer);
 
         // CHECK IF THE CURRENT PAGE OF TEXT IS FINISHED BEING DISPLAYED.
         bool current_page_finished_being_displayed = current_text_page.AllTextDisplayed();

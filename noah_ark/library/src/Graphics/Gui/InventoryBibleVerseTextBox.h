@@ -2,7 +2,6 @@
 
 #include <memory>
 #include "Bible/BibleVerses.h"
-#include "Graphics/Gui/Font.h"
 #include "Graphics/Renderer.h"
 #include "Math/Rectangle.h"
 
@@ -16,20 +15,11 @@ namespace GUI
     class InventoryBibleVerseTextBox
     {
     public:
-        // CONSTRUCTION.
-        explicit InventoryBibleVerseTextBox(
-            const std::shared_ptr<const Font>& font);
-
         // RENDERING.
         void Render(
             const BIBLE::BibleVerse* const bible_verse,
             const MATH::FloatRectangle& bounding_rectangle,
             GRAPHICS::Renderer& renderer) const;
-
-    private:
-        // MEMBER VARIABLES.
-        /// The font to use for rendering text.
-        std::shared_ptr<const Font> Font;
     };
 }
 }

@@ -2,26 +2,12 @@
 #include "Core/String.h"
 #include "Graphics/Color.h"
 #include "Graphics/Gui/InventoryBibleVerseTextBox.h"
-#include "Graphics/Gui/Text.h"
 #include "Graphics/Renderer.h"
 
 namespace GRAPHICS
 {
 namespace GUI
 {
-    /// Constructor.
-    /// @param[in]  font - The font to use for rendering text in the box.
-    /// @throws std::exception - Thrown if the font is null.
-    InventoryBibleVerseTextBox::InventoryBibleVerseTextBox(
-        const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
-    Font(font)
-    {
-        // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(
-            Font,
-            "Font cannot be null for Bible verse text box.");
-    }
-
     /// Renders the text box, with the provided verse's
     /// text (if available).  Otherwise, just an empty
     /// box is rendered.
@@ -97,14 +83,13 @@ namespace GUI
         }
 
         // RENDER EACH LINE OF TEXT.
-        MATH::Vector2ui current_line_screen_top_left_position_in_pixels(
-            static_cast<unsigned int>(bounding_rectangle.GetLeftXPosition()),
-            static_cast<unsigned int>(bounding_rectangle.GetTopYPosition()));
+        MATH::Vector2f current_line_screen_top_left_position_in_pixels(
+            bounding_rectangle.GetLeftXPosition(),
+            bounding_rectangle.GetTopYPosition());
         for (const std::string& line : lines)
         {
             // RENDER THE CURRENT LINE.
-            Text line_of_text(Font, line, current_line_screen_top_left_position_in_pixels);
-            line_of_text.Render(renderer);
+            renderer.RenderText(line, current_line_screen_top_left_position_in_pixels, GRAPHICS::Color::BLACK);
 
             // MOVE TO THE NEXT LINE.
             current_line_screen_top_left_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

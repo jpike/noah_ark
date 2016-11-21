@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cassert>
-#include "Graphics/Gui/Text.h"
 #include "Graphics/Gui/TextPage.h"
 
 namespace GRAPHICS
@@ -121,16 +120,11 @@ namespace GUI
     /// Renders the text page to the provided screen.
     /// @param[in]  top_left_screen_position_in_pixels - The top-left screen position of
     ///     the text page (in pixels).
-    /// @param[in]  font - The font to use to render text.
     /// @param[in,out]  renderer - The renderer to use for rendering.
     void TextPage::Render(
         const MATH::Vector2ui& top_left_screen_position_in_pixels,
-        const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
         GRAPHICS::Renderer& renderer) const
     {
-        // MAKE SURE THE FONT EXISTS.
-        assert(font);
-
         // RENDER EACH LINE OF TEXT.
         MATH::Vector2f current_line_top_left_screen_position_in_pixels(
             static_cast<float>(top_left_screen_position_in_pixels.X), 
@@ -147,11 +141,7 @@ namespace GUI
             }
 
             // RENDER THE CURRENT LINE.
-            /// @todo   Make a version of text that takes in a font parameters for rendering?
-            /*Text current_line(font, current_line_characters, current_line_top_left_screen_position_in_pixels);
-            current_line.Render(screen);*/
-            GRAPHICS::Color black;
-            renderer.RenderText(current_line_characters, current_line_top_left_screen_position_in_pixels, black);
+            renderer.RenderText(current_line_characters, current_line_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);
 
             // CALCULATE THE POSITION FOR THE NEXT LINE OF TEXT.
             current_line_top_left_screen_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

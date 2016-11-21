@@ -27,7 +27,7 @@ namespace TEST_TEXT_BOX
         // CREATE A TEXT BOX.
         const unsigned int WIDTH_IN_PIXELS = 512;
         const unsigned int HEIGHT_IN_PIXELS = 32;
-        TextBox text_box(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, std::make_shared<Font>(std::make_shared<Texture>()));
+        TextBox text_box(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
 
         // DEFINE THE MESSAGE TO START DISPLAYING.
         // The Bible verse message was chosen based on a realistic scenario where this was failing.

@@ -25,7 +25,6 @@ namespace GUI
             const std::shared_ptr<const OBJECTS::Inventory>& inventory,
             const unsigned int main_text_box_width_in_pixels,
             const unsigned int main_text_box_height_in_pixels,
-            const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
             const std::shared_ptr<const Texture>& axe_texture,
             const std::shared_ptr<const Texture>& wood_texture);
 
@@ -45,8 +44,6 @@ namespace GUI
 
     private:
         // PRIVATE MEMBER VARIABLES.
-        /// The font to use for rendering text.
-        std::shared_ptr<const GRAPHICS::GUI::Font> Font;
         /// The texture to use for rendering an axe icon.
         std::shared_ptr<const Texture> AxeTexture;
         /// The texture to use for rendering a wood icon.

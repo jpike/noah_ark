@@ -4,7 +4,6 @@
 #include "Graphics/Color.h"
 #include "Graphics/Gui/Glyph.h"
 #include "Graphics/Gui/InventoryBibleVerseListBox.h"
-#include "Graphics/Gui/Text.h"
 #include "Graphics/Renderer.h"
 
 namespace GRAPHICS
@@ -14,22 +13,15 @@ namespace GUI
     /// Constructor.
     /// @param[in]  inventory - The inventory indicating which
     ///     Bible verses have been collected.
-    /// @param[in]  font - The font to use for rendering text in the box.
     /// @throws std::exception - Thrown if any parameters are null.
-    InventoryBibleVerseListBox::InventoryBibleVerseListBox(
-        const std::shared_ptr<const OBJECTS::Inventory>& inventory,
-        const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
+    InventoryBibleVerseListBox::InventoryBibleVerseListBox(const std::shared_ptr<const OBJECTS::Inventory>& inventory) :
     Inventory(inventory),
-    Font(font),
     SelectedVerseIndex(0)
     {
         // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(
             Inventory,
             "Inventory cannot be null for Bible verse list box.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(
-            Font,
-            "Font cannot be null for Bible verse list box.");
     }
 
     /// Renders the text box, showing which Bible verse is selected
@@ -76,9 +68,9 @@ namespace GUI
         last_verse_to_render_index = std::min(last_verse_to_render_index, last_valid_verse_index);
 
         // RENDER THE LIST OF VERSES.
-        MATH::Vector2ui current_verse_screen_top_left_position_in_pixels(
-            static_cast<unsigned int>(bounding_rectangle.GetLeftXPosition()),
-            static_cast<unsigned int>(bounding_rectangle.GetTopYPosition()));
+        MATH::Vector2f current_verse_screen_top_left_position_in_pixels(
+            bounding_rectangle.GetLeftXPosition(),
+            bounding_rectangle.GetTopYPosition());
         for (unsigned int verse_index = first_verse_to_render_index;
             verse_index <= last_verse_to_render_index;
             ++verse_index)
@@ -104,8 +96,7 @@ namespace GUI
             }
 
             // RENDER TEXT FOR THE VERSE.
-            Text bible_verse_text(Font, bible_verse_display_string, current_verse_screen_top_left_position_in_pixels);
-            bible_verse_text.Render(renderer);
+            renderer.RenderText(bible_verse_display_string, current_verse_screen_top_left_position_in_pixels, GRAPHICS::Color::BLACK);
 
             // MOVE TO A NEW LINE FOR THE NEXT VERSE.
             current_verse_screen_top_left_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

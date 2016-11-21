@@ -374,7 +374,7 @@ int main(int argumentCount, char* arguments[])
         }
 
         // INITIALIZE THE INTRO SEQUENCE.
-        STATES::IntroSequence intro_sequence(font);
+        STATES::IntroSequence intro_sequence;
 
         // CREATE THE OVERWORLD.
         const std::unique_ptr<MAPS::OverworldMapFile>& overworld_map_file = assets.OverworldMapFile;
@@ -430,7 +430,6 @@ int main(int argumentCount, char* arguments[])
             overworld.NoahPlayer.Inventory,
             text_box_width_in_pixels,
             text_box_height_in_pixels,
-            font,
             assets.GetTexture(RESOURCES::AXE_TEXTURE_ID),
             assets.GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID));
 

@@ -1,7 +1,6 @@
 #include "Core/NullChecking.h"
 #include "Graphics/Color.h"
 #include "Graphics/Gui/InventoryGui.h"
-#include "Graphics/Gui/Text.h"
 
 namespace GRAPHICS
 {
@@ -14,25 +13,17 @@ namespace GUI
 
     /// Constructor.
     /// @param[in]  inventory - The inventory to display in the GUI.
-    /// @param[in]  font - The font to use for rendering text on the GUI.
     /// @throws std::exception - Thrown if a parameter is null.
-    /// @todo   Re-think how we pass assets to this class.
-    InventoryGui::InventoryGui(
-        const std::shared_ptr<const OBJECTS::Inventory>& inventory,
-        const std::shared_ptr<const GRAPHICS::GUI::Font>& font) :
-    Font(font),
+    InventoryGui::InventoryGui(const std::shared_ptr<const OBJECTS::Inventory>& inventory) :
     Inventory(inventory),
     CurrentTab(TabType::BIBLE),
-    BibleVerseTextBox(font),
-    BibleVerseListBox(inventory, font)
+    BibleVerseTextBox(),
+    BibleVerseListBox(inventory)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(
             Inventory,
             "Null inventory provided to HUD.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(
-            Font,
-            "Null font provided to HUD.");
     }
 
     /// Has the inventory GUI respond to the provided user input
@@ -125,13 +116,13 @@ namespace GUI
         // It should be positioned near the top-left of the GUI.
         float bible_tab_left_screen_position_in_pixels = background_rectangle.GetLeftXPosition();
         float bible_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
-        MATH::Vector2ui bible_tab_top_left_screen_position_in_pixels(
-            static_cast<unsigned int>(bible_tab_left_screen_position_in_pixels),
-            static_cast<unsigned int>(bible_tab_top_screen_position_in_pixels));
+        MATH::Vector2f bible_tab_top_left_screen_position_in_pixels(
+            bible_tab_left_screen_position_in_pixels,
+            bible_tab_top_screen_position_in_pixels);
 
         // The tab should be big enough to hold the text on the tab.
-        Text bible_tab_text(Font, "Bible", bible_tab_top_left_screen_position_in_pixels);
-        unsigned int bible_tab_text_width_in_pixels = bible_tab_text.GetWidthInPixels();;
+        std::string bible_tab_text = "Bible";
+        unsigned int bible_tab_text_width_in_pixels = Glyph::WIDTH_IN_PIXELS * bible_tab_text.length();
 
         MATH::FloatRectangle bible_tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             bible_tab_left_screen_position_in_pixels,
@@ -143,7 +134,7 @@ namespace GUI
             bible_tab_rectangle,
             BIBLE_TAB_COLOR);
 
-        bible_tab_text.Render(renderer);
+        renderer.RenderText(bible_tab_text, bible_tab_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);
 
         // RENDER A TAB FOR THE ANIMAL PORTION OF THE GUI.
         /// @todo   Centralize tab rendering code in helper function.
@@ -154,12 +145,9 @@ namespace GUI
         unsigned int animals_tab_text_half_width_in_pixels = animals_tab_text_width_in_pixels / 2;
         float animals_tab_left_screen_position_in_pixels = background_rectangle.GetCenterXPosition() - animals_tab_text_half_width_in_pixels;
         float animals_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
-        MATH::Vector2ui animals_tab_top_left_screen_position_in_pixels(
-            static_cast<unsigned int>(animals_tab_left_screen_position_in_pixels),
-            static_cast<unsigned int>(animals_tab_top_screen_position_in_pixels));
-
-        // The tab should be big enough to hold the text on the tab.
-        Text animals_tab_text(Font, ANIMALS_TAB_STRING, animals_tab_top_left_screen_position_in_pixels);
+        MATH::Vector2f animals_tab_top_left_screen_position_in_pixels(
+            animals_tab_left_screen_position_in_pixels,
+            animals_tab_top_screen_position_in_pixels);
 
         MATH::FloatRectangle animals_tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             animals_tab_left_screen_position_in_pixels,
@@ -171,7 +159,7 @@ namespace GUI
             animals_tab_rectangle,
             ANIMALS_TAB_COLOR);
 
-        animals_tab_text.Render(renderer);
+        renderer.RenderText(ANIMALS_TAB_STRING, animals_tab_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);
 
         // RENDER A TAB FOR THE FOOD PORTION OF THE GUI.
         /// @todo   Centralize tab rendering code in helper function.
@@ -181,12 +169,9 @@ namespace GUI
         unsigned int food_tab_text_width_in_pixels = Glyph::WIDTH_IN_PIXELS * FOOD_TAB_STRING.length();
         float food_tab_left_screen_position_in_pixels = background_rectangle.GetRightXPosition() - food_tab_text_width_in_pixels;
         float food_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
-        MATH::Vector2ui food_tab_top_left_screen_position_in_pixels(
-            static_cast<unsigned int>(food_tab_left_screen_position_in_pixels),
-            static_cast<unsigned int>(food_tab_top_screen_position_in_pixels));
-
-        // The tab should be big enough to hold the text on the tab.
-        Text food_tab_text(Font, FOOD_TAB_STRING, food_tab_top_left_screen_position_in_pixels);
+        MATH::Vector2f food_tab_top_left_screen_position_in_pixels(
+            food_tab_left_screen_position_in_pixels,
+            food_tab_top_screen_position_in_pixels);
 
         MATH::FloatRectangle food_tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             food_tab_left_screen_position_in_pixels,
@@ -198,7 +183,7 @@ namespace GUI
             food_tab_rectangle,
             FOOD_TAB_COLOR);
 
-        food_tab_text.Render(renderer);
+        renderer.RenderText(FOOD_TAB_STRING, food_tab_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);
 
         // RENDER THE CURRENTLY DISPLAYED PAGE.
         switch (CurrentTab)

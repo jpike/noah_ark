@@ -1,7 +1,6 @@
 #include <algorithm>
 #include "Bible/BibleVerses.h"
 #include "Core/NullChecking.h"
-#include "Graphics/Gui/Text.h"
 #include "States/IntroSequence.h"
 
 namespace STATES
@@ -9,17 +8,11 @@ namespace STATES
     const sf::Time IntroSequence::MAX_TIME_PER_FRAME = sf::seconds(10);
 
     /// Constructor.
-    /// @param[in]  font - The font to use for text.
-    /// @throws std::exception - Thrown if the font is null.
-    IntroSequence::IntroSequence(const std::shared_ptr<GRAPHICS::GUI::Font>& font) :
-        Font(font),
+    IntroSequence::IntroSequence() :
         IntroBibleVerses(),
         CurrentFrameIndex(0),
         ElapsedTimeForCurrentFrame(sf::Time::Zero)
     {
-        // MAKE SURE A FONT EXISTS.
-        CORE::ThrowInvalidArgumentExceptionIfNull(Font, "Font provided for text must not be null.");
-
         // GET THE BIBLE VERSES FOR THE INTRO SEQUENCE.
         const BIBLE::BibleVerse* intro_verse_1 = BIBLE::FindBibleVerse(
             BIBLE::BibleBook::GENESIS,

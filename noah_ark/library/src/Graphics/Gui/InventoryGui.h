@@ -44,9 +44,7 @@ namespace GUI
         };
 
         // CONSTRUCTION.
-        explicit InventoryGui(
-            const std::shared_ptr<const OBJECTS::Inventory>& inventory,
-            const std::shared_ptr<const GRAPHICS::GUI::Font>& font);
+        explicit InventoryGui(const std::shared_ptr<const OBJECTS::Inventory>& inventory);
 
         // INPUT.
         void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
@@ -69,8 +67,6 @@ namespace GUI
         void RenderFoodPage(Renderer& renderer) const;
 
         // MEMBER VARIABLES.
-        /// The font to use for rendering text.
-        std::shared_ptr<const GRAPHICS::GUI::Font> Font;
         /// The player's inventory to display in the GUI.
         std::shared_ptr<const OBJECTS::Inventory> Inventory;
         /// The type of tab currently being displayed.

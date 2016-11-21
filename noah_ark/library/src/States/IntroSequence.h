@@ -19,7 +19,7 @@ namespace STATES
     {
     public:
         // CONSTRUCTION.
-        explicit IntroSequence(const std::shared_ptr<GRAPHICS::GUI::Font>& font);
+        explicit IntroSequence();
 
         // OTHER METHODS.
         bool Completed() const;
@@ -32,8 +32,6 @@ namespace STATES
         static const sf::Time MAX_TIME_PER_FRAME;
 
         // MEMBER VARIABLES.
-        /// The font used for rendering text.
-        std::shared_ptr<GRAPHICS::GUI::Font> Font;
         /// The Bible verses, in order displayed as part of the intro sequence.
         std::vector<BIBLE::BibleVerse> IntroBibleVerses;
         /// The index of the current Bible verse being displayed.

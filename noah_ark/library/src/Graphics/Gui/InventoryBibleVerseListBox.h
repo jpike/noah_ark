@@ -20,9 +20,7 @@ namespace GUI
     {
     public:
         // CONSTRUCTION.
-        explicit InventoryBibleVerseListBox(
-            const std::shared_ptr<const OBJECTS::Inventory>& inventory,
-            const std::shared_ptr<const Font>& font);
+        explicit InventoryBibleVerseListBox(const std::shared_ptr<const OBJECTS::Inventory>& inventory);
 
         // RENDERING.
         void Render(
@@ -38,8 +36,6 @@ namespace GUI
         // MEMBER VARIABLES.
         /// The inventory holding collected Bible verses.
         std::shared_ptr<const OBJECTS::Inventory> Inventory;
-        /// The font to use for rendering text.
-        std::shared_ptr<const Font> Font;
         /// The index of the currently selected Bible verse in the global list.
         unsigned int SelectedVerseIndex;
     };

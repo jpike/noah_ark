@@ -18,6 +18,8 @@ namespace GRAPHICS
         static const Color RED;
         /// The color green.
         static const Color GREEN;
+        /// The color back.
+        static const Color BLACK;
 
         // CONSTRUCTION.
         explicit Color(

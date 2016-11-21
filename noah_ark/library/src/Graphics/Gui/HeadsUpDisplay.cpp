@@ -1,6 +1,5 @@
 #include "Core/NullChecking.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
-#include "Graphics/Gui/Text.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Sprite.h"
@@ -13,7 +12,6 @@ namespace GUI
     /// @param[in]  inventory - The inventory to display in the HUD.
     /// @param[in]  width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  height_in_pixels - The height of the main text box, in pixels.
-    /// @param[in]  font - The font to use for rendering text on the HUD.
     /// @param[in]  axe_texture - The texture to use for rendering an
     ///     axe icon on the HUD.
     /// @param[in]  wood_texture - The texture to use for rendering a
@@ -24,13 +22,11 @@ namespace GUI
         const std::shared_ptr<const OBJECTS::Inventory>& inventory,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels,
-        const std::shared_ptr<const GRAPHICS::GUI::Font>& font,
         const std::shared_ptr<const Texture>& axe_texture,
         const std::shared_ptr<const Texture>& wood_texture) :
-    MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, font),
+    MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels),
     InventoryOpened(false),
-    InventoryGui(inventory, font),
-    Font(font),
+    InventoryGui(inventory),
     AxeTexture(axe_texture),
     WoodTexture(wood_texture),
     Inventory(inventory)
@@ -39,9 +35,6 @@ namespace GUI
         CORE::ThrowInvalidArgumentExceptionIfNull(
             Inventory,
             "Null inventory provided to HUD.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(
-            Font,
-            "Null font provided to HUD.");
         CORE::ThrowInvalidArgumentExceptionIfNull(
             AxeTexture,
             "Null axe texture provided to HUD.");
@@ -137,32 +130,34 @@ namespace GUI
         const std::string TIMES_COUNT_TEXT = "x";
         std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(Inventory->WoodCount);
         // This text should be placed just to the right of the wood icon.
-        MATH::Vector2ui wood_text_top_left_screen_position_in_pixels(wood_icon_screen_position.X, TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y);
-        wood_text_top_left_screen_position_in_pixels.X += static_cast<unsigned int>(WOOD_LOG_TEXTURE_SUB_RECTANGLE.GetWidth());
-        Text wood_count_text(Font, wood_count_string, wood_text_top_left_screen_position_in_pixels);
-        wood_count_text.Render(renderer);
+        MATH::Vector2f wood_text_top_left_screen_position_in_pixels(
+            static_cast<float>(wood_icon_screen_position.X), 
+            static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
+        wood_text_top_left_screen_position_in_pixels.X += WOOD_LOG_TEXTURE_SUB_RECTANGLE.GetWidth();
+        renderer.RenderText(wood_count_string, wood_text_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);
 
         // RENDER COMPONENTS INDICATING HOW TO OPEN THE INVENTORY.
         // This text is rendered to the far-right of the screen so that its position isn't changed
         // if the space for other GUI elements (like the count of collected wood) changes such
         // that they could distractingly shift the position of this text.
-        MATH::Vector2ui TOP_RIGHT_SCREEN_POSITION_IN_PIXELS(
-            renderer.Screen.WidthInPixels<unsigned int>(),
-            TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y);
+        MATH::Vector2f TOP_RIGHT_SCREEN_POSITION_IN_PIXELS(
+            renderer.Screen.WidthInPixels<float>(),
+            static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
         const std::string OPEN_INVENTORY_TEXT = "Inventory";
         // One glyph is rendered per character.
         const unsigned int OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS = (Glyph::WIDTH_IN_PIXELS * OPEN_INVENTORY_TEXT.size());
-        MATH::Vector2ui open_inventory_text_top_left_screen_position_in_pixels = TOP_RIGHT_SCREEN_POSITION_IN_PIXELS;
+        MATH::Vector2f open_inventory_text_top_left_screen_position_in_pixels = TOP_RIGHT_SCREEN_POSITION_IN_PIXELS;
         open_inventory_text_top_left_screen_position_in_pixels.X -= OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS;
-        Text open_inventory_text(Font, OPEN_INVENTORY_TEXT, open_inventory_text_top_left_screen_position_in_pixels);
-        open_inventory_text.Render(renderer);
+        renderer.RenderText(OPEN_INVENTORY_TEXT, open_inventory_text_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);
 
         // An icon is rendered to help players know which key to press.  It is rendered after
         // the above text for the inventory since it is easier to correctly position here
         // such that it appears just to the left of the text.
         /// @todo   Figure out what key is to be pressed here.  This is just a temporary placeholder.
         const char OPEN_INVENTORY_KEY = 'X';
-        MATH::Vector2ui open_inventory_key_text_top_left_screen_position_in_pixels = open_inventory_text_top_left_screen_position_in_pixels;
+        MATH::Vector2ui open_inventory_key_text_top_left_screen_position_in_pixels(
+            static_cast<unsigned int>(open_inventory_text_top_left_screen_position_in_pixels.X),
+            static_cast<unsigned int>(open_inventory_text_top_left_screen_position_in_pixels.Y));
         open_inventory_key_text_top_left_screen_position_in_pixels.X -= KEY_ICON_WIDTH_IN_PIXELS;
         renderer.RenderKeyIcon(OPEN_INVENTORY_KEY, open_inventory_key_text_top_left_screen_position_in_pixels);
 

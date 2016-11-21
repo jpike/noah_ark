@@ -32,7 +32,6 @@
     <ClInclude Include="src\Graphics\Gui\InventoryBibleVerseListBox.h" />
     <ClInclude Include="src\Graphics\Gui\InventoryBibleVerseTextBox.h" />
     <ClInclude Include="src\Graphics\Gui\InventoryGui.h" />
-    <ClInclude Include="src\Graphics\Gui\Text.h" />
     <ClInclude Include="src\Graphics\Gui\TextBox.h" />
     <ClInclude Include="src\Graphics\Gui\TextPage.h" />
     <ClInclude Include="src\Graphics\Renderer.h" />
@@ -80,7 +79,6 @@
     <ClCompile Include="src\Graphics\Gui\InventoryBibleVerseListBox.cpp" />
     <ClCompile Include="src\Graphics\Gui\InventoryBibleVerseTextBox.cpp" />
     <ClCompile Include="src\Graphics\Gui\InventoryGui.cpp" />
-    <ClCompile Include="src\Graphics\Gui\Text.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextBox.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextPage.cpp" />
     <ClCompile Include="src\Graphics\Renderer.cpp" />

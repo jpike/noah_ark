@@ -197,9 +197,6 @@ namespace GUI
             case GRAPHICS::GUI::InventoryGui::TabType::FOOD:
                 RenderFoodPage(renderer);
                 break;
-            default:
-                /// @todo   Error-handling?
-                break;
         }
     }
 

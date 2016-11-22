@@ -34,18 +34,13 @@ namespace GUI
         Renderer& renderer) const
     {
         // RENDER THE BACKGROUND BOX.
-        /// @todo   Centralize this color.
-        GRAPHICS::Color background_color;
-        background_color.Red = 128;
-        background_color.Green = 64;
-        background_color.Blue = 0;
+        GRAPHICS::Color background_color = GRAPHICS::Color::BROWN;
         renderer.RenderScreenRectangle(
             bounding_rectangle,
             background_color);
 
         // RENDER A DARKER BOX FOR THE SELECTED VERSE.
-        GRAPHICS::Color selected_verse_background_color = background_color;
-        selected_verse_background_color.Green = 32;
+        GRAPHICS::Color selected_verse_background_color = GRAPHICS::Color::RED_BROWN;
         MATH::FloatRectangle selected_verse_background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             bounding_rectangle.GetLeftXPosition(),
             bounding_rectangle.GetTopYPosition(),

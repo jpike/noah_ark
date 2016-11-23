@@ -233,6 +233,9 @@
     <ClInclude Include="src\States\IntroSequence.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
+    <ClInclude Include="src\States\TitleScreen.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -360,6 +363,9 @@
     </ClCompile>
     <ClCompile Include="src\Graphics\Color.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\States\TitleScreen.cpp">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

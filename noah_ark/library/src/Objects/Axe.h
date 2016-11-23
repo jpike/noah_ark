@@ -60,6 +60,12 @@ namespace OBJECTS
     class Axe
     {
     public:
+        // CONSTRUCTION.
+        explicit Axe() = default;
+        explicit Axe(
+            const std::shared_ptr<GRAPHICS::Texture>& texture,
+            const std::shared_ptr<AUDIO::SoundEffect>& axe_hit_sound);
+
         // SWINGING METHODS.
         void SwingUp();
         void SwingDown();

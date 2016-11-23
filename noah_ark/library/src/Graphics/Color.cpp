@@ -2,11 +2,13 @@
 
 namespace GRAPHICS
 {
-    const Color Color::RED(Color::MAX_COLOR_COMPONENT, 0, 0);
-    const Color Color::GREEN(0, Color::MAX_COLOR_COMPONENT, 0);
     const Color Color::BLACK(0, 0, 0);
     const Color Color::BROWN(128, 64, 0);
+    const Color Color::GREEN(0, Color::MAX_COLOR_COMPONENT, 0);
+    const Color Color::RED(Color::MAX_COLOR_COMPONENT, 0, 0);
     const Color Color::RED_BROWN(128, 32, 0);
+    const Color Color::WHITE(Color::MAX_COLOR_COMPONENT, Color::MAX_COLOR_COMPONENT, Color::MAX_COLOR_COMPONENT);
+    const Color Color::YELLOW(Color::MAX_COLOR_COMPONENT, Color::MAX_COLOR_COMPONENT, 0);
 
     /// Constructor.
     /// @param[in]  red - The red component of the color.

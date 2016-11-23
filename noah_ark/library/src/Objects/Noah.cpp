@@ -1,11 +1,98 @@
-#pragma once
-
+#include "Core/NullChecking.h"
 #include "Objects/Noah.h"
 
 namespace OBJECTS
 {
     // The speed is chosen just based on what has felt right so far.
     const float Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND = 64.0f;
+    const std::string Noah::WALK_FRONT_ANIMATION_NAME = "noah_walk_front";
+    const std::string Noah::WALK_BACK_ANIMATION_NAME = "noah_walk_back";
+    const std::string Noah::WALK_LEFT_ANIMATION_NAME = "noah_walk_left";
+    const std::string Noah::WALK_RIGHT_ANIMATION_NAME = "noah_walk_right";
+
+    /// Constructor.
+    /// @param[in]  noah_texture - The texture to use for Noah.
+    /// @param[in]  axe - The axe for Noah.
+    /// @throws std::exception - Thrown if a parameter is null.
+    Noah::Noah(
+        const std::shared_ptr<GRAPHICS::Texture>& noah_texture,
+        const std::shared_ptr<OBJECTS::Axe>& axe) :
+    FacingDirection(CORE::Direction::INVALID),
+    Sprite(),
+    Inventory(std::make_shared<OBJECTS::Inventory>())
+    {
+        // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
+        CORE::ThrowInvalidArgumentExceptionIfNull(noah_texture, "Texture required for Noah.");
+        CORE::ThrowInvalidArgumentExceptionIfNull(axe, "Axe required for Noah.");
+
+        // CREATE THE SPRITE FOR NOAH.
+        const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 16, 16);
+        GRAPHICS::Sprite sprite(noah_texture, TEXTURE_SUB_RECT);
+        // The sprite origin should be the graphical center of its sub-rectangle.
+        sprite.SetOrigin(TEXTURE_SUB_RECT.GetCenterPosition());
+        Sprite.Sprite = sprite;
+
+        // ADD NOAH'S ANIMATION SEQUENCES.
+        const bool IS_LOOPING = true;
+        const sf::Time ANIMATION_TOTAL_DURATION = sf::seconds(0.7f);
+
+        const std::vector<MATH::IntRectangle> WALK_FRONT_ANIMATION_FRAMES =
+        {
+            MATH::IntRectangle::FromLeftTopAndDimensions(0, 0, 16, 16),
+            MATH::IntRectangle::FromLeftTopAndDimensions(16, 0, 16, 16),
+            MATH::IntRectangle::FromLeftTopAndDimensions(32, 0, 16, 16)
+        };
+        const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_FRONT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+            WALK_FRONT_ANIMATION_NAME,
+            IS_LOOPING,
+            ANIMATION_TOTAL_DURATION,
+            WALK_FRONT_ANIMATION_FRAMES);
+        Sprite.AddAnimationSequence(NOAH_WALK_FRONT_ANIMATION);
+
+        const std::vector<MATH::IntRectangle> WALK_BACK_ANIMATION_FRAMES =
+        {
+            MATH::IntRectangle::FromLeftTopAndDimensions(0, 16, 16, 16),
+            MATH::IntRectangle::FromLeftTopAndDimensions(16, 16, 16, 16),
+            MATH::IntRectangle::FromLeftTopAndDimensions(32, 16, 16, 16)
+        };
+        const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_BACK_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+            WALK_BACK_ANIMATION_NAME,
+            IS_LOOPING,
+            ANIMATION_TOTAL_DURATION,
+            WALK_BACK_ANIMATION_FRAMES);
+        Sprite.AddAnimationSequence(NOAH_WALK_BACK_ANIMATION);
+
+        const std::vector<MATH::IntRectangle> WALK_LEFT_ANIMATION_FRAMES =
+        {
+            MATH::IntRectangle::FromLeftTopAndDimensions(0, 32, 16, 16),
+            MATH::IntRectangle::FromLeftTopAndDimensions(16, 32, 16, 16)
+        };
+        const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_LEFT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+            WALK_LEFT_ANIMATION_NAME,
+            IS_LOOPING,
+            ANIMATION_TOTAL_DURATION,
+            WALK_LEFT_ANIMATION_FRAMES);
+        Sprite.AddAnimationSequence(NOAH_WALK_LEFT_ANIMATION);
+
+        const std::vector<MATH::IntRectangle> WALK_RIGHT_ANIMATION_FRAMES =
+        {
+            MATH::IntRectangle::FromLeftTopAndDimensions(0, 48, 16, 16),
+            MATH::IntRectangle::FromLeftTopAndDimensions(16, 48, 16, 16)
+        };
+        const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_RIGHT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+            WALK_RIGHT_ANIMATION_NAME,
+            IS_LOOPING,
+            ANIMATION_TOTAL_DURATION,
+            WALK_RIGHT_ANIMATION_FRAMES);
+        Sprite.AddAnimationSequence(NOAH_WALK_RIGHT_ANIMATION);
+
+        // SET NOAH TO FACE DOWN BY DEFAULT.
+        Sprite.UseAnimationSequence(NOAH_WALK_FRONT_ANIMATION->AnimationName);
+        FacingDirection = CORE::Direction::DOWN;
+
+        // INITIALIZE THE AXE.
+        Inventory->Axe = axe;
+    }
 
     /// Gets the world position of Noah.
     /// @return The world position of Noah.

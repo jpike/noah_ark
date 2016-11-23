@@ -1,5 +1,4 @@
-#include <iostream>
-#include <stdexcept>
+#include "Core/NullChecking.h"
 #include "Objects/Axe.h"
 
 namespace OBJECTS
@@ -29,6 +28,33 @@ namespace OBJECTS
         float swing_back_rotation_in_degrees = (FinalRotationAngleInDegrees - FullySwungOutRotationAngleInDegrees);
         bool swing_back_is_positive_rotation = (swing_back_rotation_in_degrees > 0.0f);
         return swing_back_is_positive_rotation;
+    }
+
+    /// Constructor.
+    /// @param[in]  texture - The texture for the axe.
+    /// @param[in]  axe_hit_sound - The sound effect to play if the axe hits something.
+    /// @throws std::exception - Thrown if a parameter is null.
+    Axe::Axe(
+        const std::shared_ptr<GRAPHICS::Texture>& texture,
+        const std::shared_ptr<AUDIO::SoundEffect>& axe_hit_sound) :
+    Sprite(),
+    AxeHitSound(axe_hit_sound)
+    {
+        // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
+        CORE::ThrowInvalidArgumentExceptionIfNull(texture, "Texture required for axe.");
+        CORE::ThrowInvalidArgumentExceptionIfNull(axe_hit_sound, "Hit sound required for axe.");
+
+        // INITIALIZE THE SPRITE.
+        const float AXE_SPRITE_X_OFFSET_IN_PIXELS = 52.0f;
+        const float AXE_SPRITE_Y_OFFSET_IN_PIXELS = 0.0f;
+        const float AXE_WIDTH_IN_PIXELS = 11.0f;
+        const float AXE_HEIGHT_IN_PIXELS = 14.0f;
+        MATH::FloatRectangle axe_texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+            AXE_SPRITE_X_OFFSET_IN_PIXELS,
+            AXE_SPRITE_Y_OFFSET_IN_PIXELS,
+            AXE_WIDTH_IN_PIXELS,
+            AXE_HEIGHT_IN_PIXELS);
+        Sprite = GRAPHICS::Sprite(texture, axe_texture_sub_rectangle);
     }
 
     /// Swings the axe up.

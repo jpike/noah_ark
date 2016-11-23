@@ -41,9 +41,7 @@ namespace GRAPHICS
         MATH::FloatRectangle GetWorldBoundingBox() const;
 
         // ANIMATION.
-        void AddAnimationSequence(
-            const std::string& animation_name,
-            const std::shared_ptr<AnimationSequence>& animation_sequence);
+        void AddAnimationSequence(const std::shared_ptr<AnimationSequence>& animation_sequence);
         void UseAnimationSequence(const std::string& animation_name);
         void Play();
         void ResetAnimation();

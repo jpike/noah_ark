@@ -63,7 +63,7 @@ namespace GRAPHICS
         Sprite = GRAPHICS::Sprite(texture, texture_subrectangle);
 
         // ADD THE INITIAL ANIMATION SEQUENCE TO THIS SPRITE.
-        AddAnimationSequence(animation_sequence->AnimationName, animation_sequence);
+        AddAnimationSequence(animation_sequence);
         UseAnimationSequence(animation_sequence->AnimationName);
     }
 
@@ -136,12 +136,9 @@ namespace GRAPHICS
     /// Sets the animation sequence for the sprite with the given name.
     /// If an animation with the specified name already exists for this
     /// sprite, it will be overwritten.
-    /// @param[in]  animation_name - The name identifying the animation sequence.
     /// @param[in]  animation_sequence - The animation sequence to map to the provided name.
     /// @throws std::invalid_argument - Thrown if the provided animation sequence is null.
-    void AnimatedSprite::AddAnimationSequence(
-        const std::string& animation_name,
-        const std::shared_ptr<AnimationSequence>& animation_sequence)
+    void AnimatedSprite::AddAnimationSequence(const std::shared_ptr<AnimationSequence>& animation_sequence)
     {
         // MAKE SURE THE ANIMATION SEQUENCE ISN'T NULL.
         bool animation_sequence_exists = (nullptr != animation_sequence);
@@ -151,7 +148,7 @@ namespace GRAPHICS
         }
 
         // STORE THE ANIMATION SEQUENCE.
-        AnimationSequences[animation_name] = animation_sequence;
+        AnimationSequences[animation_sequence->AnimationName] = animation_sequence;
     }
 
     /// Specifies the animation sequence that the sprite should use.

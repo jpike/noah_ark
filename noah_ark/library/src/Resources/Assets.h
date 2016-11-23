@@ -1,6 +1,8 @@
 #pragma once
 
+#include <future>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <SFML/Audio.hpp>
@@ -25,10 +27,6 @@ namespace RESOURCES
     extern const std::string TREE_TEXTURE_ID;
     extern const std::string WOOD_LOG_TEXTURE_ID;
     extern const std::string DUST_CLOUD_ANIMATION_ID;
-    extern const std::string NOAH_WALK_FRONT_ANIMATION_ID;
-    extern const std::string NOAH_WALK_BACK_ANIMATION_ID;
-    extern const std::string NOAH_WALK_LEFT_ANIMATION_ID;
-    extern const std::string NOAH_WALK_RIGHT_ANIMATION_ID;
     extern const std::string AXE_HIT_SOUND_ID;
     extern const std::string COLLECT_BIBLE_VERSE_SOUND_ID;
     extern const std::string TREE_SHAKE_SOUND_ID;
@@ -54,6 +52,10 @@ namespace RESOURCES
         bool LoadAll();
 
         // ASSET RETRIEVAL.
+        bool LoadTileMapFiles(
+            const MAPS::OverworldMapFile& overworld_map_file,
+            CORE::Array2D<MAPS::TileMapFile>& tile_map_files) const;
+
         std::shared_ptr<MAPS::Tileset> GetTileset(const std::vector<MAPS::TilesetDescription>& tileset_descriptions);
         std::shared_ptr<GRAPHICS::Texture> GetTexture(const std::string& texture_id);
         std::shared_ptr<GRAPHICS::AnimationSequence> GetAnimationSequence(const std::string& animation_id);
@@ -71,17 +73,10 @@ namespace RESOURCES
         /// Shaders that have been loaded.  They need to remain in memory to allow them to be used.
         /// They are mapped by shader ID.
         std::unordered_map< ShaderId, std::shared_ptr<sf::Shader> > Shaders;
-        /// The overworld map file, if successfully loaded.
-        std::unique_ptr<MAPS::OverworldMapFile> OverworldMapFile;
-        /// The tile map files, mapped by their 2D grid coordinates (x = column, y = row) in the overworld.
-        /// Positioning starts at (0,0) at the top-left of the overworld.
-        CORE::Array2D< std::unique_ptr<MAPS::TileMapFile> > TileMapFiles;
 
     private:
         // LOADING HELPER METHODS.
         bool LoadTextures();
         bool LoadSounds();
-        bool LoadOverworldMapFile();
-        bool LoadTileMapFiles();
     };
 }

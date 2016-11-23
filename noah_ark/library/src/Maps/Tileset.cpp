@@ -2,6 +2,62 @@
 
 namespace MAPS
 {
+    /// Attempts to create a combined tileset from the provided descriptions.
+    /// @param[in]  tileset_descriptions - Descriptions of the tileset to create.
+    /// @param[in]  tileset_texture - The texture to use for the tileset; must not be null.
+    /// @return The tileset created from the provided descriptions; null if an error occurs.
+    std::unique_ptr<Tileset> Tileset::Create(
+        const std::vector<TilesetDescription>& tileset_descriptions,
+        const std::shared_ptr<GRAPHICS::Texture>& tileset_texture)
+    {
+        // MAKE SURE THE TEXTURE EXISTS.
+        bool texture_exists = (nullptr != tileset_texture);
+        if (!texture_exists)
+        {
+            // The tileset can't be created without a valid texture.
+            return nullptr;
+        }
+
+        // POPULATE A TILESET FROM EACH DESCRIPTION.
+        std::unique_ptr<MAPS::Tileset> tileset = std::make_unique<MAPS::Tileset>();
+        for (const auto& tileset_description : tileset_descriptions)
+        {
+            // CREATE AND STORE EACH TILE IN THE CURRENT DESCRIPTION.
+            MAPS::TileId current_tile_id = tileset_description.FirstTileId;
+            MATH::Vector2ui tileset_texture_dimensions = tileset_texture->GetSize();
+            unsigned int row_count_of_tiles = tileset_texture_dimensions.Y / tileset_description.TileHeightInPixels;
+            unsigned int column_count_of_tiles = tileset_texture_dimensions.X / tileset_description.TileWidthInPixels;
+            for (unsigned int tile_row_index = 0;
+                tile_row_index < row_count_of_tiles;
+                ++tile_row_index)
+            {
+                for (unsigned int tile_column_index = 0;
+                    tile_column_index < column_count_of_tiles;
+                    ++tile_column_index)
+                {
+                    // CALCULATE THE OFFSET WITHIN THE TEXTURE FOR THE CURRENT TILE.
+                    int tile_left_texture_offset_in_texels = tile_column_index * tileset_description.TileWidthInPixels;
+                    int tile_top_texture_offset_in_texels = tile_row_index * tileset_description.TileHeightInPixels;
+
+                    // CREATE A SPRITE FOR THE CURRENT TILE.
+                    MATH::FloatRectangle tile_texture_rect = MATH::FloatRectangle::FromLeftTopAndDimensions(
+                        static_cast<float>(tile_left_texture_offset_in_texels),
+                        static_cast<float>(tile_top_texture_offset_in_texels),
+                        static_cast<float>(tileset_description.TileWidthInPixels),
+                        static_cast<float>(tileset_description.TileHeightInPixels));
+
+                    // STORE THE CURRENT TILE.
+                    tileset->SetTile(current_tile_id, tileset_texture, tile_texture_rect);
+
+                    // UPDATE THE TILE ID FOR THE NEXT TILE.
+                    ++current_tile_id;
+                }
+            }
+        }
+
+        return tileset;
+    }
+
     /// Sets the data in the set for the tile with the specified ID.
     /// @param[in]  tile_id - The unique ID of the tile.
     /// @param[in]  texture - The texture with graphics resources for the tile.

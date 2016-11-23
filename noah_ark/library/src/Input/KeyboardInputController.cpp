@@ -73,7 +73,15 @@ namespace INPUT_CONTROL
         return InputEnabledAndKeyDown(SECONDARY_ACTION_KEY);
     }
 
-    /// Checks if the up button is was pressed down this frame.
+    /// Checks if the start button is currently pressed down.
+    /// @return True if the start button is currently pressed (and input is enabled).
+    ///     False otherwise.
+    bool KeyboardInputController::StartButtonDown() const
+    {
+        return InputEnabledAndKeyDown(START_KEY);
+    }
+
+    /// Checks if the up button was pressed down this frame.
     /// @return True if the up button was pressed this frame (and input is enabled).
     ///     False otherwise.
     bool KeyboardInputController::UpButtonWasPressed() const
@@ -81,7 +89,7 @@ namespace INPUT_CONTROL
         return InputEnabledAndKeyWasPressed(UP_KEY);
     }
     
-    /// Checks if the down button is was pressed down this frame.
+    /// Checks if the down button was pressed down this frame.
     /// @return True if the down button was pressed this frame (and input is enabled).
     ///     False otherwise.
     bool KeyboardInputController::DownButtonWasPressed() const
@@ -89,7 +97,7 @@ namespace INPUT_CONTROL
         return InputEnabledAndKeyWasPressed(DOWN_KEY);
     }
 
-    /// Checks if the left button is was pressed down this frame.
+    /// Checks if the left button was pressed down this frame.
     /// @return True if the left button was pressed this frame (and input is enabled).
     ///     False otherwise.
     bool KeyboardInputController::LeftButtonWasPressed() const
@@ -97,7 +105,7 @@ namespace INPUT_CONTROL
         return InputEnabledAndKeyWasPressed(LEFT_KEY);
     }
 
-    /// Checks if the right button is was pressed down this frame.
+    /// Checks if the right button was pressed down this frame.
     /// @return True if the right button was pressed this frame (and input is enabled).
     ///     False otherwise.
     bool KeyboardInputController::RightButtonWasPressed() const
@@ -105,7 +113,7 @@ namespace INPUT_CONTROL
         return InputEnabledAndKeyWasPressed(RIGHT_KEY);
     }
 
-    /// Checks if the primary action button is was pressed down this frame.
+    /// Checks if the primary action button was pressed down this frame.
     /// @return True if the primary action button was pressed this frame (and input is enabled).
     ///     False otherwise.
     bool KeyboardInputController::PrimaryActionButtonWasPressed() const
@@ -119,6 +127,14 @@ namespace INPUT_CONTROL
     bool KeyboardInputController::SecondaryActionButtonWasPressed() const
     {
         return InputEnabledAndKeyWasPressed(SECONDARY_ACTION_KEY);
+    }
+
+    /// Checks if the start button was pressed down this frame.
+    /// @return True if the start button was pressed this frame (and input is enabled).
+    ///     False otherwise.
+    bool KeyboardInputController::StartButtonWasPressed() const
+    {
+        return InputEnabledAndKeyWasPressed(START_KEY);
     }
 
     /// A helper method to return if a key is currently down and input is enabled.

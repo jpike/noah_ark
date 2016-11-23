@@ -7,19 +7,17 @@ namespace GRAPHICS
 {
     /// Constructor.
     /// @param[in]  render_target - The target to render to.
-    /// @param[in]  camera_center_world_position - The center position (in world coordinates) of the camera's view.
     /// @param[in]  font - The font to use for rendering.
     /// @param[in]  colored_text_shader - The shader to use for coloring text.
     /// @throws std::exception - Thrown if a parameter is null.
     Renderer::Renderer(
         const std::shared_ptr<sf::RenderTarget>& render_target,
-        const MATH::Vector2f& camera_center_world_position,
         const std::shared_ptr<GRAPHICS::GUI::Font>& font,
         const std::shared_ptr<sf::Shader>& colored_text_shader) :
     Screen(render_target),
     Camera(MATH::FloatRectangle::FromCenterAndDimensions(
-        camera_center_world_position.X,
-        camera_center_world_position.Y,
+        render_target->getView().getCenter().x,
+        render_target->getView().getCenter().y,
         render_target->getView().getSize().x,
         render_target->getView().getSize().y)),
     Font(font),
@@ -204,8 +202,12 @@ namespace GRAPHICS
             // RENDER THE CURRENT GLYPH.
             /// @todo   Contemplate potential alternative interfaces for rendering sprites in screen-space.
             sf::RenderStates render_states = sf::RenderStates::Default;
+            /// @todo   This doesn't actually force coordinates to screen space, so something else is needed here.
+            /// The resetting of the view was added below, which seems to work, but more thought is needed to
+            /// make this more elegant.
             const sf::Transform RENDER_IN_SCREEN_SPACE = sf::Transform::Identity;
             render_states.transform = RENDER_IN_SCREEN_SPACE;
+            Screen.RenderTarget->setView(Screen.RenderTarget->getDefaultView());
             ColoredTextShader->setParameter("color", sf::Color(text_color.Red, text_color.Green, text_color.Blue, text_color.Alpha));
             ColoredTextShader->setParameter("texture", sf::Shader::CurrentTexture);
             render_states.shader = ColoredTextShader.get();
@@ -536,14 +538,14 @@ namespace GRAPHICS
 
         // RENDER THE PLAYER.
         // Make sure his axe/sprite are updated.
-        overworld.NoahPlayer.Inventory->Axe->Update(elapsed_time_in_seconds);
-        overworld.NoahPlayer.Sprite.Update(elapsed_time_in_seconds);
-        overworld.NoahPlayer.Sprite.Render(Screen);
+        overworld.NoahPlayer->Inventory->Axe->Update(elapsed_time_in_seconds);
+        overworld.NoahPlayer->Sprite.Update(elapsed_time_in_seconds);
+        overworld.NoahPlayer->Sprite.Render(Screen);
 
         // The axe should only be rendered if it is swinging.
-        if (overworld.NoahPlayer.Inventory->Axe->IsSwinging())
+        if (overworld.NoahPlayer->Inventory->Axe->IsSwinging())
         {
-            overworld.NoahPlayer.Inventory->Axe->Sprite.Render(Screen);
+            overworld.NoahPlayer->Inventory->Axe->Sprite.Render(Screen);
         }
     }
 

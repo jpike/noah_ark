@@ -24,7 +24,6 @@ namespace GRAPHICS
         // CONSTRUCTION.
         explicit Renderer(
             const std::shared_ptr<sf::RenderTarget>& render_target,
-            const MATH::Vector2f& camera_center_world_position,
             const std::shared_ptr<GRAPHICS::GUI::Font>& font,
             const std::shared_ptr<sf::Shader>& colored_text_shader);
 

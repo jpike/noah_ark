@@ -27,6 +27,7 @@ namespace INPUT_CONTROL
         bool RightButtonDown() const;
         bool PrimaryActionButtonDown() const;
         bool SecondaryActionButtonDown() const;
+        bool StartButtonDown() const;
 
         bool UpButtonWasPressed() const;
         bool DownButtonWasPressed() const;
@@ -34,6 +35,7 @@ namespace INPUT_CONTROL
         bool RightButtonWasPressed() const;
         bool PrimaryActionButtonWasPressed() const;
         bool SecondaryActionButtonWasPressed() const;
+        bool StartButtonWasPressed() const;
 
     private:
         // STATIC CONSTANTS.
@@ -49,6 +51,8 @@ namespace INPUT_CONTROL
         static const sf::Keyboard::Key PRIMARY_ACTION_KEY = sf::Keyboard::Z;
         /// The key for the secondary button.
         static const sf::Keyboard::Key SECONDARY_ACTION_KEY = sf::Keyboard::X;
+        /// The key for the start button.
+        static const sf::Keyboard::Key START_KEY = sf::Keyboard::Return;
 
         // HELPER METHODS.
         bool InputEnabledAndKeyDown(const sf::Keyboard::Key key) const;

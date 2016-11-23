@@ -17,10 +17,6 @@ namespace RESOURCES
     const std::string TREE_TEXTURE_ID = "res/images/tree_sprite1.png";
     const std::string WOOD_LOG_TEXTURE_ID = "res/images/tree_sprite1.png";
     const std::string DUST_CLOUD_ANIMATION_ID = "dust_cloud";
-    const std::string NOAH_WALK_FRONT_ANIMATION_ID = "noah_walk_front";
-    const std::string NOAH_WALK_BACK_ANIMATION_ID = "noah_walk_back";
-    const std::string NOAH_WALK_LEFT_ANIMATION_ID = "noah_walk_left";
-    const std::string NOAH_WALK_RIGHT_ANIMATION_ID = "noah_walk_right";
     const std::string AXE_HIT_SOUND_ID = "res/sounds/axe_tree_hit1.wav";
     const std::string COLLECT_BIBLE_VERSE_SOUND_ID = "res/sounds/collect_bible_verse1.wav";
     const std::string TREE_SHAKE_SOUND_ID = "res/sounds/tree_shake3.wav";
@@ -29,9 +25,7 @@ namespace RESOURCES
     Assets::Assets() :
     Textures(),
     AudioSamples(),
-    Shaders(),
-    OverworldMapFile(),
-    TileMapFiles()
+    Shaders()
     {}
 
     /// Loads all assets needed for the game.
@@ -52,21 +46,75 @@ namespace RESOURCES
             return false;
         }
 
-        // LOAD THE OVERWORLD MAP FILE.
-        bool overworld_map_file_loaded = LoadOverworldMapFile();
-        if (!overworld_map_file_loaded)
-        {
-            return false;
-        }
-
-        // LOAD THE INDIVIDUAL TILE MAP FILES.
-        bool tile_maps_loaded = LoadTileMapFiles();
-        if (!tile_maps_loaded)
-        {
-            return false;
-        }
-
         // INDICATE THAT ALL ASSETS WERE LOADED.
+        return true;
+    }
+
+    /// @todo
+    bool Assets::LoadTileMapFiles(
+        const MAPS::OverworldMapFile& overworld_map_file,
+        CORE::Array2D<MAPS::TileMapFile>& tile_map_files) const
+    {
+        // ALLOCATE SPACE FOR ALL TILE MAP FILES IN THE OVERWORLD.
+        // Resizing is done to allocate enough space for the new tile map files
+        // while clearing old data at the same time.
+        unsigned int tile_map_row_count = overworld_map_file.OverworldHeightInTileMaps;
+        unsigned int tile_map_column_count = overworld_map_file.OverworldWidthInTileMaps;
+        tile_map_files.Resize(tile_map_column_count, tile_map_row_count);
+
+        // DEFINE AN ARRAY OF FUTURES FOR LOADING THE TILE MAPS IN PARALLEL.
+        // Asynchronous loading is done since it is a little faster than synchronous loading
+        // (about 7-8 seconds of total asset load time as opposed to 12-13 seconds total).
+        CORE::Array2D< std::future< std::unique_ptr<MAPS::TileMapFile> > > tile_map_loaders(
+            tile_map_column_count,
+            tile_map_row_count);
+
+        // START TO LOAD ALL TILE MAP FILES IN THE OVERWORLD MAP FILE.
+        for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
+        {
+            for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
+            {
+                // STARTING LOADING THE CURRENT TILE MAP.
+                std::string tile_map_filepath = overworld_map_file.GetTileMapFilepath(tile_map_row, tile_map_column);
+                tile_map_loaders(tile_map_column, tile_map_row) = std::async(MAPS::TileMapFile::Load, tile_map_filepath);
+            }
+        }
+
+        // OBTAIN ALL OF THE TILE MAP FILES BEING LOADED ASYNCHRONOUSLY.
+        for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
+        {
+            for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
+            {
+                try
+                {
+                    // CHECK IF THE TILE MAP LOADER FOR THE CURRENT ROW/COLUMN IS VALID.
+                    auto& tile_map_loader = tile_map_loaders(tile_map_column, tile_map_row);
+                    if (tile_map_loader.valid())
+                    {
+                        // WAIT AND GET THE LOADED TILE MAP FILE.
+                        std::unique_ptr<MAPS::TileMapFile> tile_map_file = tile_map_loader.get();
+                        bool tile_map_file_loaded = (nullptr != tile_map_file);
+                        if (tile_map_file_loaded)
+                        {
+                            // STORE THE TILE MAP FILE IN THIS COLLECTION OF ASSETS.
+                            tile_map_files(tile_map_column, tile_map_row) = *tile_map_file;
+                        }
+                        else
+                        {
+                            assert(false);
+                            return false;
+                        }
+                    }
+                }
+                catch (const std::exception&)
+                {
+                    assert(false);
+                    return false;
+                }
+            }
+        }
+
+        // All tile map files were loaded successfully.
         return true;
     }
 
@@ -183,76 +231,6 @@ namespace RESOURCES
                 TOTAL_DURATION,
                 FRAMES);
             return DUST_CLOUD_ANIMATION;
-        }
-        else if (NOAH_WALK_FRONT_ANIMATION_ID == animation_id)
-        {
-            // RETURN THE ANIMATION SEQUENCE.
-            const bool IS_LOOPING = true;
-            const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
-            const std::vector<MATH::IntRectangle> FRAMES =
-            {
-                MATH::IntRectangle::FromLeftTopAndDimensions(0, 0, 16, 16),
-                MATH::IntRectangle::FromLeftTopAndDimensions(16, 0, 16, 16),
-                MATH::IntRectangle::FromLeftTopAndDimensions(32, 0, 16, 16)
-            };
-            const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_FRONT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
-                NOAH_WALK_FRONT_ANIMATION_ID,
-                IS_LOOPING,
-                TOTAL_DURATION,
-                FRAMES);
-            return NOAH_WALK_FRONT_ANIMATION;
-        }
-        else if (NOAH_WALK_BACK_ANIMATION_ID == animation_id)
-        {
-            // RETURN THE ANIMATION SEQUENCE.
-            const bool IS_LOOPING = true;
-            const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
-            const std::vector<MATH::IntRectangle> FRAMES = 
-            {
-                MATH::IntRectangle::FromLeftTopAndDimensions(0, 16, 16, 16),
-                MATH::IntRectangle::FromLeftTopAndDimensions(16, 16, 16, 16),
-                MATH::IntRectangle::FromLeftTopAndDimensions(32, 16, 16, 16)
-            };
-            const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_BACK_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
-                NOAH_WALK_BACK_ANIMATION_ID,
-                IS_LOOPING,
-                TOTAL_DURATION,
-                FRAMES);
-            return NOAH_WALK_BACK_ANIMATION;
-        }
-        else if (NOAH_WALK_LEFT_ANIMATION_ID == animation_id)
-        {
-            // RETURN THE ANIMATION SEQUENCE.
-            const bool IS_LOOPING = true;
-            const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
-            const std::vector<MATH::IntRectangle> FRAMES =
-            {
-                MATH::IntRectangle::FromLeftTopAndDimensions(0, 32, 16, 16),
-                MATH::IntRectangle::FromLeftTopAndDimensions(16, 32, 16, 16)
-            };
-            const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_LEFT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
-                NOAH_WALK_LEFT_ANIMATION_ID,
-                IS_LOOPING,
-                TOTAL_DURATION,
-                FRAMES);
-            return NOAH_WALK_LEFT_ANIMATION;
-        }
-        else if (NOAH_WALK_RIGHT_ANIMATION_ID == animation_id)
-        {
-            // RETURN THE ANIMATION SEQUENCE.
-            const bool IS_LOOPING = true;
-            const sf::Time TOTAL_DURATION = sf::seconds(0.7f);
-            const std::vector<MATH::IntRectangle> FRAMES =
-            {
-                MATH::IntRectangle::FromLeftTopAndDimensions(0, 48, 16, 16),
-                MATH::IntRectangle::FromLeftTopAndDimensions(16, 48, 16, 16)
-            };
-            const std::shared_ptr<GRAPHICS::AnimationSequence> NOAH_WALK_RIGHT_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
-                NOAH_WALK_RIGHT_ANIMATION_ID,
-                IS_LOOPING,
-                TOTAL_DURATION,
-                FRAMES);
-            return NOAH_WALK_RIGHT_ANIMATION;
         }
         else
         {
@@ -459,96 +437,6 @@ namespace RESOURCES
         }
 
         // INDICATE THAT ALL SOUNDS WERE LOADED.
-        return true;
-    }
-    
-    /// Attempts to load the overworld map file into this collection of assets.
-    /// Any previous overworld map file will be cleared.
-    /// @return True if the overworld map file is loaded; false otherwise.
-    bool Assets::LoadOverworldMapFile()
-    {
-        // CLEAR ANY PREVIOUSLY LOADED OVERWORLD MAP FILE.
-        OverworldMapFile = nullptr;
-        
-        // LOAD THE OVERWORLD MAP FILE.
-        const std::string OVERWORLD_MAP_FILEPATH = "res/maps/overworld_map.json";
-        OverworldMapFile = MAPS::OverworldMapFile::Load(OVERWORLD_MAP_FILEPATH);
-        
-        // INDICATE IF LOADING WAS SUCCESSFUL.
-        bool overworld_map_file_loaded = (nullptr != OverworldMapFile);
-        return overworld_map_file_loaded;
-    }
-    
-    /// Attempts to load the all tile map files in the overworld map file into this collection of assets.
-    /// Any previous tile map files will be cleared.
-    /// @return True if the all tile map files are loaded; false otherwise.
-    bool Assets::LoadTileMapFiles()
-    {
-        // CLEAR ANY PREVIOUSLY LOADED TILE MAP FILES.
-        // Resizing is done to allocate enough space for the new tile map files
-        // while clearing old data at the same time.
-        unsigned int tile_map_row_count = OverworldMapFile->OverworldHeightInTileMaps;
-        unsigned int tile_map_column_count = OverworldMapFile->OverworldWidthInTileMaps;
-        TileMapFiles.Resize(tile_map_column_count, tile_map_row_count);
-
-        // DEFINE AN ARRAY OF FUTURES FOR LOADING THE TILE MAPS IN PARALLEL.
-        // Asynchronous loading is done since it is a little faster than synchronous loading
-        // (about 7-8 seconds of total asset load time as opposed to 12-13 seconds total).
-        /// @todo   Determine if this asynchronous loading is worth it.  In the final
-        /// game, we'll probably have an intro sequence playing before the title screen
-        /// where this time for loading tile maps won't matter so much.
-        CORE::Array2D< std::future< std::unique_ptr<MAPS::TileMapFile> > > tile_map_loaders(
-            tile_map_column_count,
-            tile_map_row_count);
-
-        // START TO LOAD ALL TILE MAP FILES IN THE OVERWORLD MAP FILE.
-        for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
-        {
-            for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
-            {
-                // STARTING LOADING THE CURRENT TILE MAP.
-                std::string tile_map_filepath = OverworldMapFile->GetTileMapFilepath(tile_map_row, tile_map_column);
-                tile_map_loaders(tile_map_column, tile_map_row) = std::async(MAPS::TileMapFile::Load, tile_map_filepath);
-            }
-        }
-
-        // OBTAIN ALL OF THE TILE MAP FILES BEING LOADED ASYNCHRONOUSLY.
-        for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
-        {
-            for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
-            {
-                try
-                {
-                    // CHECK IF THE TILE MAP LOADER FOR THE CURRENT ROW/COLUMN IS VALID.
-                    auto& tile_map_loader = tile_map_loaders(tile_map_column, tile_map_row);
-                    if (tile_map_loader.valid())
-                    {
-                        // WAIT AND GET THE LOADED TILE MAP FILE.
-                        std::unique_ptr<MAPS::TileMapFile> tile_map_file = tile_map_loader.get();
-                        bool tile_map_file_loaded = (nullptr != tile_map_file);
-                        if (tile_map_file_loaded)
-                        {
-                            // STORE THE TILE MAP FILE IN THIS COLLECTION OF ASSETS.
-                            TileMapFiles(tile_map_column, tile_map_row) = std::move(tile_map_file);
-                        }
-                        else
-                        {
-                            assert(false);
-                            // All tile map files could not be loaded.
-                            return false;
-                        }
-                    }
-                }
-                catch (const std::exception&)
-                {
-                    assert(false);
-                    // All tile map files could not be loaded.
-                    return false;
-                }
-            }
-        }
-
-        // All tile map files were loaded successfully.
         return true;
     }
 }

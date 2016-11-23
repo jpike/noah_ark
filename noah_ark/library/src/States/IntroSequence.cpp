@@ -5,7 +5,7 @@
 
 namespace STATES
 {
-    const sf::Time IntroSequence::MAX_TIME_PER_FRAME = sf::seconds(10);
+    const sf::Time IntroSequence::MAX_TIME_PER_FRAME = sf::seconds(9);
 
     /// Constructor.
     IntroSequence::IntroSequence() :

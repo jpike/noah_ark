@@ -57,7 +57,7 @@ namespace MAPS
         /// (in units of pixels).
         unsigned int TileDimensionInPixels;
         /// Noah (the player) character within the world.
-        OBJECTS::Noah NoahPlayer;
+        std::unique_ptr<OBJECTS::Noah> NoahPlayer;
         /// Axe swings currently occurring in the world.
         std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings;
     };

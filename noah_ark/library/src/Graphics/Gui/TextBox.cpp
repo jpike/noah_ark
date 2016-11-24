@@ -10,7 +10,6 @@ namespace GUI
     /// Constructor.  The text box is invisible by default.
     /// @param[in]  width_in_pixels - The width of the text box, in pixels.
     /// @param[in]  height_in_pixels - The height of the text box, in pixels.
-    /// @param[in]  font - The font to use for rendering text.
     /// @throws std::exception - Thrown if the font is null.
     TextBox::TextBox(
         const unsigned int width_in_pixels,
@@ -95,9 +94,9 @@ namespace GUI
 
     /// Updates the text displayed in the text box based on the provided
     /// elapsed amount of time.
-    /// @param[in]  elapsed_time_in_seconds - The amount of time elapsed
+    /// @param[in]  elapsed_time - The amount of time elapsed
     ///     since the last update of the text box.
-    void TextBox::Update(const float elapsed_time_in_seconds)
+    void TextBox::Update(const sf::Time& elapsed_time)
     {
         // CHECK IF ANY PAGES OF TEXT EXIST.
         bool text_pages_exist = !Pages.empty();
@@ -109,7 +108,7 @@ namespace GUI
 
         // UPDATE THE CURRENT PAGE OF TEXT.
         auto& current_text_page = Pages[CurrentPageIndex];
-        current_text_page.Update(elapsed_time_in_seconds);
+        current_text_page.Update(elapsed_time);
     }
 
     /// Moves to the next page of text for the text box.

@@ -46,12 +46,13 @@ namespace GRAPHICS
 
     /// Updates the scrolling of the camera based on the provided time.
     /// Assumed that scrolling of the camera has started.
-    /// @param[in]  elapsed_time_in_seconds - The time by which to update
+    /// @param[in]  elapsed_time - The time by which to update
     ///     the scrolling.
-    void Camera::Scroll(const float elapsed_time_in_seconds)
+    void Camera::Scroll(const sf::Time& elapsed_time)
     {
         // CHECK IF SCROLLING IS FINISHED.
         const float MAX_SCROLL_TIME_IN_SECONDS = 3.0f;
+        float elapsed_time_in_seconds = elapsed_time.asSeconds();
         CurrentTotalScrollTimeInSeconds += elapsed_time_in_seconds;
         bool scrolling_finished = (CurrentTotalScrollTimeInSeconds >= MAX_SCROLL_TIME_IN_SECONDS);
         if (scrolling_finished)

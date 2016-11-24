@@ -3,7 +3,6 @@
 #include <exception>
 #include <iostream>
 #include <memory>
-#include <random>
 #include <string>
 #include <SFML/Graphics.hpp>
 #include "Bible/BibleVerses.h"
@@ -21,6 +20,7 @@
 #include "Maps/TileMap.h"
 #include "Objects/Noah.h"
 #include "Resources/Assets.h"
+#include "States/GameplayState.h"
 #include "States/IntroSequence.h"
 #include "States/SavedGameData.h"
 #include "States/TitleScreen.h"
@@ -46,32 +46,6 @@ enum class GameState
     /// The main gameplay state for the game.
     GAMEPLAY
 };
-
-void InitializePlayer(const STATES::SavedGameData& saved_game_data, RESOURCES::Assets& assets, std::unique_ptr<OBJECTS::Noah>& noah_player)
-{
-    // GET THE TEXTURE FOR NOAH.
-    std::shared_ptr<GRAPHICS::Texture> noah_texture = assets.GetTexture(RESOURCES::NOAH_TEXTURE_ID);
-    assert(noah_texture);
-
-    // GET THE AXE TEXTURE FOR NOAH.
-    std::shared_ptr<GRAPHICS::Texture> axe_texture = assets.GetTexture(RESOURCES::AXE_TEXTURE_ID);
-    assert(axe_texture);
-    
-    // GET THE AXE'S SOUND EFFECT.
-    std::shared_ptr<AUDIO::SoundEffect> axe_hit_sound = assets.GetSound(RESOURCES::AXE_HIT_SOUND_ID);
-    assert(axe_hit_sound);
-
-    // CREATE THE AXE.
-    std::shared_ptr<OBJECTS::Axe> axe = std::make_shared<OBJECTS::Axe>(axe_texture, axe_hit_sound);
-
-    // CREATE NOAH.
-    noah_player = std::make_unique<OBJECTS::Noah>(noah_texture, axe);
-
-    // SET NOAH'S INITIAL POSITION.
-    noah_player->SetWorldPosition(saved_game_data.PlayerWorldPosition);
-
-    /// @todo   Populate the inventory.
-}
 
 /// @todo   Document this function.  It looks like it can probably stay in this file for now.
 void PopulateOverworld(
@@ -381,20 +355,20 @@ int main(int argumentCount, char* arguments[])
         window->setKeyRepeatEnabled(false);
 
         // LOAD THE ASSETS.
-        RESOURCES::Assets assets;
+        std::shared_ptr<RESOURCES::Assets> assets = std::make_shared<RESOURCES::Assets>();
 
         // Some assets are explicitly loaded first as they are needed for initial
         // rendering of the intro sequence and title screen.  By loading them first,
         // quick startup time for the game can be maintained, showing the intro
         // sequence while other assets are being loaded.
-        auto font = assets.GetFont(RESOURCES::FONT_TEXTURE_ID);
+        auto font = assets->GetFont(RESOURCES::FONT_TEXTURE_ID);
         assert(font);
-        auto colored_texture_shader = assets.GetShader(RESOURCES::ShaderId::COLORED_TEXTURE);
+        auto colored_texture_shader = assets->GetShader(RESOURCES::ShaderId::COLORED_TEXTURE);
         assert(colored_texture_shader);
 
         // The overworld is loaded in the background in separate threads to avoid having
         // their loading slow the startup time of the rest of the game.
-        std::future< std::unique_ptr<MAPS::Overworld> > overworld_being_loaded = std::async(LoadOverworld, std::ref(assets));
+        std::future< std::unique_ptr<MAPS::Overworld> > overworld_being_loaded = std::async(LoadOverworld, std::ref(*assets));
 
         // INITIALIZE REMAINING SUBSYSTEMS.
         GRAPHICS::Renderer renderer(
@@ -402,12 +376,9 @@ int main(int argumentCount, char* arguments[])
             font,
             colored_texture_shader);
         INPUT_CONTROL::KeyboardInputController input_controller;
-        std::random_device random_number_generator;
-        std::vector<BIBLE::BibleVerse> bible_verses_left_to_find = BIBLE::BIBLE_VERSES;
         STATES::IntroSequence intro_sequence;
         STATES::TitleScreen title_screen;
-        std::unique_ptr<MAPS::Overworld> overworld;
-        std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> hud;
+        STATES::GameplayState gameplay_state(assets);
 
 #if COMPILE_PROTOTYPE_MUSIC_CODE
         // LOAD MISCELLANEOUS AUDIO RESOURCES.
@@ -458,7 +429,6 @@ int main(int argumentCount, char* arguments[])
 
                 // GET THE ELAPSED TIME FOR THE NEW FRAME.
                 sf::Time elapsed_time = game_loop_clock.restart();
-                float elapsed_time_in_seconds = elapsed_time.asSeconds();
 
                 // UPDATE THE GAME'S CURRENT STATE.
                 switch (game_state)
@@ -470,45 +440,8 @@ int main(int argumentCount, char* arguments[])
                         game_started = title_screen.RespondToInput(input_controller);
                         break;
                     case GameState::GAMEPLAY:
-                    {
-                        // UPDATE THE HUD IN RESPONSE TO USER INPUT.
-                        hud->RespondToInput(input_controller);
-
-                        // CHECK IF THE INVENTORY GUI IS DISPLAYED.
-                        // If the inventory GUI is displayed, then the regular controls for the player
-                        // in the world shouldn't work.
-                        if (!hud->InventoryOpened)
-                        {
-                            // UPDATE THE TEXT BOX IF IT IS VISIBLE.
-                            // If the text box is currently being displayed, then it should capture any user input.
-                            if (hud->MainTextBox.IsVisible)
-                            {
-                                // UPDATE THE TEXT IN THE TEXT BOX.
-                                hud->MainTextBox.Update(elapsed_time_in_seconds);
-                            }
-                            else
-                            {
-                                // UPDATE THE OVERWORLD.
-                                std::string message_for_text_box;
-                                overworld->Update(
-                                    elapsed_time_in_seconds,
-                                    random_number_generator,
-                                    input_controller,
-                                    bible_verses_left_to_find,
-                                    assets,
-                                    renderer.Camera,
-                                    message_for_text_box);
-
-                                // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
-                                bool text_box_message_exists = !message_for_text_box.empty();
-                                if (text_box_message_exists)
-                                {
-                                    hud->MainTextBox.StartDisplayingText(message_for_text_box);
-                                }
-                            }
-                        }
+                        gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
                         break;
-                    }
                 }
 
                 // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
@@ -524,8 +457,7 @@ int main(int argumentCount, char* arguments[])
                         title_screen.Render(renderer);
                         break;
                     case GameState::GAMEPLAY:
-                        renderer.Render(elapsed_time_in_seconds, *overworld);
-                        hud->Render(renderer);
+                        gameplay_state.Render(elapsed_time, renderer);
                         break;
                 }
 
@@ -564,32 +496,20 @@ int main(int argumentCount, char* arguments[])
                             }
                             else*/
                             {
-                                // CREATE THE OVERWORLD.
-                                bool overworld_exists = (nullptr != overworld);
-                                if (!overworld_exists)
-                                {
-                                    assert(overworld_being_loaded.valid());
-                                    overworld = overworld_being_loaded.get();
-                                    assert(overworld);
+                                // INITIALIZE THE GAMEPLAY STATE.
+                                assert(overworld_being_loaded.valid());
+                                auto overworld = overworld_being_loaded.get();
+                                assert(overworld);
 
-                                    // INITIALIZE THE PLAYER NOAH CHARACTER.
-                                    STATES::SavedGameData default_saved_game_data = STATES::SavedGameData::DefaultSavedGameData();
-                                    InitializePlayer(default_saved_game_data, assets, overworld->NoahPlayer);
-                                
-                                    // INITIALIZE THE HUD.
-                                    unsigned int text_box_width_in_pixels = SCREEN_WIDTH_IN_PIXELS;
-                                    const unsigned int LINE_COUNT = 2;
-                                    unsigned int text_box_height_in_pixels = GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS * LINE_COUNT;
-                                    hud = std::make_unique<GRAPHICS::GUI::HeadsUpDisplay>(
-                                        overworld->NoahPlayer->Inventory,
-                                        text_box_width_in_pixels,
-                                        text_box_height_in_pixels,
-                                        assets.GetTexture(RESOURCES::AXE_TEXTURE_ID),
-                                        assets.GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID));
-                                }
+                                STATES::SavedGameData default_saved_game_data = STATES::SavedGameData::DefaultSavedGameData();
+                                bool gameplay_state_initialized = gameplay_state.Initialize(
+                                    SCREEN_WIDTH_IN_PIXELS,
+                                    default_saved_game_data,
+                                    std::move(overworld));
+                                assert(gameplay_state_initialized);
 
                                 // FOCUS THE CAMERA ON THE PLAYER.
-                                MATH::Vector2f player_start_world_position = overworld->NoahPlayer->GetWorldPosition();
+                                MATH::Vector2f player_start_world_position = gameplay_state.Overworld->NoahPlayer->GetWorldPosition();
                                 renderer.Camera.SetCenter(player_start_world_position);
                             }
                         }

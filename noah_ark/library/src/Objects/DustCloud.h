@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/System.hpp>
 #include "Graphics/AnimatedSprite.h"
 
 namespace OBJECTS
@@ -14,7 +15,7 @@ namespace OBJECTS
         bool HasDisappeared() const;
 
         // UPDATING.
-        void Update(const float elapsed_time_in_seconds);
+        void Update(const sf::Time& elapsed_time);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The graphical sprite for the dust cloud.

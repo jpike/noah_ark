@@ -86,9 +86,9 @@ namespace OBJECTS
     }
 
     /// Updates the shaking of the tree, if the tree is currently shaking.
-    /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to
+    /// @param[in]  elapsed_time - The elapsed time for which to
     ///     update the tree's shaking.
-    void Tree::Update(const float elapsed_time_in_seconds)
+    void Tree::Update(const sf::Time& elapsed_time)
     {
         // ONLY UPDATE THE SHAKING IF THE TREE IS CURRENTLY SHAKING.
         if (!Shaking)
@@ -113,6 +113,7 @@ namespace OBJECTS
 
         // UPDATE THE TREE'S ROTATION BASED ON THE CURRENT SHAKING PARAMETERS.
         const TreeShakeSubRotation& current_shake_rotation = ShakeSubRotations[CurrentShakeSubRotationIndex];
+        float elapsed_time_in_seconds = elapsed_time.asSeconds();
         float shake_rotation_change_in_degrees = current_shake_rotation.RotationVelocityInDegreesPerSecond * elapsed_time_in_seconds;
         CurrentShakeRotationInDegrees += shake_rotation_change_in_degrees;
 

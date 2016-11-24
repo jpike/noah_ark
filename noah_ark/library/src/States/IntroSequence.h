@@ -18,8 +18,8 @@ namespace STATES
     class IntroSequence
     {
     public:
-        // CONSTRUCTION.
-        explicit IntroSequence();
+        // STATIC METHODS.
+        static const std::vector<BIBLE::BibleVerse>& IntroBibleVerses();
 
         // OTHER METHODS.
         bool Completed() const;
@@ -32,11 +32,9 @@ namespace STATES
         static const sf::Time MAX_TIME_PER_FRAME;
 
         // MEMBER VARIABLES.
-        /// The Bible verses, in order displayed as part of the intro sequence.
-        std::vector<BIBLE::BibleVerse> IntroBibleVerses;
         /// The index of the current Bible verse being displayed.
-        unsigned int CurrentFrameIndex;
+        unsigned int CurrentFrameIndex = 0;
         /// The time elapsed for the currently displayed frame of the intro sequence.
-        sf::Time ElapsedTimeForCurrentFrame;
+        sf::Time ElapsedTimeForCurrentFrame = sf::Time::Zero;
     };
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/System.hpp>
 #include "Audio/SoundEffect.h"
 #include "Core/Direction.h"
 #include "Graphics/Sprite.h"
@@ -76,7 +77,7 @@ namespace OBJECTS
         bool FullySwungOut() const;
 
         // OTHER METHODS.
-        void Update(const float elapsed_time_in_seconds);
+        void Update(const sf::Time& elapsed_time);
         MATH::FloatRectangle GetBladeBounds() const;
         void SetWorldPosition(const MATH::Vector2f& world_position);
 

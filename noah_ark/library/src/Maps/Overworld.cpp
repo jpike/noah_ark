@@ -26,7 +26,7 @@ namespace MAPS
     {}
 
     /// Updates the entire overworld for the elapsed time.
-    /// @param[in]  elapsed_time_in_seconds - The elapsed time for which to update the world.
+    /// @param[in]  elapsed_time - The elapsed time for which to update the world.
     /// @param[in,out]  random_number_generator - The generator for any random numbers needed
     ///     during the update.
     /// @param[in,out]  input_controller - The controller supplying player input.
@@ -37,7 +37,7 @@ namespace MAPS
     /// @param[out] message_for_text_box - The message to display in the main text box,
     ///     if one needs to start being displayed; empty if no new message needs to be displayed.
     void Overworld::Update(
-        const float elapsed_time_in_seconds,
+        const sf::Time& elapsed_time,
         std::random_device& random_number_generator,
         INPUT_CONTROL::KeyboardInputController& input_controller,
         std::vector<BIBLE::BibleVerse>& bible_verses_left_to_find,
@@ -104,7 +104,7 @@ namespace MAPS
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                     *this,
-                    elapsed_time_in_seconds,
+                    elapsed_time,
                     CORE::Direction::UP,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     NoahPlayer->GetWorldBoundingBox());
@@ -170,7 +170,7 @@ namespace MAPS
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                     *this,
-                    elapsed_time_in_seconds,
+                    elapsed_time,
                     CORE::Direction::DOWN,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     NoahPlayer->GetWorldBoundingBox());
@@ -236,7 +236,7 @@ namespace MAPS
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                     *this,
-                    elapsed_time_in_seconds,
+                    elapsed_time,
                     CORE::Direction::LEFT,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     NoahPlayer->GetWorldBoundingBox());
@@ -302,7 +302,7 @@ namespace MAPS
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::MoveWithCollisionDetection(
                     *this,
-                    elapsed_time_in_seconds,
+                    elapsed_time,
                     CORE::Direction::RIGHT,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     NoahPlayer->GetWorldBoundingBox());
@@ -365,7 +365,7 @@ namespace MAPS
         if (camera.IsScrolling)
         {
             // SCROLL BASED ON THE ELAPSED FRAME TIME.
-            camera.Scroll(elapsed_time_in_seconds);
+            camera.Scroll(elapsed_time);
 
             // CHECK IF SCROLLING HAS FINISHED.
             bool scrolling_finished = !camera.IsScrolling;

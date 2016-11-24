@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <SFML/System.hpp>
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
 
@@ -20,7 +21,7 @@ namespace GRAPHICS
 
         // SCROLLING.
         void StartScrolling(const MATH::Vector2f& start_position, const MATH::Vector2f& end_position);
-        void Scroll(const float elapsed_time_in_seconds);
+        void Scroll(const sf::Time& elapsed_time);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The bounding rectangle (in world coordinates) of the camera's view.

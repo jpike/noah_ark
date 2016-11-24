@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include "Graphics/Renderer.h"
 #include "Math/Vector2.h"
 
@@ -41,7 +42,7 @@ namespace GUI
 
         bool AllTextDisplayed() const;
 
-        void Update(const float elapsed_time_in_seconds);
+        void Update(const sf::Time& elapsed_time);
 
         void Render(
             const MATH::Vector2ui& top_left_screen_position_in_pixels,

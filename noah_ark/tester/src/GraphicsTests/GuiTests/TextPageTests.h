@@ -25,7 +25,7 @@ namespace TEST_TEXT_PAGE
         REQUIRE(text_added);
 
         // ELAPSE ENOUGH TIME FOR A SINGLE CHARACTER TO BE DISPLAYED.
-        text_page.Update(TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS);
+        text_page.Update(sf::seconds(TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS));
 
         // RENDER THE TEXT PAGE.
         std::stringstream output_stream;
@@ -69,7 +69,7 @@ namespace TEST_TEXT_PAGE
         REQUIRE(text_added);
 
         // ELAPSE ENOUGH TIME FOR THE SINGLE CHARACTER TO BE DISPLAYED.
-        text_page.Update(TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS);
+        text_page.Update(sf::seconds(TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS));
 
         // RENDER THE TEXT PAGE.
         std::stringstream output_stream;
@@ -97,7 +97,7 @@ namespace TEST_TEXT_PAGE
         for (unsigned int character_index = 0; character_index < SINGLE_WORD.length(); ++character_index)
         {
             // ELAPSE ENOUGH TIME FOR THIS NEXT CHARACTER TO BE DISPLAYED.
-            text_page.Update(TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS);
+            text_page.Update(sf::seconds(TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS));
 
             // RENDER THE TEXT PAGE.
             std::stringstream output_stream;
@@ -139,7 +139,7 @@ namespace TEST_TEXT_PAGE
             for (unsigned int character_index = 0; character_index < word->length(); ++character_index)
             {
                 // ELAPSE ENOUGH TIME FOR THIS NEXT CHARACTER TO BE DISPLAYED.
-                text_page.Update(TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS);
+                text_page.Update(sf::seconds(TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS));
 
                 // RENDER THE TEXT PAGE.
                 std::stringstream output_stream;
@@ -169,7 +169,7 @@ namespace TEST_TEXT_PAGE
                 previously_rendered_words += " ";
 
                 // ELAPSE ENOUGH TIME FOR THE SPACE CHARACTER TO HAVE BEEN DISPLAYED.
-                text_page.Update(TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS);
+                text_page.Update(sf::seconds(TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS));
 
                 // VERIFY THAT THE SPACE CHARACTER WAS RENDERED.
                 std::stringstream output_stream_with_space;
@@ -205,7 +205,7 @@ namespace TEST_TEXT_PAGE
             // been propagated to every test case.  Each test case will only be modified as
             // needed.
             float elapsed_time_in_seconds_for_next_character = 1.0001f * TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS;
-            text_page.Update(elapsed_time_in_seconds_for_next_character);
+            text_page.Update(sf::seconds(elapsed_time_in_seconds_for_next_character));
 
             // RENDER THE TEXT PAGE.
             std::stringstream output_stream;
@@ -253,7 +253,7 @@ namespace TEST_TEXT_PAGE
                 // been propagated to every test case.  Each test case will only be modified as
                 // needed.
                 float elapsed_time_in_seconds_for_next_character = 1.0001f * TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS;
-                text_page.Update(elapsed_time_in_seconds_for_next_character);
+                text_page.Update(sf::seconds(elapsed_time_in_seconds_for_next_character));
 
                 // RENDER THE TEXT PAGE.
                 std::stringstream output_stream;
@@ -309,7 +309,7 @@ namespace TEST_TEXT_PAGE
             for (unsigned int character_index = 0; character_index < word->length(); ++character_index)
             {
                 // ELAPSE ENOUGH TIME FOR THIS NEXT CHARACTER TO BE DISPLAYED.
-                text_page.Update(elapsed_time_in_seconds_for_next_character);
+                text_page.Update(sf::seconds(elapsed_time_in_seconds_for_next_character));
 
                 // RENDER THE TEXT PAGE.
                 std::stringstream output_stream;
@@ -349,7 +349,7 @@ namespace TEST_TEXT_PAGE
                     previously_rendered_words_on_current_line += " ";
 
                     // ELAPSE ENOUGH TIME FOR THE SPACE CHARACTER TO HAVE BEEN DISPLAYED.
-                    text_page.Update(elapsed_time_in_seconds_for_next_character);
+                    text_page.Update(sf::seconds(elapsed_time_in_seconds_for_next_character));
 
                     // VERIFY THAT THE SPACE CHARACTER WAS RENDERED.
                     std::stringstream output_stream_with_space;

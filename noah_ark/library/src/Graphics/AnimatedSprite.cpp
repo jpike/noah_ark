@@ -76,8 +76,8 @@ namespace GRAPHICS
     }
 
     /// Updates the animation based on the elapsed time.
-    /// @param[in]  elapsed_time_in_seconds - The elapsed time by which to update the animation.
-    void AnimatedSprite::Update(const float elapsed_time_in_seconds)
+    /// @param[in]  elapsed_time - The elapsed time by which to update the animation.
+    void AnimatedSprite::Update(const sf::Time& elapsed_time)
     {
         // CHECK IF AN ANIMATION IS PLAYING.
         std::shared_ptr<AnimationSequence> current_animation = GetCurrentAnimationSequence();
@@ -87,8 +87,7 @@ namespace GRAPHICS
         if (animation_playing)
         {
             // UPDATE THE ANIMATION BASED ON THE PROVIDED TIME.
-            sf::Time elapsedTime = sf::seconds(elapsed_time_in_seconds);
-            current_animation->Progress(elapsedTime);
+            current_animation->Progress(elapsed_time);
         }
 
         // APPLY ANY ANIMATIONS TO THE SPRITE.

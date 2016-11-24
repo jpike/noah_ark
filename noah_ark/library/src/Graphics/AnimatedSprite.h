@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <SFML/System.hpp>
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Color.h"
 #include "Graphics/Screen.h"
@@ -30,7 +31,7 @@ namespace GRAPHICS
 
         // RENDERING/UPDATING.
         void Render(Screen& screen) const;
-        void Update(const float elapsed_time_in_seconds);
+        void Update(const sf::Time& elapsed_time);
 
         // POSITIONING.
         MATH::Vector2f GetWorldPosition() const;

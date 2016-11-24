@@ -99,9 +99,9 @@ namespace GUI
 
     /// Updates the text displayed in the text page based on the provided
     /// elapsed amount of time.
-    /// @param[in]  elapsed_time_in_seconds - The amount of time elapsed
+    /// @param[in]  elapsed_time - The amount of time elapsed
     ///     since the last update of the text page.
-    void TextPage::Update(const float elapsed_time_in_seconds)
+    void TextPage::Update(const sf::Time& elapsed_time)
     {
         // CHECK IF THE PAGE OF TEXT HAS BEEN FULLY DISPLAYED.
         bool all_text_displayed = AllTextDisplayed();
@@ -114,6 +114,7 @@ namespace GUI
         }
 
         // UPDATE THE TOTAL TIME TEXT HAS BEEN DISPLAYED IN THIS PAGE.
+        float elapsed_time_in_seconds = elapsed_time.asSeconds();
         TotalElapsedTimeInSecondsTextHasBeenDisplayed += elapsed_time_in_seconds;
     }
 

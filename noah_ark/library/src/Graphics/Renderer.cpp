@@ -449,12 +449,12 @@ namespace GRAPHICS
     }
 
     /// Renders an overworld.
-    /// @param[in]  elapsed_time_in_seconds - The elapsed time since the last rendering of the world.
+    /// @param[in]  elapsed_time - The elapsed time since the last rendering of the world.
     ///     @todo   Look at ways to remove this parameter.
     /// @param[in]  overworld - The overworld to render.
     ///     @todo   Look at how to make overworld parameter const.
     void Renderer::Render(
-        const float elapsed_time_in_seconds,
+        const sf::Time& elapsed_time,
         MAPS::Overworld& overworld)
     {
         /// @todo   Factor out updating from this method?
@@ -506,7 +506,7 @@ namespace GRAPHICS
                 /// @todo   Figure out if this maybe should be handled elsewhere.
                 for (auto tree = tile_map->Trees.begin(); tree != tile_map->Trees.end(); ++tree)
                 {
-                    tree->Update(elapsed_time_in_seconds);
+                    tree->Update(elapsed_time);
                 }
 
                 // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
@@ -515,7 +515,7 @@ namespace GRAPHICS
                 for (auto dust_cloud = tile_map->TreeDustClouds.begin(); dust_cloud != tile_map->TreeDustClouds.end();)
                 {
                     // UPDATE THE CURRENT DUST CLOUD.
-                    dust_cloud->Update(elapsed_time_in_seconds);
+                    dust_cloud->Update(elapsed_time);
 
                     // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
                     bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
@@ -538,8 +538,8 @@ namespace GRAPHICS
 
         // RENDER THE PLAYER.
         // Make sure his axe/sprite are updated.
-        overworld.NoahPlayer->Inventory->Axe->Update(elapsed_time_in_seconds);
-        overworld.NoahPlayer->Sprite.Update(elapsed_time_in_seconds);
+        overworld.NoahPlayer->Inventory->Axe->Update(elapsed_time);
+        overworld.NoahPlayer->Sprite.Update(elapsed_time);
         overworld.NoahPlayer->Sprite.Render(Screen);
 
         // The axe should only be rendered if it is swinging.

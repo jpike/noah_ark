@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <SFML/System.hpp>
 #include "Audio/SoundEffect.h"
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
@@ -47,7 +48,7 @@ namespace OBJECTS
         void StartShaking();
 
         // UPDATING.
-        void Update(const float elapsed_time_in_seconds);
+        void Update(const sf::Time& elapsed_time);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The graphical sprite for the tree.

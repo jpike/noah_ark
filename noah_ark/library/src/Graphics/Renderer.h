@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include "Graphics/AnimatedSprite.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Color.h"
@@ -55,7 +56,7 @@ namespace GRAPHICS
 
         // OTHER RENDERING.
         void Render(
-            const float elapsed_time_in_seconds,
+            const sf::Time& elapsed_time,
             MAPS::Overworld& overworld);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

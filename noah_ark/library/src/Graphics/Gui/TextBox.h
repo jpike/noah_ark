@@ -4,6 +4,7 @@
 #include <ostream>
 #include <string>
 #include <vector>
+#include <SFML/System.hpp>
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/TextPage.h"
 #include "Graphics/Renderer.h"
@@ -28,7 +29,7 @@ namespace GUI
         // OTHER PUBLIC METHODS.
         void StartDisplayingText(const std::string& text);
 
-        void Update(const float elapsed_time_in_seconds);
+        void Update(const sf::Time& elapsed_time);
 
         void MoveToNextPage();
 

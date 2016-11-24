@@ -7,33 +7,38 @@ namespace STATES
 {
     const sf::Time IntroSequence::MAX_TIME_PER_FRAME = sf::seconds(10);
 
-    /// Constructor.
-    IntroSequence::IntroSequence() :
-        IntroBibleVerses(),
-        CurrentFrameIndex(0),
-        ElapsedTimeForCurrentFrame(sf::Time::Zero)
+    /// Gets the Bible verses, in order displayed as part of the intro sequence.
+    /// @return Bible verses included in the intro sequence.
+    const std::vector<BIBLE::BibleVerse>& IntroSequence::IntroBibleVerses()
     {
-        // GET THE BIBLE VERSES FOR THE INTRO SEQUENCE.
-        const BIBLE::BibleVerse* intro_verse_1 = BIBLE::FindBibleVerse(
-            BIBLE::BibleBook::GENESIS,
-            BIBLE::ChapterNumber(5),
-            BIBLE::VerseNumber(28));
-        bool intro_verse_1_exists = (nullptr != intro_verse_1);
-        if (intro_verse_1_exists)
+        static std::vector<BIBLE::BibleVerse> intro_bible_verses;
+
+        // Add the introductory Bible verses only if they haven't been found yet.
+        if (intro_bible_verses.empty())
         {
-            /// @todo   Factor this out so that construction can't fail?
-            IntroBibleVerses.push_back(*intro_verse_1);
+            // GET THE BIBLE VERSES FOR THE INTRO SEQUENCE.
+            const BIBLE::BibleVerse* intro_verse_1 = BIBLE::FindBibleVerse(
+                BIBLE::BibleBook::GENESIS,
+                BIBLE::ChapterNumber(5),
+                BIBLE::VerseNumber(28));
+            bool intro_verse_1_exists = (nullptr != intro_verse_1);
+            if (intro_verse_1_exists)
+            {
+                intro_bible_verses.push_back(*intro_verse_1);
+            }
+
+            const BIBLE::BibleVerse* intro_verse_2 = BIBLE::FindBibleVerse(
+                BIBLE::BibleBook::GENESIS,
+                BIBLE::ChapterNumber(5),
+                BIBLE::VerseNumber(29));
+            bool intro_verse_2_exists = (nullptr != intro_verse_2);
+            if (intro_verse_2_exists)
+            {
+                intro_bible_verses.push_back(*intro_verse_2);
+            }
         }
 
-        const BIBLE::BibleVerse* intro_verse_2 = BIBLE::FindBibleVerse(
-            BIBLE::BibleBook::GENESIS,
-            BIBLE::ChapterNumber(5),
-            BIBLE::VerseNumber(29));
-        bool intro_verse_2_exists = (nullptr != intro_verse_2);
-        if (intro_verse_2_exists)
-        {
-            IntroBibleVerses.push_back(*intro_verse_2);
-        }
+        return intro_bible_verses;
     }
 
     /// Determines if the intro sequence has completed.
@@ -43,7 +48,7 @@ namespace STATES
         // The intro sequence is only completed if the current frame index
         // is greater than the last frame index as the last frame needs
         // to be displayed on screen for some period of time.
-        unsigned int last_frame_index = IntroBibleVerses.size() - 1;
+        unsigned int last_frame_index = IntroBibleVerses().size() - 1;
         bool intro_sequence_completed = (CurrentFrameIndex > last_frame_index);
         return intro_sequence_completed;
     }
@@ -79,7 +84,7 @@ namespace STATES
         }
 
         // MAKE SURE FRAMES EXIST.
-        bool frames_exist = !IntroBibleVerses.empty();
+        bool frames_exist = !IntroBibleVerses().empty();
         if (!frames_exist)
         {
             // There's nothing to render.
@@ -87,7 +92,7 @@ namespace STATES
         }
 
         // RENDER THE CURRENT BIBLE VERSE.
-        const BIBLE::BibleVerse& current_bible_verse = IntroBibleVerses.at(CurrentFrameIndex);
+        const BIBLE::BibleVerse& current_bible_verse = IntroBibleVerses().at(CurrentFrameIndex);
         const std::string bible_verse_text = current_bible_verse.ToString();
         GRAPHICS::Color white;
         white.Red = GRAPHICS::Color::MAX_COLOR_COMPONENT;

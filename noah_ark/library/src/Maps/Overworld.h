@@ -4,6 +4,7 @@
 #include <random>
 #include <string>
 #include <vector>
+#include <SFML/System.hpp>
 #include "Bible/BibleVerses.h"
 #include "Core/Array2D.h"
 #include "Events/AxeSwingEvent.h"
@@ -30,7 +31,7 @@ namespace MAPS
 
         // UPDATING.
         void Update(
-            const float elapsed_time_in_seconds,
+            const sf::Time& elapsed_time,
             std::random_device& random_number_generator,
             INPUT_CONTROL::KeyboardInputController& input_controller,
             std::vector<BIBLE::BibleVerse>& bible_verses_left_to_find,

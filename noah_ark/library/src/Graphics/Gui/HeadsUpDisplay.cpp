@@ -10,8 +10,8 @@ namespace GUI
 {
     /// Constructor.
     /// @param[in]  inventory - The inventory to display in the HUD.
-    /// @param[in]  width_in_pixels - The width of the main text box, in pixels.
-    /// @param[in]  height_in_pixels - The height of the main text box, in pixels.
+    /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
+    /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
     /// @param[in]  axe_texture - The texture to use for rendering an
     ///     axe icon on the HUD.
     /// @param[in]  wood_texture - The texture to use for rendering a

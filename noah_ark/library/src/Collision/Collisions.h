@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <SFML/System.hpp>
 #include "Collision/Movement.h"
 #include "Core/Direction.h"
 #include "Events/AxeSwingEvent.h"
@@ -24,7 +25,7 @@ namespace COLLISION
 
     MATH::Vector2f MoveWithCollisionDetection(
         MAPS::Overworld& overworld,
-        const float elapsed_time_in_seconds,
+        const sf::Time& elapsed_time,
         const CORE::Direction direction,
         const float move_speed_in_pixels_per_second,
         const MATH::FloatRectangle& object_world_bounding_box);

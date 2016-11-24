@@ -245,6 +245,9 @@
     <ClInclude Include="src\Inventory\InventoryGui.h">
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
+    <ClInclude Include="src\States\GameplayState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -378,6 +381,9 @@
     </ClCompile>
     <ClCompile Include="src\Inventory\InventoryGui.cpp">
       <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\States\GameplayState.cpp">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

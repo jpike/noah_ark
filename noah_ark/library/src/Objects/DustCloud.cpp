@@ -13,14 +13,15 @@ namespace OBJECTS
 
     /// Updates the state of the dust cloud based on the elapsed time.
     /// Dust clouds animate and disappear/fade away over time.
-    /// @param[in]  elapsed_time_in_seconds - The elapsed time for which
+    /// @param[in]  elapsed_time - The elapsed time for which
     ///     to update the dust cloud.
-    void DustCloud::Update(const float elapsed_time_in_seconds)
+    void DustCloud::Update(const sf::Time& elapsed_time)
     {
         // UPDATE THE FRAME-BASED ANIMATION.
-        Sprite.Update(elapsed_time_in_seconds);
+        Sprite.Update(elapsed_time);
 
         // TRACK THE TOTAL TIME THIS CLOUD THAT BEEN AROUND.
+        float elapsed_time_in_seconds = elapsed_time.asSeconds();
         TotalElapsedTimeInSeconds += elapsed_time_in_seconds;
 
         // ADD ADDITIONAL EFFECTS BASED ON THE CURRENT ANIMATION SEQUENCE.

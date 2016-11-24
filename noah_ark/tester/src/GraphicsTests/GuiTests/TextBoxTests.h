@@ -40,7 +40,7 @@ namespace TEST_TEXT_BOX
         const std::string EXPECTED_FIRST_PAGE_TEXT =
             "You got a Bible verse!\n";
         float elapsed_time_in_seconds_for_first_page = elapsed_time_in_seconds_for_next_character * EXPECTED_FIRST_PAGE_TEXT.length();
-        text_box.Update(elapsed_time_in_seconds_for_first_page);
+        text_box.Update(sf::seconds(elapsed_time_in_seconds_for_first_page));
         std::stringstream first_page_output;
         text_box.Render(first_page_output);
         std::string rendered_first_page_text = first_page_output.str();
@@ -58,7 +58,7 @@ namespace TEST_TEXT_BOX
             "1 7:7 - And Noah went in, and \n"
             "his sons, and his wife, and \n";
         float elapsed_time_in_seconds_for_second_page = elapsed_time_in_seconds_for_next_character * EXPECTED_SECOND_PAGE_TEXT.length();
-        text_box.Update(elapsed_time_in_seconds_for_second_page);
+        text_box.Update(sf::seconds(elapsed_time_in_seconds_for_second_page));
         std::stringstream second_page_output;
         text_box.Render(second_page_output);
         std::string rendered_second_page_text = second_page_output.str();
@@ -76,7 +76,7 @@ namespace TEST_TEXT_BOX
             "his sons' wives with him, into\n"
             "the ark, because of the waters\n";
         float elapsed_time_in_seconds_for_third_page = elapsed_time_in_seconds_for_next_character * EXPECTED_THIRD_PAGE_TEXT.length();
-        text_box.Update(elapsed_time_in_seconds_for_third_page);
+        text_box.Update(sf::seconds(elapsed_time_in_seconds_for_third_page));
         std::stringstream third_page_output;
         text_box.Render(third_page_output);
         std::string rendered_third_page_text = third_page_output.str();
@@ -93,7 +93,7 @@ namespace TEST_TEXT_BOX
         const std::string EXPECTED_FOURTH_PAGE_TEXT =
             "of the flood.\n";
         float elapsed_time_in_seconds_for_fourth_page = elapsed_time_in_seconds_for_next_character * EXPECTED_FOURTH_PAGE_TEXT.length();
-        text_box.Update(elapsed_time_in_seconds_for_fourth_page);
+        text_box.Update(sf::seconds(elapsed_time_in_seconds_for_fourth_page));
         std::stringstream fourth_page_output;
         text_box.Render(fourth_page_output);
         std::string rendered_fourth_page_text = fourth_page_output.str();

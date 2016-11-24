@@ -252,8 +252,8 @@ namespace OBJECTS
     }
 
     /// Updates the axe for a frame based on the elapsed amount of time.
-    /// @param[in]  elapsed_time_in_seconds - The amount of time to update by.
-    void Axe::Update(const float elapsed_time_in_seconds)
+    /// @param[in]  elapsed_time - The amount of time to update by.
+    void Axe::Update(const sf::Time& elapsed_time)
     {
         // CHECK IF THE AXE IS SWINGING.
         bool is_swinging = IsSwinging();
@@ -261,6 +261,7 @@ namespace OBJECTS
         {
             // UPDATE THE SWING BASED ON THE ELAPSED TIME.
             const float ROTATION_SPEED_IN_DEGREES_PER_SECOND = 90.0f;
+            float elapsed_time_in_seconds = elapsed_time.asSeconds();
             float rotation_amount_for_update_in_degrees = ROTATION_SPEED_IN_DEGREES_PER_SECOND * elapsed_time_in_seconds;
             if (SwingingOut)
             {

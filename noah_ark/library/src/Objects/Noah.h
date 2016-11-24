@@ -44,6 +44,9 @@ namespace OBJECTS
 
         // BOUNDING BOX.
         MATH::FloatRectangle GetWorldBoundingBox() const;
+        
+        // MOVEMENT.
+        void BeginWalking(const CORE::Direction direction, const std::string& walking_animation_name);
 
         // AXE SWINGING.
         std::shared_ptr<EVENTS::AxeSwingEvent> SwingAxe() const;

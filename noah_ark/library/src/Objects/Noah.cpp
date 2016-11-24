@@ -117,6 +117,20 @@ namespace OBJECTS
         return bounding_box;
     }
 
+    /// Begins the walking process for Noah.  This doesn't actually move Noah
+    /// but instead just updates his direction and animation.
+    /// @param[in]  direction - The direction Noah should begin walking.
+    /// @param[in]  walking_animation_name - The name of the walking animation to start playing for the direction.
+    void Noah::BeginWalking(const CORE::Direction direction, const std::string& walking_animation_name)
+    {
+        // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
+        FacingDirection = direction;
+
+        // PLAY THE WALKING ANIMATION.
+        Sprite.UseAnimationSequence(walking_animation_name);
+        Sprite.Play();
+    }
+
     /// Causes Noah to begin swinging his axe, if he has one and isn't already swinging it.
     /// @return The event describing the axe swing, if an axe swing is started.
     std::shared_ptr<EVENTS::AxeSwingEvent> Noah::SwingAxe() const

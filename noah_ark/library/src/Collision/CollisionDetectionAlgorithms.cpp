@@ -1,51 +1,109 @@
-#include "Collision/Collisions.h"
+#include "Collision/CollisionDetectionAlgorithms.h"
 
 namespace COLLISION
 {
-    bool CollidesWithTree(MAPS::Overworld& overworld, const MATH::FloatRectangle& rectangle, MATH::FloatRectangle& tree_rectangle)
+    /// Moves an object in the overworld while performing collision detection
+    /// to prevent the object from inappropriately overlapping objects.
+    /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
+    /// @param[in]  direction - The direction to move the object.
+    /// @param[in]  move_speed_in_pixels_per_second - The movement speed of the object.
+    /// @param[in]  elapsed_time - The elapsed time over which to move the object.
+    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @return The new center world position of the object.
+    MATH::Vector2f CollisionDetectionAlgorithms::MoveObject(
+        const MATH::FloatRectangle& object_world_bounding_box,
+        const CORE::Direction direction,
+        const float move_speed_in_pixels_per_second,
+        const sf::Time& elapsed_time,
+        MAPS::Overworld& overworld)
     {
-        // CLEAR THE OUT PARAMETER.
-        tree_rectangle = MATH::FloatRectangle();
+        // DESCRIBE THE MOVEMENT TO BE PERFORMED.
+        float elapsed_time_in_seconds = elapsed_time.asSeconds();
+        float movement_distance_in_pixels = move_speed_in_pixels_per_second * elapsed_time_in_seconds;
+        COLLISION::Movement movement(direction, movement_distance_in_pixels);
 
-        // GET THE TREES NEAR THE RECTANGLE.
-        MATH::Vector2f object_center_position = rectangle.GetCenterPosition();
-        MAPS::TileMap* current_tile_map = overworld.GetTileMap(object_center_position.X, object_center_position.Y);
-        bool tile_map_exists = (nullptr != current_tile_map);
-        if (!tile_map_exists)
+        // SIMULATE MOVEMENT BASED ON THE PARTICULAR DIRECTION.
+        MATH::Vector2f new_world_position = object_world_bounding_box.GetCenterPosition();
+        switch (direction)
         {
-            // No tile map exists with trees to collide with.
-            return false;
+            case CORE::Direction::UP:
+                new_world_position = MoveObjectUp(object_world_bounding_box, movement, overworld);
+                break;
+            case CORE::Direction::DOWN:
+                new_world_position = MoveObjectDown(object_world_bounding_box, movement, overworld);
+                break;
+            case CORE::Direction::LEFT:
+                new_world_position = MoveObjectLeft(object_world_bounding_box, movement, overworld);
+                break;
+            case CORE::Direction::RIGHT:
+                new_world_position = MoveObjectRight(object_world_bounding_box, movement, overworld);
+                break;
+            case CORE::Direction::INVALID:
+                // Intentionally fall through.
+            default:
+                // No movement can be simulated for an invalid direction.
+                break;
         }
 
-        // CHECK IF ANY OF THE TREES COLLIDE WITH THE RECTANGLE.
-        for (auto tree = current_tile_map->Trees.cbegin(); current_tile_map->Trees.cend() != tree; ++tree)
-        {
-            // SHRINK THE TREE'S BOUNDING BOX SO THAT OBJECTS DON'T GET CAUGHT ON EDGES.
-            const float TREE_DIMENSION_SHRINK_AMOUNT = 2.0f;
-            MATH::FloatRectangle tree_bounds = tree->GetWorldBoundingBox();
-            float new_tree_width = tree_bounds.GetWidth() - TREE_DIMENSION_SHRINK_AMOUNT;
-            float new_tree_height = tree_bounds.GetHeight() - TREE_DIMENSION_SHRINK_AMOUNT;
-            MATH::FloatRectangle new_tree_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
-                tree_bounds.GetCenterXPosition(),
-                tree_bounds.GetCenterYPosition(),
-                new_tree_width,
-                new_tree_height);
-
-            // CHECK IF A COLLISION OCCURS WITH THE CURRENT TREE.
-            bool collides_with_tree = rectangle.Intersects(new_tree_bounds);
-            if (collides_with_tree)
-            {
-                // RETURN THAT A COLLISION OCCURRED WITH THE CURRENT TREE.
-                tree_rectangle = new_tree_bounds;
-                return true;
-            }
-        }
-
-        // No trees were found to collide with the rectangle.
-        return false;
+        return new_world_position;
     }
 
-    MATH::Vector2f MoveUpWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
+    /// Handles collisions of axe swings with objects in the overworld.
+    /// @param[in,out]  overworld - The overworld in which axes are being swung.
+    /// @param[in,out]  axe_swings - The axe swings to process and update.
+    /// @param[in,out]  assets - Assets that might be needed.
+    void CollisionDetectionAlgorithms::HandleAxeSwings(
+        MAPS::Overworld& overworld,
+        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings,
+        RESOURCES::Assets& assets)
+    {
+        // HANDLE COLLISIONS FOR ALL AXE SWINGS.
+        for (auto axe_swing_event = axe_swings.cbegin(); axe_swings.cend() != axe_swing_event;)
+        {
+            // MAKE SURE THE CURRENT AXE SWING EXISTS.
+            bool axe_swing_exists = (nullptr != axe_swing_event->get());
+            if (!axe_swing_exists)
+            {
+                // Remove the invalid event so that it no longer takes up space.
+                axe_swing_event = axe_swings.erase(axe_swing_event);
+
+                // Silently skip over this missing axe swing to allow
+                // the game to continue running.
+                continue;
+            }
+
+            const EVENTS::AxeSwingEvent axe_swing = (**axe_swing_event);
+
+            // CHECK IF THE AXE SWING EVENT HAS REACHED ITS MAXIMUM EXTENSION POINT.
+            // The axe swing event should only be processed once it has finish
+            // being fully swung out to its maximum point.
+            bool axe_swing_at_max_extension_point = axe_swing.FullySwungOut();
+            if (!axe_swing_at_max_extension_point)
+            {
+                // The current axe swing event is not ready to be processed,
+                // so skip to the next event.
+                ++axe_swing_event;
+                continue;
+            }
+
+            // HANDLE COLLISIONS OF THE AXE WITH TREES.
+            HandleAxeCollisionsWithTrees(*axe_swing.Axe, overworld, assets);
+
+            // REMOVE THE PROCESSED AXE SWING EVENT.
+            axe_swing_event = axe_swings.erase(axe_swing_event);
+        }
+    }
+
+    /// Moves an object up in the overworld while performing collision detection
+    /// to prevent the object from inappropriately overlapping objects.
+    /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
+    /// @param[in]  movement - The movement to simulate for the object.
+    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @return The new center world position of the object.
+    MATH::Vector2f CollisionDetectionAlgorithms::MoveObjectUp(
+        const MATH::FloatRectangle& object_world_bounding_box,
+        const COLLISION::Movement& movement,
+        MAPS::Overworld& overworld)
     {
         // INITIALIZE THE NEW POSITION FOR THE OBJECT.
         // The object should remain at its current position if no movement occurs.
@@ -105,7 +163,7 @@ namespace COLLISION
 
             // CHECK IF THE OBJECT COLLIDES WITH A TREE.
             MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
+            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, overworld, tree_rectangle);
             if (collides_with_tree)
             {
                 // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
@@ -179,7 +237,16 @@ namespace COLLISION
         return object_new_world_position;
     }
 
-    MATH::Vector2f MoveDownWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
+    /// Moves an object down in the overworld while performing collision detection
+    /// to prevent the object from inappropriately overlapping objects.
+    /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
+    /// @param[in]  movement - The movement to simulate for the object.
+    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @return The new center world position of the object.
+    MATH::Vector2f CollisionDetectionAlgorithms::MoveObjectDown(
+        const MATH::FloatRectangle& object_world_bounding_box,
+        const COLLISION::Movement& movement,
+        MAPS::Overworld& overworld)
     {
         // INITIALIZE THE NEW POSITION OF THE OBJECT.
         // The object should remain at its current position if no movement occurs.
@@ -241,7 +308,7 @@ namespace COLLISION
 
             // CHECK IF THE OBJECT COLLIDES WITH A TREE.
             MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
+            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, overworld, tree_rectangle);
             if (collides_with_tree)
             {
                 // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
@@ -310,7 +377,16 @@ namespace COLLISION
         return object_new_world_position;
     }
 
-    MATH::Vector2f MoveLeftWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
+    /// Moves an object left in the overworld while performing collision detection
+    /// to prevent the object from inappropriately overlapping objects.
+    /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
+    /// @param[in]  movement - The movement to simulate for the object.
+    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @return The new center world position of the object.
+    MATH::Vector2f CollisionDetectionAlgorithms::MoveObjectLeft(
+        const MATH::FloatRectangle& object_world_bounding_box,
+        const COLLISION::Movement& movement,
+        MAPS::Overworld& overworld)
     {
         // INITIALIZE THE NEW POSITION FOR THE OBJECT.
         // The object should remain at its current position if no movement occurs.
@@ -372,7 +448,7 @@ namespace COLLISION
 
             // CHECK IF THE OBJECT COLLIDES WITH A TREE.
             MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
+            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, overworld, tree_rectangle);
             if (collides_with_tree)
             {
                 // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
@@ -439,7 +515,16 @@ namespace COLLISION
         return object_new_world_position;
     }
 
-    MATH::Vector2f MoveRightWithCollisionDetection(MAPS::Overworld& overworld, const COLLISION::Movement& movement, const MATH::FloatRectangle& object_world_bounding_box)
+    /// Moves an object right in the overworld while performing collision detection
+    /// to prevent the object from inappropriately overlapping objects.
+    /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
+    /// @param[in]  movement - The movement to simulate for the object.
+    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @return The new center world position of the object.
+    MATH::Vector2f CollisionDetectionAlgorithms::MoveObjectRight(
+        const MATH::FloatRectangle& object_world_bounding_box,
+        const COLLISION::Movement& movement,
+        MAPS::Overworld& overworld)
     {
         // INITIALIZE THE NEW POSITION FOR THE OBJECT.
         // The object should remain at its current position if no movement occurs.
@@ -501,7 +586,7 @@ namespace COLLISION
 
             // CHECK IF THE OBJECT COLLIDES WITH A TREE.
             MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(overworld, object_current_bounding_box, tree_rectangle);
+            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, overworld, tree_rectangle);
             if (collides_with_tree)
             {
                 // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
@@ -569,44 +654,11 @@ namespace COLLISION
         return object_new_world_position;
     }
 
-    MATH::Vector2f MoveWithCollisionDetection(
-        MAPS::Overworld& overworld,
-        const sf::Time& elapsed_time,
-        const CORE::Direction direction,
-        const float move_speed_in_pixels_per_second,
-        const MATH::FloatRectangle& object_world_bounding_box)
-    {
-        float elapsed_time_in_seconds = elapsed_time.asSeconds();
-        float movement_distance_in_pixels = move_speed_in_pixels_per_second * elapsed_time_in_seconds;
-        COLLISION::Movement movement(direction, movement_distance_in_pixels);
-
-        // SIMULATE MOVEMENT BASED ON THE PARTICULAR DIRECTION.
-        MATH::Vector2f new_world_position = object_world_bounding_box.GetCenterPosition();
-        switch (direction)
-        {
-            case CORE::Direction::UP:
-                new_world_position = MoveUpWithCollisionDetection(overworld, movement, object_world_bounding_box);
-                break;
-            case CORE::Direction::DOWN:
-                new_world_position = MoveDownWithCollisionDetection(overworld, movement, object_world_bounding_box);
-                break;
-            case CORE::Direction::LEFT:
-                new_world_position = MoveLeftWithCollisionDetection(overworld, movement, object_world_bounding_box);
-                break;
-            case CORE::Direction::RIGHT:
-                new_world_position = MoveRightWithCollisionDetection(overworld, movement, object_world_bounding_box);
-                break;
-            case CORE::Direction::INVALID:
-                // Intentionally fall through.
-            default:
-                // No movement can be simulated for an invalid direction.
-                break;
-        }
-
-        return new_world_position;
-    }
-
-    void HandleAxeCollisionsWithTrees(const OBJECTS::Axe& axe, MAPS::Overworld& overworld, RESOURCES::Assets& assets)
+    /// Handles collisions of axes with trees in the overworld.
+    /// @param[in]  axe - The axe to process for collision detection with trees.
+    /// @param[in,out]  overworld - The overworld in which the axe and trees exist.
+    /// @param[in,out]  assets - Assets that might be needed.
+    void CollisionDetectionAlgorithms::HandleAxeCollisionsWithTrees(const OBJECTS::Axe& axe, MAPS::Overworld& overworld, RESOURCES::Assets& assets)
     {
         // GET THE WORLD AREA CONTAING THE AXE BLADE.
         // While it is technically possible for the axe to intersect multiple tile maps,
@@ -635,7 +687,7 @@ namespace COLLISION
 
                 // DAMAGE THE TREE.
                 tree->TakeHit();
-                
+
                 // SHAKE THE TREE.
                 tree->StartShaking();
 
@@ -677,7 +729,7 @@ namespace COLLISION
                     if (dust_cloud_resources_retrieved)
                     {
                         OBJECTS::DustCloud dust_cloud;
-                                               
+
                         const std::string DUST_CLOUD_ANIMATION_ID = "dust_cloud";
                         const bool IS_LOOPING = false;
                         const sf::Time TOTAL_DURATION = sf::seconds(2.0f);
@@ -720,45 +772,54 @@ namespace COLLISION
         }
     }
 
-    void HandleAxeSwingCollisions(
+    /// Determines if an object collides with a tree in the overworld.
+    /// @param[in]  rectangle - The bounding world rectangle of the object.
+    /// @param[in,out]  overworld - The overworld in which the object and trees exist.
+    /// @param[out] tree_rectangle - The bounding world rectangle of the tree, if a collision occurred.
+    /// @return True if the object collided with a tree; false otherwise.
+    bool CollisionDetectionAlgorithms::CollidesWithTree(
+        const MATH::FloatRectangle& rectangle, 
         MAPS::Overworld& overworld, 
-        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings,
-        RESOURCES::Assets& assets)
+        MATH::FloatRectangle& tree_rectangle)
     {
-        // HANDLE COLLISIONS FOR ALL AXE SWINGS.
-        for (auto axe_swing_event = axe_swings.cbegin(); axe_swings.cend() != axe_swing_event;)
+        // CLEAR THE OUT PARAMETER.
+        tree_rectangle = MATH::FloatRectangle();
+
+        // GET THE TREES NEAR THE RECTANGLE.
+        MATH::Vector2f object_center_position = rectangle.GetCenterPosition();
+        MAPS::TileMap* current_tile_map = overworld.GetTileMap(object_center_position.X, object_center_position.Y);
+        bool tile_map_exists = (nullptr != current_tile_map);
+        if (!tile_map_exists)
         {
-            // MAKE SURE THE CURRENT AXE SWING EXISTS.
-            bool axe_swing_exists = (nullptr != axe_swing_event->get());
-            if (!axe_swing_exists)
-            {
-                // Remove the invalid event so that it no longer takes up space.
-                axe_swing_event = axe_swings.erase(axe_swing_event);
-
-                // Silently skip over this missing axe swing to allow
-                // the game to continue running.
-                continue;
-            }
-
-            const EVENTS::AxeSwingEvent axe_swing = (**axe_swing_event);
-
-            // CHECK IF THE AXE SWING EVENT HAS REACHED ITS MAXIMUM EXTENSION POINT.
-            // The axe swing event should only be processed once it has finish
-            // being fully swung out to its maximum point.
-            bool axe_swing_at_max_extension_point = axe_swing.FullySwungOut();
-            if (!axe_swing_at_max_extension_point)
-            {
-                // The current axe swing event is not ready to be processed,
-                // so skip to the next event.
-                ++axe_swing_event;
-                continue;
-            }
-
-            // HANDLE COLLISIONS OF THE AXE WITH TREES.
-            HandleAxeCollisionsWithTrees(*axe_swing.Axe, overworld, assets);
-
-            // REMOVE THE PROCESSED AXE SWING EVENT.
-            axe_swing_event = axe_swings.erase(axe_swing_event);
+            // No tile map exists with trees to collide with.
+            return false;
         }
+
+        // CHECK IF ANY OF THE TREES COLLIDE WITH THE RECTANGLE.
+        for (auto tree = current_tile_map->Trees.cbegin(); current_tile_map->Trees.cend() != tree; ++tree)
+        {
+            // SHRINK THE TREE'S BOUNDING BOX SO THAT OBJECTS DON'T GET CAUGHT ON EDGES.
+            const float TREE_DIMENSION_SHRINK_AMOUNT = 2.0f;
+            MATH::FloatRectangle tree_bounds = tree->GetWorldBoundingBox();
+            float new_tree_width = tree_bounds.GetWidth() - TREE_DIMENSION_SHRINK_AMOUNT;
+            float new_tree_height = tree_bounds.GetHeight() - TREE_DIMENSION_SHRINK_AMOUNT;
+            MATH::FloatRectangle new_tree_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
+                tree_bounds.GetCenterXPosition(),
+                tree_bounds.GetCenterYPosition(),
+                new_tree_width,
+                new_tree_height);
+
+            // CHECK IF A COLLISION OCCURS WITH THE CURRENT TREE.
+            bool collides_with_tree = rectangle.Intersects(new_tree_bounds);
+            if (collides_with_tree)
+            {
+                // RETURN THAT A COLLISION OCCURRED WITH THE CURRENT TREE.
+                tree_rectangle = new_tree_bounds;
+                return true;
+            }
+        }
+
+        // No trees were found to collide with the rectangle.
+        return false;
     }
 }

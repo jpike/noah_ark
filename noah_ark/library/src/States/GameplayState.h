@@ -49,6 +49,13 @@ namespace STATES
             const unsigned int screen_width_in_pixels,
             const MAPS::Overworld& overworld);
 
+        // UPDATING.
+        void UpdateOverworld(
+            const sf::Time& elapsed_time,
+            INPUT_CONTROL::KeyboardInputController& input_controller,
+            GRAPHICS::Camera& camera,
+            std::string& message_for_text_box);
+
         // MEMBER VARIABLES.
         /// The random number generator.
         std::random_device RandomNumberGenerator;

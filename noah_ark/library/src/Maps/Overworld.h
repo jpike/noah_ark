@@ -1,18 +1,11 @@
 #pragma once
 
 #include <memory>
-#include <random>
-#include <string>
 #include <vector>
-#include <SFML/System.hpp>
-#include "Bible/BibleVerses.h"
 #include "Core/Array2D.h"
 #include "Events/AxeSwingEvent.h"
-#include "Graphics/Camera.h"
-#include "Input/KeyboardInputController.h"
 #include "Maps/TileMap.h"
 #include "Objects/Noah.h"
-#include "Resources/Assets.h"
 
 namespace MAPS
 {
@@ -28,16 +21,6 @@ namespace MAPS
             const unsigned int tile_map_width_in_tiles,
             const unsigned int tile_map_height_in_tiles,
             const unsigned int tile_dimension_in_pixels);
-
-        // UPDATING.
-        void Update(
-            const sf::Time& elapsed_time,
-            std::random_device& random_number_generator,
-            INPUT_CONTROL::KeyboardInputController& input_controller,
-            std::vector<BIBLE::BibleVerse>& bible_verses_left_to_find,
-            RESOURCES::Assets& assets,
-            GRAPHICS::Camera& camera,
-            std::string& message_for_text_box);
 
         // TILE MAP RETRIEVAL.
         MAPS::TileMap* GetTileMap(const unsigned int row, const unsigned int column);

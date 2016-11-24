@@ -15,7 +15,7 @@
     <ClInclude Include="src\Bible\BibleBook.h" />
     <ClInclude Include="src\Bible\BibleVerse.h" />
     <ClInclude Include="src\Bible\BibleVerses.h" />
-    <ClInclude Include="src\Collision\Collisions.h" />
+    <ClInclude Include="src\Collision\CollisionDetectionAlgorithms.h" />
     <ClInclude Include="src\Collision\Movement.h" />
     <ClInclude Include="src\Core\Array2D.h" />
     <ClInclude Include="src\Core\Direction.h" />
@@ -69,7 +69,7 @@
     <ClCompile Include="src\Bible\BibleBook.cpp" />
     <ClCompile Include="src\Bible\BibleVerse.cpp" />
     <ClCompile Include="src\Bible\BibleVerses.cpp" />
-    <ClCompile Include="src\Collision\Collisions.cpp" />
+    <ClCompile Include="src\Collision\CollisionDetectionAlgorithms.cpp" />
     <ClCompile Include="src\Collision\Movement.cpp" />
     <ClCompile Include="src\Core\String.cpp" />
     <ClCompile Include="src\Events\AxeSwingEvent.cpp" />

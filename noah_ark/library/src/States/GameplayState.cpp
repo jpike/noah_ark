@@ -201,11 +201,6 @@ namespace STATES
         // INDICATE THAT NO MESSAGE NEEDS TO BE DISPLAYED YET IN THE TEXT BOX.
         message_for_text_box.clear();
 
-        /// @todo   Try and remove this dependency on the camera.
-        /// It's here for now to ease the transition from having most
-        /// of this update logic in the main loop, but trying to
-        /// remove it immediately seemed like it might carry too
-        /// high a risk of introducing bugs.
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
         MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
 
@@ -523,10 +518,6 @@ namespace STATES
             // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
             MATH::FloatRectangle wood_log_bounding_box = wood_logs->GetWorldBoundingBox();
             MATH::FloatRectangle noah_bounding_box = Overworld->NoahPlayer->GetWorldBoundingBox();
-            /// @todo   Re-examine this later.  For now, we are forcing players to run over the center of
-            /// the wood logs to collect them.  This mostly seems fine.  However, it doesn't fully
-            /// solve the problem (it is still possible for the player to collect the wood without
-            /// ever actually seeing it).
             bool noah_collided_with_wood_logs = noah_bounding_box.Contains(
                 wood_log_bounding_box.GetCenterXPosition(),
                 wood_log_bounding_box.GetCenterYPosition());
@@ -542,10 +533,6 @@ namespace STATES
                 // SEE IF A BIBLE VERSE SHOULD BE COLLECTED ALONG WITH THE WOOD.
                 // There should be a random chance that a Bible verse can be collected.
                 const unsigned int EVENLY_DIVISIBLE = 0;
-                /// @todo   Tweak this value later as needed.  Somewhere between 2 and 3
-                /// seems about right, but the value that feels best will have to be
-                /// determined based on experience within the context of the full
-                /// game.
                 const unsigned int BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS = 2;
                 unsigned int random_number = RandomNumberGenerator();
                 bool bible_verse_exists_with_wood = ((random_number % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);

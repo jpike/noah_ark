@@ -80,7 +80,6 @@ namespace MAPS
         }
 
         // CALCULATE THE TOP-LEFT WORLD POSITION OF THE LAYER.
-        /// @todo   Use tile dimensions that are part of this layer instead of getting from tile?
         unsigned int layer_width_in_tiles = Tiles.GetWidth();
         float tile_width_in_pixels = tile->GetWidthInPixels();
         float layer_half_width_in_tiles = static_cast<float>(layer_width_in_tiles) / 2.0f;

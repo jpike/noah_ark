@@ -17,8 +17,6 @@ namespace OBJECTS
         MATH::FloatRectangle world_bounding_box = GetWorldBoundingBox();
 
         // CALCULATE THE CENTER OF THE TREE'S TRUNK.
-        /// @todo   This can be hardcoded once we switch to a single
-        /// size of tree.
         // The center will be set so that it works for all current tree sizes.
         // It is vertically placed halfway up the pixel grid for the smallest
         // tree size, which also works well for other tree sizes.

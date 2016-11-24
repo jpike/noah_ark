@@ -17,7 +17,6 @@ namespace GUI
     /// @param[in]  wood_texture - The texture to use for rendering a
     ///     wood icon on the HUD.
     /// @throws std::exception - Thrown if a parameter is null.
-    /// @todo   Re-think how we pass assets to this class.
     HeadsUpDisplay::HeadsUpDisplay(
         const std::shared_ptr<const INVENTORY::Inventory>& inventory,
         const unsigned int main_text_box_width_in_pixels,
@@ -96,8 +95,6 @@ namespace GUI
         renderer.RenderKeyIcon(SWING_AXE_KEY, TOP_LEFT_SCREEN_POSITION_IN_PIXELS);
 
         // An axe icon is rendered to help players know what the previously rendered key icon is for.
-        /// @todo   This stuff was copied from main.cpp.
-        /// Find a way so that it is centralized, not duplicated.
         const float AXE_SPRITE_X_OFFSET_IN_PIXELS = 52.0f;
         const float AXE_SPRITE_Y_OFFSET_IN_PIXELS = 0.0f;
         const float AXE_WIDTH_IN_PIXELS = 11.0f;
@@ -117,8 +114,6 @@ namespace GUI
 
         // RENDER COMPONENTS INDICATING HOW MUCH WOOD HAS BEEN COLLECTED.
         // A wood icon is rendered to help players know what the text next to it corresponds to.
-        /// @todo   This has been duplicated from Collisions.cpp.
-        /// Find a way so that it is centralized, not duplicated.
         const MATH::FloatRectangle WOOD_LOG_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(
             32.0f, 32.0f, 16.0f, 16.0f);
         // The wood icon should be next to the axe icon but with a little additional blank space
@@ -158,7 +153,6 @@ namespace GUI
         // An icon is rendered to help players know which key to press.  It is rendered after
         // the above text for the inventory since it is easier to correctly position here
         // such that it appears just to the left of the text.
-        /// @todo   Figure out what key is to be pressed here.  This is just a temporary placeholder.
         const char OPEN_INVENTORY_KEY = 'X';
         MATH::Vector2ui open_inventory_key_text_top_left_screen_position_in_pixels(
             static_cast<unsigned int>(open_inventory_text_top_left_screen_position_in_pixels.X),

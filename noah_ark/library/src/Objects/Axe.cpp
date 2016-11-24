@@ -278,7 +278,6 @@ namespace OBJECTS
                     if (fully_swung_out)
                     {
                         // START SWINGING THE AXE BACK TO ITS ORIGINAL POSITION.
-                        /// @todo   Clamp to the max rotation angle?
                         SwingingOut = false;
                         SwingingBack = true;
                     }
@@ -294,7 +293,6 @@ namespace OBJECTS
                     if (fully_swung_out)
                     {
                         // START SWINGING THE AXE BACK TO ITS ORIGINAL POSITION.
-                        /// @todo   Clamp to the max rotation angle?
                         SwingingOut = false;
                         SwingingBack = true;
                     }
@@ -315,7 +313,6 @@ namespace OBJECTS
                     if (fully_swung_back)
                     {
                         // STOP THE AXE FROM SWINGING SINCE THE SWING HAS COMPLETED.
-                        /// @todo   Clamp to the max rotation angle?
                         SwingingBack = false;
                         CurrentlySwinging = false;
                     }
@@ -331,7 +328,6 @@ namespace OBJECTS
                     if (fully_swung_back)
                     {
                         // STOP SWINGING THE AXE BACK IF IT HAS REACHED ITS MAX ROTATION ANGLE.
-                        /// @todo   Clamp to the max rotation angle?
                         SwingingBack = false;
                         CurrentlySwinging = false;
                     }
@@ -356,12 +352,9 @@ namespace OBJECTS
         bool axe_is_swinging = IsSwinging();
         if (!axe_is_swinging)
         {
-            /// @todo   Rethink returning an invalid rectangle here.
             return MATH::FloatRectangle();
         }
 
-        /// @todo   Think of more advanced collision.  Blade is 7x7.
-        /// For now, the entire sprite bounds seems to feel/look the best.
         return Sprite.GetWorldBoundingBox();
     }
 

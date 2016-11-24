@@ -20,6 +20,24 @@ namespace INVENTORY
     /// | Content for current    |
     /// | tab is displayed here. |
     /// --------------------------
+    ///
+    /// A user can press a certain key to bring up the main inventory screen,
+    /// which fills the screen, except for the standard HUD stuff above
+    /// (which will still be visible at the top of the screen).
+    ///
+    /// There are be 3 tabs in the main inventory screen that a user can
+    /// switch between: Bible, Animals, and Food.
+    ///
+    /// The Bible tab shows text for verses in a pane on the left and
+    /// a list of verse on the right.
+    ///
+    /// The Animals tab will show a grid of animal icon images, along with
+    /// counts of how many of each animal type have been found.  An animal
+    /// can be selected to bring up more detailed information.
+    ///
+    /// The Food tab will show a grid of food icon images, along with
+    /// counts of how many of each food type have been found.  Hover-over-style
+    /// tooltips will show slightly more information for each food icon.
     class InventoryGui
     {
     public:

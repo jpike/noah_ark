@@ -28,7 +28,6 @@ namespace BIBLE
             case BibleBook::SECOND_PETER:
                 return "2 Peter";
             default:
-                /// @todo   Error handling?
                 return "Unknown";
         }
     }

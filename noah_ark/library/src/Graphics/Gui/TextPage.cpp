@@ -151,7 +151,6 @@ namespace GUI
 
     /// Renders the text page to the provided stream.
     /// @param[in,out]  output_stream - The output stream to render to.
-    /// @todo   Create a textual render target?
     void TextPage::Render(std::ostream& output_stream) const
     {
         // RENDER EACH LINE OF TEXT.
@@ -224,10 +223,6 @@ namespace GUI
     /// @return The number of characters displayed so far on the specified line.
     unsigned int TextPage::GetDisplayedCharacterCount(const unsigned int line_index) const
     {
-        /// @todo   This method is way too messy and complicated.
-        /// Think about ways to simplify it, possibly by storing
-        /// information per-line?
-
         // CALCULATE THE TOTAL NUMBER OF DISPLAYED CHARACTERS IN THE PAGE BASED ON THE ELAPSED TIME.
         // It's okay for any fractional components to be truncated.
         // That simply means the "next" character isn't fully ready

@@ -81,10 +81,9 @@ namespace MAPS
     bool Tile::IsWalkable() const
     {
         // DEFINE ID CONSTANTS FOR EACH TILE IN THE TILESET.
-        /// @todo   Re-think invalid tile ID stuff here.
-        /// A 0 entry had to be added here to account for
-        /// the fact that the first tile ID read from
-        /// the tile map file started at 1, not 0.
+        // A 0 entry had to be added here to account for
+        // the fact that the first tile ID read from
+        // the tile map file starts at 1, not 0.
         const unsigned int INVALID_TILE_ID = 0;
         const unsigned int BLACK_TEST_TILE_ID = 1;
         const unsigned int WHITE_TEST_TILE_ID = 2;

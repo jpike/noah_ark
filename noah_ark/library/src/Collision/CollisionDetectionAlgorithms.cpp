@@ -736,7 +736,6 @@ namespace COLLISION
                         const std::vector<MATH::IntRectangle> FRAMES =
                         {
                             // Frames are duplicated some so that things appear to loop a few times.
-                            /// @todo   Consider having a max loop count for animation sequences?
                             MATH::IntRectangle::FromLeftTopAndDimensions(48, 0, 16, 16),
                             MATH::IntRectangle::FromLeftTopAndDimensions(48, 16, 16, 16),
                             MATH::IntRectangle::FromLeftTopAndDimensions(48, 0, 16, 16),

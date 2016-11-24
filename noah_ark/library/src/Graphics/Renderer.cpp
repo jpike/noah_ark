@@ -510,8 +510,6 @@ namespace GRAPHICS
                 }
 
                 // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
-                /// @todo   Maybe we only need a single dust cloud?  At least in theory, it shouldn't be
-                /// possible for more than one tree to be in this state at a given time.
                 for (auto dust_cloud = tile_map->TreeDustClouds.begin(); dust_cloud != tile_map->TreeDustClouds.end();)
                 {
                     // UPDATE THE CURRENT DUST CLOUD.

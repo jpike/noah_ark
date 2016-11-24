@@ -43,7 +43,6 @@ namespace TEST_ANIMATED_SPRITE
         MATH::IntRectangle spriteTextureRectangle = MATH::IntRectangle::FromLeftTopAndDimensions(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
         sprite.SetTextureRectangle(spriteTextureRectangle);
 
-        /// @todo   Rethink about how centering should occur.
         const float SPRITE_CENTER_X = static_cast<float>(SPRITE_WIDTH) / 2.0f;
         const float SPRITE_CENTER_Y = static_cast<float>(SPRITE_HEIGHT) / 2.0f;
         sprite.SetOrigin(MATH::Vector2f(SPRITE_CENTER_X, SPRITE_CENTER_Y));

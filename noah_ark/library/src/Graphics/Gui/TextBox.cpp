@@ -19,7 +19,7 @@ namespace GUI
     MaxCharacterCountPerPage(0)
     {
         // CALCULATE THE MAXIMUM NUMBER OF CHARACTERS PER PAGE.
-        /// @todo   Figure out how to best de-duplicated this calculation
+        /// @todo   Figure out how to best de-duplicate this calculation
         /// since it is also used in the TextPage class.
         unsigned int line_count_per_page = (height_in_pixels / Glyph::HEIGHT_IN_PIXELS);
         unsigned int max_character_count_per_line_per_age = (width_in_pixels / Glyph::WIDTH_IN_PIXELS) - TextPage::ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE;
@@ -234,7 +234,6 @@ namespace GUI
 
     /// Renders the current text page to the provided stream.
     /// @param[in,out]  output_stream - The output stream to render to.
-    /// @todo   Create a textual render target?
     void TextBox::Render(std::ostream& output_stream) const
     {
         // CHECK IF ANY PAGES OF TEXT EXIST.

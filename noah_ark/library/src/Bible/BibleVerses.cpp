@@ -2,8 +2,6 @@
 
 namespace BIBLE
 {
-    /// @todo   I'm not sure of the exact representation of these verses yet,
-    /// so this might change later to be stored in some other way than a vector.
     /// The KJV version is used since it is in the public domain.
     const std::vector<BibleVerse> BIBLE_VERSES = 
     {

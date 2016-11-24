@@ -47,20 +47,9 @@ namespace GUI
     /// @param[in]  input_controller - The controller on which to check user input.
     void HeadsUpDisplay::RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller)
     {
-        // CHECK IF THE SECONDARY ACTION BUTTON WAS PRESSED THIS FRAME.
-        // To prevent rapid opening/closing of the inventory, the button
-        // is checked to determine when it toggles to being pressed.
-        bool inventory_button_pressed = input_controller.SecondaryActionButtonWasPressed();
-        if (inventory_button_pressed)
-        {
-            // OPEN OR CLOSE THE INVENTORY.
-            InventoryOpened = !InventoryOpened;
-        }
-        else if (InventoryOpened)
-        {
-            InventoryGui.RespondToInput(input_controller);
-        }
-        else if (MainTextBox.IsVisible)
+        // CHECK IF THE MAIN TEXT BOX IS VISIBLE.
+        // If so, it shouldn't be possible to open the inventory.
+        if (MainTextBox.IsVisible)
         {
             // HAVE THE MAIN TEXT BOX RESPOND TO USER INPUT.
             if (input_controller.PrimaryActionButtonDown())
@@ -75,6 +64,22 @@ namespace GUI
                     // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
                     MainTextBox.MoveToNextPage();
                 }
+            }
+        }
+        else
+        {
+            // CHECK IF THE SECONDARY ACTION BUTTON WAS PRESSED THIS FRAME.
+            // To prevent rapid opening/closing of the inventory, the button
+            // is checked to determine when it toggles to being pressed.
+            bool inventory_button_pressed = input_controller.SecondaryActionButtonWasPressed();
+            if (inventory_button_pressed)
+            {
+                // OPEN OR CLOSE THE INVENTORY.
+                InventoryOpened = !InventoryOpened;
+            }
+            else if (InventoryOpened)
+            {
+                InventoryGui.RespondToInput(input_controller);
             }
         }
     }

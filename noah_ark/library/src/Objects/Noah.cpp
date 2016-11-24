@@ -19,7 +19,7 @@ namespace OBJECTS
         const std::shared_ptr<OBJECTS::Axe>& axe) :
     FacingDirection(CORE::Direction::INVALID),
     Sprite(),
-    Inventory(std::make_shared<OBJECTS::Inventory>())
+    Inventory(std::make_shared<INVENTORY::Inventory>())
     {
         // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(noah_texture, "Texture required for Noah.");

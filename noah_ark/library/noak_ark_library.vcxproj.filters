@@ -84,6 +84,12 @@
     <Filter Include="Source Files\States">
       <UniqueIdentifier>{08447a04-daee-405f-a7fb-cf7e8dcbe7c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Inventory">
+      <UniqueIdentifier>{fff794e6-7623-43f2-b209-5c5bf3a4d4c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Inventory">
+      <UniqueIdentifier>{6a41a6ef-4a17-4b82-ba34-dae6c62fc0d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector2.h">
@@ -185,9 +191,6 @@
     <ClInclude Include="src\Bible\BibleVerses.h">
       <Filter>Header Files\Bible</Filter>
     </ClInclude>
-    <ClInclude Include="src\Objects\Inventory.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\Screen.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
@@ -212,15 +215,6 @@
     <ClInclude Include="src\Core\NullChecking.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\Gui\InventoryGui.h">
-      <Filter>Header Files\Graphics\Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\Gui\InventoryBibleVerseTextBox.h">
-      <Filter>Header Files\Graphics\Gui</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Graphics\Gui\InventoryBibleVerseListBox.h">
-      <Filter>Header Files\Graphics\Gui</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\Renderer.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
@@ -235,6 +229,21 @@
     </ClInclude>
     <ClInclude Include="src\States\TitleScreen.h">
       <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\States\SavedGameData.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Inventory\Inventory.h">
+      <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Inventory\InventoryBibleVerseListBox.h">
+      <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Inventory\InventoryBibleVerseTextBox.h">
+      <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Inventory\InventoryGui.h">
+      <Filter>Header Files\Inventory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -337,15 +346,6 @@
     <ClCompile Include="src\Graphics\Gui\HeadsUpDisplay.cpp">
       <Filter>Source Files\Graphics\Gui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\Gui\InventoryGui.cpp">
-      <Filter>Source Files\Graphics\Gui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\Gui\InventoryBibleVerseListBox.cpp">
-      <Filter>Source Files\Graphics\Gui</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graphics\Gui\InventoryBibleVerseTextBox.cpp">
-      <Filter>Source Files\Graphics\Gui</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics\Renderer.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
@@ -366,6 +366,18 @@
     </ClCompile>
     <ClCompile Include="src\States\TitleScreen.cpp">
       <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\States\SavedGameData.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Inventory\InventoryBibleVerseListBox.cpp">
+      <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Inventory\InventoryBibleVerseTextBox.cpp">
+      <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Inventory\InventoryGui.cpp">
+      <Filter>Source Files\Inventory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

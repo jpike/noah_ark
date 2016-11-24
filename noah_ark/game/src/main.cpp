@@ -22,6 +22,7 @@
 #include "Objects/Noah.h"
 #include "Resources/Assets.h"
 #include "States/IntroSequence.h"
+#include "States/SavedGameData.h"
 #include "States/TitleScreen.h"
 
 /// The game exited successfully.
@@ -46,7 +47,7 @@ enum class GameState
     GAMEPLAY
 };
 
-void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::Assets& assets, std::unique_ptr<OBJECTS::Noah>& noah_player)
+void InitializePlayer(const STATES::SavedGameData& saved_game_data, RESOURCES::Assets& assets, std::unique_ptr<OBJECTS::Noah>& noah_player)
 {
     // GET THE TEXTURE FOR NOAH.
     std::shared_ptr<GRAPHICS::Texture> noah_texture = assets.GetTexture(RESOURCES::NOAH_TEXTURE_ID);
@@ -67,7 +68,9 @@ void InitializePlayer(const MATH::Vector2f& initial_world_position, RESOURCES::A
     noah_player = std::make_unique<OBJECTS::Noah>(noah_texture, axe);
 
     // SET NOAH'S INITIAL POSITION.
-    noah_player->SetWorldPosition(initial_world_position);
+    noah_player->SetWorldPosition(saved_game_data.PlayerWorldPosition);
+
+    /// @todo   Populate the inventory.
 }
 
 /// @todo   Document this function.  It looks like it can probably stay in this file for now.
@@ -77,11 +80,6 @@ void PopulateOverworld(
     RESOURCES::Assets& assets, 
     MAPS::Overworld& overworld)
 {
-    // LOAD THE TILE MAP FILES.
-    /* @todo    This is done in the background in a separate thread. CORE::Array2D<MAPS::TileMapFile> tile_map_files;
-    bool tile_map_files_loaded = assets.LoadTileMapFiles(overworld_map_file, tile_map_files);
-    assert(tile_map_files_loaded);*/
-
     // LOAD THE TILESET TEXTURE.
     std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::GROUND_TILESET_TEXTURE_ID);
     assert(tileset_texture);
@@ -270,6 +268,73 @@ void PopulateOverworld(
     }
 }
 
+bool LoadTileMapFiles(
+    const MAPS::OverworldMapFile& overworld_map_file,
+    CORE::Array2D<MAPS::TileMapFile>& tile_map_files)
+{
+    // ALLOCATE SPACE FOR ALL TILE MAP FILES IN THE OVERWORLD.
+    // Resizing is done to allocate enough space for the new tile map files
+    // while clearing old data at the same time.
+    unsigned int tile_map_row_count = overworld_map_file.OverworldHeightInTileMaps;
+    unsigned int tile_map_column_count = overworld_map_file.OverworldWidthInTileMaps;
+    tile_map_files.Resize(tile_map_column_count, tile_map_row_count);
+
+    // DEFINE AN ARRAY OF FUTURES FOR LOADING THE TILE MAPS IN PARALLEL.
+    // Asynchronous loading is done since it is a little faster than synchronous loading
+    // (about 7-8 seconds of total asset load time as opposed to 12-13 seconds total).
+    CORE::Array2D< std::future< std::unique_ptr<MAPS::TileMapFile> > > tile_map_loaders(
+        tile_map_column_count,
+        tile_map_row_count);
+
+    // START TO LOAD ALL TILE MAP FILES IN THE OVERWORLD MAP FILE.
+    for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
+    {
+        for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
+        {
+            // STARTING LOADING THE CURRENT TILE MAP.
+            std::string tile_map_filepath = overworld_map_file.GetTileMapFilepath(tile_map_row, tile_map_column);
+            tile_map_loaders(tile_map_column, tile_map_row) = std::async(MAPS::TileMapFile::Load, tile_map_filepath);
+        }
+    }
+
+    // OBTAIN ALL OF THE TILE MAP FILES BEING LOADED ASYNCHRONOUSLY.
+    for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
+    {
+        for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
+        {
+            try
+            {
+                // CHECK IF THE TILE MAP LOADER FOR THE CURRENT ROW/COLUMN IS VALID.
+                auto& tile_map_loader = tile_map_loaders(tile_map_column, tile_map_row);
+                if (tile_map_loader.valid())
+                {
+                    // WAIT AND GET THE LOADED TILE MAP FILE.
+                    std::unique_ptr<MAPS::TileMapFile> tile_map_file = tile_map_loader.get();
+                    bool tile_map_file_loaded = (nullptr != tile_map_file);
+                    if (tile_map_file_loaded)
+                    {
+                        // STORE THE TILE MAP FILE IN THIS COLLECTION OF ASSETS.
+                        tile_map_files(tile_map_column, tile_map_row) = *tile_map_file;
+                    }
+                    else
+                    {
+                        assert(false);
+                        return false;
+                    }
+                }
+            }
+            catch (const std::exception&)
+            {
+                assert(false);
+                return false;
+            }
+        }
+    }
+
+    // All tile map files were loaded successfully.
+    return true;
+}
+
 std::unique_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
 {
     // LOAD THE OVERWORLD MAP FILE.
@@ -279,7 +344,7 @@ std::unique_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
 
     // LOAD THE TILE MAPS FILES.
     CORE::Array2D<MAPS::TileMapFile> tile_map_files;
-    bool tile_map_files_loaded = assets.LoadTileMapFiles(*overworld_map_file, tile_map_files);
+    bool tile_map_files_loaded = LoadTileMapFiles(*overworld_map_file, tile_map_files);
     assert(tile_map_files_loaded);
   
     // CREATE THE OVERWORLD.
@@ -494,7 +559,6 @@ int main(int argumentCount, char* arguments[])
                             if (saved_game_data_loaded)
                             {
                                 // SAVE DATA.
-                                // - Starting tile map.
                                 // - Starting player position.
                                 // - Player inventory.
                             }
@@ -509,20 +573,10 @@ int main(int argumentCount, char* arguments[])
                                     assert(overworld);
 
                                     // INITIALIZE THE PLAYER NOAH CHARACTER.
-                                    /// @todo   Need to figure out a different way to determine initial position.
-                                    const MAPS::TileMap& starting_tile_map = overworld->TileMaps(0, 0);
-                                    MATH::Vector2f noah_initial_position = starting_tile_map.GetCenterWorldPosition();
-                                    InitializePlayer(noah_initial_position, assets, overworld->NoahPlayer);
-                                }
-
-                                // FOCUS THE CAMERA ON THE PLAYER.
-                                MATH::Vector2f player_start_world_position = overworld->NoahPlayer->GetWorldPosition();
-                                renderer.Camera.SetCenter(player_start_world_position);
-
-                                // INITIALIZE THE HUD.
-                                bool hud_exists = (nullptr != hud);
-                                if (!hud_exists)
-                                {
+                                    STATES::SavedGameData default_saved_game_data = STATES::SavedGameData::DefaultSavedGameData();
+                                    InitializePlayer(default_saved_game_data, assets, overworld->NoahPlayer);
+                                
+                                    // INITIALIZE THE HUD.
                                     unsigned int text_box_width_in_pixels = SCREEN_WIDTH_IN_PIXELS;
                                     const unsigned int LINE_COUNT = 2;
                                     unsigned int text_box_height_in_pixels = GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS * LINE_COUNT;
@@ -533,6 +587,10 @@ int main(int argumentCount, char* arguments[])
                                         assets.GetTexture(RESOURCES::AXE_TEXTURE_ID),
                                         assets.GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID));
                                 }
+
+                                // FOCUS THE CAMERA ON THE PLAYER.
+                                MATH::Vector2f player_start_world_position = overworld->NoahPlayer->GetWorldPosition();
+                                renderer.Camera.SetCenter(player_start_world_position);
                             }
                         }
                         break;

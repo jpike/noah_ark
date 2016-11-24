@@ -1,12 +1,10 @@
 #include "Core/NullChecking.h"
 #include "Core/String.h"
 #include "Graphics/Color.h"
-#include "Graphics/Gui/InventoryBibleVerseTextBox.h"
 #include "Graphics/Renderer.h"
+#include "Inventory/InventoryBibleVerseTextBox.h"
 
-namespace GRAPHICS
-{
-namespace GUI
+namespace INVENTORY
 {
     /// Renders the text box, with the provided verse's
     /// text (if available).  Otherwise, just an empty
@@ -38,5 +36,4 @@ namespace GUI
         // RENDER THE BIBLE VERSE'S TEXT.
         renderer.RenderText(bible_verse->Text, bounding_rectangle, GRAPHICS::Color::BLACK);
     }
-}
 }

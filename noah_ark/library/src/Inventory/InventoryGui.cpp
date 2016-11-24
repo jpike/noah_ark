@@ -1,10 +1,8 @@
 #include "Core/NullChecking.h"
 #include "Graphics/Color.h"
-#include "Graphics/Gui/InventoryGui.h"
+#include "Inventory/InventoryGui.h"
 
-namespace GRAPHICS
-{
-namespace GUI
+namespace INVENTORY
 {
     // The colors right now are arbitrary.
     const GRAPHICS::Color InventoryGui::BIBLE_TAB_COLOR(255, 127, 0);
@@ -14,7 +12,7 @@ namespace GUI
     /// Constructor.
     /// @param[in]  inventory - The inventory to display in the GUI.
     /// @throws std::exception - Thrown if a parameter is null.
-    InventoryGui::InventoryGui(const std::shared_ptr<const OBJECTS::Inventory>& inventory) :
+    InventoryGui::InventoryGui(const std::shared_ptr<const INVENTORY::Inventory>& inventory) :
     Inventory(inventory),
     CurrentTab(TabType::BIBLE),
     BibleVerseTextBox(),
@@ -86,7 +84,7 @@ namespace GUI
 
     /// Renders the inventory GUI to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryGui::Render(Renderer& renderer) const
+    void InventoryGui::Render(GRAPHICS::Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -94,7 +92,7 @@ namespace GUI
         // it should cover the remainder of the screen.
         /// @todo   Figure out a better way to decouple this so that
         /// this assumption isn't baked into the code right here.
-        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(Glyph::HEIGHT_IN_PIXELS);
+        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
@@ -122,13 +120,13 @@ namespace GUI
 
         // The tab should be big enough to hold the text on the tab.
         std::string bible_tab_text = "Bible";
-        unsigned int bible_tab_text_width_in_pixels = Glyph::WIDTH_IN_PIXELS * bible_tab_text.length();
+        unsigned int bible_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * bible_tab_text.length();
 
         MATH::FloatRectangle bible_tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             bible_tab_left_screen_position_in_pixels,
             bible_tab_top_screen_position_in_pixels,
             static_cast<float>(bible_tab_text_width_in_pixels),
-            static_cast<float>(Glyph::HEIGHT_IN_PIXELS));
+            static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS));
 
         renderer.RenderScreenRectangle(
             bible_tab_rectangle,
@@ -141,7 +139,7 @@ namespace GUI
         // It should be positioned near the center of the GUI.
         /// @todo   Clean-up calculation of the left position.
         const std::string ANIMALS_TAB_STRING = "Animals";
-        unsigned int animals_tab_text_width_in_pixels = Glyph::WIDTH_IN_PIXELS * ANIMALS_TAB_STRING.length();
+        unsigned int animals_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * ANIMALS_TAB_STRING.length();
         unsigned int animals_tab_text_half_width_in_pixels = animals_tab_text_width_in_pixels / 2;
         float animals_tab_left_screen_position_in_pixels = background_rectangle.GetCenterXPosition() - animals_tab_text_half_width_in_pixels;
         float animals_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
@@ -153,7 +151,7 @@ namespace GUI
             animals_tab_left_screen_position_in_pixels,
             animals_tab_top_screen_position_in_pixels,
             static_cast<float>(animals_tab_text_width_in_pixels),
-            static_cast<float>(Glyph::HEIGHT_IN_PIXELS));
+            static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS));
 
         renderer.RenderScreenRectangle(
             animals_tab_rectangle,
@@ -166,7 +164,7 @@ namespace GUI
         // It should be positioned near the center of the GUI.
         /// @todo   Clean-up calculation of the left position.
         const std::string FOOD_TAB_STRING = "Food";
-        unsigned int food_tab_text_width_in_pixels = Glyph::WIDTH_IN_PIXELS * FOOD_TAB_STRING.length();
+        unsigned int food_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * FOOD_TAB_STRING.length();
         float food_tab_left_screen_position_in_pixels = background_rectangle.GetRightXPosition() - food_tab_text_width_in_pixels;
         float food_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
         MATH::Vector2f food_tab_top_left_screen_position_in_pixels(
@@ -177,7 +175,7 @@ namespace GUI
             food_tab_left_screen_position_in_pixels,
             food_tab_top_screen_position_in_pixels,
             static_cast<float>(food_tab_text_width_in_pixels),
-            static_cast<float>(Glyph::HEIGHT_IN_PIXELS));
+            static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS));
 
         renderer.RenderScreenRectangle(
             food_tab_rectangle,
@@ -188,13 +186,13 @@ namespace GUI
         // RENDER THE CURRENTLY DISPLAYED PAGE.
         switch (CurrentTab)
         {
-            case GRAPHICS::GUI::InventoryGui::TabType::BIBLE:
+            case TabType::BIBLE:
                 RenderBiblePage(renderer);
                 break;
-            case GRAPHICS::GUI::InventoryGui::TabType::ANIMALS:
+            case TabType::ANIMALS:
                 RenderAnimalsPage(renderer);
                 break;
-            case GRAPHICS::GUI::InventoryGui::TabType::FOOD:
+            case TabType::FOOD:
                 RenderFoodPage(renderer);
                 break;
         }
@@ -203,7 +201,7 @@ namespace GUI
     /// Renders the page of the inventory for the Bible tab.
     /// This page allows browsing Bible verses in the inventory.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryGui::RenderBiblePage(Renderer& renderer) const
+    void InventoryGui::RenderBiblePage(GRAPHICS::Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -211,7 +209,7 @@ namespace GUI
         // it should cover the remainder of the screen.
         /// @todo   Figure out a better way to decouple this so that
         /// this assumption isn't baked into the code right here.
-        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
+        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
@@ -268,7 +266,7 @@ namespace GUI
     /// Renders the page of the inventory for the animals tab.
     /// This page allows browsing animals in the inventory.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryGui::RenderAnimalsPage(Renderer& renderer) const
+    void InventoryGui::RenderAnimalsPage(GRAPHICS::Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -276,7 +274,7 @@ namespace GUI
         // it should cover the remainder of the screen.
         /// @todo   Figure out a better way to decouple this so that
         /// this assumption isn't baked into the code right here.
-        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
+        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
@@ -293,7 +291,7 @@ namespace GUI
     /// Renders the page of the inventory for the food tab.
     /// This page allows browsing food in the inventory.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryGui::RenderFoodPage(Renderer& renderer) const
+    void InventoryGui::RenderFoodPage(GRAPHICS::Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -301,7 +299,7 @@ namespace GUI
         // it should cover the remainder of the screen.
         /// @todo   Figure out a better way to decouple this so that
         /// this assumption isn't baked into the code right here.
-        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * Glyph::HEIGHT_IN_PIXELS);
+        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
@@ -314,5 +312,4 @@ namespace GUI
             background_rectangle,
             FOOD_TAB_COLOR);
     }
-}
 }

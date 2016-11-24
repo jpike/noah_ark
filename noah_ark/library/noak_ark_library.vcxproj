@@ -29,9 +29,6 @@
     <ClInclude Include="src\Graphics\Gui\Font.h" />
     <ClInclude Include="src\Graphics\Gui\Glyph.h" />
     <ClInclude Include="src\Graphics\Gui\HeadsUpDisplay.h" />
-    <ClInclude Include="src\Graphics\Gui\InventoryBibleVerseListBox.h" />
-    <ClInclude Include="src\Graphics\Gui\InventoryBibleVerseTextBox.h" />
-    <ClInclude Include="src\Graphics\Gui\InventoryGui.h" />
     <ClInclude Include="src\Graphics\Gui\TextBox.h" />
     <ClInclude Include="src\Graphics\Gui\TextPage.h" />
     <ClInclude Include="src\Graphics\Renderer.h" />
@@ -40,6 +37,10 @@
     <ClInclude Include="src\Graphics\Texture.h" />
     <ClInclude Include="src\Input\Keyboard.h" />
     <ClInclude Include="src\Input\KeyboardInputController.h" />
+    <ClInclude Include="src\Inventory\Inventory.h" />
+    <ClInclude Include="src\Inventory\InventoryBibleVerseListBox.h" />
+    <ClInclude Include="src\Inventory\InventoryBibleVerseTextBox.h" />
+    <ClInclude Include="src\Inventory\InventoryGui.h" />
     <ClInclude Include="src\Maps\GroundLayer.h" />
     <ClInclude Include="src\Maps\Overworld.h" />
     <ClInclude Include="src\Maps\OverworldMapFile.h" />
@@ -54,12 +55,12 @@
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Objects\Axe.h" />
     <ClInclude Include="src\Objects\DustCloud.h" />
-    <ClInclude Include="src\Objects\Inventory.h" />
     <ClInclude Include="src\Objects\Noah.h" />
     <ClInclude Include="src\Objects\Tree.h" />
     <ClInclude Include="src\Objects\WoodLogs.h" />
     <ClInclude Include="src\Resources\Assets.h" />
     <ClInclude Include="src\States\IntroSequence.h" />
+    <ClInclude Include="src\States\SavedGameData.h" />
     <ClInclude Include="src\States\TitleScreen.h" />
   </ItemGroup>
   <ItemGroup>
@@ -77,9 +78,6 @@
     <ClCompile Include="src\Graphics\Color.cpp" />
     <ClCompile Include="src\Graphics\Gui\Font.cpp" />
     <ClCompile Include="src\Graphics\Gui\HeadsUpDisplay.cpp" />
-    <ClCompile Include="src\Graphics\Gui\InventoryBibleVerseListBox.cpp" />
-    <ClCompile Include="src\Graphics\Gui\InventoryBibleVerseTextBox.cpp" />
-    <ClCompile Include="src\Graphics\Gui\InventoryGui.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextBox.cpp" />
     <ClCompile Include="src\Graphics\Gui\TextPage.cpp" />
     <ClCompile Include="src\Graphics\Renderer.cpp" />
@@ -88,6 +86,9 @@
     <ClCompile Include="src\Graphics\Texture.cpp" />
     <ClCompile Include="src\Input\Keyboard.cpp" />
     <ClCompile Include="src\Input\KeyboardInputController.cpp" />
+    <ClCompile Include="src\Inventory\InventoryBibleVerseListBox.cpp" />
+    <ClCompile Include="src\Inventory\InventoryBibleVerseTextBox.cpp" />
+    <ClCompile Include="src\Inventory\InventoryGui.cpp" />
     <ClCompile Include="src\Maps\GroundLayer.cpp" />
     <ClCompile Include="src\Maps\Overworld.cpp" />
     <ClCompile Include="src\Maps\OverworldMapFile.cpp" />
@@ -105,6 +106,7 @@
     <ClCompile Include="src\Objects\WoodLogs.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
     <ClCompile Include="src\States\IntroSequence.cpp" />
+    <ClCompile Include="src\States\SavedGameData.cpp" />
     <ClCompile Include="src\States\TitleScreen.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

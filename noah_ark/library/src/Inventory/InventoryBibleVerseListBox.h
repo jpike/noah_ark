@@ -2,15 +2,11 @@
 
 #include <memory>
 #include "Bible/BibleVerses.h"
-#include "Graphics/Gui/Font.h"
 #include "Graphics/Renderer.h"
-#include "Graphics/Screen.h"
+#include "Inventory/Inventory.h"
 #include "Math/Rectangle.h"
-#include "Objects/Inventory.h"
 
-namespace GRAPHICS
-{
-namespace GUI
+namespace INVENTORY
 {
     /// A list box for listing all Bible verses.  Those in a
     /// player's inventory have their book, chapter, and verse
@@ -20,12 +16,12 @@ namespace GUI
     {
     public:
         // CONSTRUCTION.
-        explicit InventoryBibleVerseListBox(const std::shared_ptr<const OBJECTS::Inventory>& inventory);
+        explicit InventoryBibleVerseListBox(const std::shared_ptr<const Inventory>& inventory);
 
         // RENDERING.
         void Render(
             const MATH::FloatRectangle& bounding_rectangle,
-            Renderer& renderer) const;
+            GRAPHICS::Renderer& renderer) const;
 
         // VERSE METHODS.
         const BIBLE::BibleVerse* const GetSelectedVerse() const;
@@ -35,9 +31,8 @@ namespace GUI
     private:
         // MEMBER VARIABLES.
         /// The inventory holding collected Bible verses.
-        std::shared_ptr<const OBJECTS::Inventory> Inventory;
+        std::shared_ptr<const Inventory> Inventory;
         /// The index of the currently selected Bible verse in the global list.
         unsigned int SelectedVerseIndex;
     };
-}
 }

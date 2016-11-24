@@ -5,7 +5,7 @@
 #include "Bible/BibleVerses.h"
 #include "Objects/Axe.h"
 
-namespace OBJECTS
+namespace INVENTORY
 {
     /// An inventory of items that have been collected by Noah.
     ///

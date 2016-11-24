@@ -2,12 +2,12 @@
 
 #include <memory>
 #include "Graphics/Gui/Font.h"
-#include "Graphics/Gui/InventoryGui.h"
 #include "Graphics/Gui/TextBox.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Texture.h"
 #include "Input/KeyboardInputController.h"
-#include "Objects/Inventory.h"
+#include "Inventory/Inventory.h"
+#include "Inventory/InventoryGui.h"
 
 namespace GRAPHICS
 {
@@ -22,7 +22,7 @@ namespace GUI
     public:
         // CONSTRUCTION.
         explicit HeadsUpDisplay(
-            const std::shared_ptr<const OBJECTS::Inventory>& inventory,
+            const std::shared_ptr<const INVENTORY::Inventory>& inventory,
             const unsigned int main_text_box_width_in_pixels,
             const unsigned int main_text_box_height_in_pixels,
             const std::shared_ptr<const Texture>& axe_texture,
@@ -40,7 +40,7 @@ namespace GUI
         /// True if the full inventory GUI is displayed; false otherwise.
         bool InventoryOpened;
         /// The GUI for displaying the full inventory.
-        GRAPHICS::GUI::InventoryGui InventoryGui;
+        INVENTORY::InventoryGui InventoryGui;
 
     private:
         // PRIVATE MEMBER VARIABLES.
@@ -50,7 +50,7 @@ namespace GUI
         std::shared_ptr<const Texture> WoodTexture;
         
         /// The player's inventory to display in the HUD.
-        std::shared_ptr<const OBJECTS::Inventory> Inventory;
+        std::shared_ptr<const INVENTORY::Inventory> Inventory;
     };
 }
 }

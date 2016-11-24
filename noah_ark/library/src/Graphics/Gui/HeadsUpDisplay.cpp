@@ -19,7 +19,7 @@ namespace GUI
     /// @throws std::exception - Thrown if a parameter is null.
     /// @todo   Re-think how we pass assets to this class.
     HeadsUpDisplay::HeadsUpDisplay(
-        const std::shared_ptr<const OBJECTS::Inventory>& inventory,
+        const std::shared_ptr<const INVENTORY::Inventory>& inventory,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels,
         const std::shared_ptr<const Texture>& axe_texture,

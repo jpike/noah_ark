@@ -672,13 +672,29 @@ namespace COLLISION
                     // If the resources can't be loaded, then a dust cloud simply won't be added.
                     // The game will just continue as if no wood could be obtained from the tree.
                     std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = assets.GetTexture(RESOURCES::DUST_CLOUD_TEXTURE_ID);
-                    std::shared_ptr<GRAPHICS::AnimationSequence> dust_cloud_animation = assets.GetAnimationSequence(RESOURCES::DUST_CLOUD_ANIMATION_ID);
-                    bool dust_cloud_resources_retrieved = (dust_cloud_texture != nullptr) && (dust_cloud_animation != nullptr);
+                    bool dust_cloud_resources_retrieved = (dust_cloud_texture != nullptr);
                     if (dust_cloud_resources_retrieved)
                     {
                         OBJECTS::DustCloud dust_cloud;
                                                
-                        dust_cloud.Sprite = GRAPHICS::AnimatedSprite(dust_cloud_texture, dust_cloud_animation);
+                        const std::string DUST_CLOUD_ANIMATION_ID = "dust_cloud";
+                        const bool IS_LOOPING = false;
+                        const sf::Time TOTAL_DURATION = sf::seconds(2.0f);
+                        const std::vector<MATH::IntRectangle> FRAMES =
+                        {
+                            // Frames are duplicated some so that things appear to loop a few times.
+                            /// @todo   Consider having a max loop count for animation sequences?
+                            MATH::IntRectangle::FromLeftTopAndDimensions(48, 0, 16, 16),
+                            MATH::IntRectangle::FromLeftTopAndDimensions(48, 16, 16, 16),
+                            MATH::IntRectangle::FromLeftTopAndDimensions(48, 0, 16, 16),
+                            MATH::IntRectangle::FromLeftTopAndDimensions(48, 16, 16, 16)
+                        };
+                        const std::shared_ptr<GRAPHICS::AnimationSequence> DUST_CLOUD_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+                            DUST_CLOUD_ANIMATION_ID,
+                            IS_LOOPING,
+                            TOTAL_DURATION,
+                            FRAMES);
+                        dust_cloud.Sprite = GRAPHICS::AnimatedSprite(dust_cloud_texture, DUST_CLOUD_ANIMATION);
 
                         // The dust cloud should be positioned to cover the base of the tree.
                         MATH::Vector2f dust_cloud_center_world_position = tree->GetTrunkCenterWorldPosition();

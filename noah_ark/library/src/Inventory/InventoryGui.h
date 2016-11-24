@@ -2,17 +2,13 @@
 
 #include <memory>
 #include "Graphics/Color.h"
-#include "Graphics/Gui/Font.h"
-/// @todo  Create inventory sub-namespace?
-#include "Graphics/Gui/InventoryBibleVerseListBox.h"
-#include "Graphics/Gui/InventoryBibleVerseTextBox.h"
 #include "Graphics/Renderer.h"
 #include "Input/KeyboardInputController.h"
-#include "Objects/Inventory.h"
+#include "Inventory/Inventory.h"
+#include "Inventory/InventoryBibleVerseListBox.h"
+#include "Inventory/InventoryBibleVerseTextBox.h"
 
-namespace GRAPHICS
-{
-namespace GUI
+namespace INVENTORY
 {
     /// A GUI for displaying a player's inventory.
     /// The GUI is divided into 3 distinct tabs
@@ -44,13 +40,13 @@ namespace GUI
         };
 
         // CONSTRUCTION.
-        explicit InventoryGui(const std::shared_ptr<const OBJECTS::Inventory>& inventory);
+        explicit InventoryGui(const std::shared_ptr<const Inventory>& inventory);
 
         // INPUT.
         void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
 
         // RENDERING.
-        void Render(Renderer& renderer) const;
+        void Render(GRAPHICS::Renderer& renderer) const;
 
     private:
         // STATIC CONSTANTS.
@@ -62,13 +58,13 @@ namespace GUI
         static const GRAPHICS::Color FOOD_TAB_COLOR;
 
         // RENDERING.        
-        void RenderBiblePage(Renderer& renderer) const;
-        void RenderAnimalsPage(Renderer& renderer) const;
-        void RenderFoodPage(Renderer& renderer) const;
+        void RenderBiblePage(GRAPHICS::Renderer& renderer) const;
+        void RenderAnimalsPage(GRAPHICS::Renderer& renderer) const;
+        void RenderFoodPage(GRAPHICS::Renderer& renderer) const;
 
         // MEMBER VARIABLES.
         /// The player's inventory to display in the GUI.
-        std::shared_ptr<const OBJECTS::Inventory> Inventory;
+        std::shared_ptr<const Inventory> Inventory;
         /// The type of tab currently being displayed.
         TabType CurrentTab;
         /// The GUI text box for displaying the currently selected Bible verse
@@ -79,5 +75,4 @@ namespace GUI
         /// player's inventory.
         InventoryBibleVerseListBox BibleVerseListBox;
     };
-}
 }

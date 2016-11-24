@@ -1,20 +1,17 @@
 #include <algorithm>
-#include <iostream>
 #include "Core/NullChecking.h"
 #include "Graphics/Color.h"
 #include "Graphics/Gui/Glyph.h"
-#include "Graphics/Gui/InventoryBibleVerseListBox.h"
 #include "Graphics/Renderer.h"
+#include "Inventory/InventoryBibleVerseListBox.h"
 
-namespace GRAPHICS
-{
-namespace GUI
+namespace INVENTORY
 {
     /// Constructor.
     /// @param[in]  inventory - The inventory indicating which
     ///     Bible verses have been collected.
     /// @throws std::exception - Thrown if any parameters are null.
-    InventoryBibleVerseListBox::InventoryBibleVerseListBox(const std::shared_ptr<const OBJECTS::Inventory>& inventory) :
+    InventoryBibleVerseListBox::InventoryBibleVerseListBox(const std::shared_ptr<const INVENTORY::Inventory>& inventory) :
     Inventory(inventory),
     SelectedVerseIndex(0)
     {
@@ -31,7 +28,7 @@ namespace GUI
     /// @param[in,out]  renderer - The renderer to use for rendering.
     void InventoryBibleVerseListBox::Render(
         const MATH::FloatRectangle& bounding_rectangle,
-        Renderer& renderer) const
+        GRAPHICS::Renderer& renderer) const
     {
         // RENDER THE BACKGROUND BOX.
         GRAPHICS::Color background_color = GRAPHICS::Color::BROWN;
@@ -45,7 +42,7 @@ namespace GUI
             bounding_rectangle.GetLeftXPosition(),
             bounding_rectangle.GetTopYPosition(),
             bounding_rectangle.GetWidth(),
-            static_cast<float>(Glyph::HEIGHT_IN_PIXELS));
+            static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS));
         renderer.RenderScreenRectangle(
             selected_verse_background_rectangle,
             selected_verse_background_color);
@@ -56,7 +53,7 @@ namespace GUI
         /// @todo   Wrap around to show some number of verses centered around the current one?
         unsigned int box_height_in_pixels = static_cast<unsigned int>(bounding_rectangle.GetHeight());
         const unsigned int ONE_LESS_VERSE_TO_AVOID_EXCEEDING_BOX_BOUNDS = 1;
-        unsigned int verses_to_render_count = (box_height_in_pixels / Glyph::HEIGHT_IN_PIXELS) - ONE_LESS_VERSE_TO_AVOID_EXCEEDING_BOX_BOUNDS;
+        unsigned int verses_to_render_count = (box_height_in_pixels / GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS) - ONE_LESS_VERSE_TO_AVOID_EXCEEDING_BOX_BOUNDS;
         unsigned int first_verse_to_render_index = SelectedVerseIndex;
         unsigned int last_verse_to_render_index = first_verse_to_render_index + verses_to_render_count;
         unsigned int last_valid_verse_index = BIBLE::BIBLE_VERSES.size() - 1;
@@ -86,7 +83,7 @@ namespace GUI
             {
                 // USE QUESTION MARKS FOR THE BIBLE VERSE.
                 unsigned int box_width_in_pixels = static_cast<unsigned int>(bounding_rectangle.GetWidth());
-                unsigned int character_count_per_line = (box_width_in_pixels / Glyph::WIDTH_IN_PIXELS);
+                unsigned int character_count_per_line = (box_width_in_pixels / GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS);
                 bible_verse_display_string.assign(character_count_per_line, '?');
             }
 
@@ -94,7 +91,7 @@ namespace GUI
             renderer.RenderText(bible_verse_display_string, current_verse_screen_top_left_position_in_pixels, GRAPHICS::Color::BLACK);
 
             // MOVE TO A NEW LINE FOR THE NEXT VERSE.
-            current_verse_screen_top_left_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;
+            current_verse_screen_top_left_position_in_pixels.Y += GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS;
         }
     }
     
@@ -130,7 +127,6 @@ namespace GUI
         // go below the verse at index 0.
         unsigned int previous_verse_index = SelectedVerseIndex - 1;
         SelectedVerseIndex = std::min(SelectedVerseIndex, previous_verse_index);
-        std::cout << "SelectedVerseIndex: " << SelectedVerseIndex << std::endl;
     }
     
     /// Selects the next verse in the list, if one exists.
@@ -140,7 +136,5 @@ namespace GUI
         unsigned int next_verse_index = SelectedVerseIndex + 1;
         unsigned int last_valid_verse_index = BIBLE::BIBLE_VERSES.size() - 1;
         SelectedVerseIndex = std::min(next_verse_index, last_valid_verse_index);
-        std::cout << "SelectedVerseIndex: " << SelectedVerseIndex << std::endl;
     }
-}
 }

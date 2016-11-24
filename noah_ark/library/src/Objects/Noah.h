@@ -9,9 +9,9 @@
 #include "Events/AxeSwingEvent.h"
 #include "Graphics/AnimatedSprite.h"
 #include "Graphics/Texture.h"
+#include "Inventory/Inventory.h"
 #include "Math/Vector2.h"
 #include "Objects/Axe.h"
-#include "Objects/Inventory.h"
 
 /// Holds codes for specific objects in the game.
 namespace OBJECTS
@@ -54,6 +54,6 @@ namespace OBJECTS
         /// The sprite used for rendering Noah.
         GRAPHICS::AnimatedSprite Sprite;
         /// The inventory of items held by Noah.
-        std::shared_ptr<OBJECTS::Inventory> Inventory;
+        std::shared_ptr<INVENTORY::Inventory> Inventory;
     };
 }

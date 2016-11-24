@@ -5,9 +5,7 @@
 #include "Graphics/Renderer.h"
 #include "Math/Rectangle.h"
 
-namespace GRAPHICS
-{
-namespace GUI
+namespace INVENTORY
 {
     /// A text box for displaying Bible verses in the player's
     /// inventory.  The text box supports wrapping text
@@ -21,5 +19,4 @@ namespace GUI
             const MATH::FloatRectangle& bounding_rectangle,
             GRAPHICS::Renderer& renderer) const;
     };
-}
 }

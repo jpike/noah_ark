@@ -23,11 +23,13 @@ namespace MAPS
             const unsigned int tile_dimension_in_pixels);
 
         // TILE MAP RETRIEVAL.
+        const MAPS::TileMap* GetTileMap(const unsigned int row, const unsigned int column) const;
         MAPS::TileMap* GetTileMap(const unsigned int row, const unsigned int column);
+        const MAPS::TileMap* GetTileMap(const float world_x_position, const float world_y_position) const;
         MAPS::TileMap* GetTileMap(const float world_x_position, const float world_y_position);
 
         // TILE RETRIEVAL.
-        std::shared_ptr<MAPS::Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position);
+        std::shared_ptr<MAPS::Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// Tile maps in the overworld, arranged by column/row position in a grid rather than

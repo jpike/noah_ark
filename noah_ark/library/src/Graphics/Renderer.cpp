@@ -99,32 +99,20 @@ namespace GRAPHICS
         // GET THE GLYPH FOR THE KEY.
         GRAPHICS::GUI::Glyph glyph = Font->GetGlyph(key);
 
-        // CALCULATE THE CENTER WORLD POSITION OF THE GLYPH.
-        float glyph_width = glyph.TextureSubRectangle.GetWidth();
-        float glyph_half_width = glyph_width / 2.0f;
-        float glyph_center_world_x_position = top_left_world_position.x + glyph_half_width;
-        float glyph_height = glyph.TextureSubRectangle.GetHeight();
-        float glyph_half_height = glyph_height / 2.0f;
-        float glyph_center_world_y_position = top_left_world_position.y + glyph_half_height;
-        MATH::Vector2f glyph_center_world_position(
-            glyph_center_world_x_position,
-            glyph_center_world_y_position);
-
         // CREATE A SPRITE FOR THE GLYPH.
-        Sprite key_character_sprite(
-            glyph.Texture,
-            glyph.TextureSubRectangle);
-        key_character_sprite.SetWorldPosition(glyph_center_world_position);
+        sf::IntRect key_texture_sub_rectangle = glyph.TextureSubRectangle.ToSfmlRectangle<int>();
+        sf::Sprite key_character_sprite(glyph.Texture->TextureResource, key_texture_sub_rectangle);
+        key_character_sprite.setPosition(
+            static_cast<float>(top_left_screen_position_in_pixels.X), 
+            static_cast<float>(top_left_screen_position_in_pixels.Y));
+
+        // CONFIGURE THE RENDER TARGET FOR SCREEN-SPACE RENDERING.
+        sf::View screen_space_view = Screen.RenderTarget->getDefaultView();
+        Screen.RenderTarget->setView(screen_space_view);
 
         // RENDER THE GLYPH FOR THE KEY.
-        /// @todo   Remove this duplicated code.
-        sf::RenderStates render_states = sf::RenderStates::Default;
-        const sf::Transform RENDER_IN_SCREEN_SPACE = sf::Transform::Identity;
-        render_states.transform = RENDER_IN_SCREEN_SPACE;
-        ColoredTextShader->setParameter("color", sf::Color::Black);
-        ColoredTextShader->setParameter("texture", sf::Shader::CurrentTexture);
-        render_states.shader = ColoredTextShader.get();
-        Screen.RenderTarget->draw(key_character_sprite.SpriteResource, render_states);
+        sf::RenderStates render_states = ConfigureColoredTextShader(Color::BLACK);
+        Screen.RenderTarget->draw(key_character_sprite, render_states);
     }
 
     /// Renders a GUI icon on the screen.
@@ -187,30 +175,18 @@ namespace GRAPHICS
             GUI::Glyph glyph = Font->GetGlyph(character);
 
             // CREATE A SPRITE FOR THE CURRENT GLYPH.
-            sf::Sprite current_character_sprite;
-            current_character_sprite.setTexture(glyph.Texture->TextureResource);
-            sf::IntRect texture_rectangle(
-                static_cast<int>(glyph.TextureSubRectangle.GetLeftXPosition()),
-                static_cast<int>(glyph.TextureSubRectangle.GetTopYPosition()),
-                static_cast<int>(glyph.TextureSubRectangle.GetWidth()),
-                static_cast<int>(glyph.TextureSubRectangle.GetHeight()));
-            current_character_sprite.setTextureRect(texture_rectangle);
+            sf::IntRect texture_rectangle = glyph.TextureSubRectangle.ToSfmlRectangle<int>();
+            sf::Sprite current_character_sprite(glyph.Texture->TextureResource, texture_rectangle);
             current_character_sprite.setPosition(
                 current_character_left_top_screen_position.X,
                 current_character_left_top_screen_position.Y);
 
+            // CONFIGURE THE RENDER TARGET FOR SCREEN-SPACE RENDERING.
+            sf::View screen_space_view = Screen.RenderTarget->getDefaultView();
+            Screen.RenderTarget->setView(screen_space_view);
+
             // RENDER THE CURRENT GLYPH.
-            /// @todo   Contemplate potential alternative interfaces for rendering sprites in screen-space.
-            sf::RenderStates render_states = sf::RenderStates::Default;
-            /// @todo   This doesn't actually force coordinates to screen space, so something else is needed here.
-            /// The resetting of the view was added below, which seems to work, but more thought is needed to
-            /// make this more elegant.
-            const sf::Transform RENDER_IN_SCREEN_SPACE = sf::Transform::Identity;
-            render_states.transform = RENDER_IN_SCREEN_SPACE;
-            Screen.RenderTarget->setView(Screen.RenderTarget->getDefaultView());
-            ColoredTextShader->setParameter("color", sf::Color(text_color.Red, text_color.Green, text_color.Blue, text_color.Alpha));
-            ColoredTextShader->setParameter("texture", sf::Shader::CurrentTexture);
-            render_states.shader = ColoredTextShader.get();
+            sf::RenderStates render_states = ConfigureColoredTextShader(text_color);
             Screen.RenderTarget->draw(current_character_sprite, render_states);
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
@@ -450,15 +426,9 @@ namespace GRAPHICS
 
     /// Renders an overworld.
     /// @param[in]  elapsed_time - The elapsed time since the last rendering of the world.
-    ///     @todo   Look at ways to remove this parameter.
     /// @param[in]  overworld - The overworld to render.
-    ///     @todo   Look at how to make overworld parameter const.
-    void Renderer::Render(
-        const sf::Time& elapsed_time,
-        MAPS::Overworld& overworld)
+    void Renderer::Render(const MAPS::Overworld& overworld)
     {
-        /// @todo   Factor out updating from this method?
-
         MATH::FloatRectangle camera_bounds = Camera.ViewBounds;
         MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
 
@@ -469,12 +439,10 @@ namespace GRAPHICS
         camera_view.setSize(camera_bounds.GetWidth(), camera_bounds.GetHeight());
         Screen.RenderTarget->setView(camera_view);
 
-        MAPS::TileMap* current_tile_map = overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
+        const MAPS::TileMap* current_tile_map = overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
         assert(current_tile_map);
 
         // RENDER THE CURRENT TILE MAP.
-        /// @todo   Consider signed ints.  Right now, we're just
-        /// rendering a few surrounding tile maps.
         unsigned int min_tile_map_row = current_tile_map->OverworldRowIndex;
         bool top_tile_map_exists = (min_tile_map_row > 0);
         if (top_tile_map_exists)
@@ -494,39 +462,12 @@ namespace GRAPHICS
             for (unsigned int tile_map_column = min_tile_map_column; tile_map_column <= max_tile_map_column; ++tile_map_column)
             {
                 // GET THE CURRENT TILE MAP.
-                MAPS::TileMap* tile_map = overworld.GetTileMap(tile_map_row, tile_map_column);
+                const MAPS::TileMap* tile_map = overworld.GetTileMap(tile_map_row, tile_map_column);
                 bool tile_map_exists = (nullptr != tile_map);
                 if (!tile_map_exists)
                 {
                     // Continue trying to render other tile maps.
                     continue;
-                }
-
-                // UPDATE THE CURRENT TILE MAP'S TREES.
-                /// @todo   Figure out if this maybe should be handled elsewhere.
-                for (auto tree = tile_map->Trees.begin(); tree != tile_map->Trees.end(); ++tree)
-                {
-                    tree->Update(elapsed_time);
-                }
-
-                // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
-                for (auto dust_cloud = tile_map->TreeDustClouds.begin(); dust_cloud != tile_map->TreeDustClouds.end();)
-                {
-                    // UPDATE THE CURRENT DUST CLOUD.
-                    dust_cloud->Update(elapsed_time);
-
-                    // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
-                    bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
-                    if (dust_cloud_disappeared)
-                    {
-                        // REMOVE THE DUST CLOUD.
-                        dust_cloud = tile_map->TreeDustClouds.erase(dust_cloud);
-                    }
-                    else
-                    {
-                        // MOVE TO UPDATING THE NEXT DUST CLOUD.
-                        ++dust_cloud;
-                    }
                 }
 
                 // RENDER THE TILE MAP.
@@ -535,9 +476,6 @@ namespace GRAPHICS
         }
 
         // RENDER THE PLAYER.
-        // Make sure his axe/sprite are updated.
-        overworld.NoahPlayer->Inventory->Axe->Update(elapsed_time);
-        overworld.NoahPlayer->Sprite.Update(elapsed_time);
         overworld.NoahPlayer->Sprite.Render(Screen);
 
         // The axe should only be rendered if it is swinging.
@@ -579,5 +517,19 @@ namespace GRAPHICS
         {
             dust_cloud.Sprite.Render(Screen);
         }
+    }
+
+    /// Configures the colored text shader to render text using the specified color,
+    /// returning the corresponding render states.
+    /// @param[in]  color - The color for the text to render.
+    /// @return The render states for the configured colored text shader.
+    sf::RenderStates Renderer::ConfigureColoredTextShader(const Color& color)
+    {
+        // CONFIGURE THE SHADER IN THE RENDER STATES.
+        sf::RenderStates render_states = sf::RenderStates::Default;
+        ColoredTextShader->setParameter("color", sf::Color(color.Red, color.Green, color.Blue, color.Alpha));
+        ColoredTextShader->setParameter("texture", sf::Shader::CurrentTexture);
+        render_states.shader = ColoredTextShader.get();
+        return render_states;
     }
 }

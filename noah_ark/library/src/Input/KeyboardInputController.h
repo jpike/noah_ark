@@ -16,28 +16,6 @@ namespace INPUT_CONTROL
     class KeyboardInputController
     {
     public:
-        void DisableInput();
-        void EnableInput();
-
-        void ReadInput();
-
-        bool UpButtonDown() const;
-        bool DownButtonDown() const;
-        bool LeftButtonDown() const;
-        bool RightButtonDown() const;
-        bool PrimaryActionButtonDown() const;
-        bool SecondaryActionButtonDown() const;
-        bool StartButtonDown() const;
-
-        bool UpButtonWasPressed() const;
-        bool DownButtonWasPressed() const;
-        bool LeftButtonWasPressed() const;
-        bool RightButtonWasPressed() const;
-        bool PrimaryActionButtonWasPressed() const;
-        bool SecondaryActionButtonWasPressed() const;
-        bool StartButtonWasPressed() const;
-
-    private:
         // STATIC CONSTANTS.
         /// The key for the up button.
         static const sf::Keyboard::Key UP_KEY = sf::Keyboard::Up;
@@ -49,11 +27,23 @@ namespace INPUT_CONTROL
         static const sf::Keyboard::Key RIGHT_KEY = sf::Keyboard::Right;
         /// The key for the primary action button.
         static const sf::Keyboard::Key PRIMARY_ACTION_KEY = sf::Keyboard::Z;
+        /// A textual representation of the primary action key.
+        static const char PRIMARY_ACTION_KEY_TEXT = 'Z';
         /// The key for the secondary button.
         static const sf::Keyboard::Key SECONDARY_ACTION_KEY = sf::Keyboard::X;
         /// The key for the start button.
         static const sf::Keyboard::Key START_KEY = sf::Keyboard::Return;
 
+        // METHODS.
+        void DisableInput();
+        void EnableInput();
+
+        void ReadInput();
+
+        bool ButtonDown(const sf::Keyboard::Key key) const;
+        bool ButtonWasPressed(const sf::Keyboard::Key key) const;
+
+    private:
         // HELPER METHODS.
         bool InputEnabledAndKeyDown(const sf::Keyboard::Key key) const;
         bool InputEnabledAndKeyWasPressed(const sf::Keyboard::Key key) const;

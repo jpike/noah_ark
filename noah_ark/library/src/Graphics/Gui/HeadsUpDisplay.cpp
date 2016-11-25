@@ -51,7 +51,7 @@ namespace GUI
         if (MainTextBox.IsVisible)
         {
             // HAVE THE MAIN TEXT BOX RESPOND TO USER INPUT.
-            if (input_controller.PrimaryActionButtonDown())
+            if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::PRIMARY_ACTION_KEY))
             {
                 // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
                 // If the current page of text has not yet all been displayed, the next
@@ -70,7 +70,7 @@ namespace GUI
             // CHECK IF THE SECONDARY ACTION BUTTON WAS PRESSED THIS FRAME.
             // To prevent rapid opening/closing of the inventory, the button
             // is checked to determine when it toggles to being pressed.
-            bool inventory_button_pressed = input_controller.SecondaryActionButtonWasPressed();
+            bool inventory_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::SECONDARY_ACTION_KEY);
             if (inventory_button_pressed)
             {
                 // OPEN OR CLOSE THE INVENTORY.
@@ -89,8 +89,7 @@ namespace GUI
     {
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
         // An icon is rendered to help players know which key to press.
-        /// @todo   Couple this somehow to the input controller so that it remains in-sync?
-        const char SWING_AXE_KEY = 'Z';
+        const char SWING_AXE_KEY = INPUT_CONTROL::KeyboardInputController::PRIMARY_ACTION_KEY_TEXT;
         MATH::Vector2ui TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0, 0);
         renderer.RenderKeyIcon(SWING_AXE_KEY, TOP_LEFT_SCREEN_POSITION_IN_PIXELS);
 

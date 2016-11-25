@@ -36,7 +36,7 @@ namespace STATES
             GRAPHICS::Camera& camera);
 
         // RENDERING.
-        void Render(const sf::Time& elapsed_time, GRAPHICS::Renderer& renderer);
+        void Render(GRAPHICS::Renderer& renderer);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main overworld.

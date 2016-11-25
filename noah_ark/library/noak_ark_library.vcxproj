@@ -38,6 +38,7 @@
     <ClInclude Include="src\Input\Keyboard.h" />
     <ClInclude Include="src\Input\KeyboardInputController.h" />
     <ClInclude Include="src\Inventory\Inventory.h" />
+    <ClInclude Include="src\Inventory\InventoryBiblePage.h" />
     <ClInclude Include="src\Inventory\InventoryBibleVerseListBox.h" />
     <ClInclude Include="src\Inventory\InventoryBibleVerseTextBox.h" />
     <ClInclude Include="src\Inventory\InventoryGui.h" />
@@ -87,6 +88,7 @@
     <ClCompile Include="src\Graphics\Texture.cpp" />
     <ClCompile Include="src\Input\Keyboard.cpp" />
     <ClCompile Include="src\Input\KeyboardInputController.cpp" />
+    <ClCompile Include="src\Inventory\InventoryBiblePage.cpp" />
     <ClCompile Include="src\Inventory\InventoryBibleVerseListBox.cpp" />
     <ClCompile Include="src\Inventory\InventoryBibleVerseTextBox.cpp" />
     <ClCompile Include="src\Inventory\InventoryGui.cpp" />

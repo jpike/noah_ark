@@ -36,28 +36,31 @@ namespace INVENTORY
             bounding_rectangle,
             background_color);
 
-        // RENDER A DARKER BOX FOR THE SELECTED VERSE.
-        GRAPHICS::Color selected_verse_background_color = GRAPHICS::Color::RED_BROWN;
-        MATH::FloatRectangle selected_verse_background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
-            bounding_rectangle.GetLeftXPosition(),
-            bounding_rectangle.GetTopYPosition(),
-            bounding_rectangle.GetWidth(),
-            static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS));
-        renderer.RenderScreenRectangle(
-            selected_verse_background_rectangle,
-            selected_verse_background_color);
-
         // DETERMINE THE LIST OF VERSES TO RENDER.
-        // The list should start at the currently selected verse
-        // and then fill the remaining space in the box.
-        /// @todo   Wrap around to show some number of verses centered around the current one?
+        // The list should generally have the currently selected verse in the middle and
+        // show about an even number of verses on each side to fill the remaining space in the box.
         unsigned int box_height_in_pixels = static_cast<unsigned int>(bounding_rectangle.GetHeight());
         const unsigned int ONE_LESS_VERSE_TO_AVOID_EXCEEDING_BOX_BOUNDS = 1;
         unsigned int verses_to_render_count = (box_height_in_pixels / GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS) - ONE_LESS_VERSE_TO_AVOID_EXCEEDING_BOX_BOUNDS;
-        unsigned int first_verse_to_render_index = SelectedVerseIndex;
+        unsigned int verses_to_render_half_count = verses_to_render_count / 2;
+
+        // If there aren't enough verses before the selected verse, just start rendering
+        // with the first possible verse.  This effectively prevents "scrolling" within
+        // the list box from occurring until it is becomes more necessary to start showing
+        // more verses.
+        unsigned int first_verse_to_render_index = 0;
+        bool enough_previous_verses = (SelectedVerseIndex > verses_to_render_half_count);
+        if (enough_previous_verses)
+        {
+            // Start rendering verses prior to the selected one so that the selected verse
+            // appears in the middle, allowing players to more easily see what surrounding
+            // verses might exist.
+            first_verse_to_render_index = SelectedVerseIndex - verses_to_render_half_count;
+        }
+
         unsigned int last_verse_to_render_index = first_verse_to_render_index + verses_to_render_count;
         unsigned int last_valid_verse_index = BIBLE::BIBLE_VERSES.size() - 1;
-        last_verse_to_render_index = std::min(last_verse_to_render_index, last_valid_verse_index);
+        last_verse_to_render_index = std::min(last_verse_to_render_index, last_valid_verse_index);        
 
         // RENDER THE LIST OF VERSES.
         MATH::Vector2f current_verse_screen_top_left_position_in_pixels(
@@ -67,6 +70,22 @@ namespace INVENTORY
             verse_index <= last_verse_to_render_index;
             ++verse_index)
         {
+            // CHECK IF THE CURRENT VERSE IS THE SELECTED VERSE.
+            bool current_verse_is_selected = (SelectedVerseIndex == verse_index);
+            if (current_verse_is_selected)
+            {
+                // RENDER A DARKER BOX FOR THE SELECTED VERSE.
+                GRAPHICS::Color selected_verse_background_color = GRAPHICS::Color::RED_BROWN;
+                MATH::FloatRectangle selected_verse_background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+                    bounding_rectangle.GetLeftXPosition(),
+                    current_verse_screen_top_left_position_in_pixels.Y,
+                    bounding_rectangle.GetWidth(),
+                    static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS));
+                renderer.RenderScreenRectangle(
+                    selected_verse_background_rectangle,
+                    selected_verse_background_color);
+            }
+
             // GET THE TEXT TO RENDER FOR THE VERSE.
             // The Bible's citation string should only be visible if
             // the player has collected the vese.

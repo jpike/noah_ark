@@ -112,15 +112,54 @@ namespace STATES
                     Hud->MainTextBox.StartDisplayingText(message_for_text_box);
                 }
             }
+
+            // GET THE CURRENT TILE MAP.
+            /// @todo   Revisit the structure of the logic here.  There probably shouldn't be
+            // so much duplication here, and the separation of what's in "UpdateOverworld"
+            // and what logic is here isn't clear.
+            // This is needed for updating the tree and dust cloud animations, which should still
+            // be updated even if the main text box is displayed.
+            MATH::FloatRectangle camera_bounds = camera.ViewBounds;
+            MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
+            MAPS::TileMap* current_tile_map = Overworld->GetTileMap(camera_view_center.X, camera_view_center.Y);
+            assert(current_tile_map);
+
+            // UPDATE THE CURRENT TILE MAP'S TREES.
+            for (auto tree = current_tile_map->Trees.begin(); tree != current_tile_map->Trees.end(); ++tree)
+            {
+                tree->Update(elapsed_time);
+            }
+
+            // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
+            for (auto dust_cloud = current_tile_map->TreeDustClouds.begin(); dust_cloud != current_tile_map->TreeDustClouds.end();)
+            {
+                // UPDATE THE CURRENT DUST CLOUD.
+                dust_cloud->Update(elapsed_time);
+
+                // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
+                bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
+                if (dust_cloud_disappeared)
+                {
+                    // REMOVE THE DUST CLOUD.
+                    dust_cloud = current_tile_map->TreeDustClouds.erase(dust_cloud);
+                }
+                else
+                {
+                    // MOVE TO UPDATING THE NEXT DUST CLOUD.
+                    ++dust_cloud;
+                }
+            }
+
+            // UPDATE NOAH'S AXE AND SPRITE.
+            Overworld->NoahPlayer->Inventory->Axe->Update(elapsed_time);
         }
     }
 
     /// Renders the current frame of the gameplay state.
-    /// @param[in]  elapsed_time - The elapsed time since the previous frame.
     /// @param[in]  renderer - The renderer to use for rendering.
-    void GameplayState::Render(const sf::Time& elapsed_time, GRAPHICS::Renderer& renderer)
+    void GameplayState::Render(GRAPHICS::Renderer& renderer)
     {
-        renderer.Render(elapsed_time, *Overworld);
+        renderer.Render(*Overworld);
         Hud->Render(renderer);
     }
 
@@ -208,7 +247,7 @@ namespace STATES
         assert(current_tile_map);
 
         // CHECK IF THE PRIMARY ACTION BUTTON WAS PRESSED.
-        if (input_controller.PrimaryActionButtonDown())
+        if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::PRIMARY_ACTION_KEY))
         {
             // SWING THE PLAYER'S AXE.
             // A new axe swing may not be created if the player's
@@ -234,7 +273,7 @@ namespace STATES
             // MOVE NOAH IN RESPONSE TO USER INPUT.
             const float PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS = 8.0f;
             MATH::Vector2f old_noah_position = Overworld->NoahPlayer->GetWorldPosition();
-            if (input_controller.UpButtonDown())
+            if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::UP_KEY))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -294,9 +333,9 @@ namespace STATES
 
                         Overworld->NoahPlayer->SetWorldPosition(noah_world_position);
                     }
-                } // end if (player_moved_out_of_view)
-            } // end if (input_controller.UpButtonPressed())
-            if (input_controller.DownButtonDown())
+                }
+            }
+            if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::DOWN_KEY))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -356,9 +395,9 @@ namespace STATES
 
                         Overworld->NoahPlayer->SetWorldPosition(noah_world_position);
                     }
-                } // end if (player_moved_out_of_view)
-            } // end if (input_controller.DownButtonPressed())
-            if (input_controller.LeftButtonDown())
+                }
+            } 
+            if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::LEFT_KEY))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -418,9 +457,9 @@ namespace STATES
 
                         Overworld->NoahPlayer->SetWorldPosition(noah_world_position);
                     }
-                } // end if (player_moved_out_of_view)
-            } // end if (input_controller.LeftButtonPressed())
-            if (input_controller.RightButtonDown())
+                }
+            } 
+            if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::RIGHT_KEY))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -480,13 +519,19 @@ namespace STATES
 
                         Overworld->NoahPlayer->SetWorldPosition(noah_world_position);
                     }
-                } // end if (player_moved_out_of_view)
-            } // end if (input_controller.RightButtonPressed())
-        } // end if (!axe_is_swinging)
+                }
+            } 
+        }
 
-        // STOP NOAH'S ANIMATION FROM PLAYING IF THE PLAYER DIDN'T MOVE THIS FRAME.
-        if (!noah_moved_this_frame)
+        // CHECK IF NOAH MOVED THIS FRAME.
+        if (noah_moved_this_frame)
         {
+            // UPDATE NOAH'S ANIMATION.
+            Overworld->NoahPlayer->Sprite.Update(elapsed_time);
+        }
+        else
+        {
+            // STOP NOAH'S ANIMATION FROM PLAYING SINCE THE PLAYER DIDN'T MOVE THIS FRAME.
             Overworld->NoahPlayer->Sprite.ResetAnimation();
         }
 

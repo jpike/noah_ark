@@ -10,21 +10,16 @@ namespace GUI
     /// Constructor.  The text box is invisible by default.
     /// @param[in]  width_in_pixels - The width of the text box, in pixels.
     /// @param[in]  height_in_pixels - The height of the text box, in pixels.
-    /// @throws std::exception - Thrown if the font is null.
     TextBox::TextBox(
         const unsigned int width_in_pixels,
         const unsigned int height_in_pixels) :
     WidthInPixels(width_in_pixels),
     HeightInPixels(height_in_pixels),
-    MaxCharacterCountPerPage(0)
-    {
-        // CALCULATE THE MAXIMUM NUMBER OF CHARACTERS PER PAGE.
-        /// @todo   Figure out how to best de-duplicate this calculation
-        /// since it is also used in the TextPage class.
-        unsigned int line_count_per_page = (height_in_pixels / Glyph::HEIGHT_IN_PIXELS);
-        unsigned int max_character_count_per_line_per_age = (width_in_pixels / Glyph::WIDTH_IN_PIXELS) - TextPage::ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE;
-        MaxCharacterCountPerPage = (max_character_count_per_line_per_age * line_count_per_page);
-    }
+    Pages(),
+    CurrentPageIndex(0),
+    ContinueArrowVisible(false),
+    TotalElapsedTimeInSecondsSinceLastArrowBlink(0.0f)
+    {}
 
     /// Configures the text box to start displaying the provided text.
     /// The text box will be made visible.
@@ -42,6 +37,10 @@ namespace GUI
         // ADD EACH LINE OF TEXT TO APPROPRIATE PAGES IN THE TEXT BOX.
         for (const std::string& line : lines)
         {
+            // CALCULATE HOW MUCH TEXT CAN EXIST ON A SINGLE PAGE.
+            TextPage new_page(WidthInPixels, HeightInPixels);
+            unsigned int max_character_count_per_page = new_page.MaxCharacterCount;
+
             // SPLIT THE LINE INTO WORDS.
             // In order to avoid having a word broken up onto multiple lines,
             // word boundaries need to be determined.  Splitting the text
@@ -51,7 +50,7 @@ namespace GUI
             // only having one space between words.  There also is not
             // a use case yet where having multiple sequential spaces
             // is valuable.
-            std::deque<std::string> words = CORE::String::SplitIntoWords(line, MaxCharacterCountPerPage);
+            std::deque<std::string> words = CORE::String::SplitIntoWords(line, max_character_count_per_page);
 
             bool words_exist = !words.empty();
             if (!words_exist)
@@ -64,7 +63,7 @@ namespace GUI
             // DIVIDE THE WORDS INTO APPROPRIATE PAGES.
             // The text might not all fit onto a single page, so multiple pages
             // of text might be needed.  At least one initial page will be needed.
-            Pages.push_back(TextPage(WidthInPixels, HeightInPixels));
+            Pages.push_back(new_page);
             TextPage* current_page = &Pages.back();
             CurrentPageIndex = 0;
             while (!words.empty())
@@ -109,6 +108,19 @@ namespace GUI
         // UPDATE THE CURRENT PAGE OF TEXT.
         auto& current_text_page = Pages[CurrentPageIndex];
         current_text_page.Update(elapsed_time);
+
+        // UPDATE THE VISIBILITY OF THE BLINKING ARROW BASED ON THE ELAPSED TIME.
+        const float ELAPSED_TIME_BETWEEN_BLINKS_IN_SECONDS = 0.6f;
+        TotalElapsedTimeInSecondsSinceLastArrowBlink += elapsed_time.asSeconds();
+        bool arrow_should_blink = (TotalElapsedTimeInSecondsSinceLastArrowBlink >= ELAPSED_TIME_BETWEEN_BLINKS_IN_SECONDS);
+        if (arrow_should_blink)
+        {
+            // TOGGLE THE VISIBILITY OF THE ARROW.
+            ContinueArrowVisible = !ContinueArrowVisible;
+
+            // RESET THE TIMER FOR ARROW BLINKING.
+            TotalElapsedTimeInSecondsSinceLastArrowBlink = 0.0f;
+        }
     }
 
     /// Moves to the next page of text for the text box.
@@ -196,39 +208,42 @@ namespace GUI
         bool current_page_finished_being_displayed = current_text_page.AllTextDisplayed();
         if (current_page_finished_being_displayed)
         {
-            // DRAW A TRIANGLE TO LET THE USER KNOW TO PRESS A BUTTON TO CONTINUE TO THE NEXT PAGE.
-            // The SFML circle shape class can represent any regular polygon with any number of
-            // sides (with more sides getting close to a circle), so it is a quick way to draw
-            // a triangle.
-            const float TRIANGLE_DIMENSION = Glyph::HEIGHT_IN_PIXELS;
-            const float RADIUS = TRIANGLE_DIMENSION / 2.0f;
-            const unsigned int TRIANGLE_VERTEX_COUNT = 3;
-            sf::CircleShape press_button_triangle(RADIUS, TRIANGLE_VERTEX_COUNT);
-            press_button_triangle.setFillColor(sf::Color::Black);
-            
-            // Make sure the triangle is positioned based on its center.
-            // This makes some calculations later easier.
-            press_button_triangle.setOrigin(RADIUS, RADIUS);
+            // CHECK IF THE ARROW IS ALLOWD TO BE DISPLAYED.
+            if (ContinueArrowVisible)
+            {
+                // DRAW A TRIANGLE TO LET THE USER KNOW TO PRESS A BUTTON TO CONTINUE TO THE NEXT PAGE.
+                // The SFML circle shape class can represent any regular polygon with any number of
+                // sides (with more sides getting close to a circle), so it is a quick way to draw
+                // a triangle.
+                const float TRIANGLE_DIMENSION = Glyph::HEIGHT_IN_PIXELS;
+                const float RADIUS = TRIANGLE_DIMENSION / 2.0f;
+                const unsigned int TRIANGLE_VERTEX_COUNT = 3;
+                sf::CircleShape press_button_triangle(RADIUS, TRIANGLE_VERTEX_COUNT);
+                press_button_triangle.setFillColor(sf::Color::Black);
 
-            // The triangle needs to be flipped to appear that is is pointed down.
-            const float NO_HORIZONTAL_FLIP = 1.0f;
-            const float FLIP_VERTICALLY = -1.0f;
-            press_button_triangle.setScale(NO_HORIZONTAL_FLIP, FLIP_VERTICALLY);
+                // Make sure the triangle is positioned based on its center.
+                // This makes some calculations later easier.
+                press_button_triangle.setOrigin(RADIUS, RADIUS);
 
-            // The triangle should be in the bottom-right corner.
-            sf::Vector2i text_box_bottom_right_corner(
-                static_cast<int>(width_in_pixels), 
-                static_cast<int>(height_in_pixels));
-            sf::Vector2f bottom_right_corner_world_position = renderer.Screen.RenderTarget->mapPixelToCoords(text_box_bottom_right_corner);
+                // The triangle needs to be flipped to appear that is is pointed down.
+                const float NO_HORIZONTAL_FLIP = 1.0f;
+                const float FLIP_VERTICALLY = -1.0f;
+                press_button_triangle.setScale(NO_HORIZONTAL_FLIP, FLIP_VERTICALLY);
 
-            // The triangle should not overlap with the outline of the text box.
-            bottom_right_corner_world_position.x -= (OUTLINE_THICKNESS_IN_PIXELS);
-            bottom_right_corner_world_position.y -= (OUTLINE_THICKNESS_IN_PIXELS);
+                // The triangle should be in the bottom-right corner.
+                sf::Vector2i text_box_bottom_right_corner(
+                    static_cast<int>(width_in_pixels),
+                    static_cast<int>(height_in_pixels));
+                sf::Vector2f bottom_right_corner_world_position = renderer.Screen.RenderTarget->mapPixelToCoords(text_box_bottom_right_corner);
 
-            press_button_triangle.setPosition(bottom_right_corner_world_position);
+                // The triangle should not overlap with the outline of the text box.
+                bottom_right_corner_world_position.x -= (OUTLINE_THICKNESS_IN_PIXELS);
+                bottom_right_corner_world_position.y -= (OUTLINE_THICKNESS_IN_PIXELS);
 
-            /// @todo   Make this triangle blink?
-            renderer.Screen.RenderTarget->draw(press_button_triangle);
+                press_button_triangle.setPosition(bottom_right_corner_world_position);
+
+                renderer.Screen.RenderTarget->draw(press_button_triangle);
+            }
         }
     }
 

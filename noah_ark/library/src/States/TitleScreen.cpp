@@ -9,7 +9,7 @@ namespace STATES
     bool TitleScreen::RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller) const
     {
         // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
-        bool start_button_pressed = input_controller.StartButtonWasPressed();
+        bool start_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::START_KEY);
         return start_button_pressed;
     }
 

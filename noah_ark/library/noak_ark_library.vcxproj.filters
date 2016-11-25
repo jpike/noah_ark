@@ -248,6 +248,9 @@
     <ClInclude Include="src\Collision\CollisionDetectionAlgorithms.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="src\Inventory\InventoryBiblePage.h">
+      <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -384,6 +387,9 @@
     </ClCompile>
     <ClCompile Include="src\Collision\CollisionDetectionAlgorithms.cpp">
       <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Inventory\InventoryBiblePage.cpp">
+      <Filter>Source Files\Inventory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

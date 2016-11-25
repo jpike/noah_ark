@@ -45,15 +45,18 @@ namespace GUI
     private:
         // PRIVATE MEMBER VARIABLES.
         /// The width of the text box (excluding borders) in pixels.
-        unsigned int WidthInPixels = 0;
+        unsigned int WidthInPixels;
         /// The height of the text box (excluding borders) in pixels.
-        unsigned int HeightInPixels = 0;
+        unsigned int HeightInPixels;
         /// The pages of text currently in the text box.
-        std::vector<TextPage> Pages = std::vector<TextPage>();
+        std::vector<TextPage> Pages;
         /// The index of the current page of text displayed in the text box.
-        unsigned int CurrentPageIndex = 0;
-        /// The maximum number of characters allowed per page.
-        unsigned int MaxCharacterCountPerPage;
+        unsigned int CurrentPageIndex;
+        /// True if the arrow indicating that the user can progress the text box is visible; false otherwise.
+        bool ContinueArrowVisible;
+        /// The total elapsed time (in seconds) since the last time the arrow
+        /// in the text box was shown or hidden.  Used to make the arrow blink.
+        float TotalElapsedTimeInSecondsSinceLastArrowBlink;
     };
 }
 }

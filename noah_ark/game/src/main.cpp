@@ -446,7 +446,7 @@ int main(int argumentCount, char* arguments[])
                         title_screen.Render(renderer);
                         break;
                     case GameState::GAMEPLAY:
-                        gameplay_state.Render(elapsed_time, renderer);
+                        gameplay_state.Render(renderer);
                         break;
                 }
 

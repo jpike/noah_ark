@@ -64,6 +64,10 @@ namespace MATH
         bool Contains(const CoordinateType x_position, const CoordinateType y_position) const;
         bool Intersects(const Rectangle& other_rectangle) const;
 
+        // CONVERSION.
+        template <typename DestinationCoordinateType>
+        sf::Rect<DestinationCoordinateType> ToSfmlRectangle() const;
+
     private:
         // HELPER METHODS.
         static sf::Rect<CoordinateType> RecalculateRectangle(
@@ -310,5 +314,21 @@ namespace MATH
         // CONVERT THE RECTANGLE TO SFML FORMAT.
         sf::Rect<CoordinateType> rectangle = sf::Rect<CoordinateType>(left_x_position, top_y_position, width, height);
         return rectangle;
+    }
+
+    /// Converts the rectangle to an SFML rectangle with the specified coordinate type.
+    /// Direct casting is used for conversion.
+    /// @tparam DestinationCoordinateType - The type of the coordinates in the returned rectangle.
+    /// @return An SFML rectangle with the specified coordinate type.
+    template <typename CoordinateType>
+    template <typename DestinationCoordinateType>
+    sf::Rect<DestinationCoordinateType> Rectangle<CoordinateType>::ToSfmlRectangle() const
+    {
+        sf::Rect<DestinationCoordinateType> converted_rectangle;
+        converted_rectangle.left = static_cast<DestinationCoordinateType>(SfmlRectangle.left);
+        converted_rectangle.top = static_cast<DestinationCoordinateType>(SfmlRectangle.top);
+        converted_rectangle.width = static_cast<DestinationCoordinateType>(SfmlRectangle.width);
+        converted_rectangle.height = static_cast<DestinationCoordinateType>(SfmlRectangle.height);
+        return converted_rectangle;
     }
 }

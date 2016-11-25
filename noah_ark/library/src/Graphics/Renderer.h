@@ -55,9 +55,7 @@ namespace GRAPHICS
             const Color& text_color);
 
         // OTHER RENDERING.
-        void Render(
-            const sf::Time& elapsed_time,
-            MAPS::Overworld& overworld);
+        void Render(const MAPS::Overworld& overworld);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The screen that gets rendered to.
@@ -72,5 +70,8 @@ namespace GRAPHICS
     private:
         // RENDERING.
         void Render(const MAPS::TileMap& tile_map);
+
+        // SHADERS.
+        sf::RenderStates ConfigureColoredTextShader(const Color& color);
     };
 }

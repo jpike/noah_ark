@@ -5,8 +5,7 @@
 #include "Graphics/Renderer.h"
 #include "Input/KeyboardInputController.h"
 #include "Inventory/Inventory.h"
-#include "Inventory/InventoryBibleVerseListBox.h"
-#include "Inventory/InventoryBibleVerseTextBox.h"
+#include "Inventory/InventoryBiblePage.h"
 
 namespace INVENTORY
 {
@@ -68,15 +67,12 @@ namespace INVENTORY
 
     private:
         // STATIC CONSTANTS.
-        /// The color of the Bible tab and page.
-        static const GRAPHICS::Color BIBLE_TAB_COLOR;
         /// The color of the animals tab and page.
         static const GRAPHICS::Color ANIMALS_TAB_COLOR;
         /// The color of the food tab and page.
         static const GRAPHICS::Color FOOD_TAB_COLOR;
 
         // RENDERING.        
-        void RenderBiblePage(GRAPHICS::Renderer& renderer) const;
         void RenderAnimalsPage(GRAPHICS::Renderer& renderer) const;
         void RenderFoodPage(GRAPHICS::Renderer& renderer) const;
 
@@ -85,12 +81,7 @@ namespace INVENTORY
         std::shared_ptr<const Inventory> Inventory;
         /// The type of tab currently being displayed.
         TabType CurrentTab;
-        /// The GUI text box for displaying the currently selected Bible verse
-        /// in the player's inventory.
-        /// @todo   Factor out to some Bible page class?
-        InventoryBibleVerseTextBox BibleVerseTextBox;
-        /// The GUI list box for displaying a list of Bible verses in the
-        /// player's inventory.
-        InventoryBibleVerseListBox BibleVerseListBox;
+        /// The page of the inventory GUI displaying collected Bible verses.
+        InventoryBiblePage BiblePage;
     };
 }

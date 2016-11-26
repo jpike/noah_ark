@@ -569,8 +569,12 @@ namespace STATES
             if (noah_collided_with_wood_logs)
             {
                 // ADD THE WOOD TO NOAH'S INVENTORY.
-                /// @todo   Make the wood logs have a random amount of wood?
-                Overworld->NoahPlayer->Inventory->AddWood();
+                // The logs can have a random amount of wood.
+                unsigned int MIN_WOOD_COUNT = 1;
+                unsigned int MAX_WOOD_COUNT = 3;
+                unsigned int random_number_for_wood = RandomNumberGenerator();
+                unsigned int random_wood_count = (random_number_for_wood % MAX_WOOD_COUNT) + MIN_WOOD_COUNT;
+                Overworld->NoahPlayer->Inventory->AddWood(random_wood_count);
 
                 // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
                 wood_logs = current_tile_map->WoodLogs.erase(wood_logs);
@@ -579,8 +583,8 @@ namespace STATES
                 // There should be a random chance that a Bible verse can be collected.
                 const unsigned int EVENLY_DIVISIBLE = 0;
                 const unsigned int BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS = 2;
-                unsigned int random_number = RandomNumberGenerator();
-                bool bible_verse_exists_with_wood = ((random_number % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
+                unsigned int random_number_for_bible_verse = RandomNumberGenerator();
+                bool bible_verse_exists_with_wood = ((random_number_for_bible_verse % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
                 if (bible_verse_exists_with_wood)
                 {
                     // CHECK IF ANY BIBLE VERSES REMAIN.
@@ -589,8 +593,6 @@ namespace STATES
                     if (bible_verses_remain_to_be_found)
                     {
                         // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
-                        /// @todo   Perhaps factor this out?  If we can get rid of the dependency
-                        /// on the game assets from this method, then this might be feasible.
                         std::shared_ptr<AUDIO::SoundEffect> collected_bible_verse_sound = Assets->GetSound(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
                         bool collect_bible_verse_sound_loaded = (nullptr != collected_bible_verse_sound);
                         if (collect_bible_verse_sound_loaded)

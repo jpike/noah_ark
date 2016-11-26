@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+#include <string>
 #include <vector>
 #include "Bible/BibleVerse.h"
 #include "Math/Vector2.h"
@@ -12,6 +14,7 @@ namespace STATES
     public:
         // CONSTRUCTION.
         static SavedGameData DefaultSavedGameData();
+        static std::unique_ptr<SavedGameData> Load(const std::string& filepath);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The player's world position.

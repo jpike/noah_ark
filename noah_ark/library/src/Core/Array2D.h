@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <vector>
 
+/// Holds generic "core" functionality that doesn't yet have a more suitable namespace.
 namespace CORE
 {
     /// A class to simplify interaction with 2D arrays.

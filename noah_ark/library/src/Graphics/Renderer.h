@@ -44,15 +44,18 @@ namespace GRAPHICS
         void RenderText(
             const std::string& text, 
             const MATH::Vector2f& left_top_screen_position_in_pixels,
-            const Color& text_color);
+            const Color& text_color = GRAPHICS::Color::BLACK,
+            const float text_scale_ratio = 1.0f);
         void RenderText(
             const std::string& text,
             const MATH::FloatRectangle& bounding_screen_rectangle,
-            const Color& text_color);
+            const Color& text_color = GRAPHICS::Color::BLACK,
+            const float text_scale_ratio = 1.0f);
         void RenderCenteredText(
             const std::string& text,
             const MATH::FloatRectangle& bounding_screen_rectangle,
-            const Color& text_color);
+            const Color& text_color = GRAPHICS::Color::BLACK,
+            const float text_scale_ratio = 1.0f);
 
         // OTHER RENDERING.
         void Render(const MAPS::Overworld& overworld);

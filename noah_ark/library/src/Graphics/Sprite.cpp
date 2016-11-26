@@ -118,7 +118,17 @@ namespace GRAPHICS
         return height;
     }
 
-    /// Sets the local origin of the sprite used for rotation,
+    /// Gets the local origin (center) of the sprite,
+    /// relative to its top-left coordinate of (0,0).
+    /// @return The sprite's origin, in pixel coordinates.
+    MATH::Vector2f Sprite::GetOrigin() const
+    {
+        sf::Vector2f sprite_origin = SpriteResource.getOrigin();
+        MATH::Vector2f origin(sprite_origin.x, sprite_origin.y);
+        return origin;
+    }
+
+    /// Sets the local origin (center) of the sprite used for rotation,
     /// relative to its top-left coordinate of (0,0).
     /// @param[in]  origin - The origin, in pixel coordinates.
     void Sprite::SetOrigin(const MATH::Vector2f& origin)

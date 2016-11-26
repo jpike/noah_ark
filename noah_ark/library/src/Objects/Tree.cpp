@@ -58,11 +58,6 @@ namespace OBJECTS
         // DEFINE THE SEQUENCE OF ROTATIONS FOR THE SHAKE.
         const float SHAKE_ROTATION_SPEED_IN_DEGREES_PER_SECOND = 30.0f;
         const float FULLY_SHAKED_OUT_ROTATION_ANGLE_MAGNITUDE = 10.0f;
-
-        /// @todo   Consider if randomness should be used here to make things
-        /// more interesting or if we could have some additional direction
-        /// parameter to have the tree shake in a more realistic way
-        /// depending on how it was hit.
         
         // Rotate out to the right.
         TreeShakeSubRotation first_rotation;

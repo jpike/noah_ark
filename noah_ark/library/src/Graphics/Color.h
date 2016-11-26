@@ -2,6 +2,7 @@
 
 #include <cstdint>
 
+/// Holds code related to computer graphics.
 namespace GRAPHICS
 {
     /// Represents an RGBA color.

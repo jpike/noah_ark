@@ -4,13 +4,6 @@
 
 This page will document how collisions will be handled in the Noah's Ark game.
 
-The current plan is as follows:
-- A collision system will handle collision detection.
-- Each game object that needs to be collided with will need to have a collision component attached to it.
-- The game objects will be responsible for synchronizing graphics with physical position.
-- When a game object wants to move, it will "request" movement to its collision component.
-- The collision system will use current and "requested" data in collision components to properly handle movement.
-
 Further research performed is below.
 
 @section map_representation Map Representation

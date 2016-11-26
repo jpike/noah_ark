@@ -56,14 +56,22 @@ namespace RESOURCES
     /// @return The requested font, if successfully loaded; null otherwise.
     std::shared_ptr<GRAPHICS::GUI::Font> Assets::GetFont(const std::string& font_texture_id)
     {
+        // RETURN THE FONT IF IT HAS ALREADY BEEN LOADED.
+        auto id_with_font = Fonts.find(font_texture_id);
+        bool font_already_loaded = (Fonts.cend() != id_with_font);
+        if (font_already_loaded)
+        {
+            return id_with_font->second;
+        }
+
         // GET THE FONT'S TEXTURE.
         std::shared_ptr<GRAPHICS::Texture> font_texture = GetTexture(font_texture_id);
         bool font_texture_loaded = (nullptr != font_texture);
         if (font_texture_loaded)
         {
-            // RETURN THE FONT.
-            /// @todo Should we store loaded fonts somewhere instead of creating new instances each time?
+            // CACHE THE FONT IN THIS COLLECTION BEFORE RETURNING.
             std::shared_ptr<GRAPHICS::GUI::Font> font = std::make_shared<GRAPHICS::GUI::Font>(font_texture);
+            Fonts[font_texture_id] = font;
             return font;
         }
         else

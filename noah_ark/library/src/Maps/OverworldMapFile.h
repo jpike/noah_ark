@@ -11,6 +11,7 @@ namespace MAPS
     /// Specifically, it identifies individual tile maps and where
     /// they are located in the overworld.  The file is a JSON file
     /// in the following format:
+    /// @code
     /// {
     ///     "WidthInTilesMaps": <Unsigned Integer>,
     ///     "HeightInTileMaps": <Unsigned Integer>,
@@ -38,6 +39,7 @@ namespace MAPS
     ///         { "Filepath": "res/maps/map_2.json" }
     ///     ]
     /// }
+    /// @endcode
     ///
     /// @note    This class uses boost's property tree library,
     /// which isn't thread-safe by default.

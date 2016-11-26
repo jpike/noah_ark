@@ -7,6 +7,7 @@
 #include "Maps/TileMap.h"
 #include "Objects/Noah.h"
 
+/// Holds code related to maps in the game (primarily tile maps).
 namespace MAPS
 {
     /// The entire overworld of the game.  The overworld is divided into smaller chunks

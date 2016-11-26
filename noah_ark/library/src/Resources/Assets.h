@@ -16,6 +16,7 @@
 #include "Maps/TileMapFile.h"
 #include "Maps/Tileset.h"
 
+/// Holds code related to resources/assets for the game.
 namespace RESOURCES
 {
     // ASSET IDs.
@@ -61,5 +62,7 @@ namespace RESOURCES
         /// Shaders that have been loaded.  They need to remain in memory to allow them to be used.
         /// They are mapped by shader ID.
         std::unordered_map< ShaderId, std::shared_ptr<sf::Shader> > Shaders = {};
+        /// Fonts that have been loaded.
+        std::unordered_map< std::string, std::shared_ptr<GRAPHICS::GUI::Font> > Fonts = {};
     };
 }

@@ -1,11 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include "Graphics/Color.h"
 #include "Graphics/Renderer.h"
 #include "Input/KeyboardInputController.h"
 #include "Inventory/Inventory.h"
 #include "Inventory/InventoryBiblePage.h"
+#include "Math/Vector2.h"
 
 namespace INVENTORY
 {
@@ -72,7 +74,12 @@ namespace INVENTORY
         /// The color of the food tab and page.
         static const GRAPHICS::Color FOOD_TAB_COLOR;
 
-        // RENDERING.        
+        // RENDERING.
+        void RenderTab(
+            const std::string& tab_text,
+            const MATH::Vector2f& left_top_screen_position_in_pixels,
+            const GRAPHICS::Color& background_color,
+            GRAPHICS::Renderer& renderer) const;
         void RenderAnimalsPage(GRAPHICS::Renderer& renderer) const;
         void RenderFoodPage(GRAPHICS::Renderer& renderer) const;
 

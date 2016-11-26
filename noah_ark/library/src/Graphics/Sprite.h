@@ -35,6 +35,7 @@ namespace GRAPHICS
         float GetHeightInPixels() const;
 
         // ROTATION.
+        MATH::Vector2f GetOrigin() const;
         void SetOrigin(const MATH::Vector2f& origin);
         void SetRotation(const float angle_in_degrees);
 

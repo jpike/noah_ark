@@ -36,7 +36,11 @@ enum class GameState
     GAMEPLAY
 };
 
-/// @todo   Document this function.  It looks like it can probably stay in this file for now.
+/// Populates the overworld based on data read from files and assets.
+/// @param[in]  overworld_map_file - The overworld map file defining the contents of the overworld.
+/// @param[in]  tile_map_files - The individual tile map files that comprise the overworld.
+/// @param[in,out]  assets - The assets for the overworld.
+/// @param[in,out]  overworld - The overworld to populate.
 void PopulateOverworld(
     const MAPS::OverworldMapFile& overworld_map_file, 
     const CORE::Array2D<MAPS::TileMapFile>& tile_map_files, 
@@ -46,6 +50,10 @@ void PopulateOverworld(
     // LOAD THE TILESET TEXTURE.
     std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::GROUND_TILESET_TEXTURE_ID);
     assert(tileset_texture);
+
+    // LOAD THE TREE TEXTURE.
+    std::shared_ptr<GRAPHICS::Texture> tree_texture = assets.GetTexture(RESOURCES::TREE_TEXTURE_ID);
+    assert(tree_texture);
 
     // LOAD TILE MAPS FOR EACH ROW.
     for (unsigned int row = 0; row < overworld_map_file.OverworldHeightInTileMaps; ++row)
@@ -142,17 +150,6 @@ void PopulateOverworld(
                             bool is_tree = (TREE_OBJECT_TYPE == object_description.Type);
                             if (is_tree)
                             {
-                                // GET THE TREE TEXTURE.
-                                std::shared_ptr<GRAPHICS::Texture> tree_texture = assets.GetTexture(RESOURCES::TREE_TEXTURE_ID);
-                                bool tree_texture_retrieved = (nullptr != tree_texture);
-                                if (!tree_texture_retrieved)
-                                {
-                                    assert(tree_texture_retrieved);
-                                    // Continue trying to create other objects.
-                                    /// @todo   Maybe we should just load this once...as opposed to performing each iteration?
-                                    continue;
-                                }
-
                                 // DETERMINE THE SUB-RECTANGLE OF THE TEXTURE TO USE FOR THE TREE.
                                 // Different sub-rectangles are used depending on the tree's size.
                                 MATH::FloatRectangle tree_texture_sub_rectangle;
@@ -185,32 +182,23 @@ void PopulateOverworld(
 
                                 // CREATE THE TREE'S SPRITE.
                                 GRAPHICS::Sprite tree_sprite(tree_texture, tree_texture_sub_rectangle);
-
-                                // The center of the sprite should be the center of its visible portion of the texture.
-                                /// @todo   This is basically being done in the constructor too, but the origin is need for calculating
-                                /// the world position too...
-                                float tree_local_center_x = static_cast<float>(tree_texture_sub_rectangle.GetWidth()) / 2.0f;
-                                float tree_local_center_y = static_cast<float>(tree_texture_sub_rectangle.GetHeight()) / 2.0f;
-                                tree_sprite.SetOrigin(MATH::Vector2f(tree_local_center_x, tree_local_center_y));
-
-                                float tree_world_x_position = static_cast<float>(object_description.TopLeftPositionInPixels.X) + tree_local_center_x;
-                                float tree_world_y_position = static_cast<float>(object_description.TopLeftPositionInPixels.Y) + tree_local_center_y;
+                                MATH::Vector2f tree_local_center = tree_sprite.GetOrigin();
+                                float tree_world_x_position = static_cast<float>(object_description.TopLeftPositionInPixels.X) + tree_local_center.X;
+                                float tree_world_y_position = static_cast<float>(object_description.TopLeftPositionInPixels.Y) + tree_local_center.Y;
                                 tree_sprite.SetWorldPosition(tree_world_x_position, tree_world_y_position);
 
                                 // GET THE TREE SHAKING SOUND EFFECT.
+                                // If the sound can't be retrieved, then the game will continue just with no sound playing
+                                // when trees shake.
                                 std::shared_ptr<AUDIO::SoundEffect> tree_shake_sound = assets.GetSound(RESOURCES::TREE_SHAKE_SOUND_ID);
                                 bool tree_shake_sound_retrieved = (nullptr != tree_shake_sound);
-                                if (!tree_shake_sound_retrieved)
+                                if (tree_shake_sound_retrieved)
                                 {
-                                    /// @todo   Allow creating tree with no sound effect?
-                                    assert(false);
-                                    continue;
+                                    /// @todo   Create a better tree shaking sound effect so that stuff
+                                    /// doesn't have to be manually modified here.
+                                    tree_shake_sound->Sound.setVolume(25);
+                                    tree_shake_sound->Sound.setPitch(2);
                                 }
-
-                                /// @todo   Create a better tree shaking sound effect so that stuff
-                                /// doesn't have to be manually modified here.
-                                tree_shake_sound->Sound.setVolume(25);
-                                tree_shake_sound->Sound.setPitch(2);
 
                                 // CREATE THE TREE.
                                 OBJECTS::Tree tree;
@@ -231,6 +219,10 @@ void PopulateOverworld(
     }
 }
 
+/// Loads tile map files specified in the overworld map file.
+/// @param[in]  overworld_map_file - The overworld map file definining the tile map files to load.
+/// @param[out] tile_map_files - The tile map files, if successfully loaded.
+/// @return True if loading succeeded; false otherwise.
 bool LoadTileMapFiles(
     const MAPS::OverworldMapFile& overworld_map_file,
     CORE::Array2D<MAPS::TileMapFile>& tile_map_files)
@@ -298,6 +290,9 @@ bool LoadTileMapFiles(
     return true;
 }
 
+/// Loads the overworld.
+/// @param[in]  assets - The assets to use for the overworld.
+/// @return The overworld, if successfully loaded; null otherwise.
 std::unique_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
 {
     // LOAD THE OVERWORLD MAP FILE.
@@ -475,32 +470,28 @@ int main(int argumentCount, char* arguments[])
                             game_state = GameState::GAMEPLAY;
 
                             // LOAD THE GAME'S SAVE FILE.
-                            /* @todo std::unique_ptr<SavedGameData> saved_game_data = SavedGameData::Load("saved_game.dat");
-                            bool saved_game_loaded = (nullptr != saved_game_data);
-                            if (saved_game_data_loaded)
+                            std::unique_ptr<STATES::SavedGameData> saved_game_data = STATES::SavedGameData::Load("saved_game.dat");
+                            bool saved_game_data_loaded = (nullptr != saved_game_data);
+                            if (!saved_game_data_loaded)
                             {
-                                // SAVE DATA.
-                                // - Starting player position.
-                                // - Player inventory.
+                                // USE THE DEFAULT SAVED GAME DATA FOR A NEW GAME.
+                                saved_game_data = std::make_unique<STATES::SavedGameData>(STATES::SavedGameData::DefaultSavedGameData());
                             }
-                            else*/
-                            {
-                                // INITIALIZE THE GAMEPLAY STATE.
-                                assert(overworld_being_loaded.valid());
-                                auto overworld = overworld_being_loaded.get();
-                                assert(overworld);
 
-                                STATES::SavedGameData default_saved_game_data = STATES::SavedGameData::DefaultSavedGameData();
-                                bool gameplay_state_initialized = gameplay_state.Initialize(
-                                    SCREEN_WIDTH_IN_PIXELS,
-                                    default_saved_game_data,
-                                    std::move(overworld));
-                                assert(gameplay_state_initialized);
+                            // INITIALIZE THE GAMEPLAY STATE.
+                            assert(overworld_being_loaded.valid());
+                            auto overworld = overworld_being_loaded.get();
+                            assert(overworld);
 
-                                // FOCUS THE CAMERA ON THE PLAYER.
-                                MATH::Vector2f player_start_world_position = gameplay_state.Overworld->NoahPlayer->GetWorldPosition();
-                                renderer.Camera.SetCenter(player_start_world_position);
-                            }
+                            bool gameplay_state_initialized = gameplay_state.Initialize(
+                                SCREEN_WIDTH_IN_PIXELS,
+                                *saved_game_data,
+                                std::move(overworld));
+                            assert(gameplay_state_initialized);
+
+                            // FOCUS THE CAMERA ON THE PLAYER.
+                            MATH::Vector2f player_start_world_position = gameplay_state.Overworld->NoahPlayer->GetWorldPosition();
+                            renderer.Camera.SetCenter(player_start_world_position);
                         }
                         break;
                     }

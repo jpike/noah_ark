@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include "Core/Array2D.h"
 
+/// A namespace for testing the Array2D class.
 namespace ARRAY_2D_TESTS
 {
     TEST_CASE("Array dimensions properly set upon construction.", "[Array2D]")

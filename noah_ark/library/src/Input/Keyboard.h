@@ -3,6 +3,9 @@
 #include <array>
 #include <SFML/Window.hpp>
 
+/// Holds code related to user input for controlling the game.
+/// The namespace can't just be "INPUT" because that conflicts
+/// with a Windows API symbol.
 namespace INPUT_CONTROL
 {
     /// Keyboard hardware that can supply user input.

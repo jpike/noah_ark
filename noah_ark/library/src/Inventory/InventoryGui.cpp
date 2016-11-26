@@ -108,72 +108,43 @@ namespace INVENTORY
         // It should be positioned near the top-left of the GUI.
         float bible_tab_left_screen_position_in_pixels = background_rectangle.GetLeftXPosition();
         float bible_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
-        MATH::Vector2f bible_tab_top_left_screen_position_in_pixels(
+        MATH::Vector2f bible_tab_left_top_screen_position_in_pixels(
             bible_tab_left_screen_position_in_pixels,
             bible_tab_top_screen_position_in_pixels);
-
-        // The tab should be big enough to hold the text on the tab.
-        std::string bible_tab_text = "Bible";
-        unsigned int bible_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * bible_tab_text.length();
-
-        MATH::FloatRectangle bible_tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
-            bible_tab_left_screen_position_in_pixels,
-            bible_tab_top_screen_position_in_pixels,
-            static_cast<float>(bible_tab_text_width_in_pixels),
-            static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS));
-
-        renderer.RenderScreenRectangle(
-            bible_tab_rectangle,
-            InventoryBiblePage::BACKGROUND_COLOR);
-
-        renderer.RenderText(bible_tab_text, bible_tab_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);
+        RenderTab(
+            "Bible",
+            bible_tab_left_top_screen_position_in_pixels,
+            InventoryBiblePage::BACKGROUND_COLOR,
+            renderer);
 
         // RENDER A TAB FOR THE ANIMAL PORTION OF THE GUI.
-        /// @todo   Centralize tab rendering code in helper function.
-        // It should be positioned near the center of the GUI.
         const std::string ANIMALS_TAB_STRING = "Animals";
         unsigned int animals_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * ANIMALS_TAB_STRING.length();
         unsigned int animals_tab_text_half_width_in_pixels = animals_tab_text_width_in_pixels / 2;
         float animals_tab_left_screen_position_in_pixels = background_rectangle.GetCenterXPosition() - animals_tab_text_half_width_in_pixels;
         float animals_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
-        MATH::Vector2f animals_tab_top_left_screen_position_in_pixels(
+        MATH::Vector2f animals_tab_left_top_screen_position_in_pixels(
             animals_tab_left_screen_position_in_pixels,
             animals_tab_top_screen_position_in_pixels);
-
-        MATH::FloatRectangle animals_tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
-            animals_tab_left_screen_position_in_pixels,
-            animals_tab_top_screen_position_in_pixels,
-            static_cast<float>(animals_tab_text_width_in_pixels),
-            static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS));
-
-        renderer.RenderScreenRectangle(
-            animals_tab_rectangle,
-            ANIMALS_TAB_COLOR);
-
-        renderer.RenderText(ANIMALS_TAB_STRING, animals_tab_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);
+        RenderTab(
+            ANIMALS_TAB_STRING,
+            animals_tab_left_top_screen_position_in_pixels,
+            ANIMALS_TAB_COLOR,
+            renderer);
 
         // RENDER A TAB FOR THE FOOD PORTION OF THE GUI.
-        /// @todo   Centralize tab rendering code in helper function.
-        // It should be positioned near the center of the GUI.
         const std::string FOOD_TAB_STRING = "Food";
         unsigned int food_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * FOOD_TAB_STRING.length();
         float food_tab_left_screen_position_in_pixels = background_rectangle.GetRightXPosition() - food_tab_text_width_in_pixels;
         float food_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
-        MATH::Vector2f food_tab_top_left_screen_position_in_pixels(
+        MATH::Vector2f food_tab_left_top_screen_position_in_pixels(
             food_tab_left_screen_position_in_pixels,
             food_tab_top_screen_position_in_pixels);
-
-        MATH::FloatRectangle food_tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
-            food_tab_left_screen_position_in_pixels,
-            food_tab_top_screen_position_in_pixels,
-            static_cast<float>(food_tab_text_width_in_pixels),
-            static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS));
-
-        renderer.RenderScreenRectangle(
-            food_tab_rectangle,
-            FOOD_TAB_COLOR);
-
-        renderer.RenderText(FOOD_TAB_STRING, food_tab_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);
+        RenderTab(
+            FOOD_TAB_STRING,
+            food_tab_left_top_screen_position_in_pixels,
+            FOOD_TAB_COLOR,
+            renderer);
 
         // RENDER THE CURRENTLY DISPLAYED PAGE.
         switch (CurrentTab)
@@ -188,6 +159,33 @@ namespace INVENTORY
                 RenderFoodPage(renderer);
                 break;
         }
+    }
+
+    /// Renders a tab that is part of the inventory GUI.
+    /// @param[in]  tab_text - The text to display on the tab.
+    /// @param[in]  left_top_screen_position_in_pixels - The left-top screen position of the tab.
+    /// @param[in]  background_color - The background color of the tab.
+    /// @param[in,out]  renderer - The renderer to use for rendering.
+    void InventoryGui::RenderTab(
+        const std::string& tab_text,
+        const MATH::Vector2f& left_top_screen_position_in_pixels,
+        const GRAPHICS::Color& background_color,
+        GRAPHICS::Renderer& renderer) const
+    {
+        // RENDER A BACKGROUND RECTANGLE FOR THE TAB.
+        unsigned int tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * tab_text.length();
+        MATH::FloatRectangle tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+            left_top_screen_position_in_pixels.X,
+            left_top_screen_position_in_pixels.Y,
+            static_cast<float>(tab_text_width_in_pixels),
+            static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS));
+
+        renderer.RenderScreenRectangle(
+            tab_rectangle,
+            background_color);
+
+        // RENDER THE TEXT FOR THE TAB.
+        renderer.RenderText(tab_text, left_top_screen_position_in_pixels, GRAPHICS::Color::BLACK);
     }
     
     /// Renders the page of the inventory for the animals tab.

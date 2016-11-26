@@ -11,6 +11,7 @@
 #include "Objects/Axe.h"
 #include "Resources/Assets.h"
 
+/// Holds code related to handling collisions of objects in the game world.
 namespace COLLISION
 {
     /// Encapsulates various algorithms related to collision detection.

@@ -18,7 +18,6 @@ namespace STATES
     void TitleScreen::Render(GRAPHICS::Renderer& renderer) const
     {
         // DRAW THE SUB-HEADING FOR THE GAME'S TITLE.
-        /// @todo   Text scaling.
         // It is centered within the top third of the screen.
         MATH::FloatRectangle screen_rectangle = renderer.Screen.GetBoundingRectangle<float>();
         float screen_left_x_position = screen_rectangle.GetLeftXPosition();
@@ -31,10 +30,12 @@ namespace STATES
             screen_top_y_position,
             screen_width_in_pixels,
             one_third_of_screen_height_in_pixels);
+        const float BIBLE_GAMES_HEADING_TEXT_SCALE = 1.5f;
         renderer.RenderCenteredText(
             "BIBLE GAMES",
             sub_heading_screen_rectangle,
-            GRAPHICS::Color::WHITE);
+            GRAPHICS::Color::WHITE,
+            BIBLE_GAMES_HEADING_TEXT_SCALE);
 
         // DRAW THE MAIN GAME'S TITLE.
         // It is centered within the middle third of the screen.
@@ -43,10 +44,12 @@ namespace STATES
             one_third_of_screen_height_in_pixels,
             screen_width_in_pixels,
             one_third_of_screen_height_in_pixels);
+        const float TITLE_TEXT_SCALE = 3.0f;
         renderer.RenderCenteredText(
             "NOAH's ARK",
             main_title_screen_rectangle,
-            GRAPHICS::Color::YELLOW);
+            GRAPHICS::Color::YELLOW,
+            TITLE_TEXT_SCALE);
 
         // DRAW THE 'PRESS START' TEXT.
         // It is centered within the bottom third of the screen.

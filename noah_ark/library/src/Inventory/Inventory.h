@@ -5,6 +5,7 @@
 #include "Bible/BibleVerses.h"
 #include "Objects/Axe.h"
 
+/// Holds code related to the player's inventory of items in the game.
 namespace INVENTORY
 {
     /// An inventory of items that have been collected by Noah.
@@ -13,9 +14,9 @@ namespace INVENTORY
     public:
         // WOOD.
         /// Adds a single item of wood to the inventory.
-        void AddWood()
+        void AddWood(const unsigned int wood_count)
         {
-            ++WoodCount;
+            WoodCount += wood_count;
         }
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

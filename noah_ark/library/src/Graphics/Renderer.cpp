@@ -153,10 +153,13 @@ namespace GRAPHICS
     /// @param[in]  left_top_screen_position_in_pixels - The left/top screen position
     ///     at which to render the text.
     /// @param[in]  text_color - The color of the text.
+    /// @param[in]  text_scale_ratio - The scaling of the text, relative to the default
+    ///     size of the font's glyphs.  1.0f is normal scaling.
     void Renderer::RenderText(
         const std::string& text, 
         const MATH::Vector2f& left_top_screen_position_in_pixels,
-        const Color& text_color)
+        const Color& text_color,
+        const float text_scale_ratio)
     {
         // RENDER THE TEXT TO THE CONSOLE IF NO FONT EXISTS.
         // This is intended primarily to provide debug support.
@@ -180,6 +183,7 @@ namespace GRAPHICS
             current_character_sprite.setPosition(
                 current_character_left_top_screen_position.X,
                 current_character_left_top_screen_position.Y);
+            current_character_sprite.setScale(text_scale_ratio, text_scale_ratio);
 
             // CONFIGURE THE RENDER TARGET FOR SCREEN-SPACE RENDERING.
             sf::View screen_space_view = Screen.RenderTarget->getDefaultView();
@@ -190,7 +194,7 @@ namespace GRAPHICS
             Screen.RenderTarget->draw(current_character_sprite, render_states);
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
-            float glyph_width = glyph.TextureSubRectangle.GetWidth();
+            float glyph_width = GUI::Glyph::WidthInPixels<float>(text_scale_ratio);
             current_character_left_top_screen_position.X += glyph_width;
         }
     }
@@ -204,10 +208,13 @@ namespace GRAPHICS
     /// @param[in]  bounding_screen_rectangle - The bounding rectangle
     ///     within the screen in which to render text.
     /// @param[in]  text_color - The color of the text.
+    /// @param[in]  text_scale_ratio - The scaling of the text, relative to the default
+    ///     size of the font's glyphs.  1.0f is normal scaling.
     void Renderer::RenderText(
         const std::string& text,
         const MATH::FloatRectangle& bounding_screen_rectangle,
-        const Color& text_color)
+        const Color& text_color,
+        const float text_scale_ratio)
     {
         // SPLIT THE PROVIDED TEXT INTO LINES BASED ON EMBEDDED LINE BREAKS.
         std::vector<std::string> original_lines_from_text = CORE::String::SplitIntoLines(text);
@@ -217,7 +224,8 @@ namespace GRAPHICS
         // lines (assuming that each word can fit on a single line).
         std::vector<std::string> new_lines_of_text;
         float line_width_in_pixels = bounding_screen_rectangle.GetWidth();
-        unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / GUI::Glyph::WIDTH_IN_PIXELS);
+        float glyph_width_in_pixels = GUI::Glyph::WidthInPixels<float>(text_scale_ratio);
+        unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / glyph_width_in_pixels);
         for (const auto& line : original_lines_from_text)
         {
             // SPLIT THE CURRENT LINE INTO INDIVIDUAL WORDS.
@@ -292,10 +300,11 @@ namespace GRAPHICS
         for (const auto& line : new_lines_of_text)
         {
             // RENDER THE CURRENT LINE.
-            RenderText(line, current_line_left_top_screen_position, text_color);
+            RenderText(line, current_line_left_top_screen_position, text_color, text_scale_ratio);
 
             // MOVE TO THE NEXT LINE.
-            current_line_left_top_screen_position.Y += GUI::Glyph::HEIGHT_IN_PIXELS;
+            float glyph_height_in_pixels = GUI::Glyph::HeightInPixels<float>(text_scale_ratio);
+            current_line_left_top_screen_position.Y += glyph_height_in_pixels;
         }
     }
 
@@ -308,10 +317,13 @@ namespace GRAPHICS
     /// @param[in]  bounding_screen_rectangle - The bounding rectangle
     ///     within the screen in which to render text.
     /// @param[in]  text_color - The color of the text.
+    /// @param[in]  text_scale_ratio - The scaling of the text, relative to the default
+    ///     size of the font's glyphs.  1.0f is normal scaling.
     void Renderer::RenderCenteredText(
         const std::string& text,
         const MATH::FloatRectangle& bounding_screen_rectangle,
-        const Color& text_color)
+        const Color& text_color,
+        const float text_scale_ratio)
     {
         // SPLIT THE PROVIDED TEXT INTO LINES BASED ON EMBEDDED LINE BREAKS.
         std::vector<std::string> original_lines_from_text = CORE::String::SplitIntoLines(text);
@@ -321,7 +333,8 @@ namespace GRAPHICS
         // lines (assuming that each word can fit on a single line).
         std::vector<std::string> new_lines_of_text;
         float line_width_in_pixels = bounding_screen_rectangle.GetWidth();
-        unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / GUI::Glyph::WIDTH_IN_PIXELS);
+        float glyph_width_in_pixels = GUI::Glyph::WidthInPixels<float>(text_scale_ratio);
+        unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / glyph_width_in_pixels);
         for (const auto& line : original_lines_from_text)
         {
             // SPLIT THE CURRENT LINE INTO INDIVIDUAL WORDS.
@@ -394,6 +407,7 @@ namespace GRAPHICS
         // top y-position such that half of the unused space appears before and after the text.
         unsigned int bounding_rectangle_height_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetHeight());
         unsigned int new_line_count = new_lines_of_text.size();
+        unsigned int glyph_height_in_pixels = GUI::Glyph::HeightInPixels<unsigned int>(text_scale_ratio);
         unsigned int total_text_height_in_pixels = new_line_count * GUI::Glyph::HEIGHT_IN_PIXELS;
         unsigned int unused_vertical_space_in_pixels = bounding_rectangle_height_in_pixels - total_text_height_in_pixels;
         unsigned int half_of_unused_vertical_space_in_pixels = unused_vertical_space_in_pixels / 2;
@@ -409,7 +423,7 @@ namespace GRAPHICS
         {
             // CENTER THE CURRENT LINE HORIZONTALLY.
             unsigned int current_line_character_count = line.length();
-            unsigned int current_line_width_in_pixels = current_line_character_count * GUI::Glyph::WIDTH_IN_PIXELS;
+            unsigned int current_line_width_in_pixels = static_cast<unsigned int>(current_line_character_count * glyph_width_in_pixels);
             unsigned int bounding_rectangle_width_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetWidth());
             unsigned int unused_space_on_current_line_in_pixels = bounding_rectangle_width_in_pixels - current_line_width_in_pixels;
             unsigned int half_of_unused_space_on_current_line_in_pixels = unused_space_on_current_line_in_pixels / 2;
@@ -417,15 +431,14 @@ namespace GRAPHICS
             current_line_left_top_screen_position.X += half_of_unused_space_on_current_line_in_pixels;
 
             // RENDER THE CURRENT LINE.
-            RenderText(line, current_line_left_top_screen_position, text_color);
+            RenderText(line, current_line_left_top_screen_position, text_color, text_scale_ratio);
 
             // MOVE TO THE NEXT LINE.
-            current_line_left_top_screen_position.Y += GUI::Glyph::HEIGHT_IN_PIXELS;
+            current_line_left_top_screen_position.Y += glyph_height_in_pixels;
         }
     }
 
     /// Renders an overworld.
-    /// @param[in]  elapsed_time - The elapsed time since the last rendering of the world.
     /// @param[in]  overworld - The overworld to render.
     void Renderer::Render(const MAPS::Overworld& overworld)
     {

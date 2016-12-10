@@ -21,7 +21,8 @@ namespace MAPS
     TileMapHeightInTiles(tile_map_height_in_tiles),
     TileDimensionInPixels(tile_dimension_in_pixels),
     NoahPlayer(),
-    AxeSwings()
+    AxeSwings(),
+    BackgroundMusic()
     {}
 
     /// Gets the tile map at the specified row and column indices.

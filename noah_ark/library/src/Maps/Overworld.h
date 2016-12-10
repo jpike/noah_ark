@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <SFML/Audio.hpp>
 #include "Core/Array2D.h"
 #include "Events/AxeSwingEvent.h"
 #include "Maps/TileMap.h"
@@ -47,5 +48,7 @@ namespace MAPS
         std::unique_ptr<OBJECTS::Noah> NoahPlayer;
         /// Axe swings currently occurring in the world.
         std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings;
+        /// The background music for the overworld.
+        std::shared_ptr<sf::Music> BackgroundMusic;
     };
 }

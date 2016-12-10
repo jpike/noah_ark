@@ -192,13 +192,6 @@ void PopulateOverworld(
                                 // when trees shake.
                                 std::shared_ptr<AUDIO::SoundEffect> tree_shake_sound = assets.GetSound(RESOURCES::TREE_SHAKE_SOUND_ID);
                                 bool tree_shake_sound_retrieved = (nullptr != tree_shake_sound);
-                                if (tree_shake_sound_retrieved)
-                                {
-                                    /// @todo   Create a better tree shaking sound effect so that stuff
-                                    /// doesn't have to be manually modified here.
-                                    tree_shake_sound->Sound.setVolume(25);
-                                    tree_shake_sound->Sound.setPitch(2);
-                                }
 
                                 // CREATE THE TREE.
                                 OBJECTS::Tree tree;
@@ -313,6 +306,13 @@ std::unique_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
         overworld_map_file->TileMapHeightInTiles,
         overworld_map_file->TileDimensionInPixels);
     PopulateOverworld(*overworld_map_file, tile_map_files, assets, *overworld);
+
+    // LOAD THE BACKGROUND MUSIC.
+    std::shared_ptr<sf::Music> overworld_background_music = assets.GetMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID);
+    bool background_music_loaded = (nullptr != overworld_background_music);
+    assert(background_music_loaded);
+    overworld->BackgroundMusic = overworld_background_music;
+
     return overworld;
 }
 
@@ -363,28 +363,6 @@ int main(int argumentCount, char* arguments[])
         STATES::IntroSequence intro_sequence;
         STATES::TitleScreen title_screen;
         STATES::GameplayState gameplay_state(assets);
-
-#if COMPILE_PROTOTYPE_MUSIC_CODE
-        // LOAD MISCELLANEOUS AUDIO RESOURCES.
-        /// @todo   Create actual music class?  This background music stuff
-        /// is just temporary for now to get something in to see exactly
-        /// how music might have to work.  The temporary background music
-        /// is pretty horrible.
-        sf::Music background_music;
-        if (!background_music.openFromFile("res/sounds/temp_background_music.wav"))
-        {
-            std::cerr << "Failed to load background music." << std::endl;
-            /// @todo   More specific exit code.  A specific exit code hasn't been
-            /// created yet since this specific loading code is likely temporary.
-            return EXIT_FAILURE;
-        }
-        background_music.setVolume(50.0f);
-        background_music.setPitch(0.5f);
-        background_music.setLoop(true);
-        /// @todo   Start playing when we transition to gameplay state.
-        /// Commented out for now while we work on getting intro sequence working.
-        /// background_music.play();
-#endif
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         GameState game_state = GameState::INTRO_SEQUENCE;

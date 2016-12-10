@@ -18,7 +18,8 @@ namespace RESOURCES
     const std::string WOOD_LOG_TEXTURE_ID = "res/images/tree_sprite1.png";
     const std::string AXE_HIT_SOUND_ID = "res/sounds/axe_tree_hit1.wav";
     const std::string COLLECT_BIBLE_VERSE_SOUND_ID = "res/sounds/collect_bible_verse1.wav";
-    const std::string TREE_SHAKE_SOUND_ID = "res/sounds/tree_shake3.wav";
+    const std::string TREE_SHAKE_SOUND_ID = "res/sounds/tree_shake4.wav";
+    const std::string OVERWORLD_BACKGROUND_MUSIC_ID = "res/sounds/test_background_music6.wav";
 
     /// Attempts to retrieve the texture identified by the specified ID.
     /// @param[in]  texture_id - The ID of the texture to load.
@@ -163,5 +164,39 @@ namespace RESOURCES
         // RETURN THE SOUND EFFECT.
         std::shared_ptr<AUDIO::SoundEffect> sound_effect = std::make_shared<AUDIO::SoundEffect>(sound_buffer);
         return sound_effect;
+    }
+
+    /// Attempts to retrieve the music identified by the specified ID.
+    /// The music will be set to loop.  If the music has previously
+    /// been loaded, the previously loaded instance will be returned.
+    /// @param[in]  music_id - The ID of the music to load.
+    /// @return The requested music, if successfully loaded; null otherwise.
+    std::shared_ptr<sf::Music> Assets::GetMusic(const std::string& music_id)
+    {
+        // CHECK IF THE MUSIC HAS ALREADY BEEN LOADED.
+        auto id_with_music = Music.find(music_id);
+        bool music_already_loaded = (Music.cend() != id_with_music);
+        if (music_already_loaded)
+        {
+            // RETURN THE PREVIOUSLY LOADED MUSIC.
+            return id_with_music->second;
+        }
+
+        // LOAD THE MUSIC.
+        // The muisc ID maps directly to a filepath.
+        std::shared_ptr<sf::Music> music = std::make_shared<sf::Music>();
+        bool music_loaded = music->openFromFile(music_id);
+        if (!music_loaded)
+        {
+            return nullptr;
+        }
+
+        // SAVE THE MUSIC TO AVOID TAKING TIME TO LOAD IT IN THE FUTURE.
+        Music[music_id] = music;
+
+        // RETURN THE MUSIC AS LOOPING.
+        // So far, there isn't a need for music that doesn't loop.
+        music->setLoop(true);
+        return music;
     }
 }

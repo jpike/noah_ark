@@ -69,6 +69,9 @@ namespace STATES
             saved_game_data.FoundBibleVerses.cbegin(),
             saved_game_data.FoundBibleVerses.cend(),
             std::inserter(BibleVersesLeftToFind, BibleVersesLeftToFind.begin()));
+
+        // START PLAYING THE BACKGROUND MUSIC.
+        Overworld->BackgroundMusic->play();
         
         // INDICATE WHETHER OR NOT INITIALIZATION SUCCEEDED.
         bool initialization_succeeded = hud_initialized;

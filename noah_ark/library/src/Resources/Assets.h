@@ -31,6 +31,7 @@ namespace RESOURCES
     extern const std::string AXE_HIT_SOUND_ID;
     extern const std::string COLLECT_BIBLE_VERSE_SOUND_ID;
     extern const std::string TREE_SHAKE_SOUND_ID;
+    extern const std::string OVERWORLD_BACKGROUND_MUSIC_ID;
 
     /// Defines all of the available shaders.
     enum class ShaderId
@@ -51,18 +52,21 @@ namespace RESOURCES
         std::shared_ptr<GRAPHICS::GUI::Font> GetFont(const std::string& font_texture_id);
         std::shared_ptr<sf::Shader> GetShader(const ShaderId shader_id) const;
         std::shared_ptr<AUDIO::SoundEffect> GetSound(const std::string& sound_id);
+        std::shared_ptr<sf::Music> GetMusic(const std::string& music_id);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// Textures that have been loaded.  They need to remain in memory to allow them to be used.
         /// They are mapped by the texture resource IDs.
         std::unordered_map< std::string, std::shared_ptr<GRAPHICS::Texture> > Textures = {};
-        /// Audio samples for sounds that have been loaded.  They need to remain in memory to allow them to be used.
-        /// They are mapped by the sound resource IDs.
-        std::unordered_map< std::string, std::shared_ptr<sf::SoundBuffer> > AudioSamples = {};
+        /// Fonts that have been loaded.
+        std::unordered_map< std::string, std::shared_ptr<GRAPHICS::GUI::Font> > Fonts = {};
         /// Shaders that have been loaded.  They need to remain in memory to allow them to be used.
         /// They are mapped by shader ID.
         std::unordered_map< ShaderId, std::shared_ptr<sf::Shader> > Shaders = {};
-        /// Fonts that have been loaded.
-        std::unordered_map< std::string, std::shared_ptr<GRAPHICS::GUI::Font> > Fonts = {};
+        /// Audio samples for sounds that have been loaded.  They need to remain in memory to allow them to be used.
+        /// They are mapped by the sound resource IDs.
+        std::unordered_map< std::string, std::shared_ptr<sf::SoundBuffer> > AudioSamples = {};
+        /// Music that has been loaded.
+        std::unordered_map< std::string, std::shared_ptr<sf::Music> > Music = {};
     };
 }

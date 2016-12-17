@@ -2,7 +2,7 @@
 
 This in-development game is based on the Biblical story of Noah's Ark.  The goal is to provide a fun way to become more familiar with and learn more about the story of Noah's Ark.
 
-The game will be a native Windows game, running at least on Windows 8.  Currently, the game is in the earliest stages of development, with little more than an empty window appearing when run.
+The game will be a native Windows game, running at least on Windows 8.  Currently, the game is still in the early stages of development.
 
 ## Gameplay
 

@@ -98,7 +98,7 @@ namespace BIBLE
         BibleVerse(BibleBook::GENESIS, 9, 18, "And the sons of Noah, that went forth of the ark, were Shem, and Ham, and Japheth: and Ham is the father of Canaan."),
         BibleVerse(BibleBook::GENESIS, 9, 19, "These are the three sons of Noah: and of them was the whole earth overspread."),
         /**
-        @todo   Should these part of the main game?  Or are they outside the scope of the "ark" story?
+        @todo   Should these be part of the main game?  Or are they outside the scope of the "ark" story?
         BibleVerse(BibleBook::GENESIS, 9, 20, "And Noah began to be an husbandman, and he planted a vineyard:"),
         BibleVerse(BibleBook::GENESIS, 9, 21, "And he drank of the wine, and was drunken; and he was uncovered within his tent."),
         BibleVerse(BibleBook::GENESIS, 9, 22, "And Ham, the father of Canaan, saw the nakedness of his father, and told his two brethren without."),

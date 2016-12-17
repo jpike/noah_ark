@@ -27,7 +27,7 @@ namespace STATES
         bool Initialize(
             const unsigned int screen_width_in_pixels,
             const SavedGameData& saved_game_data,
-            std::unique_ptr<MAPS::Overworld>&& overworld);
+            const std::shared_ptr<MAPS::Overworld>& overworld);
 
         // UPDATING.
         void Update(
@@ -40,14 +40,14 @@ namespace STATES
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main overworld.
-        std::unique_ptr<MAPS::Overworld> Overworld;
+        std::shared_ptr<MAPS::Overworld> Overworld;
 
     private:
         // INITIALIZATION.
         std::unique_ptr<OBJECTS::Noah> InitializePlayer(const SavedGameData& saved_game_data);
         std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> InitializeHud(
             const unsigned int screen_width_in_pixels,
-            const MAPS::Overworld& overworld);
+            const std::shared_ptr<MAPS::Overworld>& overworld);
 
         // UPDATING.
         void UpdateOverworld(

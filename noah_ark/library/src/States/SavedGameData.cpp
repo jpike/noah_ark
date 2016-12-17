@@ -4,6 +4,8 @@
 
 namespace STATES
 {
+    const std::string SavedGameData::DEFAULT_FILENAME = "saved_game.dat";
+
     /// Creates an instance of the default saved game data
     /// for a newly started game.
     /// @return The default saved game data.
@@ -42,7 +44,6 @@ namespace STATES
         auto saved_game_data = std::make_unique<SavedGameData>();
 
         // READ IN THE PLAYER'S POSITION.
-        /// @todo   Test all of this logic.  It hasn't really been tested yet.
         saved_game_data_file >> saved_game_data->PlayerWorldPosition.X;
         saved_game_data_file >> saved_game_data->PlayerWorldPosition.Y;
 
@@ -59,8 +60,17 @@ namespace STATES
             saved_game_data_file >> chapter;
             unsigned int verse;
             saved_game_data_file >> verse;
+
+            // A single space exists after the verse number before the verse text,
+            // so that needs to be read in order to avoid having an extra space
+            // at the beginning of the verse text.
+            char space_before_verse_text;
+            saved_game_data_file.get(space_before_verse_text);
+
+            // The text may contain spaces, so the remainder of the entire
+            // line needs to be read in order to get the full verse text.
             std::string text;
-            saved_game_data_file >> text;
+            std::getline(saved_game_data_file, text);
 
             // MAKE SURE CURRENT VERSE DATA WAS PROPERLY READ.
             if (saved_game_data_file.eof())
@@ -81,5 +91,45 @@ namespace STATES
 
         // RETURN THE LOADED SAVED GAME DATA.
         return saved_game_data;
+    }
+
+    /// Attempts to write saved game data to the specified file.
+    /// @param[in]  filepath - The path to the file to write the saved game data.
+    void SavedGameData::Write(const std::string& filepath) const
+    {
+        // OPEN THE FILE.
+        std::ofstream saved_game_data_file(filepath);
+        bool file_opened = saved_game_data_file.is_open();
+        if (!file_opened)
+        {
+            // The saved game data cannot be written.
+            return;
+        }
+
+        // WRITE THE PLAYER'S POSITION.
+        const char SEPARATOR_BETWEEN_RELATED_DATA = ' ';
+        saved_game_data_file
+            << PlayerWorldPosition.X
+            << SEPARATOR_BETWEEN_RELATED_DATA
+            << PlayerWorldPosition.Y
+            << std::endl;
+
+        // WRITE PLAYER'S WOOD COUNT.
+        saved_game_data_file << WoodCount << std::endl;
+
+        // WRITE THE FOUND BIBLE VERSES.
+        for (const auto& current_verse : FoundBibleVerses)
+        {
+            // WRITE THE CURRENT VERSE.
+            saved_game_data_file
+                << static_cast<unsigned int>(current_verse.Book)
+                << SEPARATOR_BETWEEN_RELATED_DATA
+                << current_verse.Chapter
+                << SEPARATOR_BETWEEN_RELATED_DATA
+                << current_verse.Verse
+                << SEPARATOR_BETWEEN_RELATED_DATA
+                << current_verse.Text
+                << std::endl;
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace STATES
     bool GameplayState::Initialize(
         const unsigned int screen_width_in_pixels,
         const SavedGameData& saved_game_data,
-        std::unique_ptr<MAPS::Overworld>&& overworld)
+        const std::shared_ptr<MAPS::Overworld>& overworld)
     {
         // MAKE SURE AN OVERWORLD WAS PROVIDED.
         bool overworld_exists = (nullptr != overworld);
@@ -38,7 +38,7 @@ namespace STATES
         }
 
         // SET THE OVERWORLD.
-        Overworld = std::move(overworld);
+        Overworld = overworld;
 
         // INITIALIZE THE PLAYER.
         std::unique_ptr<OBJECTS::Noah> noah_player = InitializePlayer(saved_game_data);
@@ -54,7 +54,7 @@ namespace STATES
         }
 
         // INITIALIZE THE HUD.
-        Hud = InitializeHud(screen_width_in_pixels, *Overworld);
+        Hud = InitializeHud(screen_width_in_pixels, Overworld);
         bool hud_initialized = (nullptr != Hud);
         if (!hud_initialized)
         {
@@ -90,10 +90,11 @@ namespace STATES
         // UPDATE THE HUD IN RESPONSE TO USER INPUT.
         Hud->RespondToInput(input_controller);
 
-        // CHECK IF THE INVENTORY GUI IS DISPLAYED.
-        // If the inventory GUI is displayed, then the regular controls for the player
+        // CHECK IF A MODAL HUD COMPONENT IS DISPLAYED.
+        // If a modal GUI component is displayed, then the regular controls for the player
         // in the world shouldn't work.
-        if (!Hud->InventoryOpened)
+        bool modal_hud_components_displayed = Hud->ModalComponentDisplayed();
+        if (!modal_hud_components_displayed)
         {
             // UPDATE THE TEXT BOX IF IT IS VISIBLE.
             // If the text box is currently being displayed, then it should capture any user input.
@@ -205,7 +206,7 @@ namespace STATES
     /// @return The initialized HUD, if successful; null otherwise.
     std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> GameplayState::InitializeHud(
         const unsigned int screen_width_in_pixels,
-        const MAPS::Overworld& overworld)
+        const std::shared_ptr<MAPS::Overworld>& overworld)
     {
         // GET ASSETS NEEDED FOR THE HUD.
         std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AXE_TEXTURE_ID);
@@ -220,7 +221,7 @@ namespace STATES
         
         // CREATE THE HUD.
         auto hud = std::make_unique<GRAPHICS::GUI::HeadsUpDisplay>(
-            overworld.NoahPlayer->Inventory,
+            overworld,
             text_box_width_in_pixels,
             text_box_height_in_pixels,
             axe_texture,

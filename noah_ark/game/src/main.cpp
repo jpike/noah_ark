@@ -286,7 +286,7 @@ bool LoadTileMapFiles(
 /// Loads the overworld.
 /// @param[in]  assets - The assets to use for the overworld.
 /// @return The overworld, if successfully loaded; null otherwise.
-std::unique_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
+std::shared_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
 {
     // LOAD THE OVERWORLD MAP FILE.
     const std::string OVERWORLD_MAP_FILEPATH = "res/maps/overworld_map.json";
@@ -299,7 +299,7 @@ std::unique_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
     assert(tile_map_files_loaded);
   
     // CREATE THE OVERWORLD.
-    std::unique_ptr<MAPS::Overworld> overworld = std::make_unique<MAPS::Overworld>(
+    std::shared_ptr<MAPS::Overworld> overworld = std::make_shared<MAPS::Overworld>(
         overworld_map_file->OverworldWidthInTileMaps,
         overworld_map_file->OverworldHeightInTileMaps,
         overworld_map_file->TileMapWidthInTiles,
@@ -352,7 +352,7 @@ int main(int argumentCount, char* arguments[])
 
         // The overworld is loaded in the background in separate threads to avoid having
         // their loading slow the startup time of the rest of the game.
-        std::future< std::unique_ptr<MAPS::Overworld> > overworld_being_loaded = std::async(LoadOverworld, std::ref(*assets));
+        std::future< std::shared_ptr<MAPS::Overworld> > overworld_being_loaded = std::async(LoadOverworld, std::ref(*assets));
 
         // INITIALIZE REMAINING SUBSYSTEMS.
         GRAPHICS::Renderer renderer(
@@ -448,7 +448,7 @@ int main(int argumentCount, char* arguments[])
                             game_state = GameState::GAMEPLAY;
 
                             // LOAD THE GAME'S SAVE FILE.
-                            std::unique_ptr<STATES::SavedGameData> saved_game_data = STATES::SavedGameData::Load("saved_game.dat");
+                            std::unique_ptr<STATES::SavedGameData> saved_game_data = STATES::SavedGameData::Load(STATES::SavedGameData::DEFAULT_FILENAME);
                             bool saved_game_data_loaded = (nullptr != saved_game_data);
                             if (!saved_game_data_loaded)
                             {
@@ -464,7 +464,7 @@ int main(int argumentCount, char* arguments[])
                             bool gameplay_state_initialized = gameplay_state.Initialize(
                                 SCREEN_WIDTH_IN_PIXELS,
                                 *saved_game_data,
-                                std::move(overworld));
+                                overworld);
                             assert(gameplay_state_initialized);
 
                             // FOCUS THE CAMERA ON THE PLAYER.

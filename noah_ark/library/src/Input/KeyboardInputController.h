@@ -33,6 +33,8 @@ namespace INPUT_CONTROL
         static const sf::Keyboard::Key SECONDARY_ACTION_KEY = sf::Keyboard::X;
         /// The key for the start button.
         static const sf::Keyboard::Key START_KEY = sf::Keyboard::Return;
+        /// The key for the back button.
+        static const sf::Keyboard::Key BACK_KEY = sf::Keyboard::Escape;
 
         // METHODS.
         void DisableInput();

@@ -3,13 +3,14 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Sprite.h"
+#include "States/SavedGameData.h"
 
 namespace GRAPHICS
 {
 namespace GUI
 {
     /// Constructor.
-    /// @param[in]  inventory - The inventory to display in the HUD.
+    /// @param[in]  overworld - The overworld whose information is being diplayed in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
     /// @param[in]  axe_texture - The texture to use for rendering an
@@ -18,22 +19,23 @@ namespace GUI
     ///     wood icon on the HUD.
     /// @throws std::exception - Thrown if a parameter is null.
     HeadsUpDisplay::HeadsUpDisplay(
-        const std::shared_ptr<const INVENTORY::Inventory>& inventory,
+        const std::shared_ptr<MAPS::Overworld>& overworld,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels,
         const std::shared_ptr<const Texture>& axe_texture,
         const std::shared_ptr<const Texture>& wood_texture) :
     MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels),
     InventoryOpened(false),
-    InventoryGui(inventory),
+    InventoryGui(overworld->NoahPlayer->Inventory),
+    SaveDialogBoxVisible(false),
     AxeTexture(axe_texture),
     WoodTexture(wood_texture),
-    Inventory(inventory)
+    Overworld(overworld)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(
-            Inventory,
-            "Null inventory provided to HUD.");
+            Overworld,
+            "Null overworld provided to HUD.");
         CORE::ThrowInvalidArgumentExceptionIfNull(
             AxeTexture,
             "Null axe texture provided to HUD.");
@@ -46,9 +48,33 @@ namespace GUI
     /// @param[in]  input_controller - The controller on which to check user input.
     void HeadsUpDisplay::RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller)
     {
-        // CHECK IF THE MAIN TEXT BOX IS VISIBLE.
-        // If so, it shouldn't be possible to open the inventory.
-        if (MainTextBox.IsVisible)
+        // CHECK IF THE SAVE DIALOG BOX IS OPEN.
+        // If so, it should take precedence over other parts of the HUD.
+        // After that, the main text box should take precedence over the inventory.
+        if (SaveDialogBoxVisible)
+        {
+            // CHECK IF AN APPLICABLE BUTTON WAS PRESSED.
+            if (input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::START_KEY))
+            {
+                // SAVE THE GAME DATA.
+                STATES::SavedGameData saved_game_data;
+                saved_game_data.PlayerWorldPosition = Overworld->NoahPlayer->GetWorldPosition();
+                saved_game_data.WoodCount = Overworld->NoahPlayer->Inventory->WoodCount;
+                saved_game_data.FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
+                    Overworld->NoahPlayer->Inventory->BibleVerses.cbegin(),
+                    Overworld->NoahPlayer->Inventory->BibleVerses.cend()) ;
+                saved_game_data.Write(STATES::SavedGameData::DEFAULT_FILENAME);
+
+                // CLOSE THE SAVE DIALOG BOX.
+                SaveDialogBoxVisible = false;
+            }
+            else if (input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::BACK_KEY))
+            {
+                // CLOSE THE SAVE DIALOG BOX.
+                SaveDialogBoxVisible = false;
+            }
+        }
+        else if (MainTextBox.IsVisible)
         {
             // HAVE THE MAIN TEXT BOX RESPOND TO USER INPUT.
             if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::PRIMARY_ACTION_KEY))
@@ -79,6 +105,15 @@ namespace GUI
             else if (InventoryOpened)
             {
                 InventoryGui.RespondToInput(input_controller);
+            }
+            else
+            {
+                // OPEN THE SAVE DIALOG BOX IF THE APPROPRIATE BUTTON WAS PRESSED.
+                bool save_dialog_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::BACK_KEY);
+                if (save_dialog_button_pressed)
+                {
+                    SaveDialogBoxVisible = true;
+                }
             }
         }
     }
@@ -127,7 +162,7 @@ namespace GUI
         // For example, "x10" (no quotes) would be rendered if the player has collected
         // 10 wood logs.
         const std::string TIMES_COUNT_TEXT = "x";
-        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(Inventory->WoodCount);
+        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(Overworld->NoahPlayer->Inventory->WoodCount);
         // This text should be placed just to the right of the wood icon.
         MATH::Vector2f wood_text_top_left_screen_position_in_pixels(
             static_cast<float>(wood_icon_screen_position.X), 
@@ -170,6 +205,22 @@ namespace GUI
         {
             MainTextBox.Render(renderer);
         }
+
+        // RENDER THE SAVE DIALOG BOX IF IT IS VISIBLE.
+        if (SaveDialogBoxVisible)
+        {
+            renderer.RenderCenteredText(
+                "[ENTER] - Save\n[ESC] - Cancel",
+                renderer.Screen.GetBoundingRectangle<float>());
+        }
+    }
+
+    /// Checks if any modal GUI components of the HUD are currently displayed.
+    /// @return True if a modal component of the HUD is displayed; false otherwise.
+    bool HeadsUpDisplay::ModalComponentDisplayed() const
+    {
+        bool modal_component_displayed = InventoryOpened || SaveDialogBoxVisible;
+        return modal_component_displayed;
     }
 }
 }

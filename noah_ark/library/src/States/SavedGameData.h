@@ -12,9 +12,16 @@ namespace STATES
     class SavedGameData
     {
     public:
+        // STATIC CONSTANTS.
+        /// The default filename for a saved game file.
+        static const std::string DEFAULT_FILENAME;
+
         // CONSTRUCTION.
         static SavedGameData DefaultSavedGameData();
         static std::unique_ptr<SavedGameData> Load(const std::string& filepath);
+        
+        // WRITING.
+        void Write(const std::string& filepath) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The player's world position.

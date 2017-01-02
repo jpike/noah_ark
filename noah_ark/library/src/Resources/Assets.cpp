@@ -19,7 +19,7 @@ namespace RESOURCES
     const std::string AXE_HIT_SOUND_ID = "res/sounds/axe_tree_hit1.wav";
     const std::string COLLECT_BIBLE_VERSE_SOUND_ID = "res/sounds/collect_bible_verse1.wav";
     const std::string TREE_SHAKE_SOUND_ID = "res/sounds/tree_shake4.wav";
-    const std::string OVERWORLD_BACKGROUND_MUSIC_ID = "res/sounds/test_background_music6.wav";
+    const std::string OVERWORLD_BACKGROUND_MUSIC_ID = "res/sounds/overworld_music.wav";
 
     /// Attempts to retrieve the texture identified by the specified ID.
     /// @param[in]  texture_id - The ID of the texture to load.

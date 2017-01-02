@@ -145,7 +145,7 @@
   <ItemGroup>
     <Media Include="res\sounds\axe_tree_hit1.wav" />
     <Media Include="res\sounds\collect_bible_verse1.wav" />
-    <Media Include="res\sounds\temp_background_music.wav" />
+    <Media Include="res\sounds\overworld_music.wav" />
     <Media Include="res\sounds\tree_shake3.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

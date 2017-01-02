@@ -1,0 +1,11 @@
+CREDITS
+----------
+This information will be incorporated into a credits screen for the game later.
+
+God - "For by him were all things created, that are in heaven, and that are in earth, visible and invisible, whether they be thrones, or dominions, or principalities, or powers: all things were created by him, and for him: And he is before all things, and by him all things consist." - Colossians 1:16-17 (KJV)
+
+Jacob Pike - Programming, Art, Sound Effects, Other
+
+Chad Pike - Overworld Background Music
+
+Also see various third-party licenses.

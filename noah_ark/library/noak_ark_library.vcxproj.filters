@@ -251,6 +251,9 @@
     <ClInclude Include="src\Inventory\InventoryBiblePage.h">
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
+    <ClInclude Include="src\Objects\ArkPiece.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -390,6 +393,9 @@
     </ClCompile>
     <ClCompile Include="src\Inventory\InventoryBiblePage.cpp">
       <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Objects\ArkPiece.cpp">
+      <Filter>Source Files\Objects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

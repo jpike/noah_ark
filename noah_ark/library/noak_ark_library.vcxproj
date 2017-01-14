@@ -54,6 +54,7 @@
     <ClInclude Include="src\Maps\TilesetDescription.h" />
     <ClInclude Include="src\Math\Rectangle.h" />
     <ClInclude Include="src\Math\Vector2.h" />
+    <ClInclude Include="src\Objects\ArkPiece.h" />
     <ClInclude Include="src\Objects\Axe.h" />
     <ClInclude Include="src\Objects\DustCloud.h" />
     <ClInclude Include="src\Objects\Noah.h" />
@@ -102,6 +103,7 @@
     <ClCompile Include="src\Maps\TileMapObjectDescription.cpp" />
     <ClCompile Include="src\Maps\Tileset.cpp" />
     <ClCompile Include="src\Maps\TilesetDescription.cpp" />
+    <ClCompile Include="src\Objects\ArkPiece.cpp" />
     <ClCompile Include="src\Objects\Axe.cpp" />
     <ClCompile Include="src\Objects\DustCloud.cpp" />
     <ClCompile Include="src\Objects\Noah.cpp" />

@@ -20,6 +20,7 @@
 namespace RESOURCES
 {
     // ASSET IDs.
+    extern const std::string ARK_TEXTURE_ID;
     extern const std::string AXE_TEXTURE_ID;
     extern const std::string DUST_CLOUD_TEXTURE_ID;
     extern const std::string FONT_TEXTURE_ID;

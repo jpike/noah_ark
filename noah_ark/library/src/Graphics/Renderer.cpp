@@ -512,6 +512,17 @@ namespace GRAPHICS
                 tile->Sprite.Render(Screen);
             }
         }
+        
+        // RENDER THE CURRENT TILE MAP'S ARK PIECES.
+        for (const auto& ark_piece : tile_map.ArkPieces)
+        {
+            // Only ark pieces that have been built should be visible.
+            if (ark_piece.Built)
+            {
+                ark_piece.Sprite.Render(Screen);
+            }
+
+        }
 
         // RENDER THE CURRENT TILE MAP'S WOOD LOGS.
         for (const auto& wood_log : tile_map.WoodLogs)
@@ -526,7 +537,7 @@ namespace GRAPHICS
         }
 
         // RENDER THE CURRENT TILE MAP'S DUST CLOUDS.
-        for (const auto& dust_cloud : tile_map.TreeDustClouds)
+        for (const auto& dust_cloud : tile_map.DustClouds)
         {
             dust_cloud.Sprite.Render(Screen);
         }

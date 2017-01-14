@@ -1,7 +1,9 @@
 #pragma once
 
+#include <memory>
 #include <SFML/System.hpp>
 #include "Graphics/AnimatedSprite.h"
+#include "Graphics/Texture.h"
 
 namespace OBJECTS
 {
@@ -11,6 +13,9 @@ namespace OBJECTS
     class DustCloud
     {
     public:
+        // CONSTRUCTION.
+        explicit DustCloud(const std::shared_ptr<GRAPHICS::Texture>& texture);
+
         // STATUS QUERYING.
         bool HasDisappeared() const;
 
@@ -19,9 +24,9 @@ namespace OBJECTS
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The graphical sprite for the dust cloud.
-        GRAPHICS::AnimatedSprite Sprite = GRAPHICS::AnimatedSprite();
+        GRAPHICS::AnimatedSprite Sprite;
         /// The total time the cloud has been in existence.
         /// Increased during each update call.
-        float TotalElapsedTimeInSeconds = 0.0f;
+        float TotalElapsedTimeInSeconds;
     };
 }

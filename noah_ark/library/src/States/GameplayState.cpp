@@ -135,7 +135,7 @@ namespace STATES
             }
 
             // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
-            for (auto dust_cloud = current_tile_map->TreeDustClouds.begin(); dust_cloud != current_tile_map->TreeDustClouds.end();)
+            for (auto dust_cloud = current_tile_map->DustClouds.begin(); dust_cloud != current_tile_map->DustClouds.end();)
             {
                 // UPDATE THE CURRENT DUST CLOUD.
                 dust_cloud->Update(elapsed_time);
@@ -145,7 +145,7 @@ namespace STATES
                 if (dust_cloud_disappeared)
                 {
                     // REMOVE THE DUST CLOUD.
-                    dust_cloud = current_tile_map->TreeDustClouds.erase(dust_cloud);
+                    dust_cloud = current_tile_map->DustClouds.erase(dust_cloud);
                 }
                 else
                 {
@@ -532,6 +532,39 @@ namespace STATES
         {
             // UPDATE NOAH'S ANIMATION.
             Overworld->NoahPlayer->Sprite.Update(elapsed_time);
+
+            // BUILD A PIECE OF THE ARK IF NOAH STEPPED ONTO AN APPROPRIATE SPOT.
+            MATH::Vector2f noah_world_position = Overworld->NoahPlayer->GetWorldPosition();
+            MAPS::TileMap* tile_map_underneath_noah = Overworld->GetTileMap(noah_world_position.X, noah_world_position.Y);
+            assert(tile_map_underneath_noah);
+            
+            // An ark piece only needs to be built once.
+            OBJECTS::ArkPiece* ark_piece = tile_map_underneath_noah->GetArkPieceAtWorldPosition(noah_world_position);
+            bool ark_piece_can_be_built = (ark_piece && !ark_piece->Built);
+            if (ark_piece_can_be_built)
+            {
+                /// @todo   Check if Noah has wood.
+
+                // BUILD THE ARK PIECE.
+                ark_piece->Built = true;
+
+                // When building an ark piece, a dust cloud should appear.
+                std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = Assets->GetTexture(RESOURCES::DUST_CLOUD_TEXTURE_ID);
+                assert(dust_cloud_texture);
+                OBJECTS::DustCloud dust_cloud(dust_cloud_texture);
+
+                // The dust cloud should be positioned over the ark piece.
+                MATH::Vector2f dust_cloud_center_world_position = ark_piece->Sprite.GetWorldPosition();
+                dust_cloud.Sprite.SetWorldPosition(dust_cloud_center_world_position);
+
+                // The dust cloud should start animating immediately.
+                dust_cloud.Sprite.Play();
+
+                // The dust cloud needs to be added to the tile map so that it gets updated.
+                tile_map_underneath_noah->DustClouds.push_back(dust_cloud);
+
+                /// @todo   Play sound effect when building ark piece.
+            }
         }
         else
         {

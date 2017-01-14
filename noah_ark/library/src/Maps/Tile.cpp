@@ -92,9 +92,10 @@ namespace MAPS
         const unsigned int WATER_TILE_ID = 5;
         const unsigned int BROWN_DIRT_TILE_ID = 6;
         const unsigned int GRAY_STONE_TILE_ID = 7;
+        const unsigned int ARK_BUILDING_PLOT_TILE_ID = 8;
 
         // MAP EACH TILE ID TO A WALKABLE STATUS.
-        const unsigned int TILESET_TILE_COUNT = 8;
+        const unsigned int TILESET_TILE_COUNT = 9;
         std::array<bool, TILESET_TILE_COUNT> tile_is_walkable;
         tile_is_walkable[INVALID_TILE_ID] = false;
         tile_is_walkable[BLACK_TEST_TILE_ID] = false;
@@ -104,6 +105,7 @@ namespace MAPS
         tile_is_walkable[WATER_TILE_ID] = false;
         tile_is_walkable[BROWN_DIRT_TILE_ID] = true;
         tile_is_walkable[GRAY_STONE_TILE_ID] = true;
+        tile_is_walkable[ARK_BUILDING_PLOT_TILE_ID] = true;
 
         // CHECK IF THIS TILE'S ID IS VALID.
         bool tile_id_valid = (Id < TILESET_TILE_COUNT);

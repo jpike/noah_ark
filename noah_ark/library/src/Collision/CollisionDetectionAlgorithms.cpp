@@ -728,25 +728,7 @@ namespace COLLISION
                     bool dust_cloud_resources_retrieved = (dust_cloud_texture != nullptr);
                     if (dust_cloud_resources_retrieved)
                     {
-                        OBJECTS::DustCloud dust_cloud;
-
-                        const std::string DUST_CLOUD_ANIMATION_ID = "dust_cloud";
-                        const bool IS_LOOPING = false;
-                        const sf::Time TOTAL_DURATION = sf::seconds(2.0f);
-                        const std::vector<MATH::IntRectangle> FRAMES =
-                        {
-                            // Frames are duplicated some so that things appear to loop a few times.
-                            MATH::IntRectangle::FromLeftTopAndDimensions(48, 0, 16, 16),
-                            MATH::IntRectangle::FromLeftTopAndDimensions(48, 16, 16, 16),
-                            MATH::IntRectangle::FromLeftTopAndDimensions(48, 0, 16, 16),
-                            MATH::IntRectangle::FromLeftTopAndDimensions(48, 16, 16, 16)
-                        };
-                        const std::shared_ptr<GRAPHICS::AnimationSequence> DUST_CLOUD_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
-                            DUST_CLOUD_ANIMATION_ID,
-                            IS_LOOPING,
-                            TOTAL_DURATION,
-                            FRAMES);
-                        dust_cloud.Sprite = GRAPHICS::AnimatedSprite(dust_cloud_texture, DUST_CLOUD_ANIMATION);
+                        OBJECTS::DustCloud dust_cloud(dust_cloud_texture);
 
                         // The dust cloud should be positioned to cover the base of the tree.
                         MATH::Vector2f dust_cloud_center_world_position = tree->GetTrunkCenterWorldPosition();
@@ -756,7 +738,7 @@ namespace COLLISION
                         dust_cloud.Sprite.Play();
 
                         // The dust cloud needs to be added to the tile map so that it gets updated.
-                        tile_map->TreeDustClouds.push_back(dust_cloud);
+                        tile_map->DustClouds.push_back(dust_cloud);
                     }
 
                     // REMOVE THE TREE SINCE IT NO LONGER HAS ANY HIT POINTS.

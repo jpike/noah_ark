@@ -23,8 +23,9 @@ namespace MAPS
     OverworldColumnIndex(overworld_column_index),
     Ground(center_world_position, dimensions_in_tiles, tile_dimension_in_pixels),
     Trees(),
-    TreeDustClouds(),
-    WoodLogs()
+    DustClouds(),
+    WoodLogs(),
+    ArkPieces()
     {}
 
     /// Gets the center world position of the tile map.
@@ -74,5 +75,27 @@ namespace MAPS
     {
         std::shared_ptr<MAPS::Tile> tile = Ground.GetTileAtWorldPosition(world_x_position, world_y_position);
         return tile;
+    }
+
+    /// Gets an ark piece at the specified world position, if one exists.
+    /// @param[in]  world_position - The world position for which to retrieve an ark piece.
+    /// @return The ark piece at the specified world position, if one eixsts; null otherwise.
+    OBJECTS::ArkPiece* TileMap::GetArkPieceAtWorldPosition(const MATH::Vector2f& world_position)
+    {
+        // SEARCH FOR AN ARK PIECE THAT CONTAINS THE SPECIFIED WORLD POSITION.
+        for (auto& ark_piece : ArkPieces)
+        {
+            // CHECK IF THE CURRENT ARK PIECE INCLUDES THE WORLD POSITION.
+            MATH::FloatRectangle ark_piece_bounding_box = ark_piece.Sprite.GetWorldBoundingBox();
+            bool ark_piece_contains_world_position = ark_piece_bounding_box.Contains(world_position.X, world_position.Y);
+            if (ark_piece_contains_world_position)
+            {
+                // RETURN THE ARK PIECE.
+                return &ark_piece;
+            }
+        }
+
+        // INDICATE THAT NO ARK PIECE COULD BE FOUND.
+        return nullptr;
     }
 }

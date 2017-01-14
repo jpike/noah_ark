@@ -1,7 +1,38 @@
+#include "Core/NullChecking.h"
 #include "Objects/DustCloud.h"
 
 namespace OBJECTS
 {
+    /// Constructs a dust cloud using the provided texture resource.
+    /// @param[in]  texture - The texture with the dust cloud graphics.
+    /// @throws std::invalid_argument - Thrown if the texture is null.
+    DustCloud::DustCloud(const std::shared_ptr<GRAPHICS::Texture>& texture) :
+        Sprite(),
+        TotalElapsedTimeInSeconds(0.0f)
+    {
+        // MAKE SURE A VALID TEXTURE WAS PROVIDED.
+        CORE::ThrowInvalidArgumentExceptionIfNull(texture, "Dust cloud texture cannot be null.");
+
+        // CREATE THE ANIMATED SPRITE FOR THE DUST CLOUD.
+        const std::string DUST_CLOUD_ANIMATION_ID = "dust_cloud";
+        const bool IS_LOOPING = false;
+        const sf::Time TOTAL_DURATION = sf::seconds(2.0f);
+        const std::vector<MATH::IntRectangle> FRAMES =
+        {
+            // Frames are duplicated some so that things appear to loop a few times.
+            MATH::IntRectangle::FromLeftTopAndDimensions(48, 0, 16, 16),
+            MATH::IntRectangle::FromLeftTopAndDimensions(48, 16, 16, 16),
+            MATH::IntRectangle::FromLeftTopAndDimensions(48, 0, 16, 16),
+            MATH::IntRectangle::FromLeftTopAndDimensions(48, 16, 16, 16)
+        };
+        const std::shared_ptr<GRAPHICS::AnimationSequence> DUST_CLOUD_ANIMATION = std::make_shared<GRAPHICS::AnimationSequence>(
+            DUST_CLOUD_ANIMATION_ID,
+            IS_LOOPING,
+            TOTAL_DURATION,
+            FRAMES);
+        Sprite = GRAPHICS::AnimatedSprite(texture, DUST_CLOUD_ANIMATION);
+    }
+
     /// Determines if the cloud has disappeared or faded away.
     /// @return True if the cloud has disappeared; false otherwise.
     bool DustCloud::HasDisappeared() const

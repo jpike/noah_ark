@@ -108,7 +108,9 @@ void PopulateOverworld(
                     {
                         // CHECK IF THIS LAYER IS THE GROUND LAYER.
                         const std::string GROUND_LAYER_NAME = "GroundLayer";
+                        const std::string ARK_LAYER_NAME = "ArkLayer";
                         bool is_ground_layer = (GROUND_LAYER_NAME == layer_description.Name);
+                        bool is_ark_layer = (ARK_LAYER_NAME == layer_description.Name);
                         if (is_ground_layer)
                         {
                             // CREATE TILES IN THE GROUND LAYER.
@@ -135,6 +137,47 @@ void PopulateOverworld(
 
                                     // SET THE TILE IN THE GROUND LAYER.
                                     tile_map.Ground.SetTile(current_tile_x, current_tile_y, tile);
+                                }
+                            }
+                        }
+                        else if (is_ark_layer)
+                        {
+                            // GET THE ARK TEXTURE.
+                            std::shared_ptr<GRAPHICS::Texture> ark_texture = assets.GetTexture(RESOURCES::ARK_TEXTURE_ID);
+                            assert(ark_texture);
+
+                            // CREATE PIECES IN THE ARK LAYER.
+                            for (unsigned int current_tile_y = 0;
+                                current_tile_y < tile_map_file.MapHeightInTiles;
+                                ++current_tile_y)
+                            {
+                                // CREATE ARK PIECES FOR THIS ROW.
+                                for (unsigned int current_tile_x = 0;
+                                    current_tile_x < tile_map_file.MapWidthInTiles;
+                                    ++current_tile_x)
+                                {
+                                    // CHECK IF THE TILE ID IS VALID.
+                                    // Some tiles in this layer may not be for valid ark pieces.
+                                    MAPS::TileId tile_id = layer_description.TileIds(current_tile_x, current_tile_y);
+                                    bool tild_id_valid = (tile_id > 0);
+                                    if (!tild_id_valid)
+                                    {
+                                        continue;
+                                    }
+
+                                    // CREATE THE ARK PIECE.
+                                    /// @todo   Rethink how to calculate these ark piece IDs.
+                                    unsigned int ark_piece_id = tile_id - 1 - 8;
+                                    OBJECTS::ArkPiece ark_piece(ark_piece_id, ark_texture);
+                                    MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
+                                    float tile_left_x_position = static_cast<float>(current_tile_x * overworld_map_file.TileDimensionInPixels);
+                                    float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;
+                                    float tile_top_y_position = static_cast<float>(current_tile_y * overworld_map_file.TileDimensionInPixels);
+                                    float ark_piece_world_y_position = map_top_world_position + tile_top_y_position + ark_piece_local_center.Y;
+                                    ark_piece.Sprite.SetWorldPosition(ark_piece_world_x_position, ark_piece_world_y_position);
+
+                                    // ADD THE ARK PIECE TO THE TILE MAP.
+                                    tile_map.ArkPieces.push_back(ark_piece);
                                 }
                             }
                         }

@@ -3,6 +3,7 @@
 #include <vector>
 #include "Maps/GroundLayer.h"
 #include "Math/Vector2.h"
+#include "Objects/ArkPiece.h"
 #include "Objects/DustCloud.h"
 #include "Objects/Tree.h"
 #include "Objects/WoodLogs.h"
@@ -31,8 +32,9 @@ namespace MAPS
         // BOUNDARIES.
         MATH::FloatRectangle GetWorldBoundingBox() const;
 
-        // TILE RETRIEVAL.
+        // RETRIEVAL.
         std::shared_ptr<MAPS::Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const;
+        OBJECTS::ArkPiece* GetArkPieceAtWorldPosition(const MATH::Vector2f& world_position);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The 0-based index (from the top) of the tile map as located in the overworld.
@@ -43,9 +45,13 @@ namespace MAPS
         GroundLayer Ground;
         /// Trees in this tile map.
         std::vector<OBJECTS::Tree> Trees;
-        /// Dust clouds for trees that are disappearing and becoming wooden logs.
-        std::vector<OBJECTS::DustCloud> TreeDustClouds;
+        /// Dust clouds within the tile map.
+        std::vector<OBJECTS::DustCloud> DustClouds;
         /// Wooden logs that have appeared in the map from chopped down trees.
         std::vector<OBJECTS::WoodLogs> WoodLogs;
+        /// Pieces of the ark that may exist on this tile map.
+        /// Stored in a vector currently for simplicitly at the moment,
+        /// but a different data structure may be needed later for performance.
+        std::vector<OBJECTS::ArkPiece> ArkPieces;
     };
 }

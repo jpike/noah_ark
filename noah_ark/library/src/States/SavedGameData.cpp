@@ -1,4 +1,5 @@
 #include <fstream>
+#include <sstream>
 #include "States/IntroSequence.h"
 #include "States/SavedGameData.h"
 
@@ -31,66 +32,127 @@ namespace STATES
     /// @return The saved game data loaded from the file, if successful; null otherwise.
     std::unique_ptr<SavedGameData> SavedGameData::Load(const std::string& filepath)
     {
-        // OPEN THE FILE.
-        std::ifstream saved_game_data_file(filepath);
-        bool file_opened = saved_game_data_file.is_open();
-        if (!file_opened)
+        try
         {
-            // The saved game data cannot be loaded.
-            return false;
-        }
-
-        // CREATE THE SAVED GAME DATA TO BE POPULATED FROM THE FILE.
-        auto saved_game_data = std::make_unique<SavedGameData>();
-
-        // READ IN THE PLAYER'S POSITION.
-        saved_game_data_file >> saved_game_data->PlayerWorldPosition.X;
-        saved_game_data_file >> saved_game_data->PlayerWorldPosition.Y;
-
-        // READ IN THE PLAYER'S WOORD COUNT.
-        saved_game_data_file >> saved_game_data->WoodCount;
-
-        // READ IN THE FOUND BIBLE VERSES.
-        while (!saved_game_data_file.eof())
-        {
-            // READ IN THE CURRENT BIBLE VERSE'S DATA.
-            unsigned int book;
-            saved_game_data_file >> book;
-            unsigned int chapter;
-            saved_game_data_file >> chapter;
-            unsigned int verse;
-            saved_game_data_file >> verse;
-
-            // A single space exists after the verse number before the verse text,
-            // so that needs to be read in order to avoid having an extra space
-            // at the beginning of the verse text.
-            char space_before_verse_text;
-            saved_game_data_file.get(space_before_verse_text);
-
-            // The text may contain spaces, so the remainder of the entire
-            // line needs to be read in order to get the full verse text.
-            std::string text;
-            std::getline(saved_game_data_file, text);
-
-            // MAKE SURE CURRENT VERSE DATA WAS PROPERLY READ.
-            if (saved_game_data_file.eof())
+            // OPEN THE FILE.
+            std::ifstream saved_game_data_file(filepath);
+            bool file_opened = saved_game_data_file.is_open();
+            if (!file_opened)
             {
-                break;
+                // The saved game data cannot be loaded.
+                return false;
             }
 
-            // CREATE THE VERSE.
-            BIBLE::BibleVerse current_verse(
-                static_cast<BIBLE::BibleBook>(book),
-                chapter,
-                verse,
-                text);
+            // CREATE THE SAVED GAME DATA TO BE POPULATED FROM THE FILE.
+            auto saved_game_data = std::make_unique<SavedGameData>();
 
-            // ADD THE VERSE TO THE IN-MEMORY DATA.
-            saved_game_data->FoundBibleVerses.push_back(current_verse);
+            // READ IN THE PLAYER'S POSITION.
+            saved_game_data_file >> saved_game_data->PlayerWorldPosition.X;
+            saved_game_data_file >> saved_game_data->PlayerWorldPosition.Y;
+
+            // READ IN THE PLAYER'S WOORD COUNT.
+            saved_game_data_file >> saved_game_data->WoodCount;
+
+            // READ IN THE FOUND BIBLE VERSES.
+            unsigned int expected_bible_verse_count;
+            saved_game_data_file >> expected_bible_verse_count;
+            while (saved_game_data->FoundBibleVerses.size() < expected_bible_verse_count)
+            {
+                // READ IN THE CURRENT BIBLE VERSE'S DATA.
+                unsigned int book;
+                saved_game_data_file >> book;
+                unsigned int chapter;
+                saved_game_data_file >> chapter;
+                unsigned int verse;
+                saved_game_data_file >> verse;
+
+                // A single space exists after the verse number before the verse text,
+                // so that needs to be read in order to avoid having an extra space
+                // at the beginning of the verse text.
+                char space_before_verse_text;
+                saved_game_data_file.get(space_before_verse_text);
+
+                // The text may contain spaces, so the remainder of the entire
+                // line needs to be read in order to get the full verse text.
+                std::string text;
+                std::getline(saved_game_data_file, text);
+
+                // MAKE SURE CURRENT VERSE DATA WAS PROPERLY READ.
+                bool verse_data_valid = !saved_game_data_file.eof();
+                if (!verse_data_valid)
+                {
+                    break;
+                }
+
+                // CREATE THE VERSE.
+                BIBLE::BibleVerse current_verse(
+                    static_cast<BIBLE::BibleBook>(book),
+                    chapter,
+                    verse,
+                    text);
+
+                // ADD THE VERSE TO THE IN-MEMORY DATA.
+                saved_game_data->FoundBibleVerses.push_back(current_verse);
+            }
+
+            // READ IN THE BUILT ARK PIECE DATA.
+            unsigned int expected_ark_data_count;
+            saved_game_data_file >> expected_ark_data_count;
+
+            // Before reading in the ark piece data, a newline needs to be consumed.
+            std::string newline_before_ark_piece_data;
+            std::getline(saved_game_data_file, newline_before_ark_piece_data);
+
+            while (saved_game_data->BuildArkPieces.size() < expected_ark_data_count)
+            {
+                // READ THE NEXT LINE OF DATA.
+                std::string current_line_of_data;
+                std::getline(saved_game_data_file, current_line_of_data);
+
+                // READ IN THE CURRENT LINE OF ARK PIECE DATA.
+                std::stringstream current_ark_data_line(current_line_of_data);
+                BuiltArkPieceTileMapData built_ark_piece_data;
+                current_ark_data_line >> built_ark_piece_data.TileMapGridXPosition;
+                current_ark_data_line >> built_ark_piece_data.TileMapGridYPosition;
+
+                // READ IN ALL BUILT ARK PIECE INDICES.
+                while (!current_ark_data_line.eof())
+                {
+                    // READ IN THE CURRENT ARK PIECE INDEX.
+                    unsigned int ark_piece_index;
+                    current_ark_data_line >> ark_piece_index;
+
+                    // Make sure the ark piece index is valid.
+                    bool ark_piece_index_valid = !current_ark_data_line.eof() && !current_ark_data_line.bad();
+                    if (ark_piece_index_valid)
+                    {
+                        built_ark_piece_data.BuiltArkPieceIndices.push_back(ark_piece_index);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                // MAKE SURE THE READ ARK DATA IS VALID.
+                bool ark_data_valid = !saved_game_data_file.eof();
+                if (!ark_data_valid)
+                {
+                    break;
+                }
+
+                // ADD THE ARK DATA TO THE IN-MEMORY DATA.
+                saved_game_data->BuildArkPieces.push_back(built_ark_piece_data);
+            }
+
+            // RETURN THE LOADED SAVED GAME DATA.
+            return saved_game_data;
         }
-
-        // RETURN THE LOADED SAVED GAME DATA.
-        return saved_game_data;
+        catch (const std::exception&)
+        {
+            // INDICATE THAT THE DATA COULD NOT BE SUCCESSFULLY READ.
+            return nullptr;
+        }
     }
 
     /// Attempts to write saved game data to the specified file.
@@ -118,6 +180,8 @@ namespace STATES
         saved_game_data_file << WoodCount << std::endl;
 
         // WRITE THE FOUND BIBLE VERSES.
+        // The count of verses is written first.
+        saved_game_data_file << FoundBibleVerses.size() << std::endl;
         for (const auto& current_verse : FoundBibleVerses)
         {
             // WRITE THE CURRENT VERSE.
@@ -130,6 +194,28 @@ namespace STATES
                 << SEPARATOR_BETWEEN_RELATED_DATA
                 << current_verse.Text
                 << std::endl;
+        }
+
+        // WRITE THE BUILT ARK PIECES.
+        // The count of ark piece data is written out first.
+        saved_game_data_file << BuildArkPieces.size() << std::endl;
+        for (const auto& built_ark_piece_tile_map_data : BuildArkPieces)
+        {
+            // WRITE THE TILE MAP INDICES.
+            saved_game_data_file
+                << built_ark_piece_tile_map_data.TileMapGridXPosition
+                << SEPARATOR_BETWEEN_RELATED_DATA
+                << built_ark_piece_tile_map_data.TileMapGridYPosition
+                << SEPARATOR_BETWEEN_RELATED_DATA;
+
+            // WRITE THE BUILT ARK PIECE INDICES.
+            for (const auto built_ark_piece_index : built_ark_piece_tile_map_data.BuiltArkPieceIndices)
+            {
+                saved_game_data_file << built_ark_piece_index << SEPARATOR_BETWEEN_RELATED_DATA;
+            }
+
+            // WRITE A LINE SEPARATOR BEFORE THE NEXT SET OF DATA.
+            saved_game_data_file << std::endl;
         }
     }
 }

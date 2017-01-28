@@ -62,7 +62,46 @@ namespace GUI
                 saved_game_data.WoodCount = Overworld->NoahPlayer->Inventory->WoodCount;
                 saved_game_data.FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
                     Overworld->NoahPlayer->Inventory->BibleVerses.cbegin(),
-                    Overworld->NoahPlayer->Inventory->BibleVerses.cend()) ;
+                    Overworld->NoahPlayer->Inventory->BibleVerses.cend());
+                
+                // Built ark piece data from all tile maps needs to be included.
+                unsigned int tile_map_row_count = Overworld->TileMaps.GetHeight();
+                unsigned int tile_map_column_count = Overworld->TileMaps.GetWidth();
+                for (unsigned int tile_map_y_index = 0; tile_map_y_index < tile_map_row_count; ++tile_map_y_index)
+                {
+                    for (unsigned int tile_map_x_index = 0; tile_map_x_index < tile_map_column_count; ++tile_map_x_index)
+                    {
+                        // GATHER ANY ARK PIECES BUILT IN THE CURRENT TILE MAP.
+                        const MAPS::TileMap* current_tile_map = Overworld->GetTileMap(tile_map_y_index, tile_map_x_index);
+                        assert(current_tile_map);
+                        std::vector<unsigned int> built_ark_piece_indices;
+                        unsigned int ark_piece_count = current_tile_map->ArkPieces.size();
+                        for (unsigned int ark_piece_index = 0; ark_piece_index < ark_piece_count; ++ark_piece_index)
+                        {
+                            // CHECK IF THE CURRENT ARK PIECE IS BUILT.
+                            const auto& ark_piece = current_tile_map->ArkPieces.at(ark_piece_index);
+                            if (ark_piece.Built)
+                            {
+                                // STORE THE BUILT ARK PIECE INDEX.
+                                built_ark_piece_indices.push_back(ark_piece_index);
+                            }
+                        }
+
+                        // CHECK IF THE CURRENT TILE MAP HAS ANY BUILT ARK PIECES.
+                        // This prevents unnecessary data from being stored in the file.
+                        bool ark_pieces_built_in_map = !built_ark_piece_indices.empty();
+                        if (ark_pieces_built_in_map)
+                        {
+                            // ADD THE CURRENT TILE MAP'S BUILT ARK PIECES.
+                            STATES::BuiltArkPieceTileMapData tile_map_ark_data;
+                            tile_map_ark_data.TileMapGridXPosition = tile_map_x_index;
+                            tile_map_ark_data.TileMapGridYPosition = tile_map_y_index;
+                            tile_map_ark_data.BuiltArkPieceIndices = built_ark_piece_indices;
+                            saved_game_data.BuildArkPieces.push_back(tile_map_ark_data);
+                        }
+                    }
+                }
+
                 saved_game_data.Write(STATES::SavedGameData::DEFAULT_FILENAME);
 
                 // CLOSE THE SAVE DIALOG BOX.

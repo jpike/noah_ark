@@ -38,8 +38,24 @@ namespace STATES
             return false;
         }
 
-        // SET THE OVERWORLD.
+        // INITIALIZE THE OVERWORLD.
         Overworld = overworld;
+
+        // Built ark pieces need to be initialized.
+        for (const auto& built_ark_piece_data : saved_game_data.BuildArkPieces)
+        {
+            // GET THE TILE MAP FOR THE BUILT ARK PIECES.
+            MAPS::TileMap* current_tile_map = Overworld->GetTileMap(built_ark_piece_data.TileMapGridYPosition, built_ark_piece_data.TileMapGridXPosition);
+            assert(current_tile_map);
+
+            // UPDATE THE BUILT ARK PIECES IN THE CURRENT TILE MAP.
+            for (unsigned int ark_piece_index : built_ark_piece_data.BuiltArkPieceIndices)
+            {
+                // SET THE CURRENT ARK PIECE AS BUILT.
+                auto& ark_piece = current_tile_map->ArkPieces.at(ark_piece_index);
+                ark_piece.Built = true;
+            }
+        }
 
         // INITIALIZE THE PLAYER.
         std::unique_ptr<OBJECTS::Noah> noah_player = InitializePlayer(saved_game_data);

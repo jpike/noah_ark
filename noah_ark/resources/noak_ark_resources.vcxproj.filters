@@ -251,6 +251,9 @@
     <Image Include="res\images\main_font1.png">
       <Filter>Resources\Images</Filter>
     </Image>
+    <Image Include="res\images\ark_tile_set.png">
+      <Filter>Resources\Images</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Media Include="res\sounds\axe_tree_hit1.wav">
@@ -263,6 +266,9 @@
       <Filter>Resources\Sounds</Filter>
     </Media>
     <Media Include="res\sounds\overworld_music.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\ark_build_sound1.wav">
       <Filter>Resources\Sounds</Filter>
     </Media>
   </ItemGroup>

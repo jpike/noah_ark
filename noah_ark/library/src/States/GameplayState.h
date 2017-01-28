@@ -4,6 +4,7 @@
 #include <random>
 #include <vector>
 #include <SFML/System.hpp>
+#include "Audio/Speakers.h"
 #include "Bible/BibleVerse.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
@@ -59,6 +60,8 @@ namespace STATES
         // MEMBER VARIABLES.
         /// The random number generator.
         std::random_device RandomNumberGenerator;
+        /// The speakers out of which audio is played.
+        AUDIO::Speakers Speakers;
         /// Bible verses that still need to be found by the player.
         std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind;
         /// The assets to be used during gameplay.

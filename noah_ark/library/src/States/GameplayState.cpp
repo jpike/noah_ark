@@ -11,6 +11,7 @@ namespace STATES
     GameplayState::GameplayState(const std::shared_ptr<RESOURCES::Assets>& assets) :
         Overworld(),
         RandomNumberGenerator(),
+        Speakers(),
         BibleVersesLeftToFind(),
         Assets(assets),
         Hud()
@@ -157,6 +158,10 @@ namespace STATES
             // UPDATE NOAH'S AXE AND SPRITE.
             Overworld->NoahPlayer->Inventory->Axe->Update(elapsed_time);
         }
+
+        // REMOVE ANY SOUNDS THAT ARE NO LONGER PLAYING.
+        // This helps prevent memory usage from growing without bounds.
+        Speakers.RemoveCompletedSounds();
     }
 
     /// Renders the current frame of the gameplay state.
@@ -538,12 +543,14 @@ namespace STATES
             MAPS::TileMap* tile_map_underneath_noah = Overworld->GetTileMap(noah_world_position.X, noah_world_position.Y);
             assert(tile_map_underneath_noah);
             
-            // An ark piece only needs to be built once.
+            // An ark piece only needs to be built once and requires wood to be built.
             OBJECTS::ArkPiece* ark_piece = tile_map_underneath_noah->GetArkPieceAtWorldPosition(noah_world_position);
-            bool ark_piece_can_be_built = (ark_piece && !ark_piece->Built);
+            bool noah_has_wood = (Overworld->NoahPlayer->Inventory->WoodCount > 0);
+            bool ark_piece_can_be_built = (ark_piece && !ark_piece->Built && noah_has_wood);
             if (ark_piece_can_be_built)
             {
-                /// @todo   Check if Noah has wood.
+                // USE THE WOOD FROM NOAH'S INVENTORY.
+                --Overworld->NoahPlayer->Inventory->WoodCount;
 
                 // BUILD THE ARK PIECE.
                 ark_piece->Built = true;
@@ -563,7 +570,10 @@ namespace STATES
                 // The dust cloud needs to be added to the tile map so that it gets updated.
                 tile_map_underneath_noah->DustClouds.push_back(dust_cloud);
 
-                /// @todo   Play sound effect when building ark piece.
+                // Play a sound to indicate a piece of the ark is being built.
+                std::shared_ptr<AUDIO::SoundEffect> axe_building_sound = Assets->GetSound(RESOURCES::ARK_BUILDING_SOUND_ID);
+                assert(axe_building_sound);
+                Speakers.Play(axe_building_sound);
             }
         }
         else
@@ -631,11 +641,8 @@ namespace STATES
                     {
                         // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
                         std::shared_ptr<AUDIO::SoundEffect> collected_bible_verse_sound = Assets->GetSound(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
-                        bool collect_bible_verse_sound_loaded = (nullptr != collected_bible_verse_sound);
-                        if (collect_bible_verse_sound_loaded)
-                        {
-                            collected_bible_verse_sound->Play();
-                        }
+                        assert(collected_bible_verse_sound);
+                        Speakers.Play(collected_bible_verse_sound);
 
                         // SELECT A RANDOM BIBLE VERSE.
                         unsigned int random_bible_verse_index = RandomNumberGenerator() % BibleVersesLeftToFind.size();

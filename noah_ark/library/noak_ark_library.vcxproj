@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Audio\SoundEffect.h" />
+    <ClInclude Include="src\Audio\Speakers.h" />
     <ClInclude Include="src\Bible\BibleBook.h" />
     <ClInclude Include="src\Bible\BibleVerse.h" />
     <ClInclude Include="src\Bible\BibleVerses.h" />
@@ -68,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio\SoundEffect.cpp" />
+    <ClCompile Include="src\Audio\Speakers.cpp" />
     <ClCompile Include="src\Bible\BibleBook.cpp" />
     <ClCompile Include="src\Bible\BibleVerse.cpp" />
     <ClCompile Include="src\Bible\BibleVerses.cpp" />

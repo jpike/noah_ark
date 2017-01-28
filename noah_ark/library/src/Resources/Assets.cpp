@@ -17,6 +17,7 @@ namespace RESOURCES
     const std::string NOAH_TEXTURE_ID = "res/images/noah_sprite1.png";
     const std::string TREE_TEXTURE_ID = "res/images/tree_sprite1.png";
     const std::string WOOD_LOG_TEXTURE_ID = "res/images/tree_sprite1.png";
+    const std::string ARK_BUILDING_SOUND_ID = "res/sounds/ark_build_sound1.wav";
     const std::string AXE_HIT_SOUND_ID = "res/sounds/axe_tree_hit1.wav";
     const std::string COLLECT_BIBLE_VERSE_SOUND_ID = "res/sounds/collect_bible_verse1.wav";
     const std::string TREE_SHAKE_SOUND_ID = "res/sounds/tree_shake4.wav";

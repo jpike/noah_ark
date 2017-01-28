@@ -29,6 +29,7 @@ namespace RESOURCES
     extern const std::string TREE_TEXTURE_ID;
     extern const std::string WOOD_LOG_TEXTURE_ID;
     extern const std::string DUST_CLOUD_ANIMATION_ID;
+    extern const std::string ARK_BUILDING_SOUND_ID;
     extern const std::string AXE_HIT_SOUND_ID;
     extern const std::string COLLECT_BIBLE_VERSE_SOUND_ID;
     extern const std::string TREE_SHAKE_SOUND_ID;

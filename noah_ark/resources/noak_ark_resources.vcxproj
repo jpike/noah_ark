@@ -138,11 +138,13 @@
     <None Include="res\test_resources.json" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\images\ark_tile_set.png" />
     <Image Include="res\images\ground_tile_set.png" />
     <Image Include="res\images\main_font1.png" />
     <Image Include="res\images\tree_sprite_32x32.png" />
   </ItemGroup>
   <ItemGroup>
+    <Media Include="res\sounds\ark_build_sound1.wav" />
     <Media Include="res\sounds\axe_tree_hit1.wav" />
     <Media Include="res\sounds\collect_bible_verse1.wav" />
     <Media Include="res\sounds\overworld_music.wav" />

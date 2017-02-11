@@ -254,6 +254,9 @@
     <Image Include="res\images\ark_tile_set.png">
       <Filter>Resources\Images</Filter>
     </Image>
+    <Image Include="res\images\animal_sprites.png">
+      <Filter>Resources\Images</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Media Include="res\sounds\axe_tree_hit1.wav">

@@ -2,7 +2,9 @@
 
 #include <memory>
 #include <set>
+#include <unordered_map>
 #include "Bible/BibleVerses.h"
+#include "Objects/Animal.h"
 #include "Objects/Axe.h"
 
 /// Holds code related to the player's inventory of items in the game.
@@ -12,12 +14,9 @@ namespace INVENTORY
     class Inventory
     {
     public:
-        // WOOD.
-        /// Adds a single item of wood to the inventory.
-        void AddWood(const unsigned int wood_count)
-        {
-            WoodCount += wood_count;
-        }
+        // PUBLIC METHODS.
+        void AddWood(const unsigned int wood_count);
+        bool AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The axe that can be swung.  It is stored as a shared pointer
@@ -29,5 +28,13 @@ namespace INVENTORY
         /// A set is used to allow easily determining
         /// if a verse is already in the inventory.
         std::set<BIBLE::BibleVerse> BibleVerses = std::set<BIBLE::BibleVerse>();
+        /// Clean male animals collected so far, organized by species.
+        std::unordered_map< OBJECTS::AnimalSpecies, std::vector< std::shared_ptr<OBJECTS::Animal> > > CleanMaleAnimals = {};
+        /// Clean female animals collected so far, organized by species.
+        std::unordered_map< OBJECTS::AnimalSpecies, std::vector< std::shared_ptr<OBJECTS::Animal> > > CleanFemaleAnimals = {};
+        /// Unclean male animals collected so far, organized by species.
+        std::unordered_map< OBJECTS::AnimalSpecies, std::vector< std::shared_ptr<OBJECTS::Animal> > > UncleanMaleAnimals = {};
+        /// Unclean female animals collected so far, organized by species.
+        std::unordered_map< OBJECTS::AnimalSpecies, std::vector< std::shared_ptr<OBJECTS::Animal> > > UncleanFemaleAnimals = {};
     };
 }

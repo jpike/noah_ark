@@ -1,6 +1,8 @@
+#include <iostream>
 #include <algorithm>
 #include "Collision/CollisionDetectionAlgorithms.h"
 #include "Core/NullChecking.h"
+#include "Objects/RandomAnimalGenerationAlgorithm.h"
 #include "States/GameplayState.h"
 
 namespace STATES
@@ -144,6 +146,12 @@ namespace STATES
             MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
             MAPS::TileMap* current_tile_map = Overworld->GetTileMap(camera_view_center.X, camera_view_center.Y);
             assert(current_tile_map);
+
+            // UPDATE THE CURRENT TILE MAP'S ANIMALS>
+            for (auto& animal : current_tile_map->Animals)
+            {
+                animal->Sprite.Update(elapsed_time);
+            }
 
             // UPDATE THE CURRENT TILE MAP'S TREES.
             for (auto tree = current_tile_map->Trees.begin(); tree != current_tile_map->Trees.end(); ++tree)
@@ -610,6 +618,29 @@ namespace STATES
             {
                 // RE-ENABLE PLAYER INPUT.
                 input_controller.EnableInput();
+
+                // SEE IF AN ANIMAL SHOULD RANDOMLY APPEAR IN THE NEW TILE MAP.
+                const unsigned int EVENLY_DIVISIBLE = 0;
+                const unsigned int GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS = 2;
+                unsigned int random_number_for_animal_generation = RandomNumberGenerator();
+                bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
+                if (random_animal_should_be_generated)
+                {
+                    std::cout << "Generating random animal..." << std::endl;
+                    // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
+                    std::shared_ptr<OBJECTS::Animal> animal = OBJECTS::RandomAnimalGenerationAlgorithm::GenerateAnimal(
+                        *Overworld->NoahPlayer->Inventory,
+                        *current_tile_map,
+                        RandomNumberGenerator,
+                        *Assets);
+                    bool animal_generated = (nullptr != animal);
+                    if (animal_generated)
+                    {
+                        std::cout << "Random animal generated: " << static_cast<unsigned int>(animal->Type.Species) << std::endl;
+                        animal->Sprite.Play();
+                        current_tile_map->Animals.push_back(animal);
+                    }
+                }
             }
         }
         else

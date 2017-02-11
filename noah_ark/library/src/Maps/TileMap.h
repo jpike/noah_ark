@@ -3,6 +3,7 @@
 #include <vector>
 #include "Maps/GroundLayer.h"
 #include "Math/Vector2.h"
+#include "Objects/Animal.h"
 #include "Objects/ArkPiece.h"
 #include "Objects/DustCloud.h"
 #include "Objects/Tree.h"
@@ -53,5 +54,8 @@ namespace MAPS
         /// Stored in a vector currently for simplicitly at the moment,
         /// but a different data structure may be needed later for performance.
         std::vector<OBJECTS::ArkPiece> ArkPieces;
+        /// Animals freely roaming in the tile map that haven't yet been
+        /// collected by the player.
+        std::vector< std::shared_ptr<OBJECTS::Animal> > Animals;
     };
 }

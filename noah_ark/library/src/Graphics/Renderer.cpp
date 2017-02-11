@@ -536,6 +536,12 @@ namespace GRAPHICS
             tree.Sprite.Render(Screen);
         }
 
+        // RENDER THE CURRENT TILE MAP'S ANIMALS.
+        for (const auto& animal : tile_map.Animals)
+        {
+            animal->Sprite.Render(Screen);
+        }
+
         // RENDER THE CURRENT TILE MAP'S DUST CLOUDS.
         for (const auto& dust_cloud : tile_map.DustClouds)
         {

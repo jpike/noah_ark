@@ -257,6 +257,12 @@
     <ClInclude Include="src\Audio\Speakers.h">
       <Filter>Header Files\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="src\Objects\RandomAnimalGenerationAlgorithm.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Objects\Animal.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -402,6 +408,15 @@
     </ClCompile>
     <ClCompile Include="src\Audio\Speakers.cpp">
       <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Objects\RandomAnimalGenerationAlgorithm.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Objects\Animal.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Inventory\Inventory.cpp">
+      <Filter>Source Files\Inventory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

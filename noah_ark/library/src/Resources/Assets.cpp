@@ -9,6 +9,7 @@ namespace RESOURCES
     // ASSET IDs.
     // For assets that require accessing the filesystem, IDs are currently set to filepaths
     // (relative to the working directory) to simplify loading.
+    const std::string ANIMAL_TEXTURE_ID = "res/images/animal_sprites.png";
     const std::string ARK_TEXTURE_ID = "res/images/ark_tile_set.png";
     const std::string AXE_TEXTURE_ID = "res/images/noah_sprite1.png";
     const std::string DUST_CLOUD_TEXTURE_ID = "res/images/tree_sprite1.png";

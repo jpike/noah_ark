@@ -83,8 +83,8 @@ namespace OBJECTS
         // CREATE THE ANIMAL DETERMINED BY THE ALGORITHM.
         std::shared_ptr<Animal> animal = MakeAnimal(
             animal_type,
-            static_cast<float>(random_y_position),
             static_cast<float>(random_x_position),
+            static_cast<float>(random_y_position),
             assets);
         return animal;
     }

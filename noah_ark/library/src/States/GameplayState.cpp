@@ -627,6 +627,13 @@ namespace STATES
                 if (random_animal_should_be_generated)
                 {
                     std::cout << "Generating random animal..." << std::endl;
+                    std::cout << "Tile map column: " << current_tile_map->OverworldColumnIndex << " row: " << current_tile_map->OverworldRowIndex << std::endl;
+                    auto tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
+                    std::cout << "Tile map LTRB: "
+                        << tile_map_bounding_box.GetLeftXPosition() << " "
+                        << tile_map_bounding_box.GetTopYPosition() << " "
+                        << tile_map_bounding_box.GetRightXPosition() << " "
+                        << tile_map_bounding_box.GetBottomYPosition() << std::endl;
                     // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
                     std::shared_ptr<OBJECTS::Animal> animal = OBJECTS::RandomAnimalGenerationAlgorithm::GenerateAnimal(
                         *Overworld->NoahPlayer->Inventory,

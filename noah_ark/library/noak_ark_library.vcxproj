@@ -53,6 +53,7 @@
     <ClInclude Include="src\Maps\TileMapObjectDescription.h" />
     <ClInclude Include="src\Maps\Tileset.h" />
     <ClInclude Include="src\Maps\TilesetDescription.h" />
+    <ClInclude Include="src\Math\RandomNumberGenerator.h" />
     <ClInclude Include="src\Math\Rectangle.h" />
     <ClInclude Include="src\Math\Vector2.h" />
     <ClInclude Include="src\Objects\Animal.h" />

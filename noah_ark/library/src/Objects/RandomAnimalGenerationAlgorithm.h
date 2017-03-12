@@ -1,10 +1,10 @@
 #pragma once
 
 #include <memory>
-#include <random>
 #include "Graphics/AnimationSequence.h"
 #include "Inventory/Inventory.h"
 #include "Maps/TileMap.h"
+#include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
 #include "Resources/Assets.h"
 
@@ -26,7 +26,7 @@ namespace OBJECTS
         static std::shared_ptr<Animal> GenerateAnimal(
             const INVENTORY::Inventory& inventory,
             const MAPS::TileMap& tile_map,
-            std::random_device& random_number_generator,
+            MATH::RandomNumberGenerator& random_number_generator,
             RESOURCES::Assets& assets);
 
     private:

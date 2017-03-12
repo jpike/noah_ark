@@ -16,22 +16,15 @@ namespace OBJECTS
     std::shared_ptr<Animal> RandomAnimalGenerationAlgorithm::GenerateAnimal(
         const INVENTORY::Inventory& inventory,
         const MAPS::TileMap& tile_map,
-        std::random_device& random_number_generator,
+        MATH::RandomNumberGenerator& random_number_generator,
         RESOURCES::Assets& assets)
     {
-        /// @todo   More advanced logic so that multiple attempts are made to try
-        /// and find an animal/position that can be generated (as opposed to giving up early)?
-
         // DETERMINE THE SPECIES OF ANIMAL TO GENERATE.
-        const unsigned int ANIMAL_SPECIES_COUNT = static_cast<unsigned int>(AnimalSpecies::COUNT);
-        unsigned int random_number_for_species = random_number_generator();
-        AnimalSpecies random_species = static_cast<AnimalSpecies>(random_number_for_species % ANIMAL_SPECIES_COUNT);
+        AnimalSpecies random_species = random_number_generator.RandomEnum<AnimalSpecies>();
         std::cout << "Random species: " << static_cast<unsigned int>(random_species) << std::endl;
 
         // DETERMINE THE GENDER OF ANIMAL TO GENERATE.
-        const unsigned int GENDER_COUNT = static_cast<unsigned int>(AnimalGender::COUNT);
-        unsigned int random_number_for_gender = random_number_generator();
-        AnimalGender random_gender = static_cast<AnimalGender>(random_number_for_gender % GENDER_COUNT);
+        AnimalGender random_gender = random_number_generator.RandomEnum<AnimalGender>();
         std::cout << "Random gender: " << static_cast<unsigned int>(random_gender) << std::endl;
 
         // CHECK IF THE ANIMAL TYPE HAS BEEN FULLY COLLECTED.
@@ -48,19 +41,15 @@ namespace OBJECTS
 
         // DETERMINE THE LOCATION OF THE TILE MAP AT WHICH THE ANIMAL SHOULD BE PLACED.
         MATH::FloatRectangle tile_map_world_boundaries = tile_map.GetWorldBoundingBox();
-        /// @todo   Create more encapsulated random number generator functionality
-        /// so that we can generate random numbers within a range.
-        unsigned int tile_map_width = static_cast<unsigned int>(tile_map_world_boundaries.GetWidth());
-        unsigned int tile_map_left_x_position = static_cast<unsigned int>(tile_map_world_boundaries.GetLeftXPosition());
-        unsigned int tile_map_height = static_cast<unsigned int>(tile_map_world_boundaries.GetHeight());
-        unsigned int tile_map_top_y_position = static_cast<unsigned int>(tile_map_world_boundaries.GetTopYPosition());
-        unsigned int random_number_for_x_position = random_number_generator();
-        unsigned int random_number_for_y_position = random_number_generator();
-        unsigned int random_x_position = (random_number_for_x_position % tile_map_width) + tile_map_left_x_position;
-        unsigned int random_y_position = (random_number_for_y_position % tile_map_height) + tile_map_top_y_position;
+        float tile_map_left_x_position = tile_map_world_boundaries.GetLeftXPosition();
+        float tile_map_right_x_position = tile_map_world_boundaries.GetRightXPosition();
+        float tile_map_top_y_position = tile_map_world_boundaries.GetTopYPosition();
+        float tile_map_bottom_y_position = tile_map_world_boundaries.GetBottomYPosition();
+        float random_x_position = random_number_generator.RandomInRange<float>(tile_map_left_x_position, tile_map_right_x_position);
+        float random_y_position = random_number_generator.RandomInRange<float>(tile_map_top_y_position, tile_map_bottom_y_position);
         std::shared_ptr<MAPS::Tile> tile_at_animal_generation_point = tile_map.GetTileAtWorldPosition(
-            static_cast<float>(random_x_position), 
-            static_cast<float>(random_y_position));
+            random_x_position, 
+            random_y_position);
         assert(tile_at_animal_generation_point);
         std::cout << "Animal at: " << random_x_position << ", " << random_y_position << std::endl;
 
@@ -83,8 +72,8 @@ namespace OBJECTS
         // CREATE THE ANIMAL DETERMINED BY THE ALGORITHM.
         std::shared_ptr<Animal> animal = MakeAnimal(
             animal_type,
-            static_cast<float>(random_x_position),
-            static_cast<float>(random_y_position),
+            random_x_position,
+            random_y_position,
             assets);
         return animal;
     }

@@ -622,7 +622,7 @@ namespace STATES
                 // SEE IF AN ANIMAL SHOULD RANDOMLY APPEAR IN THE NEW TILE MAP.
                 const unsigned int EVENLY_DIVISIBLE = 0;
                 const unsigned int GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS = 2;
-                unsigned int random_number_for_animal_generation = RandomNumberGenerator();
+                unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>();
                 bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
                 if (random_animal_should_be_generated)
                 {
@@ -673,8 +673,7 @@ namespace STATES
                 // The logs can have a random amount of wood.
                 unsigned int MIN_WOOD_COUNT = 1;
                 unsigned int MAX_WOOD_COUNT = 3;
-                unsigned int random_number_for_wood = RandomNumberGenerator();
-                unsigned int random_wood_count = (random_number_for_wood % MAX_WOOD_COUNT) + MIN_WOOD_COUNT;
+                unsigned int random_wood_count = RandomNumberGenerator.RandomInRange<unsigned int>(MIN_WOOD_COUNT, MAX_WOOD_COUNT);
                 Overworld->NoahPlayer->Inventory->AddWood(random_wood_count);
 
                 // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
@@ -684,7 +683,7 @@ namespace STATES
                 // There should be a random chance that a Bible verse can be collected.
                 const unsigned int EVENLY_DIVISIBLE = 0;
                 const unsigned int BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS = 2;
-                unsigned int random_number_for_bible_verse = RandomNumberGenerator();
+                unsigned int random_number_for_bible_verse = RandomNumberGenerator.RandomNumber<unsigned int>();
                 bool bible_verse_exists_with_wood = ((random_number_for_bible_verse % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
                 if (bible_verse_exists_with_wood)
                 {
@@ -699,7 +698,8 @@ namespace STATES
                         Speakers.Play(collected_bible_verse_sound);
 
                         // SELECT A RANDOM BIBLE VERSE.
-                        unsigned int random_bible_verse_index = RandomNumberGenerator() % BibleVersesLeftToFind.size();
+                        unsigned int remaining_bible_verse_count = BibleVersesLeftToFind.size();
+                        unsigned int random_bible_verse_index = RandomNumberGenerator.RandomNumberLessThan(remaining_bible_verse_count);
                         auto bible_verse = BibleVersesLeftToFind.begin() + random_bible_verse_index;
 
                         // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.

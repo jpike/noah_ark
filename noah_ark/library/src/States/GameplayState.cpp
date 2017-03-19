@@ -106,6 +106,12 @@ namespace STATES
         INPUT_CONTROL::KeyboardInputController& input_controller,
         GRAPHICS::Camera& camera)
     {
+        // GET THE CURRENT TILE MAP.
+        MATH::FloatRectangle camera_bounds = camera.ViewBounds;
+        MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
+        MAPS::TileMap* current_tile_map = Overworld->GetTileMap(camera_view_center.X, camera_view_center.Y);
+        assert(current_tile_map);
+
         // UPDATE THE HUD IN RESPONSE TO USER INPUT.
         Hud->RespondToInput(input_controller);
 
@@ -124,9 +130,72 @@ namespace STATES
             }
             else
             {
-                // UPDATE THE OVERWORLD.
+                // UPDATE THE PLAYER BASED ON INPUT.
+                UpdatePlayerBasedOnInput(*current_tile_map, elapsed_time, input_controller, camera);
+
+                // HANDLE PLAYER COLLISIONS WITH WOOD LOGS.
                 std::string message_for_text_box;
-                UpdateOverworld(elapsed_time, input_controller, camera, message_for_text_box);
+                COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(*Overworld, Overworld->AxeSwings, *Assets);
+                for (auto wood_logs = current_tile_map->WoodLogs.begin(); wood_logs != current_tile_map->WoodLogs.end();)
+                {
+                    // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
+                    MATH::FloatRectangle wood_log_bounding_box = wood_logs->GetWorldBoundingBox();
+                    MATH::FloatRectangle noah_bounding_box = Overworld->NoahPlayer->GetWorldBoundingBox();
+                    bool noah_collided_with_wood_logs = noah_bounding_box.Contains(
+                        wood_log_bounding_box.GetCenterXPosition(),
+                        wood_log_bounding_box.GetCenterYPosition());
+                    if (noah_collided_with_wood_logs)
+                    {
+                        // ADD THE WOOD TO NOAH'S INVENTORY.
+                        // The logs can have a random amount of wood.
+                        unsigned int MIN_WOOD_COUNT = 1;
+                        unsigned int MAX_WOOD_COUNT = 3;
+                        unsigned int random_wood_count = RandomNumberGenerator.RandomInRange<unsigned int>(MIN_WOOD_COUNT, MAX_WOOD_COUNT);
+                        Overworld->NoahPlayer->Inventory->AddWood(random_wood_count);
+
+                        // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
+                        wood_logs = current_tile_map->WoodLogs.erase(wood_logs);
+
+                        // SEE IF A BIBLE VERSE SHOULD BE COLLECTED ALONG WITH THE WOOD.
+                        // There should be a random chance that a Bible verse can be collected.
+                        const unsigned int EVENLY_DIVISIBLE = 0;
+                        const unsigned int BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS = 2;
+                        unsigned int random_number_for_bible_verse = RandomNumberGenerator.RandomNumber<unsigned int>();
+                        bool bible_verse_exists_with_wood = ((random_number_for_bible_verse % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
+                        if (bible_verse_exists_with_wood)
+                        {
+                            // CHECK IF ANY BIBLE VERSES REMAIN.
+                            // This check helps protect against a mod by 0 below.
+                            bool bible_verses_remain_to_be_found = !BibleVersesLeftToFind.empty();
+                            if (bible_verses_remain_to_be_found)
+                            {
+                                // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
+                                std::shared_ptr<AUDIO::SoundEffect> collected_bible_verse_sound = Assets->GetSound(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
+                                assert(collected_bible_verse_sound);
+                                Speakers.Play(collected_bible_verse_sound);
+
+                                // SELECT A RANDOM BIBLE VERSE.
+                                unsigned int remaining_bible_verse_count = BibleVersesLeftToFind.size();
+                                unsigned int random_bible_verse_index = RandomNumberGenerator.RandomNumberLessThan(remaining_bible_verse_count);
+                                auto bible_verse = BibleVersesLeftToFind.begin() + random_bible_verse_index;
+
+                                // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
+                                Overworld->NoahPlayer->Inventory->BibleVerses.insert(*bible_verse);
+
+                                // POPULATE THE MESSAGE TO DISPLAY IN THE MAIN TEXT BOX.
+                                message_for_text_box = "You got a Bible verse!\n" + bible_verse->ToString();
+
+                                // REMOVE THE VERSE SINCE IT HAS BEEN FOUND.
+                                BibleVersesLeftToFind.erase(bible_verse);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // MOVE TO CHECKING COLLISIONS WITH THE NEXT SET OF WOOD LOGS.
+                        ++wood_logs;
+                    }
+                }
 
                 // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
                 bool text_box_message_exists = !message_for_text_box.empty();
@@ -136,18 +205,7 @@ namespace STATES
                 }
             }
 
-            // GET THE CURRENT TILE MAP.
-            /// @todo   Revisit the structure of the logic here.  There probably shouldn't be
-            // so much duplication here, and the separation of what's in "UpdateOverworld"
-            // and what logic is here isn't clear.
-            // This is needed for updating the tree and dust cloud animations, which should still
-            // be updated even if the main text box is displayed.
-            MATH::FloatRectangle camera_bounds = camera.ViewBounds;
-            MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
-            MAPS::TileMap* current_tile_map = Overworld->GetTileMap(camera_view_center.X, camera_view_center.Y);
-            assert(current_tile_map);
-
-            // UPDATE THE CURRENT TILE MAP'S ANIMALS>
+            // UPDATE THE CURRENT TILE MAP'S ANIMALS.
             for (auto& animal : current_tile_map->Animals)
             {
                 animal->Sprite.Update(elapsed_time);
@@ -181,6 +239,57 @@ namespace STATES
 
             // UPDATE NOAH'S AXE AND SPRITE.
             Overworld->NoahPlayer->Inventory->Axe->Update(elapsed_time);
+
+            // UPDATE THE CAMERA BASED ON SCROLLING.
+            if (camera.IsScrolling)
+            {
+                // SCROLL BASED ON THE ELAPSED FRAME TIME.
+                camera.Scroll(elapsed_time);
+
+                // CHECK IF SCROLLING HAS FINISHED.
+                bool scrolling_finished = !camera.IsScrolling;
+                if (scrolling_finished)
+                {
+                    // RE-ENABLE PLAYER INPUT.
+                    input_controller.EnableInput();
+
+                    // SEE IF AN ANIMAL SHOULD RANDOMLY APPEAR IN THE NEW TILE MAP.
+                    const unsigned int EVENLY_DIVISIBLE = 0;
+                    const unsigned int GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS = 2;
+                    unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>();
+                    bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
+                    if (random_animal_should_be_generated)
+                    {
+                        std::cout << "Generating random animal..." << std::endl;
+                        std::cout << "Tile map column: " << current_tile_map->OverworldColumnIndex << " row: " << current_tile_map->OverworldRowIndex << std::endl;
+                        auto tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
+                        std::cout << "Tile map LTRB: "
+                            << tile_map_bounding_box.GetLeftXPosition() << " "
+                            << tile_map_bounding_box.GetTopYPosition() << " "
+                            << tile_map_bounding_box.GetRightXPosition() << " "
+                            << tile_map_bounding_box.GetBottomYPosition() << std::endl;
+                        // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
+                        std::shared_ptr<OBJECTS::Animal> animal = OBJECTS::RandomAnimalGenerationAlgorithm::GenerateAnimal(
+                            *Overworld->NoahPlayer->Inventory,
+                            *current_tile_map,
+                            RandomNumberGenerator,
+                            *Assets);
+                        bool animal_generated = (nullptr != animal);
+                        if (animal_generated)
+                        {
+                            std::cout << "Random animal generated: " << static_cast<unsigned int>(animal->Type.Species) << std::endl;
+                            animal->Sprite.Play();
+                            current_tile_map->Animals.push_back(animal);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // POSITION THE CAMERA TO FOCUS ON THE CENTER OF THE CURRENT TILE MAP.
+                MATH::Vector2f center_world_position = current_tile_map->GetCenterWorldPosition();
+                camera.SetCenter(center_world_position);
+            }
         }
 
         // REMOVE ANY SOUNDS THAT ARE NO LONGER PLAYING.
@@ -258,26 +367,18 @@ namespace STATES
         return hud;
     }
 
-    /// Updates the entire overworld for the elapsed time.
-    /// @param[in]  elapsed_time - The elapsed time for which to update the world.
+    /// Updates the player and related items in the overworld based on input and elapsed time.
+    /// @param[in]  current_tile_map - The tile map the player is currently located in.
+    /// @param[in]  elapsed_time - The elapsed time for which to update things.
     /// @param[in,out]  input_controller - The controller supplying player input.
     /// @param[in,out]  camera - The camera defining the viewable region of the overworld.
-    /// @param[out] message_for_text_box - The message to display in the main text box,
-    ///     if one needs to start being displayed; empty if no new message needs to be displayed.
-    void GameplayState::UpdateOverworld(
+    void GameplayState::UpdatePlayerBasedOnInput(
+        const MAPS::TileMap& current_tile_map,
         const sf::Time& elapsed_time,
         INPUT_CONTROL::KeyboardInputController& input_controller,
-        GRAPHICS::Camera& camera,
-        std::string& message_for_text_box)
+        GRAPHICS::Camera& camera)
     {
-        // INDICATE THAT NO MESSAGE NEEDS TO BE DISPLAYED YET IN THE TEXT BOX.
-        message_for_text_box.clear();
-
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
-        MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
-
-        MAPS::TileMap* current_tile_map = Overworld->GetTileMap(camera_view_center.X, camera_view_center.Y);
-        assert(current_tile_map);
 
         // CHECK IF THE PRIMARY ACTION BUTTON WAS PRESSED.
         if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::PRIMARY_ACTION_KEY))
@@ -330,8 +431,8 @@ namespace STATES
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A TOP TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                    unsigned int top_tile_map_row_index = current_tile_map->OverworldRowIndex - 1;
-                    unsigned int top_tile_map_column_index = current_tile_map->OverworldColumnIndex;
+                    unsigned int top_tile_map_row_index = current_tile_map.OverworldRowIndex - 1;
+                    unsigned int top_tile_map_column_index = current_tile_map.OverworldColumnIndex;
                     MAPS::TileMap* top_tile_map = Overworld->GetTileMap(
                         top_tile_map_row_index,
                         top_tile_map_column_index);
@@ -344,7 +445,7 @@ namespace STATES
                         Overworld->NoahPlayer->SetWorldPosition(noah_world_position);
 
                         // START SCROLLING TO THE TOP TILE MAP.
-                        MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
+                        MATH::Vector2f scroll_start_position = current_tile_map.GetCenterWorldPosition();
                         MATH::Vector2f scroll_end_position = top_tile_map->GetCenterWorldPosition();
                         camera.StartScrolling(scroll_start_position, scroll_end_position);
 
@@ -355,7 +456,7 @@ namespace STATES
                     {
                         // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
                         // Since there is no top tile map to scroll to, this will keep Noah on-screen.
-                        MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
+                        MATH::FloatRectangle tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
                         float tile_map_top_boundary = tile_map_bounding_box.GetTopYPosition();
 
                         // To keep Noah completely on screen, his center position should be half
@@ -392,8 +493,8 @@ namespace STATES
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A BOTTOM TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                    unsigned int bottom_tile_map_row_index = current_tile_map->OverworldRowIndex + 1;
-                    unsigned int bottom_tile_map_column_index = current_tile_map->OverworldColumnIndex;
+                    unsigned int bottom_tile_map_row_index = current_tile_map.OverworldRowIndex + 1;
+                    unsigned int bottom_tile_map_column_index = current_tile_map.OverworldColumnIndex;
                     MAPS::TileMap* bottom_tile_map = Overworld->GetTileMap(
                         bottom_tile_map_row_index,
                         bottom_tile_map_column_index);
@@ -406,7 +507,7 @@ namespace STATES
                         Overworld->NoahPlayer->SetWorldPosition(noah_world_position);
 
                         // START SCROLLING TO THE BOTTOM TILE MAP.
-                        MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
+                        MATH::Vector2f scroll_start_position = current_tile_map.GetCenterWorldPosition();
                         MATH::Vector2f scroll_end_position = bottom_tile_map->GetCenterWorldPosition();
                         camera.StartScrolling(scroll_start_position, scroll_end_position);
 
@@ -417,7 +518,7 @@ namespace STATES
                     {
                         // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
                         // Since there is no bottom tile map to scroll to, this will keep Noah on-screen.
-                        MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
+                        MATH::FloatRectangle tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
                         float tile_map_bottom_boundary = tile_map_bounding_box.GetBottomYPosition();
 
                         // To keep Noah completely on screen, his center position should be half
@@ -454,8 +555,8 @@ namespace STATES
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A LEFT TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                    unsigned int left_tile_map_row_index = current_tile_map->OverworldRowIndex;
-                    unsigned int left_tile_map_column_index = current_tile_map->OverworldColumnIndex - 1;
+                    unsigned int left_tile_map_row_index = current_tile_map.OverworldRowIndex;
+                    unsigned int left_tile_map_column_index = current_tile_map.OverworldColumnIndex - 1;
                     MAPS::TileMap* left_tile_map = Overworld->GetTileMap(
                         left_tile_map_row_index,
                         left_tile_map_column_index);
@@ -468,7 +569,7 @@ namespace STATES
                         Overworld->NoahPlayer->SetWorldPosition(noah_world_position);
 
                         // START SCROLLING TO THE LEFT TILE MAP.
-                        MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
+                        MATH::Vector2f scroll_start_position = current_tile_map.GetCenterWorldPosition();
                         MATH::Vector2f scroll_end_position = left_tile_map->GetCenterWorldPosition();
                         camera.StartScrolling(scroll_start_position, scroll_end_position);
 
@@ -479,7 +580,7 @@ namespace STATES
                     {
                         // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
                         // Since there is no left tile map to scroll to, this will keep Noah on-screen.
-                        MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
+                        MATH::FloatRectangle tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
                         float tile_map_left_boundary = tile_map_bounding_box.GetLeftXPosition();
 
                         // To keep Noah completely on screen, his center position should be half
@@ -516,8 +617,8 @@ namespace STATES
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A RIGHT TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                    unsigned int right_tile_map_row_index = current_tile_map->OverworldRowIndex;
-                    unsigned int right_tile_map_column_index = current_tile_map->OverworldColumnIndex + 1;
+                    unsigned int right_tile_map_row_index = current_tile_map.OverworldRowIndex;
+                    unsigned int right_tile_map_column_index = current_tile_map.OverworldColumnIndex + 1;
                     MAPS::TileMap* right_tile_map = Overworld->GetTileMap(
                         right_tile_map_row_index,
                         right_tile_map_column_index);
@@ -530,7 +631,7 @@ namespace STATES
                         Overworld->NoahPlayer->SetWorldPosition(noah_world_position);
 
                         // START SCROLLING TO THE RIGHT TILE MAP.
-                        MATH::Vector2f scroll_start_position = current_tile_map->GetCenterWorldPosition();
+                        MATH::Vector2f scroll_start_position = current_tile_map.GetCenterWorldPosition();
                         MATH::Vector2f scroll_end_position = right_tile_map->GetCenterWorldPosition();
                         camera.StartScrolling(scroll_start_position, scroll_end_position);
 
@@ -541,7 +642,7 @@ namespace STATES
                     {
                         // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
                         // Since there is no right tile map to scroll to, this will keep Noah on-screen.
-                        MATH::FloatRectangle tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
+                        MATH::FloatRectangle tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
                         float tile_map_right_boundary = tile_map_bounding_box.GetRightXPosition();
 
                         // To keep Noah completely on screen, his center position should be half
@@ -604,120 +705,6 @@ namespace STATES
         {
             // STOP NOAH'S ANIMATION FROM PLAYING SINCE THE PLAYER DIDN'T MOVE THIS FRAME.
             Overworld->NoahPlayer->Sprite.ResetAnimation();
-        }
-
-        // UPDATE THE CAMERA BASED ON SCROLLING.
-        if (camera.IsScrolling)
-        {
-            // SCROLL BASED ON THE ELAPSED FRAME TIME.
-            camera.Scroll(elapsed_time);
-
-            // CHECK IF SCROLLING HAS FINISHED.
-            bool scrolling_finished = !camera.IsScrolling;
-            if (scrolling_finished)
-            {
-                // RE-ENABLE PLAYER INPUT.
-                input_controller.EnableInput();
-
-                // SEE IF AN ANIMAL SHOULD RANDOMLY APPEAR IN THE NEW TILE MAP.
-                const unsigned int EVENLY_DIVISIBLE = 0;
-                const unsigned int GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS = 2;
-                unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>();
-                bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
-                if (random_animal_should_be_generated)
-                {
-                    std::cout << "Generating random animal..." << std::endl;
-                    std::cout << "Tile map column: " << current_tile_map->OverworldColumnIndex << " row: " << current_tile_map->OverworldRowIndex << std::endl;
-                    auto tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
-                    std::cout << "Tile map LTRB: "
-                        << tile_map_bounding_box.GetLeftXPosition() << " "
-                        << tile_map_bounding_box.GetTopYPosition() << " "
-                        << tile_map_bounding_box.GetRightXPosition() << " "
-                        << tile_map_bounding_box.GetBottomYPosition() << std::endl;
-                    // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
-                    std::shared_ptr<OBJECTS::Animal> animal = OBJECTS::RandomAnimalGenerationAlgorithm::GenerateAnimal(
-                        *Overworld->NoahPlayer->Inventory,
-                        *current_tile_map,
-                        RandomNumberGenerator,
-                        *Assets);
-                    bool animal_generated = (nullptr != animal);
-                    if (animal_generated)
-                    {
-                        std::cout << "Random animal generated: " << static_cast<unsigned int>(animal->Type.Species) << std::endl;
-                        animal->Sprite.Play();
-                        current_tile_map->Animals.push_back(animal);
-                    }
-                }
-            }
-        }
-        else
-        {
-            // POSITION THE CAMERA TO FOCUS ON THE CENTER OF THE CURRENT TILE MAP.
-            MATH::Vector2f center_world_position = current_tile_map->GetCenterWorldPosition();
-            camera.SetCenter(center_world_position);
-        }
-
-        // HANDLE OTHER COLLISIONS.
-        COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(*Overworld, Overworld->AxeSwings, *Assets);
-        for (auto wood_logs = current_tile_map->WoodLogs.begin(); wood_logs != current_tile_map->WoodLogs.end();)
-        {
-            // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
-            MATH::FloatRectangle wood_log_bounding_box = wood_logs->GetWorldBoundingBox();
-            MATH::FloatRectangle noah_bounding_box = Overworld->NoahPlayer->GetWorldBoundingBox();
-            bool noah_collided_with_wood_logs = noah_bounding_box.Contains(
-                wood_log_bounding_box.GetCenterXPosition(),
-                wood_log_bounding_box.GetCenterYPosition());
-            if (noah_collided_with_wood_logs)
-            {
-                // ADD THE WOOD TO NOAH'S INVENTORY.
-                // The logs can have a random amount of wood.
-                unsigned int MIN_WOOD_COUNT = 1;
-                unsigned int MAX_WOOD_COUNT = 3;
-                unsigned int random_wood_count = RandomNumberGenerator.RandomInRange<unsigned int>(MIN_WOOD_COUNT, MAX_WOOD_COUNT);
-                Overworld->NoahPlayer->Inventory->AddWood(random_wood_count);
-
-                // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
-                wood_logs = current_tile_map->WoodLogs.erase(wood_logs);
-
-                // SEE IF A BIBLE VERSE SHOULD BE COLLECTED ALONG WITH THE WOOD.
-                // There should be a random chance that a Bible verse can be collected.
-                const unsigned int EVENLY_DIVISIBLE = 0;
-                const unsigned int BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS = 2;
-                unsigned int random_number_for_bible_verse = RandomNumberGenerator.RandomNumber<unsigned int>();
-                bool bible_verse_exists_with_wood = ((random_number_for_bible_verse % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
-                if (bible_verse_exists_with_wood)
-                {
-                    // CHECK IF ANY BIBLE VERSES REMAIN.
-                    // This check helps protect against a mod by 0 below.
-                    bool bible_verses_remain_to_be_found = !BibleVersesLeftToFind.empty();
-                    if (bible_verses_remain_to_be_found)
-                    {
-                        // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
-                        std::shared_ptr<AUDIO::SoundEffect> collected_bible_verse_sound = Assets->GetSound(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
-                        assert(collected_bible_verse_sound);
-                        Speakers.Play(collected_bible_verse_sound);
-
-                        // SELECT A RANDOM BIBLE VERSE.
-                        unsigned int remaining_bible_verse_count = BibleVersesLeftToFind.size();
-                        unsigned int random_bible_verse_index = RandomNumberGenerator.RandomNumberLessThan(remaining_bible_verse_count);
-                        auto bible_verse = BibleVersesLeftToFind.begin() + random_bible_verse_index;
-
-                        // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
-                        Overworld->NoahPlayer->Inventory->BibleVerses.insert(*bible_verse);
-
-                        // POPULATE THE MESSAGE TO DISPLAY IN THE MAIN TEXT BOX.
-                        message_for_text_box = "You got a Bible verse!\n" + bible_verse->ToString();
-
-                        // REMOVE THE VERSE SINCE IT HAS BEEN FOUND.
-                        BibleVersesLeftToFind.erase(bible_verse);
-                    }
-                }
-            }
-            else
-            {
-                // MOVE TO CHECKING COLLISIONS WITH THE NEXT SET OF WOOD LOGS.
-                ++wood_logs;
-            }
         }
     }
 }

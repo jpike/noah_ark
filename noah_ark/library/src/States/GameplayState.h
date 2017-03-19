@@ -10,6 +10,7 @@
 #include "Graphics/Renderer.h"
 #include "Input/KeyboardInputController.h"
 #include "Maps/Overworld.h"
+#include "Maps/TileMap.h"
 #include "Math/RandomNumberGenerator.h"
 #include "Resources/Assets.h"
 #include "States/SavedGameData.h"
@@ -51,11 +52,11 @@ namespace STATES
             const std::shared_ptr<MAPS::Overworld>& overworld);
 
         // UPDATING.
-        void UpdateOverworld(
+        void UpdatePlayerBasedOnInput(
+            const MAPS::TileMap& current_tile_map,
             const sf::Time& elapsed_time,
             INPUT_CONTROL::KeyboardInputController& input_controller,
-            GRAPHICS::Camera& camera,
-            std::string& message_for_text_box);
+            GRAPHICS::Camera& camera);
 
         // MEMBER VARIABLES.
         /// The random number generator.

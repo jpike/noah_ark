@@ -1,9 +1,12 @@
 #pragma once
 
-/// A namespace to hold math utilities.
+#include <cmath>
+
+/// Holds code related to math.
 namespace MATH
 {
-    /// A 2D mathematical vector.  It currently only has the minimal functionality needed,
+    /// A 2D mathematical vector with both magnitude and direction.
+    /// It currently only has the minimal functionality needed,
     /// so it cannot directly perform all common vector operations.
     ///
     /// The ComponentType template parameter is intended to be replaced with
@@ -12,117 +15,159 @@ namespace MATH
     class Vector2
     {
     public:
-        /// Default constructor.
-        explicit Vector2() : X(), Y() {};
+        // STATIC METHODS.
+        static Vector2 Scale(const ComponentType scale_factor, const Vector2& vector);
+        static Vector2 Normalize(const Vector2& vector);
+        static ComponentType DotProduct(const Vector2& vector_1, const Vector2& vector_2);
 
-        /// Constructor that accepts initial values.
-        /// @param[in]  x - The x component value.
-        /// @param[in]  y - The y component value.
-        explicit Vector2(const ComponentType x, const ComponentType y) : X(x), Y(y) {};
+        // CONSTRUCTION.
+        explicit Vector2(const ComponentType x = 0, const ComponentType y = 0);
 
-        /// Copy constructor.
-        /// @param[in]  vector_to_copy - The vector to copy values from.
-        Vector2(const Vector2& vector_to_copy);
-
-        /// Destructor.
-        ~Vector2() {};
-
-        /// Assignment operator.
-        /// @param[in]  rhs_vector - The vector on the right-hand side of the assignment.
-        /// @return     This vector with values copied from the provided vector.
-        Vector2& operator= (const Vector2& rhs_vector);
-
-        /// Equality operator.  Direct equality comparison is used for components,
-        /// so the precision of components types should be considered when using
-        /// this operator.
-        /// @param[in]  rhs_vector - The vector on the right-hand side of the operator.
-        /// @return     True if the vectors are equal; false otherwise.
-        bool operator== (const Vector2& rhs_vector) const;
-
-        /// Inequality operator.  Direct equality comparison is used for components,
-        ///     so the precision of components types should be considered when using
-        ///     this operator.
-        /// @param[in]  rhs_vector - The vector on the right-hand side of the operator.
-        /// @return     True if the vectors are unequal; false otherwise.
-        bool operator!= (const Vector2& rhs_vector) const;
-
-        /// Subtraction operator.
-        /// @param[in]  rhs - The vector on the right-hand side of the operator to
-        ///     subtract from this vector.
-        /// @return A new vector created by subtracting the provided vector from this vector.
+        // OPERATORS.
+        bool operator== (const Vector2& rhs) const;
+        bool operator!= (const Vector2& rhs) const;
+        Vector2 operator+ (const Vector2& rhs) const;
         Vector2 operator- (const Vector2& rhs) const;
 
-        ComponentType X;    ///< The x component of the vector.  Public for easy access.
-        ComponentType Y;    ///< The y component of the vector.  Public for easy access.
+        // OTHER OPERATIONS.
+        ComponentType Length() const;
 
-    private:
-        /// Copies values from the provided vector into this vector.
-        /// @param[in]  vector_to_copy - The vector to copy values from.
-        void Copy(const Vector2& vector_to_copy);
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The x component of the vector.
+        ComponentType X;
+        /// The y component of the vector.
+        ComponentType Y;
     };
 
     // DEFINE COMMON VECTOR2 TYPES.
-    /// @brief  A vector composed of 2 unsigned integer components.
+    /// A vector composed of 2 unsigned integer components.
     typedef Vector2<unsigned int> Vector2ui;
-    /// @brief  A vector composed of 2 float components.
+    /// A vector composed of 2 float components.
     typedef Vector2<float> Vector2f;
 
-    // CLASS IMPLEMENTATION.
-
+    /// Computes a scaled version of a vector.
+    /// @param[in]  scale_factor - The scale factor to multiply each component of the vector by.
+    /// @param[in]  vector - The vector to scale.
+    /// @return The scaled version of the vector.
     template <typename ComponentType>
-    Vector2<ComponentType>::Vector2(const Vector2<ComponentType>& vector_to_copy) :
-        X(),
-        Y()
+    Vector2<ComponentType> Vector2<ComponentType>::Scale(const ComponentType scale_factor, const Vector2<ComponentType>& vector)
     {
-        Copy(vector_to_copy);
+        Vector2<ComponentType> scaled_vector;
+        scaled_vector.X = scale_factor * vector.X;
+        scaled_vector.Y = scale_factor * vector.Y;
+        return scaled_vector;
     }
 
+    /// Normalizes a vector to be unit length (length of 1).
+    /// @param[in]  vector - The vector to normalize.
+    /// @return The normalized version of the vector.
+    ///     If the vector is a zero vector, then a zero vector is returned.
     template <typename ComponentType>
-    Vector2<ComponentType>& Vector2<ComponentType>::operator= (const Vector2<ComponentType>& rhs_vector)
+    Vector2<ComponentType> Vector2<ComponentType>::Normalize(const Vector2<ComponentType>& vector)
     {
-        // CHECK FOR SELF-ASSIGNMENT.
-        bool self_assignment = (this == &rhs_vector);
-        if (!self_assignment)
+        // GET THE VECTOR'S LENGTH.
+        ComponentType vector_length = vector.Length();
+
+        // RETURN A ZERO VECTOR IF THE VECTOR'S LENGTH IS ZERO.
+        bool vector_length_is_zero = (0 == vector_length);
+        if (vector_length_is_zero)
         {
-            // Copy the values of the right-hand side vector into this vector.
-            Copy(rhs_vector);
+            return Vector2<ComponentType>(0, 0);
         }
 
-        // RETURN THIS OBJECT.
-        return (*this);
+        // CREATE A NORMALIZED VERSION OF THE VECTOR.
+        Vector2<ComponentType> normalized_vector;
+        normalized_vector.X = vector.X / vector_length;
+        normalized_vector.Y = vector.Y / vector_length;
+        return normalized_vector;
     }
 
+    /// Computes the dot product between 2 vectors.
+    /// @param[in]  vector_1 - One vector to use in the dot product.
+    /// @param[in]  vector_2 - Another vector to use in the dot product.
+    /// @return The dot product between the 2 vectors.
     template <typename ComponentType>
-    bool Vector2<ComponentType>::operator== (const Vector2<ComponentType>& rhs_vector) const
+    ComponentType Vector2<ComponentType>::DotProduct(
+        const Vector2<ComponentType>& vector_1,
+        const Vector2<ComponentType>& vector_2)
     {
-        bool x_component_matches = (this->X == rhs_vector.X);
-        bool y_component_matches = (this->Y == rhs_vector.Y);
+        ComponentType dot_product =
+            (vector_1.X * vector_2.X) +
+            (vector_1.Y * vector_2.Y);
+        return dot_product;
+    }
+
+    /// Constructor that accepts initial values.
+    /// @param[in]  x - The x component value.
+    /// @param[in]  y - The y component value.
+    template <typename ComponentType>
+    Vector2<ComponentType>::Vector2(const ComponentType x, const ComponentType y) :
+        X(x),
+        Y(y)
+    {};
+
+    /// Equality operator.  Direct equality comparison is used for components,
+    /// so the precision of components types should be considered when using
+    /// this operator.
+    /// @param[in]  rhs - The vector on the right-hand side of the operator.
+    /// @return True if the vectors are equal; false otherwise.
+    template <typename ComponentType>
+    bool Vector2<ComponentType>::operator== (const Vector2<ComponentType>& rhs) const
+    {
+        bool x_component_matches = (this->X == rhs.X);
+        bool y_component_matches = (this->Y == rhs.Y);
 
         bool both_components_match = (x_component_matches && y_component_matches);
         return both_components_match;
     }
 
+    /// Inequality operator.  Direct equality comparison is used for components,
+    /// so the precision of components types should be considered when using
+    /// this operator.
+    /// @param[in]  rhs - The vector on the right-hand side of the operator.
+    /// @return True if the vectors are unequal; false otherwise.
     template <typename ComponentType>
-    bool Vector2<ComponentType>::operator!= (const Vector2<ComponentType>& rhs_vector) const
+    bool Vector2<ComponentType>::operator!= (const Vector2<ComponentType>& rhs) const
     {
-        bool vectors_equal = ((*this) == rhs_vector);
+        bool vectors_equal = ((*this) == rhs);
         return !vectors_equal;
     }
 
+    /// Addition operator.
+    /// @param[in]  rhs - The vector on the right-hand side of the operator to
+    ///     add to this vector.
+    /// @return A new vector created by adding the provided vector to this vector.
+    template <typename ComponentType>
+    Vector2<ComponentType> Vector2<ComponentType>::operator+ (const Vector2<ComponentType>& rhs) const
+    {
+        MATH::Vector2f resulting_vector;
+        resulting_vector.X = this->X + rhs.X;
+        resulting_vector.Y = this->Y + rhs.Y;
+        return resulting_vector;
+    }
+
+    /// Subtraction operator.
+    /// @param[in]  rhs - The vector on the right-hand side of the operator to
+    ///     subtract from this vector.
+    /// @return A new vector created by subtracting the provided vector from this vector.
     template <typename ComponentType>
     Vector2<ComponentType> Vector2<ComponentType>::operator- (const Vector2<ComponentType>& rhs) const
     {
-        Vector2<ComponentType> resulting_vector;
+        MATH::Vector2f resulting_vector;
         resulting_vector.X = this->X - rhs.X;
         resulting_vector.Y = this->Y - rhs.Y;
         return resulting_vector;
     }
 
+    /// Gets the length (magnitude) of the vector.
+    /// @return The length of the vector.
     template <typename ComponentType>
-    void Vector2<ComponentType>::Copy(const Vector2<ComponentType>& vector_to_copy)
+    ComponentType Vector2<ComponentType>::Length() const
     {
-        // COPY COMPONENTS FROM THE PROVIDED VECTOR.
-        this->X = vector_to_copy.X;
-        this->Y = vector_to_copy.Y;
+        // The dot product computes x*x + y*y.
+        // The length is the square root of this (the distance formula).
+        ComponentType length_squared = Vector2<ComponentType>::DotProduct(*this, *this);
+        ComponentType length = sqrt(length_squared);
+        return length;
     }
 }

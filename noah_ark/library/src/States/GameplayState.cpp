@@ -133,6 +133,28 @@ namespace STATES
                 // UPDATE THE PLAYER BASED ON INPUT.
                 UpdatePlayerBasedOnInput(*current_tile_map, elapsed_time, input_controller, camera);
 
+                // MOVE ANIMALS IN THE WORLD.
+                for (auto& animal : current_tile_map->Animals)
+                {
+                    // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE PLAYER.
+                    // The animal should move closer to Noah based on Genesis 6:20.
+                    MATH::Vector2f noah_world_position = Overworld->NoahPlayer->GetWorldPosition();
+                    MATH::Vector2f animal_world_position = animal->Sprite.GetWorldPosition();
+                    MATH::Vector2f animal_to_noah_vector = noah_world_position - animal_world_position;
+                    MATH::Vector2f animal_to_noah_direction = MATH::Vector2f::Normalize(animal_to_noah_vector);
+
+                    // CALCULATE THE DISTANCE THE ANIMAL NEEDS TO MOVE.
+                    /// @todo Customize movement speed based on animal type.
+                    const float ANIMAL_MOVE_SPEED_IN_PIXELS_PER_SECOND = 32.0f;
+                    float elapsed_time_in_seconds = elapsed_time.asSeconds();
+                    float animal_move_distance_in_pixels = ANIMAL_MOVE_SPEED_IN_PIXELS_PER_SECOND * elapsed_time_in_seconds;
+                    MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_noah_direction);
+
+                    // MOVE THE ANIMAL.
+                    MATH::Vector2f new_animal_world_position = animal_world_position + animal_move_vector;
+                    animal->Sprite.SetWorldPosition(new_animal_world_position);
+                }
+
                 // HANDLE PLAYER COLLISIONS WITH WOOD LOGS.
                 std::string message_for_text_box;
                 COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(*Overworld, Overworld->AxeSwings, *Assets);
@@ -194,6 +216,32 @@ namespace STATES
                     {
                         // MOVE TO CHECKING COLLISIONS WITH THE NEXT SET OF WOOD LOGS.
                         ++wood_logs;
+                    }
+                }
+
+                // HANDLE PLAYER COLLISIONS WITH ANIMALS.
+                for (auto animal = current_tile_map->Animals.cbegin();
+                    animal != current_tile_map->Animals.cend();)
+                {
+                    // CHECK IF THE CURRENT ANIMAL INTERSECTS WITH THE PLAYER.
+                    MATH::FloatRectangle animal_bounding_box = (*animal)->Sprite.GetWorldBoundingBox();
+                    MATH::FloatRectangle noah_bounding_box = Overworld->NoahPlayer->GetWorldBoundingBox();
+                    bool animal_intersects_with_noah = animal_bounding_box.Intersects(noah_bounding_box);
+                    if (animal_intersects_with_noah)
+                    {
+                        // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
+                        /// @todo   Play sound effect.
+                        std::cout << "Collected animal." << std::endl;
+                        Overworld->NoahPlayer->Inventory->AddAnimal(*animal);
+
+                        // REMOVE THE ANIMAL FROM THOSE IN THE CURRENT TILE MAP.
+                        // This should move to the next animal.
+                        animal = current_tile_map->Animals.erase(animal);
+                    }
+                    else
+                    {
+                        // MOVE TO CHECKING COLLISIONS FOR THE NEXT ANIMAL.
+                        ++animal;
                     }
                 }
 

@@ -16,6 +16,7 @@ namespace INVENTORY
     public:
         // PUBLIC METHODS.
         void AddWood(const unsigned int wood_count);
+        void AddAnimal(const std::shared_ptr<OBJECTS::Animal>& animal);
         bool AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

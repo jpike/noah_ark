@@ -9,6 +9,47 @@ namespace INVENTORY
         WoodCount += wood_count;
     }
 
+    /// Adds an animal to the inventory.
+    /// @param[in]  animal - The animal to add.
+    void Inventory::AddAnimal(const std::shared_ptr<OBJECTS::Animal>& animal)
+    {
+        // MAKE SURE THE ANIMAL EXISTS.
+        bool animal_exists = (nullptr != animal);
+        if (!animal_exists)
+        {
+            return;
+        }
+
+        // CHECK IF THE ANIMAL IS CLEAN OR NOT.
+        bool animal_is_clean = animal->Type.Clean();
+        if (animal_is_clean)
+        {
+            // ADD THE ANIMAL TO THE APPROPRIATE CONTAINER BASED ON GENDER.
+            switch (animal->Type.Gender)
+            {
+                case OBJECTS::AnimalGender::MALE:
+                    CleanMaleAnimals[animal->Type.Species].push_back(animal);
+                    break;
+                case OBJECTS::AnimalGender::FEMALE:
+                    CleanFemaleAnimals[animal->Type.Species].push_back(animal);
+                    break;
+            }
+        }
+        else
+        {
+            // ADD THE ANIMAL TO THE APPROPRIATE CONTAINER BASED ON GENDER.
+            switch (animal->Type.Gender)
+            {
+                case OBJECTS::AnimalGender::MALE:
+                    UncleanMaleAnimals[animal->Type.Species].push_back(animal);
+                    break;
+                case OBJECTS::AnimalGender::FEMALE:
+                    UncleanFemaleAnimals[animal->Type.Species].push_back(animal);
+                    break;
+            }
+        }
+    }
+
     /// Determines all animals of the specified type have been collected.
     /// @param[in]  animal_type - The type of animals to check.
     /// @return True if all animals of the specified type have been collected;

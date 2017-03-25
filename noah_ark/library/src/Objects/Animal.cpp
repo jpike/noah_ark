@@ -8,7 +8,8 @@ namespace OBJECTS
     /// @param[in]  gender - The gender of the animal.
     AnimalType::AnimalType(const AnimalSpecies species, const AnimalGender gender) :
         Species(species),
-        Gender(gender)
+        Gender(gender),
+        MoveSpeedInPixelsPerSecond(GetMoveSpeedInPixelsPerSecond(species))
     {}
 
     /// Determines if this type of animal is considered clean by Biblical standards.
@@ -55,6 +56,38 @@ namespace OBJECTS
             case AnimalSpecies::SHEEP:
             default:
                 return false;
+        }
+    }
+
+    /// Gets the movement speed for a given animal species.
+    /// For now, this speed is only intended to vary per species.
+    /// @param[in]  species - The species of animal to get the movement speed for.
+    /// @return The movement speed to the animal species (in pixels per second).
+    float AnimalType::GetMoveSpeedInPixelsPerSecond(const AnimalSpecies species)
+    {
+        // The movement speeds are somewhat arbitrarily chosen based on
+        // what feels best, but the speeds are also somewhat intended
+        // to be realistic (relative to each other) based on actual species.
+        // However, no real research has been done regarding this.
+        switch (species)
+        {
+            case AnimalSpecies::CAMEL:
+                return 32.0f;
+            case AnimalSpecies::CATTLE:
+                return 16.0f;
+            case AnimalSpecies::DOVE:
+                return 32.0f;
+            case AnimalSpecies::FROG:
+                return 16.0f;
+            case AnimalSpecies::LOCUST:
+                return 16.0f;
+            case AnimalSpecies::RAVEN:
+                return 32.0f;
+            case AnimalSpecies::SHEEP:
+                return 16.0f;
+            default:
+                // Don't let invalid animal species move.
+                return 0.0f;
         }
     }
 

@@ -38,11 +38,15 @@ namespace OBJECTS
     /// A single description that describes the "type" of an animal in the game.
     /// Encapsulating both the species and gender of an animal in a single
     /// abstraction simplifies certain logic in the game.
+    /// Movement speed is also included since it is intended to vary but
+    /// be consistent within a given type of animal.
     class AnimalType
     {
     public:
         /// CONSTRUCTION.
-        explicit AnimalType(const AnimalSpecies species, const AnimalGender gender);
+        explicit AnimalType(
+            const AnimalSpecies species, 
+            const AnimalGender gender);
 
         /// OTHER PUBLIC METHODS.
         bool Clean() const;
@@ -53,6 +57,12 @@ namespace OBJECTS
         AnimalSpecies Species;
         /// The gender of the animal.
         AnimalGender Gender;
+        /// How fast the animal moves in the world (in pixels per second).
+        float MoveSpeedInPixelsPerSecond;
+
+    private:
+        /// HELPER METHODS.
+        static float GetMoveSpeedInPixelsPerSecond(const AnimalSpecies species);
     };
 
     /// An animal in the game.  A single animal class exists that is parameterized

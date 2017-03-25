@@ -12,6 +12,7 @@
 #include "Maps/Overworld.h"
 #include "Maps/TileMap.h"
 #include "Math/RandomNumberGenerator.h"
+#include "Objects/Animal.h"
 #include "Resources/Assets.h"
 #include "States/SavedGameData.h"
 
@@ -51,12 +52,26 @@ namespace STATES
             const unsigned int screen_width_in_pixels,
             const std::shared_ptr<MAPS::Overworld>& overworld);
 
-        // UPDATING.
+        // WORLD UPDATING.
         void UpdatePlayerBasedOnInput(
             const MAPS::TileMap& current_tile_map,
             const sf::Time& elapsed_time,
             INPUT_CONTROL::KeyboardInputController& input_controller,
             GRAPHICS::Camera& camera);
+        void MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
+
+        // COLLISION DETECTION.
+        void CollectWoodAndBibleVersesCollidingWithPlayer(
+            MAPS::TileMap& tile_map, 
+            std::string& message_for_text_box);
+        void CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map);
+
+        // CAMERA UPDATING.
+        void UpdateCameraWorldView(
+            const sf::Time& elapsed_time,
+            GRAPHICS::Camera& camera,
+            INPUT_CONTROL::KeyboardInputController& input_controller,
+            MAPS::TileMap& current_tile_map);
 
         // MEMBER VARIABLES.
         /// The random number generator.

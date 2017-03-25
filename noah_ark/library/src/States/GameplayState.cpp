@@ -134,116 +134,12 @@ namespace STATES
                 UpdatePlayerBasedOnInput(*current_tile_map, elapsed_time, input_controller, camera);
 
                 // MOVE ANIMALS IN THE WORLD.
-                for (auto& animal : current_tile_map->Animals)
-                {
-                    // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE PLAYER.
-                    // The animal should move closer to Noah based on Genesis 6:20.
-                    MATH::Vector2f noah_world_position = Overworld->NoahPlayer->GetWorldPosition();
-                    MATH::Vector2f animal_world_position = animal->Sprite.GetWorldPosition();
-                    MATH::Vector2f animal_to_noah_vector = noah_world_position - animal_world_position;
-                    MATH::Vector2f animal_to_noah_direction = MATH::Vector2f::Normalize(animal_to_noah_vector);
+                MoveAnimals(elapsed_time, *current_tile_map);
 
-                    // CALCULATE THE DISTANCE THE ANIMAL NEEDS TO MOVE.
-                    /// @todo Customize movement speed based on animal type.
-                    const float ANIMAL_MOVE_SPEED_IN_PIXELS_PER_SECOND = 32.0f;
-                    float elapsed_time_in_seconds = elapsed_time.asSeconds();
-                    float animal_move_distance_in_pixels = ANIMAL_MOVE_SPEED_IN_PIXELS_PER_SECOND * elapsed_time_in_seconds;
-                    MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_noah_direction);
-
-                    // MOVE THE ANIMAL.
-                    MATH::Vector2f new_animal_world_position = animal_world_position + animal_move_vector;
-                    animal->Sprite.SetWorldPosition(new_animal_world_position);
-                }
-
-                // HANDLE PLAYER COLLISIONS WITH WOOD LOGS.
+                // HANDLE PLAYER COLLISIONS.
                 std::string message_for_text_box;
-                COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(*Overworld, Overworld->AxeSwings, *Assets);
-                for (auto wood_logs = current_tile_map->WoodLogs.begin(); wood_logs != current_tile_map->WoodLogs.end();)
-                {
-                    // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
-                    MATH::FloatRectangle wood_log_bounding_box = wood_logs->GetWorldBoundingBox();
-                    MATH::FloatRectangle noah_bounding_box = Overworld->NoahPlayer->GetWorldBoundingBox();
-                    bool noah_collided_with_wood_logs = noah_bounding_box.Contains(
-                        wood_log_bounding_box.GetCenterXPosition(),
-                        wood_log_bounding_box.GetCenterYPosition());
-                    if (noah_collided_with_wood_logs)
-                    {
-                        // ADD THE WOOD TO NOAH'S INVENTORY.
-                        // The logs can have a random amount of wood.
-                        unsigned int MIN_WOOD_COUNT = 1;
-                        unsigned int MAX_WOOD_COUNT = 3;
-                        unsigned int random_wood_count = RandomNumberGenerator.RandomInRange<unsigned int>(MIN_WOOD_COUNT, MAX_WOOD_COUNT);
-                        Overworld->NoahPlayer->Inventory->AddWood(random_wood_count);
-
-                        // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
-                        wood_logs = current_tile_map->WoodLogs.erase(wood_logs);
-
-                        // SEE IF A BIBLE VERSE SHOULD BE COLLECTED ALONG WITH THE WOOD.
-                        // There should be a random chance that a Bible verse can be collected.
-                        const unsigned int EVENLY_DIVISIBLE = 0;
-                        const unsigned int BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS = 2;
-                        unsigned int random_number_for_bible_verse = RandomNumberGenerator.RandomNumber<unsigned int>();
-                        bool bible_verse_exists_with_wood = ((random_number_for_bible_verse % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
-                        if (bible_verse_exists_with_wood)
-                        {
-                            // CHECK IF ANY BIBLE VERSES REMAIN.
-                            // This check helps protect against a mod by 0 below.
-                            bool bible_verses_remain_to_be_found = !BibleVersesLeftToFind.empty();
-                            if (bible_verses_remain_to_be_found)
-                            {
-                                // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
-                                std::shared_ptr<AUDIO::SoundEffect> collected_bible_verse_sound = Assets->GetSound(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
-                                assert(collected_bible_verse_sound);
-                                Speakers.Play(collected_bible_verse_sound);
-
-                                // SELECT A RANDOM BIBLE VERSE.
-                                unsigned int remaining_bible_verse_count = BibleVersesLeftToFind.size();
-                                unsigned int random_bible_verse_index = RandomNumberGenerator.RandomNumberLessThan(remaining_bible_verse_count);
-                                auto bible_verse = BibleVersesLeftToFind.begin() + random_bible_verse_index;
-
-                                // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
-                                Overworld->NoahPlayer->Inventory->BibleVerses.insert(*bible_verse);
-
-                                // POPULATE THE MESSAGE TO DISPLAY IN THE MAIN TEXT BOX.
-                                message_for_text_box = "You got a Bible verse!\n" + bible_verse->ToString();
-
-                                // REMOVE THE VERSE SINCE IT HAS BEEN FOUND.
-                                BibleVersesLeftToFind.erase(bible_verse);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // MOVE TO CHECKING COLLISIONS WITH THE NEXT SET OF WOOD LOGS.
-                        ++wood_logs;
-                    }
-                }
-
-                // HANDLE PLAYER COLLISIONS WITH ANIMALS.
-                for (auto animal = current_tile_map->Animals.cbegin();
-                    animal != current_tile_map->Animals.cend();)
-                {
-                    // CHECK IF THE CURRENT ANIMAL INTERSECTS WITH THE PLAYER.
-                    MATH::FloatRectangle animal_bounding_box = (*animal)->Sprite.GetWorldBoundingBox();
-                    MATH::FloatRectangle noah_bounding_box = Overworld->NoahPlayer->GetWorldBoundingBox();
-                    bool animal_intersects_with_noah = animal_bounding_box.Intersects(noah_bounding_box);
-                    if (animal_intersects_with_noah)
-                    {
-                        // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
-                        /// @todo   Play sound effect.
-                        std::cout << "Collected animal." << std::endl;
-                        Overworld->NoahPlayer->Inventory->AddAnimal(*animal);
-
-                        // REMOVE THE ANIMAL FROM THOSE IN THE CURRENT TILE MAP.
-                        // This should move to the next animal.
-                        animal = current_tile_map->Animals.erase(animal);
-                    }
-                    else
-                    {
-                        // MOVE TO CHECKING COLLISIONS FOR THE NEXT ANIMAL.
-                        ++animal;
-                    }
-                }
+                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, message_for_text_box);
+                CollectAnimalsCollidingWithPlayer(*current_tile_map);
 
                 // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
                 bool text_box_message_exists = !message_for_text_box.empty();
@@ -288,56 +184,12 @@ namespace STATES
             // UPDATE NOAH'S AXE AND SPRITE.
             Overworld->NoahPlayer->Inventory->Axe->Update(elapsed_time);
 
-            // UPDATE THE CAMERA BASED ON SCROLLING.
-            if (camera.IsScrolling)
-            {
-                // SCROLL BASED ON THE ELAPSED FRAME TIME.
-                camera.Scroll(elapsed_time);
-
-                // CHECK IF SCROLLING HAS FINISHED.
-                bool scrolling_finished = !camera.IsScrolling;
-                if (scrolling_finished)
-                {
-                    // RE-ENABLE PLAYER INPUT.
-                    input_controller.EnableInput();
-
-                    // SEE IF AN ANIMAL SHOULD RANDOMLY APPEAR IN THE NEW TILE MAP.
-                    const unsigned int EVENLY_DIVISIBLE = 0;
-                    const unsigned int GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS = 2;
-                    unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>();
-                    bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
-                    if (random_animal_should_be_generated)
-                    {
-                        std::cout << "Generating random animal..." << std::endl;
-                        std::cout << "Tile map column: " << current_tile_map->OverworldColumnIndex << " row: " << current_tile_map->OverworldRowIndex << std::endl;
-                        auto tile_map_bounding_box = current_tile_map->GetWorldBoundingBox();
-                        std::cout << "Tile map LTRB: "
-                            << tile_map_bounding_box.GetLeftXPosition() << " "
-                            << tile_map_bounding_box.GetTopYPosition() << " "
-                            << tile_map_bounding_box.GetRightXPosition() << " "
-                            << tile_map_bounding_box.GetBottomYPosition() << std::endl;
-                        // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
-                        std::shared_ptr<OBJECTS::Animal> animal = OBJECTS::RandomAnimalGenerationAlgorithm::GenerateAnimal(
-                            *Overworld->NoahPlayer->Inventory,
-                            *current_tile_map,
-                            RandomNumberGenerator,
-                            *Assets);
-                        bool animal_generated = (nullptr != animal);
-                        if (animal_generated)
-                        {
-                            std::cout << "Random animal generated: " << static_cast<unsigned int>(animal->Type.Species) << std::endl;
-                            animal->Sprite.Play();
-                            current_tile_map->Animals.push_back(animal);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // POSITION THE CAMERA TO FOCUS ON THE CENTER OF THE CURRENT TILE MAP.
-                MATH::Vector2f center_world_position = current_tile_map->GetCenterWorldPosition();
-                camera.SetCenter(center_world_position);
-            }
+            // UPDATE THE CAMERA'S WORLD VIEW.
+            UpdateCameraWorldView(
+                elapsed_time,
+                camera,
+                input_controller,
+                *current_tile_map);
         }
 
         // REMOVE ANY SOUNDS THAT ARE NO LONGER PLAYING.
@@ -753,6 +605,205 @@ namespace STATES
         {
             // STOP NOAH'S ANIMATION FROM PLAYING SINCE THE PLAYER DIDN'T MOVE THIS FRAME.
             Overworld->NoahPlayer->Sprite.ResetAnimation();
+        }
+    }
+
+    /// Moves animals in the provided tile map based on the elapsed time.
+    /// @param[in]  elapsed_time - The elapsed time for which to move the animals.
+    /// @param[in,out]  tile_map - The tile map in which to move animals.
+    void GameplayState::MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
+    {
+        // MOVE EACH ANIMAL IN THE TILE MAP CLOSER TO NOAH.
+        for (auto& animal : tile_map.Animals)
+        {
+            // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE PLAYER.
+            // The animal should move closer to Noah based on Genesis 6:20.
+            MATH::Vector2f noah_world_position = Overworld->NoahPlayer->GetWorldPosition();
+            MATH::Vector2f animal_world_position = animal->Sprite.GetWorldPosition();
+            MATH::Vector2f animal_to_noah_vector = noah_world_position - animal_world_position;
+            MATH::Vector2f animal_to_noah_direction = MATH::Vector2f::Normalize(animal_to_noah_vector);
+
+            // CALCULATE THE DISTANCE THE ANIMAL NEEDS TO MOVE.
+            float elapsed_time_in_seconds = elapsed_time.asSeconds();
+            float animal_move_distance_in_pixels = animal->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
+            MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_noah_direction);
+
+            // MOVE THE ANIMAL.
+            /// @todo   Account for collision detection with tiles.
+            MATH::Vector2f new_animal_world_position = animal_world_position + animal_move_vector;
+            animal->Sprite.SetWorldPosition(new_animal_world_position);
+        }
+    }
+
+    /// Determines if the player is colliding with any wood logs in the tile map.
+    /// If so, the wood logs, and potentially Bible verses, are added to the player's inventory.
+    /// @param[in,out]  tile_map - The tile map to examine wood logs in.
+    /// @param[out] message_for_text_box - A message for the HUD's main text box, if
+    ///     a Bible verse was collected.
+    void GameplayState::CollectWoodAndBibleVersesCollidingWithPlayer(
+        MAPS::TileMap& tile_map,
+        std::string& message_for_text_box)
+    {
+        // INDICATE THAT NO MESSAGE EXISTS FOR THE TEXT BOX YET.
+        message_for_text_box.clear();
+
+        // HANDLE PLAYER COLLISIONS WITH WOOD LOGS.
+        COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(*Overworld, Overworld->AxeSwings, *Assets);
+        for (auto wood_logs = tile_map.WoodLogs.begin(); wood_logs != tile_map.WoodLogs.end();)
+        {
+            // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
+            MATH::FloatRectangle wood_log_bounding_box = wood_logs->GetWorldBoundingBox();
+            MATH::FloatRectangle noah_bounding_box = Overworld->NoahPlayer->GetWorldBoundingBox();
+            bool noah_collided_with_wood_logs = noah_bounding_box.Contains(
+                wood_log_bounding_box.GetCenterXPosition(),
+                wood_log_bounding_box.GetCenterYPosition());
+            if (noah_collided_with_wood_logs)
+            {
+                // ADD THE WOOD TO NOAH'S INVENTORY.
+                // The logs can have a random amount of wood.
+                unsigned int MIN_WOOD_COUNT = 1;
+                unsigned int MAX_WOOD_COUNT = 3;
+                unsigned int random_wood_count = RandomNumberGenerator.RandomInRange<unsigned int>(MIN_WOOD_COUNT, MAX_WOOD_COUNT);
+                Overworld->NoahPlayer->Inventory->AddWood(random_wood_count);
+
+                // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
+                wood_logs = tile_map.WoodLogs.erase(wood_logs);
+
+                // SEE IF A BIBLE VERSE SHOULD BE COLLECTED ALONG WITH THE WOOD.
+                // There should be a random chance that a Bible verse can be collected.
+                const unsigned int EVENLY_DIVISIBLE = 0;
+                const unsigned int BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS = 2;
+                unsigned int random_number_for_bible_verse = RandomNumberGenerator.RandomNumber<unsigned int>();
+                bool bible_verse_exists_with_wood = ((random_number_for_bible_verse % BIBLE_VERSE_EXISTS_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE);
+                if (bible_verse_exists_with_wood)
+                {
+                    // CHECK IF ANY BIBLE VERSES REMAIN.
+                    // This check helps protect against a mod by 0 below.
+                    bool bible_verses_remain_to_be_found = !BibleVersesLeftToFind.empty();
+                    if (bible_verses_remain_to_be_found)
+                    {
+                        // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
+                        std::shared_ptr<AUDIO::SoundEffect> collected_bible_verse_sound = Assets->GetSound(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
+                        assert(collected_bible_verse_sound);
+                        Speakers.Play(collected_bible_verse_sound);
+
+                        // SELECT A RANDOM BIBLE VERSE.
+                        unsigned int remaining_bible_verse_count = BibleVersesLeftToFind.size();
+                        unsigned int random_bible_verse_index = RandomNumberGenerator.RandomNumberLessThan(remaining_bible_verse_count);
+                        auto bible_verse = BibleVersesLeftToFind.begin() + random_bible_verse_index;
+
+                        // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
+                        Overworld->NoahPlayer->Inventory->BibleVerses.insert(*bible_verse);
+
+                        // POPULATE THE MESSAGE TO DISPLAY IN THE MAIN TEXT BOX.
+                        message_for_text_box = "You got a Bible verse!\n" + bible_verse->ToString();
+
+                        // REMOVE THE VERSE SINCE IT HAS BEEN FOUND.
+                        BibleVersesLeftToFind.erase(bible_verse);
+                    }
+                }
+            }
+            else
+            {
+                // MOVE TO CHECKING COLLISIONS WITH THE NEXT SET OF WOOD LOGS.
+                ++wood_logs;
+            }
+        }
+    }
+    
+    /// Determines if the player is colliding with any animals in the tile map.
+    /// If so, the animals are added to the player's inventory.
+    /// @param[in,out]  tile_map - The tile map to examine animals in.
+    void GameplayState::CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map)
+    {
+        // HANDLE PLAYER COLLISIONS WITH ANIMALS.
+        for (auto animal = tile_map.Animals.cbegin();
+            animal != tile_map.Animals.cend();)
+        {
+            // CHECK IF THE CURRENT ANIMAL INTERSECTS WITH THE PLAYER.
+            MATH::FloatRectangle animal_bounding_box = (*animal)->Sprite.GetWorldBoundingBox();
+            MATH::FloatRectangle noah_bounding_box = Overworld->NoahPlayer->GetWorldBoundingBox();
+            bool animal_intersects_with_noah = animal_bounding_box.Intersects(noah_bounding_box);
+            if (animal_intersects_with_noah)
+            {
+                // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
+                /// @todo   Play sound effect.
+                std::cout << "Collected animal." << std::endl;
+                Overworld->NoahPlayer->Inventory->AddAnimal(*animal);
+
+                // REMOVE THE ANIMAL FROM THOSE IN THE CURRENT TILE MAP.
+                // This should move to the next animal.
+                animal = tile_map.Animals.erase(animal);
+            }
+            else
+            {
+                // MOVE TO CHECKING COLLISIONS FOR THE NEXT ANIMAL.
+                ++animal;
+            }
+        }
+    }
+
+    /// Updates the camera, along with the world based on any major changes
+    /// in what the camera is viewing.
+    /// @param[in]  elapsed_time - The elapsed time by which to update the camera.
+    /// @param[in,out]  camera - The camera to update.
+    /// @param[in,out]  input_controller - The input controller that might
+    ///     be tweaked based on camera movement.
+    /// @param[in,out]  current_tile_map - The current tile map in view by the camera.
+    void GameplayState::UpdateCameraWorldView(
+        const sf::Time& elapsed_time,
+        GRAPHICS::Camera& camera,
+        INPUT_CONTROL::KeyboardInputController& input_controller,
+        MAPS::TileMap& current_tile_map)
+    {
+        if (camera.IsScrolling)
+        {
+            // SCROLL BASED ON THE ELAPSED FRAME TIME.
+            camera.Scroll(elapsed_time);
+
+            // CHECK IF SCROLLING HAS FINISHED.
+            bool scrolling_finished = !camera.IsScrolling;
+            if (scrolling_finished)
+            {
+                // RE-ENABLE PLAYER INPUT.
+                input_controller.EnableInput();
+
+                // SEE IF AN ANIMAL SHOULD RANDOMLY APPEAR IN THE NEW TILE MAP.
+                const unsigned int EVENLY_DIVISIBLE = 0;
+                const unsigned int GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS = 2;
+                unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>();
+                bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
+                if (random_animal_should_be_generated)
+                {
+                    std::cout << "Generating random animal..." << std::endl;
+                    std::cout << "Tile map column: " << current_tile_map.OverworldColumnIndex << " row: " << current_tile_map.OverworldRowIndex << std::endl;
+                    auto tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
+                    std::cout << "Tile map LTRB: "
+                        << tile_map_bounding_box.GetLeftXPosition() << " "
+                        << tile_map_bounding_box.GetTopYPosition() << " "
+                        << tile_map_bounding_box.GetRightXPosition() << " "
+                        << tile_map_bounding_box.GetBottomYPosition() << std::endl;
+                    // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
+                    std::shared_ptr<OBJECTS::Animal> animal = OBJECTS::RandomAnimalGenerationAlgorithm::GenerateAnimal(
+                        *Overworld->NoahPlayer->Inventory,
+                        current_tile_map,
+                        RandomNumberGenerator,
+                        *Assets);
+                    bool animal_generated = (nullptr != animal);
+                    if (animal_generated)
+                    {
+                        std::cout << "Random animal generated: " << static_cast<unsigned int>(animal->Type.Species) << std::endl;
+                        animal->Sprite.Play();
+                        current_tile_map.Animals.push_back(animal);
+                    }
+                }
+            }
+        }
+        else
+        {
+            // POSITION THE CAMERA TO FOCUS ON THE CENTER OF THE CURRENT TILE MAP.
+            MATH::Vector2f center_world_position = current_tile_map.GetCenterWorldPosition();
+            camera.SetCenter(center_world_position);
         }
     }
 }

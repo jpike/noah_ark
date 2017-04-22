@@ -628,9 +628,30 @@ namespace STATES
             float animal_move_distance_in_pixels = animal->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
             MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_noah_direction);
 
+            // DETERMINE THE TYPES OF TILES THE ANIMAL IS ALLOWED TO MOVE OVER.
+            std::unordered_set<MAPS::TileType::Id> tile_types_allowed_to_move_over =
+            {
+                MAPS::TileType::SAND,
+                MAPS::TileType::GRASS,
+                MAPS::TileType::BROWN_DIRT,
+                MAPS::TileType::GRAY_STONE
+            };
+            bool animal_can_fly = animal->Type.CanFly();
+            if (animal_can_fly)
+            {
+                // ADD ADDITIONAL TILE TYPES THAT FLYING ANIMALS CAN MOVE OVER.
+                tile_types_allowed_to_move_over.emplace(MAPS::TileType::WATER);
+            }
+
             // MOVE THE ANIMAL.
-            /// @todo   Account for collision detection with tiles.
-            MATH::Vector2f new_animal_world_position = animal_world_position + animal_move_vector;
+            MATH::FloatRectangle animal_world_bounding_box = animal->Sprite.GetWorldBoundingBox();
+            bool allow_movement_over_solid_objects = animal_can_fly;
+            MATH::Vector2f new_animal_world_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
+                animal_world_bounding_box,
+                animal_move_vector,
+                tile_types_allowed_to_move_over,
+                allow_movement_over_solid_objects,
+                *Overworld);
             animal->Sprite.SetWorldPosition(new_animal_world_position);
         }
     }
@@ -785,7 +806,7 @@ namespace STATES
                         << tile_map_bounding_box.GetBottomYPosition() << std::endl;
                     // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
                     std::shared_ptr<OBJECTS::Animal> animal = OBJECTS::RandomAnimalGenerationAlgorithm::GenerateAnimal(
-                        *Overworld->NoahPlayer->Inventory,
+                        *Overworld->NoahPlayer,
                         current_tile_map,
                         RandomNumberGenerator,
                         *Assets);

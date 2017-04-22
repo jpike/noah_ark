@@ -7,6 +7,7 @@ namespace MAPS
     /// Constructor to create an invalid tile.
     Tile::Tile() :
     Id(std::numeric_limits<TileId>::max()),
+    Type(TileType::INVALID),
     Sprite()
     {}
 
@@ -17,6 +18,7 @@ namespace MAPS
         const TileId id,
         const GRAPHICS::Sprite& sprite) :
     Id(id),
+    Type(static_cast<TileType::Id>(id)),
     Sprite(sprite)
     {}
 
@@ -80,35 +82,20 @@ namespace MAPS
     /// @return True if the tile is walkable; false otherwise.
     bool Tile::IsWalkable() const
     {
-        // DEFINE ID CONSTANTS FOR EACH TILE IN THE TILESET.
-        // A 0 entry had to be added here to account for
-        // the fact that the first tile ID read from
-        // the tile map file starts at 1, not 0.
-        const unsigned int INVALID_TILE_ID = 0;
-        const unsigned int BLACK_TEST_TILE_ID = 1;
-        const unsigned int WHITE_TEST_TILE_ID = 2;
-        const unsigned int SAND_TILE_ID = 3;
-        const unsigned int GRASS_TILE_ID = 4;
-        const unsigned int WATER_TILE_ID = 5;
-        const unsigned int BROWN_DIRT_TILE_ID = 6;
-        const unsigned int GRAY_STONE_TILE_ID = 7;
-        const unsigned int ARK_BUILDING_PLOT_TILE_ID = 8;
-
         // MAP EACH TILE ID TO A WALKABLE STATUS.
-        const unsigned int TILESET_TILE_COUNT = 9;
-        std::array<bool, TILESET_TILE_COUNT> tile_is_walkable;
-        tile_is_walkable[INVALID_TILE_ID] = false;
-        tile_is_walkable[BLACK_TEST_TILE_ID] = false;
-        tile_is_walkable[WHITE_TEST_TILE_ID] = false;
-        tile_is_walkable[SAND_TILE_ID] = true;
-        tile_is_walkable[GRASS_TILE_ID] = true;
-        tile_is_walkable[WATER_TILE_ID] = false;
-        tile_is_walkable[BROWN_DIRT_TILE_ID] = true;
-        tile_is_walkable[GRAY_STONE_TILE_ID] = true;
-        tile_is_walkable[ARK_BUILDING_PLOT_TILE_ID] = true;
+        std::array<bool, TileType::COUNT> tile_is_walkable;
+        tile_is_walkable[TileType::INVALID] = false;
+        tile_is_walkable[TileType::BLACK_TEST] = false;
+        tile_is_walkable[TileType::WHITE_TEST] = false;
+        tile_is_walkable[TileType::SAND] = true;
+        tile_is_walkable[TileType::GRASS] = true;
+        tile_is_walkable[TileType::WATER] = false;
+        tile_is_walkable[TileType::BROWN_DIRT] = true;
+        tile_is_walkable[TileType::GRAY_STONE] = true;
+        tile_is_walkable[TileType::ARK_BUILDING_PLOT] = true;
 
         // CHECK IF THIS TILE'S ID IS VALID.
-        bool tile_id_valid = (Id < TILESET_TILE_COUNT);
+        bool tile_id_valid = (Id < TileType::COUNT);
         if (tile_id_valid)
         {
             // Return the walkable status of the valid tile.

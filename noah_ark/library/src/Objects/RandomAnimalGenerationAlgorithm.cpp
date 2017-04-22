@@ -5,16 +5,15 @@ namespace OBJECTS
 {
     /// Attempts to generate an animal that can be placed in the provided tile map.
     /// The randomly generated animal will be one that hasn't been fully collected
-    /// (both genders, appropriate number of) in the inventory.
-    /// @param[in]  inventory - The inventory indicating which animals have been
-    ///     collected so far.
+    /// (both genders, appropriate number of) in the player's inventory.
+    /// @param[in]  noah_player - The Noah player in the overworld.
     /// @param[in]  tile_map - The tile map in which the animal needs to be generated.
     /// @param[in,out]  random_number_generator - The random number generator to use
     ///     for the algorithm.
     /// @param[in,out]  assets - The assets from which to get assets necessary for an animal.
     /// @return An animal, if one was successfully generated; null otherwise.
     std::shared_ptr<Animal> RandomAnimalGenerationAlgorithm::GenerateAnimal(
-        const INVENTORY::Inventory& inventory,
+        const OBJECTS::Noah& noah_player,
         const MAPS::TileMap& tile_map,
         MATH::RandomNumberGenerator& random_number_generator,
         RESOURCES::Assets& assets)
@@ -29,7 +28,7 @@ namespace OBJECTS
 
         // CHECK IF THE ANIMAL TYPE HAS BEEN FULLY COLLECTED.
         AnimalType animal_type(random_species, random_gender);
-        bool animal_type_fully_collected = inventory.AnimalTypeFullyCollected(animal_type);
+        bool animal_type_fully_collected = noah_player.Inventory->AnimalTypeFullyCollected(animal_type);
         if (animal_type_fully_collected)
         {
             std::cout << "Animal type fully collected." << std::endl;
@@ -53,13 +52,33 @@ namespace OBJECTS
         assert(tile_at_animal_generation_point);
         std::cout << "Animal at: " << random_x_position << ", " << random_y_position << std::endl;
 
-        /// @todo   Account for Noah's position?  We shouldn't generate animals directly on top of Noah.
+        // MAKE SURE THE ANIMAL ISN'T ON TOP OF NOAH.
+        // This is important to ensure that animals aren't accidentally collected without
+        // a player noticing.
+        MATH::FloatRectangle noah_world_bounding_box = noah_player.GetWorldBoundingBox();
+        bool animal_colliding_with_noah = noah_world_bounding_box.Contains(random_x_position, random_y_position);
+        if (animal_colliding_with_noah)
+        {
+            std::cout << "Animal on top of Noah." << std::endl;
+            return nullptr;
+        }
 
+        // MAKE SURE THE ANIMAL ISN'T BEING GENERATED ON TOP OF THE ARK.
+        // This is important because it doesn't make sense for an animal to be generated on top of the ark.
+        // Special collision logic also needs to occur when animals collide with the ark, so avoiding
+        // generating them on potential ark tiles avoids issues for that special logic.
+        bool tile_is_for_ark = (MAPS::TileType::ARK_BUILDING_PLOT == tile_at_animal_generation_point->Type);
+        if (tile_is_for_ark)
+        {
+            std::cout << "Tile is for ark." << std::endl;
+            return nullptr;
+        }
+
+        // MAKE SURE THE TILE IS WALKABLE IF THE ANIMAL CAN'T FLY.
         // Flying animals can be generated on any tile.
         bool animal_can_fly = animal_type.CanFly();
         if (!animal_can_fly)
         {
-            /// @todo   We might need a more robust check of tile types here.
             bool tile_is_walkable = tile_at_animal_generation_point->IsWalkable();
             if (!tile_is_walkable)
             {

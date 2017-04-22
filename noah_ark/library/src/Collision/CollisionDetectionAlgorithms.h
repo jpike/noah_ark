@@ -1,12 +1,14 @@
 #pragma once
 
 #include <memory>
+#include <unordered_set>
 #include <vector>
 #include <SFML/System.hpp>
 #include "Collision/Movement.h"
 #include "Core/Direction.h"
 #include "Events/AxeSwingEvent.h"
 #include "Maps/Overworld.h"
+#include "Maps/Tile.h"
 #include "Math/Rectangle.h"
 #include "Objects/Axe.h"
 #include "Resources/Assets.h"
@@ -19,6 +21,12 @@ namespace COLLISION
     {
     public:
         // MOVEMENT.
+        static MATH::Vector2f MoveObject(
+            const MATH::FloatRectangle& object_world_bounding_box,
+            const MATH::Vector2f& move_vector,
+            const std::unordered_set<MAPS::TileType::Id>& tile_types_allowed_to_move_over,
+            const bool allow_movement_over_solid_objects,
+            MAPS::Overworld& overworld);
         static MATH::Vector2f MoveObject(
             const MATH::FloatRectangle& object_world_bounding_box,
             const CORE::Direction direction,

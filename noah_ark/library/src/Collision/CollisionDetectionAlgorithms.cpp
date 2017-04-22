@@ -1,7 +1,112 @@
+#include <algorithm>
 #include "Collision/CollisionDetectionAlgorithms.h"
 
 namespace COLLISION
 {
+    /// Moves an object in the overworld while performing collision detection
+    /// to prevent the object from inappropriately overlapping objects.
+    /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
+    /// @param[in]  move_vector - The movement vector for the object (in pixels).
+    /// @param[in]  tile_types_allowed_to_move_over - The types of tiles the object is allowed to move over.
+    /// @param[in]  allow_movement_over_solid_objects - True to allow movement over solid objects in the world;
+    ///     false to prevent such movement.
+    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @return The new center world position of the object.
+    MATH::Vector2f CollisionDetectionAlgorithms::MoveObject(
+        const MATH::FloatRectangle& object_world_bounding_box,
+        const MATH::Vector2f& move_vector,
+        const std::unordered_set<MAPS::TileType::Id>& tile_types_allowed_to_move_over,
+        const bool allow_movement_over_solid_objects,
+        MAPS::Overworld& overworld)
+    {
+        // GRADUALLY MOVE THE OBJECT UNTIL WE COLLIDE WITH SOMETHING.
+        // The bounding box of the object will be modified through multiple iterations of movement
+        // to calculate the final position.
+        MATH::FloatRectangle object_current_bounding_box = object_world_bounding_box;
+        MATH::Vector2f unit_move_vector = MATH::Vector2f::Normalize(move_vector);
+        float distance_left_to_move = move_vector.Length();
+        while (distance_left_to_move > 0.0f)
+        {
+            // CHECK IF THE MOVEMENT DISTANCE IS WITHIN A SINGLE TILE.
+            // The incremental move distance (per loop iteration) is hardcoded to
+            // the tile dimensions of the game, but this should be fine since
+            // we don't expect to change the tile dimensions for this game.
+            const float INCREMENTAL_MOVE_DISTANCE_IN_PIXELS = 16.0f;
+            float move_distance_this_iteration = std::min(distance_left_to_move, INCREMENTAL_MOVE_DISTANCE_IN_PIXELS);
+
+            // CALCULATE THE NEW POSITION OF THE OBJECT FOR THIS ITERATION.
+            MATH::Vector2f object_original_center_world_position = object_current_bounding_box.GetCenterPosition();
+            MATH::Vector2f remaining_move_vector = MATH::Vector2f::Scale(move_distance_this_iteration, unit_move_vector);
+            MATH::Vector2f object_center_world_position = object_original_center_world_position + remaining_move_vector;
+
+            // GET THE TILE AT THE OBJECT'S POTENTIAL NEW POSITION.
+            std::shared_ptr<MAPS::Tile> tile_at_new_object_position = overworld.GetTileAtWorldPosition(
+                object_center_world_position.X, object_center_world_position.Y);
+            if (!tile_at_new_object_position)
+            {
+                // RETURN THE OBJECT'S CURRENT UPDATED WORLD POSITION.
+                // It can't move any further if there isn't a tile underneath it.
+                MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                return new_center_world_position;
+            }
+
+            // CHECK IF THE CURRENT TILE CAN BE MOVED OVER.
+            bool tile_can_be_moved_over = tile_types_allowed_to_move_over.count(tile_at_new_object_position->Type) > 0;
+            if (!tile_can_be_moved_over)
+            {
+                // RETURN THE OBJECT'S CURRENT UPDATED WORLD POSITION.
+                // It can't move any further if the tile can't be moved over.
+                MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                return new_center_world_position;
+            }
+
+            // CHECK IF MOVEMENT IS ALLOWED OVER SOLID OBJECTS IN THE WORLD.
+            if (!allow_movement_over_solid_objects)
+            {
+                // CHECK IF THE OBJECT COLLIDED WITH A TREE.
+                MATH::FloatRectangle tree_rectangle;
+                bool collides_with_tree = CollidesWithTree(object_current_bounding_box, overworld, tree_rectangle);
+                if (collides_with_tree)
+                {
+                    // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
+                    // A collision could have occurred with a tree that isn't being moved toward,
+                    // in which case movement should not be stopped.
+                    // If the object is closer to the tree, then the object was moving toward the tree.
+                    // Otherwise, the object was moving away and should be allowed to move.
+                    /// @todo   Update this logic to check corners of bounding boxes.
+                    /// The center works well enough for now, but sometimes animals get
+                    /// a little "stuck", so we can do better.
+                    MATH::Vector2f tree_center_world_position = tree_rectangle.GetCenterPosition();
+                    MATH::Vector2f original_tree_to_object_vector = tree_center_world_position - object_original_center_world_position;
+                    float original_tree_to_object_distance = original_tree_to_object_vector.Length();
+                    MATH::Vector2f new_tree_to_object_vector = tree_center_world_position - object_center_world_position;
+                    float new_tree_to_object_distance = new_tree_to_object_vector.Length();
+                    bool object_moved_toward_tree = (new_tree_to_object_distance < original_tree_to_object_distance);
+                    if (object_moved_toward_tree)
+                    {
+                        // RETURN THE OBJECT'S CURRENT UPDATED WORLD POSITION.
+                        // It can't move any further if there a tree is in the way.
+                        MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                        return new_center_world_position;
+                    }
+                }
+            }
+
+            /// @todo   Handle more incremental move distances?
+            /// Find min distance between object position and corner of tile?
+
+            // UPDATE THE OBJECT'S BOUNDING BOX FOR THE MOVEMENT THIS ITERATION.
+            object_current_bounding_box.SetCenterPosition(object_center_world_position.X, object_center_world_position.Y);
+
+            // ACCOUNT FOR THE MOVEMENT THIS ITERATION.
+            distance_left_to_move -= move_distance_this_iteration;
+        }
+
+        // RETURN THE OBJECT'S FINAL NEW WORLD POSITION.
+        MATH::Vector2f final_center_world_position = object_current_bounding_box.GetCenterPosition();
+        return final_center_world_position;
+    }
+
     /// Moves an object in the overworld while performing collision detection
     /// to prevent the object from inappropriately overlapping objects.
     /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.

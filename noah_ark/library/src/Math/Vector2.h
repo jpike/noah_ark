@@ -27,6 +27,7 @@ namespace MATH
         bool operator== (const Vector2& rhs) const;
         bool operator!= (const Vector2& rhs) const;
         Vector2 operator+ (const Vector2& rhs) const;
+        Vector2& operator+= (const Vector2& rhs);
         Vector2 operator- (const Vector2& rhs) const;
 
         // OTHER OPERATIONS.
@@ -144,6 +145,18 @@ namespace MATH
         resulting_vector.X = this->X + rhs.X;
         resulting_vector.Y = this->Y + rhs.Y;
         return resulting_vector;
+    }
+
+    /// Addition assignment operator.
+    /// @param[in]  rhs - The vector on the right-hand side of the operator to
+    ///     add to this vector.
+    /// @return This vector with the provided vector added to it.
+    template <typename ComponentType>
+    Vector2<ComponentType>& Vector2<ComponentType>::operator+= (const Vector2<ComponentType>& rhs)
+    {
+        this->X += rhs.X;
+        this->Y += rhs.Y;
+        return (*this);
     }
 
     /// Subtraction operator.

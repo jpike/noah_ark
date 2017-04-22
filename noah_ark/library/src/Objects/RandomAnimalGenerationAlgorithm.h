@@ -2,10 +2,10 @@
 
 #include <memory>
 #include "Graphics/AnimationSequence.h"
-#include "Inventory/Inventory.h"
 #include "Maps/TileMap.h"
 #include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
+#include "Objects/Noah.h"
 #include "Resources/Assets.h"
 
 namespace OBJECTS
@@ -24,7 +24,7 @@ namespace OBJECTS
     {
     public:
         static std::shared_ptr<Animal> GenerateAnimal(
-            const INVENTORY::Inventory& inventory,
+            const OBJECTS::Noah& noah,
             const MAPS::TileMap& tile_map,
             MATH::RandomNumberGenerator& random_number_generator,
             RESOURCES::Assets& assets);

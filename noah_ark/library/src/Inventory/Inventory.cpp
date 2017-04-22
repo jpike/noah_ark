@@ -20,34 +20,8 @@ namespace INVENTORY
             return;
         }
 
-        // CHECK IF THE ANIMAL IS CLEAN OR NOT.
-        bool animal_is_clean = animal->Type.Clean();
-        if (animal_is_clean)
-        {
-            // ADD THE ANIMAL TO THE APPROPRIATE CONTAINER BASED ON GENDER.
-            switch (animal->Type.Gender)
-            {
-                case OBJECTS::AnimalGender::MALE:
-                    CleanMaleAnimals[animal->Type.Species].push_back(animal);
-                    break;
-                case OBJECTS::AnimalGender::FEMALE:
-                    CleanFemaleAnimals[animal->Type.Species].push_back(animal);
-                    break;
-            }
-        }
-        else
-        {
-            // ADD THE ANIMAL TO THE APPROPRIATE CONTAINER BASED ON GENDER.
-            switch (animal->Type.Gender)
-            {
-                case OBJECTS::AnimalGender::MALE:
-                    UncleanMaleAnimals[animal->Type.Species].push_back(animal);
-                    break;
-                case OBJECTS::AnimalGender::FEMALE:
-                    UncleanFemaleAnimals[animal->Type.Species].push_back(animal);
-                    break;
-            }
-        }
+        // COUNT THE COLLECTED ANIMAL.
+        ++CollectedAnimalCounts[animal->Type];
     }
 
     /// Determines all animals of the specified type have been collected.
@@ -56,99 +30,35 @@ namespace INVENTORY
     ///     false otherwise.
     bool Inventory::AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const
     {
-        // DETERMINE IF THE ANIMAL IS CLEAN OR NOT.
+        // DETERMINE HOW MANY ANIMALS ARE EXPECTED BASED ON IF THE ANIMAL IS CLEAN OR NOT.
+        unsigned int expected_animal_count = 0;
         bool animal_type_is_clean = animal_type.Clean();
         if (animal_type_is_clean)
         {
-            // DETERMINE IF SUFFICIENT ANIMALS OF THE APPROPRIATE GENDER HAVE BEEN COLLECTED.
             // 7 pairs of each clean animal are required (1 male + 1 female per pair).
             // See Genesis 7:2.
             const unsigned int CLEAN_ANIMAL_COUNT_PER_GENDER = 7;
-            switch (animal_type.Gender)
-            {
-                case OBJECTS::AnimalGender::MALE:
-                {
-                    // CHECK IF ANY MALE ANIMALS OF THE SPECIES HAVE BEEN COLLECTED.
-                    const auto& collected_male_animals_of_species = CleanMaleAnimals.find(animal_type.Species);
-                    bool male_animals_collected_for_species = (CleanMaleAnimals.cend() != collected_male_animals_of_species);
-                    if (!male_animals_collected_for_species)
-                    {
-                        // If no male animals have been collected for the species,
-                        // then they obviously can't have been fully collected.
-                        return false;
-                    }
-
-                    // CHECK IF A SUFFICIENT NUMBER OF THE ANIMALS HAVE BEEN COLLECTED.
-                    unsigned int collected_male_animal_count_of_species = collected_male_animals_of_species->second.size();
-                    bool all_male_animals_of_species_collected = (CLEAN_ANIMAL_COUNT_PER_GENDER == collected_male_animal_count_of_species);
-                    return all_male_animals_of_species_collected;
-                }
-                case OBJECTS::AnimalGender::FEMALE:
-                {
-                    // CHECK IF ANY FEMALE ANIMALS OF THE SPECIES HAVE BEEN COLLECTED.
-                    const auto& collected_female_animals_of_species = CleanFemaleAnimals.find(animal_type.Species);
-                    bool female_animals_collected_for_species = (CleanFemaleAnimals.cend() != collected_female_animals_of_species);
-                    if (!female_animals_collected_for_species)
-                    {
-                        // If no female animals have been collected for the species,
-                        // then they obviously can't have been fully collected.
-                        return false;
-                    }
-
-                    // CHECK IF A SUFFICIENT NUMBER OF THE ANIMALS HAVE BEEN COLLECTED.
-                    unsigned int collected_female_animal_count_of_species = collected_female_animals_of_species->second.size();
-                    bool all_female_animals_of_species_collected = (CLEAN_ANIMAL_COUNT_PER_GENDER == collected_female_animal_count_of_species);
-                    return all_female_animals_of_species_collected;
-                }
-                default:
-                    return false;
-            }
+            expected_animal_count = CLEAN_ANIMAL_COUNT_PER_GENDER;
         }
         else
         {
-            // DETERMINE IF SUFFICIENT ANIMALS OF THE APPROPRIATE GENDER HAVE BEEN COLLECTED.
             // 1 pair of each unclean animal are required (1 male + 1 female per pair).
             // See Genesis 7:2.
             const unsigned int UNCLEAN_ANIMAL_COUNT_PER_GENDER = 1;
-            switch (animal_type.Gender)
-            {
-                case OBJECTS::AnimalGender::MALE:
-                {
-                    // CHECK IF ANY MALE ANIMALS OF THE SPECIES HAVE BEEN COLLECTED.
-                    const auto& collected_male_animals_of_species = UncleanMaleAnimals.find(animal_type.Species);
-                    bool male_animals_collected_for_species = (UncleanMaleAnimals.cend() != collected_male_animals_of_species);
-                    if (!male_animals_collected_for_species)
-                    {
-                        // If no male animals have been collected for the species,
-                        // then they obviously can't have been fully collected.
-                        return false;
-                    }
-
-                    // CHECK IF A SUFFICIENT NUMBER OF THE ANIMALS HAVE BEEN COLLECTED.
-                    unsigned int collected_male_animal_count_of_species = collected_male_animals_of_species->second.size();
-                    bool all_male_animals_of_species_collected = (UNCLEAN_ANIMAL_COUNT_PER_GENDER == collected_male_animal_count_of_species);
-                    return all_male_animals_of_species_collected;
-                }
-                case OBJECTS::AnimalGender::FEMALE:
-                {
-                    // CHECK IF ANY FEMALE ANIMALS OF THE SPECIES HAVE BEEN COLLECTED.
-                    const auto& collected_female_animals_of_species = UncleanFemaleAnimals.find(animal_type.Species);
-                    bool female_animals_collected_for_species = (UncleanFemaleAnimals.cend() != collected_female_animals_of_species);
-                    if (!female_animals_collected_for_species)
-                    {
-                        // If no female animals have been collected for the species,
-                        // then they obviously can't have been fully collected.
-                        return false;
-                    }
-
-                    // CHECK IF A SUFFICIENT NUMBER OF THE ANIMALS HAVE BEEN COLLECTED.
-                    unsigned int collected_female_animal_count_of_species = collected_female_animals_of_species->second.size();
-                    bool all_female_animals_of_species_collected = (UNCLEAN_ANIMAL_COUNT_PER_GENDER == collected_female_animal_count_of_species);
-                    return all_female_animals_of_species_collected;
-                }
-                default:
-                    return false;
-            }
+            expected_animal_count = UNCLEAN_ANIMAL_COUNT_PER_GENDER;
         }
+
+        // CHECK IF THE TYPE OF ANIMAL HAS BEEN COLLECTED AT ALL.
+        const auto collected_animal_type_and_count = CollectedAnimalCounts.find(animal_type);
+        bool animal_collected = (CollectedAnimalCounts.cend() != collected_animal_type_and_count);
+        if (!animal_collected)
+        {
+            return false;
+        }
+
+        // DETERMINE IF THE APPROPRIATE NUMBER OF ANIMALS HAVE BEEN COLLECTED.
+        unsigned int actual_animal_count = collected_animal_type_and_count->second;
+        bool animal_type_fully_collected = (actual_animal_count >= expected_animal_count);
+        return animal_type_fully_collected;
     }
 }

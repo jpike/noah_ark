@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include "Bible/BibleVerse.h"
 #include "Math/Vector2.h"
@@ -47,5 +48,7 @@ namespace STATES
         std::vector<BIBLE::BibleVerse> FoundBibleVerses = {};
         /// Ark pieces built by the player.
         std::vector<BuiltArkPieceTileMapData> BuildArkPieces = {};
+        /// Animals collected by the player, with types mapping to collected counts.
+        std::unordered_map<OBJECTS::AnimalType, unsigned int> CollectedAnimals = {};
     };
 }

@@ -234,6 +234,7 @@ namespace STATES
         // POPULATE THE REST OF NOAH'S INVENTORY.
         noah_player->Inventory->WoodCount = saved_game_data.WoodCount;
         noah_player->Inventory->BibleVerses.insert(saved_game_data.FoundBibleVerses.cbegin(), saved_game_data.FoundBibleVerses.cend());
+        noah_player->Inventory->CollectedAnimalCounts = saved_game_data.CollectedAnimals;
 
         return noah_player;
     }

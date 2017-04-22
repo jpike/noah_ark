@@ -102,6 +102,8 @@ namespace GUI
                     }
                 }
 
+                saved_game_data.CollectedAnimals = Overworld->NoahPlayer->Inventory->CollectedAnimalCounts;
+
                 saved_game_data.Write(STATES::SavedGameData::DEFAULT_FILENAME);
 
                 // CLOSE THE SAVE DIALOG BOX.

@@ -48,6 +48,9 @@ namespace OBJECTS
             const AnimalSpecies species, 
             const AnimalGender gender);
 
+        // OPERATORS.
+        bool operator==(const AnimalType& other) const;
+
         /// OTHER PUBLIC METHODS.
         bool Clean() const;
         bool CanFly() const;
@@ -86,5 +89,26 @@ namespace OBJECTS
         AnimalType Type;
         /// The graphical sprite for the animal.
         GRAPHICS::AnimatedSprite Sprite;
+    };
+}
+
+namespace std
+{
+    /// A hash operation for animal types.
+    /// Required for use as a key in hashed containers.
+    template <>
+    struct hash<OBJECTS::AnimalType>
+    {
+        /// Computes a hash code for the animal type.
+        /// @param[in]  animal_type - The type of animal to hash.
+        /// @return A hash code for the animal type.
+        std::size_t operator()(const OBJECTS::AnimalType& animal_type) const
+        {
+            std::size_t species_hash = std::hash<int>{}(static_cast<int>(animal_type.Species));
+            std::size_t gender_hash = std::hash<int>{}(static_cast<int>(animal_type.Gender));
+            /// @todo Better hash function.
+            std::size_t animal_type_hash = species_hash ^ gender_hash;
+            return animal_type_hash;
+        }
     };
 }

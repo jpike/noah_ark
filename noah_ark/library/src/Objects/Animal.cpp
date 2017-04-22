@@ -12,6 +12,20 @@ namespace OBJECTS
         MoveSpeedInPixelsPerSecond(GetMoveSpeedInPixelsPerSecond(species))
     {}
 
+    /// Determines whether 2 animal types are equal.
+    /// @param[in]  other - The other animal type to compare against.
+    /// @return True if the animal types are equal; false otherwise.
+    bool AnimalType::operator==(const AnimalType& other) const
+    {
+        // The move speed is excluded since it should effectively be a constant
+        // that is always initialized during construction.
+        if (this->Species != other.Species) return false;
+        if (this->Gender != other.Gender) return false;
+
+        // All fields are equal.
+        return true;
+    }
+
     /// Determines if this type of animal is considered clean by Biblical standards.
     /// @return True if this type of animal is clean; false otherwise.
     bool AnimalType::Clean() const

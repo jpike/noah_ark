@@ -145,6 +145,36 @@ namespace STATES
                 saved_game_data->BuildArkPieces.push_back(built_ark_piece_data);
             }
 
+            // READ IN THE COLLECTED ANIMAL DATA.
+            unsigned int expected_collected_animal_data_count;
+            saved_game_data_file >> expected_collected_animal_data_count;
+
+            while (saved_game_data->CollectedAnimals.size() < expected_collected_animal_data_count)
+            {
+                // READ IN THE CURRENT ANIMAL DATA.
+                int species;
+                saved_game_data_file >> species;
+                int gender;
+                saved_game_data_file >> gender;
+                unsigned int collected_count;
+                saved_game_data_file >> collected_count;
+
+                // MAKE SURE CURRENT ANIMAL DATA WAS PROPERLY READ.
+                bool animal_data_valid = !saved_game_data_file.eof();
+                if (!animal_data_valid)
+                {
+                    break;
+                }
+
+                // CREATE THE ANIMAL TYPE.
+                OBJECTS::AnimalType animal_type(
+                    static_cast<OBJECTS::AnimalSpecies>(species),
+                    static_cast<OBJECTS::AnimalGender>(gender));
+
+                // ADD THE ANIMAL COUNT TO THE IN-MEMORY DATA.
+                saved_game_data->CollectedAnimals[animal_type] = collected_count;
+            }
+
             // RETURN THE LOADED SAVED GAME DATA.
             return saved_game_data;
         }
@@ -215,6 +245,25 @@ namespace STATES
             }
 
             // WRITE A LINE SEPARATOR BEFORE THE NEXT SET OF DATA.
+            saved_game_data_file << std::endl;
+        }
+
+        // WRITE OUT THE COLLECTED ANIMALS.
+        // The count of collected animals is written out first.
+        saved_game_data_file << CollectedAnimals.size() << std::endl;
+        for (const auto& collected_animal_type_and_count : CollectedAnimals)
+        {
+            // WRITE OUT THE ANIMAL TYPE.
+            saved_game_data_file
+                << static_cast<int>(collected_animal_type_and_count.first.Species)
+                << SEPARATOR_BETWEEN_RELATED_DATA
+                << static_cast<int>(collected_animal_type_and_count.first.Gender)
+                << SEPARATOR_BETWEEN_RELATED_DATA;
+
+            // WRITE OUT THE COLLECTED COUNT.
+            saved_game_data_file << collected_animal_type_and_count.second;
+
+            // WRITE A LINE SEPARATE BEFORE THE NEXT SET OF DATA.
             saved_game_data_file << std::endl;
         }
     }

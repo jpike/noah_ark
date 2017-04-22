@@ -29,13 +29,7 @@ namespace INVENTORY
         /// A set is used to allow easily determining
         /// if a verse is already in the inventory.
         std::set<BIBLE::BibleVerse> BibleVerses = std::set<BIBLE::BibleVerse>();
-        /// Clean male animals collected so far, organized by species.
-        std::unordered_map< OBJECTS::AnimalSpecies, std::vector< std::shared_ptr<OBJECTS::Animal> > > CleanMaleAnimals = {};
-        /// Clean female animals collected so far, organized by species.
-        std::unordered_map< OBJECTS::AnimalSpecies, std::vector< std::shared_ptr<OBJECTS::Animal> > > CleanFemaleAnimals = {};
-        /// Unclean male animals collected so far, organized by species.
-        std::unordered_map< OBJECTS::AnimalSpecies, std::vector< std::shared_ptr<OBJECTS::Animal> > > UncleanMaleAnimals = {};
-        /// Unclean female animals collected so far, organized by species.
-        std::unordered_map< OBJECTS::AnimalSpecies, std::vector< std::shared_ptr<OBJECTS::Animal> > > UncleanFemaleAnimals = {};
+        /// Counts of collected animals by type.
+        std::unordered_map<OBJECTS::AnimalType, unsigned int> CollectedAnimalCounts = {};
     };
 }

@@ -4,17 +4,20 @@
 
 namespace INVENTORY
 {
-    // The colors right now are arbitrary.
-    const GRAPHICS::Color InventoryGui::ANIMALS_TAB_COLOR = GRAPHICS::Color::RED;
+    // The color right now is arbitrary.
     const GRAPHICS::Color InventoryGui::FOOD_TAB_COLOR = GRAPHICS::Color::GREEN;
 
     /// Constructor.
     /// @param[in]  inventory - The inventory to display in the GUI.
+    /// @param[in]  assets - The assets to use for the page.
     /// @throws std::exception - Thrown if a parameter is null.
-    InventoryGui::InventoryGui(const std::shared_ptr<const INVENTORY::Inventory>& inventory) :
+    InventoryGui::InventoryGui(
+        const std::shared_ptr<const INVENTORY::Inventory>& inventory,
+        const std::shared_ptr<RESOURCES::Assets>& assets) :
     Inventory(inventory),
     CurrentTab(TabType::BIBLE),
-    BiblePage(inventory)
+    BiblePage(inventory),
+    AnimalsPage(inventory, assets)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to HUD.");
@@ -129,7 +132,7 @@ namespace INVENTORY
         RenderTab(
             ANIMALS_TAB_STRING,
             animals_tab_left_top_screen_position_in_pixels,
-            ANIMALS_TAB_COLOR,
+            InventoryAnimalsPage::BACKGROUND_COLOR,
             renderer);
 
         // RENDER A TAB FOR THE FOOD PORTION OF THE GUI.
@@ -153,7 +156,7 @@ namespace INVENTORY
                 BiblePage.Render(renderer);
                 break;
             case TabType::ANIMALS:
-                RenderAnimalsPage(renderer);
+                AnimalsPage.Render(renderer);
                 break;
             case TabType::FOOD:
                 RenderFoodPage(renderer);
@@ -188,29 +191,6 @@ namespace INVENTORY
         renderer.RenderText(tab_text, left_top_screen_position_in_pixels, GRAPHICS::Color::BLACK);
     }
     
-    /// Renders the page of the inventory for the animals tab.
-    /// This page allows browsing animals in the inventory.
-    /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryGui::RenderAnimalsPage(GRAPHICS::Renderer& renderer) const
-    {
-        // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
-        // It is offset from the top of the screen by the amount of the
-        // GUI stuff that should always be displayed above it.  Otherwise,
-        // it should cover the remainder of the screen.
-        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);
-        const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
-        MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
-            SCREEN_LEFT_POSITION_IN_PIXELS,
-            TOP_SCREEN_OFFSET_IN_PIXELS,
-            renderer.Screen.WidthInPixels<float>(),
-            BACKGROUND_HEIGHT_IN_PIXELS);
-
-        renderer.RenderScreenRectangle(
-            background_rectangle,
-            ANIMALS_TAB_COLOR);
-    }
-
     /// Renders the page of the inventory for the food tab.
     /// This page allows browsing food in the inventory.
     /// @param[in,out]  renderer - The renderer to use for rendering.

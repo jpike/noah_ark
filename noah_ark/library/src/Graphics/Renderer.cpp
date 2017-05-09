@@ -67,19 +67,19 @@ namespace GRAPHICS
     /// Renders an icon on the screen that indicates that a specific key
     /// should be pressed for something.
     /// @param[in]  key - The character of the key for the icon.
-    /// @param[in]  top_left_screen_position_in_pixels - The top-left screen position
+    /// @param[in]  left_top_screen_position_in_pixels - The left-top screen position
     ///     of the key icon.
     void Renderer::RenderKeyIcon(
         const char key,
-        const MATH::Vector2ui& top_left_screen_position_in_pixels)
+        const MATH::Vector2ui& left_top_screen_position_in_pixels)
     {
         // CONVERT THE SCREEN POSITION TO A WORLD POSITION.
         // This is necessary so that the key icon can be rendered
         // appropriately on the screen regardless of how the camera
         // might move around the world.
-        sf::Vector2f top_left_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
-            top_left_screen_position_in_pixels.X,
-            top_left_screen_position_in_pixels.Y));
+        sf::Vector2f left_top_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
+            left_top_screen_position_in_pixels.X,
+            left_top_screen_position_in_pixels.Y));
 
         // CREATE A RECTANGLE TO RESEMBLE A KEY ON A KEYBOARD.
         const sf::Color DARK_GRAY(128, 128, 128);
@@ -91,7 +91,7 @@ namespace GRAPHICS
         key_background_icon.setSize(sf::Vector2f(
             static_cast<float>(GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS),
             static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS)));
-        key_background_icon.setPosition(top_left_world_position);
+        key_background_icon.setPosition(left_top_world_position);
 
         // RENDER THE BACKGROUND RECTANGLE FOR THE KEY.
         Screen.RenderTarget->draw(key_background_icon);
@@ -103,8 +103,8 @@ namespace GRAPHICS
         sf::IntRect key_texture_sub_rectangle = glyph.TextureSubRectangle.ToSfmlRectangle<int>();
         sf::Sprite key_character_sprite(glyph.Texture->TextureResource, key_texture_sub_rectangle);
         key_character_sprite.setPosition(
-            static_cast<float>(top_left_screen_position_in_pixels.X), 
-            static_cast<float>(top_left_screen_position_in_pixels.Y));
+            static_cast<float>(left_top_screen_position_in_pixels.X),
+            static_cast<float>(left_top_screen_position_in_pixels.Y));
 
         // CONFIGURE THE RENDER TARGET FOR SCREEN-SPACE RENDERING.
         sf::View screen_space_view = Screen.RenderTarget->getDefaultView();
@@ -119,12 +119,12 @@ namespace GRAPHICS
     /// @param[in]  texture - The texture containing the icon to render.
     /// @param[in]  texture_sub_rectangle - The sub-rectangle of the texture defining
     ///     the bounding box of the icon to render.
-    /// @param[in]  top_left_screen_position_in_pixels - The top-left screen position
+    /// @param[in]  left_top_screen_position_in_pixels - The left-top screen position
     ///     of the icon.
     void Renderer::RenderGuiIcon(
         const GRAPHICS::Texture& texture,
         const MATH::FloatRectangle& texture_sub_rectangle,
-        const MATH::Vector2ui& top_left_screen_position_in_pixels)
+        const MATH::Vector2ui& left_top_screen_position_in_pixels)
     {
         // CREATE A SPRITE FOR THE ICON USING THE TEXTURE INFORMATION.
         sf::IntRect texture_rectangle;
@@ -138,10 +138,36 @@ namespace GRAPHICS
         // The screen position must be converted to a world position so that the GUI icon
         // can be rendered appropriately on screen regardless of how the camera might
         // move around the world.
-        sf::Vector2f top_left_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
-            top_left_screen_position_in_pixels.X,
-            top_left_screen_position_in_pixels.Y));
-        gui_icon.setPosition(top_left_world_position);
+        sf::Vector2f left_top_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
+            left_top_screen_position_in_pixels.X,
+            left_top_screen_position_in_pixels.Y));
+        gui_icon.setPosition(left_top_world_position);
+
+        // RENDER THE GUI ICON.
+        Screen.RenderTarget->draw(gui_icon);
+    }
+
+    /// Renders a sprite as a GUI icon on the screen.
+    /// @param[in]  sprite - The sprite to render as a GUI icon.
+    /// @param[in]  left_top_screen_position_in_pixels - The left-top screen position
+    ///     of the icon.
+    void Renderer::RenderGuiIcon(
+        const GRAPHICS::AnimatedSprite& sprite,
+        const MATH::Vector2f& left_top_screen_position_in_pixels)
+    {
+        // CREATE A SPRITE FOR THE ICON USING THE TEXTURE INFORMATION.
+        // This allow repositioning of the icon to be in screen coordinates.
+        sf::IntRect texture_rectangle = sprite.Sprite.SpriteResource.getTextureRect();
+        sf::Sprite gui_icon(sprite.Sprite.SpriteTexture->TextureResource, texture_rectangle);
+
+        // POSITION THE GUI ICON SPRITE.
+        // The screen position must be converted to a world position so that the GUI icon
+        // can be rendered appropriately on screen regardless of how the camera might
+        // move around the world.
+        sf::Vector2f left_top_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
+            left_top_screen_position_in_pixels.X,
+            left_top_screen_position_in_pixels.Y));
+        gui_icon.setPosition(left_top_world_position);
 
         // RENDER THE GUI ICON.
         Screen.RenderTarget->draw(gui_icon);

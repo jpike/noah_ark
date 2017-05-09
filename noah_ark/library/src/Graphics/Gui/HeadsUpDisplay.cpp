@@ -13,6 +13,8 @@ namespace GUI
     /// @param[in]  overworld - The overworld whose information is being diplayed in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
+    /// @param[in]  assets - The assets to use for the page.
+    ///     @todo   Consider replacing texture parameters and just using assets.
     /// @param[in]  axe_texture - The texture to use for rendering an
     ///     axe icon on the HUD.
     /// @param[in]  wood_texture - The texture to use for rendering a
@@ -22,11 +24,12 @@ namespace GUI
         const std::shared_ptr<MAPS::Overworld>& overworld,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels,
+        const std::shared_ptr<RESOURCES::Assets>& assets,
         const std::shared_ptr<const Texture>& axe_texture,
         const std::shared_ptr<const Texture>& wood_texture) :
     MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels),
     InventoryOpened(false),
-    InventoryGui(overworld->NoahPlayer->Inventory),
+    InventoryGui(overworld->NoahPlayer->Inventory, assets),
     SaveDialogBoxVisible(false),
     AxeTexture(axe_texture),
     WoodTexture(wood_texture),

@@ -39,6 +39,9 @@ namespace GRAPHICS
             const uint8_t blue = 0,
             const uint8_t alpha = MAX_COLOR_COMPONENT);
 
+        // PUBLIC METHODS.
+        void ScaleRgbDown(const uint8_t scale_factor);
+
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The red component of the color.
         uint8_t Red;

@@ -26,4 +26,16 @@ namespace GRAPHICS
     Blue(blue),
     Alpha(alpha)
     {}
+
+    /// Scales the red, green, and blue color components down
+    /// by dividing by the provided scale factor.
+    /// No protection against truncation is performed.
+    /// @param[in]  scale_factor - The amount to scale down
+    ///     the red, green, and blue components.
+    void Color::ScaleRgbDown(const uint8_t scale_factor)
+    {
+        Red /= scale_factor;
+        Green /= scale_factor;
+        Blue /= scale_factor;
+    }
 }

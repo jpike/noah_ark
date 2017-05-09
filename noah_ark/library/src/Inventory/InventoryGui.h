@@ -6,8 +6,10 @@
 #include "Graphics/Renderer.h"
 #include "Input/KeyboardInputController.h"
 #include "Inventory/Inventory.h"
+#include "Inventory/InventoryAnimalsPage.h"
 #include "Inventory/InventoryBiblePage.h"
 #include "Math/Vector2.h"
+#include "Resources/Assets.h"
 
 namespace INVENTORY
 {
@@ -59,7 +61,9 @@ namespace INVENTORY
         };
 
         // CONSTRUCTION.
-        explicit InventoryGui(const std::shared_ptr<const Inventory>& inventory);
+        explicit InventoryGui(
+            const std::shared_ptr<const Inventory>& inventory,
+            const std::shared_ptr<RESOURCES::Assets>& assets);
 
         // INPUT.
         void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
@@ -69,8 +73,6 @@ namespace INVENTORY
 
     private:
         // STATIC CONSTANTS.
-        /// The color of the animals tab and page.
-        static const GRAPHICS::Color ANIMALS_TAB_COLOR;
         /// The color of the food tab and page.
         static const GRAPHICS::Color FOOD_TAB_COLOR;
 
@@ -80,7 +82,6 @@ namespace INVENTORY
             const MATH::Vector2f& left_top_screen_position_in_pixels,
             const GRAPHICS::Color& background_color,
             GRAPHICS::Renderer& renderer) const;
-        void RenderAnimalsPage(GRAPHICS::Renderer& renderer) const;
         void RenderFoodPage(GRAPHICS::Renderer& renderer) const;
 
         // MEMBER VARIABLES.
@@ -90,5 +91,7 @@ namespace INVENTORY
         TabType CurrentTab;
         /// The page of the inventory GUI displaying collected Bible verses.
         InventoryBiblePage BiblePage;
+        /// The page of the inventory GUI displaying collected animals.
+        InventoryAnimalsPage AnimalsPage;
     };
 }

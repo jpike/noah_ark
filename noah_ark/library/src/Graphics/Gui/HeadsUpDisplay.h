@@ -8,6 +8,7 @@
 #include "Input/KeyboardInputController.h"
 #include "Inventory/InventoryGui.h"
 #include "Maps/Overworld.h"
+#include "Resources/Assets.h"
 
 namespace GRAPHICS
 {
@@ -25,6 +26,7 @@ namespace GUI
             const std::shared_ptr<MAPS::Overworld>& overworld,
             const unsigned int main_text_box_width_in_pixels,
             const unsigned int main_text_box_height_in_pixels,
+            const std::shared_ptr<RESOURCES::Assets>& assets,
             const std::shared_ptr<const Texture>& axe_texture,
             const std::shared_ptr<const Texture>& wood_texture);
 

@@ -18,6 +18,10 @@ namespace INVENTORY
         void AddWood(const unsigned int wood_count);
         void AddAnimal(const std::shared_ptr<OBJECTS::Animal>& animal);
         bool AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const;
+        void GetAnimalCollectedCount(
+            const OBJECTS::AnimalSpecies species, 
+            unsigned int& species_male_animal_collected_count, 
+            unsigned int& species_female_animal_collected_count) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The axe that can be swung.  It is stored as a shared pointer

@@ -51,6 +51,8 @@ namespace MATH
         CoordinateType GetRightXPosition() const;
         CoordinateType GetTopYPosition() const;
         CoordinateType GetBottomYPosition() const;
+        MATH::Vector2<CoordinateType> GetLeftXTopYPosition() const;
+        MATH::Vector2<CoordinateType> GetLeftXBottomYPosition() const;
         void SetCenterPosition(const CoordinateType center_x_position, const CoordinateType center_y_position);
 
         // MOVEMENT.
@@ -229,6 +231,28 @@ namespace MATH
     {
         const CoordinateType bottom_y_position = SfmlRectangle.top + SfmlRectangle.height;
         return bottom_y_position;
+    }
+
+    /// Gets the left X and top Y corner position of the rectangle.
+    /// @return The left-top corner of the rectangle.
+    template <typename CoordinateType>
+    MATH::Vector2<CoordinateType> Rectangle<CoordinateType>::GetLeftXTopYPosition() const
+    {
+        CoordinateType left_x_position = GetLeftXPosition();
+        CoordinateType top_y_position = GetTopYPosition();
+        MATH::Vector2<CoordinateType> left_top_corner(left_x_position, top_y_position);
+        return left_top_corner;
+    }
+
+    /// Gets the left X and bottom Y corner position of the rectangle.
+    /// @return The left-bottom corner of the rectangle.
+    template <typename CoordinateType>
+    MATH::Vector2<CoordinateType> Rectangle<CoordinateType>::GetLeftXBottomYPosition() const
+    {
+        CoordinateType left_x_position = GetLeftXPosition();
+        CoordinateType bottom_y_position = GetBottomYPosition();
+        MATH::Vector2<CoordinateType> left_bottom_corner(left_x_position, bottom_y_position);
+        return left_bottom_corner;
     }
 
     /// Sets the center position of the rectangle.

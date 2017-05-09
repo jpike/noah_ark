@@ -12,7 +12,10 @@ namespace INVENTORY
     InventoryBiblePage::InventoryBiblePage(const std::shared_ptr<const Inventory>& inventory) :
     BibleVerseTextBox(),
     BibleVerseListBox(inventory)
-    {}
+    {
+        // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
+        CORE::ThrowInvalidArgumentExceptionIfNull(inventory, "Null inventory provided to inventory Bible page.");
+    }
 
     /// Renders the inventory GUI Bible page to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.

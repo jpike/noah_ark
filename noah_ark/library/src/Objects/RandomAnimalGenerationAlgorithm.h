@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include "Graphics/AnimationSequence.h"
 #include "Maps/TileMap.h"
 #include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
@@ -35,6 +34,5 @@ namespace OBJECTS
             const float world_x_position,
             const float world_y_position,
             RESOURCES::Assets& assets);
-        static std::shared_ptr<GRAPHICS::AnimationSequence> GetAnimalAnimation(const AnimalType& animal_type);
     };
 }

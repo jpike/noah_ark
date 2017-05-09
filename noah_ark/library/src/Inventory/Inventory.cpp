@@ -61,4 +61,38 @@ namespace INVENTORY
         bool animal_type_fully_collected = (actual_animal_count >= expected_animal_count);
         return animal_type_fully_collected;
     }
+
+    /// Gets the number of collected animals, per gender, for a given species.
+    /// @param[in]  species - The species for which to get collected animal counts.
+    /// @param[out] species_male_animal_collected_count - The count of collected male
+    ///     animals of the species.
+    /// @param[out] species_female_animal_collected_count - The count of collected female
+    ///     animals of the species.
+    void Inventory::GetAnimalCollectedCount(
+        const OBJECTS::AnimalSpecies species,
+        unsigned int& species_male_animal_collected_count,
+        unsigned int& species_female_animal_collected_count) const
+    {
+        // INDICATE THAT COLLECTED COUNTS HAVEN'T BEEN DETERMINED YET.
+        species_male_animal_collected_count = 0;
+        species_female_animal_collected_count = 0;
+
+        // GET THE COLLECTION COUNT FOR MALE ANIMALS OF THE SPECIES.
+        OBJECTS::AnimalType male_animal_type(species, OBJECTS::AnimalGender::MALE);
+        const auto male_animal_collected_count = CollectedAnimalCounts.find(male_animal_type);
+        bool male_animals_collected = (CollectedAnimalCounts.cend() != male_animal_collected_count);
+        if (male_animals_collected)
+        {
+            species_male_animal_collected_count = male_animal_collected_count->second;
+        }
+
+        // GET THE COLLECTION COUNT FOR FEMALE ANIMALS OF THE SPECIES.
+        OBJECTS::AnimalType female_animal_type(species, OBJECTS::AnimalGender::FEMALE);
+        const auto female_animal_collected_count = CollectedAnimalCounts.find(female_animal_type);
+        bool female_animals_collected = (CollectedAnimalCounts.cend() != female_animal_collected_count);
+        if (female_animals_collected)
+        {
+            species_female_animal_collected_count = female_animal_collected_count->second;
+        }
+    }
 }

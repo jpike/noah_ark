@@ -266,6 +266,12 @@
     <ClInclude Include="src\Math\RandomNumberGenerator.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\Inventory\InventoryAnimalsPage.h">
+      <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resources\AnimalGraphics.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -420,6 +426,12 @@
     </ClCompile>
     <ClCompile Include="src\Inventory\Inventory.cpp">
       <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Inventory\InventoryAnimalsPage.cpp">
+      <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resources\AnimalGraphics.cpp">
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

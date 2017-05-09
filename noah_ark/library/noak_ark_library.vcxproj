@@ -39,6 +39,7 @@
     <ClInclude Include="src\Input\Keyboard.h" />
     <ClInclude Include="src\Input\KeyboardInputController.h" />
     <ClInclude Include="src\Inventory\Inventory.h" />
+    <ClInclude Include="src\Inventory\InventoryAnimalsPage.h" />
     <ClInclude Include="src\Inventory\InventoryBiblePage.h" />
     <ClInclude Include="src\Inventory\InventoryBibleVerseListBox.h" />
     <ClInclude Include="src\Inventory\InventoryBibleVerseTextBox.h" />
@@ -64,6 +65,7 @@
     <ClInclude Include="src\Objects\RandomAnimalGenerationAlgorithm.h" />
     <ClInclude Include="src\Objects\Tree.h" />
     <ClInclude Include="src\Objects\WoodLogs.h" />
+    <ClInclude Include="src\Resources\AnimalGraphics.h" />
     <ClInclude Include="src\Resources\Assets.h" />
     <ClInclude Include="src\States\GameplayState.h" />
     <ClInclude Include="src\States\IntroSequence.h" />
@@ -95,6 +97,7 @@
     <ClCompile Include="src\Input\Keyboard.cpp" />
     <ClCompile Include="src\Input\KeyboardInputController.cpp" />
     <ClCompile Include="src\Inventory\Inventory.cpp" />
+    <ClCompile Include="src\Inventory\InventoryAnimalsPage.cpp" />
     <ClCompile Include="src\Inventory\InventoryBiblePage.cpp" />
     <ClCompile Include="src\Inventory\InventoryBibleVerseListBox.cpp" />
     <ClCompile Include="src\Inventory\InventoryBibleVerseTextBox.cpp" />
@@ -117,6 +120,7 @@
     <ClCompile Include="src\Objects\RandomAnimalGenerationAlgorithm.cpp" />
     <ClCompile Include="src\Objects\Tree.cpp" />
     <ClCompile Include="src\Objects\WoodLogs.cpp" />
+    <ClCompile Include="src\Resources\AnimalGraphics.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
     <ClCompile Include="src\States\GameplayState.cpp" />
     <ClCompile Include="src\States\IntroSequence.cpp" />

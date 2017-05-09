@@ -44,14 +44,24 @@ namespace INVENTORY
             BACKGROUND_COLOR);
 
         // CALCULATE HOW MANY ANIMAL BOXES CAN APPEAR PER ROW AND COLUMN.
-        const float BOX_DIMENSION_IN_PIXELS = 48;
+        // Some padding is added around the boxes in order to space them out.
+        /// @todo   I'm not sure I like having the boxes spaced out like this (as opposed to how
+        /// all of the animal icons were nice and compact together before).  This may be just because
+        /// the boxes are primitive (no borders), but it is worthwhile to revisit this
+        /// approach later.
+        const float BOX_DIMENSION_IN_PIXELS = 48.0f;
+        const float PADDING_BETWEEN_BOXES_IN_PIXELS = 16.0f;
+        const float BOX_WITH_PADDING_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS + PADDING_BETWEEN_BOXES_IN_PIXELS;
         float page_width_in_pixels = background_rectangle.GetWidth();
-        unsigned int boxes_per_row = static_cast<unsigned int>(page_width_in_pixels / BOX_DIMENSION_IN_PIXELS);
+        unsigned int boxes_per_row = static_cast<unsigned int>(page_width_in_pixels / BOX_WITH_PADDING_DIMENSION_IN_PIXELS);
 
         float page_height_in_pixels = background_rectangle.GetHeight();
-        unsigned int boxes_per_column = static_cast<unsigned int>(page_height_in_pixels / BOX_DIMENSION_IN_PIXELS);
+        unsigned int boxes_per_column = static_cast<unsigned int>(page_height_in_pixels / BOX_WITH_PADDING_DIMENSION_IN_PIXELS);
 
         // RENDER BOXES FOR EACH COLLECTED ANIMAL.
+        const float BOX_HALF_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS / 2.0f;
+        float starting_box_center_x_position = background_rectangle.GetLeftXPosition() + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS;
+        float starting_box_center_y_position = background_rectangle.GetTopYPosition() + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS;
         for (unsigned int species_id = 0; species_id < static_cast<unsigned int>(OBJECTS::AnimalSpecies::COUNT); ++species_id)
         {
             // GET THE COLLECTED COUNT INFORMATION FOR EACH GENDER OF THE SPECIES.
@@ -66,18 +76,15 @@ namespace INVENTORY
             unsigned int box_row_index = species_id / boxes_per_row;
             unsigned int box_column_index = species_id % boxes_per_row;
 
-            float starting_box_left_x_position = background_rectangle.GetLeftXPosition();
-            float starting_box_top_y_position = background_rectangle.GetTopYPosition();
+            float current_box_x_offset = static_cast<float>(box_column_index * BOX_WITH_PADDING_DIMENSION_IN_PIXELS);
+            float current_box_center_x_position = starting_box_center_x_position + current_box_x_offset;
 
-            float current_box_x_offset = static_cast<float>(box_column_index * BOX_DIMENSION_IN_PIXELS);
-            float current_box_left_x_position = starting_box_left_x_position + current_box_x_offset;
+            float current_box_y_offset = static_cast<float>(box_row_index * BOX_WITH_PADDING_DIMENSION_IN_PIXELS);
+            float current_box_center_y_position = starting_box_center_y_position + current_box_y_offset;
 
-            float current_box_y_offset = static_cast<float>(box_row_index * BOX_DIMENSION_IN_PIXELS);
-            float current_box_top_y_position = starting_box_top_y_position + current_box_y_offset;
-
-            MATH::FloatRectangle box_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
-                current_box_left_x_position,
-                current_box_top_y_position,
+            MATH::FloatRectangle box_screen_rectangle = MATH::FloatRectangle::FromCenterAndDimensions(
+                current_box_center_x_position,
+                current_box_center_y_position,
                 BOX_DIMENSION_IN_PIXELS,
                 BOX_DIMENSION_IN_PIXELS);
 
@@ -92,6 +99,11 @@ namespace INVENTORY
     }
 
     /// Renders a box for an animal on the page.
+    /// @param[in]  species - The species of animal to render.
+    /// @param[in]  species_male_animal_collected_count - The count of male animals collected of the species.
+    /// @param[in]  species_female_animal_collected_count - The count of female animals collected of the species.
+    /// @param[in]  box_screen_rectangle - The placement/dimensions of the box to render, in screen coordinates.
+    /// @param[in,out]  renderer - The renderer to use.
     void InventoryAnimalsPage::RenderAnimalBox(
         const OBJECTS::AnimalSpecies species,
         const unsigned int species_male_animal_collected_count,

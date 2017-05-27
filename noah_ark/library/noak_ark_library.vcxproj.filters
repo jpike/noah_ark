@@ -272,6 +272,12 @@
     <ClInclude Include="src\Resources\AnimalGraphics.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="src\States\GameState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="src\States\CreditsScreen.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -432,6 +438,9 @@
     </ClCompile>
     <ClCompile Include="src\Resources\AnimalGraphics.cpp">
       <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\States\CreditsScreen.cpp">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

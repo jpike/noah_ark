@@ -12,9 +12,6 @@
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Texture.h"
 #include "Graphics/Gui/Font.h"
-#include "Maps/OverworldMapFile.h"
-#include "Maps/TileMapFile.h"
-#include "Maps/Tileset.h"
 
 /// Holds code related to resources/assets for the game.
 namespace RESOURCES

@@ -128,12 +128,6 @@
     <ClInclude Include="src\Core\Array2D.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\TileMapObjectDescription.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Maps\TileMapLayerDescription.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Maps\TilesetDescription.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
@@ -160,12 +154,6 @@
     </ClInclude>
     <ClInclude Include="src\Collision\Movement.h">
       <Filter>Header Files\Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Maps\OverworldMapFile.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Maps\TileMapFile.h">
-      <Filter>Header Files\Maps</Filter>
     </ClInclude>
     <ClInclude Include="src\Maps\Overworld.h">
       <Filter>Header Files\Maps</Filter>
@@ -313,12 +301,6 @@
     <ClCompile Include="src\Input\KeyboardInputController.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="src\Maps\TileMapObjectDescription.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\TileMapLayerDescription.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
     <ClCompile Include="src\Maps\TilesetDescription.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
@@ -342,12 +324,6 @@
     </ClCompile>
     <ClCompile Include="src\Collision\Movement.cpp">
       <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\OverworldMapFile.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\TileMapFile.cpp">
-      <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\Overworld.cpp">
       <Filter>Source Files\Maps</Filter>

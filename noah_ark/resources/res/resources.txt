@@ -1,2 +1,0 @@
-
-Include res/res_images.txt

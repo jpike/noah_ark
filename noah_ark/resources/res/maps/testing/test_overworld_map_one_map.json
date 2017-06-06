@@ -1,8 +1,0 @@
-{
-    "WidthInTilesMaps": 1,
-    "HeightInTileMaps": 1,
-    "StartingTileMapFilepath": "res/maps/testing/test_map_0_0.json",
-    "TileMaps": [
-        { "Filepath": "res/maps/testing/test_map_0_0.json" }
-    ]
-}

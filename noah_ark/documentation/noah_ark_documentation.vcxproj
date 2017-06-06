@@ -65,7 +65,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="CodingStandards.md" />
-    <None Include="noark_ark.dxy" />
+    <None Include="noah_ark.dxy" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="additional_pages\Animals.txt" />

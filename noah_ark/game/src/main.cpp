@@ -9,6 +9,8 @@
 #include "Graphics/Screen.h"
 #include "Input/KeyboardInputController.h"
 #include "Maps/OverworldMapData.h"
+#include "Maps/Tileset.h"
+#include "Maps/TilesetDescription.h"
 #include "Resources/Assets.h"
 #include "States/CreditsScreen.h"
 #include "States/GameplayState.h"
@@ -28,207 +30,10 @@ int EXIT_CODE_FAILURE_LOADING_ASSETS = 3;
 /// The font failed to be loaded.
 int EXIT_CODE_FAILURE_LOADING_FONT = 4;
 
-/// Populates the overworld based on data read from files and assets.
-/// @param[in]  overworld_map_file - The overworld map file defining the contents of the overworld.
-/// @param[in]  tile_map_files - The individual tile map files that comprise the overworld.
+/// Populates the overworld based on data read from in-memory assets.
 /// @param[in,out]  assets - The assets for the overworld.
 /// @param[in,out]  overworld - The overworld to populate.
 void PopulateOverworld(
-    const MAPS::OverworldMapFile& overworld_map_file, 
-    const CORE::Array2D<MAPS::TileMapFile>& tile_map_files, 
-    RESOURCES::Assets& assets, 
-    MAPS::Overworld& overworld)
-{
-    // LOAD THE TILESET TEXTURE.
-    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::GROUND_TILESET_TEXTURE_ID);
-    assert(tileset_texture);
-
-    // LOAD THE TREE TEXTURE.
-    std::shared_ptr<GRAPHICS::Texture> tree_texture = assets.GetTexture(RESOURCES::TREE_TEXTURE_ID);
-    assert(tree_texture);
-
-    // LOAD TILE MAPS FOR EACH ROW.
-    for (unsigned int row = 0; row < overworld_map_file.OverworldHeightInTileMaps; ++row)
-    {
-        // LOAD TILE MAPS FOR EACH COLUMN.
-        for (unsigned int column = 0; column < overworld_map_file.OverworldWidthInTileMaps; ++column)
-        {
-            // GET THE CURRENT TILE MAP FILE.
-            const auto& tile_map_file = tile_map_files(column, row);
-
-            // CREATE THE TILESET FOR THE CURRENT FILE.
-            std::unique_ptr<MAPS::Tileset> tileset = MAPS::Tileset::Create(tile_map_file.Tilesets, tileset_texture);
-            bool tileset_created = (nullptr != tileset);
-            if (!tileset_created)
-            {
-                assert(tileset_created);
-                // Continue trying to create other tile maps.
-                continue;
-            }
-
-            // CALCULATE THE POSITION OF THE CURRENT TILE MAP.
-            MATH::Vector2f map_center_world_position;
-
-            float map_width_in_pixels = static_cast<float>(tile_map_file.MapWidthInTiles * tile_map_file.TileWidthInPixels);
-            float map_half_width_in_pixels = map_width_in_pixels / 2.0f;
-            float map_left_world_position = static_cast<float>(column * map_width_in_pixels);
-            map_center_world_position.X = map_left_world_position + map_half_width_in_pixels;
-
-            float map_height_in_pixels = static_cast<float>(tile_map_file.MapHeightInTiles * tile_map_file.TileHeightInPixels);
-            float map_half_height_in_pixels = map_height_in_pixels / 2.0f;
-            float map_top_world_position = static_cast<float>(row * map_height_in_pixels);
-            map_center_world_position.Y = map_top_world_position + map_half_height_in_pixels;
-
-            // CREATE AN EMPTY TILE MAP.
-            MATH::Vector2ui map_dimensions_in_tiles(
-                tile_map_file.MapWidthInTiles,
-                tile_map_file.MapHeightInTiles);
-            MAPS::TileMap tile_map(
-                row,
-                column,
-                map_center_world_position,
-                map_dimensions_in_tiles,
-                overworld_map_file.TileDimensionInPixels);
-
-            // POPULATE THE TILE MAP FROM THE CURRENT FILE'S LAYERS.
-            for (const auto& layer_description : tile_map_file.Layers)
-            {
-                // DETERMINE THE TYPE OF THE LAYER.
-                switch (layer_description.Type)
-                {
-                    case MAPS::TileMapLayerType::TILE_LAYER:
-                    {
-                        // CHECK IF THIS LAYER IS THE GROUND LAYER.
-                        const std::string GROUND_LAYER_NAME = "GroundLayer";
-                        const std::string ARK_LAYER_NAME = "ArkLayer";
-                        bool is_ground_layer = (GROUND_LAYER_NAME == layer_description.Name);
-                        bool is_ark_layer = (ARK_LAYER_NAME == layer_description.Name);
-                        if (is_ground_layer)
-                        {
-                            // CREATE TILES IN THE GROUND LAYER.
-                            for (unsigned int current_tile_y = 0;
-                                current_tile_y < tile_map_file.MapHeightInTiles;
-                                ++current_tile_y)
-                            {
-                                // CREATE TILES FOR THIS ROW.
-                                for (unsigned int current_tile_x = 0;
-                                    current_tile_x < tile_map_file.MapWidthInTiles;
-                                    ++current_tile_x)
-                                {
-                                    // CREATE THE CURRENT TILE.
-                                    MAPS::TileId tile_id = layer_description.TileIds(current_tile_x, current_tile_y);
-                                    std::shared_ptr<MAPS::Tile> tile = tileset->CreateTile(tile_id);
-                                    bool tile_exists_in_tileset = (nullptr != tile);
-                                    if (!tile_exists_in_tileset)
-                                    {
-                                        assert(tile_exists_in_tileset);
-                                        // Skip to trying to create the next tile.  The layer
-                                        // simply won't have any tile at this location.
-                                        continue;
-                                    }
-
-                                    // SET THE TILE IN THE GROUND LAYER.
-                                    tile_map.Ground.SetTile(current_tile_x, current_tile_y, tile);
-                                }
-                            }
-                        }
-                        else if (is_ark_layer)
-                        {
-                            // GET THE ARK TEXTURE.
-                            std::shared_ptr<GRAPHICS::Texture> ark_texture = assets.GetTexture(RESOURCES::ARK_TEXTURE_ID);
-                            assert(ark_texture);
-
-                            // CREATE PIECES IN THE ARK LAYER.
-                            for (unsigned int current_tile_y = 0;
-                                current_tile_y < tile_map_file.MapHeightInTiles;
-                                ++current_tile_y)
-                            {
-                                // CREATE ARK PIECES FOR THIS ROW.
-                                for (unsigned int current_tile_x = 0;
-                                    current_tile_x < tile_map_file.MapWidthInTiles;
-                                    ++current_tile_x)
-                                {
-                                    // CHECK IF THE TILE ID IS VALID.
-                                    // Some tiles in this layer may not be for valid ark pieces.
-                                    MAPS::TileId tile_id = layer_description.TileIds(current_tile_x, current_tile_y);
-                                    bool tild_id_valid = (tile_id > 0);
-                                    if (!tild_id_valid)
-                                    {
-                                        continue;
-                                    }
-
-                                    // CREATE THE ARK PIECE.
-                                    /// @todo   Rethink how to calculate these ark piece IDs.
-                                    const unsigned int STARTING_TILE_ID_OFFSET = 1;
-                                    const unsigned int TILE_COUNT_BEFORE_ARK_TILES = 8;
-                                    unsigned int ark_piece_id = tile_id - STARTING_TILE_ID_OFFSET - TILE_COUNT_BEFORE_ARK_TILES;
-                                    OBJECTS::ArkPiece ark_piece(ark_piece_id, ark_texture);
-                                    MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
-                                    float tile_left_x_position = static_cast<float>(current_tile_x * overworld_map_file.TileDimensionInPixels);
-                                    float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;
-                                    float tile_top_y_position = static_cast<float>(current_tile_y * overworld_map_file.TileDimensionInPixels);
-                                    float ark_piece_world_y_position = map_top_world_position + tile_top_y_position + ark_piece_local_center.Y;
-                                    ark_piece.Sprite.SetWorldPosition(ark_piece_world_x_position, ark_piece_world_y_position);
-
-                                    // ADD THE ARK PIECE TO THE TILE MAP.
-                                    tile_map.ArkPieces.push_back(ark_piece);
-                                }
-                            }
-                        }
-
-                        break;
-                    }
-                    case MAPS::TileMapLayerType::OBJECT_LAYER:
-                    {
-                        // CREATE ANY TREES IN THE LAYER.
-                        for (const auto& object_description : layer_description.Objects)
-                        {
-                            const std::string TREE_OBJECT_TYPE = "TREE";
-                            bool is_tree = (TREE_OBJECT_TYPE == object_description.Type);
-                            if (is_tree)
-                            {
-                                // DETERMINE THE SUB-RECTANGLE OF THE TEXTURE TO USE FOR THE TREE.
-                                MATH::FloatRectangle TALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(32.0f, 0.0f, 16.0f, 32.0f);
-                                MATH::FloatRectangle tree_texture_sub_rectangle = TALL_TREE_TEXTURE_SUB_RECTANGLE;
-
-                                // CREATE THE TREE'S SPRITE.
-                                GRAPHICS::Sprite tree_sprite(tree_texture, tree_texture_sub_rectangle);
-                                MATH::Vector2f tree_local_center = tree_sprite.GetOrigin();
-                                float tree_world_x_position = static_cast<float>(object_description.TopLeftPositionInPixels.X) + tree_local_center.X;
-                                float tree_world_y_position = static_cast<float>(object_description.TopLeftPositionInPixels.Y) + tree_local_center.Y;
-                                tree_sprite.SetWorldPosition(tree_world_x_position, tree_world_y_position);
-
-                                // GET THE TREE SHAKING SOUND EFFECT.
-                                // If the sound can't be retrieved, then the game will continue just with no sound playing
-                                // when trees shake.
-                                std::shared_ptr<AUDIO::SoundEffect> tree_shake_sound = assets.GetSound(RESOURCES::TREE_SHAKE_SOUND_ID);
-                                bool tree_shake_sound_retrieved = (nullptr != tree_shake_sound);
-
-                                // CREATE THE TREE.
-                                OBJECTS::Tree tree;
-                                tree.Sprite = tree_sprite;
-                                tree.TreeShakeSound = tree_shake_sound;
-                                tile_map.Trees.push_back(tree);
-                            }
-                        }
-
-                        break;
-                    }
-                }
-            }
-
-            // SET THE TILE MAP IN THE OVERWORLD.
-            overworld.TileMaps(column, row) = std::move(tile_map);
-        }
-    }
-}
-
-/// Populates the overworld based on data read from files and assets.
-/// @param[in]  overworld_map_file - The overworld map file defining the contents of the overworld.
-/// @param[in]  tile_map_files - The individual tile map files that comprise the overworld.
-/// @param[in,out]  assets - The assets for the overworld.
-/// @param[in,out]  overworld - The overworld to populate.
-void PopulateOverworld2(
     RESOURCES::Assets& assets,
     MAPS::Overworld& overworld)
 {
@@ -417,121 +222,11 @@ void PopulateOverworld2(
     }
 }
 
-/// Loads tile map files specified in the overworld map file.
-/// @param[in]  overworld_map_file - The overworld map file definining the tile map files to load.
-/// @param[out] tile_map_files - The tile map files, if successfully loaded.
-/// @return True if loading succeeded; false otherwise.
-bool LoadTileMapFiles(
-    const MAPS::OverworldMapFile& overworld_map_file,
-    CORE::Array2D<MAPS::TileMapFile>& tile_map_files)
-{
-    // ALLOCATE SPACE FOR ALL TILE MAP FILES IN THE OVERWORLD.
-    // Resizing is done to allocate enough space for the new tile map files
-    // while clearing old data at the same time.
-    unsigned int tile_map_row_count = overworld_map_file.OverworldHeightInTileMaps;
-    unsigned int tile_map_column_count = overworld_map_file.OverworldWidthInTileMaps;
-    tile_map_files.Resize(tile_map_column_count, tile_map_row_count);
-
-    // DEFINE AN ARRAY OF FUTURES FOR LOADING THE TILE MAPS IN PARALLEL.
-    // Asynchronous loading is done since it is a little faster than synchronous loading
-    // (about 7-8 seconds of total asset load time as opposed to 12-13 seconds total).
-    CORE::Array2D< std::future< std::unique_ptr<MAPS::TileMapFile> > > tile_map_loaders(
-        tile_map_column_count,
-        tile_map_row_count);
-
-    // START TO LOAD ALL TILE MAP FILES IN THE OVERWORLD MAP FILE.
-    for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
-    {
-        for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
-        {
-            // STARTING LOADING THE CURRENT TILE MAP.
-            std::string tile_map_filepath = overworld_map_file.GetTileMapFilepath(tile_map_row, tile_map_column);
-            tile_map_loaders(tile_map_column, tile_map_row) = std::async(MAPS::TileMapFile::Load, tile_map_filepath);
-        }
-    }
-
-    // OBTAIN ALL OF THE TILE MAP FILES BEING LOADED ASYNCHRONOUSLY.
-    for (unsigned int tile_map_row = 0; tile_map_row < tile_map_row_count; ++tile_map_row)
-    {
-        for (unsigned int tile_map_column = 0; tile_map_column < tile_map_column_count; ++tile_map_column)
-        {
-            try
-            {
-                // CHECK IF THE TILE MAP LOADER FOR THE CURRENT ROW/COLUMN IS VALID.
-                auto& tile_map_loader = tile_map_loaders(tile_map_column, tile_map_row);
-                if (tile_map_loader.valid())
-                {
-                    // WAIT AND GET THE LOADED TILE MAP FILE.
-                    std::unique_ptr<MAPS::TileMapFile> tile_map_file = tile_map_loader.get();
-                    bool tile_map_file_loaded = (nullptr != tile_map_file);
-                    if (tile_map_file_loaded)
-                    {
-                        // STORE THE TILE MAP FILE IN THIS COLLECTION OF ASSETS.
-                        tile_map_files(tile_map_column, tile_map_row) = *tile_map_file;
-                    }
-                    else
-                    {
-                        assert(false);
-                        return false;
-                    }
-                }
-            }
-            catch (const std::exception&)
-            {
-                assert(false);
-                return false;
-            }
-        }
-    }
-
-    // All tile map files were loaded successfully.
-    return true;
-}
 
 /// Loads the overworld.
 /// @param[in]  assets - The assets to use for the overworld.
 /// @return The overworld, if successfully loaded; null otherwise.
 std::shared_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
-{
-    // LOAD THE OVERWORLD MAP FILE.
-    auto load_start_time = std::chrono::system_clock::now();
-    const std::string OVERWORLD_MAP_FILEPATH = "res/maps/overworld_map.json";
-    std::unique_ptr<MAPS::OverworldMapFile> overworld_map_file = MAPS::OverworldMapFile::Load(OVERWORLD_MAP_FILEPATH);
-    assert(overworld_map_file);
-
-    // LOAD THE TILE MAPS FILES.
-    CORE::Array2D<MAPS::TileMapFile> tile_map_files;
-    bool tile_map_files_loaded = LoadTileMapFiles(*overworld_map_file, tile_map_files);
-    assert(tile_map_files_loaded);
-  
-    // CREATE THE OVERWORLD.
-    std::shared_ptr<MAPS::Overworld> overworld = std::make_shared<MAPS::Overworld>(
-        overworld_map_file->OverworldWidthInTileMaps,
-        overworld_map_file->OverworldHeightInTileMaps,
-        overworld_map_file->TileMapWidthInTiles,
-        overworld_map_file->TileMapHeightInTiles,
-        overworld_map_file->TileDimensionInPixels);
-    PopulateOverworld(*overworld_map_file, tile_map_files, assets, *overworld);
-
-    auto load_end_time = std::chrono::system_clock::now();
-
-    // Overworld load time: 82263372
-    auto load_time_diff = load_end_time - load_start_time;
-    std::cout << "Overworld load time: " << load_time_diff.count() << std::endl;
-
-    // LOAD THE BACKGROUND MUSIC.
-    std::shared_ptr<sf::Music> overworld_background_music = assets.GetMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID);
-    bool background_music_loaded = (nullptr != overworld_background_music);
-    assert(background_music_loaded);
-    overworld->BackgroundMusic = overworld_background_music;
-
-    return overworld;
-}
-
-/// Loads the overworld.
-/// @param[in]  assets - The assets to use for the overworld.
-/// @return The overworld, if successfully loaded; null otherwise.
-std::shared_ptr<MAPS::Overworld> LoadOverworld2(RESOURCES::Assets& assets)
 {
     // CREATE THE OVERWORLD.
     auto load_start_time = std::chrono::system_clock::now();
@@ -541,7 +236,7 @@ std::shared_ptr<MAPS::Overworld> LoadOverworld2(RESOURCES::Assets& assets)
         MAPS::TILE_MAP_WIDTH_IN_TILES,
         MAPS::TILE_MAP_HEIGHT_IN_TILES,
         16); /// \todo Constant.
-    PopulateOverworld2(assets, *overworld);
+    PopulateOverworld(assets, *overworld);
 
     auto load_end_time = std::chrono::system_clock::now();
 
@@ -595,7 +290,7 @@ int main(int argumentCount, char* arguments[])
 
         // The overworld is loaded in the background in separate threads to avoid having
         // their loading slow the startup time of the rest of the game.
-        std::future< std::shared_ptr<MAPS::Overworld> > overworld_being_loaded = std::async(LoadOverworld2, std::ref(*assets));
+        std::future< std::shared_ptr<MAPS::Overworld> > overworld_being_loaded = std::async(LoadOverworld, std::ref(*assets));
 
         // INITIALIZE REMAINING SUBSYSTEMS.
         GRAPHICS::Renderer renderer(

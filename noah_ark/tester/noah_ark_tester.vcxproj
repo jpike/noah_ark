@@ -44,16 +44,16 @@
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\src;$(CATCH_DIR);$(SFML_32_BIT_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)noah_ark\library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(BOOST_DIR)\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\src;$(CATCH_DIR);$(SFML_32_BIT_DIR)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)noah_ark\library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
-    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\src;$(CATCH_DIR);$(SFML_32_BIT_DIR)\include;$(BOOST_DIR);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)noah_ark\library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(BOOST_DIR)\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)src;$(SolutionDir)noah_ark\library\src;$(CATCH_DIR);$(SFML_32_BIT_DIR)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)noah_ark\library\bin\$(Configuration);$(SFML_32_BIT_DIR)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -72,7 +72,6 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "$(SFML_32_BIT_DIR)\bin\*.dll" "$(TargetDir)"
-xcopy /Y "$(THOR_DIR)\bin\*.dll" "$(TargetDir)"
 
 xcopy /Y /S "$(SolutionDir)noah_ark\resources\res\*" "$(TargetDir)res\"</Command>
     </PostBuildEvent>
@@ -103,7 +102,6 @@ xcopy /Y /S "$(SolutionDir)noah_ark\resources\res\*" "$(TargetDir)res\"</Command
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "$(SFML_32_BIT_DIR)\bin\*.dll" "$(TargetDir)"
-xcopy /Y "$(THOR_DIR)\bin\*.dll" "$(TargetDir)"
 
 xcopy /Y /S "$(SolutionDir)noah_ark\resources\res\*" "$(TargetDir)res\"</Command>
     </PostBuildEvent>

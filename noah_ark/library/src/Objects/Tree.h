@@ -28,10 +28,6 @@ namespace OBJECTS
 
     /// A tree that can be placed in the overworld.
     /// Trees will provide a source of wood and potentially fruit.
-    /// Types of supported trees:
-    /// - Small trees (16x16)
-    /// - Tall trees (16x32)
-    /// - Large trees (32x32)
     class Tree
     {
     public:

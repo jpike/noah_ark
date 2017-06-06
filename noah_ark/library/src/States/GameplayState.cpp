@@ -263,9 +263,7 @@ namespace STATES
             overworld,
             text_box_width_in_pixels,
             text_box_height_in_pixels,
-            Assets,
-            axe_texture,
-            wood_log_texture);
+            Assets);
         return hud;
     }
 

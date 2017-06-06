@@ -165,8 +165,8 @@ namespace GRAPHICS
         // can be rendered appropriately on screen regardless of how the camera might
         // move around the world.
         sf::Vector2f left_top_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
-            left_top_screen_position_in_pixels.X,
-            left_top_screen_position_in_pixels.Y));
+            static_cast<int>(left_top_screen_position_in_pixels.X),
+            static_cast<int>(left_top_screen_position_in_pixels.Y)));
         gui_icon.setPosition(left_top_world_position);
 
         // RENDER THE GUI ICON.

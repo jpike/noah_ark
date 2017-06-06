@@ -46,9 +46,11 @@
     <ClInclude Include="src\Inventory\InventoryGui.h" />
     <ClInclude Include="src\Maps\GroundLayer.h" />
     <ClInclude Include="src\Maps\Overworld.h" />
+    <ClInclude Include="src\Maps\OverworldMapData.h" />
     <ClInclude Include="src\Maps\OverworldMapFile.h" />
     <ClInclude Include="src\Maps\Tile.h" />
     <ClInclude Include="src\Maps\TileMap.h" />
+    <ClInclude Include="src\Maps\TileMapData.h" />
     <ClInclude Include="src\Maps\TileMapFile.h" />
     <ClInclude Include="src\Maps\TileMapLayerDescription.h" />
     <ClInclude Include="src\Maps\TileMapObjectDescription.h" />
@@ -106,9 +108,11 @@
     <ClCompile Include="src\Inventory\InventoryGui.cpp" />
     <ClCompile Include="src\Maps\GroundLayer.cpp" />
     <ClCompile Include="src\Maps\Overworld.cpp" />
+    <ClCompile Include="src\Maps\OverworldMapData.cpp" />
     <ClCompile Include="src\Maps\OverworldMapFile.cpp" />
     <ClCompile Include="src\Maps\Tile.cpp" />
     <ClCompile Include="src\Maps\TileMap.cpp" />
+    <ClCompile Include="src\Maps\TileMapData.cpp" />
     <ClCompile Include="src\Maps\TileMapFile.cpp" />
     <ClCompile Include="src\Maps\TileMapLayerDescription.cpp" />
     <ClCompile Include="src\Maps\TileMapObjectDescription.cpp" />

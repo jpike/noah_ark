@@ -8,6 +8,7 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Input/KeyboardInputController.h"
+#include "Maps/OverworldMapData.h"
 #include "Resources/Assets.h"
 #include "States/CreditsScreen.h"
 #include "States/GameplayState.h"
@@ -158,9 +159,9 @@ void PopulateOverworld(
 
                                     // CREATE THE ARK PIECE.
                                     /// @todo   Rethink how to calculate these ark piece IDs.
-                                    const unsigned int STARTING_TILD_ID_OFFSET = 1;
+                                    const unsigned int STARTING_TILE_ID_OFFSET = 1;
                                     const unsigned int TILE_COUNT_BEFORE_ARK_TILES = 8;
-                                    unsigned int ark_piece_id = tile_id - STARTING_TILD_ID_OFFSET - TILE_COUNT_BEFORE_ARK_TILES;
+                                    unsigned int ark_piece_id = tile_id - STARTING_TILE_ID_OFFSET - TILE_COUNT_BEFORE_ARK_TILES;
                                     OBJECTS::ArkPiece ark_piece(ark_piece_id, ark_texture);
                                     MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
                                     float tile_left_x_position = static_cast<float>(current_tile_x * overworld_map_file.TileDimensionInPixels);
@@ -187,34 +188,8 @@ void PopulateOverworld(
                             if (is_tree)
                             {
                                 // DETERMINE THE SUB-RECTANGLE OF THE TEXTURE TO USE FOR THE TREE.
-                                // Different sub-rectangles are used depending on the tree's size.
-                                MATH::FloatRectangle tree_texture_sub_rectangle;
-                                const MATH::Vector2ui SMALL_TREE_DIMENSIONS_IN_PIXELS(16, 16);
-                                const MATH::Vector2ui TALL_TREE_DIMENSIONS_IN_PIXELS(16, 32);
-                                const MATH::Vector2ui LARGE_TREE_DIMENSIONS_IN_PIXELS(32, 32);
-                                MATH::Vector2ui tree_dimensions_in_pixels(object_description.WidthInPixels, object_description.HeightInPixels);
-                                if (SMALL_TREE_DIMENSIONS_IN_PIXELS == tree_dimensions_in_pixels)
-                                {
-                                    MATH::FloatRectangle SMALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(0.0f, 0.0f, 16.0f, 16.0f);
-                                    tree_texture_sub_rectangle = SMALL_TREE_TEXTURE_SUB_RECTANGLE;
-                                }
-                                else if (TALL_TREE_DIMENSIONS_IN_PIXELS == tree_dimensions_in_pixels)
-                                {
-                                    MATH::FloatRectangle TALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(32.0f, 0.0f, 16.0f, 32.0f);
-                                    tree_texture_sub_rectangle = TALL_TREE_TEXTURE_SUB_RECTANGLE;
-                                }
-                                else if (LARGE_TREE_DIMENSIONS_IN_PIXELS == tree_dimensions_in_pixels)
-                                {
-                                    MATH::FloatRectangle LARGE_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(0.0f, 16.0f, 32.0f, 32.0f);
-                                    tree_texture_sub_rectangle = LARGE_TREE_TEXTURE_SUB_RECTANGLE;
-                                }
-                                else
-                                {
-                                    // An invalid size was specified for the tree.
-                                    // Continue trying to create other objects.
-                                    assert(false);
-                                    continue;
-                                }
+                                MATH::FloatRectangle TALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(32.0f, 0.0f, 16.0f, 32.0f);
+                                MATH::FloatRectangle tree_texture_sub_rectangle = TALL_TREE_TEXTURE_SUB_RECTANGLE;
 
                                 // CREATE THE TREE'S SPRITE.
                                 GRAPHICS::Sprite tree_sprite(tree_texture, tree_texture_sub_rectangle);
@@ -238,6 +213,200 @@ void PopulateOverworld(
                         }
 
                         break;
+                    }
+                }
+            }
+
+            // SET THE TILE MAP IN THE OVERWORLD.
+            overworld.TileMaps(column, row) = std::move(tile_map);
+        }
+    }
+}
+
+/// Populates the overworld based on data read from files and assets.
+/// @param[in]  overworld_map_file - The overworld map file defining the contents of the overworld.
+/// @param[in]  tile_map_files - The individual tile map files that comprise the overworld.
+/// @param[in,out]  assets - The assets for the overworld.
+/// @param[in,out]  overworld - The overworld to populate.
+void PopulateOverworld2(
+    RESOURCES::Assets& assets,
+    MAPS::Overworld& overworld)
+{
+    // LOAD THE TILESET TEXTURE.
+    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::GROUND_TILESET_TEXTURE_ID);
+    assert(tileset_texture);
+
+    // LOAD THE TREE TEXTURE.
+    std::shared_ptr<GRAPHICS::Texture> tree_texture = assets.GetTexture(RESOURCES::TREE_TEXTURE_ID);
+    assert(tree_texture);
+
+    MAPS::TilesetDescription tileset_description = {};
+    tileset_description.Name = "ground_tile_set";
+    tileset_description.FirstTileId = 1;
+    tileset_description.TileWidthInPixels = 16;
+    tileset_description.TileHeightInPixels = 16;
+    tileset_description.TransparentColor = "#ff00ff";
+
+    // LOAD TILE MAPS FOR EACH ROW.
+    for (unsigned int row = 0; row < MAPS::OVERWORLD_HEIGHT_IN_TILE_MAPS; ++row)
+    {
+        // LOAD TILE MAPS FOR EACH COLUMN.
+        for (unsigned int column = 0; column < MAPS::OVERWORLD_WIDTH_IN_TILE_MAPS; ++column)
+        {
+            // GET THE CURRENT TILE MAP FILE.
+            const auto& tile_map_data = MAPS::OVERWORLD_MAP_DATA(column, row);
+
+            // CREATE THE TILESET FOR THE CURRENT FILE.
+            std::unique_ptr<MAPS::Tileset> tileset = MAPS::Tileset::Create({ tileset_description }, tileset_texture);
+            bool tileset_created = (nullptr != tileset);
+            if (!tileset_created)
+            {
+                assert(tileset_created);
+                // Continue trying to create other tile maps.
+                continue;
+            }
+
+            // CALCULATE THE POSITION OF THE CURRENT TILE MAP.
+            MATH::Vector2f map_center_world_position;
+
+            float map_width_in_pixels = static_cast<float>(MAPS::TILE_MAP_WIDTH_IN_TILES * tileset_description.TileWidthInPixels);
+            float map_half_width_in_pixels = map_width_in_pixels / 2.0f;
+            float map_left_world_position = static_cast<float>(column * map_width_in_pixels);
+            map_center_world_position.X = map_left_world_position + map_half_width_in_pixels;
+
+            float map_height_in_pixels = static_cast<float>(MAPS::TILE_MAP_HEIGHT_IN_TILES * tileset_description.TileHeightInPixels);
+            float map_half_height_in_pixels = map_height_in_pixels / 2.0f;
+            float map_top_world_position = static_cast<float>(row * map_height_in_pixels);
+            map_center_world_position.Y = map_top_world_position + map_half_height_in_pixels;
+
+            // CREATE AN EMPTY TILE MAP.
+            MATH::Vector2ui map_dimensions_in_tiles(
+                MAPS::TILE_MAP_WIDTH_IN_TILES,
+                MAPS::TILE_MAP_HEIGHT_IN_TILES);
+            MAPS::TileMap tile_map(
+                row,
+                column,
+                map_center_world_position,
+                map_dimensions_in_tiles,
+                tileset_description.TileWidthInPixels); /// \todo Tile dimension.
+
+            // CREATE TILES IN THE GROUND LAYER.
+            for (unsigned int current_tile_y = 0;
+                current_tile_y < MAPS::TILE_MAP_HEIGHT_IN_TILES;
+                ++current_tile_y)
+            {
+                // CREATE TILES FOR THIS ROW.
+                for (unsigned int current_tile_x = 0;
+                    current_tile_x < MAPS::TILE_MAP_WIDTH_IN_TILES;
+                    ++current_tile_x)
+                {
+                    // CREATE THE CURRENT TILE.
+                    MAPS::TileId tile_id = (*tile_map_data.GroundLayer)(current_tile_x, current_tile_y);
+                    std::shared_ptr<MAPS::Tile> tile = tileset->CreateTile(tile_id);
+                    bool tile_exists_in_tileset = (nullptr != tile);
+                    if (!tile_exists_in_tileset)
+                    {
+                        assert(tile_exists_in_tileset);
+                        // Skip to trying to create the next tile.  The layer
+                        // simply won't have any tile at this location.
+                        continue;
+                    }
+
+                    // SET THE TILE IN THE GROUND LAYER.
+                    tile_map.Ground.SetTile(current_tile_x, current_tile_y, tile);
+                }
+            }
+
+            // POPULATE THE ARK LAYER IF ONE EXISTS.
+            if (tile_map_data.ArkLayer)
+            {
+                // GET THE ARK TEXTURE.
+                std::shared_ptr<GRAPHICS::Texture> ark_texture = assets.GetTexture(RESOURCES::ARK_TEXTURE_ID);
+                assert(ark_texture);
+
+                // CREATE PIECES IN THE ARK LAYER.
+                for (unsigned int current_tile_y = 0;
+                    current_tile_y < MAPS::TILE_MAP_HEIGHT_IN_TILES;
+                    ++current_tile_y)
+                {
+                    // CREATE ARK PIECES FOR THIS ROW.
+                    for (unsigned int current_tile_x = 0;
+                        current_tile_x < MAPS::TILE_MAP_WIDTH_IN_TILES;
+                        ++current_tile_x)
+                    {
+                        // CHECK IF THE TILE ID IS VALID.
+                        // Some tiles in this layer may not be for valid ark pieces.
+                        MAPS::TileId tile_id = (*tile_map_data.ArkLayer)(current_tile_x, current_tile_y);
+                        bool tild_id_valid = (tile_id > 0);
+                        if (!tild_id_valid)
+                        {
+                            continue;
+                        }
+
+                        // CREATE THE ARK PIECE.
+                        /// @todo   Rethink how to calculate these ark piece IDs.
+                        const unsigned int STARTING_TILE_ID_OFFSET = 1;
+                        const unsigned int TILE_COUNT_BEFORE_ARK_TILES = 8;
+                        unsigned int ark_piece_id = tile_id - STARTING_TILE_ID_OFFSET - TILE_COUNT_BEFORE_ARK_TILES;
+                        OBJECTS::ArkPiece ark_piece(ark_piece_id, ark_texture);
+                        MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
+                        float tile_left_x_position = static_cast<float>(current_tile_x * tileset_description.TileWidthInPixels); /// \todo Tile Dim
+                        float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;
+                        float tile_top_y_position = static_cast<float>(current_tile_y * tileset_description.TileWidthInPixels); /// \todo Tile Dim
+                        float ark_piece_world_y_position = map_top_world_position + tile_top_y_position + ark_piece_local_center.Y;
+                        ark_piece.Sprite.SetWorldPosition(ark_piece_world_x_position, ark_piece_world_y_position);
+
+                        // ADD THE ARK PIECE TO THE TILE MAP.
+                        tile_map.ArkPieces.push_back(ark_piece);
+                    }
+                }
+            }
+
+            // POPULATE THE OBJECT LAYER IF ONE EXISTS.
+            if (tile_map_data.ObjectLayer)
+            {
+                // CREATE ANY TREES IN THE LAYER.
+                for (unsigned int current_tile_y = 0;
+                    current_tile_y < MAPS::TILE_MAP_HEIGHT_IN_TILES;
+                    ++current_tile_y)
+                {
+                    // CREATE ARK PIECES FOR THIS ROW.
+                    for (unsigned int current_tile_x = 0;
+                        current_tile_x < MAPS::TILE_MAP_WIDTH_IN_TILES;
+                        ++current_tile_x)
+                    {
+                        // CHECK IF THE TILE ID IS VALID.
+                        // Some tiles in this layer may not be for valid ark pieces.
+                        uint8_t object_id = (*tile_map_data.ObjectLayer)(current_tile_x, current_tile_y);
+                        const uint8_t TREE_OBJECT_ID = 1;
+                        bool is_tree = (TREE_OBJECT_ID == object_id);
+                        if (is_tree)
+                        {
+                            // DETERMINE THE SUB-RECTANGLE OF THE TEXTURE TO USE FOR THE TREE.
+                            MATH::FloatRectangle TALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(32.0f, 0.0f, 16.0f, 32.0f);
+                            MATH::FloatRectangle tree_texture_sub_rectangle = TALL_TREE_TEXTURE_SUB_RECTANGLE;
+
+                            // CREATE THE TREE'S SPRITE.
+                            GRAPHICS::Sprite tree_sprite(tree_texture, tree_texture_sub_rectangle);
+                            MATH::Vector2f tree_local_center = tree_sprite.GetOrigin();
+                            auto tree_left_x = current_tile_x * 16;
+                            auto tree_top_y = current_tile_y * 16;
+                            float tree_world_x_position = static_cast<float>(tree_left_x)+tree_local_center.X;
+                            float tree_world_y_position = static_cast<float>(tree_top_y)+tree_local_center.Y;
+                            tree_sprite.SetWorldPosition(tree_world_x_position, tree_world_y_position);
+
+                            // GET THE TREE SHAKING SOUND EFFECT.
+                            // If the sound can't be retrieved, then the game will continue just with no sound playing
+                            // when trees shake.
+                            std::shared_ptr<AUDIO::SoundEffect> tree_shake_sound = assets.GetSound(RESOURCES::TREE_SHAKE_SOUND_ID);
+                            bool tree_shake_sound_retrieved = (nullptr != tree_shake_sound);
+
+                            // CREATE THE TREE.
+                            OBJECTS::Tree tree;
+                            tree.Sprite = tree_sprite;
+                            tree.TreeShakeSound = tree_shake_sound;
+                            tile_map.Trees.push_back(tree);
+                        }
                     }
                 }
             }
@@ -325,6 +494,7 @@ bool LoadTileMapFiles(
 std::shared_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
 {
     // LOAD THE OVERWORLD MAP FILE.
+    auto load_start_time = std::chrono::system_clock::now();
     const std::string OVERWORLD_MAP_FILEPATH = "res/maps/overworld_map.json";
     std::unique_ptr<MAPS::OverworldMapFile> overworld_map_file = MAPS::OverworldMapFile::Load(OVERWORLD_MAP_FILEPATH);
     assert(overworld_map_file);
@@ -342,6 +512,43 @@ std::shared_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
         overworld_map_file->TileMapHeightInTiles,
         overworld_map_file->TileDimensionInPixels);
     PopulateOverworld(*overworld_map_file, tile_map_files, assets, *overworld);
+
+    auto load_end_time = std::chrono::system_clock::now();
+
+    // Overworld load time: 82263372
+    auto load_time_diff = load_end_time - load_start_time;
+    std::cout << "Overworld load time: " << load_time_diff.count() << std::endl;
+
+    // LOAD THE BACKGROUND MUSIC.
+    std::shared_ptr<sf::Music> overworld_background_music = assets.GetMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID);
+    bool background_music_loaded = (nullptr != overworld_background_music);
+    assert(background_music_loaded);
+    overworld->BackgroundMusic = overworld_background_music;
+
+    return overworld;
+}
+
+/// Loads the overworld.
+/// @param[in]  assets - The assets to use for the overworld.
+/// @return The overworld, if successfully loaded; null otherwise.
+std::shared_ptr<MAPS::Overworld> LoadOverworld2(RESOURCES::Assets& assets)
+{
+    // CREATE THE OVERWORLD.
+    auto load_start_time = std::chrono::system_clock::now();
+    std::shared_ptr<MAPS::Overworld> overworld = std::make_shared<MAPS::Overworld>(
+        MAPS::OVERWORLD_WIDTH_IN_TILE_MAPS,
+        MAPS::OVERWORLD_HEIGHT_IN_TILE_MAPS,
+        MAPS::TILE_MAP_WIDTH_IN_TILES,
+        MAPS::TILE_MAP_HEIGHT_IN_TILES,
+        16); /// \todo Constant.
+    PopulateOverworld2(assets, *overworld);
+
+    auto load_end_time = std::chrono::system_clock::now();
+
+    // Overworld load time: 82263372 (file-based)
+    // Overworld load time: 17972479 (array-based)
+    auto load_time_diff = load_end_time - load_start_time;
+    std::cout << "Overworld load time: " << load_time_diff.count() << std::endl;
 
     // LOAD THE BACKGROUND MUSIC.
     std::shared_ptr<sf::Music> overworld_background_music = assets.GetMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID);
@@ -388,7 +595,7 @@ int main(int argumentCount, char* arguments[])
 
         // The overworld is loaded in the background in separate threads to avoid having
         // their loading slow the startup time of the rest of the game.
-        std::future< std::shared_ptr<MAPS::Overworld> > overworld_being_loaded = std::async(LoadOverworld, std::ref(*assets));
+        std::future< std::shared_ptr<MAPS::Overworld> > overworld_being_loaded = std::async(LoadOverworld2, std::ref(*assets));
 
         // INITIALIZE REMAINING SUBSYSTEMS.
         GRAPHICS::Renderer renderer(

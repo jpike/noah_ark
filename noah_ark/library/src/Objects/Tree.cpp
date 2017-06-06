@@ -17,9 +17,7 @@ namespace OBJECTS
         MATH::FloatRectangle world_bounding_box = GetWorldBoundingBox();
 
         // CALCULATE THE CENTER OF THE TREE'S TRUNK.
-        // The center will be set so that it works for all current tree sizes.
-        // It is vertically placed halfway up the pixel grid for the smallest
-        // tree size, which also works well for other tree sizes.
+        // It is vertically placed halfway up the pixel grid.
         const float OFFSET_FROM_TREE_BOTTOM_TO_TRUNK_CENTER_IN_PIXELS = 8.0f;
         float tree_bottom_world_y_position = world_bounding_box.GetBottomYPosition();
         // Y gets smaller going up.

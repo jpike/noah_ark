@@ -4,7 +4,6 @@
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/TextBox.h"
 #include "Graphics/Renderer.h"
-#include "Graphics/Texture.h"
 #include "Input/KeyboardInputController.h"
 #include "Inventory/InventoryGui.h"
 #include "Maps/Overworld.h"
@@ -26,9 +25,7 @@ namespace GUI
             const std::shared_ptr<MAPS::Overworld>& overworld,
             const unsigned int main_text_box_width_in_pixels,
             const unsigned int main_text_box_height_in_pixels,
-            const std::shared_ptr<RESOURCES::Assets>& assets,
-            const std::shared_ptr<const Texture>& axe_texture,
-            const std::shared_ptr<const Texture>& wood_texture);
+            const std::shared_ptr<RESOURCES::Assets>& assets);
 
         // INPUT.
         void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
@@ -51,12 +48,8 @@ namespace GUI
         // PRIVATE MEMBER VARIABLES.
         /// True if the save dialog box is visible; false otherwise.
         bool SaveDialogBoxVisible;
-
-        /// The texture to use for rendering an axe icon.
-        std::shared_ptr<const Texture> AxeTexture;
-        /// The texture to use for rendering a wood icon.
-        std::shared_ptr<const Texture> WoodTexture;
-        
+        /// The assets to use for the HUD.
+        std::shared_ptr<RESOURCES::Assets> Assets;
         /// The overworld whose information is being displayed in the HUD.
         std::shared_ptr<MAPS::Overworld> Overworld;
     };

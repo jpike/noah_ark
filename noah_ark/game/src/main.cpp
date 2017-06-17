@@ -10,7 +10,6 @@
 #include "Input/KeyboardInputController.h"
 #include "Maps/OverworldMapData.h"
 #include "Maps/Tileset.h"
-#include "Maps/TilesetDescription.h"
 #include "Resources/Assets.h"
 #include "States/CreditsScreen.h"
 #include "States/GameplayState.h"
@@ -45,12 +44,8 @@ void PopulateOverworld(
     std::shared_ptr<GRAPHICS::Texture> tree_texture = assets.GetTexture(RESOURCES::TREE_TEXTURE_ID);
     assert(tree_texture);
 
-    MAPS::TilesetDescription tileset_description = {};
-    tileset_description.Name = "ground_tile_set";
-    tileset_description.FirstTileId = 1;
-    tileset_description.TileWidthInPixels = 16;
-    tileset_description.TileHeightInPixels = 16;
-    tileset_description.TransparentColor = "#ff00ff";
+    // CREATE THE TILESET.
+    MAPS::Tileset tileset(tileset_texture);
 
     // LOAD TILE MAPS FOR EACH ROW.
     for (unsigned int row = 0; row < MAPS::OVERWORLD_HEIGHT_IN_TILE_MAPS; ++row)
@@ -61,25 +56,17 @@ void PopulateOverworld(
             // GET THE CURRENT TILE MAP FILE.
             const auto& tile_map_data = MAPS::OVERWORLD_MAP_DATA(column, row);
 
-            // CREATE THE TILESET FOR THE CURRENT FILE.
-            std::unique_ptr<MAPS::Tileset> tileset = MAPS::Tileset::Create({ tileset_description }, tileset_texture);
-            bool tileset_created = (nullptr != tileset);
-            if (!tileset_created)
-            {
-                assert(tileset_created);
-                // Continue trying to create other tile maps.
-                continue;
-            }
-
             // CALCULATE THE POSITION OF THE CURRENT TILE MAP.
             MATH::Vector2f map_center_world_position;
 
-            float map_width_in_pixels = static_cast<float>(MAPS::TILE_MAP_WIDTH_IN_TILES * tileset_description.TileWidthInPixels);
+            unsigned int tile_width_in_pixels = MAPS::Tile::WidthInPixels<unsigned int>();
+            float map_width_in_pixels = static_cast<float>(MAPS::TILE_MAP_WIDTH_IN_TILES * tile_width_in_pixels);
             float map_half_width_in_pixels = map_width_in_pixels / 2.0f;
             float map_left_world_position = static_cast<float>(column * map_width_in_pixels);
             map_center_world_position.X = map_left_world_position + map_half_width_in_pixels;
 
-            float map_height_in_pixels = static_cast<float>(MAPS::TILE_MAP_HEIGHT_IN_TILES * tileset_description.TileHeightInPixels);
+            unsigned int tile_height_in_pixels = MAPS::Tile::HeightInPixels<unsigned int>();
+            float map_height_in_pixels = static_cast<float>(MAPS::TILE_MAP_HEIGHT_IN_TILES * tile_height_in_pixels);
             float map_half_height_in_pixels = map_height_in_pixels / 2.0f;
             float map_top_world_position = static_cast<float>(row * map_height_in_pixels);
             map_center_world_position.Y = map_top_world_position + map_half_height_in_pixels;
@@ -93,7 +80,7 @@ void PopulateOverworld(
                 column,
                 map_center_world_position,
                 map_dimensions_in_tiles,
-                tileset_description.TileWidthInPixels); /// \todo Tile dimension.
+                tile_width_in_pixels); /// \todo Tile dimension.
 
             // CREATE TILES IN THE GROUND LAYER.
             for (unsigned int current_tile_y = 0;
@@ -107,7 +94,7 @@ void PopulateOverworld(
                 {
                     // CREATE THE CURRENT TILE.
                     MAPS::TileId tile_id = (*tile_map_data.GroundLayer)(current_tile_x, current_tile_y);
-                    std::shared_ptr<MAPS::Tile> tile = tileset->CreateTile(tile_id);
+                    std::shared_ptr<MAPS::Tile> tile = tileset.CreateTile(tile_id);
                     bool tile_exists_in_tileset = (nullptr != tile);
                     if (!tile_exists_in_tileset)
                     {
@@ -155,9 +142,9 @@ void PopulateOverworld(
                         unsigned int ark_piece_id = tile_id - STARTING_TILE_ID_OFFSET - TILE_COUNT_BEFORE_ARK_TILES;
                         OBJECTS::ArkPiece ark_piece(ark_piece_id, ark_texture);
                         MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
-                        float tile_left_x_position = static_cast<float>(current_tile_x * tileset_description.TileWidthInPixels); /// \todo Tile Dim
+                        float tile_left_x_position = static_cast<float>(current_tile_x * tile_width_in_pixels); /// \todo Tile Dim
                         float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;
-                        float tile_top_y_position = static_cast<float>(current_tile_y * tileset_description.TileWidthInPixels); /// \todo Tile Dim
+                        float tile_top_y_position = static_cast<float>(current_tile_y * tile_height_in_pixels); /// \todo Tile Dim
                         float ark_piece_world_y_position = map_top_world_position + tile_top_y_position + ark_piece_local_center.Y;
                         ark_piece.Sprite.SetWorldPosition(ark_piece_world_x_position, ark_piece_world_y_position);
 

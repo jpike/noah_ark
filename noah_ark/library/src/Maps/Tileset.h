@@ -5,7 +5,6 @@
 #include <vector>
 #include "Graphics/Texture.h"
 #include "Maps/Tile.h"
-#include "Maps/TilesetDescription.h"
 #include "Math/Rectangle.h"
 
 namespace MAPS
@@ -14,9 +13,7 @@ namespace MAPS
     class Tileset
     {
     public:
-        static std::unique_ptr<Tileset> Create(
-            const std::vector<TilesetDescription>& tileset_descriptions,
-            const std::shared_ptr<GRAPHICS::Texture>& tileset_texture);
+        explicit Tileset(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture);
 
         void SetTile(
             const TileId tile_id, 

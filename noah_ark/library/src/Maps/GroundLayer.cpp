@@ -81,13 +81,13 @@ namespace MAPS
 
         // CALCULATE THE TOP-LEFT WORLD POSITION OF THE LAYER.
         unsigned int layer_width_in_tiles = Tiles.GetWidth();
-        float tile_width_in_pixels = tile->GetWidthInPixels();
+        float tile_width_in_pixels = Tile::WidthInPixels<float>();
         float layer_half_width_in_tiles = static_cast<float>(layer_width_in_tiles) / 2.0f;
         float layer_half_width_in_pixels = layer_half_width_in_tiles * tile_width_in_pixels;
         float layer_left_x_position = CenterWorldPosition.X - layer_half_width_in_pixels;
 
         unsigned int layer_height_in_tiles = Tiles.GetHeight();
-        float tile_height_in_pixels = tile->GetHeightInPixels();
+        float tile_height_in_pixels = Tile::HeightInPixels<float>();
         float layer_half_height_in_tiles = static_cast<float>(layer_height_in_tiles) / 2.0f;
         float layer_half_height_in_pixels = layer_half_height_in_tiles * tile_height_in_pixels;
         // Smaller y-coordinates are at the top of the screen.

@@ -51,7 +51,6 @@
     <ClInclude Include="src\Maps\TileMap.h" />
     <ClInclude Include="src\Maps\TileMapData.h" />
     <ClInclude Include="src\Maps\Tileset.h" />
-    <ClInclude Include="src\Maps\TilesetDescription.h" />
     <ClInclude Include="src\Math\RandomNumberGenerator.h" />
     <ClInclude Include="src\Math\Rectangle.h" />
     <ClInclude Include="src\Math\Vector2.h" />
@@ -109,7 +108,6 @@
     <ClCompile Include="src\Maps\TileMap.cpp" />
     <ClCompile Include="src\Maps\TileMapData.cpp" />
     <ClCompile Include="src\Maps\Tileset.cpp" />
-    <ClCompile Include="src\Maps\TilesetDescription.cpp" />
     <ClCompile Include="src\Objects\Animal.cpp" />
     <ClCompile Include="src\Objects\ArkPiece.cpp" />
     <ClCompile Include="src\Objects\Axe.cpp" />

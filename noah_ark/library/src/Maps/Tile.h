@@ -47,6 +47,12 @@ namespace MAPS
     class Tile
     {
     public:
+        // STATIC DIMENSION METHODS.
+        template <typename NumberType>
+        static NumberType WidthInPixels();
+        template <typename NumberType>
+        static NumberType HeightInPixels();
+
         // CONSTRUCTION.
         explicit Tile();
         explicit Tile(
@@ -55,10 +61,6 @@ namespace MAPS
 
         // POSITIONING.
         void SetWorldPosition(const float world_x_position, const float world_y_position);
-
-        // DIMENSIONS.
-        float GetWidthInPixels() const;
-        float GetHeightInPixels() const;
 
         // BOUNDARIES.
         float GetLeftXPosition() const;
@@ -77,4 +79,22 @@ namespace MAPS
         /// The sprite used for rendering the tile.
         GRAPHICS::Sprite Sprite;
     };
+
+    /// Gets the width of a tile.
+    /// @tparam NumberType - The numeric data type for which to return the width.
+    /// @return The width of a tile in pixels.
+    template <typename NumberType>
+    NumberType Tile::WidthInPixels()
+    {
+        return static_cast<NumberType>(16);
+    }
+
+    /// Gets the height of a tile.
+    /// @tparam NumberType - The numeric data type for which to return the height.
+    /// @return The height of a tile in pixels.
+    template <typename NumberType>
+    NumberType Tile::HeightInPixels()
+    {
+        return static_cast<NumberType>(16);
+    }
 }

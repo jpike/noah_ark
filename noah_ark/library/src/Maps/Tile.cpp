@@ -30,22 +30,6 @@ namespace MAPS
         Sprite.SetWorldPosition(world_x_position, world_y_position);
     }
 
-    /// Gets the width of the tile, in pixels.
-    /// @return The width of the tile in pixels.
-    float Tile::GetWidthInPixels() const
-    {
-        MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
-        return tile_bounding_box.GetWidth();
-    }
-
-    /// Gets the height of the tile, in pixels.
-    /// @return The height of the tile in pixels.
-    float Tile::GetHeightInPixels() const
-    {
-        MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
-        return tile_bounding_box.GetHeight();
-    }
-
     /// Gets the left X position of the tile's bounding box, in world coordinates.
     /// @return The left X position of the tile.
     float Tile::GetLeftXPosition() const

@@ -128,9 +128,6 @@
     <ClInclude Include="src\Core\Array2D.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\TilesetDescription.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Maps\Tileset.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
@@ -300,9 +297,6 @@
     </ClCompile>
     <ClCompile Include="src\Input\KeyboardInputController.cpp">
       <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\TilesetDescription.cpp">
-      <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\Tileset.cpp">
       <Filter>Source Files\Maps</Filter>

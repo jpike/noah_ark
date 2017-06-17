@@ -58,8 +58,8 @@ namespace INVENTORY
             first_verse_to_render_index = SelectedVerseIndex - verses_to_render_half_count;
         }
 
-        unsigned int last_verse_to_render_index = first_verse_to_render_index + verses_to_render_count;
-        unsigned int last_valid_verse_index = BIBLE::BIBLE_VERSES.size() - 1;
+        size_t last_verse_to_render_index = first_verse_to_render_index + verses_to_render_count;
+        size_t last_valid_verse_index = BIBLE::BIBLE_VERSES.size() - 1;
         last_verse_to_render_index = std::min(last_verse_to_render_index, last_valid_verse_index);        
 
         // RENDER THE LIST OF VERSES.
@@ -152,8 +152,8 @@ namespace INVENTORY
     /// If a next verse does not exist, the currently selected verse remains.
     void InventoryBibleVerseListBox::SelectNextVerse()
     {
-        unsigned int next_verse_index = SelectedVerseIndex + 1;
-        unsigned int last_valid_verse_index = BIBLE::BIBLE_VERSES.size() - 1;
-        SelectedVerseIndex = std::min(next_verse_index, last_valid_verse_index);
+        size_t next_verse_index = SelectedVerseIndex + 1;
+        size_t last_valid_verse_index = BIBLE::BIBLE_VERSES.size() - 1;
+        SelectedVerseIndex = static_cast<unsigned int>(std::min(next_verse_index, last_valid_verse_index));
     }
 }

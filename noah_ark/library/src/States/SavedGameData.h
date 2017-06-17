@@ -21,7 +21,7 @@ namespace STATES
         unsigned int TileMapGridYPosition = 0;
         /// The indices of the ark pieces in the tile map
         /// that have been built.
-        std::vector<unsigned int> BuiltArkPieceIndices = {};
+        std::vector<size_t> BuiltArkPieceIndices = {};
     };
 
     /// The data for the saved state of a game.

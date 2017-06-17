@@ -122,8 +122,8 @@ namespace INVENTORY
 
         // RENDER A TAB FOR THE ANIMAL PORTION OF THE GUI.
         const std::string ANIMALS_TAB_STRING = "Animals";
-        unsigned int animals_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * ANIMALS_TAB_STRING.length();
-        unsigned int animals_tab_text_half_width_in_pixels = animals_tab_text_width_in_pixels / 2;
+        size_t animals_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * ANIMALS_TAB_STRING.length();
+        size_t animals_tab_text_half_width_in_pixels = animals_tab_text_width_in_pixels / 2;
         float animals_tab_left_screen_position_in_pixels = background_rectangle.GetCenterXPosition() - animals_tab_text_half_width_in_pixels;
         float animals_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
         MATH::Vector2f animals_tab_left_top_screen_position_in_pixels(
@@ -137,7 +137,7 @@ namespace INVENTORY
 
         // RENDER A TAB FOR THE FOOD PORTION OF THE GUI.
         const std::string FOOD_TAB_STRING = "Food";
-        unsigned int food_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * FOOD_TAB_STRING.length();
+        size_t food_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * FOOD_TAB_STRING.length();
         float food_tab_left_screen_position_in_pixels = background_rectangle.GetRightXPosition() - food_tab_text_width_in_pixels;
         float food_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
         MATH::Vector2f food_tab_left_top_screen_position_in_pixels(
@@ -176,7 +176,7 @@ namespace INVENTORY
         GRAPHICS::Renderer& renderer) const
     {
         // RENDER A BACKGROUND RECTANGLE FOR THE TAB.
-        unsigned int tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * tab_text.length();
+        size_t tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS * tab_text.length();
         MATH::FloatRectangle tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             left_top_screen_position_in_pixels.X,
             left_top_screen_position_in_pixels.Y,

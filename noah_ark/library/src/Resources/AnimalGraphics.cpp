@@ -1,3 +1,4 @@
+#include <cassert>
 #include "Resources/AnimalGraphics.h"
 
 namespace RESOURCES

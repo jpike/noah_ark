@@ -51,7 +51,7 @@ namespace STATES
             assert(current_tile_map);
 
             // UPDATE THE BUILT ARK PIECES IN THE CURRENT TILE MAP.
-            for (unsigned int ark_piece_index : built_ark_piece_data.BuiltArkPieceIndices)
+            for (size_t ark_piece_index : built_ark_piece_data.BuiltArkPieceIndices)
             {
                 // SET THE CURRENT ARK PIECE AS BUILT.
                 auto& ark_piece = current_tile_map->ArkPieces.at(ark_piece_index);
@@ -709,8 +709,8 @@ namespace STATES
                         Speakers.Play(collected_bible_verse_sound);
 
                         // SELECT A RANDOM BIBLE VERSE.
-                        unsigned int remaining_bible_verse_count = BibleVersesLeftToFind.size();
-                        unsigned int random_bible_verse_index = RandomNumberGenerator.RandomNumberLessThan(remaining_bible_verse_count);
+                        size_t remaining_bible_verse_count = BibleVersesLeftToFind.size();
+                        size_t random_bible_verse_index = RandomNumberGenerator.RandomNumberLessThan(remaining_bible_verse_count);
                         auto bible_verse = BibleVersesLeftToFind.begin() + random_bible_verse_index;
 
                         // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.

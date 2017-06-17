@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 #include "Core/NullChecking.h"
 #include "Core/String.h"
@@ -277,9 +278,9 @@ namespace GRAPHICS
                 else
                 {
                     // CHECK IF THE CURRENT LINE CAN HANDLE THE NEXT WORD.
-                    unsigned int current_line_length_in_characters = current_new_line.length();
-                    const unsigned int SPACE_CHARACTER_BETWEEN_WORDS_COUNT = 1;
-                    unsigned int line_length_with_next_word_in_characters =
+                    size_t current_line_length_in_characters = current_new_line.length();
+                    const size_t SPACE_CHARACTER_BETWEEN_WORDS_COUNT = 1;
+                    size_t line_length_with_next_word_in_characters =
                         current_line_length_in_characters +
                         SPACE_CHARACTER_BETWEEN_WORDS_COUNT +
                         next_word.length();
@@ -386,9 +387,9 @@ namespace GRAPHICS
                 else
                 {
                     // CHECK IF THE CURRENT LINE CAN HANDLE THE NEXT WORD.
-                    unsigned int current_line_length_in_characters = current_new_line.length();
-                    const unsigned int SPACE_CHARACTER_BETWEEN_WORDS_COUNT = 1;
-                    unsigned int line_length_with_next_word_in_characters =
+                    size_t current_line_length_in_characters = current_new_line.length();
+                    const size_t SPACE_CHARACTER_BETWEEN_WORDS_COUNT = 1;
+                    size_t line_length_with_next_word_in_characters =
                         current_line_length_in_characters +
                         SPACE_CHARACTER_BETWEEN_WORDS_COUNT +
                         next_word.length();
@@ -432,11 +433,11 @@ namespace GRAPHICS
         // The starting y-position for the first line is offset from the bounding rectangle's
         // top y-position such that half of the unused space appears before and after the text.
         unsigned int bounding_rectangle_height_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetHeight());
-        unsigned int new_line_count = new_lines_of_text.size();
+        size_t new_line_count = new_lines_of_text.size();
         unsigned int glyph_height_in_pixels = GUI::Glyph::HeightInPixels<unsigned int>(text_scale_ratio);
-        unsigned int total_text_height_in_pixels = new_line_count * GUI::Glyph::HEIGHT_IN_PIXELS;
-        unsigned int unused_vertical_space_in_pixels = bounding_rectangle_height_in_pixels - total_text_height_in_pixels;
-        unsigned int half_of_unused_vertical_space_in_pixels = unused_vertical_space_in_pixels / 2;
+        size_t total_text_height_in_pixels = new_line_count * GUI::Glyph::HEIGHT_IN_PIXELS;
+        size_t unused_vertical_space_in_pixels = bounding_rectangle_height_in_pixels - total_text_height_in_pixels;
+        size_t half_of_unused_vertical_space_in_pixels = unused_vertical_space_in_pixels / 2;
         float bounding_rectangle_top_y_screen_position = bounding_screen_rectangle.GetTopYPosition();
         float first_line_top_y_screen_position = bounding_rectangle_top_y_screen_position + half_of_unused_vertical_space_in_pixels;
 
@@ -448,7 +449,7 @@ namespace GRAPHICS
         for (const auto& line : new_lines_of_text)
         {
             // CENTER THE CURRENT LINE HORIZONTALLY.
-            unsigned int current_line_character_count = line.length();
+            size_t current_line_character_count = line.length();
             unsigned int current_line_width_in_pixels = static_cast<unsigned int>(current_line_character_count * glyph_width_in_pixels);
             unsigned int bounding_rectangle_width_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetWidth());
             unsigned int unused_space_on_current_line_in_pixels = bounding_rectangle_width_in_pixels - current_line_width_in_pixels;
@@ -583,8 +584,8 @@ namespace GRAPHICS
     {
         // CONFIGURE THE SHADER IN THE RENDER STATES.
         sf::RenderStates render_states = sf::RenderStates::Default;
-        ColoredTextShader->setParameter("color", sf::Color(color.Red, color.Green, color.Blue, color.Alpha));
-        ColoredTextShader->setParameter("texture", sf::Shader::CurrentTexture);
+        ColoredTextShader->setUniform("color", sf::Glsl::Vec4(sf::Color(color.Red, color.Green, color.Blue, color.Alpha)));
+        ColoredTextShader->setUniform("texture", sf::Shader::CurrentTexture);
         render_states.shader = ColoredTextShader.get();
         return render_states;
     }

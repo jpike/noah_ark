@@ -338,7 +338,7 @@ namespace TEST_TEXT_PAGE
                 // CHECK IF THE CURRENT LINE HAS ROOM FOR A SPACE.
                 // It will be added for the next word if there is room.
                 const unsigned int CHARACTER_COUNT_FOR_SPACE = 1;
-                unsigned int previously_rendered_words_on_current_line_plus_space_character_count =
+                size_t previously_rendered_words_on_current_line_plus_space_character_count =
                     (previously_rendered_words_on_current_line.length() + CHARACTER_COUNT_FOR_SPACE);
                 bool space_fits_on_current_line = (
                     previously_rendered_words_on_current_line_plus_space_character_count <= text_page.MaxCharacterCountPerLine);
@@ -363,7 +363,7 @@ namespace TEST_TEXT_PAGE
                 }
 
                 // CHECK IF THE NEXT WORD FITS ON CURRENT LINE.
-                unsigned int previously_rendered_words_plus_next_word_character_count =
+                size_t previously_rendered_words_plus_next_word_character_count =
                     (previously_rendered_words_on_current_line_plus_space_character_count + next_word->length());
                 bool next_word_fits_on_current_line = (
                     previously_rendered_words_plus_next_word_character_count <= text_page.MaxCharacterCountPerLine);

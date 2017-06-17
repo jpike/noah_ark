@@ -102,7 +102,7 @@ namespace CORE
                 current_word += character;
 
                 // ADD THE WORD IF IT HAS REACHED THE MAXIMUM ALLOWED LENGTH.
-                unsigned int current_word_length_in_characters = current_word.length();
+                size_t current_word_length_in_characters = current_word.length();
                 bool word_met_max_length = (current_word_length_in_characters >= max_length_per_word_in_characters);
                 if (word_met_max_length)
                 {

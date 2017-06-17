@@ -48,7 +48,7 @@ namespace STATES
         // The intro sequence is only completed if the current frame index
         // is greater than the last frame index as the last frame needs
         // to be displayed on screen for some period of time.
-        unsigned int last_frame_index = IntroBibleVerses().size() - 1;
+        size_t last_frame_index = IntroBibleVerses().size() - 1;
         bool intro_sequence_completed = (CurrentFrameIndex > last_frame_index);
         return intro_sequence_completed;
     }

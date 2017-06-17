@@ -1,3 +1,4 @@
+#include <cassert>
 #include "Core/NullChecking.h"
 #include "Inventory/InventoryAnimalsPage.h"
 #include "Resources/AnimalGraphics.h"

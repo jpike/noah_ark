@@ -25,8 +25,8 @@ namespace GRAPHICS
     /// @return The total number of frames.
     unsigned int AnimationSequence::GetFrameCount() const
     {
-        unsigned int frame_count = Frames.size();
-        return frame_count;
+        size_t frame_count = Frames.size();
+        return static_cast<unsigned int>(frame_count);
     }
 
     /// Gets the frame at the specified index.

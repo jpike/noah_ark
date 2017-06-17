@@ -2,7 +2,7 @@
 
 This in-development game is based on the Biblical story of Noah's Ark.  The goal is to provide a fun way to become more familiar with and learn more about the story of Noah's Ark.
 
-The game will be a native Windows game, running at least on Windows 8.  Currently, the game is still in the early stages of development.
+The game will be a native Windows game, running at least on Windows 8 (x64).  Currently, the game is still in the early stages of development.
 
 ## Gameplay
 
@@ -10,7 +10,7 @@ Gameplay details are still being fleshed out, but some preliminary details are p
 
 ## Programming
 
-The game is being programmed using C++ within a Visual Studio 2013 environment.  Doxygen is used to document the code.
+The game is being programmed using C++ within a Visual Studio 2017 environment.  Doxygen is used to document the code.
 
 Several projects exist within the Visual Studio solution:
 * noah_ark_game - The main game.  Uses the library to orchestrate running an actual game.
@@ -20,14 +20,13 @@ Several projects exist within the Visual Studio solution:
 * noah_ark_documentation - A project to hold various documentation files.
 
 Several dependencies are used:
-* [SFML 2.2](http://sfml-dev.org/) - The main library for windowing, graphics, and input. ([zlib/libpng license](http://sfml-dev.org/license.php)).
-* [Boost 1.56.0](http://www.boost.org/) - Used for JSON parsing ([Boost Software license](http://www.boost.org/LICENSE_1_0.txt)).
+* [SFML 2.4.2](http://sfml-dev.org/) - The main library for windowing, graphics, and input. ([zlib/libpng license](http://sfml-dev.org/license.php)).
 * [Catch](https://github.com/philsquared/Catch) - Unit testing ([Boost Software license](https://github.com/philsquared/Catch/blob/master/LICENSE_1_0.txt)).
 
 The dependencies described above are not included with this project and must be downloaded externally.  To build the solution, you'll need to have environment variables set to the following directories:
 
-* SFML_32_BIT_DIR - Set to the root directory for the 32-bit (x86) version of SFML (with include, lib, and bin directories).
-* BOOST_DIR - Set to the root directory for the Boost version (with directories like boost, doc, libs).
+* SFML_64_BIT_DIR - Set to the root directory for the 64-bit (x64) version of SFML (with include, lib, and bin directories).
+** Note that a custom build of the SFML libraries is used for linking.  This is because at the current time, no Visual Studio 2017 pre-built libraries exist.  And even if they did, the pre-built libraries tend to not support full static linking of the Visual C++ runtime, so a custom build was needed.
 * CATCH_DIR - Set to the directory with Catch's catch.hpp file.
 
 ## Graphics

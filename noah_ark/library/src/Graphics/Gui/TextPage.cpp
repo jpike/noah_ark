@@ -43,8 +43,8 @@ namespace GUI
         if (!first_word)
         {
             // ADD THE SPACE IF THERE IS ROOM ON THE CURRENT LINE.
-            const unsigned int CHARACTER_COUNT_FOR_SPACE = 1;
-            unsigned int current_line_character_count_with_space = current_line_of_text->size() + CHARACTER_COUNT_FOR_SPACE;
+            const size_t CHARACTER_COUNT_FOR_SPACE = 1;
+            size_t current_line_character_count_with_space = current_line_of_text->size() + CHARACTER_COUNT_FOR_SPACE;
             bool current_line_can_hold_space = (current_line_character_count_with_space <= MaxCharacterCountPerLine);
             if (current_line_can_hold_space)
             {
@@ -60,7 +60,7 @@ namespace GUI
         }
 
         // CHECK IF THE CURRENT UNFILLED LINE OF TEXT CAN HOLD THE NEW WORD.
-        unsigned int current_line_character_count_with_new_word = current_line_of_text->size() + word.size();
+        size_t current_line_character_count_with_new_word = current_line_of_text->size() + word.size();
         bool current_line_can_hold_new_word = (current_line_character_count_with_new_word <= MaxCharacterCountPerLine);
         if (!current_line_can_hold_new_word)
         {
@@ -175,7 +175,7 @@ namespace GUI
     /// @return The total number of characters in the page.
     unsigned int TextPage::GetTotalCharacterCount() const
     {
-        unsigned int total_character_count = 0;
+        size_t total_character_count = 0;
 
         // COUNT THE CHARACTERS ON EACH LINE.
         for (const auto& line : LinesOfText)
@@ -183,7 +183,7 @@ namespace GUI
             total_character_count += line.size();
         }
 
-        return total_character_count;
+        return static_cast<unsigned int>(total_character_count);
     }
 
     /// Gets the number of characters that have been displayed so far on previous lines.
@@ -192,7 +192,7 @@ namespace GUI
     /// @return The number of characters displayed so far on previous lines.
     unsigned int TextPage::GetCharacterCountForPreviousLines(const unsigned int line_index) const
     {
-        unsigned int character_count_for_previous_lines = 0;
+        size_t character_count_for_previous_lines = 0;
 
         // COUNT CHARACTERS FROM ALL PREVIOUS LINES.
         for (unsigned int previous_line_index = 0; previous_line_index < line_index; ++previous_line_index)
@@ -200,7 +200,7 @@ namespace GUI
             character_count_for_previous_lines += LinesOfText[previous_line_index].size();
         }
 
-        return character_count_for_previous_lines;
+        return static_cast<unsigned int>(character_count_for_previous_lines);
     }
 
     /// Gets the number of characters that have been displayed in the text page so far.
@@ -245,13 +245,13 @@ namespace GUI
         }
 
         // CALCULATE THE DISPLAYED CHARACTER COUNT FOR THE CURRENT LINE.
-        unsigned int displayed_character_count_for_current_line = (displayed_character_count_for_page - character_count_for_previous_lines);
+        size_t displayed_character_count_for_current_line = (displayed_character_count_for_page - character_count_for_previous_lines);
         
         // MAKE SURE THE DISPLAYED CHARACTER COUNT IS IN THE VALID RANGE FOR THE LINE.
         const auto& current_line = LinesOfText[line_index];
         displayed_character_count_for_current_line = std::min(displayed_character_count_for_current_line, current_line.size());
         
-        return displayed_character_count_for_current_line;
+        return static_cast<unsigned int>(displayed_character_count_for_current_line);
     }
 
     /// Gets the line of text for the specified line index.

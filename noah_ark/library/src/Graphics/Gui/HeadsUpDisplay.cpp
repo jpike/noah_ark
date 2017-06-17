@@ -1,3 +1,4 @@
+#include <cassert>
 #include "Core/NullChecking.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
@@ -66,9 +67,9 @@ namespace GUI
                         // GATHER ANY ARK PIECES BUILT IN THE CURRENT TILE MAP.
                         const MAPS::TileMap* current_tile_map = Overworld->GetTileMap(tile_map_y_index, tile_map_x_index);
                         assert(current_tile_map);
-                        std::vector<unsigned int> built_ark_piece_indices;
-                        unsigned int ark_piece_count = current_tile_map->ArkPieces.size();
-                        for (unsigned int ark_piece_index = 0; ark_piece_index < ark_piece_count; ++ark_piece_index)
+                        std::vector<size_t> built_ark_piece_indices;
+                        size_t ark_piece_count = current_tile_map->ArkPieces.size();
+                        for (size_t ark_piece_index = 0; ark_piece_index < ark_piece_count; ++ark_piece_index)
                         {
                             // CHECK IF THE CURRENT ARK PIECE IS BUILT.
                             const auto& ark_piece = current_tile_map->ArkPieces.at(ark_piece_index);
@@ -222,7 +223,7 @@ namespace GUI
             static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
         const std::string OPEN_INVENTORY_TEXT = "Inventory";
         // One glyph is rendered per character.
-        const unsigned int OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS = (Glyph::WIDTH_IN_PIXELS * OPEN_INVENTORY_TEXT.size());
+        const size_t OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS = (Glyph::WIDTH_IN_PIXELS * OPEN_INVENTORY_TEXT.size());
         MATH::Vector2f open_inventory_text_top_left_screen_position_in_pixels = TOP_RIGHT_SCREEN_POSITION_IN_PIXELS;
         open_inventory_text_top_left_screen_position_in_pixels.X -= OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS;
         renderer.RenderText(OPEN_INVENTORY_TEXT, open_inventory_text_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);

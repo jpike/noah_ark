@@ -42,8 +42,8 @@ namespace STATES
             {
                 // MOVE TO THE NEXT MENU OPTION.
                 // Protection against moving to an invalid menu option is needed.
-                unsigned int menu_option_count = MenuOptions.size();
-                unsigned int last_menu_option_index = menu_option_count - 1;
+                size_t menu_option_count = MenuOptions.size();
+                size_t last_menu_option_index = menu_option_count - 1;
                 bool next_menu_option_exists = (SelectedMenuOptionIndex < last_menu_option_index);
                 if (next_menu_option_exists)
                 {
@@ -97,8 +97,8 @@ namespace STATES
         // DRAW EACH OF THE MENU OPTIONS.
         float two_thirds_screen_height_in_pixels = 2 * one_third_of_screen_height_in_pixels;
         float current_menu_option_top_screen_position = two_thirds_screen_height_in_pixels;
-        unsigned int menu_option_count = MenuOptions.size();
-        for (unsigned int menu_option_index = 0; menu_option_index < menu_option_count; ++menu_option_index)
+        size_t menu_option_count = MenuOptions.size();
+        for (size_t menu_option_index = 0; menu_option_index < menu_option_count; ++menu_option_index)
         {
             // CALCULATE THE SCREEN RECTANGLE FOR THE CURRENT MENU OPTION.
             float menu_option_screen_height = static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);

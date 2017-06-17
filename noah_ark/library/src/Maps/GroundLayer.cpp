@@ -81,26 +81,24 @@ namespace MAPS
 
         // CALCULATE THE TOP-LEFT WORLD POSITION OF THE LAYER.
         unsigned int layer_width_in_tiles = Tiles.GetWidth();
-        float tile_width_in_pixels = Tile::WidthInPixels<float>();
         float layer_half_width_in_tiles = static_cast<float>(layer_width_in_tiles) / 2.0f;
-        float layer_half_width_in_pixels = layer_half_width_in_tiles * tile_width_in_pixels;
+        float layer_half_width_in_pixels = layer_half_width_in_tiles * Tile::DIMENSION_IN_PIXELS<float>;
         float layer_left_x_position = CenterWorldPosition.X - layer_half_width_in_pixels;
 
         unsigned int layer_height_in_tiles = Tiles.GetHeight();
-        float tile_height_in_pixels = Tile::HeightInPixels<float>();
         float layer_half_height_in_tiles = static_cast<float>(layer_height_in_tiles) / 2.0f;
-        float layer_half_height_in_pixels = layer_half_height_in_tiles * tile_height_in_pixels;
+        float layer_half_height_in_pixels = layer_half_height_in_tiles * Tile::DIMENSION_IN_PIXELS<float>;
         // Smaller y-coordinates are at the top of the screen.
         float layer_top_y_position = CenterWorldPosition.Y - layer_half_height_in_pixels;
 
         // SET THE TILE'S WORLD POSITION.
         // The half width/height are added to position the tile based on its center rather than top-left.
-        float tile_x_offset_in_pixels = x_offset_from_left_in_tiles * tile_width_in_pixels;
-        float tile_half_width_in_pixels = tile_width_in_pixels / 2.0f;
+        float tile_x_offset_in_pixels = x_offset_from_left_in_tiles * Tile::DIMENSION_IN_PIXELS<float>;
+        float tile_half_width_in_pixels = Tile::DIMENSION_IN_PIXELS<float> / 2.0f;
         float tile_world_x_position = layer_left_x_position + tile_x_offset_in_pixels + tile_half_width_in_pixels;
 
-        float tile_y_offset_in_pixels = y_offset_from_top_in_tiles * tile_height_in_pixels;
-        float tile_half_height_in_pixels = tile_height_in_pixels / 2.0f;
+        float tile_y_offset_in_pixels = y_offset_from_top_in_tiles * Tile::DIMENSION_IN_PIXELS<float>;
+        float tile_half_height_in_pixels = Tile::DIMENSION_IN_PIXELS<float> / 2.0f;
         float tile_world_y_position = layer_top_y_position + tile_y_offset_in_pixels + tile_half_height_in_pixels;
 
         tile->SetWorldPosition(tile_world_x_position, tile_world_y_position);

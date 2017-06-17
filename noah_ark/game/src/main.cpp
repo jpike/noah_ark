@@ -48,10 +48,10 @@ void PopulateOverworld(
     MAPS::Tileset tileset(tileset_texture);
 
     // LOAD TILE MAPS FOR EACH ROW.
-    for (unsigned int row = 0; row < MAPS::OVERWORLD_HEIGHT_IN_TILE_MAPS; ++row)
+    for (unsigned int row = 0; row < MAPS::Overworld::HEIGHT_IN_TILE_MAPS; ++row)
     {
         // LOAD TILE MAPS FOR EACH COLUMN.
-        for (unsigned int column = 0; column < MAPS::OVERWORLD_WIDTH_IN_TILE_MAPS; ++column)
+        for (unsigned int column = 0; column < MAPS::Overworld::WIDTH_IN_TILE_MAPS; ++column)
         {
             // GET THE CURRENT TILE MAP FILE.
             const auto& tile_map_data = MAPS::OVERWORLD_MAP_DATA(column, row);
@@ -59,37 +59,35 @@ void PopulateOverworld(
             // CALCULATE THE POSITION OF THE CURRENT TILE MAP.
             MATH::Vector2f map_center_world_position;
 
-            unsigned int tile_width_in_pixels = MAPS::Tile::WidthInPixels<unsigned int>();
-            float map_width_in_pixels = static_cast<float>(MAPS::TILE_MAP_WIDTH_IN_TILES * tile_width_in_pixels);
+            float map_width_in_pixels = static_cast<float>(MAPS::TileMap::WIDTH_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
             float map_half_width_in_pixels = map_width_in_pixels / 2.0f;
             float map_left_world_position = static_cast<float>(column * map_width_in_pixels);
             map_center_world_position.X = map_left_world_position + map_half_width_in_pixels;
 
-            unsigned int tile_height_in_pixels = MAPS::Tile::HeightInPixels<unsigned int>();
-            float map_height_in_pixels = static_cast<float>(MAPS::TILE_MAP_HEIGHT_IN_TILES * tile_height_in_pixels);
+            float map_height_in_pixels = static_cast<float>(MAPS::TileMap::HEIGHT_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
             float map_half_height_in_pixels = map_height_in_pixels / 2.0f;
             float map_top_world_position = static_cast<float>(row * map_height_in_pixels);
             map_center_world_position.Y = map_top_world_position + map_half_height_in_pixels;
 
             // CREATE AN EMPTY TILE MAP.
             MATH::Vector2ui map_dimensions_in_tiles(
-                MAPS::TILE_MAP_WIDTH_IN_TILES,
-                MAPS::TILE_MAP_HEIGHT_IN_TILES);
+                MAPS::TileMap::WIDTH_IN_TILES,
+                MAPS::TileMap::HEIGHT_IN_TILES);
             MAPS::TileMap tile_map(
                 row,
                 column,
                 map_center_world_position,
                 map_dimensions_in_tiles,
-                tile_width_in_pixels); /// \todo Tile dimension.
+                MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
 
             // CREATE TILES IN THE GROUND LAYER.
             for (unsigned int current_tile_y = 0;
-                current_tile_y < MAPS::TILE_MAP_HEIGHT_IN_TILES;
+                current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
                 ++current_tile_y)
             {
                 // CREATE TILES FOR THIS ROW.
                 for (unsigned int current_tile_x = 0;
-                    current_tile_x < MAPS::TILE_MAP_WIDTH_IN_TILES;
+                    current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
                     ++current_tile_x)
                 {
                     // CREATE THE CURRENT TILE.
@@ -118,12 +116,12 @@ void PopulateOverworld(
 
                 // CREATE PIECES IN THE ARK LAYER.
                 for (unsigned int current_tile_y = 0;
-                    current_tile_y < MAPS::TILE_MAP_HEIGHT_IN_TILES;
+                    current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
                     ++current_tile_y)
                 {
                     // CREATE ARK PIECES FOR THIS ROW.
                     for (unsigned int current_tile_x = 0;
-                        current_tile_x < MAPS::TILE_MAP_WIDTH_IN_TILES;
+                        current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
                         ++current_tile_x)
                     {
                         // CHECK IF THE TILE ID IS VALID.
@@ -142,9 +140,9 @@ void PopulateOverworld(
                         unsigned int ark_piece_id = tile_id - STARTING_TILE_ID_OFFSET - TILE_COUNT_BEFORE_ARK_TILES;
                         OBJECTS::ArkPiece ark_piece(ark_piece_id, ark_texture);
                         MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
-                        float tile_left_x_position = static_cast<float>(current_tile_x * tile_width_in_pixels); /// \todo Tile Dim
+                        float tile_left_x_position = static_cast<float>(current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
                         float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;
-                        float tile_top_y_position = static_cast<float>(current_tile_y * tile_height_in_pixels); /// \todo Tile Dim
+                        float tile_top_y_position = static_cast<float>(current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
                         float ark_piece_world_y_position = map_top_world_position + tile_top_y_position + ark_piece_local_center.Y;
                         ark_piece.Sprite.SetWorldPosition(ark_piece_world_x_position, ark_piece_world_y_position);
 
@@ -159,12 +157,12 @@ void PopulateOverworld(
             {
                 // CREATE ANY TREES IN THE LAYER.
                 for (unsigned int current_tile_y = 0;
-                    current_tile_y < MAPS::TILE_MAP_HEIGHT_IN_TILES;
+                    current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
                     ++current_tile_y)
                 {
                     // CREATE ARK PIECES FOR THIS ROW.
                     for (unsigned int current_tile_x = 0;
-                        current_tile_x < MAPS::TILE_MAP_WIDTH_IN_TILES;
+                        current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
                         ++current_tile_x)
                     {
                         // CHECK IF THE TILE ID IS VALID.
@@ -181,10 +179,10 @@ void PopulateOverworld(
                             // CREATE THE TREE'S SPRITE.
                             GRAPHICS::Sprite tree_sprite(tree_texture, tree_texture_sub_rectangle);
                             MATH::Vector2f tree_local_center = tree_sprite.GetOrigin();
-                            auto tree_left_x = current_tile_x * 16;
-                            auto tree_top_y = current_tile_y * 16;
-                            float tree_world_x_position = static_cast<float>(tree_left_x)+tree_local_center.X;
-                            float tree_world_y_position = static_cast<float>(tree_top_y)+tree_local_center.Y;
+                            auto tree_left_x = current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>;
+                            auto tree_top_y = current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>;
+                            float tree_world_x_position = static_cast<float>(tree_left_x) + tree_local_center.X;
+                            float tree_world_y_position = static_cast<float>(tree_top_y) + tree_local_center.Y;
                             tree_sprite.SetWorldPosition(tree_world_x_position, tree_world_y_position);
 
                             // GET THE TREE SHAKING SOUND EFFECT.
@@ -209,7 +207,6 @@ void PopulateOverworld(
     }
 }
 
-
 /// Loads the overworld.
 /// @param[in]  assets - The assets to use for the overworld.
 /// @return The overworld, if successfully loaded; null otherwise.
@@ -217,12 +214,7 @@ std::shared_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
 {
     // CREATE THE OVERWORLD.
     auto load_start_time = std::chrono::system_clock::now();
-    std::shared_ptr<MAPS::Overworld> overworld = std::make_shared<MAPS::Overworld>(
-        MAPS::OVERWORLD_WIDTH_IN_TILE_MAPS,
-        MAPS::OVERWORLD_HEIGHT_IN_TILE_MAPS,
-        MAPS::TILE_MAP_WIDTH_IN_TILES,
-        MAPS::TILE_MAP_HEIGHT_IN_TILES,
-        16); /// \todo Constant.
+    std::shared_ptr<MAPS::Overworld> overworld = std::make_shared<MAPS::Overworld>();
     PopulateOverworld(assets, *overworld);
 
     auto load_end_time = std::chrono::system_clock::now();

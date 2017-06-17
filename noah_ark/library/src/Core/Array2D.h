@@ -21,13 +21,15 @@ namespace CORE
     {
     public:
         // CONSTRUCTION.
-        explicit Array2D();
+        /// Default constructor to create an empty array.  It must be resized later before use.
+        explicit Array2D() = default;
         explicit Array2D(const unsigned int width, const unsigned int height);
         explicit Array2D(const unsigned int width, const unsigned int height, const std::initializer_list<T>& data);
+        Array2D(const Array2D&) = default;
 
         // ASSIGNMENT OPERATORS.
-        Array2D& operator=(const Array2D& rhs);
-        Array2D& operator=(Array2D&& rhs);
+        Array2D& operator=(const Array2D&) = default;
+        Array2D& operator=(Array2D&&) = default;
 
         // COMPARISON OPERATORS.
         bool operator==(const Array2D& rhs) const;
@@ -51,24 +53,15 @@ namespace CORE
 
         // MEMBER VARIABLES.
         /// The width (number of columns) in the array.
-        unsigned int Width;
+        unsigned int Width = 0;
         /// The height (number of rows) in the array.
-        unsigned int Height;
+        unsigned int Height = 0;
         /// The raw data in the array.  It is stored in 1D format because this
         /// was deemed to be simplest.  Data is stored starting with the top row,
         /// going down to lower rows.  Within each row, each element is stored
         /// from left to right.
-        std::vector<T> Data;
+        std::vector<T> Data = {};
     };
-
-    /// Constructor to create an empty array.  It must be
-    /// resized later before use.
-    template <typename T>
-    Array2D<T>::Array2D() :
-    Width(0),
-    Height(0),
-    Data()
-    {}
 
     /// Constructor.  The array will be filled with default
     /// constructed elements to fill its maximum capacity.
@@ -106,42 +99,6 @@ namespace CORE
         {
             throw std::invalid_argument("Insufficient data elements provided to Array2D.");
         }
-    }
-
-    /// Copy assignment operator.
-    /// @param[in]  rhs - The array to assign from.
-    /// @return This array after assignment.
-    template <typename T>
-    Array2D<T>& Array2D<T>::operator=(const Array2D<T>& rhs)
-    {
-        // ONLY COPY FIELDS IF SELF-ASSIGNMENT ISN'T OCCURRING.
-        bool self_assignment = (this == &rhs);
-        if (!self_assignment)
-        {
-            Width = rhs.Width;
-            Height = rhs.Height;
-            Data = rhs.Data;
-        }
-
-        return (*this);
-    }
-
-    /// Move assignment operator.
-    /// @param[in,out]  rhs - The array to assign from.
-    /// @return This array after assignment.
-    template <typename T>
-    Array2D<T>& Array2D<T>::operator=(Array2D<T>&& rhs)
-    {
-        // ONLY MOVE FIELDS IF SELF-ASSIGNMENT ISN'T OCCURRING.
-        bool self_assignment = (this == &rhs);
-        if (!self_assignment)
-        {
-            Width = std::move(rhs.Width);
-            Height = std::move(rhs.Height);
-            Data = std::move(rhs.Data);
-        }
-
-        return (*this);
     }
 
     /// Equality operator.

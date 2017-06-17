@@ -16,6 +16,12 @@ namespace MAPS
     class TileMap
     {
     public:
+        // STATIC DIMENSION CONSTANTS.
+        /// The width of a tile map, in tiles.
+        static const unsigned int WIDTH_IN_TILES = 32;
+        /// The height of a tile map, in tiles.
+        static const unsigned int HEIGHT_IN_TILES = 24;
+
         // CONSTRUCTION.
         explicit TileMap(
             const unsigned int overworld_row_index = 0,

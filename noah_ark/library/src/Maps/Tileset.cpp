@@ -14,11 +14,9 @@ namespace MAPS
         // POPULATE A TILESET FROM THE TEXTURE.
         const MAPS::TileId FIRST_TILE_ID = 1;
         MAPS::TileId current_tile_id = FIRST_TILE_ID;
-        const unsigned int TILE_HEIGHT_IN_PIXELS = 16;
-        const unsigned int TILE_WIDTH_IN_PIXELS = 16;
         MATH::Vector2ui tileset_texture_dimensions = tileset_texture->GetSize();
-        unsigned int row_count_of_tiles = tileset_texture_dimensions.Y / TILE_HEIGHT_IN_PIXELS;
-        unsigned int column_count_of_tiles = tileset_texture_dimensions.X / TILE_WIDTH_IN_PIXELS;
+        unsigned int row_count_of_tiles = tileset_texture_dimensions.Y / Tile::DIMENSION_IN_PIXELS<unsigned int>;
+        unsigned int column_count_of_tiles = tileset_texture_dimensions.X / Tile::DIMENSION_IN_PIXELS<unsigned int>;
         for (unsigned int tile_row_index = 0;
             tile_row_index < row_count_of_tiles;
             ++tile_row_index)
@@ -28,15 +26,15 @@ namespace MAPS
                 ++tile_column_index)
             {
                 // CALCULATE THE OFFSET WITHIN THE TEXTURE FOR THE CURRENT TILE.
-                int tile_left_texture_offset_in_texels = tile_column_index * TILE_WIDTH_IN_PIXELS;
-                int tile_top_texture_offset_in_texels = tile_row_index * TILE_HEIGHT_IN_PIXELS;
+                int tile_left_texture_offset_in_texels = tile_column_index * Tile::DIMENSION_IN_PIXELS<unsigned int>;
+                int tile_top_texture_offset_in_texels = tile_row_index * Tile::DIMENSION_IN_PIXELS<unsigned int>;
 
                 // CREATE A SPRITE FOR THE CURRENT TILE.
                 MATH::FloatRectangle tile_texture_rect = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     static_cast<float>(tile_left_texture_offset_in_texels),
                     static_cast<float>(tile_top_texture_offset_in_texels),
-                    static_cast<float>(TILE_WIDTH_IN_PIXELS),
-                    static_cast<float>(TILE_HEIGHT_IN_PIXELS));
+                    Tile::DIMENSION_IN_PIXELS<float>,
+                    Tile::DIMENSION_IN_PIXELS<float>);
 
                 // STORE THE CURRENT TILE.
                 SetTile(current_tile_id, tileset_texture, tile_texture_rect);

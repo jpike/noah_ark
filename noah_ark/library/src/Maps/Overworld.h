@@ -16,13 +16,11 @@ namespace MAPS
     class Overworld
     {
     public:
-        // CONSTRUCTION.
-        explicit Overworld(
-            const unsigned int width_in_tile_maps, 
-            const unsigned int height_in_tile_maps,
-            const unsigned int tile_map_width_in_tiles,
-            const unsigned int tile_map_height_in_tiles,
-            const unsigned int tile_dimension_in_pixels);
+        // STATIC DIMENSION CONSTANTS.
+        /// The width of the overworld, in tile maps.
+        static const unsigned int WIDTH_IN_TILE_MAPS = 7;
+        /// The height of the overworld, in tile maps.
+        static const unsigned int HEIGHT_IN_TILE_MAPS = 7;
 
         // TILE MAP RETRIEVAL.
         const MAPS::TileMap* GetTileMap(const unsigned int row, const unsigned int column) const;
@@ -36,19 +34,12 @@ namespace MAPS
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// Tile maps in the overworld, arranged by column/row position in a grid rather than
         /// by absolute world positions.  (0,0) (column/x,row/y) is the top-left tile map.
-        CORE::Array2D<MAPS::TileMap> TileMaps;
-        /// The width of a single tile map in the overworld (in units of tiles).
-        unsigned int TileMapWidthInTiles;
-        /// The height of a single tile map in the overworld (in units of tiles).
-        unsigned int TileMapHeightInTiles;
-        /// The dimension (both width and height) of a single tile in the overworld
-        /// (in units of pixels).
-        unsigned int TileDimensionInPixels;
+        CORE::Array2D<MAPS::TileMap> TileMaps = CORE::Array2D<MAPS::TileMap>(WIDTH_IN_TILE_MAPS, HEIGHT_IN_TILE_MAPS);
         /// Noah (the player) character within the world.
-        std::unique_ptr<OBJECTS::Noah> NoahPlayer;
+        std::unique_ptr<OBJECTS::Noah> NoahPlayer = nullptr;
         /// Axe swings currently occurring in the world.
-        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings;
+        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings = {};
         /// The background music for the overworld.
-        std::shared_ptr<sf::Music> BackgroundMusic;
+        std::shared_ptr<sf::Music> BackgroundMusic = nullptr;
     };
 }

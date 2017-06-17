@@ -5,9 +5,6 @@
 
 namespace MAPS
 {
-    const unsigned int TILE_MAP_WIDTH_IN_TILES = 32;
-    const unsigned int TILE_MAP_HEIGHT_IN_TILES = 24;
-
     // COLUMN 0 MAP DATA.
     extern const CORE::Array2D<uint8_t> TILE_MAP_0_0_GROUND_LAYER;
     extern const CORE::Array2D<uint8_t> TILE_MAP_0_0_OBJECT_LAYER;

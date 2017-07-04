@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 #include "Collision/CollisionDetectionAlgorithms.h"
 
 namespace COLLISION
@@ -39,6 +40,8 @@ namespace COLLISION
             MATH::Vector2f object_original_center_world_position = object_current_bounding_box.GetCenterPosition();
             MATH::Vector2f remaining_move_vector = MATH::Vector2f::Scale(move_distance_this_iteration, unit_move_vector);
             MATH::Vector2f object_center_world_position = object_original_center_world_position + remaining_move_vector;
+            MATH::FloatRectangle object_new_bounding_box = object_current_bounding_box;
+            object_new_bounding_box.SetCenterPosition(object_center_world_position.X, object_center_world_position.Y);
 
             // GET THE TILE AT THE OBJECT'S POTENTIAL NEW POSITION.
             std::shared_ptr<MAPS::Tile> tile_at_new_object_position = overworld.GetTileAtWorldPosition(
@@ -74,9 +77,6 @@ namespace COLLISION
                     // in which case movement should not be stopped.
                     // If the object is closer to the tree, then the object was moving toward the tree.
                     // Otherwise, the object was moving away and should be allowed to move.
-                    /// @todo   Update this logic to check corners of bounding boxes.
-                    /// The center works well enough for now, but sometimes animals get
-                    /// a little "stuck", so we can do better.
                     MATH::Vector2f tree_center_world_position = tree_rectangle.GetCenterPosition();
                     MATH::Vector2f original_tree_to_object_vector = tree_center_world_position - object_original_center_world_position;
                     float original_tree_to_object_distance = original_tree_to_object_vector.Length();
@@ -85,19 +85,118 @@ namespace COLLISION
                     bool object_moved_toward_tree = (new_tree_to_object_distance < original_tree_to_object_distance);
                     if (object_moved_toward_tree)
                     {
-                        // RETURN THE OBJECT'S CURRENT UPDATED WORLD POSITION.
-                        // It can't move any further if there a tree is in the way.
-                        MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
-                        return new_center_world_position;
+                        // DETERMINE IF THE OBJECT CAN MOVE SOME ALONG ONE AXIS.
+                        // The object may have primarily collided with one side of the tree.
+                        // If not moving completely horizontally or vertically, the object may be able
+                        // to move a little bit alongside the tree.  Doing this kind of check here
+                        // helps prevent objects from getting stuck.
+                        float tree_top_y_world_position = tree_rectangle.GetTopYPosition();
+                        float tree_bottom_y_world_position = tree_rectangle.GetBottomYPosition();
+                        float tree_left_x_world_position = tree_rectangle.GetLeftXPosition();
+                        float tree_right_x_world_position = tree_rectangle.GetRightXPosition();
+                        float object_new_top_y_world_position = object_new_bounding_box.GetTopYPosition();
+                        float object_new_bottom_y_world_position = object_new_bounding_box.GetBottomYPosition();
+                        float object_new_left_x_world_position = object_new_bounding_box.GetLeftXPosition();
+                        float object_new_right_x_world_position = object_new_bounding_box.GetRightXPosition();
+                        // 5 cases for the object colliding with the left or right side of the tree:
+                        // - Object center y completely within tree bounds.
+                        // - Object top y is above tree, object bottom y is below top of tree, and object center right of tree.
+                        // - Object top y is above tree, object bottom y is below top of tree, and object center left of tree.
+                        // - Object bottom y is below tree, object top y is above bottom of tree, and object center right of tree.
+                        // - Object bottom y is below tree, object top y is above bottom of tree, and object center left of tree.
+                        bool object_center_y_within_tree_bounds = (
+                            (tree_top_y_world_position < object_center_world_position.Y) &&
+                            (object_center_world_position.Y < tree_bottom_y_world_position));
+                        bool object_bottom_hit_tree_from_right = (
+                            (object_new_top_y_world_position < tree_top_y_world_position) &&
+                            (object_new_bottom_y_world_position > tree_top_y_world_position) &&
+                            (object_center_world_position.X > tree_right_x_world_position));
+                        bool object_bottom_hit_tree_from_left = (
+                            (object_new_top_y_world_position < tree_top_y_world_position) &&
+                            (object_new_bottom_y_world_position > tree_top_y_world_position) &&
+                            (object_center_world_position.X < tree_left_x_world_position));
+                        bool object_top_hit_tree_from_right = (
+                            (object_new_bottom_y_world_position > tree_bottom_y_world_position) &&
+                            (object_new_top_y_world_position > tree_bottom_y_world_position) &&
+                            (object_center_world_position.X > tree_right_x_world_position));
+                        bool object_top_hit_tree_from_left = (
+                            (object_new_bottom_y_world_position > tree_bottom_y_world_position) &&
+                            (object_new_top_y_world_position > tree_bottom_y_world_position) &&
+                            (object_center_world_position.X < tree_left_x_world_position));
+                        bool object_collided_horizontally_with_tree = (
+                            object_center_y_within_tree_bounds ||
+                            object_bottom_hit_tree_from_right ||
+                            object_bottom_hit_tree_from_left ||
+                            object_top_hit_tree_from_right ||
+                            object_top_hit_tree_from_left);
+                        // 5 cases for the object colliding with the top or bottom side of the tree
+                        // - Object center x is completely within tree bounds.
+                        // - Object left x is left of tree, object right x is right of left of tree, and object center above tree.
+                        // - Object left x is left of tree, object right x is right of left of tree, and object center below tree.
+                        // - Object right x is right of tree, object left x is left of right of tree, and object center above tree.
+                        // - Object right x is right of tree, object left x is left of right of tree, and object center below tree.
+                        bool object_center_x_within_tree_bounds = (
+                            (tree_left_x_world_position < object_center_world_position.X) &&
+                            (object_center_world_position.X < tree_right_x_world_position));
+                        bool object_right_hit_tree_from_top = (
+                            (object_new_left_x_world_position < tree_left_x_world_position) &&
+                            (object_new_right_x_world_position > tree_left_x_world_position) &&
+                            (object_center_world_position.Y < tree_top_y_world_position));
+                        bool object_right_hit_tree_from_bottom = (
+                            (object_new_left_x_world_position < tree_left_x_world_position) &&
+                            (object_new_right_x_world_position > tree_left_x_world_position) &&
+                            (object_center_world_position.Y > tree_bottom_y_world_position));
+                        bool object_left_hit_tree_from_top = (
+                            (object_new_right_x_world_position > tree_right_x_world_position) &&
+                            (object_new_left_x_world_position < tree_right_x_world_position) &&
+                            (object_center_world_position.Y < tree_top_y_world_position));
+                        bool object_left_hit_tree_from_bottom = (
+                            (object_new_right_x_world_position > tree_right_x_world_position) &&
+                            (object_new_left_x_world_position < tree_right_x_world_position) &&
+                            (object_center_world_position.Y > tree_bottom_y_world_position));
+                        bool object_collided_vertically_with_tree = (
+                            object_center_x_within_tree_bounds ||
+                            object_right_hit_tree_from_top ||
+                            object_right_hit_tree_from_bottom ||
+                            object_left_hit_tree_from_top ||
+                            object_left_hit_tree_from_bottom);
+
+                        // PERFORM ANY PARTIAL MOVEMENT BASED ON THE COLLISION.
+                        // If there's both a horizontal and vertical collision, one is arbitrarily chosen
+                        // first to keep the object moving.
+                        if (object_collided_horizontally_with_tree)
+                        {
+                            std::cout << "Collided horizontally" << std::endl;
+
+                            // ONLY MOVE THE OBJECT VERTICALLY.
+                            MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                            new_center_world_position.Y = object_center_world_position.Y;
+                            return new_center_world_position;
+                        }
+                        else if (object_collided_vertically_with_tree)
+                        {
+                            std::cout << "Collided vertically" << std::endl;
+
+                            // ONLY MOVE THE OBJECT HORIZONTALLY.
+                            MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                            new_center_world_position.X = object_center_world_position.X;
+                            return new_center_world_position;
+                        }
+                        else
+                        {
+                            // RETURN THE OBJECT'S CURRENT UPDATED WORLD POSITION.
+                            // Assume the tree is completely blocking movement.
+                            // It can't move any further if there a tree is in the way.
+                            std::cout << "Completely blocking" << std::endl;
+                            MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                            return new_center_world_position;
+                        }
                     }
                 }
             }
 
-            /// @todo   Handle more incremental move distances?
-            /// Find min distance between object position and corner of tile?
-
             // UPDATE THE OBJECT'S BOUNDING BOX FOR THE MOVEMENT THIS ITERATION.
-            object_current_bounding_box.SetCenterPosition(object_center_world_position.X, object_center_world_position.Y);
+            object_current_bounding_box = object_new_bounding_box;
 
             // ACCOUNT FOR THE MOVEMENT THIS ITERATION.
             distance_left_to_move -= move_distance_this_iteration;

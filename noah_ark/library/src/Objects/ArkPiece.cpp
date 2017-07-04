@@ -18,9 +18,11 @@ namespace OBJECTS
         // SET THE TEXTURE RECTANGLE BASED ON THE ID.
         const unsigned int ARK_TILES_PER_ROW = 8;
         const unsigned int ARK_PIECE_DIMENSION = 16;
-        unsigned int ark_column_index = id % ARK_TILES_PER_ROW;
+        // IDs are 1-based; indexes are 0-based.
+        unsigned int ark_tile_index = id - 1;
+        unsigned int ark_column_index = ark_tile_index % ARK_TILES_PER_ROW;
         unsigned int texture_left_position = ark_column_index * ARK_PIECE_DIMENSION;
-        unsigned int ark_row_index = id / ARK_TILES_PER_ROW;
+        unsigned int ark_row_index = ark_tile_index / ARK_TILES_PER_ROW;
         unsigned int texture_top_position = ark_row_index * ARK_PIECE_DIMENSION;
         MATH::FloatRectangle texture_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             static_cast<float>(texture_left_position),

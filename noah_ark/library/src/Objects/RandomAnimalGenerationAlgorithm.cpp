@@ -50,7 +50,23 @@ namespace OBJECTS
         std::shared_ptr<MAPS::Tile> tile_at_animal_generation_point = tile_map.GetTileAtWorldPosition(
             random_x_position, 
             random_y_position);
-        assert(tile_at_animal_generation_point);
+        if (!tile_at_animal_generation_point)
+        {
+            // A tile might not be retrieved if the random position is at the very edge of the tile map.
+            // In this case, it's fine for now to just not generate an animal.
+            std::cout
+                << "At edge: "
+                << "Tile map world boundaries (LRTB): "
+                << tile_map_left_x_position << " "
+                << tile_map_right_x_position << " "
+                << tile_map_top_y_position << " "
+                << tile_map_bottom_y_position << " "
+                << "Random position: "
+                << random_x_position << " "
+                << random_y_position
+                << std::endl;
+            return nullptr;
+        }
         std::cout << "Animal at: " << random_x_position << ", " << random_y_position << std::endl;
 
         // MAKE SURE THE ANIMAL ISN'T ON TOP OF NOAH.
@@ -75,17 +91,25 @@ namespace OBJECTS
             return nullptr;
         }
 
-        // MAKE SURE THE TILE IS WALKABLE IF THE ANIMAL CAN'T FLY.
+        // CHECK IF THE ANIMAL CAN FLY.
         // Flying animals can be generated on any tile.
         bool animal_can_fly = animal_type.CanFly();
         if (!animal_can_fly)
         {
-            bool tile_is_walkable = tile_at_animal_generation_point->IsWalkable();
-            if (!tile_is_walkable)
+            // CHECK IF THE ANIMAL CAN SWIM AND THIS IS A WATER FILE.
+            bool animal_can_swim = animal_type.CanSwim();
+            bool is_water_tile = (MAPS::TileType::WATER == tile_at_animal_generation_point->Type);
+            bool swimming_animal_on_water_tile = (animal_can_swim && is_water_tile);
+            if (!swimming_animal_on_water_tile)
             {
-                // Non-flying animals can't be generated on unwalkable tiles.
-                std::cout << "Tile isn't walkable." << std::endl;
-                return nullptr;
+                // MAKE SURE THE TILE IS WALKABLE IF THE ANIMAL CAN'T FLY OR SWIM.
+                bool tile_is_walkable = tile_at_animal_generation_point->IsWalkable();
+                if (!tile_is_walkable)
+                {
+                    // Non-flying animals can't be generated on unwalkable tiles.
+                    std::cout << "Tile isn't walkable." << std::endl;
+                    return nullptr;
+                }
             }
         }
 

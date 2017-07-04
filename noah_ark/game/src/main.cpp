@@ -134,11 +134,7 @@ void PopulateOverworld(
                         }
 
                         // CREATE THE ARK PIECE.
-                        /// @todo   Rethink how to calculate these ark piece IDs.
-                        const unsigned int STARTING_TILE_ID_OFFSET = 1;
-                        const unsigned int TILE_COUNT_BEFORE_ARK_TILES = 8;
-                        unsigned int ark_piece_id = tile_id - STARTING_TILE_ID_OFFSET - TILE_COUNT_BEFORE_ARK_TILES;
-                        OBJECTS::ArkPiece ark_piece(ark_piece_id, ark_texture);
+                        OBJECTS::ArkPiece ark_piece(tile_id, ark_texture);
                         MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
                         float tile_left_x_position = static_cast<float>(current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
                         float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;

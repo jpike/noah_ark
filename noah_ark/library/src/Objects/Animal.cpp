@@ -73,6 +73,28 @@ namespace OBJECTS
         }
     }
 
+    /// Determines if the specific animal type can swim.
+    /// @return True if this type of animal can swim; false otherwise.
+    bool AnimalType::CanSwim() const
+    {
+        // DETERMINE IF THIS SPECIES CAN SWIM.
+        switch (Species)
+        {
+            // RETURN TRUE FOR ALL SWIMMING ANIMALS.
+            case AnimalSpecies::FROG:
+                return true;
+            // RETURN FALSE FOR ALL NON-SWIMMING ANIMALS.
+            case AnimalSpecies::CAMEL:
+            case AnimalSpecies::CATTLE:
+            case AnimalSpecies::SHEEP:
+            case AnimalSpecies::DOVE:
+            case AnimalSpecies::LOCUST:
+            case AnimalSpecies::RAVEN:
+            default:
+                return false;
+        }
+    }
+
     /// Gets the movement speed for a given animal species.
     /// For now, this speed is only intended to vary per species.
     /// @param[in]  species - The species of animal to get the movement speed for.

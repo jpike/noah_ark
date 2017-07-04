@@ -54,6 +54,7 @@ namespace OBJECTS
         /// OTHER PUBLIC METHODS.
         bool Clean() const;
         bool CanFly() const;
+        bool CanSwim() const;
 
         /// PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The species of the animal.

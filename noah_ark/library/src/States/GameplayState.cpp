@@ -637,9 +637,11 @@ namespace STATES
                 MAPS::TileType::GRAY_STONE
             };
             bool animal_can_fly = animal->Type.CanFly();
-            if (animal_can_fly)
+            bool animal_can_swim = animal->Type.CanSwim();
+            bool animal_move_move_over_water = (animal_can_fly || animal_can_swim);
+            if (animal_move_move_over_water)
             {
-                // ADD ADDITIONAL TILE TYPES THAT FLYING ANIMALS CAN MOVE OVER.
+                // LET THE ANIMAL MOVE OVER WATER.
                 tile_types_allowed_to_move_over.emplace(MAPS::TileType::WATER);
             }
 

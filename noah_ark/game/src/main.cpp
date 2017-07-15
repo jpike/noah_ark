@@ -326,7 +326,7 @@ int main(int argumentCount, char* arguments[])
                         next_game_state = title_screen.RespondToInput(input_controller);
                         break;
                     case STATES::GameState::CREDITS_SCREEN:
-                        next_game_state = credits_screen.RespondToInput(input_controller);
+                        next_game_state = credits_screen.Update(elapsed_time, input_controller);
                         break;
                     case STATES::GameState::GAMEPLAY:
                         gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
@@ -362,34 +362,40 @@ int main(int argumentCount, char* arguments[])
                 {
                     // CHANGE THE GAME'S STATE.
                     game_state = next_game_state;
-
-                    // INITIALIZE THE GAMEPLAY STATE IF WE'RE TRANSITIONING TO THAT STATE.
-                    bool starting_gameplay = (STATES::GameState::GAMEPLAY == game_state);
-                    if (starting_gameplay)
+                    switch (game_state)
                     {
-                        // LOAD THE GAME'S SAVE FILE.
-                        std::unique_ptr<STATES::SavedGameData> saved_game_data = STATES::SavedGameData::Load(STATES::SavedGameData::DEFAULT_FILENAME);
-                        bool saved_game_data_loaded = (nullptr != saved_game_data);
-                        if (!saved_game_data_loaded)
+                        case STATES::GameState::CREDITS_SCREEN:
+                            // RESET THE ELAPSED TIME FOR THE CREDITS SCREEN.
+                            credits_screen.ElapsedTime = sf::Time::Zero;
+                            break;
+                        case STATES::GameState::GAMEPLAY:
                         {
-                            // USE THE DEFAULT SAVED GAME DATA FOR A NEW GAME.
-                            saved_game_data = std::make_unique<STATES::SavedGameData>(STATES::SavedGameData::DefaultSavedGameData());
+                            // LOAD THE GAME'S SAVE FILE.
+                            std::unique_ptr<STATES::SavedGameData> saved_game_data = STATES::SavedGameData::Load(STATES::SavedGameData::DEFAULT_FILENAME);
+                            bool saved_game_data_loaded = (nullptr != saved_game_data);
+                            if (!saved_game_data_loaded)
+                            {
+                                // USE THE DEFAULT SAVED GAME DATA FOR A NEW GAME.
+                                saved_game_data = std::make_unique<STATES::SavedGameData>(STATES::SavedGameData::DefaultSavedGameData());
+                            }
+
+                            // INITIALIZE THE GAMEPLAY STATE.
+                            assert(overworld_being_loaded.valid());
+                            auto overworld = overworld_being_loaded.get();
+                            assert(overworld);
+
+                            bool gameplay_state_initialized = gameplay_state.Initialize(
+                                SCREEN_WIDTH_IN_PIXELS,
+                                *saved_game_data,
+                                overworld);
+                            assert(gameplay_state_initialized);
+
+                            // FOCUS THE CAMERA ON THE PLAYER.
+                            MATH::Vector2f player_start_world_position = gameplay_state.Overworld->NoahPlayer->GetWorldPosition();
+                            renderer.Camera.SetCenter(player_start_world_position);
+
+                            break;
                         }
-
-                        // INITIALIZE THE GAMEPLAY STATE.
-                        assert(overworld_being_loaded.valid());
-                        auto overworld = overworld_being_loaded.get();
-                        assert(overworld);
-
-                        bool gameplay_state_initialized = gameplay_state.Initialize(
-                            SCREEN_WIDTH_IN_PIXELS,
-                            *saved_game_data,
-                            overworld);
-                        assert(gameplay_state_initialized);
-
-                        // FOCUS THE CAMERA ON THE PLAYER.
-                        MATH::Vector2f player_start_world_position = gameplay_state.Overworld->NoahPlayer->GetWorldPosition();
-                        renderer.Camera.SetCenter(player_start_world_position);
                     }
                 }
             }

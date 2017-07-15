@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/System.hpp>
 #include "Graphics/Renderer.h"
 #include "Input/KeyboardInputController.h"
 #include "States/GameState.h"
@@ -10,7 +11,14 @@ namespace STATES
     class CreditsScreen
     {
     public:
-        GameState RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller) const;
+        // METHODS.
+        GameState Update(
+            const sf::Time& elapsed_time,
+            const INPUT_CONTROL::KeyboardInputController& input_controller);
         void Render(GRAPHICS::Renderer& renderer) const;
+
+        // MEMBER VARIABLES.
+        /// The total time that the credits screen has been 
+        sf::Time ElapsedTime = sf::Time::Zero;
     };
 }

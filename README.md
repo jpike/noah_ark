@@ -37,13 +37,6 @@ The graphics plan to use a "Game Boy Color" style for the overall shape of sprit
 
 Audio hasn't been planned yet.  However, the audio will likely be simple to match the graphical style.
 
-## Tile Maps
-
-[Tiled](http://www.mapeditor.org/) is used to make tile maps for the game.  This editor was chosen for the following reasons:
-* Relatively up-to-date with common features
-* Relatively up-to-date parsing libraries
-* Output formats that would allow easier creation of a custom parsing library if need
-
 ## Bugs/Want to Help?
 
 If you find any bugs (including build issues), let me know.  If you'd like to contribute in some way (programming, art, music, etc.), contact me as well.

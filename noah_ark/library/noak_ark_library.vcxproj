@@ -71,6 +71,7 @@
     <ClInclude Include="src\Objects\Tree.h" />
     <ClInclude Include="src\Objects\WoodLogs.h" />
     <ClInclude Include="src\Resources\AnimalGraphics.h" />
+    <ClInclude Include="src\Resources\AnimalSounds.h" />
     <ClInclude Include="src\Resources\Assets.h" />
     <ClInclude Include="src\States\CreditsScreen.h" />
     <ClInclude Include="src\States\GameplayState.h" />
@@ -125,6 +126,7 @@
     <ClCompile Include="src\Objects\Tree.cpp" />
     <ClCompile Include="src\Objects\WoodLogs.cpp" />
     <ClCompile Include="src\Resources\AnimalGraphics.cpp" />
+    <ClCompile Include="src\Resources\AnimalSounds.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
     <ClCompile Include="src\States\CreditsScreen.cpp" />
     <ClCompile Include="src\States\GameplayState.cpp" />

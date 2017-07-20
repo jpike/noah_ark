@@ -49,5 +49,26 @@
     <Media Include="res\sounds\ark_build_sound1.wav">
       <Filter>Resources\Sounds</Filter>
     </Media>
+    <Media Include="res\sounds\dove-Mike_Koenig-1208819046.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\FrogCroaking-SoundBible.com-1053984354.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Grasshopper-SoundBible.com-1592176719.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Raven-SoundBible.com-1790882934.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\SheepBleating-SoundBible.com-1373580685.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\SingleCow-SoundBible.com-2051754137.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\camel5.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
   </ItemGroup>
 </Project>

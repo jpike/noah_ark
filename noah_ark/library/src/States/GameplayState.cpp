@@ -749,8 +749,10 @@ namespace STATES
             bool animal_intersects_with_noah = animal_bounding_box.Intersects(noah_bounding_box);
             if (animal_intersects_with_noah)
             {
+                // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
+                Speakers.Play((*animal)->Sound);
+
                 // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
-                /// @todo   Play sound effect.
                 std::cout << "Collected animal." << std::endl;
                 Overworld->NoahPlayer->Inventory->AddAnimal(*animal);
 
@@ -816,7 +818,14 @@ namespace STATES
                     if (animal_generated)
                     {
                         std::cout << "Random animal generated: " << static_cast<unsigned int>(animal->Type.Species) << std::endl;
+
+                        // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
+                        Speakers.Play(animal->Sound);
+
+                        // START ANIMATING THE ANIMAL.
                         animal->Sprite.Play();
+
+                        // STORE THE ANIMAL IN THE CURRENT TILE MAP.
                         current_tile_map.Animals.push_back(animal);
                     }
                 }

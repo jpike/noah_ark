@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Objects/RandomAnimalGenerationAlgorithm.h"
 #include "Resources/AnimalGraphics.h"
+#include "Resources/AnimalSounds.h"
 
 namespace OBJECTS
 {
@@ -144,9 +145,15 @@ namespace OBJECTS
         // SET THE SPRITE'S WORLD POSITION.
         animal_sprite->SetWorldPosition(world_x_position, world_y_position);
 
+        // GET THE ANIMAL'S SOUND EFFECT.
+        // A sound effect is optional, for now.
+        std::shared_ptr<AUDIO::SoundEffect> animal_sound = RESOURCES::AnimalSounds::GetSound(animal_type.Species, assets);
+
         // CREATE THE ANIMAL.
-        /// @todo   Add sound effects for animals.
-        std::shared_ptr<Animal> animal = std::make_shared<Animal>(animal_type, GRAPHICS::AnimatedSprite(*animal_sprite));
+        std::shared_ptr<Animal> animal = std::make_shared<Animal>(
+            animal_type, 
+            GRAPHICS::AnimatedSprite(*animal_sprite),
+            animal_sound);
         return animal;
     }
 }

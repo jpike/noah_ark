@@ -33,7 +33,7 @@ namespace STATES
     {
         // CALCULATE THE OFFSET OF THE TOP OF THE CREDITS BASED ON THE ELAPSED TIME.
         // This helps implement scrolling of the credits text upward.
-        const float SCROLL_RATE_IN_PIXELS_PER_SECOND = -2.0f;
+        const float SCROLL_RATE_IN_PIXELS_PER_SECOND = -4.0f;
         float elapsed_time_in_seconds = ElapsedTime.asSeconds();
         float credits_text_top_offset_in_pixels = SCROLL_RATE_IN_PIXELS_PER_SECOND * elapsed_time_in_seconds;
 
@@ -80,7 +80,7 @@ namespace STATES
 
         // RENDER ADDITIONAL CREDITS FOR INDIVIDUAL PEOPLE.
         // Some additional spacing is added to help offset this credit text from other text.
-        const float SPACING_BEFORE_REMAINING_CREDITS = (3 * SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS);
+        const float SPACING_BEFORE_REMAINING_CREDITS = (2 * SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS);
         float current_credits_text_top_y_position_in_pixels = 
             start_of_credits_top_y_position_in_pixels +
             GOD_CREDIT_TEXT_HEIGHT_IN_PIXELS +
@@ -104,13 +104,57 @@ namespace STATES
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
-            "Sound Effects - Jacob Pike",
+            "Music - Chad Pike",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        // RENDER ADDITIONAL CREDITS FOR SOUND EFFECTS.
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "ANIMAL SOUNDS",
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
-            "Music - Chad Pike",
+            "soundbible.com",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "BuffBill84",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "Mike Koenig",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "snottyboy",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "NPS",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "freesoundeffects.com",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "Partners in Rhyme",
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
@@ -164,6 +208,20 @@ namespace STATES
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
+        // RENDER ADDITIONAL CREDITS FOR OTHER RESOURCES.
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "OTHER RESOURCES",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "KJV Bible",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
         // RENDER SOME HELP TEXT TO INFORM PLAYERS HOW TO RETURN TO THE TITLE SCREEN.
         const float SCREEN_Y_POSITION_ONE_LINE_BEFORE_BOTTOM = screen_height_in_pixels - SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS;
         MATH::FloatRectangle help_text_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
@@ -171,6 +229,9 @@ namespace STATES
             SCREEN_Y_POSITION_ONE_LINE_BEFORE_BOTTOM,
             screen_width_in_pixels,
             SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS);
+        // A black rectangle is rendered behind the text to avoid having the text overlap
+        // with other text from the credits and make things hard to read.
+        renderer.RenderScreenRectangle(help_text_screen_rectangle, GRAPHICS::Color::BLACK);
         renderer.RenderText(
             "[ESC] to title",
             help_text_screen_rectangle,

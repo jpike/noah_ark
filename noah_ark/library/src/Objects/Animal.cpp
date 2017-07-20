@@ -132,8 +132,13 @@ namespace OBJECTS
     /// Constructor.
     /// @param[in]  type - The type of the animal.
     /// @param[in]  sprite - The graphical sprite for the animal.
-    Animal::Animal(const AnimalType& type, const GRAPHICS::AnimatedSprite& sprite) :
+    /// @param[in]  sound - The sound for the animal (optional).
+    Animal::Animal(
+        const AnimalType& type, 
+        const GRAPHICS::AnimatedSprite& sprite,
+        const std::shared_ptr<AUDIO::SoundEffect>& sound) :
         Type(type),
-        Sprite(sprite)
+        Sprite(sprite),
+        Sound(sound)
     {}
 }

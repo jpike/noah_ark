@@ -1,11 +1,39 @@
 CREDITS
 ----------
-This information will be incorporated into a credits screen for the game later.
+This is an expanded version of the credits listed in the credits screen in the actual game.
 
 God - "For by him were all things created, that are in heaven, and that are in earth, visible and invisible, whether they be thrones, or dominions, or principalities, or powers: all things were created by him, and for him: And he is before all things, and by him all things consist." - Colossians 1:16-17 (KJV)
 
-Jacob Pike - Programming, Art, Sound Effects, Other
-
+PRIMARY DEVELOPERS
+Jacob Pike - Programming, Art, Other
 Chad Pike - Overworld Background Music
+
+ANIMAL SOUND EFFECTS
+Animal sound effects from http://soundbible.com/ are either in the public domain or licensed under the Creative Commons Attribution 3.0 license (https://creativecommons.org/licenses/by/3.0/).
+- BuffBill84
+    - http://soundbible.com/1572-Single-Cow.html
+- Mike Koenig
+    - http://soundbible.com/1850-Dove.html
+    - http://soundbible.com/520-Sheep-Bleating.html
+- snottyboy
+    - http://soundbible.com/1336-Frog-Croaking.html
+- NPS
+    - http://soundbible.com/927-Grasshopper.html
+    - http://soundbible.com/935-Raven.html
+Animal sound effects from https://www.partnersinrhyme.com/pir/PIRsfx.shtml are royalty free (https://www.partnersinrhyme.com/contact/techhelp.php#1).
+- Partners in Rhyme
+    - https://www.freesoundeffects.com/free-track/camel5-89413/
+    
+DEVELOPMENT TOOLS
+Visual Studio 2017
+Git/GitHub
+Microsoft Paint
+Bfxr (http://www.bfxr.net/)
+Doxygen (http://www.stack.nl/~dimitri/doxygen/)
+SFML (https://www.sfml-dev.org/)
+Catch (https://github.com/philsquared/Catch)
+
+OTHER RESOURCES
+King James Version (KJV) Bible (public domain)
 
 Also see various third-party licenses.

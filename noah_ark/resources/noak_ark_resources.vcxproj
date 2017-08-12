@@ -117,6 +117,7 @@
   <ItemGroup>
     <Image Include="res\images\animal_sprites.png" />
     <Image Include="res\images\ark_tile_set.png" />
+    <Image Include="res\images\food_sprites.png" />
     <Image Include="res\images\ground_tile_set.png" />
     <Image Include="res\images\main_font1.png" />
   </ItemGroup>

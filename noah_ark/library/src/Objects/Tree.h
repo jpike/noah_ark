@@ -1,10 +1,12 @@
 #pragma once
 
+#include <optional>
 #include <vector>
 #include <SFML/System.hpp>
 #include "Audio/SoundEffect.h"
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
+#include "Objects/Food.h"
 
 namespace OBJECTS
 {
@@ -53,6 +55,8 @@ namespace OBJECTS
         std::shared_ptr<AUDIO::SoundEffect> TreeShakeSound = nullptr;
         /// The number of hit points the tree currently has.
         unsigned int HitPoints = INITIAL_HIT_POINTS;
+        /// Any food that currently exists on the tree.
+        std::optional<Food> Food = std::nullopt;
 
     private:
         /// True if the tree is currently shaking; false otherwise.

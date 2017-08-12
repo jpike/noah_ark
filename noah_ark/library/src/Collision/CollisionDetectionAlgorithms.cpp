@@ -896,6 +896,23 @@ namespace COLLISION
                 // SHAKE THE TREE.
                 tree->StartShaking();
 
+                // ADD FOOD TO THE TILE MAP IF THE TREE HAD FOOD.
+                if (tree->Food)
+                {
+                    // MOVE THE FOOD DOWN TO RIGHT BELOW THE TREE.
+                    /// @todo   Make food gradually fall down?
+                    float tree_bottom_y_position = tree->Sprite.GetWorldBoundingBox().GetBottomYPosition();
+                    float food_height_in_pixels = tree->Food->Sprite.GetHeightInPixels();
+                    float food_half_height_in_pixels = food_height_in_pixels / 2.0f;
+                    MATH::Vector2f food_center_world_position = tree->Food->Sprite.GetWorldPosition();
+                    food_center_world_position.Y = tree_bottom_y_position + food_half_height_in_pixels;
+                    tree->Food->Sprite.SetWorldPosition(food_center_world_position);
+
+                    // TRANSFER THE FOOD FROM THE TREE TO THE TILE MAP.
+                    tile_map->Food.push_back(*tree->Food);
+                    tree->Food.reset();
+                }
+
                 // CHECK IF THE TREE STILL HAS ANY HIT POINTS.
                 bool tree_still_has_hit_points = (tree->HitPoints > 0);
                 if (tree_still_has_hit_points)

@@ -6,6 +6,7 @@
 #include "Bible/BibleVerses.h"
 #include "Objects/Animal.h"
 #include "Objects/Axe.h"
+#include "Objects/Food.h"
 
 /// Holds code related to the player's inventory of items in the game.
 namespace INVENTORY
@@ -16,6 +17,7 @@ namespace INVENTORY
     public:
         // PUBLIC METHODS.
         void AddWood(const unsigned int wood_count);
+        void AddFood(const OBJECTS::Food& food);
         void AddAnimal(const std::shared_ptr<OBJECTS::Animal>& animal);
         bool AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const;
         void GetAnimalCollectedCount(
@@ -33,6 +35,8 @@ namespace INVENTORY
         /// A set is used to allow easily determining
         /// if a verse is already in the inventory.
         std::set<BIBLE::BibleVerse> BibleVerses = std::set<BIBLE::BibleVerse>();
+        /// Counts of collected food by type.
+        std::unordered_map<OBJECTS::FoodType, unsigned int> CollectedFoodCounts = {};
         /// Counts of collected animals by type.
         std::unordered_map<OBJECTS::AnimalType, unsigned int> CollectedAnimalCounts = {};
     };

@@ -14,6 +14,7 @@ namespace RESOURCES
     const std::string AXE_TEXTURE_ID = "res/images/noah_sprite1.png";
     const std::string DUST_CLOUD_TEXTURE_ID = "res/images/tree_sprite1.png";
     const std::string FONT_TEXTURE_ID = "res/images/main_font1.png";
+    const std::string FOOD_TEXTURE_ID = "res/images/food_sprites.png";
     const std::string GROUND_TILESET_TEXTURE_ID = "res/images/ground_tile_set.png";
     const std::string NOAH_TEXTURE_ID = "res/images/noah_sprite1.png";
     const std::string TREE_TEXTURE_ID = "res/images/tree_sprite1.png";

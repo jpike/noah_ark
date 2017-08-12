@@ -557,10 +557,23 @@ namespace GRAPHICS
             wood_log.Sprite.Render(Screen);
         }
 
+        // RENDER THE CURRENT TILE MAP'S FOOD.
+        for (const auto& food : tile_map.Food)
+        {
+            food.Sprite.Render(Screen);
+        }
+
         // RENDER THE CURRENT TILE MAP'S TREES.
         for (const auto& tree : tile_map.Trees)
         {
+            // RENDER THE TREE.
             tree.Sprite.Render(Screen);
+
+            // RENDER ANY FOOD ON THE TREE.
+            if (tree.Food)
+            {
+                tree.Food->Sprite.Render(Screen);
+            }
         }
 
         // RENDER THE CURRENT TILE MAP'S ANIMALS.

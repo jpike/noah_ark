@@ -23,6 +23,7 @@ namespace MAPS
     OverworldColumnIndex(overworld_column_index),
     Ground(center_world_position, dimensions_in_tiles, tile_dimension_in_pixels),
     Trees(),
+    Food(),
     DustClouds(),
     WoodLogs(),
     ArkPieces()

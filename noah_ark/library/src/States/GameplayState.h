@@ -64,6 +64,7 @@ namespace STATES
         void CollectWoodAndBibleVersesCollidingWithPlayer(
             MAPS::TileMap& tile_map, 
             std::string& message_for_text_box);
+        void CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map);
         void CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map);
 
         // CAMERA UPDATING.

@@ -9,6 +9,13 @@ namespace INVENTORY
         WoodCount += wood_count;
     }
 
+    /// Adds food to the inventory.
+    /// @param[in]  food - The food to add.
+    void Inventory::AddFood(const OBJECTS::Food& food)
+    {
+        CollectedFoodCounts[food.Type] += OBJECTS::Food::COUNT_PER_INSTANCE;
+    }
+
     /// Adds an animal to the inventory.
     /// @param[in]  animal - The animal to add.
     void Inventory::AddAnimal(const std::shared_ptr<OBJECTS::Animal>& animal)

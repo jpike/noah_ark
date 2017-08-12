@@ -139,6 +139,7 @@ namespace STATES
                 // HANDLE PLAYER COLLISIONS.
                 std::string message_for_text_box;
                 CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, message_for_text_box);
+                CollectFoodCollidingWithPlayer(*current_tile_map);
                 CollectAnimalsCollidingWithPlayer(*current_tile_map);
 
                 // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
@@ -734,6 +735,40 @@ namespace STATES
         }
     }
     
+    /// Determines if the player is colliding with any food in the tile map.
+    /// If so, the food is added to the player's inventory.
+    /// @param[in,out]  tile_map - The tile map to examine food in.
+    void GameplayState::CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map)
+    {
+        // HANDLE PLAYER COLLISIONS WITH FOOD.
+        for (auto food = tile_map.Food.cbegin();
+            food != tile_map.Food.cend();)
+        {
+            // CHECK IF THE CURRENT FOOD ITEM INTERSECTS WITH THE PLAYER.
+            MATH::FloatRectangle food_bounding_box = food->Sprite.GetWorldBoundingBox();
+            MATH::FloatRectangle noah_bounding_box = Overworld->NoahPlayer->GetWorldBoundingBox();
+            bool food_intersects_with_noah = food_bounding_box.Intersects(noah_bounding_box);
+            if (food_intersects_with_noah)
+            {
+                // PLAY THE SOUND EFFECT FOR COLLECTING FOOD.
+                /// @todo Speakers.Play();
+
+                // ADD THE FOOD TO THE PLAYER'S INVENTORY.
+                std::cout << "Collected food: " << static_cast<int>(food->Type) << std::endl;
+                Overworld->NoahPlayer->Inventory->AddFood(*food);
+
+                // REMOVE THE FOOD ITEM FROM THOSE IN THE CURRENT TILE MAP.
+                // This should move to the next food ITEM.
+                food = tile_map.Food.erase(food);
+            }
+            else
+            {
+                // MOVE TO CHECKING COLLISIONS FOR THE NEXT FOOD ITEM.
+                ++food;
+            }
+        }
+    }
+
     /// Determines if the player is colliding with any animals in the tile map.
     /// If so, the animals are added to the player's inventory.
     /// @param[in,out]  tile_map - The tile map to examine animals in.

@@ -10,7 +10,9 @@
 #include "Input/KeyboardInputController.h"
 #include "Maps/OverworldMapData.h"
 #include "Maps/Tileset.h"
+#include "Math/Number.h"
 #include "Resources/Assets.h"
+#include "Resources/FoodGraphics.h"
 #include "States/CreditsScreen.h"
 #include "States/GameplayState.h"
 #include "States/GameState.h"
@@ -46,6 +48,9 @@ void PopulateOverworld(
 
     // CREATE THE TILESET.
     MAPS::Tileset tileset(tileset_texture);
+
+    // CREATE A RANDOM NUMBER GENERATOR FOR CREATING FOOD.
+    MATH::RandomNumberGenerator random_number_generator;
 
     // LOAD TILE MAPS FOR EACH ROW.
     for (unsigned int row = 0; row < MAPS::Overworld::HEIGHT_IN_TILE_MAPS; ++row)
@@ -187,10 +192,37 @@ void PopulateOverworld(
                             std::shared_ptr<AUDIO::SoundEffect> tree_shake_sound = assets.GetSound(RESOURCES::TREE_SHAKE_SOUND_ID);
                             bool tree_shake_sound_retrieved = (nullptr != tree_shake_sound);
 
+                            // CREATE ANY FOOD ON THE TREE.
+                            // Food will be randomly generated.
+                            std::optional<OBJECTS::Food> food = std::nullopt;
+                            unsigned int random_number_for_food_existing = random_number_generator.RandomNumber<unsigned int>();
+                            bool food_on_tree = MATH::Number::IsEven(random_number_for_food_existing);
+                            if (food_on_tree)
+                            {
+                                // DETERMINE THE TYPE OF FOOD.
+                                // It will be randomly determined.
+                                OBJECTS::FoodType food_type = random_number_generator.RandomEnum<OBJECTS::FoodType>();
+
+                                // GET THE SPRITE FOR THE FOOD.
+                                // The food can only be created if the sprite was retrieved.
+                                std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(food_type, assets);
+                                if (food_sprite)
+                                {
+                                    // CREATE THE FOOD.
+                                    food = OBJECTS::Food();
+                                    food->Type = food_type;
+                                    food->Sprite = GRAPHICS::Sprite(*food_sprite);
+
+                                    // The food should be positioned on the tree.
+                                    food->Sprite.SetWorldPosition(tree_sprite.GetWorldPosition());
+                                }
+                            }
+
                             // CREATE THE TREE.
                             OBJECTS::Tree tree;
                             tree.Sprite = tree_sprite;
                             tree.TreeShakeSound = tree_shake_sound;
+                            tree.Food = food;
                             tile_map.Trees.push_back(tree);
                         }
                     }

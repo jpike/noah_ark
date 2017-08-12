@@ -6,6 +6,7 @@
 #include "Objects/Animal.h"
 #include "Objects/ArkPiece.h"
 #include "Objects/DustCloud.h"
+#include "Objects/Food.h"
 #include "Objects/Tree.h"
 #include "Objects/WoodLogs.h"
 
@@ -52,6 +53,9 @@ namespace MAPS
         GroundLayer Ground;
         /// Trees in this tile map.
         std::vector<OBJECTS::Tree> Trees;
+        /// Food in the tile map that isn't on any plants.
+        /// After food falls off of a plant, it should be transferred here.
+        std::vector<OBJECTS::Food> Food;
         /// Dust clouds within the tile map.
         std::vector<OBJECTS::DustCloud> DustClouds;
         /// Wooden logs that have appeared in the map from chopped down trees.

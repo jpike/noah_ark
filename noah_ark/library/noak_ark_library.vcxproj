@@ -59,6 +59,7 @@
     <ClInclude Include="src\Maps\TileMap.h" />
     <ClInclude Include="src\Maps\TileMapData.h" />
     <ClInclude Include="src\Maps\Tileset.h" />
+    <ClInclude Include="src\Math\Number.h" />
     <ClInclude Include="src\Math\RandomNumberGenerator.h" />
     <ClInclude Include="src\Math\Rectangle.h" />
     <ClInclude Include="src\Math\Vector2.h" />
@@ -66,6 +67,7 @@
     <ClInclude Include="src\Objects\ArkPiece.h" />
     <ClInclude Include="src\Objects\Axe.h" />
     <ClInclude Include="src\Objects\DustCloud.h" />
+    <ClInclude Include="src\Objects\Food.h" />
     <ClInclude Include="src\Objects\Noah.h" />
     <ClInclude Include="src\Objects\RandomAnimalGenerationAlgorithm.h" />
     <ClInclude Include="src\Objects\Tree.h" />
@@ -73,6 +75,7 @@
     <ClInclude Include="src\Resources\AnimalGraphics.h" />
     <ClInclude Include="src\Resources\AnimalSounds.h" />
     <ClInclude Include="src\Resources\Assets.h" />
+    <ClInclude Include="src\Resources\FoodGraphics.h" />
     <ClInclude Include="src\States\CreditsScreen.h" />
     <ClInclude Include="src\States\GameplayState.h" />
     <ClInclude Include="src\States\GameState.h" />
@@ -128,6 +131,7 @@
     <ClCompile Include="src\Resources\AnimalGraphics.cpp" />
     <ClCompile Include="src\Resources\AnimalSounds.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
+    <ClCompile Include="src\Resources\FoodGraphics.cpp" />
     <ClCompile Include="src\States\CreditsScreen.cpp" />
     <ClCompile Include="src\States\GameplayState.cpp" />
     <ClCompile Include="src\States\IntroSequence.cpp" />
@@ -237,6 +241,7 @@
       <PreprocessorDefinitions>WIN32;NOMINMAX;SFML_STATIC;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -272,6 +277,7 @@
       <PreprocessorDefinitions>WIN32;NOMINMAX;SFML_STATIC;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

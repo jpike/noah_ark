@@ -50,5 +50,7 @@ namespace STATES
         std::vector<BuiltArkPieceTileMapData> BuildArkPieces = {};
         /// Animals collected by the player, with types mapping to collected counts.
         std::unordered_map<OBJECTS::AnimalType, unsigned int> CollectedAnimals = {};
+        /// Food collected by the player, with types mapping to collected counts.
+        std::unordered_map<OBJECTS::FoodType, unsigned int> CollectedFood = {};
     };
 }

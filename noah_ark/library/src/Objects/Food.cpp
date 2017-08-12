@@ -7,7 +7,7 @@ namespace OBJECTS
     void FallingFood::Fall(const sf::Time& time)
     {
         // CALCULATE HOW FAR TO MAKE THE FOOD FALL.
-        constexpr float FALL_SPEED_IN_PIXELS_PER_SECOND = 16.0f;
+        constexpr float FALL_SPEED_IN_PIXELS_PER_SECOND = 20.0f;
         float time_in_seconds = time.asSeconds();
         float fall_distance_in_pixels = FALL_SPEED_IN_PIXELS_PER_SECOND * time_in_seconds;
 

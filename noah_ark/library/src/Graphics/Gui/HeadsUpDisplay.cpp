@@ -96,6 +96,7 @@ namespace GUI
                 }
 
                 saved_game_data.CollectedAnimals = Overworld->NoahPlayer->Inventory->CollectedAnimalCounts;
+                saved_game_data.CollectedFood = Overworld->NoahPlayer->Inventory->CollectedFoodCounts;
 
                 saved_game_data.Write(STATES::SavedGameData::DEFAULT_FILENAME);
 

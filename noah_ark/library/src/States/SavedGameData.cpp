@@ -175,6 +175,30 @@ namespace STATES
                 saved_game_data->CollectedAnimals[animal_type] = collected_count;
             }
 
+            // READ IN THE COLLECTED FOOD DATA.
+            unsigned int expected_collected_food_data_count;
+            saved_game_data_file >> expected_collected_food_data_count;
+
+            while (saved_game_data->CollectedFood.size() < expected_collected_food_data_count)
+            {
+                // READ IN THE CURRENT FOOD DATA.
+                int food_id;
+                saved_game_data_file >> food_id;
+                unsigned int collected_count;
+                saved_game_data_file >> collected_count;
+
+                // MAKE SURE CURRENT FOOD DATA WAS PROPERLY READ.
+                bool food_data_valid = !saved_game_data_file.eof();
+                if (!food_data_valid)
+                {
+                    break;
+                }
+
+                // ADD THE FOOD COUNT TO THE IN-MEMORY DATA.
+                OBJECTS::FoodType food_type = static_cast<OBJECTS::FoodType>(food_id);
+                saved_game_data->CollectedFood[food_type] = collected_count;
+            }
+
             // RETURN THE LOADED SAVED GAME DATA.
             return saved_game_data;
         }
@@ -263,7 +287,22 @@ namespace STATES
             // WRITE OUT THE COLLECTED COUNT.
             saved_game_data_file << collected_animal_type_and_count.second;
 
-            // WRITE A LINE SEPARATE BEFORE THE NEXT SET OF DATA.
+            // WRITE A LINE SEPARATOR BEFORE THE NEXT SET OF DATA.
+            saved_game_data_file << std::endl;
+        }
+
+        // WRITE OUT THE COLLECTED FOOD.
+        // The count of the collected food is written out first.
+        saved_game_data_file << CollectedFood.size() << std::endl;
+        for (const auto& collected_food_type_and_count : CollectedFood)
+        {
+            // WRITE OUT THE FOOD TYPE AND COLLECTED COUNT.
+            saved_game_data_file
+                << static_cast<int>(collected_food_type_and_count.first)
+                << SEPARATOR_BETWEEN_RELATED_DATA
+                << static_cast<int>(collected_food_type_and_count.second);
+
+            // WRITE A LINE SEPARATOR BEFORE THE NEXT SET OF DATA.
             saved_game_data_file << std::endl;
         }
     }

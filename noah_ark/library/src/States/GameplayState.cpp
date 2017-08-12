@@ -239,6 +239,7 @@ namespace STATES
         noah_player->Inventory->WoodCount = saved_game_data.WoodCount;
         noah_player->Inventory->BibleVerses.insert(saved_game_data.FoundBibleVerses.cbegin(), saved_game_data.FoundBibleVerses.cend());
         noah_player->Inventory->CollectedAnimalCounts = saved_game_data.CollectedAnimals;
+        noah_player->Inventory->CollectedFoodCounts = saved_game_data.CollectedFood;
 
         return noah_player;
     }

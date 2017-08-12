@@ -13,6 +13,14 @@ namespace OBJECTS
         NONE,
         /// An apple.
         APPLE,
+        /// A grape.
+        GRAPE,
+        /// A melon.
+        MELON,
+        /// An olive.
+        OLIVE,
+        /// A fig.
+        FIG,
         /// A non-food value that supports determining the number of food types
         /// for algorithms that need this information.
         COUNT

@@ -28,6 +28,34 @@ namespace RESOURCES
                     16.0f,
                     16.0f);
                 break;
+            case OBJECTS::FoodType::GRAPE:
+                texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+                    16.0f,
+                    0.0f,
+                    16.0f,
+                    16.0f);
+                break;
+            case OBJECTS::FoodType::MELON:
+                texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+                    32.0f,
+                    0.0f,
+                    16.0f,
+                    16.0f);
+                break;
+            case OBJECTS::FoodType::OLIVE:
+                texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+                    48.0f,
+                    0.0f,
+                    16.0f,
+                    16.0f);
+                break;
+            case OBJECTS::FoodType::FIG:
+                texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+                    64.0f,
+                    0.0f,
+                    16.0f,
+                    16.0f);
+                break;
             default:
                 // The food type is invalid, so no texture rectangle can be determined.
                 return nullptr;

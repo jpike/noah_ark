@@ -128,7 +128,7 @@ namespace INVENTORY
             std::shared_ptr<GRAPHICS::AnimatedSprite> male_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(male_animal_type, *Assets);
             assert(male_animal_sprite);
             MATH::Vector2f male_animal_icon_left_top_screen_position = box_screen_rectangle.GetLeftXTopYPosition();
-            renderer.RenderGuiIcon(*male_animal_sprite, male_animal_icon_left_top_screen_position);
+            renderer.RenderGuiIcon(male_animal_sprite->Sprite, male_animal_icon_left_top_screen_position);
 
             // RENDER THE COLLECTED COUNT FOR THE MALE ANIMAL.
             // It should appear just to the right of the male animal icon.
@@ -149,7 +149,7 @@ namespace INVENTORY
             assert(female_animal_sprite);
             MATH::Vector2f female_animal_icon_left_top_screen_position = box_screen_rectangle.GetLeftXBottomYPosition();
             female_animal_icon_left_top_screen_position.Y -= female_animal_sprite->Sprite.GetHeightInPixels();
-            renderer.RenderGuiIcon(*female_animal_sprite, female_animal_icon_left_top_screen_position);
+            renderer.RenderGuiIcon(female_animal_sprite->Sprite, female_animal_icon_left_top_screen_position);
 
             // RENDER THE COLLECTED COUNT FOR THE FEMALE ANIMAL.
             // It should appear just to the right of the female animal icon.

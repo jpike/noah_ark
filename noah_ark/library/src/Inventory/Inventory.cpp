@@ -16,6 +16,26 @@ namespace INVENTORY
         CollectedFoodCounts[food.Type] += OBJECTS::Food::COUNT_PER_INSTANCE;
     }
 
+    /// Gets the amount of food in the inventory of the given type.
+    /// @param[in]  food_type - The type of food to get the collected count for.
+    /// @return The amount of food of the specified type in the inventory.
+    unsigned int Inventory::GetCollectedFoodCount(const OBJECTS::FoodType food_type) const
+    {
+        // CHECK IF THE FOOD TYPE HAS BEEN COLLECTED.
+        auto collected_food_type_and_count = CollectedFoodCounts.find(food_type);
+        bool food_type_collected = (CollectedFoodCounts.cend() != collected_food_type_and_count);
+        if (food_type_collected)
+        {
+            // RETURN THE COLLECTED COUNT.
+            return collected_food_type_and_count->second;
+        }
+        else
+        {
+            // INDICATE THAT THE FOOD HASN'T BEEN COLLECTED.
+            return 0;
+        }
+    }
+
     /// Adds an animal to the inventory.
     /// @param[in]  animal - The animal to add.
     void Inventory::AddAnimal(const std::shared_ptr<OBJECTS::Animal>& animal)

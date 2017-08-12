@@ -18,6 +18,7 @@ namespace INVENTORY
         // PUBLIC METHODS.
         void AddWood(const unsigned int wood_count);
         void AddFood(const OBJECTS::Food& food);
+        unsigned int GetCollectedFoodCount(const OBJECTS::FoodType food_type) const;
         void AddAnimal(const std::shared_ptr<OBJECTS::Animal>& animal);
         bool AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const;
         void GetAnimalCollectedCount(

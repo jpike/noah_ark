@@ -40,7 +40,7 @@ namespace GRAPHICS
             const MATH::FloatRectangle& texture_sub_rectangle,
             const MATH::Vector2ui& left_top_screen_position_in_pixels);
         void RenderGuiIcon(
-            const GRAPHICS::AnimatedSprite& sprite,
+            const GRAPHICS::Sprite& sprite,
             const MATH::Vector2f& left_top_screen_position_in_pixels);
 
         // TEXT RENDERING.

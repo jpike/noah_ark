@@ -51,6 +51,7 @@
     <ClInclude Include="src\Inventory\InventoryBiblePage.h" />
     <ClInclude Include="src\Inventory\InventoryBibleVerseListBox.h" />
     <ClInclude Include="src\Inventory\InventoryBibleVerseTextBox.h" />
+    <ClInclude Include="src\Inventory\InventoryFoodPage.h" />
     <ClInclude Include="src\Inventory\InventoryGui.h" />
     <ClInclude Include="src\Maps\GroundLayer.h" />
     <ClInclude Include="src\Maps\Overworld.h" />
@@ -112,6 +113,7 @@
     <ClCompile Include="src\Inventory\InventoryBiblePage.cpp" />
     <ClCompile Include="src\Inventory\InventoryBibleVerseListBox.cpp" />
     <ClCompile Include="src\Inventory\InventoryBibleVerseTextBox.cpp" />
+    <ClCompile Include="src\Inventory\InventoryFoodPage.cpp" />
     <ClCompile Include="src\Inventory\InventoryGui.cpp" />
     <ClCompile Include="src\Maps\GroundLayer.cpp" />
     <ClCompile Include="src\Maps\Overworld.cpp" />

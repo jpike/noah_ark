@@ -281,6 +281,9 @@
     <ClInclude Include="src\Resources\FoodGraphics.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="src\Inventory\InventoryFoodPage.h">
+      <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -444,6 +447,9 @@
     </ClCompile>
     <ClCompile Include="src\Objects\Food.cpp">
       <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Inventory\InventoryFoodPage.cpp">
+      <Filter>Source Files\Inventory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

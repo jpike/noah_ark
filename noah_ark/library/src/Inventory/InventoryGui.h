@@ -8,6 +8,7 @@
 #include "Inventory/Inventory.h"
 #include "Inventory/InventoryAnimalsPage.h"
 #include "Inventory/InventoryBiblePage.h"
+#include "Inventory/InventoryFoodPage.h"
 #include "Math/Vector2.h"
 #include "Resources/Assets.h"
 
@@ -72,17 +73,12 @@ namespace INVENTORY
         void Render(GRAPHICS::Renderer& renderer) const;
 
     private:
-        // STATIC CONSTANTS.
-        /// The color of the food tab and page.
-        static const GRAPHICS::Color FOOD_TAB_COLOR;
-
         // RENDERING.
         void RenderTab(
             const std::string& tab_text,
             const MATH::Vector2f& left_top_screen_position_in_pixels,
             const GRAPHICS::Color& background_color,
             GRAPHICS::Renderer& renderer) const;
-        void RenderFoodPage(GRAPHICS::Renderer& renderer) const;
 
         // MEMBER VARIABLES.
         /// The player's inventory to display in the GUI.
@@ -93,5 +89,7 @@ namespace INVENTORY
         InventoryBiblePage BiblePage;
         /// The page of the inventory GUI displaying collected animals.
         InventoryAnimalsPage AnimalsPage;
+        /// The page of the inventory GUI displaying collected food.
+        InventoryFoodPage FoodPage;
     };
 }

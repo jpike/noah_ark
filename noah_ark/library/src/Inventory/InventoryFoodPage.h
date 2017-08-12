@@ -5,23 +5,23 @@
 #include "Graphics/Renderer.h"
 #include "Inventory/Inventory.h"
 #include "Math/Rectangle.h"
-#include "Objects/Animal.h"
+#include "Objects/Food.h"
 #include "Resources/Assets.h"
 
 namespace INVENTORY
 {
-    /// The page of the inventory GUI that displays collected animals.
-    /// Collected animals are displayed in a grid-like fashion
-    /// with icons and collected counts per species/gender.
-    class InventoryAnimalsPage
+    /// The page of the inventory GUI that displays collected food.
+    /// Collected food are displayed in a grid-like fashion
+    /// with icons and collected counts.
+    class InventoryFoodPage
     {
     public:
         // STATIC CONSTANTS.
-        /// The background color of the animals page.
+        /// The background color of the food page.
         static const GRAPHICS::Color BACKGROUND_COLOR;
 
         // CONSTRUCTION.
-        explicit InventoryAnimalsPage(
+        explicit InventoryFoodPage(
             const std::shared_ptr<const Inventory>& inventory,
             const std::shared_ptr<RESOURCES::Assets>& assets);
 
@@ -30,10 +30,9 @@ namespace INVENTORY
 
     private:
         // RENDERING.
-        void RenderAnimalBox(
-            const OBJECTS::AnimalSpecies species,
-            const unsigned int species_male_animal_collected_count,
-            const unsigned int species_female_animal_collected_count,
+        void RenderFoodBox(
+            const OBJECTS::FoodType food_type,
+            const unsigned int food_type_collected_count,
             const MATH::FloatRectangle& box_screen_rectangle,
             GRAPHICS::Renderer& renderer) const;
 

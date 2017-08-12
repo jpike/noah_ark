@@ -153,13 +153,13 @@ namespace GRAPHICS
     /// @param[in]  left_top_screen_position_in_pixels - The left-top screen position
     ///     of the icon.
     void Renderer::RenderGuiIcon(
-        const GRAPHICS::AnimatedSprite& sprite,
+        const GRAPHICS::Sprite& sprite,
         const MATH::Vector2f& left_top_screen_position_in_pixels)
     {
         // CREATE A SPRITE FOR THE ICON USING THE TEXTURE INFORMATION.
         // This allow repositioning of the icon to be in screen coordinates.
-        sf::IntRect texture_rectangle = sprite.Sprite.SpriteResource.getTextureRect();
-        sf::Sprite gui_icon(sprite.Sprite.SpriteTexture->TextureResource, texture_rectangle);
+        sf::IntRect texture_rectangle = sprite.SpriteResource.getTextureRect();
+        sf::Sprite gui_icon(sprite.SpriteTexture->TextureResource, texture_rectangle);
 
         // POSITION THE GUI ICON SPRITE.
         // The screen position must be converted to a world position so that the GUI icon

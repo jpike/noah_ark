@@ -4,9 +4,6 @@
 
 namespace INVENTORY
 {
-    // The color right now is arbitrary.
-    const GRAPHICS::Color InventoryGui::FOOD_TAB_COLOR = GRAPHICS::Color::GREEN;
-
     /// Constructor.
     /// @param[in]  inventory - The inventory to display in the GUI.
     /// @param[in]  assets - The assets to use for the page.
@@ -17,7 +14,8 @@ namespace INVENTORY
     Inventory(inventory),
     CurrentTab(TabType::BIBLE),
     BiblePage(inventory),
-    AnimalsPage(inventory, assets)
+    AnimalsPage(inventory, assets),
+    FoodPage(inventory, assets)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to HUD.");
@@ -146,7 +144,7 @@ namespace INVENTORY
         RenderTab(
             FOOD_TAB_STRING,
             food_tab_left_top_screen_position_in_pixels,
-            FOOD_TAB_COLOR,
+            InventoryFoodPage::BACKGROUND_COLOR,
             renderer);
 
         // RENDER THE CURRENTLY DISPLAYED PAGE.
@@ -159,7 +157,7 @@ namespace INVENTORY
                 AnimalsPage.Render(renderer);
                 break;
             case TabType::FOOD:
-                RenderFoodPage(renderer);
+                FoodPage.Render(renderer);
                 break;
         }
     }
@@ -189,28 +187,5 @@ namespace INVENTORY
 
         // RENDER THE TEXT FOR THE TAB.
         renderer.RenderText(tab_text, left_top_screen_position_in_pixels, GRAPHICS::Color::BLACK);
-    }
-    
-    /// Renders the page of the inventory for the food tab.
-    /// This page allows browsing food in the inventory.
-    /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryGui::RenderFoodPage(GRAPHICS::Renderer& renderer) const
-    {
-        // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
-        // It is offset from the top of the screen by the amount of the
-        // GUI stuff that should always be displayed above it.  Otherwise,
-        // it should cover the remainder of the screen.
-        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);
-        const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
-        MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
-            SCREEN_LEFT_POSITION_IN_PIXELS,
-            TOP_SCREEN_OFFSET_IN_PIXELS,
-            renderer.Screen.WidthInPixels<float>(),
-            BACKGROUND_HEIGHT_IN_PIXELS);
-
-        renderer.RenderScreenRectangle(
-            background_rectangle,
-            FOOD_TAB_COLOR);
     }
 }

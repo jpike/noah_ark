@@ -73,5 +73,8 @@
     <Media Include="res\sounds\camel5.wav">
       <Filter>Resources\Sounds</Filter>
     </Media>
+    <Media Include="res\sounds\food_pickup_sound.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
   </ItemGroup>
 </Project>

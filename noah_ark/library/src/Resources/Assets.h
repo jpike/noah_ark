@@ -31,6 +31,7 @@ namespace RESOURCES
     extern const std::string ARK_BUILDING_SOUND_ID;
     extern const std::string AXE_HIT_SOUND_ID;
     extern const std::string COLLECT_BIBLE_VERSE_SOUND_ID;
+    extern const std::string FOOD_PICKUP_SOUND_ID;
     extern const std::string TREE_SHAKE_SOUND_ID;
     extern const std::string OVERWORLD_BACKGROUND_MUSIC_ID;
 

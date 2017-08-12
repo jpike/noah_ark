@@ -751,7 +751,8 @@ namespace STATES
             if (food_intersects_with_noah)
             {
                 // PLAY THE SOUND EFFECT FOR COLLECTING FOOD.
-                /// @todo Speakers.Play();
+                std::shared_ptr<AUDIO::SoundEffect> food_pickup_sound = Assets->GetSound(RESOURCES::FOOD_PICKUP_SOUND_ID);
+                Speakers.Play(food_pickup_sound);
 
                 // ADD THE FOOD TO THE PLAYER'S INVENTORY.
                 std::cout << "Collected food: " << static_cast<int>(food->Type) << std::endl;

@@ -442,5 +442,8 @@
     <ClCompile Include="src\Resources\FoodGraphics.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="src\Objects\Food.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

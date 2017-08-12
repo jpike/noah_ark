@@ -136,6 +136,9 @@ namespace STATES
                 // MOVE ANIMALS IN THE WORLD.
                 MoveAnimals(elapsed_time, *current_tile_map);
 
+                // UPDATE FOOD FALLING IN THE WORLD.
+                UpdateFallingFood(elapsed_time, *current_tile_map);
+
                 // HANDLE PLAYER COLLISIONS.
                 std::string message_for_text_box;
                 CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, message_for_text_box);
@@ -659,6 +662,33 @@ namespace STATES
         }
     }
 
+    /// Updates any falling food in the tile map.
+    /// @param[in]  elapsed_time - The elapsed time for which to update the food.
+    /// @param[in,out]  tile_map - The tile map whose falling food to update.
+    void GameplayState::UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
+    {
+        // UPDATE ANY FALLING FOOD.
+        for (auto food = tile_map.FallingFood.begin();
+            food != tile_map.FallingFood.end();)
+        {
+            // UPDATE THE CURRENT FOOD ITEM.
+            food->Fall(elapsed_time);
+
+            // TRANSFER THE FOOD OVER IF IT HAS FINISHED FALLING.
+            bool food_finished_falling = food->FinishedFalling();
+            if (food_finished_falling)
+            {
+                tile_map.FoodOnGround.push_back(food->FoodItem);
+                food = tile_map.FallingFood.erase(food);
+            }
+            else
+            {
+                // MOVE TO THE NEXT FALLING FOOD ITEM.
+                ++food;
+            }
+        }
+    }
+
     /// Determines if the player is colliding with any wood logs in the tile map.
     /// If so, the wood logs, and potentially Bible verses, are added to the player's inventory.
     /// @param[in,out]  tile_map - The tile map to examine wood logs in.
@@ -741,8 +771,8 @@ namespace STATES
     void GameplayState::CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map)
     {
         // HANDLE PLAYER COLLISIONS WITH FOOD.
-        for (auto food = tile_map.Food.cbegin();
-            food != tile_map.Food.cend();)
+        for (auto food = tile_map.FoodOnGround.cbegin();
+            food != tile_map.FoodOnGround.cend();)
         {
             // CHECK IF THE CURRENT FOOD ITEM INTERSECTS WITH THE PLAYER.
             MATH::FloatRectangle food_bounding_box = food->Sprite.GetWorldBoundingBox();
@@ -760,7 +790,7 @@ namespace STATES
 
                 // REMOVE THE FOOD ITEM FROM THOSE IN THE CURRENT TILE MAP.
                 // This should move to the next food ITEM.
-                food = tile_map.Food.erase(food);
+                food = tile_map.FoodOnGround.erase(food);
             }
             else
             {

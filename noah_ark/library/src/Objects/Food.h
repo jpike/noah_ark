@@ -1,6 +1,8 @@
 #pragma once
 
+#include <SFML/System.hpp>
 #include "Graphics/Sprite.h"
+#include "Math/Vector2.h"
 
 namespace OBJECTS
 {
@@ -30,5 +32,21 @@ namespace OBJECTS
         FoodType Type = FoodType::NONE;
         /// The graphical sprite for the food.
         GRAPHICS::Sprite Sprite = GRAPHICS::Sprite();
+    };
+
+    /// An item of food that is falling off a plant toward the ground.
+    /// This class helps manage updating food as it is falling.
+    class FallingFood
+    {
+    public:
+        // METHODS.
+        void Fall(const sf::Time& time);
+        bool FinishedFalling() const;
+
+        // MEMBER VARIABLES.
+        /// The food that is falling.
+        Food FoodItem = Food();
+        /// The world position that the food is falling toward.
+        MATH::Vector2f DestinationWorldPosition = MATH::Vector2f();
     };
 }

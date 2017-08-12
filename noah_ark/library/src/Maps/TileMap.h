@@ -53,9 +53,12 @@ namespace MAPS
         GroundLayer Ground;
         /// Trees in this tile map.
         std::vector<OBJECTS::Tree> Trees;
-        /// Food in the tile map that isn't on any plants.
+        /// Food that is falling off a plant toward the ground.
         /// After food falls off of a plant, it should be transferred here.
-        std::vector<OBJECTS::Food> Food;
+        std::vector<OBJECTS::FallingFood> FallingFood;
+        /// Food in the tile map that has fallen to the groun.
+        /// After food has finished falling, it should be transferred here.
+        std::vector<OBJECTS::Food> FoodOnGround;
         /// Dust clouds within the tile map.
         std::vector<OBJECTS::DustCloud> DustClouds;
         /// Wooden logs that have appeared in the map from chopped down trees.

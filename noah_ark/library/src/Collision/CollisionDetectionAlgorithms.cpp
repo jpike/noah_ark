@@ -899,17 +899,21 @@ namespace COLLISION
                 // ADD FOOD TO THE TILE MAP IF THE TREE HAD FOOD.
                 if (tree->Food)
                 {
-                    // MOVE THE FOOD DOWN TO RIGHT BELOW THE TREE.
-                    /// @todo   Make food gradually fall down?
+                    // CALCULATE THE DESTINATION POSITION FOR THE FALLING FOOD.
+                    // It should fall to directly below the tree.
                     float tree_bottom_y_position = tree->Sprite.GetWorldBoundingBox().GetBottomYPosition();
                     float food_height_in_pixels = tree->Food->Sprite.GetHeightInPixels();
                     float food_half_height_in_pixels = food_height_in_pixels / 2.0f;
-                    MATH::Vector2f food_center_world_position = tree->Food->Sprite.GetWorldPosition();
-                    food_center_world_position.Y = tree_bottom_y_position + food_half_height_in_pixels;
-                    tree->Food->Sprite.SetWorldPosition(food_center_world_position);
+                    MATH::Vector2f food_destination_world_position = tree->Food->Sprite.GetWorldPosition();
+                    food_destination_world_position.Y = tree_bottom_y_position + food_half_height_in_pixels;
 
+                    // START MAKING THE FOOD FALL OFF THE TREE.
+                    OBJECTS::FallingFood falling_food;
+                    falling_food.FoodItem = *tree->Food;
+                    falling_food.DestinationWorldPosition = food_destination_world_position;
+                    
                     // TRANSFER THE FOOD FROM THE TREE TO THE TILE MAP.
-                    tile_map->Food.push_back(*tree->Food);
+                    tile_map->FallingFood.push_back(falling_food);
                     tree->Food.reset();
                 }
 

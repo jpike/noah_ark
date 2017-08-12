@@ -557,12 +557,6 @@ namespace GRAPHICS
             wood_log.Sprite.Render(Screen);
         }
 
-        // RENDER THE CURRENT TILE MAP'S FOOD.
-        for (const auto& food : tile_map.Food)
-        {
-            food.Sprite.Render(Screen);
-        }
-
         // RENDER THE CURRENT TILE MAP'S TREES.
         for (const auto& tree : tile_map.Trees)
         {
@@ -574,6 +568,18 @@ namespace GRAPHICS
             {
                 tree.Food->Sprite.Render(Screen);
             }
+        }
+
+        // RENDER THE CURRENT TILE MAP'S FALLING FOOD.
+        for (const auto& food : tile_map.FallingFood)
+        {
+            food.FoodItem.Sprite.Render(Screen);
+        }
+
+        // RENDER THE CURRENT TILE MAP'S FOOD ON THE GROUND.
+        for (const auto& food : tile_map.FoodOnGround)
+        {
+            food.Sprite.Render(Screen);
         }
 
         // RENDER THE CURRENT TILE MAP'S ANIMALS.

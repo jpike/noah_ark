@@ -124,6 +124,7 @@
     <ClCompile Include="src\Objects\ArkPiece.cpp" />
     <ClCompile Include="src\Objects\Axe.cpp" />
     <ClCompile Include="src\Objects\DustCloud.cpp" />
+    <ClCompile Include="src\Objects\Food.cpp" />
     <ClCompile Include="src\Objects\Noah.cpp" />
     <ClCompile Include="src\Objects\RandomAnimalGenerationAlgorithm.cpp" />
     <ClCompile Include="src\Objects\Tree.cpp" />

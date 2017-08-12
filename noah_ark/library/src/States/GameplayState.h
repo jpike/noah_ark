@@ -59,6 +59,7 @@ namespace STATES
             INPUT_CONTROL::KeyboardInputController& input_controller,
             GRAPHICS::Camera& camera);
         void MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
+        void UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
 
         // COLLISION DETECTION.
         void CollectWoodAndBibleVersesCollidingWithPlayer(

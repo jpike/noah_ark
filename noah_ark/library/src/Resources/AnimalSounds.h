@@ -1,9 +1,7 @@
 #pragma once
 
-#include <memory>
-#include "Audio/SoundEffect.h"
+#include <string>
 #include "Objects/Animal.h"
-#include "Resources/Assets.h"
 
 namespace RESOURCES
 {
@@ -12,8 +10,6 @@ namespace RESOURCES
     class AnimalSounds
     {
     public:
-        static std::shared_ptr<AUDIO::SoundEffect> GetSound(
-            const OBJECTS::AnimalSpecies animal_species,
-            Assets& assets);
+        static std::string GetSound(const OBJECTS::AnimalSpecies animal_species);
     };
 }

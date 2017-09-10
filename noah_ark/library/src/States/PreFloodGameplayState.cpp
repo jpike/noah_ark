@@ -3,22 +3,26 @@
 #include "Collision/CollisionDetectionAlgorithms.h"
 #include "Core/NullChecking.h"
 #include "Objects/RandomAnimalGenerationAlgorithm.h"
-#include "States/GameplayState.h"
+#include "States/PreFloodGameplayState.h"
 
 namespace STATES
 {
     /// Constructor.
+    /// @param[in,out]  speakers - The speakers for which to play sound effects.
     /// @param[in]  assets - The assets to be used during gameplay.
     /// @throws std::exception - Thrown if the assets are null.
-    GameplayState::GameplayState(const std::shared_ptr<RESOURCES::Assets>& assets) :
+    PreFloodGameplayState::PreFloodGameplayState(
+        const std::shared_ptr<AUDIO::Speakers>& speakers,
+        const std::shared_ptr<RESOURCES::Assets>& assets) :
         Overworld(),
         RandomNumberGenerator(),
-        Speakers(),
+        Speakers(speakers),
         BibleVersesLeftToFind(),
         Assets(assets),
         Hud()
     {
-        // MAKE SURE ASSETS WERE PROVIDED.
+        // MAKE SURE PARAMETERS WERE PROVIDED.
+        CORE::ThrowInvalidArgumentExceptionIfNull(Speakers, "Speakers cannot be null for gameplay state.");
         CORE::ThrowInvalidArgumentExceptionIfNull(Assets, "Assets cannot be null for gameplay state.");
     }
 
@@ -27,7 +31,7 @@ namespace STATES
     /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
     /// @param[in,out]  overworld - The overworld for the gameplay state.
     /// @return True if initialization succeeded; false otherwise.
-    bool GameplayState::Initialize(
+    bool PreFloodGameplayState::Initialize(
         const unsigned int screen_width_in_pixels,
         const SavedGameData& saved_game_data,
         const std::shared_ptr<MAPS::Overworld>& overworld)
@@ -101,7 +105,7 @@ namespace STATES
     /// @param[in]  elapsed_time - The amount of time by which to update the game state.
     /// @param[in,out]  input_controller - The controller supplying player input.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
-    void GameplayState::Update(
+    void PreFloodGameplayState::Update(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::KeyboardInputController& input_controller,
         GRAPHICS::Camera& camera)
@@ -162,7 +166,20 @@ namespace STATES
             // UPDATE THE CURRENT TILE MAP'S TREES.
             for (auto tree = current_tile_map->Trees.begin(); tree != current_tile_map->Trees.end(); ++tree)
             {
+                // UPDATE THE TREE.
                 tree->Update(elapsed_time);
+
+                // START PLAYING THE TREE SHAKING SOUND EFFECT IF APPROPRIATE.
+                if (tree->Shaking)
+                {
+                    // ONLY START PLAYING THE SOUND IF IT ISN'T ALREADY PLAYING.
+                    // This results in a smoother sound experience.
+                    bool tree_shake_sound_playing = Speakers->IsPlaying(RESOURCES::TREE_SHAKE_SOUND_ID);
+                    if (!tree_shake_sound_playing)
+                    {
+                        Speakers->Play(RESOURCES::TREE_SHAKE_SOUND_ID);
+                    }
+                }
             }
 
             // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
@@ -195,15 +212,11 @@ namespace STATES
                 input_controller,
                 *current_tile_map);
         }
-
-        // REMOVE ANY SOUNDS THAT ARE NO LONGER PLAYING.
-        // This helps prevent memory usage from growing without bounds.
-        Speakers.RemoveCompletedSounds();
     }
 
     /// Renders the current frame of the gameplay state.
     /// @param[in]  renderer - The renderer to use for rendering.
-    void GameplayState::Render(GRAPHICS::Renderer& renderer)
+    void PreFloodGameplayState::Render(GRAPHICS::Renderer& renderer)
     {
         renderer.Render(*Overworld);
         Hud->Render(renderer);
@@ -212,7 +225,7 @@ namespace STATES
     /// Attempts to initialize the player character from saved game data.
     /// @param[in]  saved_game_data - The saved game data from which to initialize the player.
     /// @return The initialized player, if successful; null otherwise.
-    std::unique_ptr<OBJECTS::Noah> GameplayState::InitializePlayer(const SavedGameData& saved_game_data)
+    std::unique_ptr<OBJECTS::Noah> PreFloodGameplayState::InitializePlayer(const SavedGameData& saved_game_data)
     {
         // GET THE TEXTURE FOR NOAH.
         std::shared_ptr<GRAPHICS::Texture> noah_texture = Assets->GetTexture(RESOURCES::NOAH_TEXTURE_ID);
@@ -222,12 +235,8 @@ namespace STATES
         std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AXE_TEXTURE_ID);
         assert(axe_texture);
 
-        // GET THE AXE'S SOUND EFFECT.
-        std::shared_ptr<AUDIO::SoundEffect> axe_hit_sound = Assets->GetSound(RESOURCES::AXE_HIT_SOUND_ID);
-        assert(axe_hit_sound);
-
         // CREATE THE AXE.
-        std::shared_ptr<OBJECTS::Axe> axe = std::make_shared<OBJECTS::Axe>(axe_texture, axe_hit_sound);
+        std::shared_ptr<OBJECTS::Axe> axe = std::make_shared<OBJECTS::Axe>(axe_texture);
 
         // CREATE NOAH.
         auto noah_player = std::make_unique<OBJECTS::Noah>(noah_texture, axe);
@@ -248,7 +257,7 @@ namespace STATES
     /// @param[in]  screen_width_in_pixels - The width of the screen, in pixels.
     /// @param[in]  overworld - The overworld for which the HUD is displaying information about.
     /// @return The initialized HUD, if successful; null otherwise.
-    std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> GameplayState::InitializeHud(
+    std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> PreFloodGameplayState::InitializeHud(
         const unsigned int screen_width_in_pixels,
         const std::shared_ptr<MAPS::Overworld>& overworld)
     {
@@ -277,7 +286,7 @@ namespace STATES
     /// @param[in]  elapsed_time - The elapsed time for which to update things.
     /// @param[in,out]  input_controller - The controller supplying player input.
     /// @param[in,out]  camera - The camera defining the viewable region of the overworld.
-    void GameplayState::UpdatePlayerBasedOnInput(
+    void PreFloodGameplayState::UpdatePlayerBasedOnInput(
         const MAPS::TileMap& current_tile_map,
         const sf::Time& elapsed_time,
         INPUT_CONTROL::KeyboardInputController& input_controller,
@@ -601,9 +610,7 @@ namespace STATES
                 tile_map_underneath_noah->DustClouds.push_back(dust_cloud);
 
                 // Play a sound to indicate a piece of the ark is being built.
-                std::shared_ptr<AUDIO::SoundEffect> axe_building_sound = Assets->GetSound(RESOURCES::ARK_BUILDING_SOUND_ID);
-                assert(axe_building_sound);
-                Speakers.Play(axe_building_sound);
+                Speakers->Play(RESOURCES::ARK_BUILDING_SOUND_ID);
             }
         }
         else
@@ -616,7 +623,7 @@ namespace STATES
     /// Moves animals in the provided tile map based on the elapsed time.
     /// @param[in]  elapsed_time - The elapsed time for which to move the animals.
     /// @param[in,out]  tile_map - The tile map in which to move animals.
-    void GameplayState::MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
+    void PreFloodGameplayState::MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
     {
         // MOVE EACH ANIMAL IN THE TILE MAP CLOSER TO NOAH.
         for (auto& animal : tile_map.Animals)
@@ -666,7 +673,7 @@ namespace STATES
     /// Updates any falling food in the tile map.
     /// @param[in]  elapsed_time - The elapsed time for which to update the food.
     /// @param[in,out]  tile_map - The tile map whose falling food to update.
-    void GameplayState::UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
+    void PreFloodGameplayState::UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
     {
         // UPDATE ANY FALLING FOOD.
         for (auto food = tile_map.FallingFood.begin();
@@ -695,7 +702,7 @@ namespace STATES
     /// @param[in,out]  tile_map - The tile map to examine wood logs in.
     /// @param[out] message_for_text_box - A message for the HUD's main text box, if
     ///     a Bible verse was collected.
-    void GameplayState::CollectWoodAndBibleVersesCollidingWithPlayer(
+    void PreFloodGameplayState::CollectWoodAndBibleVersesCollidingWithPlayer(
         MAPS::TileMap& tile_map,
         std::string& message_for_text_box)
     {
@@ -703,7 +710,7 @@ namespace STATES
         message_for_text_box.clear();
 
         // HANDLE PLAYER COLLISIONS WITH WOOD LOGS.
-        COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(*Overworld, Overworld->AxeSwings, *Assets);
+        COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(*Overworld, Overworld->AxeSwings, *Speakers, *Assets);
         for (auto wood_logs = tile_map.WoodLogs.begin(); wood_logs != tile_map.WoodLogs.end();)
         {
             // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
@@ -738,9 +745,7 @@ namespace STATES
                     if (bible_verses_remain_to_be_found)
                     {
                         // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
-                        std::shared_ptr<AUDIO::SoundEffect> collected_bible_verse_sound = Assets->GetSound(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
-                        assert(collected_bible_verse_sound);
-                        Speakers.Play(collected_bible_verse_sound);
+                        Speakers->Play(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
 
                         // SELECT A RANDOM BIBLE VERSE.
                         size_t remaining_bible_verse_count = BibleVersesLeftToFind.size();
@@ -769,7 +774,7 @@ namespace STATES
     /// Determines if the player is colliding with any food in the tile map.
     /// If so, the food is added to the player's inventory.
     /// @param[in,out]  tile_map - The tile map to examine food in.
-    void GameplayState::CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map)
+    void PreFloodGameplayState::CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map)
     {
         // HANDLE PLAYER COLLISIONS WITH FOOD.
         for (auto food = tile_map.FoodOnGround.cbegin();
@@ -782,8 +787,7 @@ namespace STATES
             if (food_intersects_with_noah)
             {
                 // PLAY THE SOUND EFFECT FOR COLLECTING FOOD.
-                std::shared_ptr<AUDIO::SoundEffect> food_pickup_sound = Assets->GetSound(RESOURCES::FOOD_PICKUP_SOUND_ID);
-                Speakers.Play(food_pickup_sound);
+                Speakers->Play(RESOURCES::FOOD_PICKUP_SOUND_ID);
 
                 // ADD THE FOOD TO THE PLAYER'S INVENTORY.
                 std::cout << "Collected food: " << static_cast<int>(food->Type) << std::endl;
@@ -804,7 +808,7 @@ namespace STATES
     /// Determines if the player is colliding with any animals in the tile map.
     /// If so, the animals are added to the player's inventory.
     /// @param[in,out]  tile_map - The tile map to examine animals in.
-    void GameplayState::CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map)
+    void PreFloodGameplayState::CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map)
     {
         // HANDLE PLAYER COLLISIONS WITH ANIMALS.
         for (auto animal = tile_map.Animals.cbegin();
@@ -817,7 +821,7 @@ namespace STATES
             if (animal_intersects_with_noah)
             {
                 // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
-                Speakers.Play((*animal)->Sound);
+                Speakers->Play((*animal)->SoundId);
 
                 // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
                 std::cout << "Collected animal." << std::endl;
@@ -842,7 +846,7 @@ namespace STATES
     /// @param[in,out]  input_controller - The input controller that might
     ///     be tweaked based on camera movement.
     /// @param[in,out]  current_tile_map - The current tile map in view by the camera.
-    void GameplayState::UpdateCameraWorldView(
+    void PreFloodGameplayState::UpdateCameraWorldView(
         const sf::Time& elapsed_time,
         GRAPHICS::Camera& camera,
         INPUT_CONTROL::KeyboardInputController& input_controller,
@@ -887,7 +891,7 @@ namespace STATES
                         std::cout << "Random animal generated: " << static_cast<unsigned int>(animal->Type.Species) << std::endl;
 
                         // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
-                        Speakers.Play(animal->Sound);
+                        Speakers->Play(animal->SoundId);
 
                         // START ANIMATING THE ANIMAL.
                         animal->Sprite.Play();

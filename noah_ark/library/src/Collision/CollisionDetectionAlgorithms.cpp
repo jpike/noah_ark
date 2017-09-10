@@ -256,10 +256,12 @@ namespace COLLISION
     /// Handles collisions of axe swings with objects in the overworld.
     /// @param[in,out]  overworld - The overworld in which axes are being swung.
     /// @param[in,out]  axe_swings - The axe swings to process and update.
+    /// @param[in,out]  speakers - The speakers for which to play sound effects.
     /// @param[in,out]  assets - Assets that might be needed.
     void CollisionDetectionAlgorithms::HandleAxeSwings(
         MAPS::Overworld& overworld,
         std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings,
+        AUDIO::Speakers& speakers,
         RESOURCES::Assets& assets)
     {
         // HANDLE COLLISIONS FOR ALL AXE SWINGS.
@@ -292,7 +294,7 @@ namespace COLLISION
             }
 
             // HANDLE COLLISIONS OF THE AXE WITH TREES.
-            HandleAxeCollisionsWithTrees(*axe_swing.Axe, overworld, assets);
+            HandleAxeCollisionsWithTrees(*axe_swing.Axe, overworld, speakers, assets);
 
             // REMOVE THE PROCESSED AXE SWING EVENT.
             axe_swing_event = axe_swings.erase(axe_swing_event);
@@ -862,8 +864,13 @@ namespace COLLISION
     /// Handles collisions of axes with trees in the overworld.
     /// @param[in]  axe - The axe to process for collision detection with trees.
     /// @param[in,out]  overworld - The overworld in which the axe and trees exist.
+    /// @param[in,out]  speakers - The speakers for which to play sound effects.
     /// @param[in,out]  assets - Assets that might be needed.
-    void CollisionDetectionAlgorithms::HandleAxeCollisionsWithTrees(const OBJECTS::Axe& axe, MAPS::Overworld& overworld, RESOURCES::Assets& assets)
+    void CollisionDetectionAlgorithms::HandleAxeCollisionsWithTrees(
+        const OBJECTS::Axe& axe, 
+        MAPS::Overworld& overworld, 
+        AUDIO::Speakers& speakers,
+        RESOURCES::Assets& assets)
     {
         // GET THE WORLD AREA CONTAING THE AXE BLADE.
         // While it is technically possible for the axe to intersect multiple tile maps,
@@ -881,14 +888,7 @@ namespace COLLISION
             if (axe_hit_tree)
             {
                 // PLAY THE SOUND EFFECT FOR THE AXE HITTING A TREE.
-                // If it wasn't loaded, the game will continue without a sound being played
-                // since sound effects are a relatively minor part.
-                std::shared_ptr<AUDIO::SoundEffect> axe_hit_sound = axe.AxeHitSound;
-                bool axe_hit_sound_loaded = (nullptr != axe_hit_sound);
-                if (axe_hit_sound_loaded)
-                {
-                    axe_hit_sound->Play();
-                }
+                speakers.Play(RESOURCES::AXE_HIT_SOUND_ID);
 
                 // DAMAGE THE TREE.
                 tree->TakeHit();

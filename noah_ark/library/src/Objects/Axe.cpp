@@ -32,17 +32,12 @@ namespace OBJECTS
 
     /// Constructor.
     /// @param[in]  texture - The texture for the axe.
-    /// @param[in]  axe_hit_sound - The sound effect to play if the axe hits something.
     /// @throws std::exception - Thrown if a parameter is null.
-    Axe::Axe(
-        const std::shared_ptr<GRAPHICS::Texture>& texture,
-        const std::shared_ptr<AUDIO::SoundEffect>& axe_hit_sound) :
-    Sprite(),
-    AxeHitSound(axe_hit_sound)
+    Axe::Axe(const std::shared_ptr<GRAPHICS::Texture>& texture) :
+    Sprite()
     {
         // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(texture, "Texture required for axe.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(axe_hit_sound, "Hit sound required for axe.");
 
         // INITIALIZE THE SPRITE.
         const float AXE_SPRITE_X_OFFSET_IN_PIXELS = 52.0f;

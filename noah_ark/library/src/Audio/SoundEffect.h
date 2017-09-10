@@ -11,6 +11,7 @@ namespace AUDIO
     {
     public:
         // CONSTRUCTION.
+        explicit SoundEffect() = default;
         explicit SoundEffect(const std::shared_ptr<sf::SoundBuffer>& audio_samples);
 
         // PLAYING.

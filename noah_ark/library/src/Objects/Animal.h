@@ -1,9 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <string>
 #include <SFML/System.hpp>
-#include "Audio/SoundEffect.h"
 #include "Graphics/AnimatedSprite.h"
 
 namespace OBJECTS
@@ -88,15 +86,15 @@ namespace OBJECTS
         explicit Animal(
             const AnimalType& type, 
             const GRAPHICS::AnimatedSprite& sprite,
-            const std::shared_ptr<AUDIO::SoundEffect>& sound);
+            const std::string& sound_id);
 
         /// PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The type of the animal.
         AnimalType Type;
         /// The graphical sprite for the animal.
         GRAPHICS::AnimatedSprite Sprite;
-        /// The sound for the animal (optional).
-        std::shared_ptr<AUDIO::SoundEffect> Sound;
+        /// The ID of the sound for the animal (optional).
+        std::string SoundId;
     };
 }
 

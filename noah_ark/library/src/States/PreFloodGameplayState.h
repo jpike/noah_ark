@@ -18,13 +18,15 @@
 
 namespace STATES
 {
-    /// The main state of the game featuring the main gameplay
-    /// of the player moving Noah throughout the overworld.
-    class GameplayState
+    /// The main pre-flood state of the game featuring the main gameplay
+    /// of the player moving Noah throughout the overworld, prior to the flood.
+    class PreFloodGameplayState
     {
     public:
         // CONSTRUCTION.
-        explicit GameplayState(const std::shared_ptr<RESOURCES::Assets>& assets);
+        explicit PreFloodGameplayState(
+            const std::shared_ptr<AUDIO::Speakers>& speakers,
+            const std::shared_ptr<RESOURCES::Assets>& assets);
 
         // INITIALIZATION.
         bool Initialize(
@@ -79,7 +81,7 @@ namespace STATES
         /// The random number generator.
         MATH::RandomNumberGenerator RandomNumberGenerator;
         /// The speakers out of which audio is played.
-        AUDIO::Speakers Speakers;
+        std::shared_ptr<AUDIO::Speakers> Speakers;
         /// Bible verses that still need to be found by the player.
         std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind;
         /// The assets to be used during gameplay.

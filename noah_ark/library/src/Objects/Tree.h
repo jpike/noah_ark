@@ -57,10 +57,10 @@ namespace OBJECTS
         unsigned int HitPoints = INITIAL_HIT_POINTS;
         /// Any food that currently exists on the tree.
         std::optional<Food> Food = std::nullopt;
-
-    private:
         /// True if the tree is currently shaking; false otherwise.
         bool Shaking = false;
+
+    private:
         /// The current rotation angle for the tree's sprite, if the tree is currently shaking.
         float CurrentShakeRotationInDegrees = 0.0f;
         /// The index of the current sub-rotation for shaking the tree, if the tree is currently

@@ -1,38 +1,53 @@
-#include <algorithm>
 #include "Audio/Speakers.h"
 
 namespace AUDIO
 {
-    /// Starts playing the sound out of the speakers.
-    /// @param[in]  sound - The sound to play.
-    void Speakers::Play(const std::shared_ptr<AUDIO::SoundEffect>& sound)
+    /// Adds a sound to the speakers for playing.
+    /// If a sound with the specified ID already exists in the speakers, it will be overwritten.
+    /// @param[in]  sound_id - The unique ID for the sound.
+    /// @param[in]  audio_samples - The audio samples for the sound.
+    void Speakers::AddSound(const std::string& sound_id, const std::shared_ptr<sf::SoundBuffer>& audio_samples)
     {
-        // MAKE SURE THE SOUND EXISTS.
-        bool sound_exists = (nullptr != sound);
-        if (!sound_exists)
+        // MAKE SURE THE AUDIO SAMPLES EXIST.
+        if (!audio_samples)
         {
-            // The sound can't be played if it doesn't exist.
             return;
         }
 
-        // START PLAYING THE SOUND.
-        sound->Play();
-
-        // STORE THE SOUND SO THAT IT CAN FINISH BEING PLAYED.
-        Sounds.push_back(sound);
+        // STORE THE SOUND.
+        AUDIO::SoundEffect sound_effect = AUDIO::SoundEffect(audio_samples);
+        Sounds[sound_id] = sound_effect;
     }
 
-    /// Removes any sounds from the speakers that have finished playing.
-    void Speakers::RemoveCompletedSounds()
+    /// Checks if a sound is currently playing in the speakers.
+    /// @param[in]  sound_id - The ID of the sound to check.
+    /// @return True if the sound is currently playing; false otherwise.
+    bool Speakers::IsPlaying(const std::string& sound_id)
     {
-        // MOVE ALL COMPLETED SOUNDS TO THE END OF THE CONTAINER.
-        auto sound_completed = [](const std::shared_ptr<AUDIO::SoundEffect>& sound) { return !sound->IsPlaying(); };
-        auto first_completed_sound = std::remove_if(
-            Sounds.begin(),
-            Sounds.end(),
-            sound_completed);
+        // CHECK IF THE SOUND EXISTS.
+        auto sound_effect = Sounds.find(sound_id);
+        bool sound_exists = (Sounds.end() != sound_effect);
+        if (sound_exists)
+        {
+            bool is_playing = sound_effect->second.IsPlaying();
+            return is_playing;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
-        // REMOVE THE COMPLETED SOUNDS.
-        Sounds.erase(first_completed_sound, Sounds.end());
+    /// Starts playing the sound with the given ID, assuming it is already stored in the speakers.
+    /// @param[in]  sound_id - The ID of the sound to play.
+    void Speakers::Play(const std::string& sound_id)
+    {
+        // PLAY THE SOUND IF IT EXISTS.
+        auto sound_effect = Sounds.find(sound_id);
+        bool sound_exists = (Sounds.end() != sound_effect);
+        if (sound_exists)
+        {
+            sound_effect->second.Play();
+        }
     }
 }

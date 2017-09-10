@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SFML/System.hpp>
-#include "Audio/SoundEffect.h"
 #include "Core/Direction.h"
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
@@ -63,9 +62,7 @@ namespace OBJECTS
     public:
         // CONSTRUCTION.
         explicit Axe() = default;
-        explicit Axe(
-            const std::shared_ptr<GRAPHICS::Texture>& texture,
-            const std::shared_ptr<AUDIO::SoundEffect>& axe_hit_sound);
+        explicit Axe(const std::shared_ptr<GRAPHICS::Texture>& texture);
 
         // SWINGING METHODS.
         void SwingUp();
@@ -84,8 +81,6 @@ namespace OBJECTS
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The sprite for the axe.
         GRAPHICS::Sprite Sprite = GRAPHICS::Sprite();
-        /// The sound effect to play when the axe hits something.
-        std::shared_ptr<AUDIO::SoundEffect> AxeHitSound = nullptr;
 
     private:
         // MEMBER VARIABLES.

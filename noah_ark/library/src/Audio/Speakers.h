@@ -1,7 +1,9 @@
 #pragma once
 
 #include <memory>
-#include <vector>
+#include <string>
+#include <unordered_map>
+#include <SFML/Audio.hpp>
 #include "Audio/SoundEffect.h"
 
 namespace AUDIO
@@ -14,11 +16,13 @@ namespace AUDIO
     class Speakers
     {
     public:
-        void Play(const std::shared_ptr<AUDIO::SoundEffect>& sound);
-        void RemoveCompletedSounds();
+        void AddSound(const std::string& sound_id, const std::shared_ptr<sf::SoundBuffer>& audio_samples);
+        bool IsPlaying(const std::string& sound_id);
+        void Play(const std::string& sound_id);
 
     private:
-        /// The sound effects currently in the speakers for playing.
-        std::vector< std::shared_ptr<AUDIO::SoundEffect> > Sounds = {};
+        /// The sound effects currently loaded into the speakers.
+        /// Mapped by sound ID.
+        std::unordered_map<std::string, AUDIO::SoundEffect> Sounds = {};
     };
 }

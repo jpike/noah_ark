@@ -78,7 +78,7 @@
     <ClInclude Include="src\Resources\Assets.h" />
     <ClInclude Include="src\Resources\FoodGraphics.h" />
     <ClInclude Include="src\States\CreditsScreen.h" />
-    <ClInclude Include="src\States\GameplayState.h" />
+    <ClInclude Include="src\States\PreFloodGameplayState.h" />
     <ClInclude Include="src\States\GameState.h" />
     <ClInclude Include="src\States\IntroSequence.h" />
     <ClInclude Include="src\States\SavedGameData.h" />
@@ -136,7 +136,7 @@
     <ClCompile Include="src\Resources\Assets.cpp" />
     <ClCompile Include="src\Resources\FoodGraphics.cpp" />
     <ClCompile Include="src\States\CreditsScreen.cpp" />
-    <ClCompile Include="src\States\GameplayState.cpp" />
+    <ClCompile Include="src\States\PreFloodGameplayState.cpp" />
     <ClCompile Include="src\States\IntroSequence.cpp" />
     <ClCompile Include="src\States\SavedGameData.cpp" />
     <ClCompile Include="src\States\TitleScreen.cpp" />

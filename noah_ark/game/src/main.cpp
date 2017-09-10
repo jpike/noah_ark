@@ -11,10 +11,11 @@
 #include "Maps/OverworldMapData.h"
 #include "Maps/Tileset.h"
 #include "Math/Number.h"
+#include "Resources/AnimalSounds.h"
 #include "Resources/Assets.h"
 #include "Resources/FoodGraphics.h"
 #include "States/CreditsScreen.h"
-#include "States/GameplayState.h"
+#include "States/PreFloodGameplayState.h"
 #include "States/GameState.h"
 #include "States/IntroSequence.h"
 #include "States/SavedGameData.h"
@@ -182,15 +183,9 @@ void PopulateOverworld(
                             MATH::Vector2f tree_local_center = tree_sprite.GetOrigin();
                             auto tree_left_x = current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>;
                             auto tree_top_y = current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>;
-                            float tree_world_x_position = static_cast<float>(tree_left_x) + tree_local_center.X;
-                            float tree_world_y_position = static_cast<float>(tree_top_y) + tree_local_center.Y;
+                            float tree_world_x_position = map_left_world_position + static_cast<float>(tree_left_x) + tree_local_center.X;
+                            float tree_world_y_position = map_top_world_position + static_cast<float>(tree_top_y) + tree_local_center.Y;
                             tree_sprite.SetWorldPosition(tree_world_x_position, tree_world_y_position);
-
-                            // GET THE TREE SHAKING SOUND EFFECT.
-                            // If the sound can't be retrieved, then the game will continue just with no sound playing
-                            // when trees shake.
-                            std::shared_ptr<AUDIO::SoundEffect> tree_shake_sound = assets.GetSound(RESOURCES::TREE_SHAKE_SOUND_ID);
-                            bool tree_shake_sound_retrieved = (nullptr != tree_shake_sound);
 
                             // CREATE ANY FOOD ON THE TREE.
                             // Food will be randomly generated.
@@ -221,7 +216,6 @@ void PopulateOverworld(
                             // CREATE THE TREE.
                             OBJECTS::Tree tree;
                             tree.Sprite = tree_sprite;
-                            tree.TreeShakeSound = tree_shake_sound;
                             tree.Food = food;
                             tile_map.Trees.push_back(tree);
                         }
@@ -261,6 +255,47 @@ std::shared_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
     return overworld;
 }
 
+/// Loads the sounds for the game, adding them to the speakers.
+/// @param[in,out]  assets - The assets from which to load the sounds.
+/// @return The speakers with the sounds; never null.
+std::shared_ptr<AUDIO::Speakers> LoadSounds(RESOURCES::Assets& assets)
+{
+    std::shared_ptr<AUDIO::Speakers> speakers = std::make_shared<AUDIO::Speakers>();
+
+    // ADD EACH GENERIC SOUND EFFECT TO THE SPEAKERS.
+    const std::array<std::string, 5> GENERIC_SOUND_EFFECT_IDS =
+    {
+        RESOURCES::ARK_BUILDING_SOUND_ID,
+        RESOURCES::AXE_HIT_SOUND_ID,
+        RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID,
+        RESOURCES::FOOD_PICKUP_SOUND_ID,
+        RESOURCES::TREE_SHAKE_SOUND_ID
+
+    };
+    for (const std::string& sound_id : GENERIC_SOUND_EFFECT_IDS)
+    {
+        std::shared_ptr<sf::SoundBuffer> audio_samples = assets.GetSound(sound_id);
+        if (audio_samples)
+        {
+            speakers->AddSound(sound_id, audio_samples);
+        }
+    }
+
+    // ADD ALL OF THE ANIMAL SOUND EFFECTS TO THE SPEAKERS.
+    for (int species_id = 0; species_id < static_cast<int>(OBJECTS::AnimalSpecies::COUNT); ++species_id)
+    {
+        OBJECTS::AnimalSpecies species = static_cast<OBJECTS::AnimalSpecies>(species_id);
+        std::string animal_sound_id = RESOURCES::AnimalSounds::GetSound(species);
+        std::shared_ptr<sf::SoundBuffer> audio_samples = assets.GetSound(animal_sound_id);
+        if (audio_samples)
+        {
+            speakers->AddSound(animal_sound_id, audio_samples);
+        }
+    }
+    
+    return speakers;
+}
+
 /// The main entry point for the game.
 /// Runs the Noah's Ark game until the user
 /// chooses to exit or an error occurs.
@@ -295,6 +330,9 @@ int main(int argumentCount, char* arguments[])
         auto colored_texture_shader = assets->GetShader(RESOURCES::ShaderId::COLORED_TEXTURE);
         assert(colored_texture_shader);
 
+        // LOAD THE SOUND EFFECTS.
+        std::future< std::shared_ptr<AUDIO::Speakers> > speakers = std::async(LoadSounds, std::ref(*assets));
+
         // The overworld is loaded in the background in separate threads to avoid having
         // their loading slow the startup time of the rest of the game.
         std::future< std::shared_ptr<MAPS::Overworld> > overworld_being_loaded = std::async(LoadOverworld, std::ref(*assets));
@@ -308,7 +346,7 @@ int main(int argumentCount, char* arguments[])
         STATES::IntroSequence intro_sequence;
         STATES::TitleScreen title_screen;
         STATES::CreditsScreen credits_screen;
-        STATES::GameplayState gameplay_state(assets);
+        STATES::PreFloodGameplayState pre_flood_gameplay_state(speakers.get(), assets);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         STATES::GameState game_state = STATES::GameState::INTRO_SEQUENCE;
@@ -316,6 +354,7 @@ int main(int argumentCount, char* arguments[])
         while (window->isOpen())
         {
             // PROCESS WINDOW EVENTS.
+            bool switch_to_flood_gameplay_state = false;
             sf::Event event;
             while (window->pollEvent(event))
             {
@@ -324,6 +363,11 @@ int main(int argumentCount, char* arguments[])
                 {
                     case sf::Event::Closed:
                         window->close();
+                        break;
+                    case sf::Event::KeyPressed:
+                        /// @todo   This is temporary debug code to help switching between gameplay states.
+                        /// Remove it when no longer needed.
+                        switch_to_flood_gameplay_state = (sf::Keyboard::Num2 == event.key.code);
                         break;
                 }
             }
@@ -360,8 +404,15 @@ int main(int argumentCount, char* arguments[])
                     case STATES::GameState::CREDITS_SCREEN:
                         next_game_state = credits_screen.Update(elapsed_time, input_controller);
                         break;
-                    case STATES::GameState::GAMEPLAY:
-                        gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
+                    case STATES::GameState::PRE_FLOOD_GAMEPLAY:
+                        pre_flood_gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
+                        /// @todo   This is temporary debug code to help switching between gameplay states.
+                        /// Remove it when no longer needed.
+                        if (switch_to_flood_gameplay_state)
+                        {
+                            next_game_state = STATES::GameState::FLOOD_GAMEPLAY;
+                            switch_to_flood_gameplay_state = false;
+                        }
                         break;
                 }
 
@@ -380,8 +431,11 @@ int main(int argumentCount, char* arguments[])
                     case STATES::GameState::CREDITS_SCREEN:
                         credits_screen.Render(renderer);
                         break;
-                    case STATES::GameState::GAMEPLAY:
-                        gameplay_state.Render(renderer);
+                    case STATES::GameState::PRE_FLOOD_GAMEPLAY:
+                        pre_flood_gameplay_state.Render(renderer);
+                        break;
+                    case STATES::GameState::FLOOD_GAMEPLAY:
+                        /// @todo
                         break;
                 }
 
@@ -400,7 +454,7 @@ int main(int argumentCount, char* arguments[])
                             // RESET THE ELAPSED TIME FOR THE CREDITS SCREEN.
                             credits_screen.ElapsedTime = sf::Time::Zero;
                             break;
-                        case STATES::GameState::GAMEPLAY:
+                        case STATES::GameState::PRE_FLOOD_GAMEPLAY:
                         {
                             // LOAD THE GAME'S SAVE FILE.
                             std::unique_ptr<STATES::SavedGameData> saved_game_data = STATES::SavedGameData::Load(STATES::SavedGameData::DEFAULT_FILENAME);
@@ -416,16 +470,21 @@ int main(int argumentCount, char* arguments[])
                             auto overworld = overworld_being_loaded.get();
                             assert(overworld);
 
-                            bool gameplay_state_initialized = gameplay_state.Initialize(
+                            bool gameplay_state_initialized = pre_flood_gameplay_state.Initialize(
                                 SCREEN_WIDTH_IN_PIXELS,
                                 *saved_game_data,
                                 overworld);
                             assert(gameplay_state_initialized);
 
                             // FOCUS THE CAMERA ON THE PLAYER.
-                            MATH::Vector2f player_start_world_position = gameplay_state.Overworld->NoahPlayer->GetWorldPosition();
+                            MATH::Vector2f player_start_world_position = pre_flood_gameplay_state.Overworld->NoahPlayer->GetWorldPosition();
                             renderer.Camera.SetCenter(player_start_world_position);
 
+                            break;
+                        }
+                        case STATES::GameState::FLOOD_GAMEPLAY:
+                        {
+                            /// @todo
                             break;
                         }
                     }

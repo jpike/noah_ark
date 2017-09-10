@@ -84,22 +84,7 @@ namespace OBJECTS
         // ONLY UPDATE THE SHAKING IF THE TREE IS CURRENTLY SHAKING.
         if (!Shaking)
         {
-            // There isn't a need to stop the tree shaking sound effect.
-            // Doing so would cause a pop.  It is better to just let it
-            // finish on its own.
             return;
-        }
-
-        // MAKE SURE THE TREE SHAKING SOUND IS PLAYING IF IT EXISTS.
-        if (TreeShakeSound)
-        {
-            // ONLY START PLAYING THE SOUND IF IT ISN'T ALREADY PLAYING.
-            // This results in a smoother sound experience.
-            bool tree_shake_sound_playing = TreeShakeSound->IsPlaying();
-            if (!tree_shake_sound_playing)
-            {
-                TreeShakeSound->Play();
-            }
         }
 
         // UPDATE THE TREE'S ROTATION BASED ON THE CURRENT SHAKING PARAMETERS.

@@ -53,7 +53,7 @@ namespace RESOURCES
         std::shared_ptr<GRAPHICS::Texture> GetTexture(const std::string& texture_id);
         std::shared_ptr<GRAPHICS::GUI::Font> GetFont(const std::string& font_texture_id);
         std::shared_ptr<sf::Shader> GetShader(const ShaderId shader_id) const;
-        std::shared_ptr<AUDIO::SoundEffect> GetSound(const std::string& sound_id);
+        std::shared_ptr<sf::SoundBuffer> GetSound(const std::string& sound_id);
         std::shared_ptr<sf::Music> GetMusic(const std::string& music_id);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

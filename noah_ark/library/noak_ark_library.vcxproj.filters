@@ -227,9 +227,6 @@
     <ClInclude Include="src\Inventory\InventoryGui.h">
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="src\States\GameplayState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
     <ClInclude Include="src\Collision\CollisionDetectionAlgorithms.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
@@ -283,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="src\Inventory\InventoryFoodPage.h">
       <Filter>Header Files\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\States\PreFloodGameplayState.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -400,9 +400,6 @@
     <ClCompile Include="src\Inventory\InventoryGui.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="src\States\GameplayState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
     <ClCompile Include="src\Collision\CollisionDetectionAlgorithms.cpp">
       <Filter>Source Files\Collision</Filter>
     </ClCompile>
@@ -450,6 +447,9 @@
     </ClCompile>
     <ClCompile Include="src\Inventory\InventoryFoodPage.cpp">
       <Filter>Source Files\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\States\PreFloodGameplayState.cpp">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

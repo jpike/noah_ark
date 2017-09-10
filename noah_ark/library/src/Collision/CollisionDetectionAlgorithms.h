@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include <vector>
 #include <SFML/System.hpp>
+#include "Audio/Speakers.h"
 #include "Collision/Movement.h"
 #include "Core/Direction.h"
 #include "Events/AxeSwingEvent.h"
@@ -38,6 +39,7 @@ namespace COLLISION
         static void HandleAxeSwings(
             MAPS::Overworld& overworld,
             std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings,
+            AUDIO::Speakers& speakers,
             RESOURCES::Assets& assets);
 
     private:
@@ -60,7 +62,11 @@ namespace COLLISION
             MAPS::Overworld& overworld);
 
         // AXE SWINGS.
-        static void HandleAxeCollisionsWithTrees(const OBJECTS::Axe& axe, MAPS::Overworld& overworld, RESOURCES::Assets& assets);
+        static void HandleAxeCollisionsWithTrees(
+            const OBJECTS::Axe& axe, 
+            MAPS::Overworld& overworld, 
+            AUDIO::Speakers& speakers,
+            RESOURCES::Assets& assets);
 
         // OBJECT-SPECIFIC COLLISION DETECTION.
         static bool CollidesWithTree(const MATH::FloatRectangle& rectangle, MAPS::Overworld& overworld, MATH::FloatRectangle& tree_rectangle);

@@ -142,7 +142,7 @@ namespace RESOURCES
     /// but it may share the same buffer of audio samples as another instance.
     /// @param[in]  sound_id - The ID of the sound to load.
     /// @return The requested sound effect, if successfully loaded; null otherwise.
-    std::shared_ptr<AUDIO::SoundEffect> Assets::GetSound(const std::string& sound_id)
+    std::shared_ptr<sf::SoundBuffer> Assets::GetSound(const std::string& sound_id)
     {
         // CHECK IF THE AUDIO SAMPLES HAVE ALREADY BEEN LOADED.
         auto id_with_audio_samples = AudioSamples.find(sound_id);
@@ -150,8 +150,7 @@ namespace RESOURCES
         if (audio_samples_already_loaded)
         {
             // RETURN THE SOUND EFFECT USING THE PREVIOUSLY LOADED AUDIO SAMPLES.
-            std::shared_ptr<AUDIO::SoundEffect> sound_effect = std::make_shared<AUDIO::SoundEffect>(id_with_audio_samples->second);
-            return sound_effect;
+            return id_with_audio_samples->second;
         }
 
         // LOAD THE AUDIO SAMPLES INTO A BUFFER.
@@ -165,10 +164,7 @@ namespace RESOURCES
 
         // SAVE THE SOUND TO AVOID TAKING TIME TO LOAD IT IN THE FUTURE.
         AudioSamples[sound_id] = sound_buffer;
-
-        // RETURN THE SOUND EFFECT.
-        std::shared_ptr<AUDIO::SoundEffect> sound_effect = std::make_shared<AUDIO::SoundEffect>(sound_buffer);
-        return sound_effect;
+        return sound_buffer;
     }
 
     /// Attempts to retrieve the music identified by the specified ID.

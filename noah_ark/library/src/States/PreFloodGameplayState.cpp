@@ -94,7 +94,7 @@ namespace STATES
             std::inserter(BibleVersesLeftToFind, BibleVersesLeftToFind.begin()));
 
         // START PLAYING THE BACKGROUND MUSIC.
-        Overworld->BackgroundMusic->play();
+        Speakers->PlayMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID);
         
         // INDICATE WHETHER OR NOT INITIALIZATION SUCCEEDED.
         bool initialization_succeeded = hud_initialized;
@@ -174,10 +174,10 @@ namespace STATES
                 {
                     // ONLY START PLAYING THE SOUND IF IT ISN'T ALREADY PLAYING.
                     // This results in a smoother sound experience.
-                    bool tree_shake_sound_playing = Speakers->IsPlaying(RESOURCES::TREE_SHAKE_SOUND_ID);
+                    bool tree_shake_sound_playing = Speakers->SoundIsPlaying(RESOURCES::TREE_SHAKE_SOUND_ID);
                     if (!tree_shake_sound_playing)
                     {
-                        Speakers->Play(RESOURCES::TREE_SHAKE_SOUND_ID);
+                        Speakers->PlaySound(RESOURCES::TREE_SHAKE_SOUND_ID);
                     }
                 }
             }
@@ -610,7 +610,7 @@ namespace STATES
                 tile_map_underneath_noah->DustClouds.push_back(dust_cloud);
 
                 // Play a sound to indicate a piece of the ark is being built.
-                Speakers->Play(RESOURCES::ARK_BUILDING_SOUND_ID);
+                Speakers->PlaySound(RESOURCES::ARK_BUILDING_SOUND_ID);
             }
         }
         else
@@ -745,7 +745,7 @@ namespace STATES
                     if (bible_verses_remain_to_be_found)
                     {
                         // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
-                        Speakers->Play(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
+                        Speakers->PlaySound(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
 
                         // SELECT A RANDOM BIBLE VERSE.
                         size_t remaining_bible_verse_count = BibleVersesLeftToFind.size();
@@ -787,7 +787,7 @@ namespace STATES
             if (food_intersects_with_noah)
             {
                 // PLAY THE SOUND EFFECT FOR COLLECTING FOOD.
-                Speakers->Play(RESOURCES::FOOD_PICKUP_SOUND_ID);
+                Speakers->PlaySound(RESOURCES::FOOD_PICKUP_SOUND_ID);
 
                 // ADD THE FOOD TO THE PLAYER'S INVENTORY.
                 std::cout << "Collected food: " << static_cast<int>(food->Type) << std::endl;
@@ -821,7 +821,7 @@ namespace STATES
             if (animal_intersects_with_noah)
             {
                 // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
-                Speakers->Play((*animal)->SoundId);
+                Speakers->PlaySound((*animal)->SoundId);
 
                 // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
                 std::cout << "Collected animal." << std::endl;
@@ -891,7 +891,7 @@ namespace STATES
                         std::cout << "Random animal generated: " << static_cast<unsigned int>(animal->Type.Species) << std::endl;
 
                         // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
-                        Speakers->Play(animal->SoundId);
+                        Speakers->PlaySound(animal->SoundId);
 
                         // START ANIMATING THE ANIMAL.
                         animal->Sprite.Play();

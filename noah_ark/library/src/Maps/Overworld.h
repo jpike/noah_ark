@@ -39,7 +39,5 @@ namespace MAPS
         std::unique_ptr<OBJECTS::Noah> NoahPlayer = nullptr;
         /// Axe swings currently occurring in the world.
         std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings = {};
-        /// The background music for the overworld.
-        std::shared_ptr<sf::Music> BackgroundMusic = nullptr;
     };
 }

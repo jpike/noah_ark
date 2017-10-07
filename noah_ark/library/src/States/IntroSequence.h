@@ -1,6 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <vector>
+#include <SFML/Audio.hpp>
 #include <SFML/System.hpp>
 #include "Bible/BibleVerse.h"
 #include "Graphics/Gui/Font.h"

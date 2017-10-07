@@ -33,6 +33,7 @@ namespace RESOURCES
     extern const std::string COLLECT_BIBLE_VERSE_SOUND_ID;
     extern const std::string FOOD_PICKUP_SOUND_ID;
     extern const std::string TREE_SHAKE_SOUND_ID;
+    extern const std::string INTRO_MUSIC_ID;
     extern const std::string OVERWORLD_BACKGROUND_MUSIC_ID;
 
     /// Defines all of the available shaders.

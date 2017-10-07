@@ -246,18 +246,12 @@ std::shared_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
     auto load_time_diff = load_end_time - load_start_time;
     std::cout << "Overworld load time: " << load_time_diff.count() << std::endl;
 
-    // LOAD THE BACKGROUND MUSIC.
-    std::shared_ptr<sf::Music> overworld_background_music = assets.GetMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID);
-    bool background_music_loaded = (nullptr != overworld_background_music);
-    assert(background_music_loaded);
-    overworld->BackgroundMusic = overworld_background_music;
-
     return overworld;
 }
 
-/// Loads the sounds for the game, adding them to the speakers.
-/// @param[in,out]  assets - The assets from which to load the sounds.
-/// @return The speakers with the sounds; never null.
+/// Loads the sounds/music for the game, adding them to the speakers.
+/// @param[in,out]  assets - The assets from which to load the sounds/music.
+/// @return The speakers with the sounds/music; never null.
 std::shared_ptr<AUDIO::Speakers> LoadSounds(RESOURCES::Assets& assets)
 {
     std::shared_ptr<AUDIO::Speakers> speakers = std::make_shared<AUDIO::Speakers>();
@@ -291,6 +285,19 @@ std::shared_ptr<AUDIO::Speakers> LoadSounds(RESOURCES::Assets& assets)
         {
             speakers->AddSound(animal_sound_id, audio_samples);
         }
+    }
+
+    // ADD ALL OF THE MUSIC TO THE SPEAKERS.    
+    std::shared_ptr<sf::Music> intro_music = assets.GetMusic(RESOURCES::INTRO_MUSIC_ID);
+    if (intro_music)
+    {
+        speakers->AddMusic(RESOURCES::INTRO_MUSIC_ID, intro_music);
+    }
+    std::shared_ptr<sf::Music> overworld_music = assets.GetMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID);
+    if (overworld_music)
+    {
+        overworld_music->setLoop(true);
+        speakers->AddMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID, overworld_music);
     }
     
     return speakers;
@@ -330,8 +337,8 @@ int main(int argumentCount, char* arguments[])
         auto colored_texture_shader = assets->GetShader(RESOURCES::ShaderId::COLORED_TEXTURE);
         assert(colored_texture_shader);
 
-        // LOAD THE SOUND EFFECTS.
-        std::future< std::shared_ptr<AUDIO::Speakers> > speakers = std::async(LoadSounds, std::ref(*assets));
+        // LOAD THE SOUND EFFECTS/MUSIC.
+        std::future< std::shared_ptr<AUDIO::Speakers> > speakers_being_loaded = std::async(LoadSounds, std::ref(*assets));
 
         // The overworld is loaded in the background in separate threads to avoid having
         // their loading slow the startup time of the rest of the game.
@@ -344,9 +351,12 @@ int main(int argumentCount, char* arguments[])
             colored_texture_shader);
         INPUT_CONTROL::KeyboardInputController input_controller;
         STATES::IntroSequence intro_sequence;
+        auto speakers = speakers_being_loaded.get();
+        assert(speakers);
+        speakers->PlayMusic(RESOURCES::INTRO_MUSIC_ID);
         STATES::TitleScreen title_screen;
         STATES::CreditsScreen credits_screen;
-        STATES::PreFloodGameplayState pre_flood_gameplay_state(speakers.get(), assets);
+        STATES::PreFloodGameplayState pre_flood_gameplay_state(speakers, assets);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         STATES::GameState game_state = STATES::GameState::INTRO_SEQUENCE;
@@ -354,7 +364,6 @@ int main(int argumentCount, char* arguments[])
         while (window->isOpen())
         {
             // PROCESS WINDOW EVENTS.
-            bool switch_to_flood_gameplay_state = false;
             sf::Event event;
             while (window->pollEvent(event))
             {
@@ -363,11 +372,6 @@ int main(int argumentCount, char* arguments[])
                 {
                     case sf::Event::Closed:
                         window->close();
-                        break;
-                    case sf::Event::KeyPressed:
-                        /// @todo   This is temporary debug code to help switching between gameplay states.
-                        /// Remove it when no longer needed.
-                        switch_to_flood_gameplay_state = (sf::Keyboard::Num2 == event.key.code);
                         break;
                 }
             }
@@ -394,6 +398,9 @@ int main(int argumentCount, char* arguments[])
                         bool intro_sequence_finished = intro_sequence.Completed();
                         if (intro_sequence_finished)
                         {
+                            // The intro music isn't stopped before going to the next state
+                            // to avoid a hard cutoff.  It is timed such that it should end
+                            // shortly.
                             next_game_state = STATES::GameState::TITLE_SCREEN;
                         }
                         break;
@@ -406,14 +413,6 @@ int main(int argumentCount, char* arguments[])
                         break;
                     case STATES::GameState::PRE_FLOOD_GAMEPLAY:
                         pre_flood_gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
-                        /// @todo   This is temporary debug code to help switching between gameplay states.
-                        /// Remove it when no longer needed.
-                        if (switch_to_flood_gameplay_state)
-                        {
-                            next_game_state = STATES::GameState::FLOOD_GAMEPLAY;
-                            switch_to_flood_gameplay_state = false;
-                        }
-                        break;
                 }
 
                 // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
@@ -433,9 +432,6 @@ int main(int argumentCount, char* arguments[])
                         break;
                     case STATES::GameState::PRE_FLOOD_GAMEPLAY:
                         pre_flood_gameplay_state.Render(renderer);
-                        break;
-                    case STATES::GameState::FLOOD_GAMEPLAY:
-                        /// @todo
                         break;
                 }
 
@@ -480,11 +476,6 @@ int main(int argumentCount, char* arguments[])
                             MATH::Vector2f player_start_world_position = pre_flood_gameplay_state.Overworld->NoahPlayer->GetWorldPosition();
                             renderer.Camera.SetCenter(player_start_world_position);
 
-                            break;
-                        }
-                        case STATES::GameState::FLOOD_GAMEPLAY:
-                        {
-                            /// @todo
                             break;
                         }
                     }

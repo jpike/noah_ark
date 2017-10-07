@@ -130,6 +130,7 @@
     <Media Include="res\sounds\food_pickup_sound.wav" />
     <Media Include="res\sounds\FrogCroaking-SoundBible.com-1053984354.wav" />
     <Media Include="res\sounds\Grasshopper-SoundBible.com-1592176719.wav" />
+    <Media Include="res\sounds\NoahsArkIntro1_80PercentSpeedWithFadeOut.wav" />
     <Media Include="res\sounds\overworld_music.wav" />
     <Media Include="res\sounds\Raven-SoundBible.com-1790882934.wav" />
     <Media Include="res\sounds\SheepBleating-SoundBible.com-1373580685.wav" />

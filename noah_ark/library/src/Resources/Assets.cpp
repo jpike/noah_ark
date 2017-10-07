@@ -24,6 +24,7 @@ namespace RESOURCES
     const std::string COLLECT_BIBLE_VERSE_SOUND_ID = "res/sounds/collect_bible_verse1.wav";
     const std::string FOOD_PICKUP_SOUND_ID = "res/sounds/food_pickup_sound.wav";
     const std::string TREE_SHAKE_SOUND_ID = "res/sounds/tree_shake4.wav";
+    const std::string INTRO_MUSIC_ID = "res/sounds/NoahsArkIntro1_80PercentSpeedWithFadeout.wav";
     const std::string OVERWORLD_BACKGROUND_MUSIC_ID = "res/sounds/overworld_music.wav";
 
     /// Attempts to retrieve the texture identified by the specified ID.
@@ -194,10 +195,6 @@ namespace RESOURCES
 
         // SAVE THE MUSIC TO AVOID TAKING TIME TO LOAD IT IN THE FUTURE.
         Music[music_id] = music;
-
-        // RETURN THE MUSIC AS LOOPING.
-        // So far, there isn't a need for music that doesn't loop.
-        music->setLoop(true);
         return music;
     }
 }

@@ -76,5 +76,8 @@
     <Media Include="res\sounds\food_pickup_sound.wav">
       <Filter>Resources\Sounds</Filter>
     </Media>
+    <Media Include="res\sounds\NoahsArkIntro1_80PercentSpeedWithFadeOut.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
   </ItemGroup>
 </Project>

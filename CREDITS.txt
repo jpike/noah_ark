@@ -6,7 +6,7 @@ God - "For by him were all things created, that are in heaven, and that are in e
 
 PRIMARY DEVELOPERS
 Jacob Pike - Programming, Art, Other
-Chad Pike - Overworld Background Music
+Chad Pike - Background Music
 
 ANIMAL SOUND EFFECTS
 Animal sound effects from http://soundbible.com/ are either in the public domain or licensed under the Creative Commons Attribution 3.0 license (https://creativecommons.org/licenses/by/3.0/).

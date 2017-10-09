@@ -284,6 +284,12 @@
     <ClInclude Include="src\States\PreFloodGameplayState.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
+    <ClInclude Include="src\Core\Container.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\MapType.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">

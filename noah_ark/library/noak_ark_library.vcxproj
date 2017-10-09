@@ -27,6 +27,7 @@
     <ClInclude Include="src\Collision\CollisionDetectionAlgorithms.h" />
     <ClInclude Include="src\Collision\Movement.h" />
     <ClInclude Include="src\Core\Array2D.h" />
+    <ClInclude Include="src\Core\Container.h" />
     <ClInclude Include="src\Core\Direction.h" />
     <ClInclude Include="src\Core\NullChecking.h" />
     <ClInclude Include="src\Core\String.h" />
@@ -54,6 +55,7 @@
     <ClInclude Include="src\Inventory\InventoryFoodPage.h" />
     <ClInclude Include="src\Inventory\InventoryGui.h" />
     <ClInclude Include="src\Maps\GroundLayer.h" />
+    <ClInclude Include="src\Maps\MapType.h" />
     <ClInclude Include="src\Maps\Overworld.h" />
     <ClInclude Include="src\Maps\OverworldMapData.h" />
     <ClInclude Include="src\Maps\Tile.h" />

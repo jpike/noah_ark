@@ -9,6 +9,7 @@
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
 #include "Input/KeyboardInputController.h"
+#include "Maps/MapType.h"
 #include "Maps/Overworld.h"
 #include "Maps/TileMap.h"
 #include "Math/RandomNumberGenerator.h"
@@ -69,6 +70,7 @@ namespace STATES
             std::string& message_for_text_box);
         void CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map);
         void CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map);
+        void ChangeMapIfPlayerOnMapExit(MAPS::TileMap& current_tile_map);
 
         // CAMERA UPDATING.
         void UpdateCameraWorldView(
@@ -88,5 +90,7 @@ namespace STATES
         std::shared_ptr<RESOURCES::Assets> Assets;
         /// The heads-up display.
         std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> Hud;
+        /// The current type of map being displayed.
+        MAPS::MapType CurrentMap;
     };
 }

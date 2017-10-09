@@ -19,7 +19,8 @@ namespace STATES
         Speakers(speakers),
         BibleVersesLeftToFind(),
         Assets(assets),
-        Hud()
+        Hud(),
+        CurrentMap(MAPS::MapType::INVALID)
     {
         // MAKE SURE PARAMETERS WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(Speakers, "Speakers cannot be null for gameplay state.");
@@ -45,6 +46,7 @@ namespace STATES
         }
 
         // INITIALIZE THE OVERWORLD.
+        CurrentMap = MAPS::MapType::OVERWORLD;
         Overworld = overworld;
 
         // Built ark pieces need to be initialized.
@@ -110,12 +112,6 @@ namespace STATES
         INPUT_CONTROL::KeyboardInputController& input_controller,
         GRAPHICS::Camera& camera)
     {
-        // GET THE CURRENT TILE MAP.
-        MATH::FloatRectangle camera_bounds = camera.ViewBounds;
-        MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
-        MAPS::TileMap* current_tile_map = Overworld->GetTileMap(camera_view_center.X, camera_view_center.Y);
-        assert(current_tile_map);
-
         // UPDATE THE HUD IN RESPONSE TO USER INPUT.
         Hud->RespondToInput(input_controller);
 
@@ -123,40 +119,61 @@ namespace STATES
         // If a modal GUI component is displayed, then the regular controls for the player
         // in the world shouldn't work.
         bool modal_hud_components_displayed = Hud->ModalComponentDisplayed();
-        if (!modal_hud_components_displayed)
+        if (modal_hud_components_displayed)
         {
-            // UPDATE THE TEXT BOX IF IT IS VISIBLE.
-            // If the text box is currently being displayed, then it should capture any user input.
-            if (Hud->MainTextBox.IsVisible)
+            // No further updating is needed.
+            return;
+        }
+
+        // DETERMINE THE CURRENT MAP.
+        /// @todo   Properly should have separate functions for updating different map types.
+        bool in_overworld = (MAPS::MapType::OVERWORLD == CurrentMap);
+
+        // GET THE CURRENT TILE MAP.
+        MAPS::TileMap* current_tile_map = nullptr;
+        if (in_overworld)
+        {
+            MATH::FloatRectangle camera_bounds = camera.ViewBounds;
+            MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
+            current_tile_map = Overworld->GetTileMap(camera_view_center.X, camera_view_center.Y);
+            assert(current_tile_map);
+        }
+
+        // UPDATE THE TEXT BOX IF IT IS VISIBLE.
+        // If the text box is currently being displayed, then it should capture any user input.
+        if (Hud->MainTextBox.IsVisible)
+        {
+            // UPDATE THE TEXT IN THE TEXT BOX.
+            Hud->MainTextBox.Update(elapsed_time);
+        }
+        else if (in_overworld)
+        {
+            // UPDATE THE PLAYER BASED ON INPUT.
+            UpdatePlayerBasedOnInput(*current_tile_map, elapsed_time, input_controller, camera);
+
+            // MOVE ANIMALS IN THE WORLD.
+            MoveAnimals(elapsed_time, *current_tile_map);
+
+            // UPDATE FOOD FALLING IN THE WORLD.
+            UpdateFallingFood(elapsed_time, *current_tile_map);
+
+            // HANDLE PLAYER COLLISIONS.
+            std::string message_for_text_box;
+            CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, message_for_text_box);
+            CollectFoodCollidingWithPlayer(*current_tile_map);
+            CollectAnimalsCollidingWithPlayer(*current_tile_map);
+            ChangeMapIfPlayerOnMapExit(*current_tile_map);
+
+            // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
+            bool text_box_message_exists = !message_for_text_box.empty();
+            if (text_box_message_exists)
             {
-                // UPDATE THE TEXT IN THE TEXT BOX.
-                Hud->MainTextBox.Update(elapsed_time);
+                Hud->MainTextBox.StartDisplayingText(message_for_text_box);
             }
-            else
-            {
-                // UPDATE THE PLAYER BASED ON INPUT.
-                UpdatePlayerBasedOnInput(*current_tile_map, elapsed_time, input_controller, camera);
+        }
 
-                // MOVE ANIMALS IN THE WORLD.
-                MoveAnimals(elapsed_time, *current_tile_map);
-
-                // UPDATE FOOD FALLING IN THE WORLD.
-                UpdateFallingFood(elapsed_time, *current_tile_map);
-
-                // HANDLE PLAYER COLLISIONS.
-                std::string message_for_text_box;
-                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, message_for_text_box);
-                CollectFoodCollidingWithPlayer(*current_tile_map);
-                CollectAnimalsCollidingWithPlayer(*current_tile_map);
-
-                // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
-                bool text_box_message_exists = !message_for_text_box.empty();
-                if (text_box_message_exists)
-                {
-                    Hud->MainTextBox.StartDisplayingText(message_for_text_box);
-                }
-            }
-
+        if (in_overworld)
+        {
             // UPDATE THE CURRENT TILE MAP'S ANIMALS.
             for (auto& animal : current_tile_map->Animals)
             {
@@ -218,7 +235,15 @@ namespace STATES
     /// @param[in]  renderer - The renderer to use for rendering.
     void PreFloodGameplayState::Render(GRAPHICS::Renderer& renderer)
     {
-        renderer.Render(*Overworld);
+        // RENDER CONTENT SPECIFIC TO THE CURRENT MAP.
+        switch (CurrentMap)
+        {
+            case MAPS::MapType::OVERWORLD:
+                renderer.Render(*Overworld);
+                break;
+        }
+
+        // RENDER CONTENT APPLICABLE ACROSS ALL TYPES OF MAPS.
         Hud->Render(renderer);
     }
 
@@ -836,6 +861,51 @@ namespace STATES
                 // MOVE TO CHECKING COLLISIONS FOR THE NEXT ANIMAL.
                 ++animal;
             }
+        }
+    }
+
+    /// Changes the map currently being viewed/interacted with if the player is on an
+    /// exit point in the current tile map.
+    /// @param[in]  current_tile_map - The current tile map to check for exit points.
+    void PreFloodGameplayState::ChangeMapIfPlayerOnMapExit(MAPS::TileMap& current_tile_map)
+    {
+        // GET THE ARK PIECE AT THE PLAYER'S CURRENT POSITION.
+        // Currently, ark pieces are the only exit points.
+        MATH::Vector2f player_world_position = Overworld->NoahPlayer->GetWorldPosition();
+        OBJECTS::ArkPiece* current_ark_piece = current_tile_map.GetArkPieceAtWorldPosition(player_world_position);
+        if (!current_ark_piece)
+        {
+            // There's no ark piece at the player's current position, so it's not possible
+            // for the player to have stepped on a map exit point.
+            return;
+        }
+
+        // MAKE SURE THE ARK PIECE IS BUILT.
+        if (!current_ark_piece->Built)
+        {
+            // The player needs to finish building this ark piece
+            // before it can become an exit point.
+            return;
+        }
+
+        // CHECK IF THE ARK PIECE IS AN EXIT POINT.
+        if (!current_ark_piece->IsExternalDoorway)
+        {
+            // The current ark piece isn't an exit point.
+            return;
+        }
+
+        // CHANGE THE CURRENT MAP BEING PLAYED ON.
+        switch (CurrentMap)
+        {
+            case MAPS::MapType::OVERWORLD:
+                // TRANSITION FROM THE OVERWORLD TO INSIDE THE ARK.
+                CurrentMap = MAPS::MapType::ARK_INTERIOR;
+                break;
+            case MAPS::MapType::ARK_INTERIOR:
+                // TRANSITION FROM INSIDE THE ARK TO THE OVERWORLD.
+                CurrentMap = MAPS::MapType::OVERWORLD;
+                break;
         }
     }
 

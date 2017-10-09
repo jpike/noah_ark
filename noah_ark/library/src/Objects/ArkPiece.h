@@ -24,5 +24,7 @@ namespace OBJECTS
         GRAPHICS::Sprite Sprite;
         /// True if the ark piece has been built yet; false otherwise.
         bool Built;
+        /// True if the ark piece is a doorway into/out of the ark; false otherwise.
+        bool IsExternalDoorway;
     };
 }

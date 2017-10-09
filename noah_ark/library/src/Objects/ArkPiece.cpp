@@ -1,3 +1,5 @@
+#include <array>
+#include "Core/Container.h"
 #include "Core/NullChecking.h"
 #include "Objects/ArkPiece.h"
 
@@ -10,7 +12,8 @@ namespace OBJECTS
     ArkPiece::ArkPiece(const unsigned int id, const std::shared_ptr<GRAPHICS::Texture>& texture) :
         Id(id),
         Sprite(),
-        Built(false)
+        Built(false),
+        IsExternalDoorway(false)
     {
         // MAKE SURE A VALID TEXTURE WAS PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(texture, "Ark piece texture cannot be null.");
@@ -30,5 +33,13 @@ namespace OBJECTS
             static_cast<float>(ARK_PIECE_DIMENSION),
             static_cast<float>(ARK_PIECE_DIMENSION));
         Sprite = GRAPHICS::Sprite(texture, texture_rectangle);
+
+        // DETERMINE WHETHER OR NOT THE ARK PIECE IS AN EXTERNAL DOORWAY.
+        constexpr unsigned int DOORWAY_TILE_COUNT = 4;
+        const std::array<unsigned int, DOORWAY_TILE_COUNT> DOORWAY_TILE_IDS = 
+        {
+            22, 23, 30, 31
+        };
+        IsExternalDoorway = CORE::Container::Contains(DOORWAY_TILE_IDS, Id);
     }
 }

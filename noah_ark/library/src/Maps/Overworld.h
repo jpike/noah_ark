@@ -35,8 +35,6 @@ namespace MAPS
         /// Tile maps in the overworld, arranged by column/row position in a grid rather than
         /// by absolute world positions.  (0,0) (column/x,row/y) is the top-left tile map.
         CORE::Array2D<MAPS::TileMap> TileMaps = CORE::Array2D<MAPS::TileMap>(WIDTH_IN_TILE_MAPS, HEIGHT_IN_TILE_MAPS);
-        /// Noah (the player) character within the world.
-        std::unique_ptr<OBJECTS::Noah> NoahPlayer = nullptr;
         /// Axe swings currently occurring in the world.
         std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings = {};
     };

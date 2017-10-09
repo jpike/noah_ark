@@ -47,15 +47,23 @@ namespace STATES
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main overworld.
         std::shared_ptr<MAPS::Overworld> Overworld;
+        /// Noah (the player) character within the game.
+        std::shared_ptr<OBJECTS::Noah> NoahPlayer;
 
     private:
         // INITIALIZATION.
-        std::unique_ptr<OBJECTS::Noah> InitializePlayer(const SavedGameData& saved_game_data);
+        std::shared_ptr<OBJECTS::Noah> InitializePlayer(const SavedGameData& saved_game_data);
         std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> InitializeHud(
             const unsigned int screen_width_in_pixels,
-            const std::shared_ptr<MAPS::Overworld>& overworld);
+            const std::shared_ptr<MAPS::Overworld>& overworld,
+            const std::shared_ptr<OBJECTS::Noah>& noah_player);
 
         // WORLD UPDATING.
+        void UpdateOverworld(
+            const sf::Time& elapsed_time,
+            INPUT_CONTROL::KeyboardInputController& input_controller,
+            GRAPHICS::Camera& camera);
+        void UpdateArkInterior();
         void UpdatePlayerBasedOnInput(
             const MAPS::TileMap& current_tile_map,
             const sf::Time& elapsed_time,

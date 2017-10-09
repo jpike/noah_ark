@@ -473,7 +473,7 @@ int main(int argumentCount, char* arguments[])
                             assert(gameplay_state_initialized);
 
                             // FOCUS THE CAMERA ON THE PLAYER.
-                            MATH::Vector2f player_start_world_position = pre_flood_gameplay_state.Overworld->NoahPlayer->GetWorldPosition();
+                            MATH::Vector2f player_start_world_position = pre_flood_gameplay_state.NoahPlayer->GetWorldPosition();
                             renderer.Camera.SetCenter(player_start_world_position);
 
                             break;

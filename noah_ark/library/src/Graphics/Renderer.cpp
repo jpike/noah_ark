@@ -514,15 +514,6 @@ namespace GRAPHICS
                 Render(*tile_map);
             }
         }
-
-        // RENDER THE PLAYER.
-        overworld.NoahPlayer->Sprite.Render(Screen);
-
-        // The axe should only be rendered if it is swinging.
-        if (overworld.NoahPlayer->Inventory->Axe->IsSwinging())
-        {
-            overworld.NoahPlayer->Inventory->Axe->Sprite.Render(Screen);
-        }
     }
 
     /// Renders a tile map.

@@ -12,21 +12,24 @@ namespace GUI
 {
     /// Constructor.
     /// @param[in]  overworld - The overworld whose information is being diplayed in the HUD.
+    /// @param[in]  noah_player - The player whose information is being displayed in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
     /// @param[in]  assets - The assets to use for the page.
     /// @throws std::exception - Thrown if a parameter is null.
     HeadsUpDisplay::HeadsUpDisplay(
         const std::shared_ptr<MAPS::Overworld>& overworld,
+        const std::shared_ptr<OBJECTS::Noah>& noah_player,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels,
         const std::shared_ptr<RESOURCES::Assets>& assets) :
     MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels),
     InventoryOpened(false),
-    InventoryGui(overworld->NoahPlayer->Inventory, assets),
+    InventoryGui(noah_player->Inventory, assets),
     SaveDialogBoxVisible(false),
     Assets(assets),
-    Overworld(overworld)
+    Overworld(overworld),
+    NoahPlayer(noah_player)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(
@@ -35,6 +38,9 @@ namespace GUI
         CORE::ThrowInvalidArgumentExceptionIfNull(
             Overworld,
             "Null overworld provided to HUD.");
+        CORE::ThrowInvalidArgumentExceptionIfNull(
+            NoahPlayer,
+            "Null Noah player provided to HUD.");
     }
 
     /// Has the HUD respond to the provided user input.
@@ -51,11 +57,11 @@ namespace GUI
             {
                 // SAVE THE GAME DATA.
                 STATES::SavedGameData saved_game_data;
-                saved_game_data.PlayerWorldPosition = Overworld->NoahPlayer->GetWorldPosition();
-                saved_game_data.WoodCount = Overworld->NoahPlayer->Inventory->WoodCount;
+                saved_game_data.PlayerWorldPosition = NoahPlayer->GetWorldPosition();
+                saved_game_data.WoodCount = NoahPlayer->Inventory->WoodCount;
                 saved_game_data.FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
-                    Overworld->NoahPlayer->Inventory->BibleVerses.cbegin(),
-                    Overworld->NoahPlayer->Inventory->BibleVerses.cend());
+                    NoahPlayer->Inventory->BibleVerses.cbegin(),
+                    NoahPlayer->Inventory->BibleVerses.cend());
                 
                 // Built ark piece data from all tile maps needs to be included.
                 unsigned int tile_map_row_count = Overworld->TileMaps.GetHeight();
@@ -95,8 +101,8 @@ namespace GUI
                     }
                 }
 
-                saved_game_data.CollectedAnimals = Overworld->NoahPlayer->Inventory->CollectedAnimalCounts;
-                saved_game_data.CollectedFood = Overworld->NoahPlayer->Inventory->CollectedFoodCounts;
+                saved_game_data.CollectedAnimals = NoahPlayer->Inventory->CollectedAnimalCounts;
+                saved_game_data.CollectedFood = NoahPlayer->Inventory->CollectedFoodCounts;
 
                 saved_game_data.Write(STATES::SavedGameData::DEFAULT_FILENAME);
 
@@ -207,7 +213,7 @@ namespace GUI
         // For example, "x10" (no quotes) would be rendered if the player has collected
         // 10 wood logs.
         const std::string TIMES_COUNT_TEXT = "x";
-        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(Overworld->NoahPlayer->Inventory->WoodCount);
+        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(NoahPlayer->Inventory->WoodCount);
         // This text should be placed just to the right of the wood icon.
         MATH::Vector2f wood_text_top_left_screen_position_in_pixels(
             static_cast<float>(wood_icon_screen_position.X), 

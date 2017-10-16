@@ -40,7 +40,7 @@ void PopulateOverworld(
     MAPS::Overworld& overworld)
 {
     // LOAD THE TILESET TEXTURE.
-    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::GROUND_TILESET_TEXTURE_ID);
+    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::MAIN_TILESET_TEXTURE_ID);
     assert(tileset_texture);
 
     // LOAD THE TREE TEXTURE.

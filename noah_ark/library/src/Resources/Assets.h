@@ -23,7 +23,7 @@ namespace RESOURCES
     extern const std::string DUST_CLOUD_TEXTURE_ID;
     extern const std::string FONT_TEXTURE_ID;
     extern const std::string FOOD_TEXTURE_ID;
-    extern const std::string GROUND_TILESET_TEXTURE_ID;
+    extern const std::string MAIN_TILESET_TEXTURE_ID;
     extern const std::string NOAH_TEXTURE_ID;
     extern const std::string TREE_TEXTURE_ID;
     extern const std::string WOOD_LOG_TEXTURE_ID;

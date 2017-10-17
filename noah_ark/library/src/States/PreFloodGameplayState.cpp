@@ -21,7 +21,8 @@ namespace STATES
         BibleVersesLeftToFind(),
         Assets(assets),
         Hud(),
-        CurrentMap(MAPS::MapType::INVALID)
+        CurrentMap(MAPS::MapType::INVALID),
+        TileMapEditorGui(assets->GetTexture(RESOURCES::MAIN_TILESET_TEXTURE_ID))
     {
         // MAKE SURE PARAMETERS WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(Speakers, "Speakers cannot be null for gameplay state.");
@@ -129,7 +130,7 @@ namespace STATES
                 UpdateOverworld(elapsed_time, input_controller, camera);
                 break;
             case MAPS::MapType::ARK_INTERIOR:
-                UpdateArkInterior();
+                UpdateArkInterior(input_controller);
                 break;
         }
     }
@@ -157,6 +158,9 @@ namespace STATES
 
         // RENDER THE HUD.
         Hud->Render(renderer);
+
+        // RENDER THE TILE MAP EDITOR GUI.
+        TileMapEditorGui.Render(renderer);
     }
 
     /// Attempts to initialize the player character from saved game data.
@@ -326,9 +330,15 @@ namespace STATES
     }
 
     /// Updates the interior of the ark.
-    void PreFloodGameplayState::UpdateArkInterior()
+    /// @param[in,out]  input_controller - The controller supplying player input.
+    void PreFloodGameplayState::UpdateArkInterior(const INPUT_CONTROL::KeyboardInputController& input_controller)
     {
-
+        // TOGGLE THE MAP EDITOR IF THE KEY WAS PRESSED.
+        const bool map_editor_key_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::MAP_EDITOR_KEY);
+        if (map_editor_key_pressed)
+        {
+            TileMapEditorGui.Visible = !TileMapEditorGui.Visible;
+        }
     }
 
     /// Updates the player and related items in the overworld based on input and elapsed time.

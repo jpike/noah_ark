@@ -290,6 +290,9 @@
     <ClInclude Include="src\Maps\MapType.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
+    <ClInclude Include="src\Maps\TileMapEditorGui.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -456,6 +459,9 @@
     </ClCompile>
     <ClCompile Include="src\States\PreFloodGameplayState.cpp">
       <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\TileMapEditorGui.cpp">
+      <Filter>Source Files\Maps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

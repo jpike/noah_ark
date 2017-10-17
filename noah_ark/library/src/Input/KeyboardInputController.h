@@ -18,23 +18,25 @@ namespace INPUT_CONTROL
     public:
         // STATIC CONSTANTS.
         /// The key for the up button.
-        static const sf::Keyboard::Key UP_KEY = sf::Keyboard::Up;
+        static constexpr sf::Keyboard::Key UP_KEY = sf::Keyboard::Up;
         /// The key for the down button.
-        static const sf::Keyboard::Key DOWN_KEY = sf::Keyboard::Down;
+        static constexpr sf::Keyboard::Key DOWN_KEY = sf::Keyboard::Down;
         /// The key for the left button.
-        static const sf::Keyboard::Key LEFT_KEY = sf::Keyboard::Left;
+        static constexpr sf::Keyboard::Key LEFT_KEY = sf::Keyboard::Left;
         /// The key for the right button.
-        static const sf::Keyboard::Key RIGHT_KEY = sf::Keyboard::Right;
+        static constexpr sf::Keyboard::Key RIGHT_KEY = sf::Keyboard::Right;
         /// The key for the primary action button.
-        static const sf::Keyboard::Key PRIMARY_ACTION_KEY = sf::Keyboard::Z;
+        static constexpr sf::Keyboard::Key PRIMARY_ACTION_KEY = sf::Keyboard::Z;
         /// A textual representation of the primary action key.
-        static const char PRIMARY_ACTION_KEY_TEXT = 'Z';
+        static constexpr char PRIMARY_ACTION_KEY_TEXT = 'Z';
         /// The key for the secondary button.
-        static const sf::Keyboard::Key SECONDARY_ACTION_KEY = sf::Keyboard::X;
+        static constexpr sf::Keyboard::Key SECONDARY_ACTION_KEY = sf::Keyboard::X;
         /// The key for the start button.
-        static const sf::Keyboard::Key START_KEY = sf::Keyboard::Return;
+        static constexpr sf::Keyboard::Key START_KEY = sf::Keyboard::Return;
         /// The key for the back button.
-        static const sf::Keyboard::Key BACK_KEY = sf::Keyboard::Escape;
+        static constexpr sf::Keyboard::Key BACK_KEY = sf::Keyboard::Escape;
+        /// The key for toggling the map editor.
+        static constexpr sf::Keyboard::Key MAP_EDITOR_KEY = sf::Keyboard::E;
 
         // METHODS.
         void DisableInput();

@@ -76,6 +76,7 @@ namespace MAPS
         tile_is_walkable[TileType::WATER] = false;
         tile_is_walkable[TileType::BROWN_DIRT] = true;
         tile_is_walkable[TileType::GRAY_STONE] = true;
+        tile_is_walkable[TileType::ARK_INTERIOR_WOOD_FLOOR] = true;
         tile_is_walkable[TileType::ARK_BUILDING_PLOT] = true;
 
         // CHECK IF THIS TILE'S ID IS VALID.

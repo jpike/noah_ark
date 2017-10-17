@@ -35,6 +35,8 @@ namespace MAPS
             GRAY_STONE = 7,
             /// A tile upon when the ark can be built.
             ARK_BUILDING_PLOT = 8,
+            /// A tile for the wood floor in the interior of the ark.
+            ARK_INTERIOR_WOOD_FLOOR = 9,
             /// An extra enum value to define count of different tile types.
             COUNT
         };

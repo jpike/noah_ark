@@ -12,6 +12,7 @@
 #include "Maps/MapType.h"
 #include "Maps/Overworld.h"
 #include "Maps/TileMap.h"
+#include "Maps/TileMapEditorGui.h"
 #include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
 #include "Resources/Assets.h"
@@ -63,7 +64,7 @@ namespace STATES
             const sf::Time& elapsed_time,
             INPUT_CONTROL::KeyboardInputController& input_controller,
             GRAPHICS::Camera& camera);
-        void UpdateArkInterior();
+        void UpdateArkInterior(const INPUT_CONTROL::KeyboardInputController& input_controller);
         void UpdatePlayerBasedOnInput(
             const MAPS::TileMap& current_tile_map,
             const sf::Time& elapsed_time,
@@ -100,5 +101,7 @@ namespace STATES
         std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> Hud;
         /// The current type of map being displayed.
         MAPS::MapType CurrentMap;
+        /// The tile map editor GUI.
+        MAPS::TileMapEditorGui TileMapEditorGui;
     };
 }

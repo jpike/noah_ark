@@ -4,7 +4,7 @@
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/TextBox.h"
 #include "Graphics/Renderer.h"
-#include "Input/KeyboardInputController.h"
+#include "Input/InputController.h"
 #include "Inventory/InventoryGui.h"
 #include "Maps/Overworld.h"
 #include "Objects/Noah.h"
@@ -30,7 +30,7 @@ namespace GUI
             const std::shared_ptr<RESOURCES::Assets>& assets);
 
         // INPUT.
-        void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
+        void RespondToInput(const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
         void Render(GRAPHICS::Renderer& renderer) const;

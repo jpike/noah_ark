@@ -45,7 +45,7 @@ namespace GUI
 
     /// Has the HUD respond to the provided user input.
     /// @param[in]  input_controller - The controller on which to check user input.
-    void HeadsUpDisplay::RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller)
+    void HeadsUpDisplay::RespondToInput(const INPUT_CONTROL::InputController& input_controller)
     {
         // CHECK IF THE SAVE DIALOG BOX IS OPEN.
         // If so, it should take precedence over other parts of the HUD.
@@ -53,7 +53,7 @@ namespace GUI
         if (SaveDialogBoxVisible)
         {
             // CHECK IF AN APPLICABLE BUTTON WAS PRESSED.
-            if (input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::START_KEY))
+            if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY))
             {
                 // SAVE THE GAME DATA.
                 STATES::SavedGameData saved_game_data;
@@ -109,7 +109,7 @@ namespace GUI
                 // CLOSE THE SAVE DIALOG BOX.
                 SaveDialogBoxVisible = false;
             }
-            else if (input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::BACK_KEY))
+            else if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY))
             {
                 // CLOSE THE SAVE DIALOG BOX.
                 SaveDialogBoxVisible = false;
@@ -118,7 +118,7 @@ namespace GUI
         else if (MainTextBox.IsVisible)
         {
             // HAVE THE MAIN TEXT BOX RESPOND TO USER INPUT.
-            if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::PRIMARY_ACTION_KEY))
+            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
             {
                 // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
                 // If the current page of text has not yet all been displayed, the next
@@ -137,7 +137,7 @@ namespace GUI
             // CHECK IF THE SECONDARY ACTION BUTTON WAS PRESSED THIS FRAME.
             // To prevent rapid opening/closing of the inventory, the button
             // is checked to determine when it toggles to being pressed.
-            bool inventory_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::SECONDARY_ACTION_KEY);
+            bool inventory_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::SECONDARY_ACTION_KEY);
             if (inventory_button_pressed)
             {
                 // OPEN OR CLOSE THE INVENTORY.
@@ -150,7 +150,7 @@ namespace GUI
             else
             {
                 // OPEN THE SAVE DIALOG BOX IF THE APPROPRIATE BUTTON WAS PRESSED.
-                bool save_dialog_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::BACK_KEY);
+                bool save_dialog_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY);
                 if (save_dialog_button_pressed)
                 {
                     SaveDialogBoxVisible = true;
@@ -165,7 +165,7 @@ namespace GUI
     {
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
         // An icon is rendered to help players know which key to press.
-        const char SWING_AXE_KEY = INPUT_CONTROL::KeyboardInputController::PRIMARY_ACTION_KEY_TEXT;
+        const char SWING_AXE_KEY = INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY_TEXT;
         MATH::Vector2ui TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0, 0);
         renderer.RenderKeyIcon(SWING_AXE_KEY, TOP_LEFT_SCREEN_POSITION_IN_PIXELS);
 

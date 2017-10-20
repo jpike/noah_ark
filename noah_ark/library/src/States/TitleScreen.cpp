@@ -12,10 +12,10 @@ namespace STATES
     /// Handles any user input for the title screen.
     /// @param[in]  input_controller - The controller supplying user input to respond to.
     /// @return The state the game should be in based on the user's input.
-    GameState TitleScreen::RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller)
+    GameState TitleScreen::RespondToInput(const INPUT_CONTROL::InputController& input_controller)
     {
         // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
-        bool start_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::START_KEY);
+        bool start_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY);
         if (start_button_pressed)
         {
             // GET THE STATE FOR THE CURRENTLY SELECTED MENU OPTION.
@@ -25,8 +25,8 @@ namespace STATES
         else
         {
             // CHECK IF AN ARROW KEY WAS PRESSED TO MOVE TO ANOTHER MENU OPTION.
-            bool up_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::UP_KEY);
-            bool down_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::DOWN_KEY);
+            bool up_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::UP_KEY);
+            bool down_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DOWN_KEY);
             if (up_button_pressed)
             {
                 // MOVE TO THE PREVIOUS MENU OPTION.

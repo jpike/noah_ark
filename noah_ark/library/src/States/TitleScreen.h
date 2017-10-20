@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "Graphics/Renderer.h"
-#include "Input/KeyboardInputController.h"
+#include "Input/InputController.h"
 #include "States/GameState.h"
 
 namespace STATES
@@ -16,7 +16,7 @@ namespace STATES
         explicit TitleScreen();
 
         // OTHER METHODS.
-        GameState RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
+        GameState RespondToInput(const INPUT_CONTROL::InputController& input_controller);
         void Render(GRAPHICS::Renderer& renderer) const;
 
     private:

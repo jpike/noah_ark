@@ -90,6 +90,12 @@
     <Filter Include="Source Files\Inventory">
       <UniqueIdentifier>{6a41a6ef-4a17-4b82-ba34-dae6c62fc0d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Debugging">
+      <UniqueIdentifier>{67066359-1f68-46d2-90c1-cae803a85456}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Debugging">
+      <UniqueIdentifier>{a2498f2c-61b6-44bd-90b5-b771bb899cdf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector2.h">
@@ -118,9 +124,6 @@
     </ClInclude>
     <ClInclude Include="src\Graphics\AnimationSequence.h">
       <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Input\KeyboardInputController.h">
-      <Filter>Header Files\Input</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Direction.h">
       <Filter>Header Files\Core</Filter>
@@ -293,6 +296,15 @@
     <ClInclude Include="src\Maps\TileMapEditorGui.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
+    <ClInclude Include="src\Input\Mouse.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input\InputController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Debugging\DebugConsole.h">
+      <Filter>Header Files\Debugging</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -318,9 +330,6 @@
     </ClCompile>
     <ClCompile Include="src\Objects\Noah.cpp">
       <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Input\KeyboardInputController.cpp">
-      <Filter>Source Files\Input</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\Tileset.cpp">
       <Filter>Source Files\Maps</Filter>
@@ -462,6 +471,15 @@
     </ClCompile>
     <ClCompile Include="src\Maps\TileMapEditorGui.cpp">
       <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input\Mouse.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Input\InputController.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Debugging\DebugConsole.cpp">
+      <Filter>Source Files\Debugging</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

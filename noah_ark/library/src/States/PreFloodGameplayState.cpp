@@ -107,7 +107,7 @@ namespace STATES
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
     void PreFloodGameplayState::Update(
         const sf::Time& elapsed_time,
-        INPUT_CONTROL::KeyboardInputController& input_controller,
+        INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera)
     {
         // UPDATE THE HUD IN RESPONSE TO USER INPUT.
@@ -231,7 +231,7 @@ namespace STATES
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
     void PreFloodGameplayState::UpdateOverworld(
         const sf::Time& elapsed_time,
-        INPUT_CONTROL::KeyboardInputController& input_controller,
+        INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera)
     {
         // GET THE CURRENT TILE MAP.
@@ -331,14 +331,9 @@ namespace STATES
 
     /// Updates the interior of the ark.
     /// @param[in,out]  input_controller - The controller supplying player input.
-    void PreFloodGameplayState::UpdateArkInterior(const INPUT_CONTROL::KeyboardInputController& input_controller)
+    void PreFloodGameplayState::UpdateArkInterior(const INPUT_CONTROL::InputController& input_controller)
     {
-        // TOGGLE THE MAP EDITOR IF THE KEY WAS PRESSED.
-        const bool map_editor_key_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::KeyboardInputController::MAP_EDITOR_KEY);
-        if (map_editor_key_pressed)
-        {
-            TileMapEditorGui.Visible = !TileMapEditorGui.Visible;
-        }
+        TileMapEditorGui.RespondToInput(input_controller);
     }
 
     /// Updates the player and related items in the overworld based on input and elapsed time.
@@ -349,13 +344,13 @@ namespace STATES
     void PreFloodGameplayState::UpdatePlayerBasedOnInput(
         const MAPS::TileMap& current_tile_map,
         const sf::Time& elapsed_time,
-        INPUT_CONTROL::KeyboardInputController& input_controller,
+        INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera)
     {
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
 
         // CHECK IF THE PRIMARY ACTION BUTTON WAS PRESSED.
-        if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::PRIMARY_ACTION_KEY))
+        if (input_controller.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
         {
             // SWING THE PLAYER'S AXE.
             // A new axe swing may not be created if the player's
@@ -381,7 +376,7 @@ namespace STATES
             // MOVE NOAH IN RESPONSE TO USER INPUT.
             const float PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS = 8.0f;
             MATH::Vector2f old_noah_position = NoahPlayer->GetWorldPosition();
-            if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::UP_KEY))
+            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::UP_KEY))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -443,7 +438,7 @@ namespace STATES
                     }
                 }
             }
-            if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::DOWN_KEY))
+            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::DOWN_KEY))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -505,7 +500,7 @@ namespace STATES
                     }
                 }
             } 
-            if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::LEFT_KEY))
+            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::LEFT_KEY))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -567,7 +562,7 @@ namespace STATES
                     }
                 }
             } 
-            if (input_controller.ButtonDown(INPUT_CONTROL::KeyboardInputController::RIGHT_KEY))
+            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::RIGHT_KEY))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
@@ -954,7 +949,7 @@ namespace STATES
     void PreFloodGameplayState::UpdateCameraWorldView(
         const sf::Time& elapsed_time,
         GRAPHICS::Camera& camera,
-        INPUT_CONTROL::KeyboardInputController& input_controller,
+        INPUT_CONTROL::InputController& input_controller,
         MAPS::TileMap& current_tile_map)
     {
         if (camera.IsScrolling)

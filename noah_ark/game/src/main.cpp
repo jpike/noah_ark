@@ -7,7 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
-#include "Input/KeyboardInputController.h"
+#include "Input/InputController.h"
 #include "Maps/OverworldMapData.h"
 #include "Maps/Tileset.h"
 #include "Math/Number.h"
@@ -349,7 +349,7 @@ int main(int argumentCount, char* arguments[])
             window,
             font,
             colored_texture_shader);
-        INPUT_CONTROL::KeyboardInputController input_controller;
+        INPUT_CONTROL::InputController input_controller;
         STATES::IntroSequence intro_sequence;
         auto speakers = speakers_being_loaded.get();
         assert(speakers);
@@ -380,6 +380,8 @@ int main(int argumentCount, char* arguments[])
             if (window->isOpen())
             {
                 // READ USER INPUT.
+                sf::Vector2i mouse_screen_position = sf::Mouse::getPosition(*window);
+                input_controller.Mouse.ScreenPosition = MATH::Vector2f(mouse_screen_position.x, mouse_screen_position.y);
                 input_controller.ReadInput();
 
                 // GET THE ELAPSED TIME FOR THE NEW FRAME.

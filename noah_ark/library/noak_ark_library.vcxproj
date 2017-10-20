@@ -31,6 +31,7 @@
     <ClInclude Include="src\Core\Direction.h" />
     <ClInclude Include="src\Core\NullChecking.h" />
     <ClInclude Include="src\Core\String.h" />
+    <ClInclude Include="src\Debugging\DebugConsole.h" />
     <ClInclude Include="src\Events\AxeSwingEvent.h" />
     <ClInclude Include="src\Graphics\AnimatedSprite.h" />
     <ClInclude Include="src\Graphics\AnimationSequence.h" />
@@ -46,7 +47,8 @@
     <ClInclude Include="src\Graphics\Sprite.h" />
     <ClInclude Include="src\Graphics\Texture.h" />
     <ClInclude Include="src\Input\Keyboard.h" />
-    <ClInclude Include="src\Input\KeyboardInputController.h" />
+    <ClInclude Include="src\Input\InputController.h" />
+    <ClInclude Include="src\Input\Mouse.h" />
     <ClInclude Include="src\Inventory\Inventory.h" />
     <ClInclude Include="src\Inventory\InventoryAnimalsPage.h" />
     <ClInclude Include="src\Inventory\InventoryBiblePage.h" />
@@ -96,6 +98,7 @@
     <ClCompile Include="src\Collision\CollisionDetectionAlgorithms.cpp" />
     <ClCompile Include="src\Collision\Movement.cpp" />
     <ClCompile Include="src\Core\String.cpp" />
+    <ClCompile Include="src\Debugging\DebugConsole.cpp" />
     <ClCompile Include="src\Events\AxeSwingEvent.cpp" />
     <ClCompile Include="src\Graphics\AnimatedSprite.cpp" />
     <ClCompile Include="src\Graphics\AnimationSequence.cpp" />
@@ -110,7 +113,8 @@
     <ClCompile Include="src\Graphics\Sprite.cpp" />
     <ClCompile Include="src\Graphics\Texture.cpp" />
     <ClCompile Include="src\Input\Keyboard.cpp" />
-    <ClCompile Include="src\Input\KeyboardInputController.cpp" />
+    <ClCompile Include="src\Input\InputController.cpp" />
+    <ClCompile Include="src\Input\Mouse.cpp" />
     <ClCompile Include="src\Inventory\Inventory.cpp" />
     <ClCompile Include="src\Inventory\InventoryAnimalsPage.cpp" />
     <ClCompile Include="src\Inventory\InventoryBiblePage.cpp" />

@@ -2,18 +2,20 @@
 
 #include <SFML/Window.hpp>
 #include "Input/Keyboard.h"
+#include "Input/Mouse.h"
 
 namespace INPUT_CONTROL
 {
     /// An input controller for the game that receives
-    /// input from the keyboard.
+    /// input from the keyboard and mouse.
     /// In order to update the state of input stored in this
     /// class, the ReadInput() method should be called once
     /// per frame.  This is needed to allow easier detection
     /// of more advanced input events, like a button being initially 
     /// pressed or released on a given frame (as opposed to just
-    /// being up or down).
-    class KeyboardInputController
+    /// being up or down).  The mouse screen position must be
+    /// set separately.
+    class InputController
     {
     public:
         // STATIC CONSTANTS.
@@ -37,6 +39,8 @@ namespace INPUT_CONTROL
         static constexpr sf::Keyboard::Key BACK_KEY = sf::Keyboard::Escape;
         /// The key for toggling the map editor.
         static constexpr sf::Keyboard::Key MAP_EDITOR_KEY = sf::Keyboard::E;
+        /// The button for the main pointer.
+        static constexpr sf::Mouse::Button MAIN_POINTER_BUTTON = sf::Mouse::Left;
 
         // METHODS.
         void DisableInput();
@@ -46,11 +50,17 @@ namespace INPUT_CONTROL
 
         bool ButtonDown(const sf::Keyboard::Key key) const;
         bool ButtonWasPressed(const sf::Keyboard::Key key) const;
+        bool ButtonWasPressed(const sf::Mouse::Button button) const;
+
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The mouse supplying user input.
+        INPUT_CONTROL::Mouse Mouse = INPUT_CONTROL::Mouse();
 
     private:
         // HELPER METHODS.
         bool InputEnabledAndKeyDown(const sf::Keyboard::Key key) const;
         bool InputEnabledAndKeyWasPressed(const sf::Keyboard::Key key) const;
+        bool InputEnabledAndMouseButtonWasPressed(const sf::Mouse::Button button) const;
 
         // MEMBER VARIABLES.
         /// Whether or not this controller can supply input.

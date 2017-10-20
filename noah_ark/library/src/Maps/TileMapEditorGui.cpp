@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <string>
 #include "Core/NullChecking.h"
+#include "Debugging/DebugConsole.h"
 #include "Maps/TileMapEditorGui.h"
 
 namespace MAPS
@@ -11,7 +12,8 @@ namespace MAPS
     TileMapEditorGui::TileMapEditorGui(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture) :
     Visible(false),
     Tileset(tileset_texture),
-    TilesById()
+    TilesById(),
+    SelectedTile()
     {
         // MAKE SURE A TILESET TEXTURE WAS PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(tileset_texture, "Tile map editor GUI provided with null tileset texture.");
@@ -33,6 +35,44 @@ namespace MAPS
 
             // STORE THE CREATED TILE.
             TilesById[tile_id] = tile;
+        }
+    }
+
+    /// Updates the tile map editor GUI in response to user input.
+    /// @param[in,out]  input_controller - The input controller supplying user input.
+    void TileMapEditorGui::RespondToInput(const INPUT_CONTROL::InputController& input_controller)
+    {
+        // TOGGLE THE MAP EDITOR IF THE KEY WAS PRESSED.
+        const bool map_editor_key_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAP_EDITOR_KEY);
+        if (map_editor_key_pressed)
+        {
+            Visible = !Visible;
+        }
+
+        // EXIT IF THE GUI ISN'T VISIBLE.
+        // If the GUI isn't visible, then it shouldn't be responsive to any more user input.
+        if (!Visible)
+        {
+            return;
+        }
+
+        // CHECK IF A TILE IS CURRENTLY SELECTED.
+        if (SelectedTile)
+        {
+
+        }
+        else
+        {
+            // CHECK IF THE USER HAS SELECTED A TILE.
+            bool pointer_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAIN_POINTER_BUTTON);
+            if (pointer_button_pressed)
+            {
+                // GET THE SELECTED TILE (IF ONE EXISTS).
+                /// \todo
+                DEBUGGING::DebugConsole::WriteLine("Pointer pressed.");
+                //MATH::Vector2f pointer_screen_position = input_controller.GetPointerScreenCoordinates(INPUT_CONTROL::InputController::POINTER_BUTTON);
+                //SelectedTile = GetTileFromPaletteAtScreenPosition(pointer_screen_position);
+            }
         }
     }
 

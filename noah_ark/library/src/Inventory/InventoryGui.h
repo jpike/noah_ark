@@ -4,7 +4,7 @@
 #include <string>
 #include "Graphics/Color.h"
 #include "Graphics/Renderer.h"
-#include "Input/KeyboardInputController.h"
+#include "Input/InputController.h"
 #include "Inventory/Inventory.h"
 #include "Inventory/InventoryAnimalsPage.h"
 #include "Inventory/InventoryBiblePage.h"
@@ -67,7 +67,7 @@ namespace INVENTORY
             const std::shared_ptr<RESOURCES::Assets>& assets);
 
         // INPUT.
-        void RespondToInput(const INPUT_CONTROL::KeyboardInputController& input_controller);
+        void RespondToInput(const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
         void Render(GRAPHICS::Renderer& renderer) const;

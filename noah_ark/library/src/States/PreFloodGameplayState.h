@@ -8,7 +8,7 @@
 #include "Graphics/Camera.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
-#include "Input/KeyboardInputController.h"
+#include "Input/InputController.h"
 #include "Maps/MapType.h"
 #include "Maps/Overworld.h"
 #include "Maps/TileMap.h"
@@ -39,7 +39,7 @@ namespace STATES
         // UPDATING.
         void Update(
             const sf::Time& elapsed_time, 
-            INPUT_CONTROL::KeyboardInputController& input_controller,
+            INPUT_CONTROL::InputController& input_controller,
             GRAPHICS::Camera& camera);
 
         // RENDERING.
@@ -62,13 +62,13 @@ namespace STATES
         // WORLD UPDATING.
         void UpdateOverworld(
             const sf::Time& elapsed_time,
-            INPUT_CONTROL::KeyboardInputController& input_controller,
+            INPUT_CONTROL::InputController& input_controller,
             GRAPHICS::Camera& camera);
-        void UpdateArkInterior(const INPUT_CONTROL::KeyboardInputController& input_controller);
+        void UpdateArkInterior(const INPUT_CONTROL::InputController& input_controller);
         void UpdatePlayerBasedOnInput(
             const MAPS::TileMap& current_tile_map,
             const sf::Time& elapsed_time,
-            INPUT_CONTROL::KeyboardInputController& input_controller,
+            INPUT_CONTROL::InputController& input_controller,
             GRAPHICS::Camera& camera);
         void MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
         void UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
@@ -85,7 +85,7 @@ namespace STATES
         void UpdateCameraWorldView(
             const sf::Time& elapsed_time,
             GRAPHICS::Camera& camera,
-            INPUT_CONTROL::KeyboardInputController& input_controller,
+            INPUT_CONTROL::InputController& input_controller,
             MAPS::TileMap& current_tile_map);
 
         // MEMBER VARIABLES.

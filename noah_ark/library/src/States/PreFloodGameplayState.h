@@ -9,10 +9,10 @@
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
 #include "Input/InputController.h"
+#include "Maps/Gui/TileMapEditorGui.h"
 #include "Maps/MapType.h"
 #include "Maps/Overworld.h"
 #include "Maps/TileMap.h"
-#include "Maps/TileMapEditorGui.h"
 #include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
 #include "Resources/Assets.h"
@@ -102,6 +102,6 @@ namespace STATES
         /// The current type of map being displayed.
         MAPS::MapType CurrentMap;
         /// The tile map editor GUI.
-        MAPS::TileMapEditorGui TileMapEditorGui;
+        MAPS::GUI::TileMapEditorGui TileMapEditorGui;
     };
 }

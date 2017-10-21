@@ -96,6 +96,12 @@
     <Filter Include="Source Files\Debugging">
       <UniqueIdentifier>{a2498f2c-61b6-44bd-90b5-b771bb899cdf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Maps\Gui">
+      <UniqueIdentifier>{fc4f1ad2-df47-4449-a692-1366811c5ba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Maps\Gui">
+      <UniqueIdentifier>{f7fee578-2306-45bb-84f7-1397a4aff28f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector2.h">
@@ -293,9 +299,6 @@
     <ClInclude Include="src\Maps\MapType.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\TileMapEditorGui.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Input\Mouse.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
@@ -304,6 +307,12 @@
     </ClInclude>
     <ClInclude Include="src\Debugging\DebugConsole.h">
       <Filter>Header Files\Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\Gui\TileMapEditorGui.h">
+      <Filter>Header Files\Maps\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\Gui\TilePalette.h">
+      <Filter>Header Files\Maps\Gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -469,9 +478,6 @@
     <ClCompile Include="src\States\PreFloodGameplayState.cpp">
       <Filter>Source Files\States</Filter>
     </ClCompile>
-    <ClCompile Include="src\Maps\TileMapEditorGui.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
     <ClCompile Include="src\Input\Mouse.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
@@ -480,6 +486,12 @@
     </ClCompile>
     <ClCompile Include="src\Debugging\DebugConsole.cpp">
       <Filter>Source Files\Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\Gui\TileMapEditorGui.cpp">
+      <Filter>Source Files\Maps\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\Gui\TilePalette.cpp">
+      <Filter>Source Files\Maps\Gui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

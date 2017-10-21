@@ -37,6 +37,12 @@ namespace MAPS
             ARK_BUILDING_PLOT = 8,
             /// A tile for the wood floor in the interior of the ark.
             ARK_INTERIOR_WOOD_FLOOR = 9,
+            /// A tile for the left side of an exit from the interior of the ark.
+            ARK_INTERIOR_LEFT_EXIT = 10,
+            /// A tile for the center of an exit from the interior of the ark.
+            ARK_INTERIOR_CENTER_EXIT = 11,
+            /// A tile for the right side of an exit from the interior of the ark.
+            ARK_INTERIOR_RIGHT_EXIT = 12,
             /// An extra enum value to define count of different tile types.
             COUNT
         };

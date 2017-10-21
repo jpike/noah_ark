@@ -381,7 +381,9 @@ int main(int argumentCount, char* arguments[])
             {
                 // READ USER INPUT.
                 sf::Vector2i mouse_screen_position = sf::Mouse::getPosition(*window);
-                input_controller.Mouse.ScreenPosition = MATH::Vector2f(mouse_screen_position.x, mouse_screen_position.y);
+                input_controller.Mouse.ScreenPosition = MATH::Vector2f(
+                    static_cast<float>(mouse_screen_position.x),
+                    static_cast<float>(mouse_screen_position.y));
                 input_controller.ReadInput();
 
                 // GET THE ELAPSED TIME FOR THE NEW FRAME.

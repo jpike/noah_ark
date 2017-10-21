@@ -1,14 +1,17 @@
 #pragma once
 
 #include <memory>
-#include <unordered_map>
 #include "Graphics/Renderer.h"
 #include "Graphics/Texture.h"
 #include "Input/InputController.h"
+#include "Maps/Gui/TilePalette.h"
 #include "Maps/Tile.h"
-#include "Maps/Tileset.h"
+#include "Math/Vector2.h"
 
 namespace MAPS
+{
+/// Holds code related to GUI functionality for maps.
+namespace GUI
 {
     /// A developer/debug GUI used for editing a single tile map on the screen.
     class TileMapEditorGui
@@ -27,12 +30,12 @@ namespace MAPS
         // MEMBER VARIABLES.
         /// True if the GUI is currently visible; false otherwise.
         bool Visible;
-        /// The tileset for maps edited via the GUI.
-        MAPS::Tileset Tileset;
-        /// A mapping of tiles in the tileset by ID.
-        /// Used for quickly rendering each tile.
-        std::unordered_map< MAPS::TileType::Id, std::shared_ptr<Tile> > TilesById;
+        /// The palette of tiles from which a user can select tiles in the editor.
+        MAPS::GUI::TilePalette TilePalette;
         /// The currently selected tile (if one is selected).
         std::shared_ptr<Tile> SelectedTile;
+        /// The most recent screen position of the mouse.
+        MATH::Vector2f MouseScreenPosition;
     };
+}
 }

@@ -1,15 +1,17 @@
 #include <stdexcept>
 #include "Core/NullChecking.h"
+#include "Debugging/DebugConsole.h"
 #include "Maps/Gui/TilePalette.h"
 
 namespace MAPS
 {
 namespace GUI
 {
-    /// Initializes the palette to use the provided tileset texture.
+    /// Initializes an invisible palette to use the provided tileset texture.
     /// @param[in]  tileset_texture - The texture for the tileset used by the palette.
     /// @throws std::exception - Thrown if the parameter is null or a tile fails to be created.
     TilePalette::TilePalette(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture):
+        Visible(false),
         Tileset(tileset_texture),
         TilesById(),
         TileScreenBoundsById()
@@ -48,10 +50,51 @@ namespace GUI
         }
     }
 
-    /// Renders the tile palette.
+    /// Updates the tile palette GUI in response to user input.
+    /// @param[in,out]  input_controller - The input controller supplying user input.
+    /// @return The tile selected by the user (if one was selected); null otherwise.
+    std::shared_ptr<Tile> TilePalette::RespondToInput(const INPUT_CONTROL::InputController& input_controller)
+    {
+        // TOGGLE THE TILE PALETTE IF THE KEY WAS PRESSED.
+        const bool tile_palette_key_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAP_EDITOR_TILE_PALETTE_KEY);
+        if (tile_palette_key_pressed)
+        {
+            Visible = !Visible;
+        }
+
+        // EXIT IF THE GUI ISN'T VISIBLE.
+        // If the GUI isn't visible, then it shouldn't be responsive to any more user input.
+        if (!Visible)
+        {
+            // No tile was selected from the palette.
+            return nullptr;
+        }
+
+        // CHECK IF THE USER HAS SELECTED A TILE.
+        bool pointer_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAIN_POINTER_BUTTON);
+        if (pointer_button_pressed)
+        {
+            // GET THE SELECTED TILE (IF ONE EXISTS).
+            DEBUGGING::DebugConsole::WriteLine("Mouse pressed at position: ", input_controller.Mouse.ScreenPosition);
+            std::shared_ptr<Tile> selected_tile = GetTileAtScreenPosition(input_controller.Mouse.ScreenPosition);
+            return selected_tile;
+        }
+
+        // INDICATE THAT NO TILE WAS SELECTED.
+        // If a tile was selected, code above should have already returned.
+        return nullptr;
+    }
+
+    /// Renders the tile palette (if visible).
     /// @param[in,out]  renderer - The renderer to use.
     void TilePalette::Render(GRAPHICS::Renderer& renderer) const
     {
+        // MAKE SURE THE TILE PALETTE IS VISIBLE.
+        if (!Visible)
+        {
+            return;
+        }
+
         // RENDER THE TILES.
         for (const auto& id_with_tile : TilesById)
         {
@@ -71,6 +114,13 @@ namespace GUI
     /// @return The tile from the palette at the specified screen position, if one exists; null otherwise.
     std::shared_ptr<Tile> TilePalette::GetTileAtScreenPosition(const MATH::Vector2f& screen_position) const
     {
+        // CHECK IF THE TILE PALETTE IS VISIBLE.
+        if (!Visible)
+        {
+            // The palette isn't visible, so there can't be a tile as the screen position.
+            return nullptr;
+        }
+
         // SEACH FOR A TILE AT THE SCREEN POSITION.
         for (const auto& id_with_tile : TilesById)
         {

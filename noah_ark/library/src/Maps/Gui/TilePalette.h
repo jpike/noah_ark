@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "Graphics/Renderer.h"
 #include "Graphics/Texture.h"
+#include "Input/InputController.h"
 #include "Maps/Tile.h"
 #include "Maps/Tileset.h"
 #include "Math/Rectangle.h"
@@ -20,13 +21,19 @@ namespace GUI
         // CONSTRUCTION.
         explicit TilePalette(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture);
 
+        // INPUT METHODS.
+        std::shared_ptr<Tile> RespondToInput(const INPUT_CONTROL::InputController& input_controller);
+
         // RENDERING METHODS.
         void Render(GRAPHICS::Renderer& renderer) const;
 
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// True if the tile palette is currently visible; false otherwise.
+        bool Visible;
+    private:
         // TILE RETRIEVAL.
         std::shared_ptr<Tile> GetTileAtScreenPosition(const MATH::Vector2f& screen_position) const;
 
-    private:
         // MEMBER VARIABLES.
         /// The tileset for maps edited via the GUI.
         MAPS::Tileset Tileset;

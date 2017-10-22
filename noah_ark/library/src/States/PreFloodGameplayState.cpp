@@ -110,6 +110,16 @@ namespace STATES
         INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera)
     {
+        // UPDATE THE TILE MAP EDITOR IN RESPONSE TO USER INPUT.
+        TileMapEditorGui.RespondToInput(input_controller);
+        if (TileMapEditorGui.Visible)
+        {
+            // If the tile map editor is displayed, it should have
+            // full control over updating to avoid interference
+            // by other components.
+            return;
+        }
+
         // UPDATE THE HUD IN RESPONSE TO USER INPUT.
         Hud->RespondToInput(input_controller);
 
@@ -147,20 +157,28 @@ namespace STATES
                 break;
         }
 
-        // RENDER THE PLAYER.
-        NoahPlayer->Sprite.Render(renderer.Screen);
-
-        // The axe should only be rendered if it is swinging.
-        if (NoahPlayer->Inventory->Axe->IsSwinging())
+        // CHECK IF THE TILE MAP EDITOR GUI IS VISIBLE.
+        if (TileMapEditorGui.Visible)
         {
-            NoahPlayer->Inventory->Axe->Sprite.Render(renderer.Screen);
+            // RENDER THE TILE MAP EDITOR GUI.
+            // Other components like the player and HUD aren't rendered
+            // because they would distract from the editor.
+            TileMapEditorGui.Render(renderer);
         }
+        else
+        {
+            // RENDER THE PLAYER.
+            NoahPlayer->Sprite.Render(renderer.Screen);
 
-        // RENDER THE HUD.
-        Hud->Render(renderer);
+            // The axe should only be rendered if it is swinging.
+            if (NoahPlayer->Inventory->Axe->IsSwinging())
+            {
+                NoahPlayer->Inventory->Axe->Sprite.Render(renderer.Screen);
+            }
 
-        // RENDER THE TILE MAP EDITOR GUI.
-        TileMapEditorGui.Render(renderer);
+            // RENDER THE HUD.
+            Hud->Render(renderer);
+        }
     }
 
     /// Attempts to initialize the player character from saved game data.
@@ -333,7 +351,7 @@ namespace STATES
     /// @param[in,out]  input_controller - The controller supplying player input.
     void PreFloodGameplayState::UpdateArkInterior(const INPUT_CONTROL::InputController& input_controller)
     {
-        TileMapEditorGui.RespondToInput(input_controller);
+        /// @todo Implement!
     }
 
     /// Updates the player and related items in the overworld based on input and elapsed time.

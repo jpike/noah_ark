@@ -26,10 +26,11 @@ namespace GUI
         // RENDERING METHODS.
         void Render(GRAPHICS::Renderer& renderer) const;
 
-    private:
-        // MEMBER VARIABLES.
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// True if the GUI is currently visible; false otherwise.
         bool Visible;
+    private:
+        // MEMBER VARIABLES.
         /// The palette of tiles from which a user can select tiles in the editor.
         MAPS::GUI::TilePalette TilePalette;
         /// The currently selected tile (if one is selected).

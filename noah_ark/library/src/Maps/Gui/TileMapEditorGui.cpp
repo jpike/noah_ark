@@ -24,7 +24,12 @@ namespace GUI
         const bool map_editor_key_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAP_EDITOR_KEY);
         if (map_editor_key_pressed)
         {
+            // TOGGLE THE MAIN GUI.
             Visible = !Visible;
+
+            // TOGGLE THE TILE PALETTE.
+            // It should be made visible if the map editor is being opened.
+            TilePalette.Visible = Visible;
         }
 
         // EXIT IF THE GUI ISN'T VISIBLE.
@@ -34,19 +39,24 @@ namespace GUI
             return;
         }
 
-        // STORE THE MOUSE SCREEN POSITION.
+        // TRACK THE MOUSE SCREEN POSITION.
         MouseScreenPosition = input_controller.Mouse.ScreenPosition;
 
-        // CHECK IF THE USER HAS SELECTED A TILE.
-        bool pointer_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAIN_POINTER_BUTTON);
-        if (pointer_button_pressed)
+        // GET ANY NEWLY SELECTED TILE FROM THE TILE PALETTE.
+        std::shared_ptr<MAPS::Tile> newly_selected_tile = TilePalette.RespondToInput(input_controller);
+        if (newly_selected_tile)
         {
-            // GET THE SELECTED TILE (IF ONE EXISTS).
-            DEBUGGING::DebugConsole::WriteLine("Mouse pressed at position: ", input_controller.Mouse.ScreenPosition);
-            SelectedTile = TilePalette.GetTileAtScreenPosition(input_controller.Mouse.ScreenPosition);
+            SelectedTile = newly_selected_tile;
+            DEBUGGING::DebugConsole::WriteLine("Tile selected!");
+        }
+        else
+        {
+            // CHECK IF A TILE HAS ALREADY BEEN SELECTED.
             if (SelectedTile)
             {
-                DEBUGGING::DebugConsole::WriteLine("Tile selected!");
+                /// @todo   Response to mouse clicks here.
+                /// If a mouse button is clicked, then the tile should be placed
+                /// in the tile map.
             }
         }
     }

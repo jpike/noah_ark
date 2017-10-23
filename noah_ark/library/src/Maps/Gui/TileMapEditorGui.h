@@ -6,6 +6,7 @@
 #include "Input/InputController.h"
 #include "Maps/Gui/TilePalette.h"
 #include "Maps/Tile.h"
+#include "Maps/TileMap.h"
 #include "Math/Vector2.h"
 
 namespace MAPS
@@ -29,6 +30,8 @@ namespace GUI
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// True if the GUI is currently visible; false otherwise.
         bool Visible;
+        /// The current tile map being edited by the GUI.
+        std::shared_ptr<MAPS::TileMap> CurrentTileMap;
     private:
         // MEMBER VARIABLES.
         /// The palette of tiles from which a user can select tiles in the editor.

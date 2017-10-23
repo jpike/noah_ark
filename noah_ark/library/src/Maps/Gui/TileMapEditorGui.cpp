@@ -11,6 +11,7 @@ namespace GUI
     /// @throws std::exception - Thrown if the parameter is null or a tile fails to be created.
     TileMapEditorGui::TileMapEditorGui(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture) :
     Visible(false),
+    CurrentTileMap(),
     TilePalette(tileset_texture),
     SelectedTile(),
     MouseScreenPosition()
@@ -47,16 +48,29 @@ namespace GUI
         if (newly_selected_tile)
         {
             SelectedTile = newly_selected_tile;
-            DEBUGGING::DebugConsole::WriteLine("Tile selected!");
         }
         else
         {
-            // CHECK IF A TILE HAS ALREADY BEEN SELECTED.
-            if (SelectedTile)
+            // CHECK IF THE USER CHOSE TO UPDATE A TILE IN THE MAP.
+            // The user must have already chosen a tile from the palette and then pressed the mouse button within the tile map.
+            bool pointer_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAIN_POINTER_BUTTON);
+            bool user_chose_to_update_tile_in_map = SelectedTile && pointer_button_pressed && CurrentTileMap;
+            if (user_chose_to_update_tile_in_map)
             {
-                /// @todo   Response to mouse clicks here.
-                /// If a mouse button is clicked, then the tile should be placed
-                /// in the tile map.
+                // CALCULATE THE TILE'S OFFSET WITHIN THE CURRENT TILE MAP.
+                unsigned int tile_x_offset_from_left_in_tiles = static_cast<unsigned int>(
+                    MouseScreenPosition.X / MAPS::Tile::DIMENSION_IN_PIXELS<float>);
+                unsigned int tile_y_offset_from_top_in_tiles = static_cast<unsigned int>(
+                    MouseScreenPosition.Y / MAPS::Tile::DIMENSION_IN_PIXELS<float>);
+
+                // SET THE TILE IN THE TILE MAP.
+                std::shared_ptr<MAPS::Tile> new_tile = std::make_shared<MAPS::Tile>(
+                    SelectedTile->Id,
+                    SelectedTile->Sprite);
+                CurrentTileMap->Ground.SetTile(
+                    tile_x_offset_from_left_in_tiles,
+                    tile_y_offset_from_top_in_tiles,
+                    new_tile);
             }
         }
     }

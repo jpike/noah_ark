@@ -1,3 +1,4 @@
+#include <fstream>
 #include <string>
 #include "Debugging/DebugConsole.h"
 #include "Maps/Gui/TileMapEditorGui.h"
@@ -22,7 +23,7 @@ namespace GUI
     void TileMapEditorGui::RespondToInput(const INPUT_CONTROL::InputController& input_controller)
     {
         // TOGGLE THE MAP EDITOR IF THE KEY WAS PRESSED.
-        const bool map_editor_key_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAP_EDITOR_KEY);
+        bool map_editor_key_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAP_EDITOR_KEY);
         if (map_editor_key_pressed)
         {
             // TOGGLE THE MAIN GUI.
@@ -38,6 +39,16 @@ namespace GUI
         if (!Visible)
         {
             return;
+        }
+
+        // SAVE THE UPDATED MAP IF THE APPROPRIATE KEY WAS PRESSED.
+        bool save_map_key_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAP_EDITOR_SAVE_MAP_KEY);
+        if (save_map_key_pressed)
+        {
+            if (CurrentTileMap)
+            {
+                WriteTileMapFile(*CurrentTileMap);
+            }
         }
 
         // TRACK THE MOUSE SCREEN POSITION.
@@ -92,6 +103,60 @@ namespace GUI
         if (SelectedTile)
         {
             renderer.RenderGuiIcon(SelectedTile->Sprite, MouseScreenPosition);
+        }
+    }
+
+    /// Writes the basic tile data of the provided tile map out
+    /// to a file so that the updated map data can be copied into the
+    /// actual game code (and thus easily update the map).
+    /// @param[in]  tile_map - The tile map to write to file.
+    void TileMapEditorGui::WriteTileMapFile(const MAPS::TileMap& tile_map)
+    {
+        // OPEN THE OUTPUT FILE.
+        // The name is hardcoded since this is sufficient for now.
+        // Ideally, we'd have a way to automatically update the
+        // compiled-in map data without manual copying, but it
+        // hasn't yet been worth the effort to overcome that.
+        std::ofstream tile_map_file("edited_tile_map.txt");
+        if (!tile_map_file.is_open())
+        {
+            // The file can't be written.
+            return;
+        }
+
+        // WRITE OUT THE BASIC GRID COORDINATES OF THE TILE MAP.
+        tile_map_file
+            << "Column: " << tile_map.OverworldColumnIndex
+            << "Row: " << tile_map.OverworldRowIndex
+            << "\n";
+
+        // WRITE OUT EACH TILE ID IN THE GROUND LAYER.
+        // Tile data is stored first by row.
+        unsigned int map_height_in_tiles = tile_map.Ground.Tiles.GetHeight();
+        unsigned int map_width_in_tiles = tile_map.Ground.Tiles.GetWidth();
+        for (unsigned int tile_row_index = 0; tile_row_index < map_height_in_tiles; ++tile_row_index)
+        {
+            for (unsigned int tile_column_index = 0; tile_column_index < map_width_in_tiles; ++tile_row_index)
+            {
+                // WRITE OUT THE CURRENT TILE.
+                std::shared_ptr<MAPS::Tile> tile = tile_map.Ground.Tiles(tile_column_index, tile_row_index);
+                if (tile)
+                {
+                    // The ID is the only data that needs to be written.
+                    tile_map_file << tile->Id;
+                }
+                else
+                {
+                    // Default to an invalid tile ID to ensure that some data gets written.
+                    tile_map_file << MAPS::TileType::INVALID;
+                }
+
+                // WRITE OUT A SEPARATOR BEFORE THE NEXT TILE.
+                tile_map_file << ", ";
+            }
+
+            // WRITE OUT A SEPARATOR BEFORE THE NEXT ROW.
+            tile_map_file << "\n";
         }
     }
 }

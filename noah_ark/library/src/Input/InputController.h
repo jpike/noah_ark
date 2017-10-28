@@ -41,6 +41,8 @@ namespace INPUT_CONTROL
         static constexpr sf::Keyboard::Key MAP_EDITOR_KEY = sf::Keyboard::E;
         /// The key for toggling the map editor's tile palette.
         static constexpr sf::Keyboard::Key MAP_EDITOR_TILE_PALETTE_KEY = sf::Keyboard::T;
+        /// The key for saving the updated map in a map editor.
+        static constexpr sf::Keyboard::Key MAP_EDITOR_SAVE_MAP_KEY = sf::Keyboard::S;
         /// The button for the main pointer.
         static constexpr sf::Mouse::Button MAIN_POINTER_BUTTON = sf::Mouse::Left;
 

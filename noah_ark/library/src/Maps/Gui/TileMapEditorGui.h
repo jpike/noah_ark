@@ -33,6 +33,9 @@ namespace GUI
         /// The current tile map being edited by the GUI.
         MAPS::TileMap* CurrentTileMap;
     private:
+        // PRIVATE HELPER METHODS.
+        static void WriteTileMapFile(const MAPS::TileMap& tile_map);
+
         // MEMBER VARIABLES.
         /// The palette of tiles from which a user can select tiles in the editor.
         MAPS::GUI::TilePalette TilePalette;

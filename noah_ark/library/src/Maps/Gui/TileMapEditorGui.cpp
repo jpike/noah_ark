@@ -11,7 +11,7 @@ namespace GUI
     /// @throws std::exception - Thrown if the parameter is null or a tile fails to be created.
     TileMapEditorGui::TileMapEditorGui(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture) :
     Visible(false),
-    CurrentTileMap(),
+    CurrentTileMap(nullptr),
     TilePalette(tileset_texture),
     SelectedTile(),
     MouseScreenPosition()

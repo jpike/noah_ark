@@ -114,10 +114,34 @@ namespace STATES
         TileMapEditorGui.RespondToInput(input_controller);
         if (TileMapEditorGui.Visible)
         {
+            // MAKE SURE THE TILE MAP EDITOR GUI HAS THE CURRENT TILE MAP.
+            switch (CurrentMap)
+            {
+                case MAPS::MapType::OVERWORLD:
+                {
+                    MATH::FloatRectangle camera_bounds = camera.ViewBounds;
+                    MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
+                    MAPS::TileMap* current_tile_map = Overworld->GetTileMap(camera_view_center.X, camera_view_center.Y);
+                    TileMapEditorGui.CurrentTileMap = current_tile_map;
+                    break;
+                }
+                case MAPS::MapType::ARK_INTERIOR:
+                {
+                    /// @todo
+                    break;
+                }
+            }
+
+            // FINISH UPDATING.
             // If the tile map editor is displayed, it should have
             // full control over updating to avoid interference
             // by other components.
             return;
+        }
+        else
+        {
+            // CLEAR THE TILE MAP EDITOR GUI'S CURRENT TILE MAP.
+            TileMapEditorGui.CurrentTileMap = nullptr;
         }
 
         // UPDATE THE HUD IN RESPONSE TO USER INPUT.

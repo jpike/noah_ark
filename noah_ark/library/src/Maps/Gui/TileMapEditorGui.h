@@ -31,7 +31,7 @@ namespace GUI
         /// True if the GUI is currently visible; false otherwise.
         bool Visible;
         /// The current tile map being edited by the GUI.
-        std::shared_ptr<MAPS::TileMap> CurrentTileMap;
+        MAPS::TileMap* CurrentTileMap;
     private:
         // MEMBER VARIABLES.
         /// The palette of tiles from which a user can select tiles in the editor.

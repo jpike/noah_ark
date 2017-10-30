@@ -1,9 +1,8 @@
-#include "Maps/Overworld.h"
 #include "Maps/OverworldMapData.h"
 
 namespace MAPS
 {
-    const CORE::Array2D<TileMapData> OVERWORLD_MAP_DATA(Overworld::WIDTH_IN_TILE_MAPS, Overworld::HEIGHT_IN_TILE_MAPS,
+    const CORE::Array2D<TileMapData> OVERWORLD_MAP_DATA(OVERWORLD_WIDTH_IN_TILE_MAPS, OVERWORLD_HEIGHT_IN_TILE_MAPS,
     {
         // ROW 0.
         TileMapData(&TILE_MAP_0_0_GROUND_LAYER, NO_LAYER, &TILE_MAP_0_0_OBJECT_LAYER),

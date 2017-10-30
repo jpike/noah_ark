@@ -18,7 +18,7 @@ namespace GUI
     /// @param[in]  assets - The assets to use for the page.
     /// @throws std::exception - Thrown if a parameter is null.
     HeadsUpDisplay::HeadsUpDisplay(
-        const std::shared_ptr<MAPS::Overworld>& overworld,
+        const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld,
         const std::shared_ptr<OBJECTS::Noah>& noah_player,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels,

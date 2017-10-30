@@ -161,9 +161,6 @@
     <ClInclude Include="src\Collision\Movement.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\Overworld.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\Camera.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
@@ -314,6 +311,9 @@
     <ClInclude Include="src\Maps\Gui\TilePalette.h">
       <Filter>Header Files\Maps\Gui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Maps\MultiTileMapGrid.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -360,9 +360,6 @@
     </ClCompile>
     <ClCompile Include="src\Collision\Movement.cpp">
       <Filter>Source Files\Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\Overworld.cpp">
-      <Filter>Source Files\Maps</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics\Camera.cpp">
       <Filter>Source Files\Graphics</Filter>
@@ -492,6 +489,9 @@
     </ClCompile>
     <ClCompile Include="src\Maps\Gui\TilePalette.cpp">
       <Filter>Source Files\Maps\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\MultiTileMapGrid.cpp">
+      <Filter>Source Files\Maps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

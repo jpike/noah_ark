@@ -8,7 +8,7 @@
 #include "Collision/Movement.h"
 #include "Core/Direction.h"
 #include "Events/AxeSwingEvent.h"
-#include "Maps/Overworld.h"
+#include "Maps/MultiTileMapGrid.h"
 #include "Maps/Tile.h"
 #include "Math/Rectangle.h"
 #include "Objects/Axe.h"
@@ -27,17 +27,17 @@ namespace COLLISION
             const MATH::Vector2f& move_vector,
             const std::unordered_set<MAPS::TileType::Id>& tile_types_allowed_to_move_over,
             const bool allow_movement_over_solid_objects,
-            MAPS::Overworld& overworld);
+            MAPS::MultiTileMapGrid& tile_map_grid);
         static MATH::Vector2f MoveObject(
             const MATH::FloatRectangle& object_world_bounding_box,
             const CORE::Direction direction,
             const float move_speed_in_pixels_per_second,
             const sf::Time& elapsed_time,
-            MAPS::Overworld& overworld);
+            MAPS::MultiTileMapGrid& tile_map_grid);
 
         // AXE SWINGS.
         static void HandleAxeSwings(
-            MAPS::Overworld& overworld,
+            MAPS::MultiTileMapGrid& tile_map_grid,
             std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings,
             AUDIO::Speakers& speakers,
             RESOURCES::Assets& assets);
@@ -47,28 +47,28 @@ namespace COLLISION
         static MATH::Vector2f MoveObjectUp(
             const MATH::FloatRectangle& object_world_bounding_box, 
             const COLLISION::Movement& movement, 
-            MAPS::Overworld& overworld);
+            MAPS::MultiTileMapGrid& tile_map_grid);
         static MATH::Vector2f MoveObjectDown(
             const MATH::FloatRectangle& object_world_bounding_box, 
             const COLLISION::Movement& movement, 
-            MAPS::Overworld& overworld);
+            MAPS::MultiTileMapGrid& tile_map_grid);
         static MATH::Vector2f MoveObjectLeft(
             const MATH::FloatRectangle& object_world_bounding_box, 
             const COLLISION::Movement& movement, 
-            MAPS::Overworld& overworld);
+            MAPS::MultiTileMapGrid& tile_map_grid);
         static MATH::Vector2f MoveObjectRight(
             const MATH::FloatRectangle& object_world_bounding_box, 
             const COLLISION::Movement& movement, 
-            MAPS::Overworld& overworld);
+            MAPS::MultiTileMapGrid& tile_map_grid);
 
         // AXE SWINGS.
         static void HandleAxeCollisionsWithTrees(
             const OBJECTS::Axe& axe, 
-            MAPS::Overworld& overworld, 
+            MAPS::MultiTileMapGrid& tile_map_grid,
             AUDIO::Speakers& speakers,
             RESOURCES::Assets& assets);
 
         // OBJECT-SPECIFIC COLLISION DETECTION.
-        static bool CollidesWithTree(const MATH::FloatRectangle& rectangle, MAPS::Overworld& overworld, MATH::FloatRectangle& tree_rectangle);
+        static bool CollidesWithTree(const MATH::FloatRectangle& rectangle, MAPS::MultiTileMapGrid& tile_map_grid, MATH::FloatRectangle& tree_rectangle);
     };
 }

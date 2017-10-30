@@ -37,7 +37,7 @@ namespace STATES
     bool PreFloodGameplayState::Initialize(
         const unsigned int screen_width_in_pixels,
         const SavedGameData& saved_game_data,
-        const std::shared_ptr<MAPS::Overworld>& overworld)
+        const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld)
     {
         // MAKE SURE AN OVERWORLD WAS PROVIDED.
         bool overworld_exists = (nullptr != overworld);
@@ -243,7 +243,7 @@ namespace STATES
     /// @return The initialized HUD, if successful; null otherwise.
     std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> PreFloodGameplayState::InitializeHud(
         const unsigned int screen_width_in_pixels,
-        const std::shared_ptr<MAPS::Overworld>& overworld,
+        const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld,
         const std::shared_ptr<OBJECTS::Noah>& noah_player)
     {
         // GET ASSETS NEEDED FOR THE HUD.

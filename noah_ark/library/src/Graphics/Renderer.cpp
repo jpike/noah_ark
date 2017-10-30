@@ -465,9 +465,9 @@ namespace GRAPHICS
         }
     }
 
-    /// Renders an overworld.
-    /// @param[in]  overworld - The overworld to render.
-    void Renderer::Render(const MAPS::Overworld& overworld)
+    /// Renders a multi-tile-map grid.
+    /// @param[in]  tile_map_grid - The tile map grid to render.
+    void Renderer::Render(const MAPS::MultiTileMapGrid& tile_map_grid)
     {
         MATH::FloatRectangle camera_bounds = Camera.ViewBounds;
         MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
@@ -479,7 +479,7 @@ namespace GRAPHICS
         camera_view.setSize(camera_bounds.GetWidth(), camera_bounds.GetHeight());
         Screen.RenderTarget->setView(camera_view);
 
-        const MAPS::TileMap* current_tile_map = overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
+        const MAPS::TileMap* current_tile_map = tile_map_grid.GetTileMap(camera_view_center.X, camera_view_center.Y);
         assert(current_tile_map);
 
         // RENDER THE CURRENT TILE MAP.
@@ -502,7 +502,7 @@ namespace GRAPHICS
             for (unsigned int tile_map_column = min_tile_map_column; tile_map_column <= max_tile_map_column; ++tile_map_column)
             {
                 // GET THE CURRENT TILE MAP.
-                const MAPS::TileMap* tile_map = overworld.GetTileMap(tile_map_row, tile_map_column);
+                const MAPS::TileMap* tile_map = tile_map_grid.GetTileMap(tile_map_row, tile_map_column);
                 bool tile_map_exists = (nullptr != tile_map);
                 if (!tile_map_exists)
                 {

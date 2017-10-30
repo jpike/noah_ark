@@ -11,7 +11,7 @@
 #include "Input/InputController.h"
 #include "Maps/Gui/TileMapEditorGui.h"
 #include "Maps/MapType.h"
-#include "Maps/Overworld.h"
+#include "Maps/MultiTileMapGrid.h"
 #include "Maps/TileMap.h"
 #include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
@@ -34,7 +34,7 @@ namespace STATES
         bool Initialize(
             const unsigned int screen_width_in_pixels,
             const SavedGameData& saved_game_data,
-            const std::shared_ptr<MAPS::Overworld>& overworld);
+            const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld);
 
         // UPDATING.
         void Update(
@@ -47,7 +47,7 @@ namespace STATES
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main overworld.
-        std::shared_ptr<MAPS::Overworld> Overworld;
+        std::shared_ptr<MAPS::MultiTileMapGrid> Overworld;
         /// Noah (the player) character within the game.
         std::shared_ptr<OBJECTS::Noah> NoahPlayer;
 
@@ -56,7 +56,7 @@ namespace STATES
         std::shared_ptr<OBJECTS::Noah> InitializePlayer(const SavedGameData& saved_game_data);
         std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> InitializeHud(
             const unsigned int screen_width_in_pixels,
-            const std::shared_ptr<MAPS::Overworld>& overworld,
+            const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld,
             const std::shared_ptr<OBJECTS::Noah>& noah_player);
 
         // WORLD UPDATING.

@@ -37,7 +37,7 @@ int EXIT_CODE_FAILURE_LOADING_FONT = 4;
 /// @param[in,out]  overworld - The overworld to populate.
 void PopulateOverworld(
     RESOURCES::Assets& assets,
-    MAPS::Overworld& overworld)
+    MAPS::MultiTileMapGrid& overworld)
 {
     // LOAD THE TILESET TEXTURE.
     std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::MAIN_TILESET_TEXTURE_ID);
@@ -54,10 +54,10 @@ void PopulateOverworld(
     MATH::RandomNumberGenerator random_number_generator;
 
     // LOAD TILE MAPS FOR EACH ROW.
-    for (unsigned int row = 0; row < MAPS::Overworld::HEIGHT_IN_TILE_MAPS; ++row)
+    for (unsigned int row = 0; row < MAPS::OVERWORLD_HEIGHT_IN_TILE_MAPS; ++row)
     {
         // LOAD TILE MAPS FOR EACH COLUMN.
-        for (unsigned int column = 0; column < MAPS::Overworld::WIDTH_IN_TILE_MAPS; ++column)
+        for (unsigned int column = 0; column < MAPS::OVERWORLD_WIDTH_IN_TILE_MAPS; ++column)
         {
             // GET THE CURRENT TILE MAP FILE.
             const auto& tile_map_data = MAPS::OVERWORLD_MAP_DATA(column, row);
@@ -232,11 +232,13 @@ void PopulateOverworld(
 /// Loads the overworld.
 /// @param[in]  assets - The assets to use for the overworld.
 /// @return The overworld, if successfully loaded; null otherwise.
-std::shared_ptr<MAPS::Overworld> LoadOverworld(RESOURCES::Assets& assets)
+std::shared_ptr<MAPS::MultiTileMapGrid> LoadOverworld(RESOURCES::Assets& assets)
 {
     // CREATE THE OVERWORLD.
     auto load_start_time = std::chrono::system_clock::now();
-    std::shared_ptr<MAPS::Overworld> overworld = std::make_shared<MAPS::Overworld>();
+    std::shared_ptr<MAPS::MultiTileMapGrid> overworld = std::make_shared<MAPS::MultiTileMapGrid>(
+        MAPS::OVERWORLD_WIDTH_IN_TILE_MAPS,
+        MAPS::OVERWORLD_HEIGHT_IN_TILE_MAPS);
     PopulateOverworld(assets, *overworld);
 
     auto load_end_time = std::chrono::system_clock::now();
@@ -342,7 +344,7 @@ int main(int argumentCount, char* arguments[])
 
         // The overworld is loaded in the background in separate threads to avoid having
         // their loading slow the startup time of the rest of the game.
-        std::future< std::shared_ptr<MAPS::Overworld> > overworld_being_loaded = std::async(LoadOverworld, std::ref(*assets));
+        std::future< std::shared_ptr<MAPS::MultiTileMapGrid> > overworld_being_loaded = std::async(LoadOverworld, std::ref(*assets));
 
         // INITIALIZE REMAINING SUBSYSTEMS.
         GRAPHICS::Renderer renderer(

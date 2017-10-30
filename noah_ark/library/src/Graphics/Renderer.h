@@ -11,7 +11,7 @@
 #include "Graphics/Screen.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Texture.h"
-#include "Maps/Overworld.h"
+#include "Maps/MultiTileMapGrid.h"
 #include "Maps/TileMap.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
@@ -61,7 +61,7 @@ namespace GRAPHICS
             const float text_scale_ratio = 1.0f);
 
         // OTHER RENDERING.
-        void Render(const MAPS::Overworld& overworld);
+        void Render(const MAPS::MultiTileMapGrid& tile_map_grid);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The screen that gets rendered to.

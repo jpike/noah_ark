@@ -127,6 +127,7 @@ namespace GUI
         // WRITE OUT THE BASIC GRID COORDINATES OF THE TILE MAP.
         tile_map_file
             << "Column: " << tile_map.OverworldColumnIndex
+            << "\n"
             << "Row: " << tile_map.OverworldRowIndex
             << "\n";
 
@@ -136,7 +137,7 @@ namespace GUI
         unsigned int map_width_in_tiles = tile_map.Ground.Tiles.GetWidth();
         for (unsigned int tile_row_index = 0; tile_row_index < map_height_in_tiles; ++tile_row_index)
         {
-            for (unsigned int tile_column_index = 0; tile_column_index < map_width_in_tiles; ++tile_row_index)
+            for (unsigned int tile_column_index = 0; tile_column_index < map_width_in_tiles; ++tile_column_index)
             {
                 // WRITE OUT THE CURRENT TILE.
                 std::shared_ptr<MAPS::Tile> tile = tile_map.Ground.Tiles(tile_column_index, tile_row_index);

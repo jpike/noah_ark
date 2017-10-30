@@ -5,21 +5,21 @@
 
 namespace COLLISION
 {
-    /// Moves an object in the overworld while performing collision detection
+    /// Moves an object in a map grid while performing collision detection
     /// to prevent the object from inappropriately overlapping objects.
     /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
     /// @param[in]  move_vector - The movement vector for the object (in pixels).
     /// @param[in]  tile_types_allowed_to_move_over - The types of tiles the object is allowed to move over.
     /// @param[in]  allow_movement_over_solid_objects - True to allow movement over solid objects in the world;
     ///     false to prevent such movement.
-    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @param[in,out]  tile_map_grid - The map grid in which the object is being moved.
     /// @return The new center world position of the object.
     MATH::Vector2f CollisionDetectionAlgorithms::MoveObject(
         const MATH::FloatRectangle& object_world_bounding_box,
         const MATH::Vector2f& move_vector,
         const std::unordered_set<MAPS::TileType::Id>& tile_types_allowed_to_move_over,
         const bool allow_movement_over_solid_objects,
-        MAPS::Overworld& overworld)
+        MAPS::MultiTileMapGrid& tile_map_grid)
     {
         // GRADUALLY MOVE THE OBJECT UNTIL WE COLLIDE WITH SOMETHING.
         // The bounding box of the object will be modified through multiple iterations of movement
@@ -44,7 +44,7 @@ namespace COLLISION
             object_new_bounding_box.SetCenterPosition(object_center_world_position.X, object_center_world_position.Y);
 
             // GET THE TILE AT THE OBJECT'S POTENTIAL NEW POSITION.
-            std::shared_ptr<MAPS::Tile> tile_at_new_object_position = overworld.GetTileAtWorldPosition(
+            std::shared_ptr<MAPS::Tile> tile_at_new_object_position = tile_map_grid.GetTileAtWorldPosition(
                 object_center_world_position.X, object_center_world_position.Y);
             if (!tile_at_new_object_position)
             {
@@ -69,7 +69,7 @@ namespace COLLISION
             {
                 // CHECK IF THE OBJECT COLLIDED WITH A TREE.
                 MATH::FloatRectangle tree_rectangle;
-                bool collides_with_tree = CollidesWithTree(object_current_bounding_box, overworld, tree_rectangle);
+                bool collides_with_tree = CollidesWithTree(object_current_bounding_box, tile_map_grid, tree_rectangle);
                 if (collides_with_tree)
                 {
                     // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
@@ -207,20 +207,20 @@ namespace COLLISION
         return final_center_world_position;
     }
 
-    /// Moves an object in the overworld while performing collision detection
+    /// Moves an object in the map grid while performing collision detection
     /// to prevent the object from inappropriately overlapping objects.
     /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
     /// @param[in]  direction - The direction to move the object.
     /// @param[in]  move_speed_in_pixels_per_second - The movement speed of the object.
     /// @param[in]  elapsed_time - The elapsed time over which to move the object.
-    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @param[in,out]  tile_map_grid - The map grid in which the object is being moved.
     /// @return The new center world position of the object.
     MATH::Vector2f CollisionDetectionAlgorithms::MoveObject(
         const MATH::FloatRectangle& object_world_bounding_box,
         const CORE::Direction direction,
         const float move_speed_in_pixels_per_second,
         const sf::Time& elapsed_time,
-        MAPS::Overworld& overworld)
+        MAPS::MultiTileMapGrid& tile_map_grid)
     {
         // DESCRIBE THE MOVEMENT TO BE PERFORMED.
         float elapsed_time_in_seconds = elapsed_time.asSeconds();
@@ -232,16 +232,16 @@ namespace COLLISION
         switch (direction)
         {
             case CORE::Direction::UP:
-                new_world_position = MoveObjectUp(object_world_bounding_box, movement, overworld);
+                new_world_position = MoveObjectUp(object_world_bounding_box, movement, tile_map_grid);
                 break;
             case CORE::Direction::DOWN:
-                new_world_position = MoveObjectDown(object_world_bounding_box, movement, overworld);
+                new_world_position = MoveObjectDown(object_world_bounding_box, movement, tile_map_grid);
                 break;
             case CORE::Direction::LEFT:
-                new_world_position = MoveObjectLeft(object_world_bounding_box, movement, overworld);
+                new_world_position = MoveObjectLeft(object_world_bounding_box, movement, tile_map_grid);
                 break;
             case CORE::Direction::RIGHT:
-                new_world_position = MoveObjectRight(object_world_bounding_box, movement, overworld);
+                new_world_position = MoveObjectRight(object_world_bounding_box, movement, tile_map_grid);
                 break;
             case CORE::Direction::INVALID:
                 // Intentionally fall through.
@@ -253,13 +253,13 @@ namespace COLLISION
         return new_world_position;
     }
 
-    /// Handles collisions of axe swings with objects in the overworld.
-    /// @param[in,out]  overworld - The overworld in which axes are being swung.
+    /// Handles collisions of axe swings with objects in the map grid.
+    /// @param[in,out]  tile_map_grid - The map grid in which axes are being swung.
     /// @param[in,out]  axe_swings - The axe swings to process and update.
     /// @param[in,out]  speakers - The speakers for which to play sound effects.
     /// @param[in,out]  assets - Assets that might be needed.
     void CollisionDetectionAlgorithms::HandleAxeSwings(
-        MAPS::Overworld& overworld,
+        MAPS::MultiTileMapGrid& tile_map_grid,
         std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings,
         AUDIO::Speakers& speakers,
         RESOURCES::Assets& assets)
@@ -294,23 +294,23 @@ namespace COLLISION
             }
 
             // HANDLE COLLISIONS OF THE AXE WITH TREES.
-            HandleAxeCollisionsWithTrees(*axe_swing.Axe, overworld, speakers, assets);
+            HandleAxeCollisionsWithTrees(*axe_swing.Axe, tile_map_grid, speakers, assets);
 
             // REMOVE THE PROCESSED AXE SWING EVENT.
             axe_swing_event = axe_swings.erase(axe_swing_event);
         }
     }
 
-    /// Moves an object up in the overworld while performing collision detection
+    /// Moves an object up in the map grid while performing collision detection
     /// to prevent the object from inappropriately overlapping objects.
     /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
     /// @param[in]  movement - The movement to simulate for the object.
-    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @param[in,out]  tile_map_grid - The map grid in which the object is being moved.
     /// @return The new center world position of the object.
     MATH::Vector2f CollisionDetectionAlgorithms::MoveObjectUp(
         const MATH::FloatRectangle& object_world_bounding_box,
         const COLLISION::Movement& movement,
-        MAPS::Overworld& overworld)
+        MAPS::MultiTileMapGrid& tile_map_grid)
     {
         // INITIALIZE THE NEW POSITION FOR THE OBJECT.
         // The object should remain at its current position if no movement occurs.
@@ -341,16 +341,16 @@ namespace COLLISION
             float collision_box_width = object_current_bounding_box.GetWidth();
             float horizontal_corner_tiles_adjustment_amount = collision_box_width / 4.0f;
             collision_box_left_x_position += horizontal_corner_tiles_adjustment_amount;
-            std::shared_ptr<MAPS::Tile> top_left_tile = overworld.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_top_y_position);
+            std::shared_ptr<MAPS::Tile> top_left_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_top_y_position);
 
             // Get the tile right above the collision box's center.
             float collison_box_center_x_position = object_current_bounding_box.GetCenterXPosition();
-            std::shared_ptr<MAPS::Tile> top_center_tile = overworld.GetTileAtWorldPosition(collison_box_center_x_position, collision_box_top_y_position);
+            std::shared_ptr<MAPS::Tile> top_center_tile = tile_map_grid.GetTileAtWorldPosition(collison_box_center_x_position, collision_box_top_y_position);
 
             // Get the tile for the top-right corner.
             float collision_box_right_x_position = object_current_bounding_box.GetRightXPosition();
             collision_box_right_x_position -= horizontal_corner_tiles_adjustment_amount;
-            std::shared_ptr<MAPS::Tile> top_right_tile = overworld.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_top_y_position);
+            std::shared_ptr<MAPS::Tile> top_right_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_top_y_position);
 
             // MAKE SURE THE TOP TILES EXIST.
             bool top_tiles_exist = (nullptr != top_left_tile) && (nullptr != top_center_tile) && (nullptr != top_right_tile);
@@ -370,7 +370,7 @@ namespace COLLISION
 
             // CHECK IF THE OBJECT COLLIDES WITH A TREE.
             MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, overworld, tree_rectangle);
+            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, tile_map_grid, tree_rectangle);
             if (collides_with_tree)
             {
                 // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
@@ -444,16 +444,16 @@ namespace COLLISION
         return object_new_world_position;
     }
 
-    /// Moves an object down in the overworld while performing collision detection
+    /// Moves an object down in the map grid while performing collision detection
     /// to prevent the object from inappropriately overlapping objects.
     /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
     /// @param[in]  movement - The movement to simulate for the object.
-    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @param[in,out]  tile_map_grid - The map grid in which the object is being moved.
     /// @return The new center world position of the object.
     MATH::Vector2f CollisionDetectionAlgorithms::MoveObjectDown(
         const MATH::FloatRectangle& object_world_bounding_box,
         const COLLISION::Movement& movement,
-        MAPS::Overworld& overworld)
+        MAPS::MultiTileMapGrid& tile_map_grid)
     {
         // INITIALIZE THE NEW POSITION OF THE OBJECT.
         // The object should remain at its current position if no movement occurs.
@@ -486,16 +486,16 @@ namespace COLLISION
             // Get the tile for the bottom-left corner.
             float collision_box_left_x_position = object_current_bounding_box.GetLeftXPosition();
             collision_box_left_x_position += horizontal_corner_tiles_adjustment_amount;
-            std::shared_ptr<MAPS::Tile> bottom_left_tile = overworld.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_bottom_y_position);
+            std::shared_ptr<MAPS::Tile> bottom_left_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_bottom_y_position);
 
             // Get the tile right below the collision box's center.
             float collison_box_center_x_position = object_current_bounding_box.GetCenterXPosition();
-            std::shared_ptr<MAPS::Tile> bottom_center_tile = overworld.GetTileAtWorldPosition(collison_box_center_x_position, collision_box_bottom_y_position);
+            std::shared_ptr<MAPS::Tile> bottom_center_tile = tile_map_grid.GetTileAtWorldPosition(collison_box_center_x_position, collision_box_bottom_y_position);
 
             // Get the tile for the bottom-right corner.
             float collision_box_right_x_position = object_current_bounding_box.GetRightXPosition();
             collision_box_right_x_position -= horizontal_corner_tiles_adjustment_amount;
-            std::shared_ptr<MAPS::Tile> bottom_right_tile = overworld.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_bottom_y_position);
+            std::shared_ptr<MAPS::Tile> bottom_right_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_bottom_y_position);
 
             // MAKE SURE THE BOTTOM TILES EXIST.
             bool bottom_tiles_exist = (nullptr != bottom_left_tile) && (nullptr != bottom_center_tile) && (nullptr != bottom_right_tile);
@@ -515,7 +515,7 @@ namespace COLLISION
 
             // CHECK IF THE OBJECT COLLIDES WITH A TREE.
             MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, overworld, tree_rectangle);
+            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, tile_map_grid, tree_rectangle);
             if (collides_with_tree)
             {
                 // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
@@ -584,16 +584,16 @@ namespace COLLISION
         return object_new_world_position;
     }
 
-    /// Moves an object left in the overworld while performing collision detection
+    /// Moves an object left in the map grid while performing collision detection
     /// to prevent the object from inappropriately overlapping objects.
     /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
     /// @param[in]  movement - The movement to simulate for the object.
-    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @param[in,out]  tile_map_grid - The map grid in which the object is being moved.
     /// @return The new center world position of the object.
     MATH::Vector2f CollisionDetectionAlgorithms::MoveObjectLeft(
         const MATH::FloatRectangle& object_world_bounding_box,
         const COLLISION::Movement& movement,
-        MAPS::Overworld& overworld)
+        MAPS::MultiTileMapGrid& tile_map_grid)
     {
         // INITIALIZE THE NEW POSITION FOR THE OBJECT.
         // The object should remain at its current position if no movement occurs.
@@ -626,16 +626,16 @@ namespace COLLISION
             // Get the tile for the top-left corner.
             float collision_box_top_y_position = object_current_bounding_box.GetTopYPosition();
             collision_box_top_y_position += vertical_corner_tiles_adjustment_amount;
-            std::shared_ptr<MAPS::Tile> top_left_tile = overworld.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_top_y_position);
+            std::shared_ptr<MAPS::Tile> top_left_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_top_y_position);
 
             // Get the tile to the direct left of the collision box's center.
             float collision_box_center_y_position = object_current_bounding_box.GetCenterYPosition();
-            std::shared_ptr<MAPS::Tile> center_left_tile = overworld.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_center_y_position);
+            std::shared_ptr<MAPS::Tile> center_left_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_center_y_position);
 
             // Get the tile for the bottom-left corner.
             float collision_box_bottom_y_position = object_current_bounding_box.GetBottomYPosition();
             collision_box_bottom_y_position -= vertical_corner_tiles_adjustment_amount;
-            std::shared_ptr<MAPS::Tile> bottom_left_tile = overworld.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_bottom_y_position);
+            std::shared_ptr<MAPS::Tile> bottom_left_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_bottom_y_position);
 
             // MAKE SURE THE LEFT TILES EXIST.
             bool left_tiles_exist = (nullptr != top_left_tile) && (nullptr != center_left_tile) && (nullptr != bottom_left_tile);
@@ -655,7 +655,7 @@ namespace COLLISION
 
             // CHECK IF THE OBJECT COLLIDES WITH A TREE.
             MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, overworld, tree_rectangle);
+            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, tile_map_grid, tree_rectangle);
             if (collides_with_tree)
             {
                 // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
@@ -722,16 +722,16 @@ namespace COLLISION
         return object_new_world_position;
     }
 
-    /// Moves an object right in the overworld while performing collision detection
+    /// Moves an object right in the map grid while performing collision detection
     /// to prevent the object from inappropriately overlapping objects.
     /// @param[in]  object_world_bounding_box - The world bounding box of the object being moved.
     /// @param[in]  movement - The movement to simulate for the object.
-    /// @param[in,out]  overworld - The overworld in which the object is being moved.
+    /// @param[in,out]  tile_map_grid - The map grid in which the object is being moved.
     /// @return The new center world position of the object.
     MATH::Vector2f CollisionDetectionAlgorithms::MoveObjectRight(
         const MATH::FloatRectangle& object_world_bounding_box,
         const COLLISION::Movement& movement,
-        MAPS::Overworld& overworld)
+        MAPS::MultiTileMapGrid& tile_map_grid)
     {
         // INITIALIZE THE NEW POSITION FOR THE OBJECT.
         // The object should remain at its current position if no movement occurs.
@@ -764,16 +764,16 @@ namespace COLLISION
             // Get the tile for the top-right corner.
             float collision_box_top_y_position = object_current_bounding_box.GetTopYPosition();
             collision_box_top_y_position += vertical_corner_tiles_adjustment_amount;
-            std::shared_ptr<MAPS::Tile> top_right_tile = overworld.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_top_y_position);
+            std::shared_ptr<MAPS::Tile> top_right_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_top_y_position);
 
             // Get the tile to the direct right of the collision box's center.
             float collision_box_center_y_position = object_current_bounding_box.GetCenterYPosition();
-            std::shared_ptr<MAPS::Tile> center_right_tile = overworld.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_center_y_position);
+            std::shared_ptr<MAPS::Tile> center_right_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_center_y_position);
 
             // Get the tile for the bottom-right corner.
             float collision_box_bottom_y_position = object_current_bounding_box.GetBottomYPosition();
             collision_box_bottom_y_position -= vertical_corner_tiles_adjustment_amount;
-            std::shared_ptr<MAPS::Tile> bottom_right_tile = overworld.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_bottom_y_position);
+            std::shared_ptr<MAPS::Tile> bottom_right_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_bottom_y_position);
 
             // MAKE SURE THE RIGHT TILES EXIST.
             bool right_tiles_exist = (nullptr != top_right_tile) && (nullptr != center_right_tile) && (nullptr != bottom_right_tile);
@@ -793,7 +793,7 @@ namespace COLLISION
 
             // CHECK IF THE OBJECT COLLIDES WITH A TREE.
             MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, overworld, tree_rectangle);
+            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, tile_map_grid, tree_rectangle);
             if (collides_with_tree)
             {
                 // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
@@ -861,14 +861,14 @@ namespace COLLISION
         return object_new_world_position;
     }
 
-    /// Handles collisions of axes with trees in the overworld.
+    /// Handles collisions of axes with trees in the map grid.
     /// @param[in]  axe - The axe to process for collision detection with trees.
-    /// @param[in,out]  overworld - The overworld in which the axe and trees exist.
+    /// @param[in,out]  tile_map_grid - The map grid in which the axe and trees exist.
     /// @param[in,out]  speakers - The speakers for which to play sound effects.
     /// @param[in,out]  assets - Assets that might be needed.
     void CollisionDetectionAlgorithms::HandleAxeCollisionsWithTrees(
         const OBJECTS::Axe& axe, 
-        MAPS::Overworld& overworld, 
+        MAPS::MultiTileMapGrid& tile_map_grid,
         AUDIO::Speakers& speakers,
         RESOURCES::Assets& assets)
     {
@@ -879,7 +879,7 @@ namespace COLLISION
         // axe blade's center.
         MATH::FloatRectangle axe_blade_bounds = axe.GetBladeBounds();
         MATH::Vector2f axe_center_position = axe_blade_bounds.GetCenterPosition();
-        MAPS::TileMap* tile_map = overworld.GetTileMap(axe_center_position.X, axe_center_position.Y);
+        MAPS::TileMap* tile_map = tile_map_grid.GetTileMap(axe_center_position.X, axe_center_position.Y);
         assert(tile_map);
         for (auto tree = tile_map->Trees.begin(); tile_map->Trees.end() != tree;)
         {
@@ -979,14 +979,14 @@ namespace COLLISION
         }
     }
 
-    /// Determines if an object collides with a tree in the overworld.
+    /// Determines if an object collides with a tree in the map grid.
     /// @param[in]  rectangle - The bounding world rectangle of the object.
-    /// @param[in,out]  overworld - The overworld in which the object and trees exist.
+    /// @param[in,out]  tile_map_grid - The map grid in which the object and trees exist.
     /// @param[out] tree_rectangle - The bounding world rectangle of the tree, if a collision occurred.
     /// @return True if the object collided with a tree; false otherwise.
     bool CollisionDetectionAlgorithms::CollidesWithTree(
         const MATH::FloatRectangle& rectangle, 
-        MAPS::Overworld& overworld, 
+        MAPS::MultiTileMapGrid& tile_map_grid,
         MATH::FloatRectangle& tree_rectangle)
     {
         // CLEAR THE OUT PARAMETER.
@@ -994,7 +994,7 @@ namespace COLLISION
 
         // GET THE TREES NEAR THE RECTANGLE.
         MATH::Vector2f object_center_position = rectangle.GetCenterPosition();
-        MAPS::TileMap* current_tile_map = overworld.GetTileMap(object_center_position.X, object_center_position.Y);
+        MAPS::TileMap* current_tile_map = tile_map_grid.GetTileMap(object_center_position.X, object_center_position.Y);
         bool tile_map_exists = (nullptr != current_tile_map);
         if (!tile_map_exists)
         {

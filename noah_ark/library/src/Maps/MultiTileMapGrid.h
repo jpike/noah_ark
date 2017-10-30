@@ -11,16 +11,14 @@
 /// Holds code related to maps in the game (primarily tile maps).
 namespace MAPS
 {
-    /// The entire overworld of the game.  The overworld is divided into smaller chunks
-    /// of individual tile maps.
-    class Overworld
+    /// A grid-based organizational mechanism for collecting a set of related tile maps
+    /// that form a larger "map" (for example, an overworld map or interior area may
+    /// be made of multiple individual tile maps).
+    class MultiTileMapGrid
     {
     public:
-        // STATIC DIMENSION CONSTANTS.
-        /// The width of the overworld, in tile maps.
-        static const unsigned int WIDTH_IN_TILE_MAPS = 7;
-        /// The height of the overworld, in tile maps.
-        static const unsigned int HEIGHT_IN_TILE_MAPS = 7;
+        // CONSTRUCTION.
+        explicit MultiTileMapGrid(const unsigned int width_in_tile_maps, const unsigned int height_in_tile_maps);
 
         // TILE MAP RETRIEVAL.
         const MAPS::TileMap* GetTileMap(const unsigned int row, const unsigned int column) const;
@@ -32,10 +30,10 @@ namespace MAPS
         std::shared_ptr<MAPS::Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
-        /// Tile maps in the overworld, arranged by column/row position in a grid rather than
+        /// Tile maps in the grid, arranged by column/row position in the grid rather than
         /// by absolute world positions.  (0,0) (column/x,row/y) is the top-left tile map.
-        CORE::Array2D<MAPS::TileMap> TileMaps = CORE::Array2D<MAPS::TileMap>(WIDTH_IN_TILE_MAPS, HEIGHT_IN_TILE_MAPS);
-        /// Axe swings currently occurring in the world.
-        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings = {};
+        CORE::Array2D<MAPS::TileMap> TileMaps;
+        /// Axe swings currently occurring in the map grid.
+        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings;
     };
 }

@@ -5,6 +5,8 @@
 
 namespace MAPS
 {
+namespace DATA
+{
     // COLUMN 0 MAP DATA.
     extern const CORE::Array2D<uint8_t> TILE_MAP_0_0_GROUND_LAYER;
     extern const CORE::Array2D<uint8_t> TILE_MAP_0_0_OBJECT_LAYER;
@@ -124,4 +126,5 @@ namespace MAPS
             ObjectLayer(object_layer)
         {}
     };
+}
 }

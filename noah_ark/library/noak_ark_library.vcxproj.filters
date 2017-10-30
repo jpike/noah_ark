@@ -102,6 +102,12 @@
     <Filter Include="Source Files\Maps\Gui">
       <UniqueIdentifier>{f7fee578-2306-45bb-84f7-1397a4aff28f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Maps\Data">
+      <UniqueIdentifier>{ec148954-d075-4d2a-895d-57f14a35ab00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Maps\Data">
+      <UniqueIdentifier>{f13618ec-74be-43fb-8851-7e7ebf679765}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector2.h">
@@ -266,12 +272,6 @@
     <ClInclude Include="src\States\CreditsScreen.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\TileMapData.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Maps\OverworldMapData.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Resources\AnimalSounds.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
@@ -311,14 +311,20 @@
     <ClInclude Include="src\Maps\MultiTileMapGrid.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\ArkInteriorTileMapData.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Maps\World.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
     <ClInclude Include="src\Maps\ExitPoint.h">
       <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\Data\ArkInteriorTileMapData.h">
+      <Filter>Header Files\Maps\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\Data\OverworldMapData.h">
+      <Filter>Header Files\Maps\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\Data\TileMapData.h">
+      <Filter>Header Files\Maps\Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -460,12 +466,6 @@
     <ClCompile Include="src\States\CreditsScreen.cpp">
       <Filter>Source Files\States</Filter>
     </ClCompile>
-    <ClCompile Include="src\Maps\TileMapData.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Maps\OverworldMapData.cpp">
-      <Filter>Source Files\Maps</Filter>
-    </ClCompile>
     <ClCompile Include="src\Resources\AnimalSounds.cpp">
       <Filter>Source Files\Resources</Filter>
     </ClCompile>
@@ -499,8 +499,14 @@
     <ClCompile Include="src\Maps\MultiTileMapGrid.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
-    <ClCompile Include="src\Maps\ArkInteriorTileMapData.cpp">
-      <Filter>Source Files\Maps</Filter>
+    <ClCompile Include="src\Maps\Data\ArkInteriorTileMapData.cpp">
+      <Filter>Source Files\Maps\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\Data\OverworldMapData.cpp">
+      <Filter>Source Files\Maps\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\Data\TileMapData.cpp">
+      <Filter>Source Files\Maps\Data</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,7 +1,9 @@
+#include "Maps/Data/TileMapData.h"
 #include "Maps/TileMap.h"
-#include "Maps/TileMapData.h"
 
 namespace MAPS
+{
+namespace DATA
 {
     const CORE::Array2D<uint8_t> TILE_MAP_0_0_GROUND_LAYER(TileMap::WIDTH_IN_TILES, TileMap::HEIGHT_IN_TILES,
     {
@@ -2468,4 +2470,5 @@ namespace MAPS
     });
 
     const CORE::Array2D<uint8_t>* NO_LAYER = nullptr;
+}
 }

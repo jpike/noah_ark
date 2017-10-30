@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Maps/MultiTileMapGrid.h"
-#include "Maps/OverworldMapData.h"
 
 namespace MAPS
 {

@@ -1,7 +1,9 @@
-#include "Maps/ArkInteriorTileMapData.h"
+#include "Maps/Data/ArkInteriorTileMapData.h"
 #include "Maps/TileMap.h"
 
 namespace MAPS
+{
+namespace DATA
 {
     const CORE::Array2D<uint8_t> ARK_INTERIOR_TILE_MAP_0_0(TileMap::WIDTH_IN_TILES, TileMap::HEIGHT_IN_TILES,
     {
@@ -30,4 +32,5 @@ namespace MAPS
         1, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 10, 11, 11, 12, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     });
+}
 }

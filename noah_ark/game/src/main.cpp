@@ -8,8 +8,8 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Input/InputController.h"
-#include "Maps/ArkInteriorTileMapData.h"
-#include "Maps/OverworldMapData.h"
+#include "Maps/Data/ArkInteriorTileMapData.h"
+#include "Maps/Data/OverworldMapData.h"
 #include "Maps/Tileset.h"
 #include "Math/Number.h"
 #include "Resources/AnimalSounds.h"
@@ -61,7 +61,7 @@ void PopulateOverworld(
         for (unsigned int column = 0; column < MAPS::World::OVERWORLD_WIDTH_IN_TILE_MAPS; ++column)
         {
             // GET THE CURRENT TILE MAP FILE.
-            const auto& tile_map_data = MAPS::OVERWORLD_MAP_DATA(column, row);
+            const auto& tile_map_data = MAPS::DATA::OVERWORLD_MAP_DATA(column, row);
 
             // CALCULATE THE POSITION OF THE CURRENT TILE MAP.
             MATH::Vector2f map_center_world_position;
@@ -269,7 +269,7 @@ void PopulateArkInterior(RESOURCES::Assets& assets, MAPS::MultiTileMapGrid& ark_
         map_dimensions_in_tiles,
         MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
 
-    const auto& tile_map_data = MAPS::ARK_INTERIOR_TILE_MAP_0_0;
+    const auto& tile_map_data = MAPS::DATA::ARK_INTERIOR_TILE_MAP_0_0;
 
     // CREATE TILES IN THE GROUND LAYER.
     for (unsigned int current_tile_y = 0;

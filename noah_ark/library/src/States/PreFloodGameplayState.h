@@ -9,8 +9,8 @@
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
 #include "Input/InputController.h"
+#include "Maps/ExitPoint.h"
 #include "Maps/Gui/TileMapEditorGui.h"
-#include "Maps/MapType.h"
 #include "Maps/TileMap.h"
 #include "Maps/World.h"
 #include "Math/RandomNumberGenerator.h"
@@ -60,28 +60,27 @@ namespace STATES
             const std::shared_ptr<OBJECTS::Noah>& noah_player);
 
         // WORLD UPDATING.
-        void UpdateOverworld(
+        void UpdateMapGrid(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
-            GRAPHICS::Camera& camera);
-        void UpdateArkInterior(
-            const INPUT_CONTROL::InputController& input_controller,
-            GRAPHICS::Camera& camera);
-        void UpdatePlayerBasedOnInput(
-            const MAPS::TileMap& current_tile_map,
+            GRAPHICS::Camera& camera,
+            MAPS::MultiTileMapGrid& map_grid);
+        MAPS::ExitPoint* UpdatePlayerBasedOnInput(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
+            MAPS::TileMap& current_tile_map,
+            MAPS::MultiTileMapGrid& map_grid,
             GRAPHICS::Camera& camera);
-        void MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
+        void MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map, MAPS::MultiTileMapGrid& map_grid);
         void UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
 
         // COLLISION DETECTION.
         void CollectWoodAndBibleVersesCollidingWithPlayer(
-            MAPS::TileMap& tile_map, 
+            MAPS::TileMap& tile_map,
+            MAPS::MultiTileMapGrid& map_grid,
             std::string& message_for_text_box);
         void CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map);
         void CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map);
-        void ChangeMapIfPlayerOnMapExit(MAPS::TileMap& current_tile_map, GRAPHICS::Camera& camera);
 
         // CAMERA UPDATING.
         void UpdateCameraWorldView(
@@ -101,8 +100,8 @@ namespace STATES
         std::shared_ptr<RESOURCES::Assets> Assets;
         /// The heads-up display.
         std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> Hud;
-        /// The current type of map being displayed.
-        MAPS::MapType CurrentMap;
+        /// The current map being displayed within the world.
+        MAPS::MultiTileMapGrid* CurrentMapGrid;
         /// The tile map editor GUI.
         MAPS::GUI::TileMapEditorGui TileMapEditorGui;
     };

@@ -81,7 +81,7 @@ namespace MAPS
 
     /// Gets an ark piece at the specified world position, if one exists.
     /// @param[in]  world_position - The world position for which to retrieve an ark piece.
-    /// @return The ark piece at the specified world position, if one eixsts; null otherwise.
+    /// @return The ark piece at the specified world position, if one exists; null otherwise.
     OBJECTS::ArkPiece* TileMap::GetArkPieceAtWorldPosition(const MATH::Vector2f& world_position)
     {
         // SEARCH FOR AN ARK PIECE THAT CONTAINS THE SPECIFIED WORLD POSITION.
@@ -98,6 +98,44 @@ namespace MAPS
         }
 
         // INDICATE THAT NO ARK PIECE COULD BE FOUND.
+        return nullptr;
+    }
+
+    /// Gets an exit point at the specified world position, if one exists.
+    /// @param[in]  world_position - The world position for which to retrieve an exit point.
+    /// @return The exit point at the specified world position, if one exists; null otherwise.
+    MAPS::ExitPoint* TileMap::GetExitPointAtWorldPosition(const MATH::Vector2f& world_position)
+    {
+        // SEARCH FOR AN EXIT POINT THAT CONTAINS THE SPECIFIED WORLD POSITION.
+        for (auto& exit_point : ExitPoints)
+        {
+            // CHECK IF THE CURRENT EXIT POINT INCLUDES THE WORLD POSITION.
+            bool exit_point_contains_world_position = exit_point.BoundingBox.Contains(world_position.X, world_position.Y);
+            if (exit_point_contains_world_position)
+            {
+                // CHECK IF THE EXIT POINT IS PART OF AN ARK PIECE.
+                OBJECTS::ArkPiece* ark_piece_for_exit = GetArkPieceAtWorldPosition(world_position);
+                if (ark_piece_for_exit)
+                {
+                    // MAKE SURE THE ARK PIECE HAS BEEN BUILT AND IS FOR A DOORWAY.
+                    // If the ark piece hasn't been built yet or isn't a doorway,
+                    // then the exit point shouldn't be usable yet.
+                    bool ark_piece_is_built_external_doorway = (ark_piece_for_exit->Built && ark_piece_for_exit->IsExternalDoorway);
+                    if (ark_piece_is_built_external_doorway)
+                    {
+                        // RETURN THE USABLE EXIT POINT.
+                        return &exit_point;
+                    }
+                }
+                else
+                {
+                    // RETURN THE EXIT POINT.
+                    return &exit_point;
+                }
+            }
+        }
+
+        // INDICATE THAT NO EXIT POINT COULD BE FOUND.
         return nullptr;
     }
 }

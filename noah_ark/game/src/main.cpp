@@ -315,6 +315,67 @@ std::shared_ptr<MAPS::World> LoadWorld(RESOURCES::Assets& assets)
     PopulateOverworld(assets, world->Overworld);
     PopulateArkInterior(assets, world->ArkInterior);
 
+    // CREATE THE EXIT POINTS BETWEEN MAP GRIDS.
+    // The ark interior data used for exit points is currently hard-coded to simplify
+    // things since I'm not sure yet exactly how we want to structure this.
+    MAPS::TileMap* starting_ark_interior_tile_map = &world->ArkInterior.TileMaps(0, 0);
+    // For now, this is hardcoded to an arbitrary place near the bottom of the starting tile map.
+    MATH::FloatRectangle ark_interior_bounding_box = starting_ark_interior_tile_map->GetWorldBoundingBox();
+    float ark_interior_center_x_position = ark_interior_bounding_box.GetCenterXPosition();
+    float ark_interior_bottom_y_position = ark_interior_bounding_box.GetBottomYPosition();
+    MATH::Vector2f ark_interior_bottom_center_position(ark_interior_center_x_position, ark_interior_bottom_y_position);
+    MATH::Vector2f ark_interior_player_start_position = ark_interior_bottom_center_position;
+    ark_interior_player_start_position.Y -= MAPS::Tile::DIMENSION_IN_PIXELS<float> * 3.0f;
+
+    MATH::FloatRectangle ark_interior_exit_point_bounding_box = MATH::FloatRectangle::FromCenterAndDimensions(
+        ark_interior_player_start_position.X,
+        ark_interior_player_start_position.Y + MAPS::Tile::DIMENSION_IN_PIXELS<float>,
+        MAPS::Tile::DIMENSION_IN_PIXELS<float> * 4.0f,
+        MAPS::Tile::DIMENSION_IN_PIXELS<float> * 2.0f);
+
+    // Note that this is intentionally done in a a not-very-efficient way right now.
+    // While we could theoretically create the initial exit points when creating
+    // the different map grids, that's not currently being done now due to risk in
+    // having incomplete exit points and the fact that I'm not sure yet exactly
+    // what form we'll want these exit points in.
+    unsigned int overworld_height_in_tile_maps = world->Overworld.TileMaps.GetHeight();
+    unsigned int overworld_width_in_tile_maps = world->Overworld.TileMaps.GetWidth();
+    for (unsigned int tile_map_row = 0; tile_map_row < overworld_height_in_tile_maps; ++tile_map_row)
+    {
+        for (unsigned int tile_map_column = 0; tile_map_column < overworld_width_in_tile_maps; ++tile_map_column)
+        {
+            // SEARCH THE CURRENT TILE MAP FOR ANY ARK PIECE EXISTS.
+            MAPS::TileMap& overworld_tile_map = world->Overworld.TileMaps(tile_map_column, tile_map_row);
+            for (const auto& ark_piece : overworld_tile_map.ArkPieces)
+            {
+                // CREATE EXIT POINTS FOR ANY DOORWAYS.
+                if (ark_piece.IsExternalDoorway)
+                {
+                    // CREATE AN EXIT POINT FROM THE OVERWORLD INTO THE ARK.
+                    MAPS::ExitPoint overworld_to_ark_exit_point;
+                    MATH::FloatRectangle ark_piece_bounding_box = ark_piece.Sprite.GetWorldBoundingBox();
+                    overworld_to_ark_exit_point.BoundingBox = ark_piece_bounding_box;
+                    overworld_to_ark_exit_point.NewMapGrid = &world->ArkInterior;
+                    overworld_to_ark_exit_point.NewTileMap = starting_ark_interior_tile_map;
+                    overworld_to_ark_exit_point.NewPlayerWorldPosition = ark_interior_player_start_position;
+
+                    overworld_tile_map.ExitPoints.push_back(overworld_to_ark_exit_point);
+
+                    // CREATE AN EXIT POINT FROM THE ARK INTERIOR TO THE OVERWORLD.
+                    MAPS::ExitPoint ark_to_overworld_exit_point;
+                    ark_to_overworld_exit_point.BoundingBox = ark_interior_exit_point_bounding_box;
+                    ark_to_overworld_exit_point.NewMapGrid = &world->Overworld;
+                    ark_to_overworld_exit_point.NewTileMap = &overworld_tile_map;
+                    MATH::Vector2f overworld_exit_starting_position = ark_piece_bounding_box.GetCenterPosition();
+                    overworld_exit_starting_position.Y = ark_piece_bounding_box.GetBottomYPosition();
+                    ark_to_overworld_exit_point.NewPlayerWorldPosition = overworld_exit_starting_position;
+
+                    starting_ark_interior_tile_map->ExitPoints.push_back(ark_to_overworld_exit_point);
+                }
+            }
+        }
+    }
+
     auto load_end_time = std::chrono::system_clock::now();
 
     // Overworld load time: 82,263,372 (file-based)

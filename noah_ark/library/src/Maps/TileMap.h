@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "Maps/ExitPoint.h"
 #include "Maps/GroundLayer.h"
 #include "Math/Vector2.h"
 #include "Objects/Animal.h"
@@ -43,6 +44,7 @@ namespace MAPS
         // RETRIEVAL.
         std::shared_ptr<MAPS::Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const;
         OBJECTS::ArkPiece* GetArkPieceAtWorldPosition(const MATH::Vector2f& world_position);
+        MAPS::ExitPoint* GetExitPointAtWorldPosition(const MATH::Vector2f& world_position);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The 0-based index (from the top) of the tile map as located in a larger grid.
@@ -70,5 +72,7 @@ namespace MAPS
         /// Animals freely roaming in the tile map that haven't yet been
         /// collected by the player.
         std::vector< std::shared_ptr<OBJECTS::Animal> > Animals;
+        /// Exit points within the tile map.
+        std::vector<MAPS::ExitPoint> ExitPoints;
     };
 }

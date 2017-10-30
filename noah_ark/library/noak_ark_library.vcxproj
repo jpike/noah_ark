@@ -57,10 +57,10 @@
     <ClInclude Include="src\Inventory\InventoryFoodPage.h" />
     <ClInclude Include="src\Inventory\InventoryGui.h" />
     <ClInclude Include="src\Maps\ArkInteriorTileMapData.h" />
+    <ClInclude Include="src\Maps\ExitPoint.h" />
     <ClInclude Include="src\Maps\GroundLayer.h" />
     <ClInclude Include="src\Maps\Gui\TileMapEditorGui.h" />
     <ClInclude Include="src\Maps\Gui\TilePalette.h" />
-    <ClInclude Include="src\Maps\MapType.h" />
     <ClInclude Include="src\Maps\MultiTileMapGrid.h" />
     <ClInclude Include="src\Maps\OverworldMapData.h" />
     <ClInclude Include="src\Maps\Tile.h" />

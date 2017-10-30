@@ -293,9 +293,6 @@
     <ClInclude Include="src\Core\Container.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Maps\MapType.h">
-      <Filter>Header Files\Maps</Filter>
-    </ClInclude>
     <ClInclude Include="src\Input\Mouse.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
@@ -318,6 +315,9 @@
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
     <ClInclude Include="src\Maps\World.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\ExitPoint.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
   </ItemGroup>

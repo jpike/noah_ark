@@ -35,6 +35,15 @@ namespace INPUT_CONTROL
         return InputEnabledAndKeyDown(key);
     }
 
+    /// Checks if the specified button is currently pressed down.
+    /// @param[in]  button - The mouse button to check.
+    /// @return True if the specified button is currently pressed (and input is enabled).
+    ///     False otherwise.
+    bool InputController::ButtonDown(const sf::Mouse::Button button) const
+    {
+        return InputEnabledAndMouseButtonDown(button);
+    }
+
     /// Checks if the specified button was pressed down this frame.
     /// @param[in]  key - The key for the button to check.
     /// @return True if the specified button was pressed this frame (and input is enabled).
@@ -78,6 +87,22 @@ namespace INPUT_CONTROL
         if (Enabled)
         {
             return Keyboard.WasKeyPressed(key);
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// A helper method to return if a mouse button is currently down and input is enabled.
+    /// @param[in]  button - The mouse button to check.
+    /// @return True if the button is currently down (and input is enabled).
+    ///     False otherwise.
+    bool InputController::InputEnabledAndMouseButtonDown(const sf::Mouse::Button button) const
+    {
+        if (Enabled)
+        {
+            return Mouse.IsButtonDown(button);
         }
         else
         {

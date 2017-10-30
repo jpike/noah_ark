@@ -11,8 +11,8 @@
 #include "Input/InputController.h"
 #include "Maps/Gui/TileMapEditorGui.h"
 #include "Maps/MapType.h"
-#include "Maps/MultiTileMapGrid.h"
 #include "Maps/TileMap.h"
+#include "Maps/World.h"
 #include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
 #include "Resources/Assets.h"
@@ -34,7 +34,7 @@ namespace STATES
         bool Initialize(
             const unsigned int screen_width_in_pixels,
             const SavedGameData& saved_game_data,
-            const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld);
+            const std::shared_ptr<MAPS::World>& world);
 
         // UPDATING.
         void Update(
@@ -46,8 +46,8 @@ namespace STATES
         void Render(GRAPHICS::Renderer& renderer);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
-        /// The main overworld.
-        std::shared_ptr<MAPS::MultiTileMapGrid> Overworld;
+        /// The main game world.
+        std::shared_ptr<MAPS::World> World;
         /// Noah (the player) character within the game.
         std::shared_ptr<OBJECTS::Noah> NoahPlayer;
 
@@ -56,7 +56,7 @@ namespace STATES
         std::shared_ptr<OBJECTS::Noah> InitializePlayer(const SavedGameData& saved_game_data);
         std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> InitializeHud(
             const unsigned int screen_width_in_pixels,
-            const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld,
+            const std::shared_ptr<MAPS::World>& world,
             const std::shared_ptr<OBJECTS::Noah>& noah_player);
 
         // WORLD UPDATING.
@@ -64,7 +64,9 @@ namespace STATES
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
             GRAPHICS::Camera& camera);
-        void UpdateArkInterior(const INPUT_CONTROL::InputController& input_controller);
+        void UpdateArkInterior(
+            const INPUT_CONTROL::InputController& input_controller,
+            GRAPHICS::Camera& camera);
         void UpdatePlayerBasedOnInput(
             const MAPS::TileMap& current_tile_map,
             const sf::Time& elapsed_time,
@@ -79,7 +81,7 @@ namespace STATES
             std::string& message_for_text_box);
         void CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map);
         void CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map);
-        void ChangeMapIfPlayerOnMapExit(MAPS::TileMap& current_tile_map);
+        void ChangeMapIfPlayerOnMapExit(MAPS::TileMap& current_tile_map, GRAPHICS::Camera& camera);
 
         // CAMERA UPDATING.
         void UpdateCameraWorldView(

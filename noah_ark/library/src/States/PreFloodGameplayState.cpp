@@ -14,7 +14,7 @@ namespace STATES
     PreFloodGameplayState::PreFloodGameplayState(
         const std::shared_ptr<AUDIO::Speakers>& speakers,
         const std::shared_ptr<RESOURCES::Assets>& assets) :
-        Overworld(),
+        World(),
         NoahPlayer(),
         RandomNumberGenerator(),
         Speakers(speakers),
@@ -32,30 +32,30 @@ namespace STATES
     /// Initializes the gameplay state.
     /// @param[in]  screen_width_in_pixels - The width of the screen, in pixels.
     /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
-    /// @param[in,out]  overworld - The overworld for the gameplay state.
+    /// @param[in,out]  world - The world for the gameplay state.
     /// @return True if initialization succeeded; false otherwise.
     bool PreFloodGameplayState::Initialize(
         const unsigned int screen_width_in_pixels,
         const SavedGameData& saved_game_data,
-        const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld)
+        const std::shared_ptr<MAPS::World>& world)
     {
-        // MAKE SURE AN OVERWORLD WAS PROVIDED.
-        bool overworld_exists = (nullptr != overworld);
-        if (!overworld_exists)
+        // MAKE SURE A WORLD WAS PROVIDED.
+        bool world_exists = (nullptr != world);
+        if (!world_exists)
         {
-            // The gameplay state requires an overworld.
+            // The gameplay state requires a world.
             return false;
         }
 
-        // INITIALIZE THE OVERWORLD.
+        // INITIALIZE THE WORLD.
         CurrentMap = MAPS::MapType::OVERWORLD;
-        Overworld = overworld;
+        World = world;
 
         // Built ark pieces need to be initialized.
         for (const auto& built_ark_piece_data : saved_game_data.BuildArkPieces)
         {
             // GET THE TILE MAP FOR THE BUILT ARK PIECES.
-            MAPS::TileMap* current_tile_map = Overworld->GetTileMap(built_ark_piece_data.TileMapGridYPosition, built_ark_piece_data.TileMapGridXPosition);
+            MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(built_ark_piece_data.TileMapGridYPosition, built_ark_piece_data.TileMapGridXPosition);
             assert(current_tile_map);
 
             // UPDATE THE BUILT ARK PIECES IN THE CURRENT TILE MAP.
@@ -77,7 +77,7 @@ namespace STATES
         }
 
         // INITIALIZE THE HUD.
-        Hud = InitializeHud(screen_width_in_pixels, Overworld, NoahPlayer);
+        Hud = InitializeHud(screen_width_in_pixels, World, NoahPlayer);
         bool hud_initialized = (nullptr != Hud);
         if (!hud_initialized)
         {
@@ -121,13 +121,17 @@ namespace STATES
                 {
                     MATH::FloatRectangle camera_bounds = camera.ViewBounds;
                     MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
-                    MAPS::TileMap* current_tile_map = Overworld->GetTileMap(camera_view_center.X, camera_view_center.Y);
+                    MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
                     TileMapEditorGui.CurrentTileMap = current_tile_map;
                     break;
                 }
                 case MAPS::MapType::ARK_INTERIOR:
                 {
-                    /// @todo
+                    /// @todo Get current tile map by method other than hard-coded coordinates.
+                    MATH::FloatRectangle camera_bounds = camera.ViewBounds;
+                    MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
+                    MAPS::TileMap* current_tile_map = World->ArkInterior.GetTileMap(camera_view_center.X, camera_view_center.Y);
+                    TileMapEditorGui.CurrentTileMap = current_tile_map;
                     break;
                 }
             }
@@ -164,7 +168,7 @@ namespace STATES
                 UpdateOverworld(elapsed_time, input_controller, camera);
                 break;
             case MAPS::MapType::ARK_INTERIOR:
-                UpdateArkInterior(input_controller);
+                UpdateArkInterior(input_controller, camera);
                 break;
         }
     }
@@ -177,7 +181,10 @@ namespace STATES
         switch (CurrentMap)
         {
             case MAPS::MapType::OVERWORLD:
-                renderer.Render(*Overworld);
+                renderer.Render(World->Overworld);
+                break;
+            case MAPS::MapType::ARK_INTERIOR:
+                renderer.Render(World->ArkInterior);
                 break;
         }
 
@@ -238,12 +245,12 @@ namespace STATES
 
     /// Attempts to initialize the HUD for gameplay.
     /// @param[in]  screen_width_in_pixels - The width of the screen, in pixels.
-    /// @param[in]  overworld - The overworld for which the HUD is displaying information about.
+    /// @param[in]  world - The world for which the HUD is displaying information about.
     /// @param[in]  noah_player - The player whose information to display in the HUD.
     /// @return The initialized HUD, if successful; null otherwise.
     std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> PreFloodGameplayState::InitializeHud(
         const unsigned int screen_width_in_pixels,
-        const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld,
+        const std::shared_ptr<MAPS::World>& world,
         const std::shared_ptr<OBJECTS::Noah>& noah_player)
     {
         // GET ASSETS NEEDED FOR THE HUD.
@@ -259,7 +266,7 @@ namespace STATES
 
         // CREATE THE HUD.
         auto hud = std::make_unique<GRAPHICS::GUI::HeadsUpDisplay>(
-            overworld,
+            world,
             noah_player,
             text_box_width_in_pixels,
             text_box_height_in_pixels,
@@ -279,7 +286,7 @@ namespace STATES
         // GET THE CURRENT TILE MAP.
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
         MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
-        MAPS::TileMap* current_tile_map = Overworld->GetTileMap(camera_view_center.X, camera_view_center.Y);
+        MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(camera_view_center.X, camera_view_center.Y);
         assert(current_tile_map);
 
         // UPDATE THE TEXT BOX IF IT IS VISIBLE.
@@ -305,7 +312,7 @@ namespace STATES
             CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, message_for_text_box);
             CollectFoodCollidingWithPlayer(*current_tile_map);
             CollectAnimalsCollidingWithPlayer(*current_tile_map);
-            ChangeMapIfPlayerOnMapExit(*current_tile_map);
+            ChangeMapIfPlayerOnMapExit(*current_tile_map, camera);
 
             // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
             bool text_box_message_exists = !message_for_text_box.empty();
@@ -313,6 +320,13 @@ namespace STATES
             {
                 Hud->MainTextBox.StartDisplayingText(message_for_text_box);
             }
+        }
+
+        // EXIT THIS UPDATE IF THE PLAYER HAS CHANGED MAPS.
+        bool player_moved_out_of_overworld = (MAPS::MapType::OVERWORLD != CurrentMap);
+        if (player_moved_out_of_overworld)
+        {
+            return;
         }
 
         // UPDATE THE CURRENT TILE MAP'S ANIMALS.
@@ -372,10 +386,17 @@ namespace STATES
     }
 
     /// Updates the interior of the ark.
-    /// @param[in,out]  input_controller - The controller supplying player input.
-    void PreFloodGameplayState::UpdateArkInterior(const INPUT_CONTROL::InputController& input_controller)
+    /// @param[out]  input_controller - The controller supplying player input.
+    /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
+    void PreFloodGameplayState::UpdateArkInterior(
+        const INPUT_CONTROL::InputController& input_controller,
+        GRAPHICS::Camera& camera)
     {
-        /// @todo Implement!
+        // POSITION THE CAMERA TO FOCUS ON THE CENTER OF THE CURRENT TILE MAP.
+        /// @todo Get tile map based on something else other than hardcoded 0,0 coordinates.
+        const MAPS::TileMap& current_tile_map = World->ArkInterior.TileMaps(0, 0);
+        MATH::Vector2f center_world_position = current_tile_map.GetCenterWorldPosition();
+        camera.SetCenter(center_world_position);
     }
 
     /// Updates the player and related items in the overworld based on input and elapsed time.
@@ -402,7 +423,7 @@ namespace STATES
             if (axe_swing_occurred)
             {
                 // Allow the axe to collide with other objects.
-                Overworld->AxeSwings.push_back(axe_swing);
+                World->Overworld.AxeSwings.push_back(axe_swing);
             }
         }
 
@@ -432,7 +453,7 @@ namespace STATES
                     CORE::Direction::UP,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
-                    *Overworld);
+                    World->Overworld);
                 NoahPlayer->SetWorldPosition(new_position);
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
@@ -442,9 +463,9 @@ namespace STATES
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A TOP TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                    unsigned int top_tile_map_row_index = current_tile_map.OverworldRowIndex - 1;
-                    unsigned int top_tile_map_column_index = current_tile_map.OverworldColumnIndex;
-                    MAPS::TileMap* top_tile_map = Overworld->GetTileMap(
+                    unsigned int top_tile_map_row_index = current_tile_map.GridRowIndex - 1;
+                    unsigned int top_tile_map_column_index = current_tile_map.GridColumnIndex;
+                    MAPS::TileMap* top_tile_map = World->Overworld.GetTileMap(
                         top_tile_map_row_index,
                         top_tile_map_column_index);
                     bool top_tile_map_exists = (nullptr != top_tile_map);
@@ -494,7 +515,7 @@ namespace STATES
                     CORE::Direction::DOWN,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
-                    *Overworld);
+                    World->Overworld);
                 NoahPlayer->SetWorldPosition(new_position);
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
@@ -504,9 +525,9 @@ namespace STATES
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A BOTTOM TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                    unsigned int bottom_tile_map_row_index = current_tile_map.OverworldRowIndex + 1;
-                    unsigned int bottom_tile_map_column_index = current_tile_map.OverworldColumnIndex;
-                    MAPS::TileMap* bottom_tile_map = Overworld->GetTileMap(
+                    unsigned int bottom_tile_map_row_index = current_tile_map.GridRowIndex + 1;
+                    unsigned int bottom_tile_map_column_index = current_tile_map.GridColumnIndex;
+                    MAPS::TileMap* bottom_tile_map = World->Overworld.GetTileMap(
                         bottom_tile_map_row_index,
                         bottom_tile_map_column_index);
                     bool bottom_tile_map_exists = (nullptr != bottom_tile_map);
@@ -556,7 +577,7 @@ namespace STATES
                     CORE::Direction::LEFT,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
-                    *Overworld);
+                    World->Overworld);
                 NoahPlayer->SetWorldPosition(new_position);
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
@@ -566,9 +587,9 @@ namespace STATES
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A LEFT TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                    unsigned int left_tile_map_row_index = current_tile_map.OverworldRowIndex;
-                    unsigned int left_tile_map_column_index = current_tile_map.OverworldColumnIndex - 1;
-                    MAPS::TileMap* left_tile_map = Overworld->GetTileMap(
+                    unsigned int left_tile_map_row_index = current_tile_map.GridRowIndex;
+                    unsigned int left_tile_map_column_index = current_tile_map.GridColumnIndex - 1;
+                    MAPS::TileMap* left_tile_map = World->Overworld.GetTileMap(
                         left_tile_map_row_index,
                         left_tile_map_column_index);
                     bool left_tile_map_exists = (nullptr != left_tile_map);
@@ -618,7 +639,7 @@ namespace STATES
                     CORE::Direction::RIGHT,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
-                    *Overworld);
+                    World->Overworld);
                 NoahPlayer->SetWorldPosition(new_position);
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
@@ -628,9 +649,9 @@ namespace STATES
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A RIGHT TILE MAP EXISTS FOR NOAH TO MOVE TO.
-                    unsigned int right_tile_map_row_index = current_tile_map.OverworldRowIndex;
-                    unsigned int right_tile_map_column_index = current_tile_map.OverworldColumnIndex + 1;
-                    MAPS::TileMap* right_tile_map = Overworld->GetTileMap(
+                    unsigned int right_tile_map_row_index = current_tile_map.GridRowIndex;
+                    unsigned int right_tile_map_column_index = current_tile_map.GridColumnIndex + 1;
+                    MAPS::TileMap* right_tile_map = World->Overworld.GetTileMap(
                         right_tile_map_row_index,
                         right_tile_map_column_index);
                     bool right_tile_map_exists = (nullptr != right_tile_map);
@@ -676,7 +697,7 @@ namespace STATES
 
             // BUILD A PIECE OF THE ARK IF NOAH STEPPED ONTO AN APPROPRIATE SPOT.
             MATH::Vector2f noah_world_position = NoahPlayer->GetWorldPosition();
-            MAPS::TileMap* tile_map_underneath_noah = Overworld->GetTileMap(noah_world_position.X, noah_world_position.Y);
+            MAPS::TileMap* tile_map_underneath_noah = World->Overworld.GetTileMap(noah_world_position.X, noah_world_position.Y);
             assert(tile_map_underneath_noah);
             
             // An ark piece only needs to be built once and requires wood to be built.
@@ -762,7 +783,7 @@ namespace STATES
                 animal_move_vector,
                 tile_types_allowed_to_move_over,
                 allow_movement_over_solid_objects,
-                *Overworld);
+                World->Overworld);
             animal->Sprite.SetWorldPosition(new_animal_world_position);
         }
     }
@@ -807,7 +828,7 @@ namespace STATES
         message_for_text_box.clear();
 
         // HANDLE PLAYER COLLISIONS WITH WOOD LOGS.
-        COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(*Overworld, Overworld->AxeSwings, *Speakers, *Assets);
+        COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(World->Overworld, World->Overworld.AxeSwings, *Speakers, *Assets);
         for (auto wood_logs = tile_map.WoodLogs.begin(); wood_logs != tile_map.WoodLogs.end();)
         {
             // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
@@ -939,7 +960,8 @@ namespace STATES
     /// Changes the map currently being viewed/interacted with if the player is on an
     /// exit point in the current tile map.
     /// @param[in]  current_tile_map - The current tile map to check for exit points.
-    void PreFloodGameplayState::ChangeMapIfPlayerOnMapExit(MAPS::TileMap& current_tile_map)
+    /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
+    void PreFloodGameplayState::ChangeMapIfPlayerOnMapExit(MAPS::TileMap& current_tile_map, GRAPHICS::Camera& camera)
     {
         // GET THE ARK PIECE AT THE PLAYER'S CURRENT POSITION.
         // Currently, ark pieces are the only exit points.
@@ -971,9 +993,17 @@ namespace STATES
         switch (CurrentMap)
         {
             case MAPS::MapType::OVERWORLD:
+            {
                 // TRANSITION FROM THE OVERWORLD TO INSIDE THE ARK.
                 CurrentMap = MAPS::MapType::ARK_INTERIOR;
+
+                // POSITION THE CAMERA TO FOCUS ON THE CENTER OF THE CURRENT TILE MAP.
+                /// @todo Get tile map based on something else other than hardcoded 0,0 coordinates.
+                const MAPS::TileMap& current_tile_map = World->ArkInterior.TileMaps(0, 0);
+                MATH::Vector2f center_world_position = current_tile_map.GetCenterWorldPosition();
+                camera.SetCenter(center_world_position);
                 break;
+            }
             case MAPS::MapType::ARK_INTERIOR:
                 // TRANSITION FROM INSIDE THE ARK TO THE OVERWORLD.
                 CurrentMap = MAPS::MapType::OVERWORLD;
@@ -1014,7 +1044,7 @@ namespace STATES
                 if (random_animal_should_be_generated)
                 {
                     std::cout << "Generating random animal..." << std::endl;
-                    std::cout << "Tile map column: " << current_tile_map.OverworldColumnIndex << " row: " << current_tile_map.OverworldRowIndex << std::endl;
+                    std::cout << "Tile map column: " << current_tile_map.GridColumnIndex << " row: " << current_tile_map.GridRowIndex << std::endl;
                     auto tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
                     std::cout << "Tile map LTRB: "
                         << tile_map_bounding_box.GetLeftXPosition() << " "

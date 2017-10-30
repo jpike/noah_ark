@@ -11,14 +11,14 @@ namespace GRAPHICS
 namespace GUI
 {
     /// Constructor.
-    /// @param[in]  overworld - The overworld whose information is being diplayed in the HUD.
+    /// @param[in]  world - The world whose information is being diplayed in the HUD.
     /// @param[in]  noah_player - The player whose information is being displayed in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
     /// @param[in]  assets - The assets to use for the page.
     /// @throws std::exception - Thrown if a parameter is null.
     HeadsUpDisplay::HeadsUpDisplay(
-        const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld,
+        const std::shared_ptr<MAPS::World>& world,
         const std::shared_ptr<OBJECTS::Noah>& noah_player,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels,
@@ -28,7 +28,7 @@ namespace GUI
     InventoryGui(noah_player->Inventory, assets),
     SaveDialogBoxVisible(false),
     Assets(assets),
-    Overworld(overworld),
+    World(world),
     NoahPlayer(noah_player)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
@@ -36,8 +36,8 @@ namespace GUI
             Assets,
             "Null assets provided to HUD.");
         CORE::ThrowInvalidArgumentExceptionIfNull(
-            Overworld,
-            "Null overworld provided to HUD.");
+            World,
+            "Null world provided to HUD.");
         CORE::ThrowInvalidArgumentExceptionIfNull(
             NoahPlayer,
             "Null Noah player provided to HUD.");
@@ -64,14 +64,14 @@ namespace GUI
                     NoahPlayer->Inventory->BibleVerses.cend());
                 
                 // Built ark piece data from all tile maps needs to be included.
-                unsigned int tile_map_row_count = Overworld->TileMaps.GetHeight();
-                unsigned int tile_map_column_count = Overworld->TileMaps.GetWidth();
+                unsigned int tile_map_row_count = World->Overworld.TileMaps.GetHeight();
+                unsigned int tile_map_column_count = World->Overworld.TileMaps.GetWidth();
                 for (unsigned int tile_map_y_index = 0; tile_map_y_index < tile_map_row_count; ++tile_map_y_index)
                 {
                     for (unsigned int tile_map_x_index = 0; tile_map_x_index < tile_map_column_count; ++tile_map_x_index)
                     {
                         // GATHER ANY ARK PIECES BUILT IN THE CURRENT TILE MAP.
-                        const MAPS::TileMap* current_tile_map = Overworld->GetTileMap(tile_map_y_index, tile_map_x_index);
+                        const MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(tile_map_y_index, tile_map_x_index);
                         assert(current_tile_map);
                         std::vector<size_t> built_ark_piece_indices;
                         size_t ark_piece_count = current_tile_map->ArkPieces.size();

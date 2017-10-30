@@ -32,6 +32,15 @@ namespace INPUT_CONTROL
         }
     }
 
+    /// Checks if the specified button is currently down.
+    /// @param[in]  button - The mouse button to check.
+    /// @return True if the button is down; false otherwise.
+    bool Mouse::IsButtonDown(const sf::Mouse::Button button) const
+    {
+        bool button_down = CurrentFrameButtonStates[button];
+        return button_down;
+    }
+
     /// Checks if a button was pressed down from an up state in the current frame.
     /// @return True if the button was pressed down this frame; false otherwise.
     bool Mouse::WasButtonPressed(const sf::Mouse::Button button) const

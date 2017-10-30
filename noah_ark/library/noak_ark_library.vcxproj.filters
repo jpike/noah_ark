@@ -314,6 +314,12 @@
     <ClInclude Include="src\Maps\MultiTileMapGrid.h">
       <Filter>Header Files\Maps</Filter>
     </ClInclude>
+    <ClInclude Include="src\Maps\ArkInteriorTileMapData.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Maps\World.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -491,6 +497,9 @@
       <Filter>Source Files\Maps\Gui</Filter>
     </ClCompile>
     <ClCompile Include="src\Maps\MultiTileMapGrid.cpp">
+      <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\ArkInteriorTileMapData.cpp">
       <Filter>Source Files\Maps</Filter>
     </ClCompile>
   </ItemGroup>

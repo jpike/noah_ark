@@ -4,23 +4,23 @@ namespace MAPS
 {
     /// Creates an empty tile map.  Parameters have default values to allow
     /// for default construction.
-    /// @param[in]  overworld_row_index - The 0-based index (from the top) of
-    ///     the tile map as located in the overworld.
-    /// @param[in]  overworld_column_index - The 0-based index (from the left) of
-    ///     the tile map as located in the overworld.
+    /// @param[in]  grid_row_index - The 0-based index (from the top) of
+    ///     the tile map as located in its grid.
+    /// @param[in]  grid_column_index - The 0-based index (from the left) of
+    ///     the tile map as located in its grid.
     /// @param[in]  center_world_position - The world position of the center
     ///     of the tile map.
     /// @param[in]  dimensions_in_tiles - The dimensions of the map in tiles.
     /// @param[in]  tile_dimension_in_pixels - The dimensions (both width and height)
     ///     of an individual tile in the map (in units of pixels).
     TileMap::TileMap(
-        const unsigned int overworld_row_index,
-        const unsigned int overworld_column_index,
+        const unsigned int grid_row_index,
+        const unsigned int grid_column_index,
         const MATH::Vector2f& center_world_position,
         const MATH::Vector2ui& dimensions_in_tiles,
         const unsigned int tile_dimension_in_pixels) :
-    OverworldRowIndex(overworld_row_index),
-    OverworldColumnIndex(overworld_column_index),
+    GridRowIndex(grid_row_index),
+    GridColumnIndex(grid_column_index),
     Ground(center_world_position, dimensions_in_tiles, tile_dimension_in_pixels),
     Trees(),
     FallingFood(),

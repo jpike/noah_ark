@@ -53,7 +53,7 @@ namespace RESOURCES
         // ASSET RETRIEVAL.
         std::shared_ptr<GRAPHICS::Texture> GetTexture(const std::string& texture_id);
         std::shared_ptr<GRAPHICS::GUI::Font> GetFont(const std::string& font_texture_id);
-        std::shared_ptr<sf::Shader> GetShader(const ShaderId shader_id) const;
+        std::shared_ptr<sf::Shader> GetShader(const ShaderId shader_id);
         std::shared_ptr<sf::SoundBuffer> GetSound(const std::string& sound_id);
         std::shared_ptr<sf::Music> GetMusic(const std::string& music_id);
 
@@ -71,5 +71,10 @@ namespace RESOURCES
         std::unordered_map< std::string, std::shared_ptr<sf::SoundBuffer> > AudioSamples = {};
         /// Music that has been loaded.
         std::unordered_map< std::string, std::shared_ptr<sf::Music> > Music = {};
+
+    private:
+        // MEMBER VARIABLES.
+        /// A mutex to provide thread-safety for this class.
+        std::recursive_mutex AssetMutex = {};
     };
 }

@@ -26,6 +26,7 @@ namespace INPUT_CONTROL
         // OTHER METHODS.
         void ReadButtons();
 
+        bool IsButtonDown(const sf::Mouse::Button button) const;
         bool WasButtonPressed(const sf::Mouse::Button button) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

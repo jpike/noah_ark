@@ -483,13 +483,13 @@ namespace GRAPHICS
         assert(current_tile_map);
 
         // RENDER THE CURRENT TILE MAP.
-        unsigned int min_tile_map_row = current_tile_map->OverworldRowIndex;
+        unsigned int min_tile_map_row = current_tile_map->GridRowIndex;
         bool top_tile_map_exists = (min_tile_map_row > 0);
         if (top_tile_map_exists)
         {
             --min_tile_map_row;
         }
-        unsigned int min_tile_map_column = current_tile_map->OverworldColumnIndex;
+        unsigned int min_tile_map_column = current_tile_map->GridColumnIndex;
         bool left_tile_map_exists = (min_tile_map_column > 0);
         if (left_tile_map_exists)
         {

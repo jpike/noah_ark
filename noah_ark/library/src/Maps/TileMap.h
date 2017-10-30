@@ -25,8 +25,8 @@ namespace MAPS
 
         // CONSTRUCTION.
         explicit TileMap(
-            const unsigned int overworld_row_index = 0,
-            const unsigned int overworld_column_index = 0,
+            const unsigned int grid_row_index = 0,
+            const unsigned int grid_column_index = 0,
             const MATH::Vector2f& center_world_position = MATH::Vector2f(),
             const MATH::Vector2ui& dimensions_in_tiles = MATH::Vector2ui(),
             const unsigned int tile_dimension_in_pixels = 0);
@@ -45,10 +45,10 @@ namespace MAPS
         OBJECTS::ArkPiece* GetArkPieceAtWorldPosition(const MATH::Vector2f& world_position);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
-        /// The 0-based index (from the top) of the tile map as located in the overworld.
-        unsigned int OverworldRowIndex;
-        /// The 0-based index (from the left) of the tile map as located in the overworld.
-        unsigned int OverworldColumnIndex;
+        /// The 0-based index (from the top) of the tile map as located in a larger grid.
+        unsigned int GridRowIndex;
+        /// The 0-based index (from the left) of the tile map as located in a larger grid.
+        unsigned int GridColumnIndex;
         /// The ground in this tile map.
         GroundLayer Ground;
         /// Trees in this tile map.

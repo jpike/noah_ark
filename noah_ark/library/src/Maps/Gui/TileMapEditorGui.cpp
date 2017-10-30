@@ -64,7 +64,7 @@ namespace GUI
         {
             // CHECK IF THE USER CHOSE TO UPDATE A TILE IN THE MAP.
             // The user must have already chosen a tile from the palette and then pressed the mouse button within the tile map.
-            bool pointer_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAIN_POINTER_BUTTON);
+            bool pointer_button_pressed = input_controller.ButtonDown(INPUT_CONTROL::InputController::MAIN_POINTER_BUTTON);
             bool user_chose_to_update_tile_in_map = SelectedTile && pointer_button_pressed && CurrentTileMap;
             if (user_chose_to_update_tile_in_map)
             {
@@ -126,9 +126,9 @@ namespace GUI
 
         // WRITE OUT THE BASIC GRID COORDINATES OF THE TILE MAP.
         tile_map_file
-            << "Column: " << tile_map.OverworldColumnIndex
+            << "Column: " << tile_map.GridColumnIndex
             << "\n"
-            << "Row: " << tile_map.OverworldRowIndex
+            << "Row: " << tile_map.GridRowIndex
             << "\n";
 
         // WRITE OUT EACH TILE ID IN THE GROUND LAYER.
@@ -148,8 +148,8 @@ namespace GUI
                 }
                 else
                 {
-                    // Default to an invalid tile ID to ensure that some data gets written.
-                    tile_map_file << MAPS::TileType::INVALID;
+                    // Default to black tile ID to ensure that some data gets written.
+                    tile_map_file << MAPS::TileType::BLACK_TEST;
                 }
 
                 // WRITE OUT A SEPARATOR BEFORE THE NEXT TILE.

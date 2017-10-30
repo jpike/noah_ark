@@ -8,6 +8,7 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Input/InputController.h"
+#include "Maps/ArkInteriorTileMapData.h"
 #include "Maps/OverworldMapData.h"
 #include "Maps/Tileset.h"
 #include "Math/Number.h"
@@ -54,10 +55,10 @@ void PopulateOverworld(
     MATH::RandomNumberGenerator random_number_generator;
 
     // LOAD TILE MAPS FOR EACH ROW.
-    for (unsigned int row = 0; row < MAPS::OVERWORLD_HEIGHT_IN_TILE_MAPS; ++row)
+    for (unsigned int row = 0; row < MAPS::World::OVERWORLD_HEIGHT_IN_TILE_MAPS; ++row)
     {
         // LOAD TILE MAPS FOR EACH COLUMN.
-        for (unsigned int column = 0; column < MAPS::OVERWORLD_WIDTH_IN_TILE_MAPS; ++column)
+        for (unsigned int column = 0; column < MAPS::World::OVERWORLD_WIDTH_IN_TILE_MAPS; ++column)
         {
             // GET THE CURRENT TILE MAP FILE.
             const auto& tile_map_data = MAPS::OVERWORLD_MAP_DATA(column, row);
@@ -229,26 +230,100 @@ void PopulateOverworld(
     }
 }
 
-/// Loads the overworld.
-/// @param[in]  assets - The assets to use for the overworld.
-/// @return The overworld, if successfully loaded; null otherwise.
-std::shared_ptr<MAPS::MultiTileMapGrid> LoadOverworld(RESOURCES::Assets& assets)
+/// Populates the ark interior based on data read from in-memory assets.
+/// @param[in,out]  assets - The assets for the overworld.
+/// @param[in,out]  ark_interior - The ark interior to populate.
+void PopulateArkInterior(RESOURCES::Assets& assets, MAPS::MultiTileMapGrid& ark_interior)
 {
-    // CREATE THE OVERWORLD.
+    // LOAD THE TILESET TEXTURE.
+    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::MAIN_TILESET_TEXTURE_ID);
+    assert(tileset_texture);
+
+    // CREATE THE TILESET.
+    MAPS::Tileset tileset(tileset_texture);
+
+    // CALCULATE THE POSITION OF THE CURRENT TILE MAP.
+    MATH::Vector2f map_center_world_position;
+
+    /// @todo   Add an appropriate loop to handle a larger ark interior, rather than hard-coding column/row.
+    unsigned int column = 0;
+    unsigned int row = 0;
+    float map_width_in_pixels = static_cast<float>(MAPS::TileMap::WIDTH_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
+    float map_half_width_in_pixels = map_width_in_pixels / 2.0f;
+    float map_left_world_position = static_cast<float>(column * map_width_in_pixels);
+    map_center_world_position.X = map_left_world_position + map_half_width_in_pixels;
+
+    float map_height_in_pixels = static_cast<float>(MAPS::TileMap::HEIGHT_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
+    float map_half_height_in_pixels = map_height_in_pixels / 2.0f;
+    float map_top_world_position = static_cast<float>(row * map_height_in_pixels);
+    map_center_world_position.Y = map_top_world_position + map_half_height_in_pixels;
+
+    // CREATE AN EMPTY TILE MAP.
+    MATH::Vector2ui map_dimensions_in_tiles(
+        MAPS::TileMap::WIDTH_IN_TILES,
+        MAPS::TileMap::HEIGHT_IN_TILES);
+    MAPS::TileMap tile_map(
+        row,
+        column,
+        map_center_world_position,
+        map_dimensions_in_tiles,
+        MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
+
+    const auto& tile_map_data = MAPS::ARK_INTERIOR_TILE_MAP_0_0;
+
+    // CREATE TILES IN THE GROUND LAYER.
+    for (unsigned int current_tile_y = 0;
+        current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
+        ++current_tile_y)
+    {
+        // CREATE TILES FOR THIS ROW.
+        for (unsigned int current_tile_x = 0;
+            current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
+            ++current_tile_x)
+        {
+            // CREATE THE CURRENT TILE.
+            MAPS::TileId tile_id = tile_map_data(current_tile_x, current_tile_y);
+            std::shared_ptr<MAPS::Tile> tile = tileset.CreateTile(tile_id);
+            bool tile_exists_in_tileset = (nullptr != tile);
+            if (!tile_exists_in_tileset)
+            {
+                assert(tile_exists_in_tileset);
+                // Skip to trying to create the next tile.  The layer
+                // simply won't have any tile at this location.
+                continue;
+            }
+
+            // SET THE TILE IN THE GROUND LAYER.
+            tile_map.Ground.SetTile(current_tile_x, current_tile_y, tile);
+        }
+    }
+
+    // STORE THE TILE MAP OF THE ARK INTERIOR.
+    ark_interior.TileMaps(column, row) = std::move(tile_map);
+}
+
+/// Loads the world.
+/// @param[in,out]  assets - The assets to use for the world.
+/// @return The world, if successfully loaded; null otherwise.
+std::shared_ptr<MAPS::World> LoadWorld(RESOURCES::Assets& assets)
+{
+    // CREATE THE EMPTY WORLD.
     auto load_start_time = std::chrono::system_clock::now();
-    std::shared_ptr<MAPS::MultiTileMapGrid> overworld = std::make_shared<MAPS::MultiTileMapGrid>(
-        MAPS::OVERWORLD_WIDTH_IN_TILE_MAPS,
-        MAPS::OVERWORLD_HEIGHT_IN_TILE_MAPS);
-    PopulateOverworld(assets, *overworld);
+    std::shared_ptr<MAPS::World> world = std::make_shared<MAPS::World>();
+
+    // POPULATE THE WORLD.
+    PopulateOverworld(assets, world->Overworld);
+    PopulateArkInterior(assets, world->ArkInterior);
 
     auto load_end_time = std::chrono::system_clock::now();
 
-    // Overworld load time: 82263372 (file-based)
-    // Overworld load time: 17972479 (array-based)
+    // Overworld load time: 82,263,372 (file-based)
+    // Overworld load time: 17,972,479 (array-based)
+    // World load time (with ark interior): 31,132,753
     auto load_time_diff = load_end_time - load_start_time;
-    std::cout << "Overworld load time: " << load_time_diff.count() << std::endl;
+    std::cout << "World load time: " << load_time_diff.count() << std::endl;
 
-    return overworld;
+    return world;
 }
 
 /// Loads the sounds/music for the game, adding them to the speakers.
@@ -342,9 +417,10 @@ int main(int argumentCount, char* arguments[])
         // LOAD THE SOUND EFFECTS/MUSIC.
         std::future< std::shared_ptr<AUDIO::Speakers> > speakers_being_loaded = std::async(LoadSounds, std::ref(*assets));
 
-        // The overworld is loaded in the background in separate threads to avoid having
-        // their loading slow the startup time of the rest of the game.
-        std::future< std::shared_ptr<MAPS::MultiTileMapGrid> > overworld_being_loaded = std::async(LoadOverworld, std::ref(*assets));
+        // LOAD THE MAPS.
+        // The world is loaded in the background in separate threads to avoid having
+        // map loading slow the startup time of the rest of the game.
+        std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorld, std::ref(*assets));
 
         // INITIALIZE REMAINING SUBSYSTEMS.
         GRAPHICS::Renderer renderer(
@@ -468,14 +544,14 @@ int main(int argumentCount, char* arguments[])
                             }
 
                             // INITIALIZE THE GAMEPLAY STATE.
-                            assert(overworld_being_loaded.valid());
-                            auto overworld = overworld_being_loaded.get();
-                            assert(overworld);
+                            assert(world_being_loaded.valid());
+                            auto world = world_being_loaded.get();
+                            assert(world);
 
                             bool gameplay_state_initialized = pre_flood_gameplay_state.Initialize(
                                 SCREEN_WIDTH_IN_PIXELS,
                                 *saved_game_data,
-                                overworld);
+                                world);
                             assert(gameplay_state_initialized);
 
                             // FOCUS THE CAMERA ON THE PLAYER.

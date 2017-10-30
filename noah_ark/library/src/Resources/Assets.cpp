@@ -32,6 +32,9 @@ namespace RESOURCES
     /// @return The requested texture, if successfully loaded; null otherwise.
     std::shared_ptr<GRAPHICS::Texture> Assets::GetTexture(const std::string& texture_id)
     {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
         // RETURN THE TEXTURE IF IT HAS ALREADY BEEN LOADED.
         auto id_with_texture = Textures.find(texture_id);
         bool texture_already_loaded = (Textures.cend() != id_with_texture);
@@ -63,6 +66,9 @@ namespace RESOURCES
     /// @return The requested font, if successfully loaded; null otherwise.
     std::shared_ptr<GRAPHICS::GUI::Font> Assets::GetFont(const std::string& font_texture_id)
     {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
         // RETURN THE FONT IF IT HAS ALREADY BEEN LOADED.
         auto id_with_font = Fonts.find(font_texture_id);
         bool font_already_loaded = (Fonts.cend() != id_with_font);
@@ -91,8 +97,11 @@ namespace RESOURCES
     /// Attempts to get the specified shader.
     /// @param[in]  shader_id - The ID of the shader to get.
     /// @return The specified shader, if successfully loaded; null otherwise.
-    std::shared_ptr<sf::Shader> Assets::GetShader(const ShaderId shader_id) const
+    std::shared_ptr<sf::Shader> Assets::GetShader(const ShaderId shader_id)
     {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
         // RETURN THE SHADER IF IT HAS ALREADY BEEN LOADED.
         auto id_with_shader = Shaders.find(shader_id);
         bool shader_already_loaded = (Shaders.cend() != id_with_shader);
@@ -145,6 +154,9 @@ namespace RESOURCES
     /// @return The requested sound effect, if successfully loaded; null otherwise.
     std::shared_ptr<sf::SoundBuffer> Assets::GetSound(const std::string& sound_id)
     {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
         // CHECK IF THE AUDIO SAMPLES HAVE ALREADY BEEN LOADED.
         auto id_with_audio_samples = AudioSamples.find(sound_id);
         bool audio_samples_already_loaded = (AudioSamples.cend() != id_with_audio_samples);
@@ -175,6 +187,9 @@ namespace RESOURCES
     /// @return The requested music, if successfully loaded; null otherwise.
     std::shared_ptr<sf::Music> Assets::GetMusic(const std::string& music_id)
     {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
         // CHECK IF THE MUSIC HAS ALREADY BEEN LOADED.
         auto id_with_music = Music.find(music_id);
         bool music_already_loaded = (Music.cend() != id_with_music);

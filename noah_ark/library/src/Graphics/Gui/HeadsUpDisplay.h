@@ -6,7 +6,7 @@
 #include "Graphics/Renderer.h"
 #include "Input/InputController.h"
 #include "Inventory/InventoryGui.h"
-#include "Maps/MultiTileMapGrid.h"
+#include "Maps/World.h"
 #include "Objects/Noah.h"
 #include "Resources/Assets.h"
 
@@ -23,7 +23,7 @@ namespace GUI
     public:
         // CONSTRUCTION.
         explicit HeadsUpDisplay(
-            const std::shared_ptr<MAPS::MultiTileMapGrid>& overworld,
+            const std::shared_ptr<MAPS::World>& world,
             const std::shared_ptr<OBJECTS::Noah>& noah_player,
             const unsigned int main_text_box_width_in_pixels,
             const unsigned int main_text_box_height_in_pixels,
@@ -52,8 +52,8 @@ namespace GUI
         bool SaveDialogBoxVisible;
         /// The assets to use for the HUD.
         std::shared_ptr<RESOURCES::Assets> Assets;
-        /// The overworld whose information is being displayed in the HUD.
-        std::shared_ptr<MAPS::MultiTileMapGrid> Overworld;
+        /// The world whose information is being displayed in the HUD.
+        std::shared_ptr<MAPS::World> World;
         /// The player whose information is being displayed in the HUD.
         std::shared_ptr<OBJECTS::Noah> NoahPlayer;
     };

@@ -53,6 +53,7 @@ namespace INPUT_CONTROL
         void ReadInput();
 
         bool ButtonDown(const sf::Keyboard::Key key) const;
+        bool ButtonDown(const sf::Mouse::Button button) const;
         bool ButtonWasPressed(const sf::Keyboard::Key key) const;
         bool ButtonWasPressed(const sf::Mouse::Button button) const;
 
@@ -64,6 +65,7 @@ namespace INPUT_CONTROL
         // HELPER METHODS.
         bool InputEnabledAndKeyDown(const sf::Keyboard::Key key) const;
         bool InputEnabledAndKeyWasPressed(const sf::Keyboard::Key key) const;
+        bool InputEnabledAndMouseButtonDown(const sf::Mouse::Button button) const;
         bool InputEnabledAndMouseButtonWasPressed(const sf::Mouse::Button button) const;
 
         // MEMBER VARIABLES.

@@ -63,6 +63,8 @@ namespace GUI
         else
         {
             // CHECK IF THE USER CHOSE TO UPDATE A TILE IN THE MAP.
+            // Check if the mouse button is down is done to allow quick editing without a user needing to press
+            // the button separately for each individual tile.
             // The user must have already chosen a tile from the palette and then pressed the mouse button within the tile map.
             bool pointer_button_pressed = input_controller.ButtonDown(INPUT_CONTROL::InputController::MAIN_POINTER_BUTTON);
             bool user_chose_to_update_tile_in_map = SelectedTile && pointer_button_pressed && CurrentTileMap;

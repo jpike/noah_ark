@@ -71,7 +71,9 @@ namespace GUI
         }
 
         // CHECK IF THE USER HAS SELECTED A TILE.
-        bool pointer_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::MAIN_POINTER_BUTTON);
+        // The secondary pointer button is used to avoid interference with the primary pointer button
+        // that is also used during map editing for placing tiles in an actual map.
+        bool pointer_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::SECONDARY_POINTER_BUTTON);
         if (pointer_button_pressed)
         {
             // GET THE SELECTED TILE (IF ONE EXISTS).

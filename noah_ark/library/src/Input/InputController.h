@@ -45,6 +45,8 @@ namespace INPUT_CONTROL
         static constexpr sf::Keyboard::Key MAP_EDITOR_SAVE_MAP_KEY = sf::Keyboard::S;
         /// The button for the main pointer.
         static constexpr sf::Mouse::Button MAIN_POINTER_BUTTON = sf::Mouse::Left;
+        /// The button for the secondary pointer.
+        static constexpr sf::Mouse::Button SECONDARY_POINTER_BUTTON = sf::Mouse::Right;
 
         // METHODS.
         void DisableInput();

@@ -1,7 +1,7 @@
 #include <cassert>
-#include <iostream>
 #include "Core/NullChecking.h"
 #include "Core/String.h"
+#include "Debugging/DebugConsole.h"
 #include "Graphics/Renderer.h"
 
 namespace GRAPHICS
@@ -193,7 +193,7 @@ namespace GRAPHICS
         bool font_exists = (nullptr != Font);
         if (!font_exists)
         {
-            std::cout << text << std::endl;
+            DEBUGGING::DebugConsole::WriteLine(text);
             return;
         }
 

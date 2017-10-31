@@ -1,10 +1,10 @@
 #include <cassert>
 #include <chrono>
 #include <exception>
-#include <iostream>
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "Debugging/DebugConsole.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Input/InputController.h"
@@ -382,7 +382,7 @@ std::shared_ptr<MAPS::World> LoadWorld(RESOURCES::Assets& assets)
     // Overworld load time: 17,972,479 (array-based)
     // World load time (with ark interior): 31,132,753
     auto load_time_diff = load_end_time - load_start_time;
-    std::cout << "World load time: " << load_time_diff.count() << std::endl;
+    DEBUGGING::DebugConsole::WriteLine("World load time: ", load_time_diff.count());
 
     return world;
 }
@@ -631,12 +631,12 @@ int main(int argumentCount, char* arguments[])
     }
     catch (std::exception& exception)
     {
-        std::cerr << "Standard exception in main: " << exception.what() << std::endl;
+        DEBUGGING::DebugConsole::WriteErrorLine("Standard exception in main: " + std::string(exception.what()));
         return EXIT_CODE_FAILURE_STANDARD_EXCEPTION_IN_MAIN;
     }
     catch (...)
     {   
-        std::cerr << "Unknown exception in main." << std::endl;
+        DEBUGGING::DebugConsole::WriteErrorLine("Unknown exception in main.");
         return EXIT_CODE_FAILURE_UNKNOWN_EXCEPTION_IN_MAIN;
     }
 }

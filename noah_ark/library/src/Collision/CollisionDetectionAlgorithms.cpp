@@ -166,8 +166,6 @@ namespace COLLISION
                         // first to keep the object moving.
                         if (object_collided_horizontally_with_tree)
                         {
-                            std::cout << "Collided horizontally" << std::endl;
-
                             // ONLY MOVE THE OBJECT VERTICALLY.
                             MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
                             new_center_world_position.Y = object_center_world_position.Y;
@@ -175,8 +173,6 @@ namespace COLLISION
                         }
                         else if (object_collided_vertically_with_tree)
                         {
-                            std::cout << "Collided vertically" << std::endl;
-
                             // ONLY MOVE THE OBJECT HORIZONTALLY.
                             MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
                             new_center_world_position.X = object_center_world_position.X;
@@ -187,7 +183,6 @@ namespace COLLISION
                             // RETURN THE OBJECT'S CURRENT UPDATED WORLD POSITION.
                             // Assume the tree is completely blocking movement.
                             // It can't move any further if there a tree is in the way.
-                            std::cout << "Completely blocking" << std::endl;
                             MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
                             return new_center_world_position;
                         }

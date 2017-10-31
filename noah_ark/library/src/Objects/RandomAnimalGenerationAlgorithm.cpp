@@ -1,4 +1,4 @@
-#include <iostream>
+#include "Debugging/DebugConsole.h"
 #include "Objects/RandomAnimalGenerationAlgorithm.h"
 #include "Resources/AnimalGraphics.h"
 #include "Resources/AnimalSounds.h"
@@ -22,18 +22,18 @@ namespace OBJECTS
     {
         // DETERMINE THE SPECIES OF ANIMAL TO GENERATE.
         AnimalSpecies random_species = random_number_generator.RandomEnum<AnimalSpecies>();
-        std::cout << "Random species: " << static_cast<unsigned int>(random_species) << std::endl;
+        DEBUGGING::DebugConsole::WriteLine("Random species: ", static_cast<unsigned int>(random_species));
 
         // DETERMINE THE GENDER OF ANIMAL TO GENERATE.
         AnimalGender random_gender = random_number_generator.RandomEnum<AnimalGender>();
-        std::cout << "Random gender: " << static_cast<unsigned int>(random_gender) << std::endl;
+        DEBUGGING::DebugConsole::WriteLine("Random gender: ", static_cast<unsigned int>(random_gender));
 
         // CHECK IF THE ANIMAL TYPE HAS BEEN FULLY COLLECTED.
         AnimalType animal_type(random_species, random_gender);
         bool animal_type_fully_collected = noah_player.Inventory->AnimalTypeFullyCollected(animal_type);
         if (animal_type_fully_collected)
         {
-            std::cout << "Animal type fully collected." << std::endl;
+            DEBUGGING::DebugConsole::WriteLine("Animal type fully collected.");
             // DON'T GENERATE A RANDOM ANIMAL.
             // Since the randomly chosen animal type has already been fully collected,
             // there's no need to generate another instance of it.
@@ -55,20 +55,19 @@ namespace OBJECTS
         {
             // A tile might not be retrieved if the random position is at the very edge of the tile map.
             // In this case, it's fine for now to just not generate an animal.
-            std::cout
-                << "At edge: "
-                << "Tile map world boundaries (LRTB): "
-                << tile_map_left_x_position << " "
-                << tile_map_right_x_position << " "
-                << tile_map_top_y_position << " "
-                << tile_map_bottom_y_position << " "
-                << "Random position: "
-                << random_x_position << " "
-                << random_y_position
-                << std::endl;
+            std::string debug_missing_tile_message =
+                "At edge: Tile map world boundaries (LRTB): " +
+                std::to_string(tile_map_left_x_position) + " " +
+                std::to_string(tile_map_right_x_position) + " " +
+                std::to_string(tile_map_top_y_position) + " " +
+                std::to_string(tile_map_bottom_y_position) + " " +
+                "Random position: " +
+                std::to_string(random_x_position) + " " +
+                std::to_string(random_y_position);
+            DEBUGGING::DebugConsole::WriteLine(debug_missing_tile_message);
             return nullptr;
         }
-        std::cout << "Animal at: " << random_x_position << ", " << random_y_position << std::endl;
+        DEBUGGING::DebugConsole::WriteLine("Animal at: ", MATH::Vector2f(random_x_position, random_y_position));
 
         // MAKE SURE THE ANIMAL ISN'T ON TOP OF NOAH.
         // This is important to ensure that animals aren't accidentally collected without
@@ -77,7 +76,7 @@ namespace OBJECTS
         bool animal_colliding_with_noah = noah_world_bounding_box.Contains(random_x_position, random_y_position);
         if (animal_colliding_with_noah)
         {
-            std::cout << "Animal on top of Noah." << std::endl;
+            DEBUGGING::DebugConsole::WriteLine("Animal on top of Noah.");
             return nullptr;
         }
 
@@ -88,7 +87,7 @@ namespace OBJECTS
         bool tile_is_for_ark = (MAPS::TileType::ARK_BUILDING_PLOT == tile_at_animal_generation_point->Type);
         if (tile_is_for_ark)
         {
-            std::cout << "Tile is for ark." << std::endl;
+            DEBUGGING::DebugConsole::WriteLine("Tile is for ark.");
             return nullptr;
         }
 
@@ -108,7 +107,7 @@ namespace OBJECTS
                 if (!tile_is_walkable)
                 {
                     // Non-flying animals can't be generated on unwalkable tiles.
-                    std::cout << "Tile isn't walkable." << std::endl;
+                    DEBUGGING::DebugConsole::WriteLine("Tile isn't walkable.");
                     return nullptr;
                 }
             }

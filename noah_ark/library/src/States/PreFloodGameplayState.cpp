@@ -1,7 +1,7 @@
-#include <iostream>
 #include <algorithm>
 #include "Collision/CollisionDetectionAlgorithms.h"
 #include "Core/NullChecking.h"
+#include "Debugging/DebugConsole.h"
 #include "Objects/RandomAnimalGenerationAlgorithm.h"
 #include "States/PreFloodGameplayState.h"
 
@@ -914,7 +914,7 @@ namespace STATES
                 Speakers->PlaySound(RESOURCES::FOOD_PICKUP_SOUND_ID);
 
                 // ADD THE FOOD TO THE PLAYER'S INVENTORY.
-                std::cout << "Collected food: " << static_cast<int>(food->Type) << std::endl;
+                DEBUGGING::DebugConsole::WriteLine("Collected food: ", static_cast<int>(food->Type));
                 NoahPlayer->Inventory->AddFood(*food);
 
                 // REMOVE THE FOOD ITEM FROM THOSE IN THE CURRENT TILE MAP.
@@ -948,7 +948,7 @@ namespace STATES
                 Speakers->PlaySound((*animal)->SoundId);
 
                 // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
-                std::cout << "Collected animal." << std::endl;
+                DEBUGGING::DebugConsole::WriteLine("Collected animal.");
                 NoahPlayer->Inventory->AddAnimal(*animal);
 
                 // REMOVE THE ANIMAL FROM THOSE IN THE CURRENT TILE MAP.
@@ -995,14 +995,11 @@ namespace STATES
                 bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
                 if (random_animal_should_be_generated)
                 {
-                    std::cout << "Generating random animal..." << std::endl;
-                    std::cout << "Tile map column: " << current_tile_map.GridColumnIndex << " row: " << current_tile_map.GridRowIndex << std::endl;
+                    DEBUGGING::DebugConsole::WriteLine("Generating random animal...");
+                    DEBUGGING::DebugConsole::WriteLine("Tile map column, row: ", MATH::Vector2ui(current_tile_map.GridColumnIndex, current_tile_map.GridRowIndex));
                     auto tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
-                    std::cout << "Tile map LTRB: "
-                        << tile_map_bounding_box.GetLeftXPosition() << " "
-                        << tile_map_bounding_box.GetTopYPosition() << " "
-                        << tile_map_bounding_box.GetRightXPosition() << " "
-                        << tile_map_bounding_box.GetBottomYPosition() << std::endl;
+                    DEBUGGING::DebugConsole::WriteLine("Tile map LTRB: ", tile_map_bounding_box);
+
                     // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
                     std::shared_ptr<OBJECTS::Animal> animal = OBJECTS::RandomAnimalGenerationAlgorithm::GenerateAnimal(
                         *NoahPlayer,
@@ -1012,7 +1009,7 @@ namespace STATES
                     bool animal_generated = (nullptr != animal);
                     if (animal_generated)
                     {
-                        std::cout << "Random animal generated: " << static_cast<unsigned int>(animal->Type.Species) << std::endl;
+                        DEBUGGING::DebugConsole::WriteLine("Random animal generated: ", static_cast<unsigned int>(animal->Type.Species));
 
                         // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
                         Speakers->PlaySound(animal->SoundId);

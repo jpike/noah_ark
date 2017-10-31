@@ -11,4 +11,13 @@ namespace DEBUGGING
         std::cout << text << std::endl;
 #endif
     }
+
+    /// Writes a line of error text to the console.
+    /// @param[in]  text - The text to write.
+    void DebugConsole::WriteErrorLine(const std::string& text)
+    {
+#ifdef _DEBUG
+        std::cerr << text << std::endl;
+#endif
+    }
 }

@@ -124,14 +124,23 @@
   <ItemGroup>
     <Media Include="res\sounds\ark_build_sound1.wav" />
     <Media Include="res\sounds\axe_tree_hit1.wav" />
+    <Media Include="res\sounds\BaldEagle-SoundBible.com-2025808531.wav" />
+    <Media Include="res\sounds\BatsVocalizing-SoundBible.com-1162895834.wav" />
     <Media Include="res\sounds\camel5.wav" />
     <Media Include="res\sounds\collect_bible_verse1.wav" />
     <Media Include="res\sounds\dove-Mike_Koenig-1208819046.wav" />
+    <Media Include="res\sounds\Elk-SoundBible.com-734134354.wav" />
     <Media Include="res\sounds\food_pickup_sound.wav" />
     <Media Include="res\sounds\FrogCroaking-SoundBible.com-1053984354.wav" />
+    <Media Include="res\sounds\GoatBah-SoundBible.com-959734934.wav" />
     <Media Include="res\sounds\Grasshopper-SoundBible.com-1592176719.wav" />
+    <Media Include="res\sounds\hawk_screeching-Mike_Koenig-1626170357.wav" />
+    <Media Include="res\sounds\horned_owl-Mike_Koenig-1945374932.wav" />
     <Media Include="res\sounds\NoahsArkIntro1_80PercentSpeedWithFadeOut.wav" />
+    <Media Include="res\sounds\OspreyBirdCall-SoundBible.com-525395846.wav" />
     <Media Include="res\sounds\overworld_music.wav" />
+    <Media Include="res\sounds\PelicanChick-SoundBible.com-549990839.wav" />
+    <Media Include="res\sounds\PigOink-SoundBible.com-1424738584.wav" />
     <Media Include="res\sounds\Raven-SoundBible.com-1790882934.wav" />
     <Media Include="res\sounds\SheepBleating-SoundBible.com-1373580685.wav" />
     <Media Include="res\sounds\SingleCow-SoundBible.com-2051754137.wav" />

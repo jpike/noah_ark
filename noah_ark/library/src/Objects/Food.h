@@ -11,16 +11,46 @@ namespace OBJECTS
     {
         /// Indicates no food exists.
         NONE,
-        /// An apple.
+        ALMOND,
         APPLE,
-        /// A grape.
-        GRAPE,
-        /// A melon.
-        MELON,
-        /// An olive.
-        OLIVE,
-        /// A fig.
+        APRICOT,
+        AVOCADO,
+        BANANA,
+        BLACKBERRY,
+        BLUEBERRY,
+        CANTELOUPE,
+        CASHEW,
+        CHERRY,
+        CHESTNUT,
+        CLEMENTINE,
+        CLOUDBERRY,
+        COCONUT,
+        CRANBERRY,
+        DURIAN,
+        ELDERBERRY,
         FIG,
+        GOURD,
+        GRAPE,
+        GRAPEFRUIT,
+        GUAVA,
+        HAZELNUT,
+        LEMON,
+        LIME,
+        LYCHEE,
+        MANGO,
+        MELON,
+        MULBERRY,
+        OLIVE,
+        ORANGE,
+        PAWPAW,
+        PEACH,
+        PEAR,
+        PECAN,
+        PERSIMMON,
+        PLUM,
+        POMEGRANATE,
+        RASPBERRY,
+        WALNUT,
         /// A non-food value that supports determining the number of food types
         /// for algorithms that need this information.
         COUNT

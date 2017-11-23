@@ -25,9 +25,18 @@ namespace OBJECTS
     {
         CAMEL,
         CATTLE,
+        BAT,
+        DEER,
         DOVE,
+        EAGLE,
         FROG,
+        GOAT,
+        HAWK,
         LOCUST,
+        OSPREY,
+        OWL, 
+        PELICAN,
+        PIG,
         RAVEN,
         SHEEP,
         /// A non-species value that supports determining the number of species

@@ -35,13 +35,22 @@ namespace OBJECTS
         {
             // RETURN TRUE FOR ALL CLEAN ANIMALS.
             case AnimalSpecies::CATTLE: // Deuteronomy 14:4
+            case AnimalSpecies::DEER: // Deuteronomy 14:5
             case AnimalSpecies::DOVE: // Genesis 15:9
+            case AnimalSpecies::GOAT: // Deuteronomy 14:4
             case AnimalSpecies::LOCUST: // Leviticus 11:22
             case AnimalSpecies::SHEEP: // Deuteronomy 14:4
                 return true;
             // RETURN FALSE FOR ALL UNCLEAN ANIMALS.
+            case AnimalSpecies::BAT: // Leviticus 11:19
             case AnimalSpecies::CAMEL: // Leviticus 11:4
+            case AnimalSpecies::EAGLE: // Leviticus 11:13
             case AnimalSpecies::FROG: // Leviticus 11:9-10
+            case AnimalSpecies::HAWK: // Leviticus 11:16
+            case AnimalSpecies::OSPREY: // Leviticus 11:13
+            case AnimalSpecies::OWL: // Leviticus 11:16
+            case AnimalSpecies::PELICAN: // Leviticus 11:18
+            case AnimalSpecies::PIG: // Leviticus 11:7
             case AnimalSpecies::RAVEN: // Leviticus 11:13-15
                 return false;
             default:
@@ -59,14 +68,23 @@ namespace OBJECTS
         switch (Species)
         {
             // RETURN TRUE FOR ALL FLYING ANIMALS.
+            case AnimalSpecies::BAT:
             case AnimalSpecies::DOVE:
+            case AnimalSpecies::EAGLE:
+            case AnimalSpecies::HAWK:
             case AnimalSpecies::LOCUST:
+            case AnimalSpecies::OSPREY:
+            case AnimalSpecies::OWL:
+            case AnimalSpecies::PELICAN:
             case AnimalSpecies::RAVEN:
                 return true;
             // RETURN FALSE FOR ALL NON-FLYING ANIMALS.
             case AnimalSpecies::CAMEL:
             case AnimalSpecies::CATTLE:
+            case AnimalSpecies::DEER:
             case AnimalSpecies::FROG:
+            case AnimalSpecies::GOAT:
+            case AnimalSpecies::PIG:
             case AnimalSpecies::SHEEP:
             default:
                 return false;
@@ -84,12 +102,21 @@ namespace OBJECTS
             case AnimalSpecies::FROG:
                 return true;
             // RETURN FALSE FOR ALL NON-SWIMMING ANIMALS.
+            case AnimalSpecies::BAT:
             case AnimalSpecies::CAMEL:
             case AnimalSpecies::CATTLE:
-            case AnimalSpecies::SHEEP:
+            case AnimalSpecies::DEER:
             case AnimalSpecies::DOVE:
+            case AnimalSpecies::EAGLE:
+            case AnimalSpecies::GOAT:
+            case AnimalSpecies::HAWK:
             case AnimalSpecies::LOCUST:
+            case AnimalSpecies::OSPREY:
+            case AnimalSpecies::OWL:
+            case AnimalSpecies::PELICAN:
+            case AnimalSpecies::PIG:
             case AnimalSpecies::RAVEN:
+            case AnimalSpecies::SHEEP:
             default:
                 return false;
         }
@@ -107,15 +134,33 @@ namespace OBJECTS
         // However, no real research has been done regarding this.
         switch (species)
         {
+            case AnimalSpecies::BAT:
+                return 32.0f;
             case AnimalSpecies::CAMEL:
                 return 32.0f;
             case AnimalSpecies::CATTLE:
                 return 16.0f;
+            case AnimalSpecies::DEER:
+                return 32.0f;
             case AnimalSpecies::DOVE:
+                return 32.0f;
+            case AnimalSpecies::EAGLE:
                 return 32.0f;
             case AnimalSpecies::FROG:
                 return 16.0f;
+            case AnimalSpecies::GOAT:
+                return 16.0f;
+            case AnimalSpecies::HAWK:
+                return 32.0f;
             case AnimalSpecies::LOCUST:
+                return 16.0f;
+            case AnimalSpecies::OSPREY:
+                return 32.0f;
+            case AnimalSpecies::OWL:
+                return 32.0f;
+            case AnimalSpecies::PELICAN:
+                return 32.0f;
+            case AnimalSpecies::PIG:
                 return 16.0f;
             case AnimalSpecies::RAVEN:
                 return 32.0f;

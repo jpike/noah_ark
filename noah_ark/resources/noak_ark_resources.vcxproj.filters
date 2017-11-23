@@ -79,5 +79,32 @@
     <Media Include="res\sounds\NoahsArkIntro1_80PercentSpeedWithFadeOut.wav">
       <Filter>Resources\Sounds</Filter>
     </Media>
+    <Media Include="res\sounds\PigOink-SoundBible.com-1424738584.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\BatsVocalizing-SoundBible.com-1162895834.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\GoatBah-SoundBible.com-959734934.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Elk-SoundBible.com-734134354.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\BaldEagle-SoundBible.com-2025808531.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\hawk_screeching-Mike_Koenig-1626170357.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\OspreyBirdCall-SoundBible.com-525395846.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\horned_owl-Mike_Koenig-1945374932.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\PelicanChick-SoundBible.com-549990839.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
   </ItemGroup>
 </Project>

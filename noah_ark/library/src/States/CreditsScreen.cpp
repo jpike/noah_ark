@@ -160,6 +160,30 @@ namespace STATES
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
+            "Daniel Simion",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "Caroline Ford",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "JimBob",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "J Dawg",
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
             "freesoundeffects.com",
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);

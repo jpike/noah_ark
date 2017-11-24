@@ -106,5 +106,74 @@
     <Media Include="res\sounds\PelicanChick-SoundBible.com-549990839.wav">
       <Filter>Resources\Sounds</Filter>
     </Media>
+    <Media Include="res\sounds\AngryChipmunk-SoundBible.com-980210050.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Ape-SoundBible.com-1651128585.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\baboon2.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\baligator5.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\bear_polar.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Bear-SoundBible.com-866204188.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Bee-SoundBible.com-914644763.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\BOB-CAT.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Butterfly-SoundBible.com-1530156556.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\CatMeow-SoundBible.com-1453940411.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Cheetah5.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Chicken-SoundBible.com-744739895.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\doberman-pincher_daniel-simion.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\gibbon-monkey-daniel_simon.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\greyfox-vs-coon.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\GrowlingLion-SoundBible.com-495747737.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\hippo2.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\HorseNeigh-SoundBible.com-1740540960.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\koala1.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\leopard3.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\PeacockBird-SoundBible.com-98379922.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Raccoon-J_Dawg-688727657.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
+    <Media Include="res\sounds\Turkey_Call_2-JimBob-26023545.wav">
+      <Filter>Resources\Sounds</Filter>
+    </Media>
   </ItemGroup>
 </Project>

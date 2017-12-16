@@ -1,5 +1,5 @@
-#include <stdexcept>
 #include "Audio/SoundEffect.h"
+#include "Core/NullChecking.h"
 
 namespace AUDIO
 {
@@ -11,11 +11,7 @@ namespace AUDIO
     Sound()
     {
         // MAKE SURE AUDIO SAMPLES WERE PROVIDED.
-        bool audio_samples_provided = (nullptr != AudioSamples);
-        if (!audio_samples_provided)
-        {
-            throw std::invalid_argument("Audio samples were not provided when constructing a sound effect.");
-        }
+        CORE::ThrowInvalidArgumentExceptionIfNull(AudioSamples, "Audio samples were not provided when constructing a sound effect.");
 
         // CREATE THE SOUND FOR THE AUDIO SAMPLES.
         Sound.setBuffer(*AudioSamples);

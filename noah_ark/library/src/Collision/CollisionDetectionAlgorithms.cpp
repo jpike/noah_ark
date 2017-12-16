@@ -1,6 +1,4 @@
 #include <algorithm>
-#include <cassert>
-#include <iostream>
 #include "Collision/CollisionDetectionAlgorithms.h"
 
 namespace COLLISION
@@ -316,7 +314,6 @@ namespace COLLISION
         if (!movement_for_up_direction)
         {
             // An invalid movement was provided to this method since the direction was not up.
-            assert(movement_for_up_direction);
             return object_new_world_position;
         }
 
@@ -434,7 +431,6 @@ namespace COLLISION
 
         float original_x_position = object_world_bounding_box.GetCenterPosition().X;
         float new_x_position = object_new_world_position.X;
-        assert(original_x_position == new_x_position);
 
         return object_new_world_position;
     }
@@ -459,7 +455,6 @@ namespace COLLISION
         if (!movement_for_down_direction)
         {
             // An invalid movement was provided to this method since the direction was not down.
-            assert(movement_for_down_direction);
             return object_new_world_position;
         }
 
@@ -599,7 +594,6 @@ namespace COLLISION
         if (!movement_for_left_direction)
         {
             // An invalid movement was provided to this method since the direction was not left.
-            assert(movement_for_left_direction);
             return object_new_world_position;
         }
 
@@ -737,7 +731,6 @@ namespace COLLISION
         if (!movement_for_right_direction)
         {
             // An invalid movement was provided to this method since the direction was not right.
-            assert(movement_for_right_direction);
             return object_new_world_position;
         }
 
@@ -875,7 +868,13 @@ namespace COLLISION
         MATH::FloatRectangle axe_blade_bounds = axe.GetBladeBounds();
         MATH::Vector2f axe_center_position = axe_blade_bounds.GetCenterPosition();
         MAPS::TileMap* tile_map = tile_map_grid.GetTileMap(axe_center_position.X, axe_center_position.Y);
-        assert(tile_map);
+        if (!tile_map)
+        {
+            // A tile map must exist in order to deal with collisions in it.
+            return;
+        }
+
+        // HANDLE AXE COLLISIONS WITH TREES.
         for (auto tree = tile_map->Trees.begin(); tile_map->Trees.end() != tree;)
         {
             MATH::FloatRectangle tree_bounds = tree->GetWorldBoundingBox();

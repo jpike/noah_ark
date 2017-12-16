@@ -1,4 +1,3 @@
-#include <cassert>
 #include "Core/NullChecking.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
@@ -70,9 +69,15 @@ namespace GUI
                 {
                     for (unsigned int tile_map_x_index = 0; tile_map_x_index < tile_map_column_count; ++tile_map_x_index)
                     {
-                        // GATHER ANY ARK PIECES BUILT IN THE CURRENT TILE MAP.
+                        // GET THE CURRENT TILE MAP.
                         const MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(tile_map_y_index, tile_map_x_index);
-                        assert(current_tile_map);
+                        if (!current_tile_map)
+                        {
+                            // CONTINUE GETTING DATA FROM OTHER TILE MAPS.
+                            continue;
+                        }
+
+                        // GATHER ANY ARK PIECES BUILT IN THE CURRENT TILE MAP.
                         std::vector<size_t> built_ark_piece_indices;
                         size_t ark_piece_count = current_tile_map->ArkPieces.size();
                         for (size_t ark_piece_index = 0; ark_piece_index < ark_piece_count; ++ark_piece_index)

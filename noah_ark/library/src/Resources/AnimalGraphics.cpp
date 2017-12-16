@@ -1,4 +1,3 @@
-#include <cassert>
 #include "Resources/AnimalGraphics.h"
 
 namespace RESOURCES
@@ -38,7 +37,12 @@ namespace RESOURCES
         // DETERMINE THE GENDER OF THE ANIMAL.
         bool is_male = (OBJECTS::AnimalGender::MALE == animal_type.Gender);
         bool is_female = (OBJECTS::AnimalGender::FEMALE == animal_type.Gender);
-        assert(is_male || is_female);
+        bool gender_valid = (is_male || is_female);
+        if (!gender_valid)
+        {
+            // A valid gender is required for an animation.
+            return nullptr;
+        }
 
         // GET THE ANIMATION SEQUENCE FOR THE APPROPRIATE SPECIES.
         //const std::vector<MATH::IntRectangle>& frames;

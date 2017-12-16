@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cassert>
 #include "Graphics/Gui/TextPage.h"
 
 namespace GRAPHICS

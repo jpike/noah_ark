@@ -1,4 +1,3 @@
-#include <cassert>
 #include "Graphics/Texture.h"
 
 namespace GRAPHICS
@@ -39,9 +38,8 @@ namespace GRAPHICS
         // CREATE THE TEXTURE FROM THE IMAGE.
         std::shared_ptr<GRAPHICS::Texture> texture = std::make_shared<GRAPHICS::Texture>();
         bool texture_loaded_from_image = texture->TextureResource.loadFromImage(image);
-        // The return value is ignored in non-debug builds so that the code can continue
-        // to exeute.  It will just have an "empty" texture to have to deal with.
-        assert(texture_loaded_from_image);
+        // The return value is ignored so that the code can continue to execute.
+        // It will just have an "empty" texture to have to deal with.
         return texture;
     }
 

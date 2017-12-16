@@ -1,4 +1,3 @@
-#include <cassert>
 #include "Core/NullChecking.h"
 #include "Inventory/InventoryFoodPage.h"
 #include "Resources/FoodGraphics.h"
@@ -122,16 +121,18 @@ namespace INVENTORY
             // RENDER AN ICON FOR THE FOOD.
             // It should appear in the left-top corner of the box.
             std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(food_type, *Assets);
-            assert(food_sprite);
-            MATH::Vector2f food_icon_left_top_screen_position = box_screen_rectangle.GetLeftXTopYPosition();
-            renderer.RenderGuiIcon(*food_sprite, food_icon_left_top_screen_position);
+            if (food_sprite)
+            {
+                MATH::Vector2f food_icon_left_top_screen_position = box_screen_rectangle.GetLeftXTopYPosition();
+                renderer.RenderGuiIcon(*food_sprite, food_icon_left_top_screen_position);
 
-            // RENDER THE COLLECTED COUNT FOR THE FOOD TYPE.
-            // It should appear just to the right of the food icon.
-            std::string collected_count_text = "x" + std::to_string(food_type_collected_count);
-            MATH::Vector2f collected_count_left_top_screen_position = food_icon_left_top_screen_position;
-            collected_count_left_top_screen_position.X += food_sprite->GetWidthInPixels();
-            renderer.RenderText(collected_count_text, collected_count_left_top_screen_position);
+                // RENDER THE COLLECTED COUNT FOR THE FOOD TYPE.
+                // It should appear just to the right of the food icon.
+                std::string collected_count_text = "x" + std::to_string(food_type_collected_count);
+                MATH::Vector2f collected_count_left_top_screen_position = food_icon_left_top_screen_position;
+                collected_count_left_top_screen_position.X += food_sprite->GetWidthInPixels();
+                renderer.RenderText(collected_count_text, collected_count_left_top_screen_position);
+            }
         }
     }
 }

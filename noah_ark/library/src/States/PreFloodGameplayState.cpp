@@ -56,7 +56,11 @@ namespace STATES
         {
             // GET THE TILE MAP FOR THE BUILT ARK PIECES.
             MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(built_ark_piece_data.TileMapGridYPosition, built_ark_piece_data.TileMapGridXPosition);
-            assert(current_tile_map);
+            if (!current_tile_map)
+            {
+                // The game can't be properly initialized if a tile map is missing.
+                return false;
+            }
 
             // UPDATE THE BUILT ARK PIECES IN THE CURRENT TILE MAP.
             for (size_t ark_piece_index : built_ark_piece_data.BuiltArkPieceIndices)
@@ -110,6 +114,7 @@ namespace STATES
         INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera)
     {
+#ifdef _DEBUG
         // UPDATE THE TILE MAP EDITOR IN RESPONSE TO USER INPUT.
         TileMapEditorGui.RespondToInput(input_controller);
         if (TileMapEditorGui.Visible)
@@ -131,6 +136,7 @@ namespace STATES
             // CLEAR THE TILE MAP EDITOR GUI'S CURRENT TILE MAP.
             TileMapEditorGui.CurrentTileMap = nullptr;
         }
+#endif
 
         // UPDATE THE HUD IN RESPONSE TO USER INPUT.
         Hud->RespondToInput(input_controller);
@@ -187,11 +193,17 @@ namespace STATES
     {
         // GET THE TEXTURE FOR NOAH.
         std::shared_ptr<GRAPHICS::Texture> noah_texture = Assets->GetTexture(RESOURCES::NOAH_TEXTURE_ID);
-        assert(noah_texture);
+        if (!noah_texture)
+        {
+            return nullptr;
+        }
 
         // GET THE AXE TEXTURE FOR NOAH.
         std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AXE_TEXTURE_ID);
-        assert(axe_texture);
+        if (!axe_texture)
+        {
+            return nullptr;
+        }
 
         // CREATE THE AXE.
         std::shared_ptr<OBJECTS::Axe> axe = std::make_shared<OBJECTS::Axe>(axe_texture);
@@ -223,9 +235,16 @@ namespace STATES
     {
         // GET ASSETS NEEDED FOR THE HUD.
         std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AXE_TEXTURE_ID);
-        assert(axe_texture);
+        if (!axe_texture)
+        {
+            return nullptr;
+        }
+
         std::shared_ptr<GRAPHICS::Texture> wood_log_texture = Assets->GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID);
-        assert(wood_log_texture);
+        if (!wood_log_texture)
+        {
+            return nullptr;
+        }
 
         // CALCULATE THE TEXT BOX DIMENSIONS.
         unsigned int text_box_width_in_pixels = screen_width_in_pixels;
@@ -257,7 +276,11 @@ namespace STATES
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
         MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
         MAPS::TileMap* current_tile_map = map_grid.GetTileMap(camera_view_center.X, camera_view_center.Y);
-        assert(current_tile_map);
+        if (!current_tile_map)
+        {
+            // A current tile map is required for updating.
+            return;
+        }
 
         // UPDATE THE TEXT BOX IF IT IS VISIBLE.
         // If the text box is currently being displayed, then it should capture any user input.
@@ -679,7 +702,11 @@ namespace STATES
             // BUILD A PIECE OF THE ARK IF NOAH STEPPED ONTO AN APPROPRIATE SPOT.
             MATH::Vector2f noah_world_position = NoahPlayer->GetWorldPosition();
             MAPS::TileMap* tile_map_underneath_noah = map_grid.GetTileMap(noah_world_position.X, noah_world_position.Y);
-            assert(tile_map_underneath_noah);
+            if (!tile_map_underneath_noah)
+            {
+                // If no tile map exists, then Noah couldn't have stepped on an exit point.
+                return nullptr;
+            }
             
             // An ark piece only needs to be built once and requires wood to be built.
             OBJECTS::ArkPiece* ark_piece = tile_map_underneath_noah->GetArkPieceAtWorldPosition(noah_world_position);
@@ -695,18 +722,20 @@ namespace STATES
 
                 // When building an ark piece, a dust cloud should appear.
                 std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = Assets->GetTexture(RESOURCES::DUST_CLOUD_TEXTURE_ID);
-                assert(dust_cloud_texture);
-                OBJECTS::DustCloud dust_cloud(dust_cloud_texture);
+                if (dust_cloud_texture)
+                {
+                    OBJECTS::DustCloud dust_cloud(dust_cloud_texture);
 
-                // The dust cloud should be positioned over the ark piece.
-                MATH::Vector2f dust_cloud_center_world_position = ark_piece->Sprite.GetWorldPosition();
-                dust_cloud.Sprite.SetWorldPosition(dust_cloud_center_world_position);
+                    // The dust cloud should be positioned over the ark piece.
+                    MATH::Vector2f dust_cloud_center_world_position = ark_piece->Sprite.GetWorldPosition();
+                    dust_cloud.Sprite.SetWorldPosition(dust_cloud_center_world_position);
 
-                // The dust cloud should start animating immediately.
-                dust_cloud.Sprite.Play();
+                    // The dust cloud should start animating immediately.
+                    dust_cloud.Sprite.Play();
 
-                // The dust cloud needs to be added to the tile map so that it gets updated.
-                tile_map_underneath_noah->DustClouds.push_back(dust_cloud);
+                    // The dust cloud needs to be added to the tile map so that it gets updated.
+                    tile_map_underneath_noah->DustClouds.push_back(dust_cloud);
+                }
 
                 // Play a sound to indicate a piece of the ark is being built.
                 Speakers->PlaySound(RESOURCES::ARK_BUILDING_SOUND_ID);

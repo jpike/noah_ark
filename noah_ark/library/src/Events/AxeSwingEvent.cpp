@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Core/NullChecking.h"
 #include "Events/AxeSwingEvent.h"
 
 namespace EVENTS
@@ -9,12 +9,7 @@ namespace EVENTS
     Axe(axe)
     {
         // MAKE SURE AN AXE WAS PROVIDED.
-        bool axe_exists = (nullptr != Axe);
-        if (!axe_exists)
-        {
-            // Provide visibility into the error.
-            throw std::invalid_argument("Null axe given to axe swing event.");
-        }
+        CORE::ThrowInvalidArgumentExceptionIfNull(Axe, "Null axe given to axe swing event.");
     }
 
     /// Determines if the axe is fully swung out.

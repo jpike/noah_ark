@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cassert>
 #include <random>
 
 namespace MATH
@@ -62,7 +61,6 @@ namespace MATH
         NumberType number_count_in_range = max - min + 1;
         NumberType random_number = RandomNumberLessThan(number_count_in_range);
         NumberType random_number_in_range = min + random_number;
-        assert(random_number_in_range >= min && random_number_in_range <= max);
         return random_number_in_range;
     }
 

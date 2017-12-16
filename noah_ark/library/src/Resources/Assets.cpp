@@ -1,4 +1,3 @@
-#include <cassert>
 #include <cstdint>
 #include <future>
 #include <vector>

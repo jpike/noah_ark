@@ -1,4 +1,3 @@
-#include <cassert>
 #include "Objects/Animal.h"
 
 namespace OBJECTS
@@ -78,7 +77,6 @@ namespace OBJECTS
             case AnimalSpecies::WOLF:
                 return false;
             default:
-                assert(false);
                 // Assume it isn't clean.
                 return false;
         }

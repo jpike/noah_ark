@@ -1,4 +1,3 @@
-#include <cassert>
 #include <chrono>
 #include <exception>
 #include <memory>
@@ -42,11 +41,17 @@ void PopulateOverworld(
 {
     // LOAD THE TILESET TEXTURE.
     std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::MAIN_TILESET_TEXTURE_ID);
-    assert(tileset_texture);
+    if (!tileset_texture)
+    {
+        return;
+    }
 
     // LOAD THE TREE TEXTURE.
     std::shared_ptr<GRAPHICS::Texture> tree_texture = assets.GetTexture(RESOURCES::TREE_TEXTURE_ID);
-    assert(tree_texture);
+    if (!tree_texture)
+    {
+        return;
+    }
 
     // CREATE THE TILESET.
     MAPS::Tileset tileset(tileset_texture);
@@ -103,7 +108,6 @@ void PopulateOverworld(
                     bool tile_exists_in_tileset = (nullptr != tile);
                     if (!tile_exists_in_tileset)
                     {
-                        assert(tile_exists_in_tileset);
                         // Skip to trying to create the next tile.  The layer
                         // simply won't have any tile at this location.
                         continue;
@@ -119,38 +123,39 @@ void PopulateOverworld(
             {
                 // GET THE ARK TEXTURE.
                 std::shared_ptr<GRAPHICS::Texture> ark_texture = assets.GetTexture(RESOURCES::ARK_TEXTURE_ID);
-                assert(ark_texture);
-
-                // CREATE PIECES IN THE ARK LAYER.
-                for (unsigned int current_tile_y = 0;
-                    current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
-                    ++current_tile_y)
+                if (ark_texture)
                 {
-                    // CREATE ARK PIECES FOR THIS ROW.
-                    for (unsigned int current_tile_x = 0;
-                        current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
-                        ++current_tile_x)
+                    // CREATE PIECES IN THE ARK LAYER.
+                    for (unsigned int current_tile_y = 0;
+                        current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
+                        ++current_tile_y)
                     {
-                        // CHECK IF THE TILE ID IS VALID.
-                        // Some tiles in this layer may not be for valid ark pieces.
-                        MAPS::TileId tile_id = (*tile_map_data.ArkLayer)(current_tile_x, current_tile_y);
-                        bool tild_id_valid = (tile_id > 0);
-                        if (!tild_id_valid)
+                        // CREATE ARK PIECES FOR THIS ROW.
+                        for (unsigned int current_tile_x = 0;
+                            current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
+                            ++current_tile_x)
                         {
-                            continue;
+                            // CHECK IF THE TILE ID IS VALID.
+                            // Some tiles in this layer may not be for valid ark pieces.
+                            MAPS::TileId tile_id = (*tile_map_data.ArkLayer)(current_tile_x, current_tile_y);
+                            bool tild_id_valid = (tile_id > 0);
+                            if (!tild_id_valid)
+                            {
+                                continue;
+                            }
+
+                            // CREATE THE ARK PIECE.
+                            OBJECTS::ArkPiece ark_piece(tile_id, ark_texture);
+                            MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
+                            float tile_left_x_position = static_cast<float>(current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
+                            float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;
+                            float tile_top_y_position = static_cast<float>(current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
+                            float ark_piece_world_y_position = map_top_world_position + tile_top_y_position + ark_piece_local_center.Y;
+                            ark_piece.Sprite.SetWorldPosition(ark_piece_world_x_position, ark_piece_world_y_position);
+
+                            // ADD THE ARK PIECE TO THE TILE MAP.
+                            tile_map.ArkPieces.push_back(ark_piece);
                         }
-
-                        // CREATE THE ARK PIECE.
-                        OBJECTS::ArkPiece ark_piece(tile_id, ark_texture);
-                        MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
-                        float tile_left_x_position = static_cast<float>(current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
-                        float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;
-                        float tile_top_y_position = static_cast<float>(current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
-                        float ark_piece_world_y_position = map_top_world_position + tile_top_y_position + ark_piece_local_center.Y;
-                        ark_piece.Sprite.SetWorldPosition(ark_piece_world_x_position, ark_piece_world_y_position);
-
-                        // ADD THE ARK PIECE TO THE TILE MAP.
-                        tile_map.ArkPieces.push_back(ark_piece);
                     }
                 }
             }
@@ -237,7 +242,10 @@ void PopulateArkInterior(RESOURCES::Assets& assets, MAPS::MultiTileMapGrid& ark_
 {
     // LOAD THE TILESET TEXTURE.
     std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::MAIN_TILESET_TEXTURE_ID);
-    assert(tileset_texture);
+    if (!tileset_texture)
+    {
+        return;
+    }
 
     // CREATE THE TILESET.
     MAPS::Tileset tileset(tileset_texture);
@@ -287,7 +295,6 @@ void PopulateArkInterior(RESOURCES::Assets& assets, MAPS::MultiTileMapGrid& ark_
             bool tile_exists_in_tileset = (nullptr != tile);
             if (!tile_exists_in_tileset)
             {
-                assert(tile_exists_in_tileset);
                 // Skip to trying to create the next tile.  The layer
                 // simply won't have any tile at this location.
                 continue;
@@ -471,9 +478,16 @@ int main(int argumentCount, char* arguments[])
         // quick startup time for the game can be maintained, showing the intro
         // sequence while other assets are being loaded.
         auto font = assets->GetFont(RESOURCES::FONT_TEXTURE_ID);
-        assert(font);
+        if (!font)
+        {
+            return EXIT_CODE_FAILURE_LOADING_FONT;
+        }
+
         auto colored_texture_shader = assets->GetShader(RESOURCES::ShaderId::COLORED_TEXTURE);
-        assert(colored_texture_shader);
+        if (!colored_texture_shader)
+        {
+            return EXIT_CODE_FAILURE_LOADING_ASSETS;
+        }
 
         // LOAD THE SOUND EFFECTS/MUSIC.
         std::future< std::shared_ptr<AUDIO::Speakers> > speakers_being_loaded = std::async(LoadSounds, std::ref(*assets));
@@ -491,7 +505,10 @@ int main(int argumentCount, char* arguments[])
         INPUT_CONTROL::InputController input_controller;
         STATES::IntroSequence intro_sequence;
         auto speakers = speakers_being_loaded.get();
-        assert(speakers);
+        if (!speakers)
+        {
+            return EXIT_FAILURE;
+        }
         speakers->PlayMusic(RESOURCES::INTRO_MUSIC_ID);
         STATES::TitleScreen title_screen;
         STATES::CreditsScreen credits_screen;
@@ -605,15 +622,20 @@ int main(int argumentCount, char* arguments[])
                             }
 
                             // INITIALIZE THE GAMEPLAY STATE.
-                            assert(world_being_loaded.valid());
                             auto world = world_being_loaded.get();
-                            assert(world);
+                            if (!world)
+                            {
+                                return EXIT_FAILURE;
+                            }
 
                             bool gameplay_state_initialized = pre_flood_gameplay_state.Initialize(
                                 SCREEN_WIDTH_IN_PIXELS,
                                 *saved_game_data,
                                 world);
-                            assert(gameplay_state_initialized);
+                            if (!gameplay_state_initialized)
+                            {
+                                return EXIT_FAILURE;
+                            }
 
                             // FOCUS THE CAMERA ON THE PLAYER.
                             MATH::Vector2f player_start_world_position = pre_flood_gameplay_state.NoahPlayer->GetWorldPosition();

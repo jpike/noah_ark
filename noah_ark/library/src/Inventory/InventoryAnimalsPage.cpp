@@ -1,4 +1,3 @@
-#include <cassert>
 #include "Core/NullChecking.h"
 #include "Inventory/InventoryAnimalsPage.h"
 #include "Resources/AnimalGraphics.h"
@@ -126,16 +125,18 @@ namespace INVENTORY
             // It should appear in the left-top corner of the box.
             OBJECTS::AnimalType male_animal_type(species, OBJECTS::AnimalGender::MALE);
             std::shared_ptr<GRAPHICS::AnimatedSprite> male_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(male_animal_type, *Assets);
-            assert(male_animal_sprite);
-            MATH::Vector2f male_animal_icon_left_top_screen_position = box_screen_rectangle.GetLeftXTopYPosition();
-            renderer.RenderGuiIcon(male_animal_sprite->Sprite, male_animal_icon_left_top_screen_position);
+            if (male_animal_sprite)
+            {
+                MATH::Vector2f male_animal_icon_left_top_screen_position = box_screen_rectangle.GetLeftXTopYPosition();
+                renderer.RenderGuiIcon(male_animal_sprite->Sprite, male_animal_icon_left_top_screen_position);
 
-            // RENDER THE COLLECTED COUNT FOR THE MALE ANIMAL.
-            // It should appear just to the right of the male animal icon.
-            std::string male_collected_count_text = "x" + std::to_string(species_male_animal_collected_count);
-            MATH::Vector2f male_collected_count_left_top_screen_position = male_animal_icon_left_top_screen_position;
-            male_collected_count_left_top_screen_position.X += male_animal_sprite->Sprite.GetWidthInPixels();
-            renderer.RenderText(male_collected_count_text, male_collected_count_left_top_screen_position);
+                // RENDER THE COLLECTED COUNT FOR THE MALE ANIMAL.
+                // It should appear just to the right of the male animal icon.
+                std::string male_collected_count_text = "x" + std::to_string(species_male_animal_collected_count);
+                MATH::Vector2f male_collected_count_left_top_screen_position = male_animal_icon_left_top_screen_position;
+                male_collected_count_left_top_screen_position.X += male_animal_sprite->Sprite.GetWidthInPixels();
+                renderer.RenderText(male_collected_count_text, male_collected_count_left_top_screen_position);
+            }
         }
 
         // RENDER INFORMATION ABOUT ANY COLLECTED FEMALE ANIMALS.
@@ -146,17 +147,19 @@ namespace INVENTORY
             // It should appear in the left-bottom corner of the box.
             OBJECTS::AnimalType female_animal_type(species, OBJECTS::AnimalGender::FEMALE);
             std::shared_ptr<GRAPHICS::AnimatedSprite> female_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(female_animal_type, *Assets);
-            assert(female_animal_sprite);
-            MATH::Vector2f female_animal_icon_left_top_screen_position = box_screen_rectangle.GetLeftXBottomYPosition();
-            female_animal_icon_left_top_screen_position.Y -= female_animal_sprite->Sprite.GetHeightInPixels();
-            renderer.RenderGuiIcon(female_animal_sprite->Sprite, female_animal_icon_left_top_screen_position);
+            if (female_animal_sprite)
+            {
+                MATH::Vector2f female_animal_icon_left_top_screen_position = box_screen_rectangle.GetLeftXBottomYPosition();
+                female_animal_icon_left_top_screen_position.Y -= female_animal_sprite->Sprite.GetHeightInPixels();
+                renderer.RenderGuiIcon(female_animal_sprite->Sprite, female_animal_icon_left_top_screen_position);
 
-            // RENDER THE COLLECTED COUNT FOR THE FEMALE ANIMAL.
-            // It should appear just to the right of the female animal icon.
-            std::string female_collected_count_text = "x" + std::to_string(species_female_animal_collected_count);
-            MATH::Vector2f female_collected_count_left_top_screen_position = female_animal_icon_left_top_screen_position;
-            female_collected_count_left_top_screen_position.X += female_animal_sprite->Sprite.GetWidthInPixels();
-            renderer.RenderText(female_collected_count_text, female_collected_count_left_top_screen_position);
+                // RENDER THE COLLECTED COUNT FOR THE FEMALE ANIMAL.
+                // It should appear just to the right of the female animal icon.
+                std::string female_collected_count_text = "x" + std::to_string(species_female_animal_collected_count);
+                MATH::Vector2f female_collected_count_left_top_screen_position = female_animal_icon_left_top_screen_position;
+                female_collected_count_left_top_screen_position.X += female_animal_sprite->Sprite.GetWidthInPixels();
+                renderer.RenderText(female_collected_count_text, female_collected_count_left_top_screen_position);
+            }
         }
     }
 }

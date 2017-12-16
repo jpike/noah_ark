@@ -1,4 +1,4 @@
-#include <stdexcept>
+#include "Core/NullChecking.h"
 #include "Graphics/Gui/Font.h"
 
 namespace GRAPHICS
@@ -12,11 +12,7 @@ namespace GUI
         Texture(texture)
     {
         // MAKE SURE A TEXTURE EXISTS.
-        bool texture_exists = (nullptr != Texture);
-        if (!texture_exists)
-        {
-            throw std::invalid_argument("Texture provided for font must not be null.");
-        }
+        CORE::ThrowInvalidArgumentExceptionIfNull(Texture, "Texture provided for font must not be null.");       
     }
 
     /// Gets the glyph for the specified character.

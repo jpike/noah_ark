@@ -1,4 +1,3 @@
-#include <cassert>
 #include "Core/NullChecking.h"
 #include "Core/String.h"
 #include "Debugging/DebugConsole.h"
@@ -479,8 +478,13 @@ namespace GRAPHICS
         camera_view.setSize(camera_bounds.GetWidth(), camera_bounds.GetHeight());
         Screen.RenderTarget->setView(camera_view);
 
+        // GET THE CURRENT TILE MAP.
         const MAPS::TileMap* current_tile_map = tile_map_grid.GetTileMap(camera_view_center.X, camera_view_center.Y);
-        assert(current_tile_map);
+        if (!current_tile_map)
+        {
+            // A current tile map is required for rendering.
+            return;
+        }
 
         // RENDER THE CURRENT TILE MAP.
         unsigned int min_tile_map_row = current_tile_map->GridRowIndex;

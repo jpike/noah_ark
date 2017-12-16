@@ -1,5 +1,3 @@
-#include <cassert>
-#include <stdexcept>
 #include "Core/String.h"
 #include "Graphics/Gui/TextBox.h"
 
@@ -82,7 +80,6 @@ namespace GUI
                 }
 
                 // The current word has been added to a page, so it is no longer needed.
-                assert(word_added);
                 words.pop_front();
             }
         }

@@ -557,11 +557,27 @@ int main(int argumentCount, char* arguments[])
             sf::Event event;
             while (window->pollEvent(event))
             {
-                // Handle the current event based on its type.
+                // HANDLE THE CURRENT EVENT BASED ON ITS TYPE.
                 switch (event.type)
                 {
                     case sf::Event::Closed:
+                        // CLOSE THE WINDOW.
+                        // The game will end later.
                         window->close();
+                        break;
+                    case sf::Event::LostFocus:
+                        // DISABLE INPUT.
+                        // This will prevent the user from accidentally moving
+                        // the player until the window regains focus.
+                        DEBUGGING::DebugConsole::WriteLine("Disabling input.");
+                        input_controller.DisableInput();
+                        break;
+                    case sf::Event::GainedFocus:
+                        // ENABLE INPUT.
+                        // This will allow the user to resume moving the player
+                        // now that the window has focus.
+                        DEBUGGING::DebugConsole::WriteLine("Enabling input.");
+                        input_controller.EnableInput();
                         break;
                 }
             }

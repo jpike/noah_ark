@@ -172,13 +172,34 @@ namespace STATES
         }
         else
         {
-            // RENDER THE PLAYER.
-            NoahPlayer->Sprite.Render(renderer.Screen);
-
-            // The axe should only be rendered if it is swinging.
-            if (NoahPlayer->Inventory->Axe->IsSwinging())
+            // CHECK WHICH DIRECTION NOAH IS FACING.
+            // If he's facing up, the axe needs to be rendered first
+            // so that it appears in-front of him (behind him from
+            // the player's view).
+            bool noah_facing_up = (CORE::Direction::UP == NoahPlayer->FacingDirection);
+            if (noah_facing_up)
             {
-                NoahPlayer->Inventory->Axe->Sprite.Render(renderer.Screen);
+                // RENDER THE AXE.
+                // The axe should only be rendered if it is swinging.
+                if (NoahPlayer->Inventory->Axe->IsSwinging())
+                {
+                    NoahPlayer->Inventory->Axe->Sprite.Render(renderer.Screen);
+                }
+
+                // RENDER THE PLAYER.
+                NoahPlayer->Sprite.Render(renderer.Screen);
+            }
+            else
+            {
+                // RENDER THE PLAYER.
+                NoahPlayer->Sprite.Render(renderer.Screen);
+
+                // RENDER THE AXE.
+                // The axe should only be rendered if it is swinging.
+                if (NoahPlayer->Inventory->Axe->IsSwinging())
+                {
+                    NoahPlayer->Inventory->Axe->Sprite.Render(renderer.Screen);
+                }
             }
 
             // RENDER THE HUD.

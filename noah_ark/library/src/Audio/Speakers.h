@@ -1,10 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <SFML/Audio.hpp>
 #include "Audio/SoundEffect.h"
+#include "Resources/AssetId.h"
 
 namespace AUDIO
 {
@@ -18,21 +20,22 @@ namespace AUDIO
     {
     public:
         // SOUND EFFECTS.
-        void AddSound(const std::string& sound_id, const std::shared_ptr<sf::SoundBuffer>& audio_samples);
-        bool SoundIsPlaying(const std::string& sound_id);
-        void PlaySound(const std::string& sound_id);
+        void AddSound(const RESOURCES::AssetId sound_id, const std::shared_ptr<sf::SoundBuffer>& audio_samples);
+        bool SoundIsPlaying(const RESOURCES::AssetId sound_id);
+        void PlaySound(const RESOURCES::AssetId sound_id);
 
         // MUSIC.
-        void AddMusic(const std::string& music_id, const std::shared_ptr<sf::Music>& music);
-        void PlayMusic(const std::string& music_id);
-        void StopMusic(const std::string& music_id);
+        void AddMusic(const RESOURCES::AssetId music_id, const std::shared_ptr<sf::Music>& music);
+        void PlayMusic(const RESOURCES::AssetId music_id);
+        void StopMusic(const RESOURCES::AssetId music_id);
 
     private:
+        // MEMBER VARIABLES.
+        /// A mutex to provide thread-safety for this class.
+        std::recursive_mutex SpeakerMutex = {};
         /// The sound effects currently loaded into the speakers.
-        /// Mapped by sound ID.
-        std::unordered_map<std::string, AUDIO::SoundEffect> Sounds = {};
+        std::unordered_map<RESOURCES::AssetId, AUDIO::SoundEffect> Sounds = {};
         /// THe music currently loaded into the speakers.
-        /// Mapped by music ID.
-        std::unordered_map< std::string, std::shared_ptr<sf::Music> > Music = {};
+        std::unordered_map< RESOURCES::AssetId, std::shared_ptr<sf::Music> > Music = {};
     };
 }

@@ -83,7 +83,11 @@
     <ClInclude Include="src\Objects\WoodLogs.h" />
     <ClInclude Include="src\Resources\AnimalGraphics.h" />
     <ClInclude Include="src\Resources\AnimalSounds.h" />
+    <ClInclude Include="src\Resources\AssetDefinition.h" />
+    <ClInclude Include="src\Resources\AssetId.h" />
+    <ClInclude Include="src\Resources\AssetPackage.h" />
     <ClInclude Include="src\Resources\Assets.h" />
+    <ClInclude Include="src\Resources\AssetType.h" />
     <ClInclude Include="src\Resources\FoodGraphics.h" />
     <ClInclude Include="src\States\CreditsScreen.h" />
     <ClInclude Include="src\States\PreFloodGameplayState.h" />
@@ -146,6 +150,9 @@
     <ClCompile Include="src\Objects\WoodLogs.cpp" />
     <ClCompile Include="src\Resources\AnimalGraphics.cpp" />
     <ClCompile Include="src\Resources\AnimalSounds.cpp" />
+    <ClCompile Include="src\Resources\AssetDefinition.cpp" />
+    <ClCompile Include="src\Resources\AssetId.cpp" />
+    <ClCompile Include="src\Resources\AssetPackage.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
     <ClCompile Include="src\Resources\FoodGraphics.cpp" />
     <ClCompile Include="src\States\CreditsScreen.cpp" />
@@ -215,10 +222,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>$(ProjectName)_$(Configuration)</TargetName>
     <LibraryPath>$(SFML_64_BIT_DIR)\lib\vc;$(LibraryPath)</LibraryPath>
-    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <IncludePath>./src;($ProjectDir)src;$(SFML_64_BIT_DIR)\include;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+    <EnableCppCoreCheck>true</EnableCppCoreCheck>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>./src;($ProjectDir)src;$(SFML_32_BIT_DIR)\include;$(IncludePath)</IncludePath>
@@ -233,6 +241,7 @@
     <IncludePath>./src;($ProjectDir)src;$(SFML_64_BIT_DIR)\include;$(IncludePath)</IncludePath>
     <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+    <EnableCppCoreCheck>true</EnableCppCoreCheck>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

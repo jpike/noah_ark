@@ -1,35 +1,58 @@
 #include <cstdint>
 #include <future>
 #include <vector>
+#include "Debugging/DebugConsole.h"
 #include "Resources/Assets.h"
 
 namespace RESOURCES
 {
-    // ASSET IDs.
-    // For assets that require accessing the filesystem, IDs are currently set to filepaths
-    // (relative to the working directory) to simplify loading.
-    const std::string ANIMAL_TEXTURE_ID = "res/images/animal_sprites.png";
-    const std::string ARK_TEXTURE_ID = "res/images/ark_tile_set.png";
-    const std::string AXE_TEXTURE_ID = "res/images/noah_sprite1.png";
-    const std::string DUST_CLOUD_TEXTURE_ID = "res/images/tree_sprite1.png";
-    const std::string FONT_TEXTURE_ID = "res/images/main_font1.png";
-    const std::string FOOD_TEXTURE_ID = "res/images/food_sprites.png";
-    const std::string MAIN_TILESET_TEXTURE_ID = "res/images/main_tile_set.png";
-    const std::string NOAH_TEXTURE_ID = "res/images/noah_sprite1.png";
-    const std::string TREE_TEXTURE_ID = "res/images/tree_sprite1.png";
-    const std::string WOOD_LOG_TEXTURE_ID = "res/images/tree_sprite1.png";
-    const std::string ARK_BUILDING_SOUND_ID = "res/sounds/ark_build_sound1.wav";
-    const std::string AXE_HIT_SOUND_ID = "res/sounds/axe_tree_hit1.wav";
-    const std::string COLLECT_BIBLE_VERSE_SOUND_ID = "res/sounds/collect_bible_verse1.wav";
-    const std::string FOOD_PICKUP_SOUND_ID = "res/sounds/food_pickup_sound.wav";
-    const std::string TREE_SHAKE_SOUND_ID = "res/sounds/tree_shake4.wav";
-    const std::string INTRO_MUSIC_ID = "res/sounds/NoahsArkIntro1_80PercentSpeedWithFadeout.wav";
-    const std::string OVERWORLD_BACKGROUND_MUSIC_ID = "res/sounds/overworld_music.wav";
+    /// Loads assets in the specified asset package into this collection.
+    /// @param[in]  asset_package - The package of assets to load.
+    /// @return True if all assets in the package are loaded successfully; false otherwise.
+    bool Assets::Load(const AssetPackage& asset_package)
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
+        // LOAD EACH ASSET IN THE PACKAGE.
+        for (const AssetDefinition& asset_definition : asset_package.Assets)
+        {
+            // LOAD THE ASSET BASED ON IT'S TYPE.
+            bool asset_loaded = false;
+            switch (asset_definition.Type)
+            {
+                case AssetType::FONT:
+                    // LOAD THE FONT.
+                    asset_loaded = static_cast<bool>(GetFont(asset_definition.Id));
+                    break;
+                case AssetType::MUSIC:
+                    // LOAD THE MUSIC.
+                    asset_loaded = static_cast<bool>(GetMusic(asset_definition.Id));
+                    break;
+                case AssetType::SHADER:
+                    // LOAD THE SHADER.
+                    asset_loaded = static_cast<bool>(GetShader(asset_definition.Id));
+                    break;
+                default:
+                    // The asset can be loaded if it's type isn't known.
+                    asset_loaded = false;
+            }
+
+            // ABORT IF THE ASSET FAILED TO BE LOADED.
+            if (!asset_loaded)
+            {
+                return false;
+            }
+        }
+
+        // INDICATE THAT ALL ASSETS WERE LOADED SUCCESSFULLY.
+        return true;
+    }
 
     /// Attempts to retrieve the texture identified by the specified ID.
     /// @param[in]  texture_id - The ID of the texture to load.
     /// @return The requested texture, if successfully loaded; null otherwise.
-    std::shared_ptr<GRAPHICS::Texture> Assets::GetTexture(const std::string& texture_id)
+    std::shared_ptr<GRAPHICS::Texture> Assets::GetTexture(const AssetId texture_id)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(AssetMutex);
@@ -42,10 +65,17 @@ namespace RESOURCES
             return id_with_texture->second;
         }
 
+        // GET THE TEXTURE FILEPATH.
+        const auto texture_id_with_filepath = ASSET_FILEPATHS_BY_ID.find(texture_id);
+        bool texture_filepath_found = (ASSET_FILEPATHS_BY_ID.cend() != texture_id_with_filepath);
+        if (!texture_filepath_found)
+        {
+            // The filepath is needed to load the texture.
+            return nullptr;
+        }
+
         // TRY LOADING THE TEXTURE.
-        // Texture IDs map directly to filepaths.
-        const auto& texture_filepath = texture_id;
-        std::shared_ptr<GRAPHICS::Texture> texture = GRAPHICS::Texture::Load(texture_filepath);
+        std::shared_ptr<GRAPHICS::Texture> texture = GRAPHICS::Texture::Load(texture_id_with_filepath->second);
         bool texture_loaded = (nullptr != texture);
         if (texture_loaded)
         {
@@ -63,7 +93,7 @@ namespace RESOURCES
     /// Attempts to retrieve the font identified by the specified texture ID.
     /// @param[in]  font_texture_id - The ID of the texture associated with the font.
     /// @return The requested font, if successfully loaded; null otherwise.
-    std::shared_ptr<GRAPHICS::GUI::Font> Assets::GetFont(const std::string& font_texture_id)
+    std::shared_ptr<GRAPHICS::GUI::Font> Assets::GetFont(const AssetId font_texture_id)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(AssetMutex);
@@ -96,7 +126,7 @@ namespace RESOURCES
     /// Attempts to get the specified shader.
     /// @param[in]  shader_id - The ID of the shader to get.
     /// @return The specified shader, if successfully loaded; null otherwise.
-    std::shared_ptr<sf::Shader> Assets::GetShader(const ShaderId shader_id)
+    std::shared_ptr<sf::Shader> Assets::GetShader(const AssetId shader_id)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(AssetMutex);
@@ -114,7 +144,7 @@ namespace RESOURCES
         std::shared_ptr<sf::Shader> shader = std::make_shared<sf::Shader>();
         switch (shader_id)
         {
-            case ShaderId::COLORED_TEXTURE:
+            case AssetId::COLORED_TEXTURE_SHADER:
             {
                 // LOAD THE SHADER FROM ITS CODE.
                 const std::string COLORED_TEXTURE_FRAGMENT_SHADER_CODE = R"(
@@ -151,7 +181,7 @@ namespace RESOURCES
     /// but it may share the same buffer of audio samples as another instance.
     /// @param[in]  sound_id - The ID of the sound to load.
     /// @return The requested sound effect, if successfully loaded; null otherwise.
-    std::shared_ptr<sf::SoundBuffer> Assets::GetSound(const std::string& sound_id)
+    std::shared_ptr<sf::SoundBuffer> Assets::GetSound(const AssetId sound_id)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(AssetMutex);
@@ -165,10 +195,19 @@ namespace RESOURCES
             return id_with_audio_samples->second;
         }
 
+        // GET THE SOUND FILEPATH.
+        const auto sound_id_with_filepath = ASSET_FILEPATHS_BY_ID.find(sound_id);
+        bool sound_filepath_found = (ASSET_FILEPATHS_BY_ID.cend() != sound_id_with_filepath);
+        if (!sound_filepath_found)
+        {
+            // The filepath is needed to load the sound.
+            return nullptr;
+        }
+
         // LOAD THE AUDIO SAMPLES INTO A BUFFER.
         // The sound ID maps directly to a filepath.
         std::shared_ptr<sf::SoundBuffer> sound_buffer = std::make_shared<sf::SoundBuffer>();
-        bool audio_samples_loaded = sound_buffer->loadFromFile(sound_id);
+        bool audio_samples_loaded = sound_buffer->loadFromFile(sound_id_with_filepath->second);
         if (!audio_samples_loaded)
         {
             return nullptr;
@@ -184,7 +223,7 @@ namespace RESOURCES
     /// been loaded, the previously loaded instance will be returned.
     /// @param[in]  music_id - The ID of the music to load.
     /// @return The requested music, if successfully loaded; null otherwise.
-    std::shared_ptr<sf::Music> Assets::GetMusic(const std::string& music_id)
+    std::shared_ptr<sf::Music> Assets::GetMusic(const AssetId music_id)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(AssetMutex);
@@ -198,10 +237,19 @@ namespace RESOURCES
             return id_with_music->second;
         }
 
+        // GET THE MUSIC FILEPATH.
+        const auto music_id_with_filepath = ASSET_FILEPATHS_BY_ID.find(music_id);
+        bool music_filepath_found = (ASSET_FILEPATHS_BY_ID.cend() != music_id_with_filepath);
+        if (!music_filepath_found)
+        {
+            // The filepath is needed to load the music.
+            return nullptr;
+        }
+
         // LOAD THE MUSIC.
         // The muisc ID maps directly to a filepath.
         std::shared_ptr<sf::Music> music = std::make_shared<sf::Music>();
-        bool music_loaded = music->openFromFile(music_id);
+        bool music_loaded = music->openFromFile(music_id_with_filepath->second);
         if (!music_loaded)
         {
             return nullptr;

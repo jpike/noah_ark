@@ -11,7 +11,7 @@ namespace RESOURCES
         Assets& assets)
     {
         // GET THE ANIMAL TEXTURE.
-        std::shared_ptr<GRAPHICS::Texture> animal_texture = assets.GetTexture(RESOURCES::ANIMAL_TEXTURE_ID);
+        std::shared_ptr<GRAPHICS::Texture> animal_texture = assets.GetTexture(RESOURCES::AssetId::ANIMAL_TEXTURE);
         if (!animal_texture)
         {
             return nullptr;

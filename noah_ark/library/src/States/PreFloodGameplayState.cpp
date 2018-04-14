@@ -22,7 +22,7 @@ namespace STATES
         Assets(assets),
         Hud(),
         CurrentMapGrid(nullptr),
-        TileMapEditorGui(assets->GetTexture(RESOURCES::MAIN_TILESET_TEXTURE_ID))
+        TileMapEditorGui(assets->GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE))
     {
         // MAKE SURE PARAMETERS WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(Speakers, "Speakers cannot be null for gameplay state.");
@@ -98,7 +98,7 @@ namespace STATES
             std::inserter(BibleVersesLeftToFind, BibleVersesLeftToFind.begin()));
 
         // START PLAYING THE BACKGROUND MUSIC.
-        Speakers->PlayMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID);
+        Speakers->PlayMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
 
         // INDICATE WHETHER OR NOT INITIALIZATION SUCCEEDED.
         bool initialization_succeeded = hud_initialized;
@@ -192,14 +192,14 @@ namespace STATES
     std::shared_ptr<OBJECTS::Noah> PreFloodGameplayState::InitializePlayer(const SavedGameData& saved_game_data)
     {
         // GET THE TEXTURE FOR NOAH.
-        std::shared_ptr<GRAPHICS::Texture> noah_texture = Assets->GetTexture(RESOURCES::NOAH_TEXTURE_ID);
+        std::shared_ptr<GRAPHICS::Texture> noah_texture = Assets->GetTexture(RESOURCES::AssetId::NOAH_TEXTURE);
         if (!noah_texture)
         {
             return nullptr;
         }
 
         // GET THE AXE TEXTURE FOR NOAH.
-        std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AXE_TEXTURE_ID);
+        std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AssetId::AXE_TEXTURE);
         if (!axe_texture)
         {
             return nullptr;
@@ -234,13 +234,13 @@ namespace STATES
         const std::shared_ptr<OBJECTS::Noah>& noah_player)
     {
         // GET ASSETS NEEDED FOR THE HUD.
-        std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AXE_TEXTURE_ID);
+        std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AssetId::AXE_TEXTURE);
         if (!axe_texture)
         {
             return nullptr;
         }
 
-        std::shared_ptr<GRAPHICS::Texture> wood_log_texture = Assets->GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID);
+        std::shared_ptr<GRAPHICS::Texture> wood_log_texture = Assets->GetTexture(RESOURCES::AssetId::WOOD_LOG_TEXTURE);
         if (!wood_log_texture)
         {
             return nullptr;
@@ -351,10 +351,10 @@ namespace STATES
             {
                 // ONLY START PLAYING THE SOUND IF IT ISN'T ALREADY PLAYING.
                 // This results in a smoother sound experience.
-                bool tree_shake_sound_playing = Speakers->SoundIsPlaying(RESOURCES::TREE_SHAKE_SOUND_ID);
+                bool tree_shake_sound_playing = Speakers->SoundIsPlaying(RESOURCES::AssetId::TREE_SHAKE_SOUND);
                 if (!tree_shake_sound_playing)
                 {
-                    Speakers->PlaySound(RESOURCES::TREE_SHAKE_SOUND_ID);
+                    Speakers->PlaySound(RESOURCES::AssetId::TREE_SHAKE_SOUND);
                 }
             }
         }
@@ -721,7 +721,7 @@ namespace STATES
                 ark_piece->Built = true;
 
                 // When building an ark piece, a dust cloud should appear.
-                std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = Assets->GetTexture(RESOURCES::DUST_CLOUD_TEXTURE_ID);
+                std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = Assets->GetTexture(RESOURCES::AssetId::DUST_CLOUD_TEXTURE);
                 if (dust_cloud_texture)
                 {
                     OBJECTS::DustCloud dust_cloud(dust_cloud_texture);
@@ -738,7 +738,7 @@ namespace STATES
                 }
 
                 // Play a sound to indicate a piece of the ark is being built.
-                Speakers->PlaySound(RESOURCES::ARK_BUILDING_SOUND_ID);
+                Speakers->PlaySound(RESOURCES::AssetId::ARK_BUILDING_SOUND);
             }
             
             // CHECK IF THE PLAYER STEPPED ON AN EXIT POINT.
@@ -898,7 +898,7 @@ namespace STATES
                     if (bible_verses_remain_to_be_found)
                     {
                         // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
-                        Speakers->PlaySound(RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID);
+                        Speakers->PlaySound(RESOURCES::AssetId::COLLECT_BIBLE_VERSE_SOUND);
 
                         // SELECT A RANDOM BIBLE VERSE.
                         size_t remaining_bible_verse_count = BibleVersesLeftToFind.size();
@@ -940,7 +940,7 @@ namespace STATES
             if (food_intersects_with_noah)
             {
                 // PLAY THE SOUND EFFECT FOR COLLECTING FOOD.
-                Speakers->PlaySound(RESOURCES::FOOD_PICKUP_SOUND_ID);
+                Speakers->PlaySound(RESOURCES::AssetId::FOOD_PICKUP_SOUND);
 
                 // ADD THE FOOD TO THE PLAYER'S INVENTORY.
                 DEBUGGING::DebugConsole::WriteLine("Collected food: ", static_cast<int>(food->Type));

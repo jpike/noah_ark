@@ -298,7 +298,7 @@ namespace OBJECTS
     Animal::Animal(
         const AnimalType& type, 
         const GRAPHICS::AnimatedSprite& sprite,
-        const std::string& sound_id) :
+        const RESOURCES::AssetId sound_id) :
     Type(type),
     Sprite(sprite),
     SoundId(sound_id)

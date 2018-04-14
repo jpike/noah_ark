@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include "Objects/Animal.h"
+#include "Resources/AssetId.h"
 
 namespace RESOURCES
 {
@@ -10,6 +10,6 @@ namespace RESOURCES
     class AnimalSounds
     {
     public:
-        static std::string GetSound(const OBJECTS::AnimalSpecies animal_species);
+        static RESOURCES::AssetId GetSound(const OBJECTS::AnimalSpecies animal_species);
     };
 }

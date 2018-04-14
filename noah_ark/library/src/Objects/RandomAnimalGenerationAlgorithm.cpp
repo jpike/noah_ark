@@ -145,7 +145,7 @@ namespace OBJECTS
         animal_sprite->SetWorldPosition(world_x_position, world_y_position);
 
         // GET THE ANIMAL'S SOUND EFFECT.
-        std::string animal_sound_id = RESOURCES::AnimalSounds::GetSound(animal_type.Species);
+        RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(animal_type.Species);
 
         // CREATE THE ANIMAL.
         std::shared_ptr<Animal> animal = std::make_shared<Animal>(

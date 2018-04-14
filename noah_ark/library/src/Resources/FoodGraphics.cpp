@@ -11,7 +11,7 @@ namespace RESOURCES
         Assets& assets)
     {
         // GET THE FOOD TEXTURE.
-        std::shared_ptr<GRAPHICS::Texture> food_texture = assets.GetTexture(RESOURCES::FOOD_TEXTURE_ID);
+        std::shared_ptr<GRAPHICS::Texture> food_texture = assets.GetTexture(RESOURCES::AssetId::FOOD_TEXTURE);
         if (!food_texture)
         {
             return nullptr;

@@ -3,6 +3,7 @@
 #include <string>
 #include <SFML/System.hpp>
 #include "Graphics/AnimatedSprite.h"
+#include "Resources/AssetId.h"
 
 namespace OBJECTS
 {
@@ -119,7 +120,7 @@ namespace OBJECTS
         explicit Animal(
             const AnimalType& type, 
             const GRAPHICS::AnimatedSprite& sprite,
-            const std::string& sound_id);
+            const RESOURCES::AssetId sound_id);
 
         /// PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The type of the animal.
@@ -127,7 +128,7 @@ namespace OBJECTS
         /// The graphical sprite for the animal.
         GRAPHICS::AnimatedSprite Sprite;
         /// The ID of the sound for the animal (optional).
-        std::string SoundId;
+        RESOURCES::AssetId SoundId;
     };
 }
 

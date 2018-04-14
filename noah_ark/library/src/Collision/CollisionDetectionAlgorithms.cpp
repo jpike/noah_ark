@@ -882,7 +882,7 @@ namespace COLLISION
             if (axe_hit_tree)
             {
                 // PLAY THE SOUND EFFECT FOR THE AXE HITTING A TREE.
-                speakers.PlaySound(RESOURCES::AXE_HIT_SOUND_ID);
+                speakers.PlaySound(RESOURCES::AssetId::AXE_HIT_SOUND);
 
                 // DAMAGE THE TREE.
                 tree->TakeHit();
@@ -923,7 +923,7 @@ namespace COLLISION
                     // PLACE WOOD LOGS WHERE THE TREE WAS
                     // If the texture can't be loaded, then wood logs simply won't be added.
                     // The game will just continue as if no wood could be obtained from the tree.
-                    std::shared_ptr<GRAPHICS::Texture> wood_log_texture = assets.GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID);
+                    std::shared_ptr<GRAPHICS::Texture> wood_log_texture = assets.GetTexture(RESOURCES::AssetId::WOOD_LOG_TEXTURE);
                     bool wood_log_texture_retrieved = (nullptr != wood_log_texture);
                     if (wood_log_texture_retrieved)
                     {
@@ -944,7 +944,7 @@ namespace COLLISION
                     // This signifies the tree being chopped down and turning into wood.
                     // If the resources can't be loaded, then a dust cloud simply won't be added.
                     // The game will just continue as if no wood could be obtained from the tree.
-                    std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = assets.GetTexture(RESOURCES::DUST_CLOUD_TEXTURE_ID);
+                    std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = assets.GetTexture(RESOURCES::AssetId::DUST_CLOUD_TEXTURE);
                     bool dust_cloud_resources_retrieved = (dust_cloud_texture != nullptr);
                     if (dust_cloud_resources_retrieved)
                     {

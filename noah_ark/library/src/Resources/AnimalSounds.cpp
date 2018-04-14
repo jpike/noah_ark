@@ -4,95 +4,95 @@ namespace RESOURCES
 {
     /// Gets the sound effect ID for the animal species, if one exists.
     /// @param[in]  animal_species - The species for which to get the sound effect.
-    /// @return The sound ID for the animal, if one exists (empty otherwise).
-    std::string AnimalSounds::GetSound(const OBJECTS::AnimalSpecies animal_species)
+    /// @return The sound ID for the animal, if one exists (invalid otherwise).
+    RESOURCES::AssetId AnimalSounds::GetSound(const OBJECTS::AnimalSpecies animal_species)
     {
         // GET THE SOUND EFFECT FOR THE SPECIES.
         switch (animal_species)
         {
             case OBJECTS::AnimalSpecies::ALLIGATOR:
-                return "res/sounds/baligator5.wav";
+                return RESOURCES::AssetId::ALLIGATOR_SOUND;
             case OBJECTS::AnimalSpecies::BABOON:
-                return "res/sounds/baboon2.wav";
+                return RESOURCES::AssetId::BABOON_SOUND;
             case OBJECTS::AnimalSpecies::BAT:
-                return "res/sounds/BatsVocalizing-SoundBible.com-1162895834.wav";
+                return RESOURCES::AssetId::BAT_SOUND;
             case OBJECTS::AnimalSpecies::BEAR:
-                return "res/sounds/Bear-SoundBible.com-866204188.wav";
+                return RESOURCES::AssetId::BEAR_SOUND;
             case OBJECTS::AnimalSpecies::BEE:
-                return "res/sounds/Bee-SoundBible.com-914644763.wav";
+                return RESOURCES::AssetId::BEE_SOUND;
             case OBJECTS::AnimalSpecies::BOBCAT:
-                return "res/sounds/BOB-CAT.wav";
+                return RESOURCES::AssetId::BOBCAT_SOUND;
             case OBJECTS::AnimalSpecies::BUTTERFLY:
-                return "res/sounds/Butterfly-SoundBible.com-1530156556.wav";
+                return RESOURCES::AssetId::BUTTERFLY_SOUND;
             case OBJECTS::AnimalSpecies::CAMEL:
-                return "res/sounds/camel5.wav";
+                return RESOURCES::AssetId::CAMEL_SOUND;
             case OBJECTS::AnimalSpecies::CAT:
-                return "res/sounds/CatMeow-SoundBible.com-1453940411.wav";
+                return RESOURCES::AssetId::CAT_SOUND;
             case OBJECTS::AnimalSpecies::CATTLE:
-                return "res/sounds/SingleCow-SoundBible.com-2051754137.wav";
+                return RESOURCES::AssetId::CATTLE_SOUND;
             case OBJECTS::AnimalSpecies::CHEETAH:
-                return "res/sounds/Cheetah5.wav";
+                return RESOURCES::AssetId::CHEETAH_SOUND;
             case OBJECTS::AnimalSpecies::CHICKEN:
-                return "res/sounds/Chicken-SoundBible.com-744739895.wav";
+                return RESOURCES::AssetId::CHICKEN_SOUND;
             case OBJECTS::AnimalSpecies::CHIPMUNK:
-                return "res/sounds/AngryChipmunk-SoundBible.com-980210050.wav";
+                return RESOURCES::AssetId::CHIPMUNK_SOUND;
             case OBJECTS::AnimalSpecies::DEER:
-                return "res/sounds/Elk-SoundBible.com-734134354.wav";
+                return RESOURCES::AssetId::DEER_SOUND;
             case OBJECTS::AnimalSpecies::DOG:
-                return "res/sounds/doberman-pincher_daniel-simion.wav";
+                return RESOURCES::AssetId::DOG_SOUND;
             case OBJECTS::AnimalSpecies::DOVE:
-                return "res/sounds/dove-Mike_Koenig-1208819046.wav";
+                return RESOURCES::AssetId::DOVE_SOUND;
             case OBJECTS::AnimalSpecies::EAGLE:
-                return "res/sounds/BaldEagle-SoundBible.com-2025808531.wav";
+                return RESOURCES::AssetId::EAGLE_SOUND;
             case OBJECTS::AnimalSpecies::FOX:
-                return "res/sounds/greyfox-vs-coon.wav";
+                return RESOURCES::AssetId::FOX_SOUND;
             case OBJECTS::AnimalSpecies::FROG:
-                return "res/sounds/FrogCroaking-SoundBible.com-1053984354.wav";
+                return RESOURCES::AssetId::FROG_SOUND;
             case OBJECTS::AnimalSpecies::GOAT:
-                return "res/sounds/GoatBah-SoundBible.com-959734934.wav";
+                return RESOURCES::AssetId::GOAT_SOUND;
             case OBJECTS::AnimalSpecies::GORILLA:
-                return "res/sounds/Ape-SoundBible.com-1651128585.wav";
+                return RESOURCES::AssetId::GORILLA_SOUND;
             case OBJECTS::AnimalSpecies::HAWK:
-                return "res/sounds/hawk_screeching-Mike_Koenig-1626170357.wav";
+                return RESOURCES::AssetId::HAWK_SOUND;
             case OBJECTS::AnimalSpecies::HIPPO:
-                return "res/sounds/hippo2.wav";
+                return RESOURCES::AssetId::HIPPO_SOUND;
             case OBJECTS::AnimalSpecies::HORSE:
-                return "res/sounds/HorseNeigh-SoundBible.com-1740540960.wav";
+                return RESOURCES::AssetId::HORSE_SOUND;
             case OBJECTS::AnimalSpecies::KOALA:
-                return "res/sounds/koala1.wav";
+                return RESOURCES::AssetId::KOALA_SOUND;
             case OBJECTS::AnimalSpecies::LEOPARD:
-                return "res/sounds/leopard3.wav";
+                return RESOURCES::AssetId::LEOPARD_SOUND;
             case OBJECTS::AnimalSpecies::LION:
-                return "res/sounds/GrowlingLion-SoundBible.com-495747737.wav";
+                return RESOURCES::AssetId::LION_SOUND;
             case OBJECTS::AnimalSpecies::LOCUST:
-                return "res/sounds/Grasshopper-SoundBible.com-1592176719.wav";
+                return RESOURCES::AssetId::LOCUST_SOUND;
             case OBJECTS::AnimalSpecies::MONKEY:
-                return "res/sounds/gibbon-monkey-daniel_simon.wav";
+                return RESOURCES::AssetId::MONKEY_SOUND;
             case OBJECTS::AnimalSpecies::OSPREY:
-                return "res/sounds/OspreyBirdCall-SoundBible.com-525395846.wav";
+                return RESOURCES::AssetId::OSPREY_SOUND;
             case OBJECTS::AnimalSpecies::OWL:
-                return "res/sounds/horned_owl-Mike_Koenig-1945374932.wav";
+                return RESOURCES::AssetId::OWL_SOUND;
             case OBJECTS::AnimalSpecies::PEACOCK:
-                return "res/sounds/PeacockBird-SoundBible.com-98379922.wav";
+                return RESOURCES::AssetId::PEACOCK_SOUND;
             case OBJECTS::AnimalSpecies::PELICAN:
-                return "res/sounds/PelicanChick-SoundBible.com-549990839.wav";
+                return RESOURCES::AssetId::PELICAN_SOUND;
             case OBJECTS::AnimalSpecies::PIG:
-                return "res/sounds/PigOink-SoundBible.com-1424738584.wav";
+                return RESOURCES::AssetId::PIG_SOUND;
             case OBJECTS::AnimalSpecies::POLAR_BEAR:
-                return "res/sounds/bear_polar.wav";
+                return RESOURCES::AssetId::POLAR_BEAR_SOUND;
             case OBJECTS::AnimalSpecies::RACCOON:
-                return "res/sounds/Raccoon-J_Dawg-688727657.wav";
+                return RESOURCES::AssetId::RACCOON_SOUND;
             case OBJECTS::AnimalSpecies::RAVEN:
-                return "res/sounds/Raven-SoundBible.com-1790882934.wav";
+                return RESOURCES::AssetId::RAVEN_SOUND;
             case OBJECTS::AnimalSpecies::SHEEP:
-                return "res/sounds/SheepBleating-SoundBible.com-1373580685.wav";
+                return RESOURCES::AssetId::SHEEP_SOUND;
             case OBJECTS::AnimalSpecies::TURKEY:
-                return "res/sounds/Turkey_Call_2-JimBob-26023545.wav";
+                return RESOURCES::AssetId::TURKEY_SOUND;
             case OBJECTS::AnimalSpecies::WOLF:
-                return "res/sounds/Howl.wav";
+                return RESOURCES::AssetId::WOLF_SOUND;
             default:
                 // No sound exists.
-                return "";
+                return RESOURCES::AssetId::INVALID;
         }
     }
 }

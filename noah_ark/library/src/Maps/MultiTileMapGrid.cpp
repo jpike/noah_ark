@@ -5,8 +5,8 @@ namespace MAPS
     /// Constructs the grid with the specified width/height.
     /// @param[in]  width_in_tile_maps - The width of the grid in tile maps.
     /// @param[in]  height_in_tile_maps - The height of the grid in tile maps.
-    MultiTileMapGrid::MultiTileMapGrid(const unsigned int width_in_tile_maps, const unsigned int height_in_tile_map) :
-        TileMaps(width_in_tile_maps, height_in_tile_map),
+    MultiTileMapGrid::MultiTileMapGrid(const unsigned int width_in_tile_maps, const unsigned int height_in_tile_maps) :
+        TileMaps(width_in_tile_maps, height_in_tile_maps),
         AxeSwings()
     {}
 

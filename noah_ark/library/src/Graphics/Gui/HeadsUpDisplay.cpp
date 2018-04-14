@@ -191,7 +191,7 @@ namespace GUI
         MATH::Vector2ui axe_icon_screen_position = TOP_LEFT_SCREEN_POSITION_IN_PIXELS;
         axe_icon_screen_position.X += KEY_ICON_WIDTH_IN_PIXELS;
 
-        std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AXE_TEXTURE_ID);
+        std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AssetId::AXE_TEXTURE);
         if (axe_texture)
         {
             renderer.RenderGuiIcon(*axe_texture, AXE_TEXTURE_SUB_RECTANGLE, axe_icon_screen_position);
@@ -208,7 +208,7 @@ namespace GUI
         wood_icon_screen_position.X += static_cast<unsigned int>(AXE_TEXTURE_SUB_RECTANGLE.GetWidth());
         wood_icon_screen_position.X += PIXEL_BUFFER_SPACE_BETWEEN_AXE_ICON_AND_WOOD_ICON;
 
-        std::shared_ptr<GRAPHICS::Texture> wood_texture = Assets->GetTexture(RESOURCES::WOOD_LOG_TEXTURE_ID);
+        std::shared_ptr<GRAPHICS::Texture> wood_texture = Assets->GetTexture(RESOURCES::AssetId::WOOD_LOG_TEXTURE);
         if (wood_texture)
         {
             renderer.RenderGuiIcon(*wood_texture, WOOD_LOG_TEXTURE_SUB_RECTANGLE, wood_icon_screen_position);

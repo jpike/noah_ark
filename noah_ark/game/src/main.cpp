@@ -1,5 +1,6 @@
 #include <chrono>
 #include <exception>
+#include <initializer_list>
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
@@ -12,6 +13,7 @@
 #include "Maps/Tileset.h"
 #include "Math/Number.h"
 #include "Resources/AnimalSounds.h"
+#include "Resources/AssetPackage.h"
 #include "Resources/Assets.h"
 #include "Resources/FoodGraphics.h"
 #include "States/CreditsScreen.h"
@@ -40,14 +42,14 @@ void PopulateOverworld(
     MAPS::MultiTileMapGrid& overworld)
 {
     // LOAD THE TILESET TEXTURE.
-    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::MAIN_TILESET_TEXTURE_ID);
+    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);
     if (!tileset_texture)
     {
         return;
     }
 
     // LOAD THE TREE TEXTURE.
-    std::shared_ptr<GRAPHICS::Texture> tree_texture = assets.GetTexture(RESOURCES::TREE_TEXTURE_ID);
+    std::shared_ptr<GRAPHICS::Texture> tree_texture = assets.GetTexture(RESOURCES::AssetId::TREE_TEXTURE);
     if (!tree_texture)
     {
         return;
@@ -122,7 +124,7 @@ void PopulateOverworld(
             if (tile_map_data.ArkLayer)
             {
                 // GET THE ARK TEXTURE.
-                std::shared_ptr<GRAPHICS::Texture> ark_texture = assets.GetTexture(RESOURCES::ARK_TEXTURE_ID);
+                std::shared_ptr<GRAPHICS::Texture> ark_texture = assets.GetTexture(RESOURCES::AssetId::ARK_TEXTURE);
                 if (ark_texture)
                 {
                     // CREATE PIECES IN THE ARK LAYER.
@@ -241,7 +243,7 @@ void PopulateOverworld(
 void PopulateArkInterior(RESOURCES::Assets& assets, MAPS::MultiTileMapGrid& ark_interior)
 {
     // LOAD THE TILESET TEXTURE.
-    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::MAIN_TILESET_TEXTURE_ID);
+    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);
     if (!tileset_texture)
     {
         return;
@@ -395,28 +397,29 @@ std::shared_ptr<MAPS::World> LoadWorld(RESOURCES::Assets& assets)
 }
 
 /// Loads the sounds/music for the game, adding them to the speakers.
+/// @todo   Rethink this function since it doesn't load the intro music.
 /// @param[in,out]  assets - The assets from which to load the sounds/music.
-/// @return The speakers with the sounds/music; never null.
-std::shared_ptr<AUDIO::Speakers> LoadSounds(RESOURCES::Assets& assets)
+/// @param[in,out]  speakers - The speakers to add sounds to.
+void LoadSounds(RESOURCES::Assets& assets, AUDIO::Speakers& speakers)
 {
-    std::shared_ptr<AUDIO::Speakers> speakers = std::make_shared<AUDIO::Speakers>();
+    auto load_start_time = std::chrono::system_clock::now();
 
     // ADD EACH GENERIC SOUND EFFECT TO THE SPEAKERS.
-    const std::array<std::string, 5> GENERIC_SOUND_EFFECT_IDS =
+    const std::array<RESOURCES::AssetId, 5> GENERIC_SOUND_EFFECT_IDS =
     {
-        RESOURCES::ARK_BUILDING_SOUND_ID,
-        RESOURCES::AXE_HIT_SOUND_ID,
-        RESOURCES::COLLECT_BIBLE_VERSE_SOUND_ID,
-        RESOURCES::FOOD_PICKUP_SOUND_ID,
-        RESOURCES::TREE_SHAKE_SOUND_ID
+        RESOURCES::AssetId::ARK_BUILDING_SOUND,
+        RESOURCES::AssetId::AXE_HIT_SOUND,
+        RESOURCES::AssetId::COLLECT_BIBLE_VERSE_SOUND,
+        RESOURCES::AssetId::FOOD_PICKUP_SOUND,
+        RESOURCES::AssetId::TREE_SHAKE_SOUND
 
     };
-    for (const std::string& sound_id : GENERIC_SOUND_EFFECT_IDS)
+    for (const RESOURCES::AssetId sound_id : GENERIC_SOUND_EFFECT_IDS)
     {
         std::shared_ptr<sf::SoundBuffer> audio_samples = assets.GetSound(sound_id);
         if (audio_samples)
         {
-            speakers->AddSound(sound_id, audio_samples);
+            speakers.AddSound(sound_id, audio_samples);
         }
     }
 
@@ -424,28 +427,47 @@ std::shared_ptr<AUDIO::Speakers> LoadSounds(RESOURCES::Assets& assets)
     for (int species_id = 0; species_id < static_cast<int>(OBJECTS::AnimalSpecies::COUNT); ++species_id)
     {
         OBJECTS::AnimalSpecies species = static_cast<OBJECTS::AnimalSpecies>(species_id);
-        std::string animal_sound_id = RESOURCES::AnimalSounds::GetSound(species);
+        RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(species);
         std::shared_ptr<sf::SoundBuffer> audio_samples = assets.GetSound(animal_sound_id);
         if (audio_samples)
         {
-            speakers->AddSound(animal_sound_id, audio_samples);
+            speakers.AddSound(animal_sound_id, audio_samples);
         }
     }
 
-    // ADD ALL OF THE MUSIC TO THE SPEAKERS.    
-    std::shared_ptr<sf::Music> intro_music = assets.GetMusic(RESOURCES::INTRO_MUSIC_ID);
-    if (intro_music)
-    {
-        speakers->AddMusic(RESOURCES::INTRO_MUSIC_ID, intro_music);
-    }
-    std::shared_ptr<sf::Music> overworld_music = assets.GetMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID);
+    // ADD ALL OF THE MUSIC TO THE SPEAKERS.
+    std::shared_ptr<sf::Music> overworld_music = assets.GetMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
     if (overworld_music)
     {
         overworld_music->setLoop(true);
-        speakers->AddMusic(RESOURCES::OVERWORLD_BACKGROUND_MUSIC_ID, overworld_music);
+        speakers.AddMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC, overworld_music);
     }
-    
-    return speakers;
+
+    auto load_end_time = std::chrono::system_clock::now();
+    auto load_time_diff = load_end_time - load_start_time;
+    DEBUGGING::DebugConsole::WriteLine("Sound load time: ", load_time_diff.count());
+}
+
+bool LoadIntroSequenceAssets(RESOURCES::Assets& assets)
+{
+    auto load_start_time = std::chrono::system_clock::now();
+
+    // DEFINE THE INTRO SEQUENCE ASSETS.
+    const RESOURCES::AssetPackage INTRO_SEQUENCE_ASSETS(
+    {
+        RESOURCES::AssetDefinition(RESOURCES::AssetType::FONT, RESOURCES::AssetId::FONT_TEXTURE),
+        RESOURCES::AssetDefinition(RESOURCES::AssetType::MUSIC, RESOURCES::AssetId::INTRO_MUSIC),
+        RESOURCES::AssetDefinition(RESOURCES::AssetType::SHADER, RESOURCES::AssetId::COLORED_TEXTURE_SHADER),
+    });
+
+    // LOAD THE ASSETS.
+    bool assets_loaded = assets.Load(INTRO_SEQUENCE_ASSETS);
+
+    auto load_end_time = std::chrono::system_clock::now();
+    auto load_time_diff = load_end_time - load_start_time;
+    DEBUGGING::DebugConsole::WriteLine("Intro sequence load time: ", load_time_diff.count());
+
+    return assets_loaded;
 }
 
 /// The main entry point for the game.
@@ -470,27 +492,44 @@ int main(int argumentCount, char* arguments[])
         // Ensure that only one key event is generated for each key press.
         window->setKeyRepeatEnabled(false);
 
-        // LOAD THE ASSETS.
-        std::shared_ptr<RESOURCES::Assets> assets = std::make_shared<RESOURCES::Assets>();
-
+        // LOAD ASSETS NEEDED FOR THE INTRO SEQUENCE.
         // Some assets are explicitly loaded first as they are needed for initial
         // rendering of the intro sequence and title screen.  By loading them first,
         // quick startup time for the game can be maintained, showing the intro
         // sequence while other assets are being loaded.
-        auto font = assets->GetFont(RESOURCES::FONT_TEXTURE_ID);
+        std::shared_ptr<RESOURCES::Assets> assets = std::make_shared<RESOURCES::Assets>();
+        bool intro_sequence_assets_loaded = LoadIntroSequenceAssets(*assets);
+        if (!intro_sequence_assets_loaded)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Failed to load intro sequence assets.");
+            return EXIT_CODE_FAILURE_LOADING_ASSETS;
+        }
+
+        auto font = assets->GetFont(RESOURCES::AssetId::FONT_TEXTURE);
         if (!font)
         {
             return EXIT_CODE_FAILURE_LOADING_FONT;
         }
 
-        auto colored_texture_shader = assets->GetShader(RESOURCES::ShaderId::COLORED_TEXTURE);
+        auto colored_texture_shader = assets->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
         if (!colored_texture_shader)
         {
             return EXIT_CODE_FAILURE_LOADING_ASSETS;
         }
 
-        // LOAD THE SOUND EFFECTS/MUSIC.
-        std::future< std::shared_ptr<AUDIO::Speakers> > speakers_being_loaded = std::async(LoadSounds, std::ref(*assets));
+        std::shared_ptr<AUDIO::Speakers> speakers = std::make_shared<AUDIO::Speakers>();
+        auto intro_music = assets->GetMusic(RESOURCES::AssetId::INTRO_MUSIC);
+        if (!intro_music)
+        {
+            return EXIT_CODE_FAILURE_LOADING_ASSETS;
+        }
+        speakers->AddMusic(RESOURCES::AssetId::INTRO_MUSIC, intro_music);
+
+        // LOAD REMAINING SOUND EFFECTS/MUSIC.
+        // This is loaded in a background thread in order to let the rest of the game continue
+        // while assets not needed for the intro sequence are loaded.
+        std::future<void> audio_being_loaded = std::async(LoadSounds, std::ref(*assets), std::ref(*speakers));
+        /// @todo   When to wait for this to finish?
 
         // LOAD THE MAPS.
         // The world is loaded in the background in separate threads to avoid having
@@ -504,12 +543,7 @@ int main(int argumentCount, char* arguments[])
             colored_texture_shader);
         INPUT_CONTROL::InputController input_controller;
         STATES::IntroSequence intro_sequence;
-        auto speakers = speakers_being_loaded.get();
-        if (!speakers)
-        {
-            return EXIT_FAILURE;
-        }
-        speakers->PlayMusic(RESOURCES::INTRO_MUSIC_ID);
+        speakers->PlayMusic(RESOURCES::AssetId::INTRO_MUSIC);
         STATES::TitleScreen title_screen;
         STATES::CreditsScreen credits_screen;
         STATES::PreFloodGameplayState pre_flood_gameplay_state(speakers, assets);

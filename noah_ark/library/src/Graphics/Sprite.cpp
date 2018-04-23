@@ -59,7 +59,7 @@ namespace GRAPHICS
     /// @param[in,out]  screen - The screento render to.
     void Sprite::Render(Screen& screen) const
     {
-        screen.RenderTarget->draw(SpriteResource);
+        screen.RenderTarget.draw(SpriteResource);
     }
 
     /// Gets the world position of the sprite.

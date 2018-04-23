@@ -6,20 +6,22 @@
 namespace GRAPHICS
 {
     /// Constructor.
-    /// @param[in]  render_target - The target to render to.
+    /// @param[in]  width_in_pixels - The width (in pixels) for the screen.
+    /// @param[in]  height_in_pixels - The height (in pixels) for the screen.
     /// @param[in]  font - The font to use for rendering.
     /// @param[in]  colored_text_shader - The shader to use for coloring text.
     /// @throws std::exception - Thrown if a parameter is null.
     Renderer::Renderer(
-        const std::shared_ptr<sf::RenderTarget>& render_target,
+        const unsigned int width_in_pixels, 
+        const unsigned int height_in_pixels,
         const std::shared_ptr<GRAPHICS::GUI::Font>& font,
         const std::shared_ptr<sf::Shader>& colored_text_shader) :
-    Screen(render_target),
+    Screen(width_in_pixels, height_in_pixels),
     Camera(MATH::FloatRectangle::FromCenterAndDimensions(
-        render_target->getView().getCenter().x,
-        render_target->getView().getCenter().y,
-        render_target->getView().getSize().x,
-        render_target->getView().getSize().y)),
+        Screen.RenderTarget.getView().getCenter().x,
+        Screen.RenderTarget.getView().getCenter().y,
+        Screen.RenderTarget.getView().getSize().x,
+        Screen.RenderTarget.getView().getSize().y)),
     Font(font),
     ColoredTextShader(colored_text_shader)
     {
@@ -46,7 +48,7 @@ namespace GRAPHICS
         // might move around the world.
         int left_screen_position = static_cast<int>(rectangle.GetLeftXPosition());
         int top_screen_position = static_cast<int>(rectangle.GetTopYPosition());
-        sf::Vector2f top_left_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
+        sf::Vector2f top_left_world_position = Screen.RenderTarget.mapPixelToCoords(sf::Vector2i(
             left_screen_position,
             top_screen_position));
 
@@ -61,7 +63,7 @@ namespace GRAPHICS
         renderable_rectangle.setPosition(top_left_world_position);
 
         // RENDER THE RECTANGLE.
-        Screen.RenderTarget->draw(renderable_rectangle);
+        Screen.RenderTarget.draw(renderable_rectangle);
     }
 
     /// Renders an icon on the screen that indicates that a specific key
@@ -77,7 +79,7 @@ namespace GRAPHICS
         // This is necessary so that the key icon can be rendered
         // appropriately on the screen regardless of how the camera
         // might move around the world.
-        sf::Vector2f left_top_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
+        sf::Vector2f left_top_world_position = Screen.RenderTarget.mapPixelToCoords(sf::Vector2i(
             left_top_screen_position_in_pixels.X,
             left_top_screen_position_in_pixels.Y));
 
@@ -94,7 +96,7 @@ namespace GRAPHICS
         key_background_icon.setPosition(left_top_world_position);
 
         // RENDER THE BACKGROUND RECTANGLE FOR THE KEY.
-        Screen.RenderTarget->draw(key_background_icon);
+        Screen.RenderTarget.draw(key_background_icon);
 
         // GET THE GLYPH FOR THE KEY.
         GRAPHICS::GUI::Glyph glyph = Font->GetGlyph(key);
@@ -107,12 +109,12 @@ namespace GRAPHICS
             static_cast<float>(left_top_screen_position_in_pixels.Y));
 
         // CONFIGURE THE RENDER TARGET FOR SCREEN-SPACE RENDERING.
-        sf::View screen_space_view = Screen.RenderTarget->getDefaultView();
-        Screen.RenderTarget->setView(screen_space_view);
+        sf::View screen_space_view = Screen.RenderTarget.getDefaultView();
+        Screen.RenderTarget.setView(screen_space_view);
 
         // RENDER THE GLYPH FOR THE KEY.
         sf::RenderStates render_states = ConfigureColoredTextShader(Color::BLACK);
-        Screen.RenderTarget->draw(key_character_sprite, render_states);
+        Screen.RenderTarget.draw(key_character_sprite, render_states);
     }
 
     /// Renders a GUI icon on the screen.
@@ -138,13 +140,13 @@ namespace GRAPHICS
         // The screen position must be converted to a world position so that the GUI icon
         // can be rendered appropriately on screen regardless of how the camera might
         // move around the world.
-        sf::Vector2f left_top_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
+        sf::Vector2f left_top_world_position = Screen.RenderTarget.mapPixelToCoords(sf::Vector2i(
             left_top_screen_position_in_pixels.X,
             left_top_screen_position_in_pixels.Y));
         gui_icon.setPosition(left_top_world_position);
 
         // RENDER THE GUI ICON.
-        Screen.RenderTarget->draw(gui_icon);
+        Screen.RenderTarget.draw(gui_icon);
     }
 
     /// Renders a sprite as a GUI icon on the screen.
@@ -164,13 +166,13 @@ namespace GRAPHICS
         // The screen position must be converted to a world position so that the GUI icon
         // can be rendered appropriately on screen regardless of how the camera might
         // move around the world.
-        sf::Vector2f left_top_world_position = Screen.RenderTarget->mapPixelToCoords(sf::Vector2i(
+        sf::Vector2f left_top_world_position = Screen.RenderTarget.mapPixelToCoords(sf::Vector2i(
             static_cast<int>(left_top_screen_position_in_pixels.X),
             static_cast<int>(left_top_screen_position_in_pixels.Y)));
         gui_icon.setPosition(left_top_world_position);
 
         // RENDER THE GUI ICON.
-        Screen.RenderTarget->draw(gui_icon);
+        Screen.RenderTarget.draw(gui_icon);
     }
 
     /// Renders text to the screen at the specified position.
@@ -212,12 +214,12 @@ namespace GRAPHICS
             current_character_sprite.setScale(text_scale_ratio, text_scale_ratio);
 
             // CONFIGURE THE RENDER TARGET FOR SCREEN-SPACE RENDERING.
-            sf::View screen_space_view = Screen.RenderTarget->getDefaultView();
-            Screen.RenderTarget->setView(screen_space_view);
+            sf::View screen_space_view = Screen.RenderTarget.getDefaultView();
+            Screen.RenderTarget.setView(screen_space_view);
 
             // RENDER THE CURRENT GLYPH.
             sf::RenderStates render_states = ConfigureColoredTextShader(text_color);
-            Screen.RenderTarget->draw(current_character_sprite, render_states);
+            Screen.RenderTarget.draw(current_character_sprite, render_states);
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
             float glyph_width = GUI::Glyph::WidthInPixels<float>(text_scale_ratio);
@@ -476,7 +478,7 @@ namespace GRAPHICS
         sf::View camera_view;
         camera_view.setCenter(camera_view_center.X, camera_view_center.Y);
         camera_view.setSize(camera_bounds.GetWidth(), camera_bounds.GetHeight());
-        Screen.RenderTarget->setView(camera_view);
+        Screen.RenderTarget.setView(camera_view);
 
         // GET THE CURRENT TILE MAP.
         const MAPS::TileMap* current_tile_map = tile_map_grid.GetTileMap(camera_view_center.X, camera_view_center.Y);

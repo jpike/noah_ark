@@ -538,7 +538,8 @@ int main(int argumentCount, char* arguments[])
 
         // INITIALIZE REMAINING SUBSYSTEMS.
         GRAPHICS::Renderer renderer(
-            window,
+            SCREEN_WIDTH_IN_PIXELS,
+            SCREEN_HEIGHT_IN_PIXELS,
             font,
             colored_texture_shader);
         INPUT_CONTROL::InputController input_controller;
@@ -646,6 +647,9 @@ int main(int argumentCount, char* arguments[])
                 }
 
                 // DISPLAY THE RENDERED FRAME IN THE WINDOW.
+                renderer.Screen.RenderTarget.display();
+                sf::Sprite screen(renderer.Screen.RenderTarget.getTexture());
+                window->draw(screen);
                 window->display();
 
                 // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.

@@ -24,7 +24,8 @@ namespace GRAPHICS
     public:
         // CONSTRUCTION.
         explicit Renderer(
-            const std::shared_ptr<sf::RenderTarget>& render_target,
+            const unsigned int width_in_pixels,
+            const unsigned int height_in_pixels,
             const std::shared_ptr<GRAPHICS::GUI::Font>& font,
             const std::shared_ptr<sf::Shader>& colored_text_shader);
 

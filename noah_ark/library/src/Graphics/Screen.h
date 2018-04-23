@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <SFML/Graphics.hpp>
 #include "Math/Rectangle.h"
 
@@ -16,7 +15,7 @@ namespace GRAPHICS
     {
     public:
         // CONSTRUCTION.
-        explicit Screen(const std::shared_ptr<sf::RenderTarget>& render_target);
+        explicit Screen(const unsigned int width_in_pixels, const unsigned int height_in_pixels);
 
         // CLEARING.
         void Clear();
@@ -31,8 +30,7 @@ namespace GRAPHICS
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The actual render target for the screen.
-        /// Guaranteed to not be null after construction.
-        const std::shared_ptr<sf::RenderTarget> RenderTarget;
+        sf::RenderTexture RenderTarget;
     };
 
     /// Gets the width, in pixels, of the screen as the specified data type.
@@ -43,7 +41,7 @@ namespace GRAPHICS
     template <typename T>
     T Screen::WidthInPixels() const
     {
-        sf::Vector2u size_in_pixels = RenderTarget->getSize();
+        sf::Vector2u size_in_pixels = RenderTarget.getSize();
         T width_in_pixels = static_cast<T>(size_in_pixels.x);
         return width_in_pixels;
     }
@@ -56,7 +54,7 @@ namespace GRAPHICS
     template <typename T>
     T Screen::HeightInPixels() const
     {
-        sf::Vector2u size_in_pixels = RenderTarget->getSize();
+        sf::Vector2u size_in_pixels = RenderTarget.getSize();
         T height_in_pixels = static_cast<T>(size_in_pixels.y);
         return height_in_pixels;
     }

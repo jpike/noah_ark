@@ -40,7 +40,7 @@ namespace STATES
         // RENDER TEXT INDICATING THE PURPOSE OF THIS SCREEN.
         const GRAPHICS::Color CREDITS_TEXT_COLOR = GRAPHICS::Color::WHITE;
         
-        MATH::FloatRectangle screen_rectangle = renderer.Screen.GetBoundingRectangle<float>();
+        MATH::FloatRectangle screen_rectangle = renderer.Screen->GetBoundingRectangle<float>();
         float screen_left_x_position = screen_rectangle.GetLeftXPosition();
         float screen_top_y_position = screen_rectangle.GetTopYPosition();
         float screen_width_in_pixels = screen_rectangle.GetWidth();

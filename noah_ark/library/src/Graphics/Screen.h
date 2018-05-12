@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <SFML/Graphics.hpp>
 #include "Math/Rectangle.h"
 
@@ -15,7 +16,7 @@ namespace GRAPHICS
     {
     public:
         // CONSTRUCTION.
-        explicit Screen(const unsigned int width_in_pixels, const unsigned int height_in_pixels);
+        static std::unique_ptr<Screen> Create(const unsigned int width_in_pixels, const unsigned int height_in_pixels);
 
         // CLEARING.
         void Clear();

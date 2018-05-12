@@ -231,7 +231,7 @@ namespace GUI
         // if the space for other GUI elements (like the count of collected wood) changes such
         // that they could distractingly shift the position of this text.
         MATH::Vector2f TOP_RIGHT_SCREEN_POSITION_IN_PIXELS(
-            renderer.Screen.WidthInPixels<float>(),
+            renderer.Screen->WidthInPixels<float>(),
             static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
         const std::string OPEN_INVENTORY_TEXT = "Inventory";
         // One glyph is rendered per character.
@@ -267,7 +267,7 @@ namespace GUI
         {
             renderer.RenderCenteredText(
                 "[ENTER] - Save\n[ESC] - Cancel",
-                renderer.Screen.GetBoundingRectangle<float>());
+                renderer.Screen->GetBoundingRectangle<float>());
         }
     }
 

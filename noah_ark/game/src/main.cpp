@@ -33,6 +33,8 @@ int EXIT_CODE_FAILURE_UNKNOWN_EXCEPTION_IN_MAIN = 2;
 int EXIT_CODE_FAILURE_LOADING_ASSETS = 3;
 /// The font failed to be loaded.
 int EXIT_CODE_FAILURE_LOADING_FONT = 4;
+/// Other generic failure.
+int EXIT_CODE_FAILURE = 5;
 
 /// Populates the overworld based on data read from in-memory assets.
 /// @param[in,out]  assets - The assets for the overworld.
@@ -536,12 +538,19 @@ int main(int argumentCount, char* arguments[])
         // map loading slow the startup time of the rest of the game.
         std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorld, std::ref(*assets));
 
+        // CREATE THE SCREEN.
+        std::unique_ptr<GRAPHICS::Screen> screen = GRAPHICS::Screen::Create(SCREEN_WIDTH_IN_PIXELS, SCREEN_HEIGHT_IN_PIXELS);
+        if (!screen)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Failed to create game screen.");
+            return EXIT_CODE_FAILURE;
+        }
+
         // INITIALIZE REMAINING SUBSYSTEMS.
         GRAPHICS::Renderer renderer(
-            SCREEN_WIDTH_IN_PIXELS,
-            SCREEN_HEIGHT_IN_PIXELS,
             font,
-            colored_texture_shader);
+            colored_texture_shader,
+            std::move(screen));
         INPUT_CONTROL::InputController input_controller;
         STATES::IntroSequence intro_sequence;
         speakers->PlayMusic(RESOURCES::AssetId::INTRO_MUSIC);
@@ -627,7 +636,7 @@ int main(int argumentCount, char* arguments[])
                 }
 
                 // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
-                renderer.Screen.Clear();
+                renderer.Screen->Clear();
 
                 // RENDER THE CURRENT STATE OF THE GAME.
                 switch (game_state)
@@ -647,9 +656,9 @@ int main(int argumentCount, char* arguments[])
                 }
 
                 // DISPLAY THE RENDERED FRAME IN THE WINDOW.
-                renderer.Screen.RenderTarget.display();
-                sf::Sprite screen(renderer.Screen.RenderTarget.getTexture());
-                window->draw(screen);
+                renderer.Screen->RenderTarget.display();
+                sf::Sprite screen_sprite(renderer.Screen->RenderTarget.getTexture());
+                window->draw(screen_sprite);
                 window->display();
 
                 // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.

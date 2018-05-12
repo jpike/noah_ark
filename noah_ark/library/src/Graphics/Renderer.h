@@ -24,10 +24,9 @@ namespace GRAPHICS
     public:
         // CONSTRUCTION.
         explicit Renderer(
-            const unsigned int width_in_pixels,
-            const unsigned int height_in_pixels,
             const std::shared_ptr<GRAPHICS::GUI::Font>& font,
-            const std::shared_ptr<sf::Shader>& colored_text_shader);
+            const std::shared_ptr<sf::Shader>& colored_text_shader,
+            std::unique_ptr<GRAPHICS::Screen>&& screen);
 
         // GENERIC SCREEN-SPACE RENDERING.
         void RenderScreenRectangle(
@@ -66,7 +65,7 @@ namespace GRAPHICS
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The screen that gets rendered to.
-        GRAPHICS::Screen Screen;
+        std::unique_ptr<GRAPHICS::Screen> Screen;
         /// The camera defining what portion of the world is currently viewable.
         GRAPHICS::Camera Camera;
         /// The font to use for rendering text.

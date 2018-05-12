@@ -183,22 +183,22 @@ namespace STATES
                 // The axe should only be rendered if it is swinging.
                 if (NoahPlayer->Inventory->Axe->IsSwinging())
                 {
-                    NoahPlayer->Inventory->Axe->Sprite.Render(renderer.Screen);
+                    NoahPlayer->Inventory->Axe->Sprite.Render(*renderer.Screen);
                 }
 
                 // RENDER THE PLAYER.
-                NoahPlayer->Sprite.Render(renderer.Screen);
+                NoahPlayer->Sprite.Render(*renderer.Screen);
             }
             else
             {
                 // RENDER THE PLAYER.
-                NoahPlayer->Sprite.Render(renderer.Screen);
+                NoahPlayer->Sprite.Render(*renderer.Screen);
 
                 // RENDER THE AXE.
                 // The axe should only be rendered if it is swinging.
                 if (NoahPlayer->Inventory->Axe->IsSwinging())
                 {
-                    NoahPlayer->Inventory->Axe->Sprite.Render(renderer.Screen);
+                    NoahPlayer->Inventory->Axe->Sprite.Render(*renderer.Screen);
                 }
             }
 

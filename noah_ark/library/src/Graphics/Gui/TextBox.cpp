@@ -180,16 +180,16 @@ namespace GUI
 
         const float VERTICAL_PADDING_IN_PIXELS = 16.0f;
         float height_in_pixels = HeightInPixels + VERTICAL_PADDING_IN_PIXELS - OUTLINE_THICKNESS_IN_PIXELS * 2;
-        float width_in_pixels = renderer.Screen.WidthInPixels<float>() - OUTLINE_THICKNESS_IN_PIXELS * 2;
+        float width_in_pixels = renderer.Screen->WidthInPixels<float>() - OUTLINE_THICKNESS_IN_PIXELS * 2;
         box.setSize(sf::Vector2f(width_in_pixels, height_in_pixels));
 
         const sf::Vector2i SCREEN_TOP_LEFT_CORNER(0, 0);
-        sf::Vector2f top_left_corner_world_position = renderer.Screen.RenderTarget.mapPixelToCoords(SCREEN_TOP_LEFT_CORNER);
+        sf::Vector2f top_left_corner_world_position = renderer.Screen->RenderTarget.mapPixelToCoords(SCREEN_TOP_LEFT_CORNER);
         top_left_corner_world_position.x += OUTLINE_THICKNESS_IN_PIXELS;
         top_left_corner_world_position.y += OUTLINE_THICKNESS_IN_PIXELS;
         box.setPosition(top_left_corner_world_position);
 
-        renderer.Screen.RenderTarget.draw(box);
+        renderer.Screen->RenderTarget.draw(box);
 
         // DRAW THE CURRENT PAGE OF TEXT.
         auto& current_text_page = Pages[CurrentPageIndex];
@@ -231,7 +231,7 @@ namespace GUI
                 sf::Vector2i text_box_bottom_right_corner(
                     static_cast<int>(width_in_pixels),
                     static_cast<int>(height_in_pixels));
-                sf::Vector2f bottom_right_corner_world_position = renderer.Screen.RenderTarget.mapPixelToCoords(text_box_bottom_right_corner);
+                sf::Vector2f bottom_right_corner_world_position = renderer.Screen->RenderTarget.mapPixelToCoords(text_box_bottom_right_corner);
 
                 // The triangle should not overlap with the outline of the text box.
                 bottom_right_corner_world_position.x -= (OUTLINE_THICKNESS_IN_PIXELS);
@@ -239,7 +239,7 @@ namespace GUI
 
                 press_button_triangle.setPosition(bottom_right_corner_world_position);
 
-                renderer.Screen.RenderTarget.draw(press_button_triangle);
+                renderer.Screen->RenderTarget.draw(press_button_triangle);
             }
         }
     }

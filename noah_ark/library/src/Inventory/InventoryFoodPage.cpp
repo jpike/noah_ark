@@ -32,11 +32,11 @@ namespace INVENTORY
         // it should cover the remainder of the screen.
         const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen.HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
+        const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen->HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
-            renderer.Screen.WidthInPixels<float>(),
+            renderer.Screen->WidthInPixels<float>(),
             BACKGROUND_HEIGHT_IN_PIXELS);
 
         renderer.RenderScreenRectangle(

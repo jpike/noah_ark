@@ -69,7 +69,7 @@ void PopulateOverworld(
         // LOAD TILE MAPS FOR EACH COLUMN.
         for (unsigned int column = 0; column < MAPS::World::OVERWORLD_WIDTH_IN_TILE_MAPS; ++column)
         {
-            // GET THE CURRENT TILE MAP FILE.
+            // GET THE CURRENT TILE MAP DATA.
             const auto& tile_map_data = MAPS::DATA::OVERWORLD_MAP_DATA(column, row);
 
             // CALCULATE THE POSITION OF THE CURRENT TILE MAP.
@@ -254,63 +254,69 @@ void PopulateArkInterior(RESOURCES::Assets& assets, MAPS::MultiTileMapGrid& ark_
     // CREATE THE TILESET.
     MAPS::Tileset tileset(tileset_texture);
 
-    // CALCULATE THE POSITION OF THE CURRENT TILE MAP.
-    MATH::Vector2f map_center_world_position;
-
-    /// @todo   Add an appropriate loop to handle a larger ark interior, rather than hard-coding column/row.
-    unsigned int column = 0;
-    unsigned int row = 0;
-    float map_width_in_pixels = static_cast<float>(MAPS::TileMap::WIDTH_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
-    float map_half_width_in_pixels = map_width_in_pixels / 2.0f;
-    float map_left_world_position = static_cast<float>(column * map_width_in_pixels);
-    map_center_world_position.X = map_left_world_position + map_half_width_in_pixels;
-
-    float map_height_in_pixels = static_cast<float>(MAPS::TileMap::HEIGHT_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
-    float map_half_height_in_pixels = map_height_in_pixels / 2.0f;
-    float map_top_world_position = static_cast<float>(row * map_height_in_pixels);
-    map_center_world_position.Y = map_top_world_position + map_half_height_in_pixels;
-
-    // CREATE AN EMPTY TILE MAP.
-    MATH::Vector2ui map_dimensions_in_tiles(
-        MAPS::TileMap::WIDTH_IN_TILES,
-        MAPS::TileMap::HEIGHT_IN_TILES);
-    MAPS::TileMap tile_map(
-        row,
-        column,
-        map_center_world_position,
-        map_dimensions_in_tiles,
-        MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
-
-    const auto& tile_map_data = MAPS::DATA::ARK_INTERIOR_TILE_MAP_0_0;
-
-    // CREATE TILES IN THE GROUND LAYER.
-    for (unsigned int current_tile_y = 0;
-        current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
-        ++current_tile_y)
+    // LOAD TILE MAPS FOR EACH ROW.
+    for (unsigned int row = 0; row < MAPS::World::ARK_INTERIOR_HEIGHT_IN_TILE_MAPS; ++row)
     {
-        // CREATE TILES FOR THIS ROW.
-        for (unsigned int current_tile_x = 0;
-            current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
-            ++current_tile_x)
+        // LOAD TILE MAPS FOR EACH COLUMN.
+        for (unsigned int column = 0; column < MAPS::World::ARK_INTERIOR_WIDTH_IN_TILE_MAPS; ++column)
         {
-            // CREATE THE CURRENT TILE.
-            MAPS::TileId tile_id = tile_map_data(current_tile_x, current_tile_y);
-            std::shared_ptr<MAPS::Tile> tile = tileset.CreateTile(tile_id);
-            bool tile_exists_in_tileset = (nullptr != tile);
-            if (!tile_exists_in_tileset)
+            // CALCULATE THE POSITION OF THE CURRENT TILE MAP.
+            MATH::Vector2f map_center_world_position;
+
+            float map_width_in_pixels = static_cast<float>(MAPS::TileMap::WIDTH_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
+            float map_half_width_in_pixels = map_width_in_pixels / 2.0f;
+            float map_left_world_position = static_cast<float>(column * map_width_in_pixels);
+            map_center_world_position.X = map_left_world_position + map_half_width_in_pixels;
+
+            float map_height_in_pixels = static_cast<float>(MAPS::TileMap::HEIGHT_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
+            float map_half_height_in_pixels = map_height_in_pixels / 2.0f;
+            float map_top_world_position = static_cast<float>(row * map_height_in_pixels);
+            map_center_world_position.Y = map_top_world_position + map_half_height_in_pixels;
+
+            // CREATE AN EMPTY TILE MAP.
+            MATH::Vector2ui map_dimensions_in_tiles(
+                MAPS::TileMap::WIDTH_IN_TILES,
+                MAPS::TileMap::HEIGHT_IN_TILES);
+            MAPS::TileMap tile_map(
+                row,
+                column,
+                map_center_world_position,
+                map_dimensions_in_tiles,
+                MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
+
+            // GET THE CURRENT TILE MAP.
+            const auto& tile_map_data = MAPS::DATA::ARK_INTERIOR_MAP_DATA(column, row);
+
+            // CREATE TILES IN THE GROUND LAYER.
+            for (unsigned int current_tile_y = 0;
+                current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
+                ++current_tile_y)
             {
-                // Skip to trying to create the next tile.  The layer
-                // simply won't have any tile at this location.
-                continue;
+                // CREATE TILES FOR THIS ROW.
+                for (unsigned int current_tile_x = 0;
+                    current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
+                    ++current_tile_x)
+                {
+                    // CREATE THE CURRENT TILE.
+                    MAPS::TileId tile_id = (*tile_map_data)(current_tile_x, current_tile_y);
+                    std::shared_ptr<MAPS::Tile> tile = tileset.CreateTile(tile_id);
+                    bool tile_exists_in_tileset = (nullptr != tile);
+                    if (!tile_exists_in_tileset)
+                    {
+                        // Skip to trying to create the next tile.  The layer
+                        // simply won't have any tile at this location.
+                        continue;
+                    }
+
+                    // SET THE TILE IN THE GROUND LAYER.
+                    tile_map.Ground.SetTile(current_tile_x, current_tile_y, tile);
+                }
             }
 
-            // SET THE TILE IN THE GROUND LAYER.
-            tile_map.Ground.SetTile(current_tile_x, current_tile_y, tile);
+            // STORE THE TILE MAP OF THE ARK INTERIOR.
+            ark_interior.TileMaps(column, row) = std::move(tile_map);
         }
     }
-
-    // STORE THE TILE MAP OF THE ARK INTERIOR.
-    ark_interior.TileMaps(column, row) = std::move(tile_map);
 }
 
 /// Loads the world.
@@ -329,7 +335,7 @@ std::shared_ptr<MAPS::World> LoadWorld(RESOURCES::Assets& assets)
     // CREATE THE EXIT POINTS BETWEEN MAP GRIDS.
     // The ark interior data used for exit points is currently hard-coded to simplify
     // things since I'm not sure yet exactly how we want to structure this.
-    MAPS::TileMap* starting_ark_interior_tile_map = &world->ArkInterior.TileMaps(0, 0);
+    MAPS::TileMap* starting_ark_interior_tile_map = &world->ArkInterior.TileMaps(1, 0);
     // For now, this is hardcoded to an arbitrary place near the bottom of the starting tile map.
     MATH::FloatRectangle ark_interior_bounding_box = starting_ark_interior_tile_map->GetWorldBoundingBox();
     float ark_interior_center_x_position = ark_interior_bounding_box.GetCenterXPosition();

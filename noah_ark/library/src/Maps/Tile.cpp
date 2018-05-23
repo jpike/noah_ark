@@ -4,6 +4,20 @@
 
 namespace MAPS
 {
+    /// Determines if the specified type of tile is for the ark.
+    /// @param[in]  tile_type_id - The ID of the tile type to check.
+    /// @return True if the specified type of tile is for the ark; false if not.
+    bool TileType::IsForArk(const Id tile_type_id)
+    {
+        bool is_for_ark = (
+            ARK_BUILDING_PLOT == tile_type_id ||
+            ARK_INTERIOR_WOOD_FLOOR == tile_type_id ||
+            ARK_INTERIOR_LEFT_EXIT == tile_type_id ||
+            ARK_INTERIOR_CENTER_EXIT == tile_type_id ||
+            ARK_INTERIOR_RIGHT_EXIT == tile_type_id);
+        return is_for_ark;
+    }
+
     /// Constructor to create an invalid tile.
     Tile::Tile() :
     Id(std::numeric_limits<TileId>::max()),

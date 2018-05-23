@@ -84,7 +84,7 @@ namespace OBJECTS
         // This is important because it doesn't make sense for an animal to be generated on top of the ark.
         // Special collision logic also needs to occur when animals collide with the ark, so avoiding
         // generating them on potential ark tiles avoids issues for that special logic.
-        bool tile_is_for_ark = (MAPS::TileType::ARK_BUILDING_PLOT == tile_at_animal_generation_point->Type);
+        bool tile_is_for_ark = MAPS::TileType::IsForArk(tile_at_animal_generation_point->Type);
         if (tile_is_for_ark)
         {
             DEBUGGING::DebugConsole::WriteLine("Tile is for ark.");

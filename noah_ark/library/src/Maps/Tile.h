@@ -46,6 +46,8 @@ namespace MAPS
             /// An extra enum value to define count of different tile types.
             COUNT
         };
+
+        static bool IsForArk(const Id tile_type_id);
     };
 
     /// A 2D graphical tile intended to be used as a building block for tile maps.

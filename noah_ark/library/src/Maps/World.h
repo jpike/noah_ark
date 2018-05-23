@@ -14,7 +14,7 @@ namespace MAPS
         /// The height of the overworld in tile maps.
         static constexpr unsigned int OVERWORLD_HEIGHT_IN_TILE_MAPS = 7;
         /// The width of the ark interior in tile maps.
-        static constexpr unsigned int ARK_INTERIOR_WIDTH_IN_TILE_MAPS = 1;
+        static constexpr unsigned int ARK_INTERIOR_WIDTH_IN_TILE_MAPS = 3;
         /// The height of the ark interior in tile maps.
         static constexpr unsigned int ARK_INTERIOR_HEIGHT_IN_TILE_MAPS = 1;
 

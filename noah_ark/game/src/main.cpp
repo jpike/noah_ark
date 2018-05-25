@@ -327,6 +327,101 @@ void PopulateArkInterior(RESOURCES::Assets& assets, MAPS::LayeredMultiTileMapGri
             }
         }
     }
+
+    // CREATE EXIT POINTS FOR MOVING BETWEEN FLOORS OF THE ARK INTERIOR.
+    for (std::size_t layer_index = 0; layer_index < layer_count; ++layer_index)
+    {
+        // GET THE APPLICABLE LAYERS.
+        MAPS::MultiTileMapGrid& current_map_layer = ark_interior.LayersFromBottomToTop.at(layer_index);
+
+        MAPS::MultiTileMapGrid* previous_map_layer = nullptr;
+        bool previous_layer_exists = (layer_index > 0);
+        if (previous_layer_exists)
+        {
+            std::size_t previous_map_layer_index = layer_index - 1;
+            previous_map_layer = &ark_interior.LayersFromBottomToTop.at(previous_map_layer_index);
+        }
+
+        MAPS::MultiTileMapGrid* next_map_layer = nullptr;
+        std::size_t last_layer_index = layer_count - 1;
+        bool next_layer_exists = (layer_index < last_layer_index);
+        if (next_layer_exists)
+        {
+            std::size_t next_map_layer_index = layer_index + 1;
+            next_map_layer = &ark_interior.LayersFromBottomToTop.at(next_map_layer_index);
+        }
+
+        // CHECK ALL MAPS IN THE CURRENT LAYER'S ROWS FOR STAIRCASES.
+        for (unsigned int row = 0; row < MAPS::World::ARK_INTERIOR_HEIGHT_IN_TILE_MAPS; ++row)
+        {
+            // CHECK ALL MAPS IN THE CURRENT LAYER'S COLUMNS FOR STAIRCASES.
+            for (unsigned int column = 0; column < MAPS::World::ARK_INTERIOR_WIDTH_IN_TILE_MAPS; ++column)
+            {
+                // GET THE CURRENT TILE MAP.
+                auto& current_tile_map = current_map_layer.TileMaps(column, row);
+
+                // CHECK TILES ACROSS ALL ROWS.
+                for (unsigned int current_tile_y = 0;
+                    current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
+                    ++current_tile_y)
+                {
+                    // CHECK TILES ACROSS ALL COLUMNS.
+                    for (unsigned int current_tile_x = 0;
+                        current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
+                        ++current_tile_x)
+                    {
+                        // GET THE CURRENT TILE.
+                        auto& current_tile = current_tile_map.Ground.Tiles(current_tile_x, current_tile_y);
+                        if (!current_tile)
+                        {
+                            // SKIP THIS TILE SINCE IT DOESN'T EXIST.
+                            continue;
+                        }
+
+                        // CHECK IF THE TILE IS FOR AN UPWARD STAIRCASE.
+                        bool tile_is_upward_stairs = (MAPS::TileType::ARK_INTERIOR_UP_STAIRS == current_tile->Type);
+                        if (tile_is_upward_stairs)
+                        {
+                            // ADD AN EXIT POINT TO THE ABOVE FLOOR IF ONE EXISTS.
+                            if (next_map_layer)
+                            {
+                                auto& above_tile_map = next_map_layer->TileMaps(column, row);
+
+                                MAPS::ExitPoint ark_floor_exit_point;
+                                MATH::FloatRectangle tile_bounding_box = current_tile->Sprite.GetWorldBoundingBox();
+                                ark_floor_exit_point.BoundingBox = tile_bounding_box;
+                                ark_floor_exit_point.NewMapGrid = next_map_layer;
+                                ark_floor_exit_point.NewTileMap = &above_tile_map;
+                                ark_floor_exit_point.NewPlayerWorldPosition = tile_bounding_box.GetCenterPosition();
+
+                                current_tile_map.ExitPoints.push_back(ark_floor_exit_point);
+                            }
+                        }
+
+                        // CHECK IF THE TILE IS FOR AN DOWNWARD STAIRCASE.
+                        bool tile_is_downward_stairs = (MAPS::TileType::ARK_INTERIOR_DOWN_STAIRS == current_tile->Type);
+                        if (tile_is_downward_stairs)
+                        {
+                            // ADD AN EXIT POINT TO THE BELOW FLOOR IF ONE EXISTS.
+                            if (previous_map_layer)
+                            {
+                                auto& below_tile_map = previous_map_layer->TileMaps(column, row);
+
+                                MAPS::ExitPoint ark_floor_exit_point;
+                                MATH::FloatRectangle tile_bounding_box = current_tile->Sprite.GetWorldBoundingBox();
+                                ark_floor_exit_point.BoundingBox = tile_bounding_box;
+                                ark_floor_exit_point.NewMapGrid = previous_map_layer;
+                                ark_floor_exit_point.NewTileMap = &below_tile_map;
+                                ark_floor_exit_point.NewPlayerWorldPosition = tile_bounding_box.GetCenterPosition();
+
+                                current_tile_map.ExitPoints.push_back(ark_floor_exit_point);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 /// Loads the world.

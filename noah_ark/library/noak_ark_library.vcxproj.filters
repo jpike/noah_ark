@@ -338,6 +338,9 @@
     <ClInclude Include="src\Resources\AssetType.h">
       <Filter>Header Files\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="src\Maps\LayeredMultiTileMapGrids.h">
+      <Filter>Header Files\Maps</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -528,6 +531,9 @@
     </ClCompile>
     <ClCompile Include="src\Resources\AssetId.cpp">
       <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Maps\LayeredMultiTileMapGrids.cpp">
+      <Filter>Source Files\Maps</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

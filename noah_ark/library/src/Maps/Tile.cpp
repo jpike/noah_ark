@@ -14,7 +14,9 @@ namespace MAPS
             ARK_INTERIOR_WOOD_FLOOR == tile_type_id ||
             ARK_INTERIOR_LEFT_EXIT == tile_type_id ||
             ARK_INTERIOR_CENTER_EXIT == tile_type_id ||
-            ARK_INTERIOR_RIGHT_EXIT == tile_type_id);
+            ARK_INTERIOR_RIGHT_EXIT == tile_type_id ||
+            ARK_INTERIOR_UP_STAIRS == tile_type_id ||
+            ARK_INTERIOR_DOWN_STAIRS == tile_type_id);
         return is_for_ark;
     }
 
@@ -95,6 +97,8 @@ namespace MAPS
         tile_is_walkable[TileType::ARK_INTERIOR_LEFT_EXIT] = true;
         tile_is_walkable[TileType::ARK_INTERIOR_CENTER_EXIT] = true;
         tile_is_walkable[TileType::ARK_INTERIOR_RIGHT_EXIT] = true;
+        tile_is_walkable[TileType::ARK_INTERIOR_UP_STAIRS] = true;
+        tile_is_walkable[TileType::ARK_INTERIOR_DOWN_STAIRS] = true;
 
         // CHECK IF THIS TILE'S ID IS VALID.
         bool tile_id_valid = (Id < TileType::COUNT);

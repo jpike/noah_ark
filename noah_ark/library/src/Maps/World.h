@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Maps/LayeredMultiTileMapGrids.h"
 #include "Maps/MultiTileMapGrid.h"
 
 namespace MAPS
@@ -22,6 +23,6 @@ namespace MAPS
         /// The overworld of the game.
         MultiTileMapGrid Overworld = MultiTileMapGrid(OVERWORLD_WIDTH_IN_TILE_MAPS, OVERWORLD_HEIGHT_IN_TILE_MAPS);
         /// The interior of the ark.
-        MultiTileMapGrid ArkInterior = MultiTileMapGrid(ARK_INTERIOR_WIDTH_IN_TILE_MAPS, ARK_INTERIOR_HEIGHT_IN_TILE_MAPS);
+        LayeredMultiTileMapGrids ArkInterior = LayeredMultiTileMapGrids();
     };
 }

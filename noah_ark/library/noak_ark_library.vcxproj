@@ -63,6 +63,7 @@
     <ClInclude Include="src\Maps\GroundLayer.h" />
     <ClInclude Include="src\Maps\Gui\TileMapEditorGui.h" />
     <ClInclude Include="src\Maps\Gui\TilePalette.h" />
+    <ClInclude Include="src\Maps\LayeredMultiTileMapGrids.h" />
     <ClInclude Include="src\Maps\MultiTileMapGrid.h" />
     <ClInclude Include="src\Maps\Tile.h" />
     <ClInclude Include="src\Maps\TileMap.h" />
@@ -135,6 +136,7 @@
     <ClCompile Include="src\Maps\GroundLayer.cpp" />
     <ClCompile Include="src\Maps\Gui\TileMapEditorGui.cpp" />
     <ClCompile Include="src\Maps\Gui\TilePalette.cpp" />
+    <ClCompile Include="src\Maps\LayeredMultiTileMapGrids.cpp" />
     <ClCompile Include="src\Maps\MultiTileMapGrid.cpp" />
     <ClCompile Include="src\Maps\Tile.cpp" />
     <ClCompile Include="src\Maps\TileMap.cpp" />

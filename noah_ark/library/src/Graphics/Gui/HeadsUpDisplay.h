@@ -41,6 +41,10 @@ namespace GUI
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main text box for displaying messages to the player.
         GRAPHICS::GUI::TextBox MainTextBox;
+        /// The color for text in the main HUD.  This doesn't affect
+        /// text displayed in the main text box or the inventory GUI
+        /// but only other text displayed directly by this HUD.
+        GRAPHICS::Color TextColor;
         /// True if the full inventory GUI is displayed; false otherwise.
         bool InventoryOpened;
         /// The GUI for displaying the full inventory.

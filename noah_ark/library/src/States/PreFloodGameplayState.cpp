@@ -331,6 +331,19 @@ namespace STATES
                 // MOVE THE PLAYER TO THE START POINT OF THE NEW TILE MAP.
                 NoahPlayer->SetWorldPosition(map_exit_point->NewPlayerWorldPosition);
 
+                // UPDATE THE HUD'S TEXT COLOR BASED THE MAP.
+                bool inside_ark = World->ArkInterior.Contains(CurrentMapGrid);
+                if (inside_ark)
+                {
+                    // White is more readable on-top of the black borders around the ark interior.
+                    Hud->TextColor = GRAPHICS::Color::WHITE;
+                }
+                else
+                {
+                    // The default color of black is more readable in the overworld.
+                    Hud->TextColor = GRAPHICS::Color::BLACK;
+                }
+
                 // EXIT THIS UPDATE IF THE PLAYER HAS CHANGED MAPS.
                 return;
             }

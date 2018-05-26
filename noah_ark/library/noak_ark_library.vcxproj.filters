@@ -287,9 +287,6 @@
     <ClInclude Include="src\Inventory\InventoryFoodPage.h">
       <Filter>Header Files\Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="src\States\PreFloodGameplayState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\Container.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -340,6 +337,9 @@
     </ClInclude>
     <ClInclude Include="src\Maps\LayeredMultiTileMapGrids.h">
       <Filter>Header Files\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="src\States\GameplayState.h">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -493,9 +493,6 @@
     <ClCompile Include="src\Inventory\InventoryFoodPage.cpp">
       <Filter>Source Files\Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="src\States\PreFloodGameplayState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
     <ClCompile Include="src\Input\Mouse.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
@@ -534,6 +531,9 @@
     </ClCompile>
     <ClCompile Include="src\Maps\LayeredMultiTileMapGrids.cpp">
       <Filter>Source Files\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="src\States\GameplayState.cpp">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

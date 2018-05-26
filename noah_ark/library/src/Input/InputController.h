@@ -43,6 +43,9 @@ namespace INPUT_CONTROL
         static constexpr sf::Keyboard::Key MAP_EDITOR_TILE_PALETTE_KEY = sf::Keyboard::T;
         /// The key for saving the updated map in a map editor.
         static constexpr sf::Keyboard::Key MAP_EDITOR_SAVE_MAP_KEY = sf::Keyboard::S;
+        /// The key for closing the ark doors as a quick way to switch to that state.
+        /// The key is completely arbitrary.
+        static constexpr sf::Keyboard::Key DEBUG_CLOSE_ARK_DOORS_KEY = sf::Keyboard::J;
         /// The button for the main pointer.
         static constexpr sf::Mouse::Button MAIN_POINTER_BUTTON = sf::Mouse::Left;
         /// The button for the secondary pointer.

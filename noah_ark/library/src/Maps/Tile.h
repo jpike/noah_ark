@@ -47,6 +47,12 @@ namespace MAPS
             ARK_INTERIOR_UP_STAIRS = 13,
             /// A tile for stairs leading downward in the interior of the ark.
             ARK_INTERIOR_DOWN_STAIRS = 14,
+            /// A tile for the left side of an exit from the interior of the ark.
+            ARK_INTERIOR_LEFT_EXIT_CLOSED = 15,
+            /// A tile for the center of an exit from the interior of the ark.
+            ARK_INTERIOR_CENTER_EXIT_CLOSED = 16,
+            /// A tile for the right side of an exit from the interior of the ark.
+            ARK_INTERIOR_RIGHT_EXIT_CLOSED = 17,
             /// An extra enum value to define count of different tile types.
             COUNT
         };

@@ -3,7 +3,7 @@
 #include "Core/NullChecking.h"
 #include "Debugging/DebugConsole.h"
 #include "Objects/RandomAnimalGenerationAlgorithm.h"
-#include "States/PreFloodGameplayState.h"
+#include "States/GameplayState.h"
 
 namespace STATES
 {
@@ -11,7 +11,7 @@ namespace STATES
     /// @param[in,out]  speakers - The speakers for which to play sound effects.
     /// @param[in]  assets - The assets to be used during gameplay.
     /// @throws std::exception - Thrown if the assets are null.
-    PreFloodGameplayState::PreFloodGameplayState(
+    GameplayState::GameplayState(
         const std::shared_ptr<AUDIO::Speakers>& speakers,
         const std::shared_ptr<RESOURCES::Assets>& assets) :
         World(),
@@ -34,7 +34,7 @@ namespace STATES
     /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
     /// @param[in,out]  world - The world for the gameplay state.
     /// @return True if initialization succeeded; false otherwise.
-    bool PreFloodGameplayState::Initialize(
+    bool GameplayState::Initialize(
         const unsigned int screen_width_in_pixels,
         const SavedGameData& saved_game_data,
         const std::shared_ptr<MAPS::World>& world)
@@ -109,7 +109,7 @@ namespace STATES
     /// @param[in]  elapsed_time - The amount of time by which to update the game state.
     /// @param[in,out]  input_controller - The controller supplying player input.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
-    void PreFloodGameplayState::Update(
+    void GameplayState::Update(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera)
@@ -157,7 +157,7 @@ namespace STATES
 
     /// Renders the current frame of the gameplay state.
     /// @param[in]  renderer - The renderer to use for rendering.
-    void PreFloodGameplayState::Render(GRAPHICS::Renderer& renderer)
+    void GameplayState::Render(GRAPHICS::Renderer& renderer)
     {
         // RENDER CONTENT SPECIFIC TO THE CURRENT MAP.
         renderer.Render(*CurrentMapGrid);
@@ -210,7 +210,7 @@ namespace STATES
     /// Attempts to initialize the player character from saved game data.
     /// @param[in]  saved_game_data - The saved game data from which to initialize the player.
     /// @return The initialized player, if successful; null otherwise.
-    std::shared_ptr<OBJECTS::Noah> PreFloodGameplayState::InitializePlayer(const SavedGameData& saved_game_data)
+    std::shared_ptr<OBJECTS::Noah> GameplayState::InitializePlayer(const SavedGameData& saved_game_data)
     {
         // GET THE TEXTURE FOR NOAH.
         std::shared_ptr<GRAPHICS::Texture> noah_texture = Assets->GetTexture(RESOURCES::AssetId::NOAH_TEXTURE);
@@ -249,7 +249,7 @@ namespace STATES
     /// @param[in]  world - The world for which the HUD is displaying information about.
     /// @param[in]  noah_player - The player whose information to display in the HUD.
     /// @return The initialized HUD, if successful; null otherwise.
-    std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> PreFloodGameplayState::InitializeHud(
+    std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> GameplayState::InitializeHud(
         const unsigned int screen_width_in_pixels,
         const std::shared_ptr<MAPS::World>& world,
         const std::shared_ptr<OBJECTS::Noah>& noah_player)
@@ -287,7 +287,7 @@ namespace STATES
     /// @param[in,out]  input_controller - The controller supplying player input.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
     /// @param[in,out]  map_grid - The map grid to update.
-    void PreFloodGameplayState::UpdateMapGrid(
+    void GameplayState::UpdateMapGrid(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera,
@@ -332,8 +332,8 @@ namespace STATES
                 NoahPlayer->SetWorldPosition(map_exit_point->NewPlayerWorldPosition);
 
                 // UPDATE THE HUD'S TEXT COLOR BASED THE MAP.
-                bool inside_ark = World->ArkInterior.Contains(CurrentMapGrid);
-                if (inside_ark)
+                bool entered_ark = World->ArkInterior.Contains(CurrentMapGrid);
+                if (entered_ark)
                 {
                     // White is more readable on-top of the black borders around the ark interior.
                     Hud->TextColor = GRAPHICS::Color::WHITE;
@@ -346,6 +346,73 @@ namespace STATES
 
                 // EXIT THIS UPDATE IF THE PLAYER HAS CHANGED MAPS.
                 return;
+            }
+
+            // CLOSE THE ARK DOOR'S IF THE PLAYER IS IN THE ARK AFTER COLLECTION ALL ITEMS.
+            bool inside_ark = World->ArkInterior.Contains(&map_grid);
+            if (inside_ark)
+            {
+                /// @todo   Add non-debug logic for this.
+                bool player_collected_all_items = false;
+#ifdef _DEBUG
+                player_collected_all_items = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_CLOSE_ARK_DOORS_KEY);
+#endif
+                if (player_collected_all_items)
+                {
+                    // GET THE TILESET.
+                    // It's needed for switching tiles.
+                    std::shared_ptr<GRAPHICS::Texture> tileset_texture = Assets->GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);
+                    if (tileset_texture)
+                    {
+                        MAPS::Tileset tileset(tileset_texture);
+                        
+                        // CHANGE ANY ARK EXIT DOORS TO BE CLOSED.
+                        for (unsigned int tile_row = 0; tile_row < MAPS::TileMap::HEIGHT_IN_TILES; ++tile_row)
+                        {
+                            for (unsigned int tile_column = 0; tile_column < MAPS::TileMap::WIDTH_IN_TILES; ++tile_column)
+                            {
+                                // GET THE CURRENT TILE.
+                                std::shared_ptr<MAPS::Tile> current_tile = current_tile_map->Ground.Tiles(tile_column, tile_row);
+                                if (!current_tile)
+                                {
+                                    continue;
+                                }
+
+                                // CHANGE THE TILE IF IT IS FOR AN ARK EXIT DOOR.
+                                switch (current_tile->Type)
+                                {
+                                    case MAPS::TileType::ARK_INTERIOR_CENTER_EXIT:
+                                    {
+                                        std::shared_ptr<MAPS::Tile> center_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_CENTER_EXIT_CLOSED);
+                                        if (center_closed_tile)
+                                        {
+                                            current_tile_map->Ground.SetTile(tile_column, tile_row, center_closed_tile);
+                                        }
+                                        break;
+                                    }
+                                    case MAPS::TileType::ARK_INTERIOR_LEFT_EXIT:
+                                    {
+                                        std::shared_ptr<MAPS::Tile> left_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_LEFT_EXIT_CLOSED);
+                                        if (left_closed_tile)
+                                        {
+                                            current_tile_map->Ground.SetTile(tile_column, tile_row, left_closed_tile);
+                                        }
+                                        break;
+                                    }
+                                    case MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT:
+                                    {
+                                        std::shared_ptr<MAPS::Tile> right_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT_CLOSED);
+                                        if (right_closed_tile)
+                                        {
+                                            current_tile_map->Ground.SetTile(tile_column, tile_row, right_closed_tile);
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             // MOVE ANIMALS IN THE WORLD.
@@ -431,7 +498,7 @@ namespace STATES
     /// @param[in,out]  map_grid - The map grid containing the current tile map.
     /// @param[in,out]  camera - The camera defining the viewable region of the map grid.
     /// @return The map exit point, if the player stepped on such a point.
-    MAPS::ExitPoint* PreFloodGameplayState::UpdatePlayerBasedOnInput(
+    MAPS::ExitPoint* GameplayState::UpdatePlayerBasedOnInput(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         MAPS::TileMap& current_tile_map,
@@ -808,7 +875,7 @@ namespace STATES
     /// @param[in]  elapsed_time - The elapsed time for which to move the animals.
     /// @param[in,out]  tile_map - The tile map in which to move animals.
     /// @param[in,out]  map_grid - The map grid containing the tile map.
-    void PreFloodGameplayState::MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map, MAPS::MultiTileMapGrid& map_grid)
+    void GameplayState::MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map, MAPS::MultiTileMapGrid& map_grid)
     {
         // MOVE EACH ANIMAL IN THE TILE MAP CLOSER TO NOAH.
         for (auto& animal : tile_map.Animals)
@@ -858,7 +925,7 @@ namespace STATES
     /// Updates any falling food in the tile map.
     /// @param[in]  elapsed_time - The elapsed time for which to update the food.
     /// @param[in,out]  tile_map - The tile map whose falling food to update.
-    void PreFloodGameplayState::UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
+    void GameplayState::UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
     {
         // UPDATE ANY FALLING FOOD.
         for (auto food = tile_map.FallingFood.begin();
@@ -888,7 +955,7 @@ namespace STATES
     /// @param[in,out]  map_grid - The grid containing the tile map.
     /// @param[out] message_for_text_box - A message for the HUD's main text box, if
     ///     a Bible verse was collected.
-    void PreFloodGameplayState::CollectWoodAndBibleVersesCollidingWithPlayer(
+    void GameplayState::CollectWoodAndBibleVersesCollidingWithPlayer(
         MAPS::TileMap& tile_map,
         MAPS::MultiTileMapGrid& map_grid,
         std::string& message_for_text_box)
@@ -961,7 +1028,7 @@ namespace STATES
     /// Determines if the player is colliding with any food in the tile map.
     /// If so, the food is added to the player's inventory.
     /// @param[in,out]  tile_map - The tile map to examine food in.
-    void PreFloodGameplayState::CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map)
+    void GameplayState::CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map)
     {
         // HANDLE PLAYER COLLISIONS WITH FOOD.
         for (auto food = tile_map.FoodOnGround.cbegin();
@@ -995,7 +1062,7 @@ namespace STATES
     /// Determines if the player is colliding with any animals in the tile map.
     /// If so, the animals are added to the player's inventory.
     /// @param[in,out]  tile_map - The tile map to examine animals in.
-    void PreFloodGameplayState::CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map)
+    void GameplayState::CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map)
     {
         // HANDLE PLAYER COLLISIONS WITH ANIMALS.
         for (auto animal = tile_map.Animals.cbegin();
@@ -1033,7 +1100,7 @@ namespace STATES
     /// @param[in,out]  input_controller - The input controller that might
     ///     be tweaked based on camera movement.
     /// @param[in,out]  current_tile_map - The current tile map in view by the camera.
-    void PreFloodGameplayState::UpdateCameraWorldView(
+    void GameplayState::UpdateCameraWorldView(
         const sf::Time& elapsed_time,
         GRAPHICS::Camera& camera,
         INPUT_CONTROL::InputController& input_controller,

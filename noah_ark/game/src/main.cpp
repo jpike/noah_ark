@@ -17,7 +17,7 @@
 #include "Resources/Assets.h"
 #include "Resources/FoodGraphics.h"
 #include "States/CreditsScreen.h"
-#include "States/PreFloodGameplayState.h"
+#include "States/GameplayState.h"
 #include "States/GameState.h"
 #include "States/IntroSequence.h"
 #include "States/SavedGameData.h"
@@ -669,7 +669,7 @@ int main(int argumentCount, char* arguments[])
         speakers->PlayMusic(RESOURCES::AssetId::INTRO_MUSIC);
         STATES::TitleScreen title_screen;
         STATES::CreditsScreen credits_screen;
-        STATES::PreFloodGameplayState pre_flood_gameplay_state(speakers, assets);
+        STATES::GameplayState gameplay_state(speakers, assets);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         STATES::GameState game_state = STATES::GameState::INTRO_SEQUENCE;
@@ -744,8 +744,8 @@ int main(int argumentCount, char* arguments[])
                     case STATES::GameState::CREDITS_SCREEN:
                         next_game_state = credits_screen.Update(elapsed_time, input_controller);
                         break;
-                    case STATES::GameState::PRE_FLOOD_GAMEPLAY:
-                        pre_flood_gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
+                    case STATES::GameState::GAMEPLAY:
+                        gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
                 }
 
                 // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
@@ -763,8 +763,8 @@ int main(int argumentCount, char* arguments[])
                     case STATES::GameState::CREDITS_SCREEN:
                         credits_screen.Render(renderer);
                         break;
-                    case STATES::GameState::PRE_FLOOD_GAMEPLAY:
-                        pre_flood_gameplay_state.Render(renderer);
+                    case STATES::GameState::GAMEPLAY:
+                        gameplay_state.Render(renderer);
                         break;
                 }
 
@@ -786,7 +786,7 @@ int main(int argumentCount, char* arguments[])
                             // RESET THE ELAPSED TIME FOR THE CREDITS SCREEN.
                             credits_screen.ElapsedTime = sf::Time::Zero;
                             break;
-                        case STATES::GameState::PRE_FLOOD_GAMEPLAY:
+                        case STATES::GameState::GAMEPLAY:
                         {
                             // LOAD THE GAME'S SAVE FILE.
                             std::unique_ptr<STATES::SavedGameData> saved_game_data = STATES::SavedGameData::Load(STATES::SavedGameData::DEFAULT_FILENAME);
@@ -804,7 +804,7 @@ int main(int argumentCount, char* arguments[])
                                 return EXIT_FAILURE;
                             }
 
-                            bool gameplay_state_initialized = pre_flood_gameplay_state.Initialize(
+                            bool gameplay_state_initialized = gameplay_state.Initialize(
                                 SCREEN_WIDTH_IN_PIXELS,
                                 *saved_game_data,
                                 world);
@@ -814,7 +814,7 @@ int main(int argumentCount, char* arguments[])
                             }
 
                             // FOCUS THE CAMERA ON THE PLAYER.
-                            MATH::Vector2f player_start_world_position = pre_flood_gameplay_state.NoahPlayer->GetWorldPosition();
+                            MATH::Vector2f player_start_world_position = gameplay_state.NoahPlayer->GetWorldPosition();
                             renderer.Camera.SetCenter(player_start_world_position);
 
                             break;

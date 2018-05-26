@@ -6,7 +6,7 @@ namespace STATES
     /// Constructor.
     TitleScreen::TitleScreen() :
         SelectedMenuOptionIndex(0),
-        MenuOptions({ GameState::PRE_FLOOD_GAMEPLAY, GameState::CREDITS_SCREEN })
+        MenuOptions({ GameState::GAMEPLAY, GameState::CREDITS_SCREEN })
     {}
 
     /// Handles any user input for the title screen.
@@ -133,7 +133,7 @@ namespace STATES
             GameState current_menu_option = MenuOptions.at(menu_option_index);
             switch (current_menu_option)
             {
-                case GameState::PRE_FLOOD_GAMEPLAY:
+                case GameState::GAMEPLAY:
                     menu_option_text += "PLAY GAME";
                     break;
                 case GameState::CREDITS_SCREEN:

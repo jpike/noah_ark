@@ -11,7 +11,7 @@ namespace STATES
         TITLE_SCREEN,
         /// The credits screen.
         CREDITS_SCREEN,
-        /// The main pre-flood gameplay state for the game.
-        PRE_FLOOD_GAMEPLAY
+        /// The main gameplay state for the game.
+        GAMEPLAY
     };
 }

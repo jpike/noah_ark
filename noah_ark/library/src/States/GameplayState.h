@@ -20,13 +20,14 @@
 
 namespace STATES
 {
-    /// The main pre-flood state of the game featuring the main gameplay
-    /// of the player moving Noah throughout the overworld, prior to the flood.
-    class PreFloodGameplayState
+    /// The state of the game featuring the main gameplay of the player moving Noah
+    /// throughout the overworld and inside the ark (before, during, and after
+    /// the flood).
+    class GameplayState
     {
     public:
         // CONSTRUCTION.
-        explicit PreFloodGameplayState(
+        explicit GameplayState(
             const std::shared_ptr<AUDIO::Speakers>& speakers,
             const std::shared_ptr<RESOURCES::Assets>& assets);
 

@@ -9,7 +9,7 @@ namespace RESOURCES
     /// Loads assets in the specified asset package into this collection.
     /// @param[in]  asset_package - The package of assets to load.
     /// @return True if all assets in the package are loaded successfully; false otherwise.
-    bool Assets::Load(const AssetPackage& asset_package)
+    bool Assets::Load(const AssetPackageDefinition& asset_package)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(AssetMutex);

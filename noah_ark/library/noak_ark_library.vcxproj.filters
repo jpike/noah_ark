@@ -108,6 +108,12 @@
     <Filter Include="Header Files\Maps\Data">
       <UniqueIdentifier>{f13618ec-74be-43fb-8851-7e7ebf679765}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Filesystem">
+      <UniqueIdentifier>{1a8fe1ee-7657-4453-ae10-f0927c3cbb8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Filesystem">
+      <UniqueIdentifier>{06fe7dfb-5a5e-4b38-9c43-e3639f021db9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Math\Vector2.h">
@@ -341,6 +347,18 @@
     <ClInclude Include="src\States\GameplayState.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
+    <ClInclude Include="src\Resources\PredefinedAssetPackages.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Filesystem\File.h">
+      <Filter>Header Files\Filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resources\AssetPackageDefinition.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Resources\Asset.h">
+      <Filter>Header Files\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Maps\Tile.cpp">
@@ -534,6 +552,18 @@
     </ClCompile>
     <ClCompile Include="src\States\GameplayState.cpp">
       <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resources\PredefinedAssetPackages.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Filesystem\File.cpp">
+      <Filter>Source Files\Filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resources\AssetPackageDefinition.cpp">
+      <Filter>Source Files\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Resources\Asset.cpp">
+      <Filter>Source Files\Resources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

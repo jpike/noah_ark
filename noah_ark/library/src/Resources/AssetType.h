@@ -7,8 +7,12 @@ namespace RESOURCES
     {
         /// Reserved to indicate an invalid type of asset.
         INVALID,
+        /// A generic texture.
+        TEXTURE,
         /// A \ref GRAPHICS::GUI::Font.
         FONT,
+        /// A sound effect.
+        SOUND_EFFECT,
         /// A piece of music.
         MUSIC,
         /// A shader.

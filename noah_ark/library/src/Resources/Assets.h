@@ -12,7 +12,7 @@
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Texture.h"
 #include "Graphics/Gui/Font.h"
-#include "Resources/AssetPackage.h"
+#include "Resources/AssetPackageDefinition.h"
 
 /// Holds code related to resources/assets for the game.
 namespace RESOURCES
@@ -25,7 +25,7 @@ namespace RESOURCES
     {
     public:
         // ASSET LOADING.
-        bool Load(const AssetPackage& asset_package);
+        bool Load(const AssetPackageDefinition& asset_package);
 
         // ASSET RETRIEVAL.
         std::shared_ptr<GRAPHICS::Texture> GetTexture(const AssetId texture_id);

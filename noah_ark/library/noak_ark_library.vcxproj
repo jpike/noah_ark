@@ -33,6 +33,7 @@
     <ClInclude Include="src\Core\String.h" />
     <ClInclude Include="src\Debugging\DebugConsole.h" />
     <ClInclude Include="src\Events\AxeSwingEvent.h" />
+    <ClInclude Include="src\Filesystem\File.h" />
     <ClInclude Include="src\Graphics\AnimatedSprite.h" />
     <ClInclude Include="src\Graphics\AnimationSequence.h" />
     <ClInclude Include="src\Graphics\Camera.h" />
@@ -84,12 +85,15 @@
     <ClInclude Include="src\Objects\WoodLogs.h" />
     <ClInclude Include="src\Resources\AnimalGraphics.h" />
     <ClInclude Include="src\Resources\AnimalSounds.h" />
+    <ClInclude Include="src\Resources\Asset.h" />
     <ClInclude Include="src\Resources\AssetDefinition.h" />
     <ClInclude Include="src\Resources\AssetId.h" />
     <ClInclude Include="src\Resources\AssetPackage.h" />
+    <ClInclude Include="src\Resources\AssetPackageDefinition.h" />
     <ClInclude Include="src\Resources\Assets.h" />
     <ClInclude Include="src\Resources\AssetType.h" />
     <ClInclude Include="src\Resources\FoodGraphics.h" />
+    <ClInclude Include="src\Resources\PredefinedAssetPackages.h" />
     <ClInclude Include="src\States\CreditsScreen.h" />
     <ClInclude Include="src\States\GameplayState.h" />
     <ClInclude Include="src\States\GameState.h" />
@@ -108,6 +112,7 @@
     <ClCompile Include="src\Core\String.cpp" />
     <ClCompile Include="src\Debugging\DebugConsole.cpp" />
     <ClCompile Include="src\Events\AxeSwingEvent.cpp" />
+    <ClCompile Include="src\Filesystem\File.cpp" />
     <ClCompile Include="src\Graphics\AnimatedSprite.cpp" />
     <ClCompile Include="src\Graphics\AnimationSequence.cpp" />
     <ClCompile Include="src\Graphics\Camera.cpp" />
@@ -152,11 +157,14 @@
     <ClCompile Include="src\Objects\WoodLogs.cpp" />
     <ClCompile Include="src\Resources\AnimalGraphics.cpp" />
     <ClCompile Include="src\Resources\AnimalSounds.cpp" />
+    <ClCompile Include="src\Resources\Asset.cpp" />
     <ClCompile Include="src\Resources\AssetDefinition.cpp" />
     <ClCompile Include="src\Resources\AssetId.cpp" />
     <ClCompile Include="src\Resources\AssetPackage.cpp" />
+    <ClCompile Include="src\Resources\AssetPackageDefinition.cpp" />
     <ClCompile Include="src\Resources\Assets.cpp" />
     <ClCompile Include="src\Resources\FoodGraphics.cpp" />
+    <ClCompile Include="src\Resources\PredefinedAssetPackages.cpp" />
     <ClCompile Include="src\States\CreditsScreen.cpp" />
     <ClCompile Include="src\States\GameplayState.cpp" />
     <ClCompile Include="src\States\IntroSequence.cpp" />

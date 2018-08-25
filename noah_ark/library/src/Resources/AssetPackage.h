@@ -1,8 +1,9 @@
 #pragma once
 
-#include <initializer_list>
+#include <filesystem>
 #include <vector>
-#include "Resources/AssetDefinition.h"
+#include "Resources/Asset.h"
+#include "Resources/AssetPackageDefinition.h"
 
 namespace RESOURCES
 {
@@ -17,11 +18,8 @@ namespace RESOURCES
     class AssetPackage
     {
     public:
-        // CONSTRUCTION.
-        explicit AssetPackage(const std::initializer_list<AssetDefinition>& assets);
-
-        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
-        /// The assets in the package.
-        std::vector<AssetDefinition> Assets;
+        // FILE ACCESS.
+        static std::vector<Asset> ReadFile(const std::filesystem::path& filepath);
+        static bool WriteFile(const AssetPackageDefinition& asset_package_definition, const std::filesystem::path& filepath);
     };
 }

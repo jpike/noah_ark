@@ -5,8 +5,10 @@ namespace RESOURCES
     /// Constructor.
     /// @param[in]  type - See \ref Type.
     /// @param[in]  id - See \ref Id.
-    AssetDefinition::AssetDefinition(const AssetType type, const AssetId id) :
+    /// @param[in]  filepath - See \ref Filepath.
+    AssetDefinition::AssetDefinition(const AssetType type, const AssetId id, const std::filesystem::path& filepath) :
         Type(type),
-        Id(id)
+        Id(id),
+        Filepath(filepath)
     {}
 }

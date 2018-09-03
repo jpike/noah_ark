@@ -1,0 +1,48 @@
+{
+    "version": "0.2.1",
+    "tasks":
+    [
+        {
+            "taskName": "Full build",
+            "taskLabel": "Full build",
+            "appliesTo": "full_build.bat",
+            "command": "full_build.bat",
+            "type": "launch"
+        },
+        {
+            "taskName": "Build library",
+            "taskLabel": "Build library",
+            "appliesTo": "build_library.bat",
+            "command": "build_library.bat",
+            "type": "launch"
+        },
+        {
+            "taskName": "Build asset packer",
+            "taskLabel": "Build asset packer",
+            "appliesTo": "build_asset_packer.bat",
+            "command": "build_asset_packer.bat",
+            "type": "launch"
+        },
+        {
+            "taskName": "Build tester",
+            "taskLabel": "Build tester",
+            "appliesTo": "build_tester.bat",
+            "command": "build_tester.bat",
+            "type": "launch"
+        },
+        {
+            "taskName": "Copy DLLs",
+            "taskLabel": "Copy DLLs",
+            "appliesTo": "copy_dlls.bat",
+            "command": "copy_dlls.bat",
+            "type": "launch"
+        },
+        {
+            "taskName": "Copy Resources",
+            "taskLabel": "Copy Resources",
+            "appliesTo": "copy_resources.bat",
+            "command": "copy_resources.bat",
+            "type": "launch"
+        }
+    ]
+}

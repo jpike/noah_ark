@@ -577,6 +577,7 @@ bool LoadIntroSequenceAssets(RESOURCES::Assets& assets)
 
     // LOAD THE ASSETS.
     bool assets_loaded = assets.Load(INTRO_SEQUENCE_ASSETS);*/
+    assets;
     bool assets_loaded = false;
 
     auto load_end_time = std::chrono::system_clock::now();
@@ -594,6 +595,8 @@ bool LoadIntroSequenceAssets(RESOURCES::Assets& assets)
 /// @return     One of the exit codes defined in NoahArkGame.
 int main(int argumentCount, char* arguments[])
 {
+    argumentCount;
+    arguments;
     try
     {
         // CREATE THE WINDOW.

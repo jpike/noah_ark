@@ -20,6 +20,6 @@ namespace MATH
     {
         NumberType remainder = (number % 2);
         bool is_even = (0 == remainder);
-        return remainder;
+        return is_even;
     }
 }

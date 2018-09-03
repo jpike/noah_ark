@@ -1,0 +1,7 @@
+Tempo: -20
+Bass: 30
+Treble: 0 (make negative?)
+Pitch: 0 (make negative?)
+Speed: make lower?
+Paulstretch - try this?
+Reverse - try this?

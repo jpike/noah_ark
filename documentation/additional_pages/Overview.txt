@@ -1,0 +1,13 @@
+/**
+
+@mainpage Bible Games - Noah's Ark
+
+*Bible Games - Noah's Ark* is an in-development game based on the Biblical story of Noah's Ark, as told in the book of Genesis.  The goal is to create a fun way to grow closer with God and learn more about the story of Noah's Ark.  The game is intended to be along the lines of more "traditional" video games in order to provide a deeper experience while engaging with the wonderful Scripture that the loving God has graced us with.
+
+Bible verses will be incorporated from the King James Version (due to its public domain status).
+
+It will be a native Windows game, playable at least on Windows 8, x86 systems.  Development is being done with C++ and Visual Studio 2013.  For additional third-party technologies used, check out the source code on [GitHub](https://github.com/jpike/noah_ark).
+
+[Blog posts](http://www.jacobpike.com/blog/?tag=noahs-ark) also exist related to the game's development.
+
+*/

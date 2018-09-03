@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="code\testing\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\testing\GraphicsTests\AnimatedSpriteTests.h">
+      <Filter>GraphicsTests</Filter>
+    </ClInclude>
+    <ClInclude Include="code\testing\GraphicsTests\AnimationSequenceTests.h">
+      <Filter>GraphicsTests</Filter>
+    </ClInclude>
+    <ClInclude Include="code\testing\CoreTests\Array2DTests.h">
+      <Filter>CoreTests</Filter>
+    </ClInclude>
+    <ClInclude Include="code\testing\MathTests\FloatRectangleTests.h">
+      <Filter>MathTests</Filter>
+    </ClInclude>
+    <ClInclude Include="code\testing\GraphicsTests\GuiTests\TextBoxTests.h">
+      <Filter>GraphicsTests\GuiTests</Filter>
+    </ClInclude>
+    <ClInclude Include="code\testing\GraphicsTests\GuiTests\TextPageTests.h">
+      <Filter>GraphicsTests\GuiTests</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CoreTests">
+      <UniqueIdentifier>{98c0d1fd-3ac8-41bb-8ef8-20de351307d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsTests">
+      <UniqueIdentifier>{cdcd0c90-98fb-4184-ab97-29b355877e5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GraphicsTests\GuiTests">
+      <UniqueIdentifier>{4a4af1be-c726-45e0-8ee6-7dead9692709}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MathTests">
+      <UniqueIdentifier>{438861d8-f1ba-4085-9ace-5a29bdfd1a73}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\library\Audio\SoundEffect.h" />
+    <ClInclude Include="code\library\Audio\Speakers.h" />
+    <ClInclude Include="code\library\Bible\BibleBook.h" />
+    <ClInclude Include="code\library\Bible\BibleVerse.h" />
+    <ClInclude Include="code\library\Bible\BibleVerses.h" />
+    <ClInclude Include="code\library\Collision\CollisionDetectionAlgorithms.h" />
+    <ClInclude Include="code\library\Collision\Movement.h" />
+    <ClInclude Include="code\library\Core\Array2D.h" />
+    <ClInclude Include="code\library\Core\Container.h" />
+    <ClInclude Include="code\library\Core\Direction.h" />
+    <ClInclude Include="code\library\Core\NullChecking.h" />
+    <ClInclude Include="code\library\Core\String.h" />
+    <ClInclude Include="code\library\Debugging\DebugConsole.h" />
+    <ClInclude Include="code\library\Events\AxeSwingEvent.h" />
+    <ClInclude Include="code\library\Filesystem\File.h" />
+    <ClInclude Include="code\library\Graphics\AnimatedSprite.h" />
+    <ClInclude Include="code\library\Graphics\AnimationSequence.h" />
+    <ClInclude Include="code\library\Graphics\Camera.h" />
+    <ClInclude Include="code\library\Graphics\Color.h" />
+    <ClInclude Include="code\library\Graphics\Gui\Font.h" />
+    <ClInclude Include="code\library\Graphics\Gui\Glyph.h" />
+    <ClInclude Include="code\library\Graphics\Gui\HeadsUpDisplay.h" />
+    <ClInclude Include="code\library\Graphics\Gui\TextBox.h" />
+    <ClInclude Include="code\library\Graphics\Gui\TextPage.h" />
+    <ClInclude Include="code\library\Graphics\Renderer.h" />
+    <ClInclude Include="code\library\Graphics\Screen.h" />
+    <ClInclude Include="code\library\Graphics\Sprite.h" />
+    <ClInclude Include="code\library\Graphics\Texture.h" />
+    <ClInclude Include="code\library\Input\Keyboard.h" />
+    <ClInclude Include="code\library\Input\InputController.h" />
+    <ClInclude Include="code\library\Input\Mouse.h" />
+    <ClInclude Include="code\library\Inventory\Inventory.h" />
+    <ClInclude Include="code\library\Inventory\InventoryAnimalsPage.h" />
+    <ClInclude Include="code\library\Inventory\InventoryBiblePage.h" />
+    <ClInclude Include="code\library\Inventory\InventoryBibleVerseListBox.h" />
+    <ClInclude Include="code\library\Inventory\InventoryBibleVerseTextBox.h" />
+    <ClInclude Include="code\library\Inventory\InventoryFoodPage.h" />
+    <ClInclude Include="code\library\Inventory\InventoryGui.h" />
+    <ClInclude Include="code\library\Maps\Data\ArkInteriorTileMapData.h" />
+    <ClInclude Include="code\library\Maps\Data\OverworldMapData.h" />
+    <ClInclude Include="code\library\Maps\Data\TileMapData.h" />
+    <ClInclude Include="code\library\Maps\ExitPoint.h" />
+    <ClInclude Include="code\library\Maps\GroundLayer.h" />
+    <ClInclude Include="code\library\Maps\Gui\TileMapEditorGui.h" />
+    <ClInclude Include="code\library\Maps\Gui\TilePalette.h" />
+    <ClInclude Include="code\library\Maps\LayeredMultiTileMapGrids.h" />
+    <ClInclude Include="code\library\Maps\MultiTileMapGrid.h" />
+    <ClInclude Include="code\library\Maps\Tile.h" />
+    <ClInclude Include="code\library\Maps\TileMap.h" />
+    <ClInclude Include="code\library\Maps\Tileset.h" />
+    <ClInclude Include="code\library\Maps\World.h" />
+    <ClInclude Include="code\library\Math\Number.h" />
+    <ClInclude Include="code\library\Math\RandomNumberGenerator.h" />
+    <ClInclude Include="code\library\Math\Rectangle.h" />
+    <ClInclude Include="code\library\Math\Vector2.h" />
+    <ClInclude Include="code\library\Objects\Animal.h" />
+    <ClInclude Include="code\library\Objects\ArkPiece.h" />
+    <ClInclude Include="code\library\Objects\Axe.h" />
+    <ClInclude Include="code\library\Objects\DustCloud.h" />
+    <ClInclude Include="code\library\Objects\Food.h" />
+    <ClInclude Include="code\library\Objects\Noah.h" />
+    <ClInclude Include="code\library\Objects\RandomAnimalGenerationAlgorithm.h" />
+    <ClInclude Include="code\library\Objects\Tree.h" />
+    <ClInclude Include="code\library\Objects\WoodLogs.h" />
+    <ClInclude Include="code\library\Resources\AnimalGraphics.h" />
+    <ClInclude Include="code\library\Resources\AnimalSounds.h" />
+    <ClInclude Include="code\library\Resources\Asset.h" />
+    <ClInclude Include="code\library\Resources\AssetDefinition.h" />
+    <ClInclude Include="code\library\Resources\AssetId.h" />
+    <ClInclude Include="code\library\Resources\AssetPackage.h" />
+    <ClInclude Include="code\library\Resources\AssetPackageDefinition.h" />
+    <ClInclude Include="code\library\Resources\Assets.h" />
+    <ClInclude Include="code\library\Resources\AssetType.h" />
+    <ClInclude Include="code\library\Resources\FoodGraphics.h" />
+    <ClInclude Include="code\library\Resources\PredefinedAssetPackages.h" />
+    <ClInclude Include="code\library\States\CreditsScreen.h" />
+    <ClInclude Include="code\library\States\GameplayState.h" />
+    <ClInclude Include="code\library\States\GameState.h" />
+    <ClInclude Include="code\library\States\IntroSequence.h" />
+    <ClInclude Include="code\library\States\SavedGameData.h" />
+    <ClInclude Include="code\library\States\TitleScreen.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="code\library\Audio\SoundEffect.cpp" />
+    <ClCompile Include="code\library\Audio\Speakers.cpp" />
+    <ClCompile Include="code\library\Bible\BibleBook.cpp" />
+    <ClCompile Include="code\library\Bible\BibleVerse.cpp" />
+    <ClCompile Include="code\library\Bible\BibleVerses.cpp" />
+    <ClCompile Include="code\library\Collision\CollisionDetectionAlgorithms.cpp" />
+    <ClCompile Include="code\library\Collision\Movement.cpp" />
+    <ClCompile Include="code\library\Core\String.cpp" />
+    <ClCompile Include="code\library\Debugging\DebugConsole.cpp" />
+    <ClCompile Include="code\library\Events\AxeSwingEvent.cpp" />
+    <ClCompile Include="code\library\Filesystem\File.cpp" />
+    <ClCompile Include="code\library\Graphics\AnimatedSprite.cpp" />
+    <ClCompile Include="code\library\Graphics\AnimationSequence.cpp" />
+    <ClCompile Include="code\library\Graphics\Camera.cpp" />
+    <ClCompile Include="code\library\Graphics\Color.cpp" />
+    <ClCompile Include="code\library\Graphics\Gui\Font.cpp" />
+    <ClCompile Include="code\library\Graphics\Gui\HeadsUpDisplay.cpp" />
+    <ClCompile Include="code\library\Graphics\Gui\TextBox.cpp" />
+    <ClCompile Include="code\library\Graphics\Gui\TextPage.cpp" />
+    <ClCompile Include="code\library\Graphics\Renderer.cpp" />
+    <ClCompile Include="code\library\Graphics\Screen.cpp" />
+    <ClCompile Include="code\library\Graphics\Sprite.cpp" />
+    <ClCompile Include="code\library\Graphics\Texture.cpp" />
+    <ClCompile Include="code\library\Input\Keyboard.cpp" />
+    <ClCompile Include="code\library\Input\InputController.cpp" />
+    <ClCompile Include="code\library\Input\Mouse.cpp" />
+    <ClCompile Include="code\library\Inventory\Inventory.cpp" />
+    <ClCompile Include="code\library\Inventory\InventoryAnimalsPage.cpp" />
+    <ClCompile Include="code\library\Inventory\InventoryBiblePage.cpp" />
+    <ClCompile Include="code\library\Inventory\InventoryBibleVerseListBox.cpp" />
+    <ClCompile Include="code\library\Inventory\InventoryBibleVerseTextBox.cpp" />
+    <ClCompile Include="code\library\Inventory\InventoryFoodPage.cpp" />
+    <ClCompile Include="code\library\Inventory\InventoryGui.cpp" />
+    <ClCompile Include="code\library\Maps\Data\ArkInteriorTileMapData.cpp" />
+    <ClCompile Include="code\library\Maps\Data\OverworldMapData.cpp" />
+    <ClCompile Include="code\library\Maps\Data\TileMapData.cpp" />
+    <ClCompile Include="code\library\Maps\GroundLayer.cpp" />
+    <ClCompile Include="code\library\Maps\Gui\TileMapEditorGui.cpp" />
+    <ClCompile Include="code\library\Maps\Gui\TilePalette.cpp" />
+    <ClCompile Include="code\library\Maps\LayeredMultiTileMapGrids.cpp" />
+    <ClCompile Include="code\library\Maps\MultiTileMapGrid.cpp" />
+    <ClCompile Include="code\library\Maps\Tile.cpp" />
+    <ClCompile Include="code\library\Maps\TileMap.cpp" />
+    <ClCompile Include="code\library\Maps\Tileset.cpp" />
+    <ClCompile Include="code\library\Objects\Animal.cpp" />
+    <ClCompile Include="code\library\Objects\ArkPiece.cpp" />
+    <ClCompile Include="code\library\Objects\Axe.cpp" />
+    <ClCompile Include="code\library\Objects\DustCloud.cpp" />
+    <ClCompile Include="code\library\Objects\Food.cpp" />
+    <ClCompile Include="code\library\Objects\Noah.cpp" />
+    <ClCompile Include="code\library\Objects\RandomAnimalGenerationAlgorithm.cpp" />
+    <ClCompile Include="code\library\Objects\Tree.cpp" />
+    <ClCompile Include="code\library\Objects\WoodLogs.cpp" />
+    <ClCompile Include="code\library\Resources\AnimalGraphics.cpp" />
+    <ClCompile Include="code\library\Resources\AnimalSounds.cpp" />
+    <ClCompile Include="code\library\Resources\Asset.cpp" />
+    <ClCompile Include="code\library\Resources\AssetDefinition.cpp" />
+    <ClCompile Include="code\library\Resources\AssetId.cpp" />
+    <ClCompile Include="code\library\Resources\AssetPackage.cpp" />
+    <ClCompile Include="code\library\Resources\AssetPackageDefinition.cpp" />
+    <ClCompile Include="code\library\Resources\Assets.cpp" />
+    <ClCompile Include="code\library\Resources\FoodGraphics.cpp" />
+    <ClCompile Include="code\library\Resources\PredefinedAssetPackages.cpp" />
+    <ClCompile Include="code\library\States\CreditsScreen.cpp" />
+    <ClCompile Include="code\library\States\GameplayState.cpp" />
+    <ClCompile Include="code\library\States\IntroSequence.cpp" />
+    <ClCompile Include="code\library\States\SavedGameData.cpp" />
+    <ClCompile Include="code\library\States\TitleScreen.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0D615E35-8F41-44B6-BE1B-FED957017972}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>noak_ark_library</RootNamespace>
+    <ProjectName>noah_ark_library</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>$(ProjectName)_$(Configuration)</TargetName>
+    <LibraryPath>$(SolutionDir)ThirdParty\SFML-2.5.0\build\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <IncludePath>$(SolutionDir)code\library;$(SolutionDir)ThirdParty\SFML\SFML-2.5.0\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(ProjectName)\final\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Configuration)\$(ProjectName)\intermediate\</IntDir>
+    <EnableCppCoreCheck>true</EnableCppCoreCheck>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>$(ProjectName)_$(Configuration)</TargetName>
+    <LibraryPath>$(SolutionDir)ThirdParty\SFML-2.5.0\build\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)code\library;$(SolutionDir)ThirdParty\SFML\SFML-2.5.0\include;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)build\$(Configuration)\$(ProjectName)\final\</OutDir>
+    <IntDir>$(SolutionDir)build\$(Configuration)\$(ProjectName)\intermediate\</IntDir>
+    <EnableCppCoreCheck>true</EnableCppCoreCheck>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;SFML_STATIC;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NOMINMAX;SFML_STATIC;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

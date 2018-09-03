@@ -1,0 +1,510 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="code\library\Objects\Animal.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Resources\AnimalGraphics.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Resources\AnimalSounds.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\AnimatedSprite.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\AnimationSequence.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\Data\ArkInteriorTileMapData.cpp">
+      <Filter>Maps\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Objects\ArkPiece.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Resources\Asset.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Resources\AssetDefinition.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Resources\AssetId.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Resources\AssetPackage.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Resources\AssetPackageDefinition.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Resources\Assets.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Objects\Axe.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Events\AxeSwingEvent.cpp">
+      <Filter>Events</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Bible\BibleBook.cpp">
+      <Filter>Bible</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Bible\BibleVerse.cpp">
+      <Filter>Bible</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Bible\BibleVerses.cpp">
+      <Filter>Bible</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\Camera.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Collision\CollisionDetectionAlgorithms.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\Color.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\States\CreditsScreen.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Debugging\DebugConsole.cpp">
+      <Filter>Debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Objects\DustCloud.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Filesystem\File.cpp">
+      <Filter>Filesystem</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\Gui\Font.cpp">
+      <Filter>Graphics\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Objects\Food.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Resources\FoodGraphics.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\States\GameplayState.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\GroundLayer.cpp">
+      <Filter>Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\Gui\HeadsUpDisplay.cpp">
+      <Filter>Graphics\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Input\InputController.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\States\IntroSequence.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Inventory\Inventory.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Inventory\InventoryAnimalsPage.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Inventory\InventoryBiblePage.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Inventory\InventoryBibleVerseListBox.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Inventory\InventoryBibleVerseTextBox.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Inventory\InventoryFoodPage.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Inventory\InventoryGui.cpp">
+      <Filter>Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Input\Keyboard.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\LayeredMultiTileMapGrids.cpp">
+      <Filter>Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Input\Mouse.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Collision\Movement.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\MultiTileMapGrid.cpp">
+      <Filter>Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Objects\Noah.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\Data\OverworldMapData.cpp">
+      <Filter>Maps\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Resources\PredefinedAssetPackages.cpp">
+      <Filter>Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Objects\RandomAnimalGenerationAlgorithm.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\Renderer.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\States\SavedGameData.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\Screen.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Audio\SoundEffect.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Audio\Speakers.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\Sprite.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Core\String.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\Gui\TextBox.cpp">
+      <Filter>Graphics\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\Gui\TextPage.cpp">
+      <Filter>Graphics\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Graphics\Texture.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\Tile.cpp">
+      <Filter>Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\TileMap.cpp">
+      <Filter>Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\Data\TileMapData.cpp">
+      <Filter>Maps\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\Gui\TileMapEditorGui.cpp">
+      <Filter>Maps\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\Gui\TilePalette.cpp">
+      <Filter>Maps\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Maps\Tileset.cpp">
+      <Filter>Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\States\TitleScreen.cpp">
+      <Filter>States</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Objects\Tree.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="code\library\Objects\WoodLogs.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\library\Objects\Animal.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\AnimalGraphics.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\AnimalSounds.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\AnimatedSprite.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\AnimationSequence.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\Data\ArkInteriorTileMapData.h">
+      <Filter>Maps\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Objects\ArkPiece.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Core\Array2D.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\Asset.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\AssetDefinition.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\AssetId.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\AssetPackage.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\AssetPackageDefinition.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\Assets.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\AssetType.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Objects\Axe.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Events\AxeSwingEvent.h">
+      <Filter>Events</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Bible\BibleBook.h">
+      <Filter>Bible</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Bible\BibleVerse.h">
+      <Filter>Bible</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Bible\BibleVerses.h">
+      <Filter>Bible</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Camera.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Collision\CollisionDetectionAlgorithms.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Color.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Core\Container.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\States\CreditsScreen.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Debugging\DebugConsole.h">
+      <Filter>Debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Core\Direction.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Objects\DustCloud.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\ExitPoint.h">
+      <Filter>Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Filesystem\File.h">
+      <Filter>Filesystem</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Gui\Font.h">
+      <Filter>Graphics\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Objects\Food.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\FoodGraphics.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\States\GameplayState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\States\GameState.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Gui\Glyph.h">
+      <Filter>Graphics\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\GroundLayer.h">
+      <Filter>Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Gui\HeadsUpDisplay.h">
+      <Filter>Graphics\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Input\InputController.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\States\IntroSequence.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Inventory\Inventory.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Inventory\InventoryAnimalsPage.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Inventory\InventoryBiblePage.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Inventory\InventoryBibleVerseListBox.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Inventory\InventoryBibleVerseTextBox.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Inventory\InventoryFoodPage.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Inventory\InventoryGui.h">
+      <Filter>Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Input\Keyboard.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\LayeredMultiTileMapGrids.h">
+      <Filter>Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Input\Mouse.h">
+      <Filter>Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Collision\Movement.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\MultiTileMapGrid.h">
+      <Filter>Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Objects\Noah.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Math\Number.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Core\NullChecking.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\Data\OverworldMapData.h">
+      <Filter>Maps\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Resources\PredefinedAssetPackages.h">
+      <Filter>Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Objects\RandomAnimalGenerationAlgorithm.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Math\RandomNumberGenerator.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Math\Rectangle.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Renderer.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\States\SavedGameData.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Screen.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Audio\SoundEffect.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Audio\Speakers.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Sprite.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Core\String.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Gui\TextBox.h">
+      <Filter>Graphics\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Gui\TextPage.h">
+      <Filter>Graphics\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Graphics\Texture.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\Tile.h">
+      <Filter>Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\TileMap.h">
+      <Filter>Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\Data\TileMapData.h">
+      <Filter>Maps\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\Gui\TileMapEditorGui.h">
+      <Filter>Maps\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\Gui\TilePalette.h">
+      <Filter>Maps\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\Tileset.h">
+      <Filter>Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\States\TitleScreen.h">
+      <Filter>States</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Objects\Tree.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Math\Vector2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Maps\World.h">
+      <Filter>Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="code\library\Objects\WoodLogs.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{06c9856e-c9d1-4b4d-ad97-334c4ac4d74e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bible">
+      <UniqueIdentifier>{70239aaa-1e07-461e-a324-682f0227251e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collision">
+      <UniqueIdentifier>{d37ff96e-c616-46f4-9e83-23cabb26f256}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{48e46358-7222-417a-892b-f2eb4021eec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Debugging">
+      <UniqueIdentifier>{3db89422-2606-45aa-9c59-3952c300cbf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Events">
+      <UniqueIdentifier>{82b9f1bf-584d-489a-b387-467a8c4e2abb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Filesystem">
+      <UniqueIdentifier>{bd58b34b-5947-4145-ae8e-0c466a91112f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{b200c2ae-53f2-4a11-b256-f8b9e5bba57a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{a417fdd9-382a-4329-a2bc-8d7ca68af25e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inventory">
+      <UniqueIdentifier>{053e46c6-1826-4476-b129-11bb3f724e2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Maps">
+      <UniqueIdentifier>{9c9aa89e-c423-4a48-a547-558d510c62b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{44689253-0e5f-4fe0-8455-b5d60aada6b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Objects">
+      <UniqueIdentifier>{64c58bbf-ab4f-4cef-82f0-efee3a244dc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{547298db-8988-421f-8d56-b921b3c51bad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="States">
+      <UniqueIdentifier>{57e2f952-3b24-461c-8096-68ce054dfdd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Maps\Data">
+      <UniqueIdentifier>{1e141539-771f-43ea-9068-487cc6cd9646}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Gui">
+      <UniqueIdentifier>{4bd65ffb-a400-4d4f-9bda-edd25a27f008}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Maps\Gui">
+      <UniqueIdentifier>{964d22af-f1fd-44cc-af3b-2df2c4ef52b7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

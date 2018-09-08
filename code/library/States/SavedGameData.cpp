@@ -40,7 +40,7 @@ namespace STATES
             if (!file_opened)
             {
                 // The saved game data cannot be loaded.
-                return false;
+                return nullptr;
             }
 
             // CREATE THE SAVED GAME DATA TO BE POPULATED FROM THE FILE.

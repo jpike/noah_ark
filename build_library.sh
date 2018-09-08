@@ -16,7 +16,7 @@ which g++-8
 COMPILATION_FILE="noah_ark_library.project"
 MAIN_CODE_DIR="code/library"
 if [ $CXX == clang++-7 ]; then
-    $CXX -x c++ $COMPILATION_FILE -I $MAIN_CODE_DIR -std=c++17 -stdlib=libc++ -fpermissive -o "build/noah_ark_library.lib"
+    $CXX -x c++ $COMPILATION_FILE -I $MAIN_CODE_DIR -std=c++17 -fpermissive -o "build/noah_ark_library.lib"
 else
     $CXX -x c++ $COMPILATION_FILE -I $MAIN_CODE_DIR -std=c++17 -fpermissive -o "build/noah_ark_library.lib"
 fi

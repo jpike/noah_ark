@@ -1,3 +1,6 @@
+# CREATE THE BUILD DIRECTORY IF IT DOESN'T EXIST.
+mkdir -p build
+
 
 # BUILD THE LIBRARY.
 COMPILATION_FILE="noah_ark_library.project"

@@ -1,7 +1,4 @@
 language: cpp
-compiler:
-    - clang
-    - gcc
     
 matrix:
   include:
@@ -9,7 +6,8 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-7.0
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty-7
           packages:
             - clang-7.0
       env:

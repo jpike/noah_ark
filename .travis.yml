@@ -20,6 +20,8 @@ matrix:
             - ubuntu-toolchain-r-test
             - sourceline: 'deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-7 main'
               key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+            - sourceline: 'deb http://us.archive.ubuntu.com/ubuntu/ cosmic main'
+              key_url: 'http://us.archive.ubuntu.com/ubuntu/dists/cosmic/Release.gpg'
           packages:
             - libstdc++-8-dev
             - clang-7
@@ -30,7 +32,8 @@ before_install:
     - eval "${MATRIX_EVAL}"
     
 install:
-    - sudo apt-get install -y libsfml-dev
+    - sudo apt-cache search libsfml-dev
+    - sudo apt-get install -y libsfml-dev=2.5
 
 before_script:
     - chmod +x build_library.sh

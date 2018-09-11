@@ -5,6 +5,7 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include "Audio/SoundEffect.h"
@@ -12,6 +13,7 @@
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Texture.h"
 #include "Graphics/Gui/Font.h"
+#include "Resources/Asset.h"
 #include "Resources/AssetPackageDefinition.h"
 
 /// Holds code related to resources/assets for the game.
@@ -26,13 +28,19 @@ namespace RESOURCES
     public:
         // ASSET LOADING.
         bool Load(const AssetPackageDefinition& asset_package);
+        bool Populate(const std::vector<Asset>& assets);
 
         // ASSET RETRIEVAL.
         std::shared_ptr<GRAPHICS::Texture> GetTexture(const AssetId texture_id);
+        std::shared_ptr<GRAPHICS::Texture> GetTexture(const AssetId texture_id, const std::string& binary_data);
         std::shared_ptr<GRAPHICS::GUI::Font> GetFont(const AssetId font_texture_id);
+        std::shared_ptr<GRAPHICS::GUI::Font> GetFont(const AssetId font_texture_id, const std::string& binary_data);
         std::shared_ptr<sf::Shader> GetShader(const AssetId shader_id);
+        std::shared_ptr<sf::Shader> GetShader(const AssetId shader_id, const std::string& binary_data);
         std::shared_ptr<sf::SoundBuffer> GetSound(const AssetId sound_id);
+        std::shared_ptr<sf::SoundBuffer> GetSound(const AssetId sound_id, const::std::string& binary_data);
         std::shared_ptr<sf::Music> GetMusic(const AssetId music_id);
+        std::shared_ptr<sf::Music> GetMusic(const AssetId music_id, const std::string& binary_data);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// Textures that have been loaded.  They need to remain in memory to allow them to be used.

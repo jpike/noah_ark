@@ -7,8 +7,7 @@ namespace RESOURCES
     const AssetPackageDefinition INTRO_SEQUENCE_ASSET_PACKAGE_DEFINITION({
         AssetDefinition(AssetType::FONT, RESOURCES::AssetId::FONT_TEXTURE, "res/images/main_font1.png"),
         AssetDefinition(AssetType::MUSIC, RESOURCES::AssetId::INTRO_MUSIC, "res/sounds/NoahsArkIntro1_80PercentSpeedWithFadeout.wav"),
-        /// @todo   Figure out what to do about shader assets.
-        AssetDefinition(AssetType::SHADER, RESOURCES::AssetId::COLORED_TEXTURE_SHADER, ""),
+        AssetDefinition(AssetType::SHADER, RESOURCES::AssetId::COLORED_TEXTURE_SHADER, "res/shaders/ColoredTexture.frag"),
     });
 
     const std::string MAIN_ASSET_PACKAGE_FILENAME = "MainAssets.package";

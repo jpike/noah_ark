@@ -1,5 +1,5 @@
 {
-    "version": "0.2.1",
+  "version": "0.2.1",
     "tasks":
     [
         {
@@ -42,6 +42,13 @@
             "taskLabel": "Copy Resources",
             "appliesTo": "copy_resources.bat",
             "command": "copy_resources.bat",
+            "type": "launch"
+        },
+        {
+            "taskName": "Build game",
+            "taskLabel": "Build game",
+            "appliesTo": "build_game.bat",
+            "command": "build_game.bat",
             "type": "launch"
         }
     ]

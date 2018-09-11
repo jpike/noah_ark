@@ -49,6 +49,67 @@ namespace RESOURCES
         return true;
     }
 
+    /// Populates this collection of assets with more specific types
+    /// of data as specified in the generic collection of assets.
+    /// @param[in]  assets - The generic asset data to populate from.
+    /// @return True if all assets are successfully populated; false otherwise.
+    bool Assets::Populate(const std::vector<Asset>& assets)
+    {
+        for (const auto& asset : assets)
+        {
+            switch (asset.Type)
+            {
+                case RESOURCES::AssetType::FONT:
+                {
+                    std::shared_ptr<GRAPHICS::GUI::Font> font = GetFont(asset.Id, asset.BinaryData);
+                    if (!font)
+                    {
+                        return false;
+                    }
+                    break;
+                }
+                case RESOURCES::AssetType::MUSIC:
+                {
+                    std::shared_ptr<sf::Music> music = GetMusic(asset.Id, asset.BinaryData);
+                    if (!music)
+                    {
+                        return false;
+                    }
+                    break;
+                }
+                case RESOURCES::AssetType::SHADER:
+                {
+                    std::shared_ptr<sf::Shader> shader = GetShader(asset.Id, asset.BinaryData);
+                    if (!shader)
+                    {
+                        return false;
+                    }
+                    break;
+                }
+                case RESOURCES::AssetType::SOUND_EFFECT:
+                {
+                    std::shared_ptr<sf::SoundBuffer> sound = GetSound(asset.Id, asset.BinaryData);
+                    if (!sound)
+                    {
+                        return false;
+                    }
+                    break;
+                }
+                case RESOURCES::AssetType::TEXTURE:
+                {
+                    std::shared_ptr<GRAPHICS::Texture> texture = GetTexture(asset.Id, asset.BinaryData);
+                    if (!texture)
+                    {
+                        return false;
+                    }
+                    break;
+                }
+            }
+        }
+
+        return true;
+    }
+
     /// Attempts to retrieve the texture identified by the specified ID.
     /// @param[in]  texture_id - The ID of the texture to load.
     /// @return The requested texture, if successfully loaded; null otherwise.
@@ -90,6 +151,39 @@ namespace RESOURCES
         }
     }
 
+    /// Attempts to retrieve the texture identified by the specified ID.
+    /// @param[in]  texture_id - The ID of the texture to load.
+    /// @param[in]  binary_data - The binary texture data.
+    /// @return The requested texture, if successfully loaded; null otherwise.
+    std::shared_ptr<GRAPHICS::Texture> Assets::GetTexture(const AssetId texture_id, const std::string& binary_data)
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
+        // RETURN THE TEXTURE IF IT HAS ALREADY BEEN LOADED.
+        auto id_with_texture = Textures.find(texture_id);
+        bool texture_already_loaded = (Textures.cend() != id_with_texture);
+        if (texture_already_loaded)
+        {
+            return id_with_texture->second;
+        }
+
+        // TRY LOADING THE TEXTURE.
+        std::shared_ptr<GRAPHICS::Texture> texture = GRAPHICS::Texture::LoadFromMemory(binary_data);
+        bool texture_loaded = (nullptr != texture);
+        if (texture_loaded)
+        {
+            // CACHE THE TEXTURE IN THIS COLLECTION BEFORE RETURNING.
+            Textures[texture_id] = texture;
+            return texture;
+        }
+        else
+        {
+            // The texture couldn't be retrieved.
+            return nullptr;
+        }
+    }
+
     /// Attempts to retrieve the font identified by the specified texture ID.
     /// @param[in]  font_texture_id - The ID of the texture associated with the font.
     /// @return The requested font, if successfully loaded; null otherwise.
@@ -108,6 +202,40 @@ namespace RESOURCES
 
         // GET THE FONT'S TEXTURE.
         std::shared_ptr<GRAPHICS::Texture> font_texture = GetTexture(font_texture_id);
+        bool font_texture_loaded = (nullptr != font_texture);
+        if (font_texture_loaded)
+        {
+            // CACHE THE FONT IN THIS COLLECTION BEFORE RETURNING.
+            std::shared_ptr<GRAPHICS::GUI::Font> font = std::make_shared<GRAPHICS::GUI::Font>(font_texture);
+            Fonts[font_texture_id] = font;
+            return font;
+        }
+        else
+        {
+            // INDICATE THAT THE FONT COULD NOT BE LOADED.
+            return nullptr;
+        }
+    }
+
+    /// Attempts to retrieve the font identified by the specified texture ID.
+    /// @param[in]  font_texture_id - The ID of the texture associated with the font.
+    /// @param[in]  binary_data - The binary font data.
+    /// @return The requested font, if successfully loaded; null otherwise.
+    std::shared_ptr<GRAPHICS::GUI::Font> Assets::GetFont(const AssetId font_texture_id, const std::string& binary_data)
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
+        // RETURN THE FONT IF IT HAS ALREADY BEEN LOADED.
+        auto id_with_font = Fonts.find(font_texture_id);
+        bool font_already_loaded = (Fonts.cend() != id_with_font);
+        if (font_already_loaded)
+        {
+            return id_with_font->second;
+        }
+
+        // GET THE FONT'S TEXTURE.
+        std::shared_ptr<GRAPHICS::Texture> font_texture = GetTexture(font_texture_id, binary_data);
         bool font_texture_loaded = (nullptr != font_texture);
         if (font_texture_loaded)
         {
@@ -176,6 +304,38 @@ namespace RESOURCES
         }
     }
 
+    /// Attempts to get the specified shader.  Assumed to always be a fragment shader.
+    /// @param[in]  shader_id - The ID of the shader to get.
+    /// @param[in]  binary_data - The binary data of the shader.
+    /// @return The specified shader, if successfully loaded; null otherwise.
+    std::shared_ptr<sf::Shader> Assets::GetShader(const AssetId shader_id, const std::string& binary_data)
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
+        // RETURN THE SHADER IF IT HAS ALREADY BEEN LOADED.
+        auto id_with_shader = Shaders.find(shader_id);
+        bool shader_already_loaded = (Shaders.cend() != id_with_shader);
+        if (shader_already_loaded)
+        {
+            return id_with_shader->second;
+        }
+
+        // TRY LOADING THE SHADER.
+        std::shared_ptr<sf::Shader> shader = std::make_shared<sf::Shader>();
+        bool shader_loaded = shader->loadFromMemory(binary_data, sf::Shader::Fragment);
+        
+        // RETURN THE SHADER ONLY IF SUCCESSFULLY LOADED.
+        if (shader_loaded)
+        {
+            return shader;
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
+
     /// Attempts to retrieve the sound effect identified by the specified ID.
     /// The returned sound effect will be a new instance of a sound effect,
     /// but it may share the same buffer of audio samples as another instance.
@@ -218,6 +378,39 @@ namespace RESOURCES
         return sound_buffer;
     }
 
+    /// Attempts to retrieve the sound effect identified by the specified ID.
+    /// The returned sound effect will be a new instance of a sound effect,
+    /// but it may share the same buffer of audio samples as another instance.
+    /// @param[in]  sound_id - The ID of the sound to load.
+    /// @param[in]  binary_data - The binary data for the sound.
+    /// @return The requested sound effect, if successfully loaded; null otherwise.
+    std::shared_ptr<sf::SoundBuffer> Assets::GetSound(const AssetId sound_id, const std::string& binary_data)
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
+        // CHECK IF THE AUDIO SAMPLES HAVE ALREADY BEEN LOADED.
+        auto id_with_audio_samples = AudioSamples.find(sound_id);
+        bool audio_samples_already_loaded = (AudioSamples.cend() != id_with_audio_samples);
+        if (audio_samples_already_loaded)
+        {
+            // RETURN THE SOUND EFFECT USING THE PREVIOUSLY LOADED AUDIO SAMPLES.
+            return id_with_audio_samples->second;
+        }
+
+        // LOAD THE AUDIO SAMPLES INTO A BUFFER.
+        std::shared_ptr<sf::SoundBuffer> sound_buffer = std::make_shared<sf::SoundBuffer>();
+        bool audio_samples_loaded = sound_buffer->loadFromMemory(binary_data.data(), binary_data.size());
+        if (!audio_samples_loaded)
+        {
+            return nullptr;
+        }
+
+        // SAVE THE SOUND TO AVOID TAKING TIME TO LOAD IT IN THE FUTURE.
+        AudioSamples[sound_id] = sound_buffer;
+        return sound_buffer;
+    }
+
     /// Attempts to retrieve the music identified by the specified ID.
     /// The music will be set to loop.  If the music has previously
     /// been loaded, the previously loaded instance will be returned.
@@ -250,6 +443,39 @@ namespace RESOURCES
         // The muisc ID maps directly to a filepath.
         std::shared_ptr<sf::Music> music = std::make_shared<sf::Music>();
         bool music_loaded = music->openFromFile(music_id_with_filepath->second);
+        if (!music_loaded)
+        {
+            return nullptr;
+        }
+
+        // SAVE THE MUSIC TO AVOID TAKING TIME TO LOAD IT IN THE FUTURE.
+        Music[music_id] = music;
+        return music;
+    }
+
+    /// Attempts to retrieve the music identified by the specified ID.
+    /// The music will be set to loop.  If the music has previously
+    /// been loaded, the previously loaded instance will be returned.
+    /// @param[in]  music_id - The ID of the music to load.
+    /// @param[in]  binary_data - The binary data of the music.
+    /// @return The requested music, if successfully loaded; null otherwise.
+    std::shared_ptr<sf::Music> Assets::GetMusic(const AssetId music_id, const std::string& binary_data)
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
+
+        // CHECK IF THE MUSIC HAS ALREADY BEEN LOADED.
+        auto id_with_music = Music.find(music_id);
+        bool music_already_loaded = (Music.cend() != id_with_music);
+        if (music_already_loaded)
+        {
+            // RETURN THE PREVIOUSLY LOADED MUSIC.
+            return id_with_music->second;
+        }
+
+        // LOAD THE MUSIC.
+        std::shared_ptr<sf::Music> music = std::make_shared<sf::Music>();
+        bool music_loaded = music->openFromMemory(binary_data.data(), binary_data.size());
         if (!music_loaded)
         {
             return nullptr;

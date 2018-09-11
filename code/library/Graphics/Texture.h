@@ -13,6 +13,7 @@ namespace GRAPHICS
     public:
         // STATIC METHODS.
         static std::shared_ptr<Texture> Load(const std::string& filepath);
+        static std::shared_ptr<Texture> LoadFromMemory(const std::string& binary_data);
 
         // DIMENSIONS.
         MATH::Vector2ui GetSize() const;

@@ -16,6 +16,7 @@
 #include "Resources/AssetPackage.h"
 #include "Resources/Assets.h"
 #include "Resources/FoodGraphics.h"
+#include "Resources/PredefinedAssetPackages.h"
 #include "States/CreditsScreen.h"
 #include "States/GameplayState.h"
 #include "States/GameState.h"
@@ -35,6 +36,18 @@ int EXIT_CODE_FAILURE_LOADING_ASSETS = 3;
 int EXIT_CODE_FAILURE_LOADING_FONT = 4;
 /// Other generic failure.
 int EXIT_CODE_FAILURE = 5;
+
+/// Global intro sequence assets.  Stored globally to keep in memory once loaded
+/// (needed due to how SFML manages assets loaded from memory).
+/// Really just music - https://www.sfml-dev.org/documentation/2.5.0/classsf_1_1Music.php#ae93b21bcf28ff0b5fec458039111386e.
+/// So we should adjust this to reduce memory usage.
+std::vector<RESOURCES::Asset> g_intro_assets;
+
+/// Global main assets.  Stored globally to keep in memory once loaded
+/// (needed due to how SFML manages assets loaded from memory).
+/// Really just music - https://www.sfml-dev.org/documentation/2.5.0/classsf_1_1Music.php#ae93b21bcf28ff0b5fec458039111386e.
+/// So we should adjust this to reduce memory usage.
+std::vector<RESOURCES::Asset> g_remaining_assets;
 
 /// Populates the overworld based on data read from in-memory assets.
 /// @param[in,out]  assets - The assets for the overworld.
@@ -563,7 +576,7 @@ void LoadSounds(RESOURCES::Assets& assets, AUDIO::Speakers& speakers)
     DEBUGGING::DebugConsole::WriteLine("Sound load time: ", load_time_diff.count());
 }
 
-bool LoadIntroSequenceAssets(RESOURCES::Assets& assets)
+bool LoadIntroSequenceAssets(RESOURCES::Assets& asset_collection)
 {
     auto load_start_time = std::chrono::system_clock::now();
 
@@ -576,9 +589,10 @@ bool LoadIntroSequenceAssets(RESOURCES::Assets& assets)
     });
 
     // LOAD THE ASSETS.
-    bool assets_loaded = assets.Load(INTRO_SEQUENCE_ASSETS);*/
-    assets;
-    bool assets_loaded = false;
+    bool assets_loaded = assets.Load(INTRO_SEQUENCE_ASSETS);*/    
+
+    g_intro_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME);
+    bool assets_loaded = !g_intro_assets.empty() && asset_collection.Populate(g_intro_assets);
 
     auto load_end_time = std::chrono::system_clock::now();
     auto load_time_diff = load_end_time - load_start_time;
@@ -587,16 +601,32 @@ bool LoadIntroSequenceAssets(RESOURCES::Assets& assets)
     return assets_loaded;
 }
 
+std::shared_ptr<MAPS::World> LoadRemainingAssets(RESOURCES::Assets& assets, AUDIO::Speakers& speakers)
+{
+    auto load_start_time = std::chrono::system_clock::now();
+    
+    g_remaining_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::MAIN_ASSET_PACKAGE_FILENAME);
+    bool assets_loaded = !g_remaining_assets.empty() && assets.Populate(g_remaining_assets);
+    if (!assets_loaded)
+    {
+        return nullptr;
+    }
+
+    auto load_end_time = std::chrono::system_clock::now();
+    auto load_time_diff = load_end_time - load_start_time;
+    DEBUGGING::DebugConsole::WriteLine("Remaining asset raw load time: ", load_time_diff.count());
+
+    LoadSounds(assets, speakers);
+    std::shared_ptr<MAPS::World> world = LoadWorld(assets);
+    return world;
+}
+
 /// The main entry point for the game.
 /// Runs the Noah's Ark game until the user
 /// chooses to exit or an error occurs.
-/// @param[in]  argumentCount - The number of command line arguments.
-/// @param[in]  arguments - The command line arguments.
 /// @return     One of the exit codes defined in NoahArkGame.
-int main(int argumentCount, char* arguments[])
+int main()
 {
-    argumentCount;
-    arguments;
     try
     {
         // CREATE THE WINDOW.
@@ -644,16 +674,19 @@ int main(int argumentCount, char* arguments[])
         }
         speakers->AddMusic(RESOURCES::AssetId::INTRO_MUSIC, intro_music);
 
+        // LOAD REMAINING ASSETS.
+        std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadRemainingAssets, std::ref(*assets), std::ref(*speakers));
+
         // LOAD REMAINING SOUND EFFECTS/MUSIC.
         // This is loaded in a background thread in order to let the rest of the game continue
         // while assets not needed for the intro sequence are loaded.
-        std::future<void> audio_being_loaded = std::async(LoadSounds, std::ref(*assets), std::ref(*speakers));
+        /// @todo std::future<void> audio_being_loaded = std::async(LoadSounds, std::ref(*assets), std::ref(*speakers));
         /// @todo   When to wait for this to finish?
 
         // LOAD THE MAPS.
         // The world is loaded in the background in separate threads to avoid having
         // map loading slow the startup time of the rest of the game.
-        std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorld, std::ref(*assets));
+        /// @todo   std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorld, std::ref(*assets));
 
         // CREATE THE SCREEN.
         std::unique_ptr<GRAPHICS::Screen> screen = GRAPHICS::Screen::Create(SCREEN_WIDTH_IN_PIXELS, SCREEN_HEIGHT_IN_PIXELS);

@@ -19,8 +19,8 @@ namespace RESOURCES
         std::string::size_type asset_size_in_bytes = 0;
         data_stream.read(reinterpret_cast<char*>(&asset_size_in_bytes), sizeof(asset_size_in_bytes));
 
-        std::string asset_data;
-        asset_data.reserve(asset_size_in_bytes);
+        constexpr char EMPTY_DATA = '\0';
+        std::string asset_data(asset_size_in_bytes, EMPTY_DATA);
         data_stream.read(asset_data.data(), asset_size_in_bytes);
 
         // RETURN THE ASSET IF SUCCESSFULLY READ.

@@ -63,14 +63,6 @@ namespace RESOURCES
         // WRITE EACH ASSET TO THE PACKAGE FILE.
         for (const auto& asset : asset_package_definition.Assets)
         {
-            /// @todo   Figure out what to do for shaders.
-            /// We're skipping over them for now since we don't have them stored in separate files.
-            bool asset_is_shader = (AssetType::SHADER == asset.Type);
-            if (asset_is_shader)
-            {
-                continue;
-            }
-
             // READ IN THE ASSET FILE'S DATA.
             std::string asset_data = FILESYSTEM::File::ReadBinary(asset.Filepath);
             bool asset_data_read = !asset_data.empty();

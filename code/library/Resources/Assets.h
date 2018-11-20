@@ -59,5 +59,9 @@ namespace RESOURCES
         // MEMBER VARIABLES.
         /// A mutex to provide thread-safety for this class.
         std::recursive_mutex AssetMutex = {};
+        /// Raw binary music data mapped by asset ID.  Must remain in-memory due to how SFML works
+        /// (https://www.sfml-dev.org/documentation/2.5.0/classsf_1_1Music.php#ae93b21bcf28ff0b5fec458039111386e).
+        /// This doesn't need to be done for other assets since they don't need to remain in memory.
+        std::unordered_map< AssetId, std::unique_ptr<uint8_t[]> > MusicData = {};
     };
 }

@@ -37,18 +37,6 @@ int EXIT_CODE_FAILURE_LOADING_FONT = 4;
 /// Other generic failure.
 int EXIT_CODE_FAILURE = 5;
 
-/// Global intro sequence assets.  Stored globally to keep in memory once loaded
-/// (needed due to how SFML manages assets loaded from memory).
-/// Really just music - https://www.sfml-dev.org/documentation/2.5.0/classsf_1_1Music.php#ae93b21bcf28ff0b5fec458039111386e.
-/// So we should adjust this to reduce memory usage.
-std::vector<RESOURCES::Asset> g_intro_assets;
-
-/// Global main assets.  Stored globally to keep in memory once loaded
-/// (needed due to how SFML manages assets loaded from memory).
-/// Really just music - https://www.sfml-dev.org/documentation/2.5.0/classsf_1_1Music.php#ae93b21bcf28ff0b5fec458039111386e.
-/// So we should adjust this to reduce memory usage.
-std::vector<RESOURCES::Asset> g_remaining_assets;
-
 /// Populates the overworld based on data read from in-memory assets.
 /// @param[in,out]  assets - The assets for the overworld.
 /// @param[in,out]  overworld - The overworld to populate.
@@ -580,19 +568,8 @@ bool LoadIntroSequenceAssets(RESOURCES::Assets& asset_collection)
 {
     auto load_start_time = std::chrono::system_clock::now();
 
-    // DEFINE THE INTRO SEQUENCE ASSETS.
-    /* @todo Replace with asset package loading. const RESOURCES::AssetPackage INTRO_SEQUENCE_ASSETS(
-    {
-        RESOURCES::AssetDefinition(RESOURCES::AssetType::FONT, RESOURCES::AssetId::FONT_TEXTURE),
-        RESOURCES::AssetDefinition(RESOURCES::AssetType::MUSIC, RESOURCES::AssetId::INTRO_MUSIC),
-        RESOURCES::AssetDefinition(RESOURCES::AssetType::SHADER, RESOURCES::AssetId::COLORED_TEXTURE_SHADER),
-    });
-
-    // LOAD THE ASSETS.
-    bool assets_loaded = assets.Load(INTRO_SEQUENCE_ASSETS);*/    
-
-    g_intro_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME);
-    bool assets_loaded = !g_intro_assets.empty() && asset_collection.Populate(g_intro_assets);
+    std::vector<RESOURCES::Asset> intro_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME);
+    bool assets_loaded = !intro_assets.empty() && asset_collection.Populate(intro_assets);
 
     auto load_end_time = std::chrono::system_clock::now();
     auto load_time_diff = load_end_time - load_start_time;
@@ -605,8 +582,8 @@ std::shared_ptr<MAPS::World> LoadRemainingAssets(RESOURCES::Assets& assets, AUDI
 {
     auto load_start_time = std::chrono::system_clock::now();
     
-    g_remaining_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::MAIN_ASSET_PACKAGE_FILENAME);
-    bool assets_loaded = !g_remaining_assets.empty() && assets.Populate(g_remaining_assets);
+    std::vector<RESOURCES::Asset> remaining_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::MAIN_ASSET_PACKAGE_FILENAME);
+    bool assets_loaded = !remaining_assets.empty() && assets.Populate(remaining_assets);
     if (!assets_loaded)
     {
         return nullptr;

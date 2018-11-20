@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <cstring>
 #include <future>
 #include <vector>
 #include "Debugging/DebugConsole.h"
@@ -473,9 +474,15 @@ namespace RESOURCES
             return id_with_music->second;
         }
 
+        // CREATE A PERMANENT COPY OF THE BINARY DATA.
+        std::size_t music_size_in_bytes = binary_data.size();
+        MusicData[music_id] = std::make_unique<uint8_t[]>(music_size_in_bytes);
+        const std::unique_ptr<uint8_t[]>& music_data = MusicData[music_id];
+        std::memcpy(music_data.get(), binary_data.data(), music_size_in_bytes);
+
         // LOAD THE MUSIC.
         std::shared_ptr<sf::Music> music = std::make_shared<sf::Music>();
-        bool music_loaded = music->openFromMemory(binary_data.data(), binary_data.size());
+        bool music_loaded = music->openFromMemory(music_data.get(), music_size_in_bytes);
         if (!music_loaded)
         {
             return nullptr;

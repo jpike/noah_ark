@@ -5,7 +5,7 @@ namespace GRAPHICS
 {
 namespace GUI
 {
-    const float TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS = 0.05f;
+    const float TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS = 0.03f;
 
     /// Constructor.
     /// @param[in]  width_in_pixels - The width of the text page, in pixels.

@@ -255,7 +255,7 @@ namespace OBJECTS
         if (is_swinging)
         {
             // UPDATE THE SWING BASED ON THE ELAPSED TIME.
-            const float ROTATION_SPEED_IN_DEGREES_PER_SECOND = 90.0f;
+            const float ROTATION_SPEED_IN_DEGREES_PER_SECOND = 150.0f;
             float elapsed_time_in_seconds = elapsed_time.asSeconds();
             float rotation_amount_for_update_in_degrees = ROTATION_SPEED_IN_DEGREES_PER_SECOND * elapsed_time_in_seconds;
             if (SwingingOut)

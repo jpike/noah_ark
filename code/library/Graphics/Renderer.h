@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Graphics/AnimatedSprite.h"
@@ -15,6 +16,7 @@
 #include "Maps/TileMap.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
+#include "Resources/AssetId.h"
 
 namespace GRAPHICS
 {
@@ -24,7 +26,6 @@ namespace GRAPHICS
     public:
         // CONSTRUCTION.
         explicit Renderer(
-            const std::shared_ptr<GRAPHICS::GUI::Font>& font,
             const std::shared_ptr<sf::Shader>& colored_text_shader,
             std::unique_ptr<GRAPHICS::Screen>&& screen);
 
@@ -46,16 +47,19 @@ namespace GRAPHICS
         // TEXT RENDERING.
         void RenderText(
             const std::string& text, 
+            const RESOURCES::AssetId font_id,
             const MATH::Vector2f& left_top_screen_position_in_pixels,
             const Color& text_color = GRAPHICS::Color::BLACK,
             const float text_scale_ratio = 1.0f);
         void RenderText(
             const std::string& text,
+            const RESOURCES::AssetId font_id,
             const MATH::FloatRectangle& bounding_screen_rectangle,
             const Color& text_color = GRAPHICS::Color::BLACK,
             const float text_scale_ratio = 1.0f);
         void RenderCenteredText(
             const std::string& text,
+            const RESOURCES::AssetId font_id,
             const MATH::FloatRectangle& bounding_screen_rectangle,
             const Color& text_color = GRAPHICS::Color::BLACK,
             const float text_scale_ratio = 1.0f);
@@ -68,8 +72,8 @@ namespace GRAPHICS
         std::unique_ptr<GRAPHICS::Screen> Screen;
         /// The camera defining what portion of the world is currently viewable.
         GRAPHICS::Camera Camera;
-        /// The font to use for rendering text.
-        std::shared_ptr<GRAPHICS::GUI::Font> Font;
+        /// Fonts to use for rendering text.
+        std::unordered_map< RESOURCES::AssetId, std::shared_ptr<GRAPHICS::GUI::Font> > Fonts;
         /// The shader to use for colored text.
         std::shared_ptr<sf::Shader> ColoredTextShader;
 

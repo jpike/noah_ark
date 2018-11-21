@@ -631,12 +631,6 @@ int main()
             return EXIT_CODE_FAILURE_LOADING_ASSETS;
         }
 
-        auto font = assets->GetFont(RESOURCES::AssetId::FONT_TEXTURE);
-        if (!font)
-        {
-            return EXIT_CODE_FAILURE_LOADING_FONT;
-        }
-
         auto colored_texture_shader = assets->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
         if (!colored_texture_shader)
         {
@@ -673,11 +667,23 @@ int main()
             return EXIT_CODE_FAILURE;
         }
 
-        // INITIALIZE REMAINING SUBSYSTEMS.
+        // INITIALIZE THE RENDERER.
         GRAPHICS::Renderer renderer(
-            font,
             colored_texture_shader,
             std::move(screen));
+
+        // Fonts must be added separately.
+        auto serif_font = assets->GetFont(RESOURCES::AssetId::SERIF_FONT_TEXTURE);
+        auto default_font = assets->GetFont(RESOURCES::AssetId::FONT_TEXTURE);
+        bool fonts_loaded = (serif_font && default_font);
+        if (!fonts_loaded)
+        {
+            return EXIT_CODE_FAILURE_LOADING_FONT;
+        }
+        renderer.Fonts[RESOURCES::AssetId::SERIF_FONT_TEXTURE] = serif_font;
+        renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE] = default_font;
+
+        // INITIALIZE REMAINING SUBSYSTEMS.
         INPUT_CONTROL::InputController input_controller;
         STATES::IntroSequence intro_sequence;
         speakers->PlayMusic(RESOURCES::AssetId::INTRO_MUSIC);

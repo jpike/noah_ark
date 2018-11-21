@@ -6,12 +6,10 @@
 namespace GRAPHICS
 {
     /// Constructor.
-    /// @param[in]  font - The font to use for rendering.
     /// @param[in]  colored_text_shader - The shader to use for coloring text.
     /// @param[in,out]  screen - The screen to render to.
     /// @throws std::exception - Thrown if a parameter is null.
     Renderer::Renderer(
-        const std::shared_ptr<GRAPHICS::GUI::Font>& font,
         const std::shared_ptr<sf::Shader>& colored_text_shader,
         std::unique_ptr<GRAPHICS::Screen>&& screen) :
     Screen(std::move(screen)),
@@ -20,17 +18,12 @@ namespace GRAPHICS
         Screen->RenderTarget.getView().getCenter().y,
         Screen->RenderTarget.getView().getSize().x,
         Screen->RenderTarget.getView().getSize().y)),
-    Font(font),
     ColoredTextShader(colored_text_shader)
     {
         // MAKE SURE REQUIRED PARAMETERS EXISTS.
         CORE::ThrowInvalidArgumentExceptionIfNull(
             Screen,
             "The screen for the renderer cannot be null.");
-
-        CORE::ThrowInvalidArgumentExceptionIfNull(
-            Font,
-            "The font for the renderer cannot be null.");
         
         CORE::ThrowInvalidArgumentExceptionIfNull(
             ColoredTextShader,
@@ -100,8 +93,18 @@ namespace GRAPHICS
         // RENDER THE BACKGROUND RECTANGLE FOR THE KEY.
         Screen->RenderTarget.draw(key_background_icon);
 
+        // GET THE DEFAULT FONT.
+        auto id_with_font = Fonts.find(RESOURCES::AssetId::FONT_TEXTURE);
+        bool font_exists = (id_with_font != Fonts.cend()) && (nullptr != id_with_font->second);
+        if (!font_exists)
+        {
+            // The text can't be rendered without the font.
+            return;
+        }
+
         // GET THE GLYPH FOR THE KEY.
-        GRAPHICS::GUI::Glyph glyph = Font->GetGlyph(key);
+        auto font = id_with_font->second;
+        GRAPHICS::GUI::Glyph glyph = font->GetGlyph(key);
 
         // CREATE A SPRITE FOR THE GLYPH.
         sf::IntRect key_texture_sub_rectangle = glyph.TextureSubRectangle.ToSfmlRectangle<int>();
@@ -180,6 +183,7 @@ namespace GRAPHICS
     /// Renders text to the screen at the specified position.
     /// All text will be rendered on the same line.
     /// @param[in]  text - The text to render.
+    /// @param[in]  font_id - The ID of the font to use for the text.
     /// @param[in]  left_top_screen_position_in_pixels - The left/top screen position
     ///     at which to render the text.
     /// @param[in]  text_color - The color of the text.
@@ -187,13 +191,15 @@ namespace GRAPHICS
     ///     size of the font's glyphs.  1.0f is normal scaling.
     void Renderer::RenderText(
         const std::string& text, 
+        const RESOURCES::AssetId font_id,
         const MATH::Vector2f& left_top_screen_position_in_pixels,
         const Color& text_color,
         const float text_scale_ratio)
     {
         // RENDER THE TEXT TO THE CONSOLE IF NO FONT EXISTS.
         // This is intended primarily to provide debug support.
-        bool font_exists = (nullptr != Font);
+        auto id_with_font = Fonts.find(font_id);
+        bool font_exists = (id_with_font != Fonts.cend()) && (nullptr != id_with_font->second);
         if (!font_exists)
         {
             DEBUGGING::DebugConsole::WriteLine(text);
@@ -201,11 +207,12 @@ namespace GRAPHICS
         }
 
         // RENDER EACH CHARACTER OF THE TEXT.
+        auto font = id_with_font->second;
         MATH::Vector2f current_character_left_top_screen_position = left_top_screen_position_in_pixels;
         for (const char character : text)
         {
             // GET THE GLYPH FOR THE CURRENT CHARACTER.
-            GUI::Glyph glyph = Font->GetGlyph(character);
+            GUI::Glyph glyph = font->GetGlyph(character);
 
             // CREATE A SPRITE FOR THE CURRENT GLYPH.
             sf::IntRect texture_rectangle = glyph.TextureSubRectangle.ToSfmlRectangle<int>();
@@ -235,6 +242,7 @@ namespace GRAPHICS
     /// rendered exceeds the dimensions of the specified rectangle,
     /// then it will be rendered outside of rectangle.
     /// @param[in]  text - The text to render.
+    /// @param[in]  font_id - The ID of the font to use for the text.
     /// @param[in]  bounding_screen_rectangle - The bounding rectangle
     ///     within the screen in which to render text.
     /// @param[in]  text_color - The color of the text.
@@ -242,6 +250,7 @@ namespace GRAPHICS
     ///     size of the font's glyphs.  1.0f is normal scaling.
     void Renderer::RenderText(
         const std::string& text,
+        const RESOURCES::AssetId font_id,
         const MATH::FloatRectangle& bounding_screen_rectangle,
         const Color& text_color,
         const float text_scale_ratio)
@@ -330,7 +339,7 @@ namespace GRAPHICS
         for (const auto& line : new_lines_of_text)
         {
             // RENDER THE CURRENT LINE.
-            RenderText(line, current_line_left_top_screen_position, text_color, text_scale_ratio);
+            RenderText(line, font_id, current_line_left_top_screen_position, text_color, text_scale_ratio);
 
             // MOVE TO THE NEXT LINE.
             float glyph_height_in_pixels = GUI::Glyph::HeightInPixels<float>(text_scale_ratio);
@@ -344,6 +353,7 @@ namespace GRAPHICS
     /// rendered exceeds the dimensions of the specified rectangle,
     /// then it will be rendered outside of rectangle.
     /// @param[in]  text - The text to render.
+    /// @param[in]  font_id - The ID of the font to use for the text.
     /// @param[in]  bounding_screen_rectangle - The bounding rectangle
     ///     within the screen in which to render text.
     /// @param[in]  text_color - The color of the text.
@@ -351,6 +361,7 @@ namespace GRAPHICS
     ///     size of the font's glyphs.  1.0f is normal scaling.
     void Renderer::RenderCenteredText(
         const std::string& text,
+        const RESOURCES::AssetId font_id,
         const MATH::FloatRectangle& bounding_screen_rectangle,
         const Color& text_color,
         const float text_scale_ratio)
@@ -461,7 +472,7 @@ namespace GRAPHICS
             current_line_left_top_screen_position.X += half_of_unused_space_on_current_line_in_pixels;
 
             // RENDER THE CURRENT LINE.
-            RenderText(line, current_line_left_top_screen_position, text_color, text_scale_ratio);
+            RenderText(line, font_id, current_line_left_top_screen_position, text_color, text_scale_ratio);
 
             // MOVE TO THE NEXT LINE.
             current_line_left_top_screen_position.Y += glyph_height_in_pixels;

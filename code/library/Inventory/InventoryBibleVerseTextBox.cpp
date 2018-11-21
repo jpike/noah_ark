@@ -34,6 +34,6 @@ namespace INVENTORY
         }
 
         // RENDER THE BIBLE VERSE'S TEXT.
-        renderer.RenderText(bible_verse->Text, bounding_rectangle, GRAPHICS::Color::BLACK);
+        renderer.RenderText(bible_verse->Text, RESOURCES::AssetId::FONT_TEXTURE, bounding_rectangle, GRAPHICS::Color::BLACK);
     }
 }

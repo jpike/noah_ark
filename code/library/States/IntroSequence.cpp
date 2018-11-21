@@ -99,6 +99,6 @@ namespace STATES
         white.Green = GRAPHICS::Color::MAX_COLOR_COMPONENT;
         white.Blue = GRAPHICS::Color::MAX_COLOR_COMPONENT;
         white.Alpha = GRAPHICS::Color::MAX_COLOR_COMPONENT;
-        renderer.RenderCenteredText(bible_verse_text, renderer.Screen->GetBoundingRectangle<float>(), white);
+        renderer.RenderCenteredText(bible_verse_text, RESOURCES::AssetId::SERIF_FONT_TEXTURE, renderer.Screen->GetBoundingRectangle<float>(), white);
     }
 }

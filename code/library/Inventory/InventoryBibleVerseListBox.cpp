@@ -107,7 +107,11 @@ namespace INVENTORY
             }
 
             // RENDER TEXT FOR THE VERSE.
-            renderer.RenderText(bible_verse_display_string, current_verse_screen_top_left_position_in_pixels, GRAPHICS::Color::BLACK);
+            renderer.RenderText(
+                bible_verse_display_string, 
+                RESOURCES::AssetId::FONT_TEXTURE, 
+                current_verse_screen_top_left_position_in_pixels, 
+                GRAPHICS::Color::BLACK);
 
             // MOVE TO A NEW LINE FOR THE NEXT VERSE.
             current_verse_screen_top_left_position_in_pixels.Y += GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS;

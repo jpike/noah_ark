@@ -5,7 +5,7 @@ namespace RESOURCES
     const std::string INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME = "IntroAssets.package";
 
     const AssetPackageDefinition INTRO_SEQUENCE_ASSET_PACKAGE_DEFINITION({
-        AssetDefinition(AssetType::FONT, RESOURCES::AssetId::FONT_TEXTURE, "res/images/main_font1.png"),
+        AssetDefinition(AssetType::FONT, RESOURCES::AssetId::SERIF_FONT_TEXTURE, "res/images/main_font_serif.png"),
         AssetDefinition(AssetType::MUSIC, RESOURCES::AssetId::INTRO_MUSIC, "res/sounds/NoahsArkIntro1_80PercentSpeedWithFadeout.wav"),
         AssetDefinition(AssetType::SHADER, RESOURCES::AssetId::COLORED_TEXTURE_SHADER, "res/shaders/ColoredTexture.frag"),
     });
@@ -13,6 +13,9 @@ namespace RESOURCES
     const std::string MAIN_ASSET_PACKAGE_FILENAME = "MainAssets.package";
 
     const AssetPackageDefinition MAIN_ASSET_PACKAGE_DEFINITION({
+        // FONTS.
+        AssetDefinition(AssetType::FONT, RESOURCES::AssetId::FONT_TEXTURE, "res/images/main_font1.png"),
+
         // OTHER TEXTURES.
         AssetDefinition(AssetType::TEXTURE, AssetId::ANIMAL_TEXTURE, "res/images/animal_sprites.png"),
         AssetDefinition(AssetType::TEXTURE, AssetId::ARK_TEXTURE, "res/images/ark_tile_set.png"),

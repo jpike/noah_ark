@@ -128,7 +128,7 @@ namespace INVENTORY
                 std::string collected_count_text = "x" + std::to_string(food_type_collected_count);
                 MATH::Vector2f collected_count_left_top_screen_position = food_icon_left_top_screen_position;
                 collected_count_left_top_screen_position.X += food_sprite->GetWidthInPixels();
-                renderer.RenderText(collected_count_text, collected_count_left_top_screen_position);
+                renderer.RenderText(collected_count_text, RESOURCES::AssetId::FONT_TEXTURE, collected_count_left_top_screen_position);
             }
         }
     }

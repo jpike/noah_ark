@@ -132,7 +132,7 @@ namespace INVENTORY
                 std::string male_collected_count_text = "x" + std::to_string(species_male_animal_collected_count);
                 MATH::Vector2f male_collected_count_left_top_screen_position = male_animal_icon_left_top_screen_position;
                 male_collected_count_left_top_screen_position.X += male_animal_sprite->Sprite.GetWidthInPixels();
-                renderer.RenderText(male_collected_count_text, male_collected_count_left_top_screen_position);
+                renderer.RenderText(male_collected_count_text, RESOURCES::AssetId::FONT_TEXTURE, male_collected_count_left_top_screen_position);
             }
         }
 
@@ -155,7 +155,7 @@ namespace INVENTORY
                 std::string female_collected_count_text = "x" + std::to_string(species_female_animal_collected_count);
                 MATH::Vector2f female_collected_count_left_top_screen_position = female_animal_icon_left_top_screen_position;
                 female_collected_count_left_top_screen_position.X += female_animal_sprite->Sprite.GetWidthInPixels();
-                renderer.RenderText(female_collected_count_text, female_collected_count_left_top_screen_position);
+                renderer.RenderText(female_collected_count_text, RESOURCES::AssetId::FONT_TEXTURE, female_collected_count_left_top_screen_position);
             }
         }
     }

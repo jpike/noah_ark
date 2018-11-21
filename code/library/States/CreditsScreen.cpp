@@ -55,6 +55,7 @@ namespace STATES
 
         renderer.RenderCenteredText(
             "CREDITS",
+            RESOURCES::AssetId::FONT_TEXTURE,
             credits_title_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
@@ -75,6 +76,7 @@ namespace STATES
 
         renderer.RenderCenteredText(
             GOD_CREDIT_TEXT,
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
@@ -92,6 +94,7 @@ namespace STATES
             SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS);
         renderer.RenderCenteredText(
             "Programming - Jacob Pike",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
@@ -99,12 +102,14 @@ namespace STATES
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);        
         renderer.RenderCenteredText(
             "Graphics - Jacob Pike",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Music - Chad Pike",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
@@ -113,84 +118,98 @@ namespace STATES
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "ANIMAL SOUNDS",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "soundbible.com",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "BuffBill84",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Mike Koenig",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "snottyboy",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "NPS",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "fws.gov",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "BlastwaveFx.com",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Daniel Simion",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Caroline Ford",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "JimBob",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "J Dawg",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "freesoundeffects.com",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Partners in Rhyme",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
@@ -199,48 +218,56 @@ namespace STATES
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "DEVELOPMENT TOOLS",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Visual Studio 2017",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Git/GitHub",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Microsoft Paint",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Bfxr",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Doxygen",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "SFML",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Catch",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
@@ -249,12 +276,14 @@ namespace STATES
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "OTHER RESOURCES",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "KJV Bible",
+            RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
@@ -270,6 +299,7 @@ namespace STATES
         renderer.RenderScreenRectangle(help_text_screen_rectangle, GRAPHICS::Color::BLACK);
         renderer.RenderText(
             "[ESC] to title",
+            RESOURCES::AssetId::FONT_TEXTURE,
             help_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
     }

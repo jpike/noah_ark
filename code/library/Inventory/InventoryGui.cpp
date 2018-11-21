@@ -186,6 +186,6 @@ namespace INVENTORY
             background_color);
 
         // RENDER THE TEXT FOR THE TAB.
-        renderer.RenderText(tab_text, left_top_screen_position_in_pixels, GRAPHICS::Color::BLACK);
+        renderer.RenderText(tab_text, RESOURCES::AssetId::FONT_TEXTURE, left_top_screen_position_in_pixels, GRAPHICS::Color::BLACK);
     }
 }

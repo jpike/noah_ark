@@ -14,6 +14,8 @@ namespace RESOURCES
         // FONT TEXTURES.
         /// The main font texture.
         FONT_TEXTURE,
+        /// A serif font texture.
+        SERIF_FONT_TEXTURE,
 
         // OTHER TEXTURES.
         /// The texture with animal sprites.

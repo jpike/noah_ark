@@ -76,6 +76,7 @@ namespace STATES
         const float BIBLE_GAMES_HEADING_TEXT_SCALE = 1.5f;
         renderer.RenderCenteredText(
             "BIBLE GAMES",
+            RESOURCES::AssetId::SERIF_FONT_TEXTURE,
             sub_heading_screen_rectangle,
             GRAPHICS::Color::WHITE,
             BIBLE_GAMES_HEADING_TEXT_SCALE);
@@ -90,6 +91,7 @@ namespace STATES
         const float TITLE_TEXT_SCALE = 3.0f;
         renderer.RenderCenteredText(
             "NOAH's ARK",
+            RESOURCES::AssetId::SERIF_FONT_TEXTURE,
             main_title_screen_rectangle,
             GRAPHICS::Color::YELLOW,
             TITLE_TEXT_SCALE);
@@ -144,6 +146,7 @@ namespace STATES
             // DRAW TEXT FOR THE CURRENT MENU OPTION.
             renderer.RenderCenteredText(
                 menu_option_text,
+                RESOURCES::AssetId::FONT_TEXTURE,
                 menu_option_screen_rectangle,
                 menu_option_color);
 

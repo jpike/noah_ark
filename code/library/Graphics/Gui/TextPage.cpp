@@ -141,7 +141,11 @@ namespace GUI
             }
 
             // RENDER THE CURRENT LINE.
-            renderer.RenderText(current_line_characters, current_line_top_left_screen_position_in_pixels, GRAPHICS::Color::BLACK);
+            renderer.RenderText(
+                current_line_characters, 
+                RESOURCES::AssetId::FONT_TEXTURE, 
+                current_line_top_left_screen_position_in_pixels, 
+                GRAPHICS::Color::BLACK);
 
             // CALCULATE THE POSITION FOR THE NEXT LINE OF TEXT.
             current_line_top_left_screen_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;

@@ -225,7 +225,7 @@ namespace GUI
             static_cast<float>(wood_icon_screen_position.X), 
             static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
         wood_text_top_left_screen_position_in_pixels.X += WOOD_LOG_TEXTURE_SUB_RECTANGLE.GetWidth();
-        renderer.RenderText(wood_count_string, wood_text_top_left_screen_position_in_pixels, TextColor);
+        renderer.RenderText(wood_count_string, RESOURCES::AssetId::FONT_TEXTURE, wood_text_top_left_screen_position_in_pixels, TextColor);
 
         // RENDER COMPONENTS INDICATING HOW TO OPEN THE INVENTORY.
         // This text is rendered to the far-right of the screen so that its position isn't changed
@@ -239,7 +239,11 @@ namespace GUI
         const size_t OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS = (Glyph::WIDTH_IN_PIXELS * OPEN_INVENTORY_TEXT.size());
         MATH::Vector2f open_inventory_text_top_left_screen_position_in_pixels = TOP_RIGHT_SCREEN_POSITION_IN_PIXELS;
         open_inventory_text_top_left_screen_position_in_pixels.X -= OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS;
-        renderer.RenderText(OPEN_INVENTORY_TEXT, open_inventory_text_top_left_screen_position_in_pixels, TextColor);
+        renderer.RenderText(
+            OPEN_INVENTORY_TEXT, 
+            RESOURCES::AssetId::FONT_TEXTURE, 
+            open_inventory_text_top_left_screen_position_in_pixels, 
+            TextColor);
 
         // An icon is rendered to help players know which key to press.  It is rendered after
         // the above text for the inventory since it is easier to correctly position here
@@ -268,6 +272,7 @@ namespace GUI
         {
             renderer.RenderCenteredText(
                 "[ENTER] - Save\n[ESC] - Cancel",
+                RESOURCES::AssetId::FONT_TEXTURE,
                 renderer.Screen->GetBoundingRectangle<float>());
         }
     }

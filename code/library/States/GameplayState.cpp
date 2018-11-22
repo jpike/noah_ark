@@ -435,6 +435,24 @@ namespace STATES
             }
         }
 
+        // UPDATE THE CURRENT TILE MAP'S TILES.
+        unsigned int map_height_in_tiles = current_tile_map->Ground.Tiles.GetHeight();
+        unsigned int map_width_in_tiles = current_tile_map->Ground.Tiles.GetWidth();
+        for (unsigned int tile_y = 0; tile_y < map_height_in_tiles; ++tile_y)
+        {
+            // UPDATE TILES ACROSS THE CURRENT ROW.
+            for (unsigned int tile_x = 0; tile_x < map_width_in_tiles; ++tile_x)
+            {
+                // UPDATE THE CURRENT TILE.
+                auto current_tile = current_tile_map->Ground.Tiles(tile_x, tile_y);
+                if (current_tile)
+                {
+                    current_tile->Sprite.Play();
+                    current_tile->Sprite.Update(elapsed_time);
+                }
+            }
+        }
+
         // UPDATE THE CURRENT TILE MAP'S ANIMALS.
         for (auto& animal : current_tile_map->Animals)
         {
@@ -906,7 +924,7 @@ namespace STATES
             if (animal_move_move_over_water)
             {
                 // LET THE ANIMAL MOVE OVER WATER.
-                tile_types_allowed_to_move_over.emplace(MAPS::TileType::WATER);
+                tile_types_allowed_to_move_over.insert(MAPS::TileType::WATER_TYPES.cbegin(), MAPS::TileType::WATER_TYPES.cend());
             }
 
             // MOVE THE ANIMAL.

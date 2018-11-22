@@ -82,9 +82,31 @@ namespace MAPS
         }
 
         // CREATE A SPRITE FOR THE TILE.
-        GRAPHICS::Sprite sprite(
+        GRAPHICS::AnimatedSprite sprite(GRAPHICS::Sprite(
             id_with_texture->second,
-            id_with_sub_rectangle->second);
+            id_with_sub_rectangle->second));
+
+        // ADD ANIMATION SEQUENCES FOR WATER TILES.
+        bool is_water_tile = TileType::IsForWater(static_cast<TileType::Id>(tile_id));
+        if (is_water_tile)
+        {
+            const std::string WATER_ANIMATION_NAME = "WaterAnimation";
+            const bool IS_LOOPING = true;
+            const sf::Time ANIMATION_DURATION = sf::seconds(1.2f);
+            const std::vector<MATH::IntRectangle> ANIMATION_FRAMES = 
+            {
+                MATH::IntRectangle::FromLeftTopAndDimensions(64, 0, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(16, 32, 16, 16),
+                MATH::IntRectangle::FromLeftTopAndDimensions(32, 32, 16, 16)
+            };
+            auto water_animation_sequence = std::make_shared<GRAPHICS::AnimationSequence>(
+                WATER_ANIMATION_NAME,
+                IS_LOOPING,
+                ANIMATION_DURATION,
+                ANIMATION_FRAMES);
+            sprite.AddAnimationSequence(water_animation_sequence);
+            sprite.UseAnimationSequence(WATER_ANIMATION_NAME);
+        }
 
         // CREATE THE TILE.
         std::shared_ptr<Tile> tile = std::make_shared<Tile>(tile_id, sprite);

@@ -104,7 +104,7 @@ namespace GUI
         // RENDER ANY SELECTED TILE AT THE MOUSE CURSOR.
         if (SelectedTile)
         {
-            renderer.RenderGuiIcon(SelectedTile->Sprite, MouseScreenPosition);
+            renderer.RenderGuiIcon(SelectedTile->Sprite.Sprite, MouseScreenPosition);
         }
     }
 

@@ -1,9 +1,29 @@
 #include <array>
 #include <limits>
+#include "Debugging/DebugConsole.h"
 #include "Maps/Tile.h"
 
 namespace MAPS
 {
+    const std::vector<TileType::Id> TileType::WATER_TYPES = 
+    {
+        TileType::WATER,
+        TileType::WATER_ANIMATED_1,
+        TileType::WATER_ANIMATED_2
+    };
+    
+    /// Determines if the specified type of tile is a water tile.
+    /// @param[in]  tile_type_id - The ID of the tile type to check.
+    /// @return True if the specified type of tile is for water; false if not.
+    bool TileType::IsForWater(const Id tile_type_id)
+    {
+        bool is_for_water = (
+            WATER == tile_type_id ||
+            WATER_ANIMATED_1 == tile_type_id ||
+            WATER_ANIMATED_2 == tile_type_id);
+        return is_for_water;
+    }
+
     /// Determines if the specified type of tile is for the ark.
     /// @param[in]  tile_type_id - The ID of the tile type to check.
     /// @return True if the specified type of tile is for the ark; false if not.
@@ -35,7 +55,7 @@ namespace MAPS
     /// @param[in]  sprite - The sprite used for rendering the tile.
     Tile::Tile(
         const TileId id,
-        const GRAPHICS::Sprite& sprite) :
+        const GRAPHICS::AnimatedSprite& sprite) :
     Id(id),
     Type(static_cast<TileType::Id>(id)),
     Sprite(sprite)
@@ -105,6 +125,8 @@ namespace MAPS
         tile_is_walkable[TileType::ARK_INTERIOR_LEFT_EXIT_CLOSED] = false;
         tile_is_walkable[TileType::ARK_INTERIOR_CENTER_EXIT_CLOSED] = false;
         tile_is_walkable[TileType::ARK_INTERIOR_RIGHT_EXIT_CLOSED] = false;
+        tile_is_walkable[TileType::WATER_ANIMATED_1] = false;
+        tile_is_walkable[TileType::WATER_ANIMATED_2] = false;
 
         // CHECK IF THIS TILE'S ID IS VALID.
         bool tile_id_valid = (Id < TileType::COUNT);

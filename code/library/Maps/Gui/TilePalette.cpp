@@ -107,7 +107,7 @@ namespace GUI
 
             // RENDER THE TILE.
             MATH::Vector2f tile_left_top_screen_position = tile_screen_bounds.GetLeftXTopYPosition();
-            renderer.RenderGuiIcon(tile->Sprite, tile_left_top_screen_position);
+            renderer.RenderGuiIcon(tile->Sprite.Sprite, tile_left_top_screen_position);
         }
     }
 

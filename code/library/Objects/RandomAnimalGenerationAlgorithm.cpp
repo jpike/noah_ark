@@ -98,7 +98,7 @@ namespace OBJECTS
         {
             // CHECK IF THE ANIMAL CAN SWIM AND THIS IS A WATER FILE.
             bool animal_can_swim = animal_type.CanSwim();
-            bool is_water_tile = (MAPS::TileType::WATER == tile_at_animal_generation_point->Type);
+            bool is_water_tile = MAPS::TileType::IsForWater(tile_at_animal_generation_point->Type);
             bool swimming_animal_on_water_tile = (animal_can_swim && is_water_tile);
             if (!swimming_animal_on_water_tile)
             {

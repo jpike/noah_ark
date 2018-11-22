@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Graphics/Sprite.h"
+#include <vector>
+#include "Graphics/AnimatedSprite.h"
 
 namespace MAPS
 {
@@ -14,6 +15,7 @@ namespace MAPS
     /// enum values and increase readability, the enum is wrapped with a struct.
     struct TileType
     {
+        // ENUM VALUES.
         /// Explicit numeric values are assigned that map to tile IDs.
         enum Id
         {
@@ -53,10 +55,20 @@ namespace MAPS
             ARK_INTERIOR_CENTER_EXIT_CLOSED = 16,
             /// A tile for the right side of an exit from the interior of the ark.
             ARK_INTERIOR_RIGHT_EXIT_CLOSED = 17,
+            /// Another frame of animation for a water tile.
+            WATER_ANIMATED_1 = 18,
+            /// Another frame of animation for a water tile.
+            WATER_ANIMATED_2 = 19,
             /// An extra enum value to define count of different tile types.
             COUNT
         };
 
+        // ADDITIONAL HELPER CONSTANTS.
+        /// A list of all types of water tiles.
+        static const std::vector<Id> WATER_TYPES;
+
+        // HELPER METHODS.
+        static bool IsForWater(const Id tile_type_id);
         static bool IsForArk(const Id tile_type_id);
     };
 
@@ -76,7 +88,7 @@ namespace MAPS
         explicit Tile();
         explicit Tile(
             const TileId id,
-            const GRAPHICS::Sprite& sprite);
+            const GRAPHICS::AnimatedSprite& sprite);
 
         // POSITIONING.
         void SetWorldPosition(const float world_x_position, const float world_y_position);
@@ -96,6 +108,6 @@ namespace MAPS
         /// The type of this tile.
         TileType::Id Type;
         /// The sprite used for rendering the tile.
-        GRAPHICS::Sprite Sprite;
+        GRAPHICS::AnimatedSprite Sprite;
     };
 }

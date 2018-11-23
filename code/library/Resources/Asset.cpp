@@ -12,7 +12,7 @@ namespace RESOURCES
         data_stream.read(reinterpret_cast<char*>(&asset_type), sizeof(Type));
 
         // READ IN THE ASSET ID.
-        AssetId asset_id = AssetId::INTRO_MUSIC;
+        AssetId asset_id = AssetId::INVALID;
         data_stream.read(reinterpret_cast<char*>(&asset_id), sizeof(Id));
 
         // READ IN THE ASSET DATA.

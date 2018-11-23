@@ -329,6 +329,7 @@ namespace RESOURCES
         // RETURN THE SHADER ONLY IF SUCCESSFULLY LOADED.
         if (shader_loaded)
         {
+            Shaders[shader_id] = shader;
             return shader;
         }
         else

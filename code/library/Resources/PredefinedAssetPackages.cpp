@@ -78,5 +78,8 @@ namespace RESOURCES
 
         // MUSIC.
         AssetDefinition(AssetType::MUSIC, AssetId::OVERWORLD_BACKGROUND_MUSIC, "res/sounds/overworld_music.wav"),
+
+        // SHADERS.
+        AssetDefinition(AssetType::SHADER, RESOURCES::AssetId::TIME_OF_DAY_SHADER, "res/shaders/TimeOfDay.frag"),
     });
 }

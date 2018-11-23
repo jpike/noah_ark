@@ -40,6 +40,8 @@ namespace RESOURCES
         // SHADERS.
         /// A shader that tints a texture based on a color parameter.
         COLORED_TEXTURE_SHADER,
+        /// A shader that tints an image based on the time of day.
+        TIME_OF_DAY_SHADER,
 
         // GENERAL SOUND EFFECTS.
         /// The sound that plays when building a piece of the ark.

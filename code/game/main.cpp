@@ -191,13 +191,38 @@ void PopulateOverworld(
                             MATH::FloatRectangle tree_texture_sub_rectangle = TALL_TREE_TEXTURE_SUB_RECTANGLE;
 
                             // CREATE THE TREE'S SPRITE.
-                            GRAPHICS::Sprite tree_sprite(tree_texture, tree_texture_sub_rectangle);
-                            MATH::Vector2f tree_local_center = tree_sprite.GetOrigin();
+                            GRAPHICS::AnimatedSprite tree_sprite(GRAPHICS::Sprite(tree_texture, tree_texture_sub_rectangle));
+                            MATH::Vector2f tree_local_center = tree_sprite.Sprite.GetOrigin();
                             auto tree_left_x = current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>;
                             auto tree_top_y = current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>;
-                            float tree_world_x_position = map_left_world_position + static_cast<float>(tree_left_x) + tree_local_center.X;
-                            float tree_world_y_position = map_top_world_position + static_cast<float>(tree_top_y) + tree_local_center.Y;
+                            float tree_left_world_x_position = map_left_world_position + static_cast<float>(tree_left_x);
+                            float tree_top_world_y_position = map_top_world_position + static_cast<float>(tree_top_y);
+                            float tree_world_x_position = tree_left_world_x_position + tree_local_center.X;
+                            float tree_world_y_position = tree_top_world_y_position + tree_local_center.Y;
                             tree_sprite.SetWorldPosition(tree_world_x_position, tree_world_y_position);
+
+                            // ADD APPROPRIATE ANIMATIONS TO THE TREE.
+                            const std::string TREE_SHAKE_ANIMATION_NAME = "TreeShake";
+                            const bool NO_LOOPING = false;
+                            const sf::Time TREE_SHAKE_DURATION = sf::seconds(0.6f);
+                            const std::vector<MATH::IntRectangle> TREE_SHAKE_FRAMES = 
+                            {
+                                MATH::IntRectangle::FromLeftTopAndDimensions(32, 0, 16, 32),
+                                MATH::IntRectangle::FromLeftTopAndDimensions(64, 0, 16, 32),
+                                MATH::IntRectangle::FromLeftTopAndDimensions(32, 0, 16, 32),
+                                MATH::IntRectangle::FromLeftTopAndDimensions(80, 0, 16, 32),
+                                MATH::IntRectangle::FromLeftTopAndDimensions(32, 0, 16, 32),
+                                MATH::IntRectangle::FromLeftTopAndDimensions(64, 0, 16, 32),
+                                MATH::IntRectangle::FromLeftTopAndDimensions(32, 0, 16, 32),
+                                MATH::IntRectangle::FromLeftTopAndDimensions(80, 0, 16, 32),
+                                MATH::IntRectangle::FromLeftTopAndDimensions(32, 0, 16, 32)
+                            };
+                            std::shared_ptr<GRAPHICS::AnimationSequence> tree_shake_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                                TREE_SHAKE_ANIMATION_NAME,
+                                NO_LOOPING,
+                                TREE_SHAKE_DURATION,
+                                TREE_SHAKE_FRAMES);
+                            tree_sprite.AddAnimationSequence(tree_shake_animation);
 
                             // CREATE ANY FOOD ON THE TREE.
                             // Food will be randomly generated.

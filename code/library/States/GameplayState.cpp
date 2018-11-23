@@ -466,7 +466,8 @@ namespace STATES
             tree->Update(elapsed_time);
 
             // START PLAYING THE TREE SHAKING SOUND EFFECT IF APPROPRIATE.
-            if (tree->Shaking)
+            bool is_shaking = tree->IsShaking();
+            if (is_shaking)
             {
                 // ONLY START PLAYING THE SOUND IF IT ISN'T ALREADY PLAYING.
                 // This results in a smoother sound experience.

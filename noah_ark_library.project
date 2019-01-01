@@ -10,6 +10,7 @@
 #include "Events/AxeSwingEvent.cpp"
 #include "Filesystem/File.cpp"
 #include "Graphics/Gui/Font.cpp"
+#include "Graphics/Gui/Glyph.cpp"
 #include "Graphics/Gui/HeadsUpDisplay.cpp"
 #include "Graphics/Gui/TextBox.cpp"
 #include "Graphics/Gui/TextPage.cpp"

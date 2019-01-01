@@ -196,7 +196,7 @@ namespace GUI
 
         const unsigned int FIRST_LINE_VERTICAL_PADDING_IN_PIXELS = static_cast<unsigned int>(VERTICAL_PADDING_IN_PIXELS / 2.0f);
         MATH::Vector2ui text_page_top_left_screen_position_in_pixels;
-        text_page_top_left_screen_position_in_pixels.X = SCREEN_TOP_LEFT_CORNER.x + Glyph::WIDTH_IN_PIXELS;
+        text_page_top_left_screen_position_in_pixels.X = SCREEN_TOP_LEFT_CORNER.x + Glyph::MAX_WIDTH_IN_PIXELS;
         text_page_top_left_screen_position_in_pixels.Y = SCREEN_TOP_LEFT_CORNER.y + FIRST_LINE_VERTICAL_PADDING_IN_PIXELS;
 
         current_text_page.Render(text_page_top_left_screen_position_in_pixels, renderer);
@@ -212,7 +212,7 @@ namespace GUI
                 // The SFML circle shape class can represent any regular polygon with any number of
                 // sides (with more sides getting close to a circle), so it is a quick way to draw
                 // a triangle.
-                const float TRIANGLE_DIMENSION = Glyph::HEIGHT_IN_PIXELS;
+                const float TRIANGLE_DIMENSION = Glyph::MAX_HEIGHT_IN_PIXELS;
                 const float RADIUS = TRIANGLE_DIMENSION / 2.0f;
                 const unsigned int TRIANGLE_VERTEX_COUNT = 3;
                 sf::CircleShape press_button_triangle(RADIUS, TRIANGLE_VERTEX_COUNT);

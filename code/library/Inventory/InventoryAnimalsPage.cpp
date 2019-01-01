@@ -30,7 +30,7 @@ namespace INVENTORY
         // It is offset from the top of the screen by the amount of the
         // GUI stuff that should always be displayed above it.  Otherwise,
         // it should cover the remainder of the screen.
-        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);
+        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen->HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(

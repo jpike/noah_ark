@@ -14,6 +14,7 @@ REM IF %ERRORLEVEL% NEQ 0 CALL "C:\Program Files (x86)\Microsoft Visual Studio\2
 CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 WHERE cl.exe
 
+CALL build_font_metrics.bat %build_mode%
 CALL build_library.bat %build_mode%
 CALL build_asset_packer.bat %build_mode%
 CALL build_tester.bat %build_mode%

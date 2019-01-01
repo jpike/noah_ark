@@ -11,8 +11,8 @@ namespace GUI
     /// @param[in]  width_in_pixels - The width of the text page, in pixels.
     /// @param[in]  height_in_pixels - The height of the text page, in pixels.
     TextPage::TextPage(const unsigned int width_in_pixels, const unsigned int height_in_pixels) :
-        LineCount(height_in_pixels / Glyph::HEIGHT_IN_PIXELS),
-        MaxCharacterCountPerLine((width_in_pixels / Glyph::WIDTH_IN_PIXELS) - ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE),
+        LineCount(height_in_pixels / Glyph::MAX_HEIGHT_IN_PIXELS),
+        MaxCharacterCountPerLine((width_in_pixels / Glyph::MAX_WIDTH_IN_PIXELS) - ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE),
         MaxCharacterCount(MaxCharacterCountPerLine * LineCount),
         LinesOfText(LineCount),
         LastUnfilledLineIndex(0),
@@ -148,7 +148,7 @@ namespace GUI
                 GRAPHICS::Color::BLACK);
 
             // CALCULATE THE POSITION FOR THE NEXT LINE OF TEXT.
-            current_line_top_left_screen_position_in_pixels.Y += Glyph::HEIGHT_IN_PIXELS;
+            current_line_top_left_screen_position_in_pixels.Y += Glyph::MAX_HEIGHT_IN_PIXELS;
         }
     }
 

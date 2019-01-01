@@ -270,7 +270,7 @@ namespace STATES
         // CALCULATE THE TEXT BOX DIMENSIONS.
         unsigned int text_box_width_in_pixels = screen_width_in_pixels;
         const unsigned int LINE_COUNT = 2;
-        unsigned int text_box_height_in_pixels = GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS * LINE_COUNT;
+        unsigned int text_box_height_in_pixels = GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS * LINE_COUNT;
 
         // CREATE THE HUD.
         auto hud = std::make_unique<GRAPHICS::GUI::HeadsUpDisplay>(

@@ -45,7 +45,7 @@ namespace STATES
         float screen_top_y_position = screen_rectangle.GetTopYPosition();
         float screen_width_in_pixels = screen_rectangle.GetWidth();
         float screen_height_in_pixels = screen_rectangle.GetHeight();
-        const float SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);
+        const float SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS);
         float credits_text_start_top_y_position = screen_top_y_position + credits_text_top_offset_in_pixels;
         MATH::FloatRectangle credits_title_text_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             screen_left_x_position,

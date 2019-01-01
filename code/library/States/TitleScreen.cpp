@@ -103,7 +103,7 @@ namespace STATES
         for (size_t menu_option_index = 0; menu_option_index < menu_option_count; ++menu_option_index)
         {
             // CALCULATE THE SCREEN RECTANGLE FOR THE CURRENT MENU OPTION.
-            float menu_option_screen_height = static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS);
+            float menu_option_screen_height = static_cast<float>(GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS);
             MATH::FloatRectangle menu_option_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                 screen_left_x_position,
                 current_menu_option_top_screen_position,

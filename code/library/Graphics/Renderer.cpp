@@ -86,8 +86,8 @@ namespace GRAPHICS
         key_background_icon.setOutlineColor(DARK_GRAY);
         key_background_icon.setOutlineThickness(2.0f);
         key_background_icon.setSize(sf::Vector2f(
-            static_cast<float>(GRAPHICS::GUI::Glyph::WIDTH_IN_PIXELS),
-            static_cast<float>(GRAPHICS::GUI::Glyph::HEIGHT_IN_PIXELS)));
+            static_cast<float>(GRAPHICS::GUI::Glyph::MAX_WIDTH_IN_PIXELS),
+            static_cast<float>(GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS)));
         key_background_icon.setPosition(left_top_world_position);
 
         // RENDER THE BACKGROUND RECTANGLE FOR THE KEY.
@@ -106,11 +106,18 @@ namespace GRAPHICS
         auto font = id_with_font->second;
         GRAPHICS::GUI::Glyph glyph = font->GetGlyph(key);
 
+        // GET THE LEFT POSITION OF THE KEY SPRITE.
+        // It should be offset based on the amount of space on the left of the glyph
+        // in order to center it.
+        float space_on_left_of_glyph_in_pixels = GRAPHICS::GUI::Glyph::SpaceOnLeftInPixels<float>(key);
+        float key_character_sprite_left_screen_position_in_pixels = 
+            static_cast<float>(left_top_screen_position_in_pixels.X) + space_on_left_of_glyph_in_pixels;
+
         // CREATE A SPRITE FOR THE GLYPH.
         sf::IntRect key_texture_sub_rectangle = glyph.TextureSubRectangle.ToSfmlRectangle<int>();
         sf::Sprite key_character_sprite(glyph.Texture->TextureResource, key_texture_sub_rectangle);
         key_character_sprite.setPosition(
-            static_cast<float>(left_top_screen_position_in_pixels.X),
+            key_character_sprite_left_screen_position_in_pixels,
             static_cast<float>(left_top_screen_position_in_pixels.Y));
 
         // CONFIGURE THE RENDER TARGET FOR SCREEN-SPACE RENDERING.
@@ -209,9 +216,10 @@ namespace GRAPHICS
         // RENDER EACH CHARACTER OF THE TEXT.
         auto font = id_with_font->second;
         MATH::Vector2f current_character_left_top_screen_position = left_top_screen_position_in_pixels;
-        for (const char character : text)
+        for (unsigned int character_index = 0; character_index < text.size(); ++character_index)
         {
             // GET THE GLYPH FOR THE CURRENT CHARACTER.
+            const char character = text.at(character_index);
             GUI::Glyph glyph = font->GetGlyph(character);
 
             // CREATE A SPRITE FOR THE CURRENT GLYPH.
@@ -231,8 +239,11 @@ namespace GRAPHICS
             Screen->RenderTarget.draw(current_character_sprite, render_states);
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
-            float glyph_width = GUI::Glyph::WidthInPixels<float>(text_scale_ratio);
-            current_character_left_top_screen_position.X += glyph_width;
+            // One pixel of spacing on each side of a character should be rendered for better readability.
+            constexpr float SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER = 2.0f;
+            float glyph_width = glyph.TextureSubRectangle.GetWidth();
+            float scaled_glyph_width = text_scale_ratio * glyph_width;
+            current_character_left_top_screen_position.X += scaled_glyph_width + SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
         }
     }
 
@@ -339,6 +350,7 @@ namespace GRAPHICS
         for (const auto& line : new_lines_of_text)
         {
             // RENDER THE CURRENT LINE.
+            /// @todo   This method still needs to be updated to better reflect dynamic widths of characters.
             RenderText(line, font_id, current_line_left_top_screen_position, text_color, text_scale_ratio);
 
             // MOVE TO THE NEXT LINE.
@@ -449,7 +461,7 @@ namespace GRAPHICS
         unsigned int bounding_rectangle_height_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetHeight());
         size_t new_line_count = new_lines_of_text.size();
         unsigned int glyph_height_in_pixels = GUI::Glyph::HeightInPixels<unsigned int>(text_scale_ratio);
-        size_t total_text_height_in_pixels = new_line_count * GUI::Glyph::HEIGHT_IN_PIXELS;
+        size_t total_text_height_in_pixels = new_line_count * GUI::Glyph::MAX_HEIGHT_IN_PIXELS;
         size_t unused_vertical_space_in_pixels = bounding_rectangle_height_in_pixels - total_text_height_in_pixels;
         size_t half_of_unused_vertical_space_in_pixels = unused_vertical_space_in_pixels / 2;
         float bounding_rectangle_top_y_screen_position = bounding_screen_rectangle.GetTopYPosition();
@@ -463,8 +475,7 @@ namespace GRAPHICS
         for (const auto& line : new_lines_of_text)
         {
             // CENTER THE CURRENT LINE HORIZONTALLY.
-            size_t current_line_character_count = line.length();
-            unsigned int current_line_width_in_pixels = static_cast<unsigned int>(current_line_character_count * glyph_width_in_pixels);
+            unsigned int current_line_width_in_pixels = GUI::Glyph::TextWidthInPixels<unsigned int>(line, text_scale_ratio);
             unsigned int bounding_rectangle_width_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetWidth());
             unsigned int unused_space_on_current_line_in_pixels = bounding_rectangle_width_in_pixels - current_line_width_in_pixels;
             unsigned int half_of_unused_space_on_current_line_in_pixels = unused_space_on_current_line_in_pixels / 2;

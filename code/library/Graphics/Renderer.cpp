@@ -301,13 +301,14 @@ namespace GRAPHICS
                 else
                 {
                     // CHECK IF THE CURRENT LINE CAN HANDLE THE NEXT WORD.
-                    size_t current_line_length_in_characters = current_new_line.length();
-                    const size_t SPACE_CHARACTER_BETWEEN_WORDS_COUNT = 1;
-                    size_t line_length_with_next_word_in_characters =
-                        current_line_length_in_characters +
-                        SPACE_CHARACTER_BETWEEN_WORDS_COUNT +
-                        next_word.length();
-                    bool current_line_can_handle_next_word = (line_length_with_next_word_in_characters <= max_characters_per_line);
+                    size_t current_line_width_in_pixels = GUI::Glyph::TextWidthInPixels<size_t>(current_new_line, text_scale_ratio);
+                    size_t space_character_width_in_pixels = GUI::Glyph::TextWidthInPixels<size_t>(" ", text_scale_ratio);
+                    size_t next_word_width_in_pixels = GUI::Glyph::TextWidthInPixels<size_t>(next_word, text_scale_ratio);
+                    size_t line_width_with_next_word_in_characters = 
+                        current_line_width_in_pixels + 
+                        space_character_width_in_pixels + 
+                        next_word_width_in_pixels;
+                    bool current_line_can_handle_next_word = (line_width_with_next_word_in_characters <= line_width_in_pixels);
                     if (current_line_can_handle_next_word)
                     {
                         // ADD A SPACE BEFORE ADDING THE NEW WORD.
@@ -350,7 +351,6 @@ namespace GRAPHICS
         for (const auto& line : new_lines_of_text)
         {
             // RENDER THE CURRENT LINE.
-            /// @todo   This method still needs to be updated to better reflect dynamic widths of characters.
             RenderText(line, font_id, current_line_left_top_screen_position, text_color, text_scale_ratio);
 
             // MOVE TO THE NEXT LINE.

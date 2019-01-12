@@ -33,6 +33,8 @@ namespace GUI
         /// a consistent speed in how fast text is displayed along
         /// with making sure it doesn't get displayed too quickly.
         static const float ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS;
+        /// The scale ratio for text in the text box.
+        static const float TEXT_SCALE_RATIO;
 
         // CONSTRUCTION.
         explicit TextPage(const unsigned int width_in_pixels, const unsigned int height_in_pixels);

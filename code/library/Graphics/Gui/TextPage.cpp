@@ -6,6 +6,7 @@ namespace GRAPHICS
 namespace GUI
 {
     const float TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS = 0.03f;
+    const float TextPage::TEXT_SCALE_RATIO = 1.0f;
 
     /// Constructor.
     /// @param[in]  width_in_pixels - The width of the text page, in pixels.
@@ -38,13 +39,15 @@ namespace GUI
         // the first word on a line would waste a character slot.
         std::vector<char>& first_unfilled_line_of_text = LinesOfText[LastUnfilledLineIndex];
         std::vector<char>* current_line_of_text = &first_unfilled_line_of_text;
+        std::string current_line_as_string = std::string(current_line_of_text->cbegin(), current_line_of_text->cend());
+        size_t max_width_per_line_in_pixels = MaxCharacterCountPerLine * Glyph::MAX_WIDTH_IN_PIXELS;
         bool first_word = current_line_of_text->empty();
         if (!first_word)
         {
             // ADD THE SPACE IF THERE IS ROOM ON THE CURRENT LINE.
-            const size_t CHARACTER_COUNT_FOR_SPACE = 1;
-            size_t current_line_character_count_with_space = current_line_of_text->size() + CHARACTER_COUNT_FOR_SPACE;
-            bool current_line_can_hold_space = (current_line_character_count_with_space <= MaxCharacterCountPerLine);
+            std::string current_line_with_space = current_line_as_string + " ";
+            size_t current_line_with_space_width_in_pixels = Glyph::TextWidthInPixels<size_t>(current_line_with_space, TextPage::TEXT_SCALE_RATIO);
+            bool current_line_can_hold_space = (current_line_with_space_width_in_pixels <= max_width_per_line_in_pixels);
             if (current_line_can_hold_space)
             {
                 const char SPACE = ' ';
@@ -59,8 +62,12 @@ namespace GUI
         }
 
         // CHECK IF THE CURRENT UNFILLED LINE OF TEXT CAN HOLD THE NEW WORD.
-        size_t current_line_character_count_with_new_word = current_line_of_text->size() + word.size();
-        bool current_line_can_hold_new_word = (current_line_character_count_with_new_word <= MaxCharacterCountPerLine);
+        current_line_as_string = std::string(current_line_of_text->cbegin(), current_line_of_text->cend());
+        std::string current_line_with_new_word = current_line_as_string + word;
+        size_t current_line_with_new_word_width_in_pixels = Glyph::TextWidthInPixels<size_t>(
+            current_line_with_new_word, 
+            TextPage::TEXT_SCALE_RATIO);
+        bool current_line_can_hold_new_word = (current_line_with_new_word_width_in_pixels <= max_width_per_line_in_pixels);
         if (!current_line_can_hold_new_word)
         {
             // MOVE TO THE NEXT LINE.

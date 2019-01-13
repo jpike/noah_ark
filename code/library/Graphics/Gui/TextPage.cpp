@@ -14,7 +14,6 @@ namespace GUI
     TextPage::TextPage(const unsigned int width_in_pixels, const unsigned int height_in_pixels) :
         LineCount(height_in_pixels / Glyph::MAX_HEIGHT_IN_PIXELS),
         MaxCharacterCountPerLine((width_in_pixels / Glyph::MAX_WIDTH_IN_PIXELS) - ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE),
-        MaxCharacterCount(MaxCharacterCountPerLine * LineCount),
         LinesOfText(LineCount),
         LastUnfilledLineIndex(0),
         TotalElapsedTimeInSecondsTextHasBeenDisplayed(0.0f)
@@ -34,41 +33,37 @@ namespace GUI
             return false;
         }
 
-        // ADD A SPACE BEFORE THE NEW WORD IF THE WORD ISN'T THE FIRST WORD ON THE LINE.
+        // DETERMINE IF A SPACE NEEDS TO BE ADDED BEFORE THE NEW WORD.
         // Spaces should separate consecutive words, but putting a space before
         // the first word on a line would waste a character slot.
+        const char SPACE = ' ';
         std::vector<char>& first_unfilled_line_of_text = LinesOfText[LastUnfilledLineIndex];
         std::vector<char>* current_line_of_text = &first_unfilled_line_of_text;
         std::string current_line_as_string = std::string(current_line_of_text->cbegin(), current_line_of_text->cend());
-        size_t max_width_per_line_in_pixels = MaxCharacterCountPerLine * Glyph::MAX_WIDTH_IN_PIXELS;
         bool first_word = current_line_of_text->empty();
         if (!first_word)
         {
-            // ADD THE SPACE IF THERE IS ROOM ON THE CURRENT LINE.
-            std::string current_line_with_space = current_line_as_string + " ";
-            size_t current_line_with_space_width_in_pixels = Glyph::TextWidthInPixels<size_t>(current_line_with_space, TextPage::TEXT_SCALE_RATIO);
-            bool current_line_can_hold_space = (current_line_with_space_width_in_pixels <= max_width_per_line_in_pixels);
-            if (current_line_can_hold_space)
-            {
-                const char SPACE = ' ';
-                current_line_of_text->push_back(SPACE);
-            }
-            else
-            {
-                // If the current line can't hold a space, it can't hold the new word.
-                // That means that that the code below will move to the next available line
-                // to add the new word, so we shouldn't return early here.
-            }
+            current_line_as_string += SPACE;
         }
 
         // CHECK IF THE CURRENT UNFILLED LINE OF TEXT CAN HOLD THE NEW WORD.
-        current_line_as_string = std::string(current_line_of_text->cbegin(), current_line_of_text->cend());
         std::string current_line_with_new_word = current_line_as_string + word;
         size_t current_line_with_new_word_width_in_pixels = Glyph::TextWidthInPixels<size_t>(
-            current_line_with_new_word, 
+            current_line_with_new_word,
             TextPage::TEXT_SCALE_RATIO);
+        size_t max_width_per_line_in_pixels = MaxCharacterCountPerLine * Glyph::MAX_WIDTH_IN_PIXELS;
         bool current_line_can_hold_new_word = (current_line_with_new_word_width_in_pixels <= max_width_per_line_in_pixels);
-        if (!current_line_can_hold_new_word)
+        if (current_line_can_hold_new_word)
+        {
+            // ADD THE SPACE BEFORE THE NEW WORD.
+            // The above only added the space to a temporary string, but it needs to be
+            // added to the official line if this isn't the first word on the line.
+            if (!first_word)
+            {
+                current_line_of_text->push_back(SPACE);
+            }
+        }
+        else
         {
             // MOVE TO THE NEXT LINE.
             ++LastUnfilledLineIndex;

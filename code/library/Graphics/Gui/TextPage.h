@@ -56,8 +56,6 @@ namespace GUI
         const unsigned int LineCount;
         /// The maximum number of characters that can be displayd per line.
         const unsigned int MaxCharacterCountPerLine;
-        /// The maximum number of characters allowed per page.
-        const unsigned int MaxCharacterCount;
 
     private:
         // PRIVATE METHODS.

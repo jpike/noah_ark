@@ -35,9 +35,9 @@ namespace GUI
         // ADD EACH LINE OF TEXT TO APPROPRIATE PAGES IN THE TEXT BOX.
         for (const std::string& line : lines)
         {
-            // CALCULATE HOW MUCH TEXT CAN EXIST ON A SINGLE PAGE.
+            // CALCULATE HOW MUCH TEXT CAN EXIST ON A SINGLE LINE.
             TextPage new_page(WidthInPixels, HeightInPixels);
-            unsigned int max_character_count_per_page = new_page.MaxCharacterCount;
+            unsigned int max_character_count_per_line = new_page.MaxCharacterCountPerLine;
 
             // SPLIT THE LINE INTO WORDS.
             // In order to avoid having a word broken up onto multiple lines,
@@ -48,7 +48,7 @@ namespace GUI
             // only having one space between words.  There also is not
             // a use case yet where having multiple sequential spaces
             // is valuable.
-            std::deque<std::string> words = CORE::String::SplitIntoWords(line, max_character_count_per_page);
+            std::deque<std::string> words = CORE::String::SplitIntoWords(line, max_character_count_per_line);
 
             bool words_exist = !words.empty();
             if (!words_exist)

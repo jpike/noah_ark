@@ -56,7 +56,7 @@ namespace TEST_TEXT_BOX
         // VERIFY THAT THE SECOND PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
         const std::string EXPECTED_SECOND_PAGE_TEXT =
             "1 7:7 - And Noah went in, and his sons,\n"
-            "and his wife, and his sons' wives with \n";
+            "and his wife, and his sons' wives with\n";
         float elapsed_time_in_seconds_for_second_page = elapsed_time_in_seconds_for_next_character * EXPECTED_SECOND_PAGE_TEXT.length();
         text_box.Update(sf::seconds(elapsed_time_in_seconds_for_second_page));
         std::stringstream second_page_output;
@@ -73,8 +73,8 @@ namespace TEST_TEXT_BOX
 
         // VERIFY THAT THE THIRD PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
         const std::string EXPECTED_THIRD_PAGE_TEXT =
-            "his sons' wives with him, into\n"
-            "the ark, because of the waters\n";
+            "him, into the ark, because of the waters\n"
+            "of the flood.\n";
         float elapsed_time_in_seconds_for_third_page = elapsed_time_in_seconds_for_next_character * EXPECTED_THIRD_PAGE_TEXT.length();
         text_box.Update(sf::seconds(elapsed_time_in_seconds_for_third_page));
         std::stringstream third_page_output;
@@ -88,19 +88,5 @@ namespace TEST_TEXT_BOX
 
         // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
         text_box.MoveToNextPage();
-
-        // VERIFY THAT THE FOURTH PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
-        const std::string EXPECTED_FOURTH_PAGE_TEXT =
-            "of the flood.\n";
-        float elapsed_time_in_seconds_for_fourth_page = elapsed_time_in_seconds_for_next_character * EXPECTED_FOURTH_PAGE_TEXT.length();
-        text_box.Update(sf::seconds(elapsed_time_in_seconds_for_fourth_page));
-        std::stringstream fourth_page_output;
-        text_box.Render(fourth_page_output);
-        std::string rendered_fourth_page_text = fourth_page_output.str();
-        REQUIRE(EXPECTED_FOURTH_PAGE_TEXT == rendered_fourth_page_text);
-
-        // VERIFY THAT THE FOURTH PAGE IS FINISHED BEING DISPLAYED.
-        bool fourth_page_finished_being_displayed = text_box.CurrentPageOfTextFinishedBeingDisplayed();
-        REQUIRE(fourth_page_finished_being_displayed);
     }
 }

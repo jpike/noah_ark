@@ -13,7 +13,8 @@
                 "${env.VCToolsInstallDir}include",
                 "${projectRoot}/code/library",
                 "${projectRoot}/code/testing",
-                "${projectRoot}/ThirdParty/SFML/SFML-2.5.0/include"
+                "${projectRoot}/ThirdParty/SFML/SFML-2.5.0/include",
+                "${projectRoot}/ThirdParty/catch"
             ]
         },
         {
@@ -28,7 +29,8 @@
                 "${env.VCToolsInstallDir}include",
                 "${projectRoot}/code/library",
                 "${projectRoot}/code/testing",
-                "${projectRoot}/ThirdParty/SFML/SFML-2.5.0/include"
+                "${projectRoot}/ThirdParty/SFML/SFML-2.5.0/include",
+                "${projectRoot}/ThirdParty/catch"
             ]
         }
     ]

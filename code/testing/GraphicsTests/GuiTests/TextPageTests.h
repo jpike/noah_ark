@@ -337,42 +337,54 @@ namespace TEST_TEXT_PAGE
             {
                 // CHECK IF THE CURRENT LINE HAS ROOM FOR A SPACE.
                 // It will be added for the next word if there is room.
-                const unsigned int CHARACTER_COUNT_FOR_SPACE = 1;
-                size_t previously_rendered_words_on_current_line_plus_space_character_count =
-                    (previously_rendered_words_on_current_line.length() + CHARACTER_COUNT_FOR_SPACE);
-                bool space_fits_on_current_line = (
-                    previously_rendered_words_on_current_line_plus_space_character_count <= text_page.MaxCharacterCountPerLine);
+                std::string previously_rendered_words_on_current_line_plus_space = previously_rendered_words_on_current_line + " ";
+                size_t previously_rendered_words_on_current_line_plus_space_width_in_pixels = GRAPHICS::GUI::Glyph::TextWidthInPixels<size_t>(
+                    previously_rendered_words_on_current_line_plus_space,
+                    GRAPHICS::GUI::TextPage::TEXT_SCALE_RATIO);
+                size_t max_line_width_in_pixels = text_page.MaxCharacterCountPerLine * GRAPHICS::GUI::Glyph::MAX_WIDTH_IN_PIXELS;
+                bool space_fits_on_current_line = (previously_rendered_words_on_current_line_plus_space_width_in_pixels <= max_line_width_in_pixels);
                 if (space_fits_on_current_line)
                 {
                     // ADD THE SPACE BEFORE THE NEXT WORD.
                     previously_rendered_words += " ";
                     previously_rendered_words_on_current_line += " ";
-
-                    // ELAPSE ENOUGH TIME FOR THE SPACE CHARACTER TO HAVE BEEN DISPLAYED.
-                    text_page.Update(sf::seconds(elapsed_time_in_seconds_for_next_character));
-
-                    // VERIFY THAT THE SPACE CHARACTER WAS RENDERED.
-                    std::stringstream output_stream_with_space;
-                    text_page.Render(output_stream_with_space);
-
-                    // VERIFY THAT THE EXPECTED TEXT WAS RENDERED.
-                    // Since the text page renders text by lines, each line should end with a newline.
-                    std::string expected_text_with_space = (previously_rendered_words + "\n");
-                    std::string rendered_text_with_space = output_stream_with_space.str();
-                    REQUIRE(expected_text_with_space == rendered_text_with_space);
                 }
 
                 // CHECK IF THE NEXT WORD FITS ON CURRENT LINE.
-                size_t previously_rendered_words_plus_next_word_character_count =
-                    (previously_rendered_words_on_current_line_plus_space_character_count + next_word->length());
-                bool next_word_fits_on_current_line = (
-                    previously_rendered_words_plus_next_word_character_count <= text_page.MaxCharacterCountPerLine);
+                std::string current_line_with_next_word = previously_rendered_words_on_current_line + *next_word;
+                size_t current_line_with_next_word_width_in_pixels = GRAPHICS::GUI::Glyph::TextWidthInPixels<size_t>(
+                    current_line_with_next_word, 
+                    GRAPHICS::GUI::TextPage::TEXT_SCALE_RATIO);
+                bool next_word_fits_on_current_line = (current_line_with_next_word_width_in_pixels <= max_line_width_in_pixels);
                 if (next_word_fits_on_current_line)
                 {
-                    
+                    // VERIFY RENDERING OF THE SPACE IF ONE WAS ADDED.
+                    if (space_fits_on_current_line)
+                    {
+                        // ELAPSE ENOUGH TIME FOR THE SPACE CHARACTER TO HAVE BEEN DISPLAYED.
+                        text_page.Update(sf::seconds(elapsed_time_in_seconds_for_next_character));
+
+                        // VERIFY THAT THE SPACE CHARACTER WAS RENDERED.
+                        std::stringstream output_stream_with_space;
+                        text_page.Render(output_stream_with_space);
+
+                        // VERIFY THAT THE EXPECTED TEXT WAS RENDERED.
+                        // Since the text page renders text by lines, each line should end with a newline.
+                        std::string expected_text_with_space = (previously_rendered_words + "\n");
+                        std::string rendered_text_with_space = output_stream_with_space.str();
+                        REQUIRE(expected_text_with_space == rendered_text_with_space);
+                    }
                 }
                 else
                 {
+                    // REMOVE THE SPACE IF THE WORD DOESN'T FIT.
+                    // If the next word doesn't fit on the current line, then there's no point in rendering a space.
+                    if (space_fits_on_current_line)
+                    {
+                        previously_rendered_words.pop_back();
+                        previously_rendered_words_on_current_line.pop_back();
+                    }
+
                     // ADD THE LINE OF TEXT THAT JUST FINISHED BEING RENDERED.
                     // A newline is also needed before the next line can be rendered.
                     previously_rendered_words += "\n";

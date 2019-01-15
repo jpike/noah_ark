@@ -87,7 +87,7 @@ namespace INVENTORY
         // It is offset from the top of the screen by the amount of the
         // top row of the HUD that is always displayed.  Otherwise,
         // it should cover the remainder of the screen.
-        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS);
+        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen->HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
@@ -120,7 +120,7 @@ namespace INVENTORY
 
         // RENDER A TAB FOR THE ANIMAL PORTION OF THE GUI.
         const std::string ANIMALS_TAB_STRING = "Animals";
-        size_t animals_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::MAX_WIDTH_IN_PIXELS * ANIMALS_TAB_STRING.length();
+        size_t animals_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS * ANIMALS_TAB_STRING.length();
         size_t animals_tab_text_half_width_in_pixels = animals_tab_text_width_in_pixels / 2;
         float animals_tab_left_screen_position_in_pixels = background_rectangle.GetCenterXPosition() - animals_tab_text_half_width_in_pixels;
         float animals_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
@@ -135,7 +135,7 @@ namespace INVENTORY
 
         // RENDER A TAB FOR THE FOOD PORTION OF THE GUI.
         const std::string FOOD_TAB_STRING = "Food";
-        size_t food_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::MAX_WIDTH_IN_PIXELS * FOOD_TAB_STRING.length();
+        size_t food_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS * FOOD_TAB_STRING.length();
         float food_tab_left_screen_position_in_pixels = background_rectangle.GetRightXPosition() - food_tab_text_width_in_pixels;
         float food_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
         MATH::Vector2f food_tab_left_top_screen_position_in_pixels(
@@ -174,12 +174,12 @@ namespace INVENTORY
         GRAPHICS::Renderer& renderer) const
     {
         // RENDER A BACKGROUND RECTANGLE FOR THE TAB.
-        size_t tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::MAX_WIDTH_IN_PIXELS * tab_text.length();
+        size_t tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS * tab_text.length();
         MATH::FloatRectangle tab_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             left_top_screen_position_in_pixels.X,
             left_top_screen_position_in_pixels.Y,
             static_cast<float>(tab_text_width_in_pixels),
-            static_cast<float>(GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS));
+            static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS));
 
         renderer.RenderScreenRectangle(
             tab_rectangle,

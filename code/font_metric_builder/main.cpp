@@ -101,7 +101,7 @@ int main()
             << "            " << glyph_min_x << ".0f," << std::endl
             << "            " << glyph_box_top_position << ".0f," << std::endl
             << "            " << glyph_width_in_pixels << ".0f," << std::endl
-            << "            static_cast<float>(Glyph::MAX_HEIGHT_IN_PIXELS))," << std::endl;
+            << "            static_cast<float>(Glyph::DEFAULT_HEIGHT_IN_PIXELS))," << std::endl;
     }
 
     // WRITE OUT THE FINAL GLYPH DATA FOR THE C++ CODE.

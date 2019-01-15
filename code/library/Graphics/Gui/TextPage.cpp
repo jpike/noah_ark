@@ -12,8 +12,8 @@ namespace GUI
     /// @param[in]  width_in_pixels - The width of the text page, in pixels.
     /// @param[in]  height_in_pixels - The height of the text page, in pixels.
     TextPage::TextPage(const unsigned int width_in_pixels, const unsigned int height_in_pixels) :
-        LineCount(height_in_pixels / Glyph::MAX_HEIGHT_IN_PIXELS),
-        MaxCharacterCountPerLine((width_in_pixels / Glyph::MAX_WIDTH_IN_PIXELS) - ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE),
+        LineCount(height_in_pixels / Glyph::DEFAULT_HEIGHT_IN_PIXELS),
+        MaxCharacterCountPerLine((width_in_pixels / Glyph::DEFAULT_WIDTH_IN_PIXELS) - ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE),
         LinesOfText(LineCount),
         LastUnfilledLineIndex(0),
         TotalElapsedTimeInSecondsTextHasBeenDisplayed(0.0f)
@@ -51,7 +51,7 @@ namespace GUI
         size_t current_line_with_new_word_width_in_pixels = Glyph::TextWidthInPixels<size_t>(
             current_line_with_new_word,
             TextPage::TEXT_SCALE_RATIO);
-        size_t max_width_per_line_in_pixels = MaxCharacterCountPerLine * Glyph::MAX_WIDTH_IN_PIXELS;
+        size_t max_width_per_line_in_pixels = MaxCharacterCountPerLine * Glyph::DEFAULT_WIDTH_IN_PIXELS;
         bool current_line_can_hold_new_word = (current_line_with_new_word_width_in_pixels <= max_width_per_line_in_pixels);
         if (current_line_can_hold_new_word)
         {
@@ -150,7 +150,7 @@ namespace GUI
                 GRAPHICS::Color::BLACK);
 
             // CALCULATE THE POSITION FOR THE NEXT LINE OF TEXT.
-            current_line_top_left_screen_position_in_pixels.Y += Glyph::MAX_HEIGHT_IN_PIXELS;
+            current_line_top_left_screen_position_in_pixels.Y += Glyph::DEFAULT_HEIGHT_IN_PIXELS;
         }
     }
 

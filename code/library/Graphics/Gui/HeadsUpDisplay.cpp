@@ -188,7 +188,7 @@ namespace GUI
         // The axe icon should be positioned just to the right of its key icon.
         // Since a single character (glyph) is rendered for the key icon,
         // the width of the icon is the width of a single glyph.
-        const unsigned int KEY_ICON_WIDTH_IN_PIXELS = Glyph::MAX_WIDTH_IN_PIXELS;
+        const unsigned int KEY_ICON_WIDTH_IN_PIXELS = Glyph::DEFAULT_WIDTH_IN_PIXELS;
         MATH::Vector2ui axe_icon_screen_position = TOP_LEFT_SCREEN_POSITION_IN_PIXELS;
         axe_icon_screen_position.X += KEY_ICON_WIDTH_IN_PIXELS;
 
@@ -236,7 +236,7 @@ namespace GUI
             static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
         const std::string OPEN_INVENTORY_TEXT = "Inventory";
         // One glyph is rendered per character.
-        const size_t OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS = (Glyph::MAX_WIDTH_IN_PIXELS * OPEN_INVENTORY_TEXT.size());
+        const size_t OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS = (Glyph::DEFAULT_WIDTH_IN_PIXELS * OPEN_INVENTORY_TEXT.size());
         MATH::Vector2f open_inventory_text_top_left_screen_position_in_pixels = TOP_RIGHT_SCREEN_POSITION_IN_PIXELS;
         open_inventory_text_top_left_screen_position_in_pixels.X -= OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS;
         renderer.RenderText(

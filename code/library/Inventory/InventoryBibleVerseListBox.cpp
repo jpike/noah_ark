@@ -41,7 +41,7 @@ namespace INVENTORY
         // show about an even number of verses on each side to fill the remaining space in the box.
         unsigned int box_height_in_pixels = static_cast<unsigned int>(bounding_rectangle.GetHeight());
         const unsigned int ONE_LESS_VERSE_TO_AVOID_EXCEEDING_BOX_BOUNDS = 1;
-        unsigned int verses_to_render_count = (box_height_in_pixels / GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS) - ONE_LESS_VERSE_TO_AVOID_EXCEEDING_BOX_BOUNDS;
+        unsigned int verses_to_render_count = (box_height_in_pixels / GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS) - ONE_LESS_VERSE_TO_AVOID_EXCEEDING_BOX_BOUNDS;
         unsigned int verses_to_render_half_count = verses_to_render_count / 2;
 
         // If there aren't enough verses before the selected verse, just start rendering
@@ -80,7 +80,7 @@ namespace INVENTORY
                     bounding_rectangle.GetLeftXPosition(),
                     current_verse_screen_top_left_position_in_pixels.Y,
                     bounding_rectangle.GetWidth(),
-                    static_cast<float>(GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS));
+                    static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS));
                 renderer.RenderScreenRectangle(
                     selected_verse_background_rectangle,
                     selected_verse_background_color);
@@ -102,7 +102,7 @@ namespace INVENTORY
             {
                 // USE QUESTION MARKS FOR THE BIBLE VERSE.
                 unsigned int box_width_in_pixels = static_cast<unsigned int>(bounding_rectangle.GetWidth());
-                unsigned int character_count_per_line = (box_width_in_pixels / GRAPHICS::GUI::Glyph::MAX_WIDTH_IN_PIXELS);
+                unsigned int character_count_per_line = (box_width_in_pixels / GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS);
                 bible_verse_display_string.assign(character_count_per_line, '?');
             }
 
@@ -114,7 +114,7 @@ namespace INVENTORY
                 GRAPHICS::Color::BLACK);
 
             // MOVE TO A NEW LINE FOR THE NEXT VERSE.
-            current_verse_screen_top_left_position_in_pixels.Y += GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS;
+            current_verse_screen_top_left_position_in_pixels.Y += GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS;
         }
     }
     

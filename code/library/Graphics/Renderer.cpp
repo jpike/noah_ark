@@ -86,8 +86,8 @@ namespace GRAPHICS
         key_background_icon.setOutlineColor(DARK_GRAY);
         key_background_icon.setOutlineThickness(2.0f);
         key_background_icon.setSize(sf::Vector2f(
-            static_cast<float>(GRAPHICS::GUI::Glyph::MAX_WIDTH_IN_PIXELS),
-            static_cast<float>(GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS)));
+            static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS),
+            static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS)));
         key_background_icon.setPosition(left_top_world_position);
 
         // RENDER THE BACKGROUND RECTANGLE FOR THE KEY.
@@ -461,7 +461,7 @@ namespace GRAPHICS
         unsigned int bounding_rectangle_height_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetHeight());
         size_t new_line_count = new_lines_of_text.size();
         unsigned int glyph_height_in_pixels = GUI::Glyph::HeightInPixels<unsigned int>(text_scale_ratio);
-        size_t total_text_height_in_pixels = new_line_count * GUI::Glyph::MAX_HEIGHT_IN_PIXELS;
+        size_t total_text_height_in_pixels = new_line_count * GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS;
         size_t unused_vertical_space_in_pixels = bounding_rectangle_height_in_pixels - total_text_height_in_pixels;
         size_t half_of_unused_vertical_space_in_pixels = unused_vertical_space_in_pixels / 2;
         float bounding_rectangle_top_y_screen_position = bounding_screen_rectangle.GetTopYPosition();

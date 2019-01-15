@@ -30,7 +30,7 @@ namespace INVENTORY
         // It is offset from the top of the screen by the amount of the
         // GUI stuff that should always be displayed above it.  Otherwise,
         // it should cover the remainder of the screen.
-        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::MAX_HEIGHT_IN_PIXELS);
+        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
         const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
         const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen->HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
@@ -51,9 +51,9 @@ namespace INVENTORY
         /// approach later.
         const float BOX_DIMENSION_IN_PIXELS = 48.0f;
         const float PADDING_BETWEEN_BOXES_IN_PIXELS = 16.0f;
-        const float BOX_WITH_PADDING_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS + PADDING_BETWEEN_BOXES_IN_PIXELS;
+        const float BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS + PADDING_BETWEEN_BOXES_IN_PIXELS;
         float page_width_in_pixels = background_rectangle.GetWidth();
-        unsigned int boxes_per_row = static_cast<unsigned int>(page_width_in_pixels / BOX_WITH_PADDING_DIMENSION_IN_PIXELS);
+        unsigned int boxes_per_row = static_cast<unsigned int>(page_width_in_pixels / BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS);
 
         // RENDER BOXES FOR EACH COLLECTED ANIMAL.
         const float BOX_HALF_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS / 2.0f;
@@ -73,10 +73,10 @@ namespace INVENTORY
             unsigned int box_row_index = species_id / boxes_per_row;
             unsigned int box_column_index = species_id % boxes_per_row;
 
-            float current_box_x_offset = static_cast<float>(box_column_index * BOX_WITH_PADDING_DIMENSION_IN_PIXELS);
+            float current_box_x_offset = static_cast<float>(box_column_index * BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS);
             float current_box_center_x_position = starting_box_center_x_position + current_box_x_offset;
 
-            float current_box_y_offset = static_cast<float>(box_row_index * BOX_WITH_PADDING_DIMENSION_IN_PIXELS);
+            float current_box_y_offset = static_cast<float>(box_row_index * BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS);
             float current_box_center_y_position = starting_box_center_y_position + current_box_y_offset;
 
             MATH::FloatRectangle box_screen_rectangle = MATH::FloatRectangle::FromCenterAndDimensions(

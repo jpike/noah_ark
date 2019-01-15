@@ -341,7 +341,7 @@ namespace TEST_TEXT_PAGE
                 size_t previously_rendered_words_on_current_line_plus_space_width_in_pixels = GRAPHICS::GUI::Glyph::TextWidthInPixels<size_t>(
                     previously_rendered_words_on_current_line_plus_space,
                     GRAPHICS::GUI::TextPage::TEXT_SCALE_RATIO);
-                size_t max_line_width_in_pixels = text_page.MaxCharacterCountPerLine * GRAPHICS::GUI::Glyph::MAX_WIDTH_IN_PIXELS;
+                size_t max_line_width_in_pixels = text_page.MaxCharacterCountPerLine * GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS;
                 bool space_fits_on_current_line = (previously_rendered_words_on_current_line_plus_space_width_in_pixels <= max_line_width_in_pixels);
                 if (space_fits_on_current_line)
                 {

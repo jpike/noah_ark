@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include "Bible/BibleVerses.h"
 #include "Core/NullChecking.h"
 #include "States/IntroSequence.h"
@@ -94,11 +95,22 @@ namespace STATES
         // RENDER THE CURRENT BIBLE VERSE.
         const BIBLE::BibleVerse& current_bible_verse = IntroBibleVerses().at(CurrentFrameIndex);
         const std::string bible_verse_text = current_bible_verse.ToString();
-        GRAPHICS::Color white;
-        white.Red = GRAPHICS::Color::MAX_COLOR_COMPONENT;
-        white.Green = GRAPHICS::Color::MAX_COLOR_COMPONENT;
-        white.Blue = GRAPHICS::Color::MAX_COLOR_COMPONENT;
-        white.Alpha = GRAPHICS::Color::MAX_COLOR_COMPONENT;
-        renderer.RenderCenteredText(bible_verse_text, RESOURCES::AssetId::SERIF_FONT_TEXTURE, renderer.Screen->GetBoundingRectangle<float>(), white);
+        // The text color is scaled to fade in and and then out for each frame.
+        // A sine wave is used to help scale the color so that it starts dark,
+        // peaks halfway between the the frame being displayed, and then
+        // gets dark again.
+        GRAPHICS::Color text_color = GRAPHICS::Color::WHITE;
+        float current_verse_displayed_time_in_seconds = ElapsedTimeForCurrentFrame.asSeconds();
+        float max_verse_displayed_time_in_seconds = MAX_TIME_PER_FRAME.asSeconds();
+        constexpr float PI = 3.14159f;
+        constexpr float RADIANS_FOR_HALF_OF_SINE_WAVE = PI;
+        float scale_factor_for_half_sine_wave_to_match_verse_frame_time = RADIANS_FOR_HALF_OF_SINE_WAVE / max_verse_displayed_time_in_seconds;
+        float text_scale_factor = std::sin(current_verse_displayed_time_in_seconds * scale_factor_for_half_sine_wave_to_match_verse_frame_time);
+        text_color.ScaleRgb(text_scale_factor);
+        renderer.RenderCenteredText(
+            bible_verse_text, 
+            RESOURCES::AssetId::SERIF_FONT_TEXTURE, 
+            renderer.Screen->GetBoundingRectangle<float>(), 
+            text_color);
     }
 }

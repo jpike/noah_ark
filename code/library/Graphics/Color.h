@@ -40,6 +40,7 @@ namespace GRAPHICS
             const uint8_t alpha = MAX_COLOR_COMPONENT);
 
         // PUBLIC METHODS.
+        void ScaleRgb(const float scale_factor);
         void ScaleRgbDown(const uint8_t scale_factor);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

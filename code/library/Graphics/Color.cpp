@@ -28,6 +28,17 @@ namespace GRAPHICS
     {}
 
     /// Scales the red, green, and blue color components down
+    /// by multiplying by the provided scale factor.
+    /// @param[in]  scale_factor - The amount to scale down
+    ///     the red, green, and blue components.
+    void Color::ScaleRgb(const float scale_factor)
+    {
+        Red = static_cast<uint8_t>(Red * scale_factor);
+        Green = static_cast<uint8_t>(Green * scale_factor);
+        Blue = static_cast<uint8_t>(Blue * scale_factor);
+    }
+
+    /// Scales the red, green, and blue color components down
     /// by dividing by the provided scale factor.
     /// No protection against truncation is performed.
     /// @param[in]  scale_factor - The amount to scale down

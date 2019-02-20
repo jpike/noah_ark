@@ -201,14 +201,7 @@ namespace STATES
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
-            "freesoundeffects.com",
-            RESOURCES::AssetId::FONT_TEXTURE,
-            current_credit_text_screen_rectangle,
-            CREDITS_TEXT_COLOR);
-
-        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
-        renderer.RenderCenteredText(
-            "Partners in Rhyme",
+            "wrzesien",
             RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);

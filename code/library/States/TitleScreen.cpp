@@ -127,9 +127,25 @@ namespace STATES
             if (current_menu_option_is_selected)
             {
                 // To better help players see which menu option is selected,
-                // some additional "arrow" text is inserted before the
+                // some additional "arrow" text is rendered before the
                 // main text for the selected menu option.
-                menu_option_text += "> ";
+                // It is rendered separately to avoid having the length of the
+                // menu options change, which results in shifting if they're
+                // rendered as centered text.
+                // It conveniently happens that 1/3 across the width of the screen
+                // places this arrow pointer just to the left of all of the
+                // current menu options.
+                float one_third_screen_width_in_pixels = screen_width_in_pixels / 3.0f;
+                float selected_menu_option_arrow_left_screen_position_in_pixels = (screen_left_x_position + one_third_screen_width_in_pixels);
+                MATH::Vector2f selected_menu_option_arrow_left_top_screen_position_in_pixels(
+                    selected_menu_option_arrow_left_screen_position_in_pixels,
+                    current_menu_option_top_screen_position);
+                const std::string SELECTED_MENU_OPTION_POINTER_TEXT = ">";
+                renderer.RenderText(
+                    SELECTED_MENU_OPTION_POINTER_TEXT,
+                    RESOURCES::AssetId::FONT_TEXTURE,
+                    selected_menu_option_arrow_left_top_screen_position_in_pixels,
+                    menu_option_color);
             }
 
             GameState current_menu_option = MenuOptions.at(menu_option_index);

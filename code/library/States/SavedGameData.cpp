@@ -5,7 +5,7 @@
 
 namespace STATES
 {
-    const std::string SavedGameData::DEFAULT_FILENAME = "saved_game.dat";
+    const std::string SavedGameData::DEFAULT_FILEPATH = "SavedGames/saved_game.dat";
 
     /// Creates an instance of the default saved game data
     /// for a newly started game.
@@ -15,6 +15,7 @@ namespace STATES
         // The exact values are set based on experimentation
         // for what seems best for a new game.
         SavedGameData default_saved_game_data;
+        default_saved_game_data.Filepath = DEFAULT_FILEPATH;
 
         // INITIALIZE THE DEFAULT PLAYER POSITION.
         default_saved_game_data.PlayerWorldPosition.X = 256.0f;
@@ -34,6 +35,10 @@ namespace STATES
     {
         try
         {
+            // ENSURE APPROPRIATE DIRECTORIES EXIST.
+            std::filesystem::path parent_directory_path = std::filesystem::path(filepath).parent_path();
+            std::filesystem::create_directories(parent_directory_path);
+
             // OPEN THE FILE.
             std::ifstream saved_game_data_file(filepath);
             bool file_opened = saved_game_data_file.is_open();
@@ -45,6 +50,7 @@ namespace STATES
 
             // CREATE THE SAVED GAME DATA TO BE POPULATED FROM THE FILE.
             auto saved_game_data = std::make_unique<SavedGameData>();
+            saved_game_data->Filepath = filepath;
 
             // READ IN THE PLAYER'S POSITION.
             saved_game_data_file >> saved_game_data->PlayerWorldPosition.X;

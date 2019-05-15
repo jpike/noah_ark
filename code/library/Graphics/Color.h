@@ -15,8 +15,10 @@ namespace GRAPHICS
         // STATIC CONSTANTS.
         /// The max value for a single color component value.
         static const uint8_t MAX_COLOR_COMPONENT = 255;
-        /// The color b;ack.
+        /// The color black.
         static const Color BLACK;
+        /// The color blue.
+        static const Color BLUE;
         /// The color brown.
         static const Color BROWN;
         /// The color green.

@@ -490,6 +490,58 @@ namespace GRAPHICS
         }
     }
 
+    /// Renders text within a bordered box.
+    /// \param[in]  text - The text to render.
+    /// \param[in]  font_id - The ID of the font to use for the text.
+    /// \param[in]  text_color - The color of the text.
+    /// \param[in]  text_padding_in_pixels_from_border - The padding of the text from each side of the border.
+    /// \param[in]  bounding_screen_rectangle - The bounding screen rectangle for the
+    ///     box containing the box (and thus defining the border).
+    /// \param[in]  border_color - The color for the border.
+    /// \param[in]  border_thickness_in_pixels - The thickness of the border in pixels.
+    void Renderer::RenderTextInBorderedBox(
+        const std::string& text,
+        const RESOURCES::AssetId font_id,
+        const Color& text_color,
+        const MATH::Vector2f& text_padding_in_pixels_from_border,
+        const MATH::FloatRectangle& bounding_screen_rectangle,
+        const Color& border_color,
+        const float border_thickness_in_pixels)
+    {
+        // RENDER THE BORDER FOR THE BOX.
+        sf::RectangleShape border;
+
+        border.setFillColor(sf::Color::Transparent);
+        border.setOutlineColor(sf::Color(border_color.Red, border_color.Green, border_color.Blue));
+        border.setOutlineThickness(border_thickness_in_pixels);
+
+        float box_width_in_pixels = bounding_screen_rectangle.GetWidth();
+        float box_height_in_pixels = bounding_screen_rectangle.GetHeight();
+        border.setSize(sf::Vector2f(box_width_in_pixels, box_height_in_pixels));
+
+        float box_left_x_position_in_pixels = bounding_screen_rectangle.GetLeftXPosition();
+        float box_top_y_position_in_pixels = bounding_screen_rectangle.GetTopYPosition();
+        border.setPosition(box_left_x_position_in_pixels, box_top_y_position_in_pixels);
+
+        Screen->RenderTarget.draw(border);
+
+        // RENDER THE TEXT.
+        float text_left_x_position_in_pixels = box_left_x_position_in_pixels + text_padding_in_pixels_from_border.X;
+        float text_top_y_position_in_pixels = box_top_y_position_in_pixels + text_padding_in_pixels_from_border.Y;
+        float text_box_width_in_pixels = box_width_in_pixels - text_padding_in_pixels_from_border.X;
+        float text_box_height_in_pixels = box_height_in_pixels - text_padding_in_pixels_from_border.Y;
+        MATH::FloatRectangle text_bounding_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+            text_left_x_position_in_pixels,
+            text_top_y_position_in_pixels,
+            text_box_width_in_pixels,
+            text_box_height_in_pixels);
+        RenderText(
+            text,
+            font_id,
+            text_bounding_screen_rectangle,
+            text_color);
+    }
+
     /// Renders a multi-tile-map grid.
     /// @param[in]  tile_map_grid - The tile map grid to render.
     void Renderer::Render(const MAPS::MultiTileMapGrid& tile_map_grid)

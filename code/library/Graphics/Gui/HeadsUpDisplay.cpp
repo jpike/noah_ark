@@ -110,7 +110,8 @@ namespace GUI
                 saved_game_data.CollectedAnimals = NoahPlayer->Inventory->CollectedAnimalCounts;
                 saved_game_data.CollectedFood = NoahPlayer->Inventory->CollectedFoodCounts;
 
-                saved_game_data.Write(STATES::SavedGameData::DEFAULT_FILENAME);
+                /// @todo   Get existing saved game filename!
+                saved_game_data.Write(STATES::SavedGameData::DEFAULT_FILEPATH);
 
                 // CLOSE THE SAVE DIALOG BOX.
                 SaveDialogBoxVisible = false;

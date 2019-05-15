@@ -11,6 +11,8 @@ namespace STATES
         TITLE_SCREEN,
         /// The credits screen.
         CREDITS_SCREEN,
+        /// The screen for selecting the game (saved or new) to play.
+        GAME_SELECTION_SCREEN,
         /// The main gameplay state for the game.
         GAMEPLAY
     };

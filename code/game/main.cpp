@@ -20,6 +20,7 @@
 #include "Resources/PredefinedAssetPackages.h"
 #include "States/CreditsScreen.h"
 #include "States/GameplayState.h"
+#include "States/GameSelectionScreen.h"
 #include "States/GameState.h"
 #include "States/IntroSequence.h"
 #include "States/SavedGameData.h"
@@ -715,6 +716,7 @@ int main()
         speakers->PlayMusic(RESOURCES::AssetId::INTRO_MUSIC);
         STATES::TitleScreen title_screen;
         STATES::CreditsScreen credits_screen;
+        STATES::GameSelectionScreen game_selection_screen;
         STATES::GameplayState gameplay_state(speakers, assets);
 
         // DEFINE THE TIME-OF-DAY SHADER.
@@ -794,8 +796,12 @@ int main()
                     case STATES::GameState::CREDITS_SCREEN:
                         next_game_state = credits_screen.Update(elapsed_time, input_controller);
                         break;
+                    case STATES::GameState::GAME_SELECTION_SCREEN:
+                        next_game_state = game_selection_screen.RespondToInput(input_controller);
+                        break;
                     case STATES::GameState::GAMEPLAY:
                         gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
+                        break;
                 }
 
                 // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
@@ -812,6 +818,9 @@ int main()
                         break;
                     case STATES::GameState::CREDITS_SCREEN:
                         credits_screen.Render(renderer);
+                        break;
+                    case STATES::GameState::GAME_SELECTION_SCREEN:
+                        game_selection_screen.Render(renderer);
                         break;
                     case STATES::GameState::GAMEPLAY:
                         gameplay_state.Render(renderer);
@@ -910,10 +919,13 @@ int main()
                             // RESET THE ELAPSED TIME FOR THE CREDITS SCREEN.
                             credits_screen.ElapsedTime = sf::Time::Zero;
                             break;
+                        case STATES::GameState::GAME_SELECTION_SCREEN:
+                            game_selection_screen.LoadSavedGames();
+                            break;
                         case STATES::GameState::GAMEPLAY:
                         {
                             // LOAD THE GAME'S SAVE FILE.
-                            std::unique_ptr<STATES::SavedGameData> saved_game_data = STATES::SavedGameData::Load(STATES::SavedGameData::DEFAULT_FILENAME);
+                            std::unique_ptr<STATES::SavedGameData>& saved_game_data = game_selection_screen.SavedGames.at(game_selection_screen.SelectedGameIndex);
                             bool saved_game_data_loaded = (nullptr != saved_game_data);
                             if (!saved_game_data_loaded)
                             {

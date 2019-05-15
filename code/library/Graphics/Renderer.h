@@ -63,6 +63,14 @@ namespace GRAPHICS
             const MATH::FloatRectangle& bounding_screen_rectangle,
             const Color& text_color = GRAPHICS::Color::BLACK,
             const float text_scale_ratio = 1.0f);
+        void RenderTextInBorderedBox(
+            const std::string& text,
+            const RESOURCES::AssetId font_id,
+            const Color& text_color,
+            const MATH::Vector2f& text_padding_in_pixels_from_border,
+            const MATH::FloatRectangle& bounding_screen_rectangle,
+            const Color& border_color,
+            const float border_thickness_in_pixels = 1.0f);
 
         // OTHER RENDERING.
         void Render(const MAPS::MultiTileMapGrid& tile_map_grid);

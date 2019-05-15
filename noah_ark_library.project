@@ -63,6 +63,7 @@
 #include "Resources/FoodGraphics.cpp"
 #include "Resources/PredefinedAssetPackages.cpp"
 #include "States/CreditsScreen.cpp"
+#include "States/GameSelectionScreen.cpp"
 #include "States/GameplayState.cpp"
 #include "States/IntroSequence.cpp"
 #include "States/SavedGameData.cpp"

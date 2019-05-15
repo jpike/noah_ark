@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -29,17 +30,19 @@ namespace STATES
     {
     public:
         // STATIC CONSTANTS.
-        /// The default filename for a saved game file.
-        static const std::string DEFAULT_FILENAME;
+        /// The default filepath for a saved game file.
+        static const std::string DEFAULT_FILEPATH;
 
         // CONSTRUCTION.
         static SavedGameData DefaultSavedGameData();
         static std::unique_ptr<SavedGameData> Load(const std::string& filepath);
-        
+
         // WRITING.
         void Write(const std::string& filepath) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The path to the file for this saved game.
+        std::filesystem::path Filepath = "";
         /// The player's world position.
         MATH::Vector2f PlayerWorldPosition = MATH::Vector2f();
         /// The amount of wood found by the player.

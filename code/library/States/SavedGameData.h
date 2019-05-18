@@ -38,7 +38,7 @@ namespace STATES
         static std::unique_ptr<SavedGameData> Load(const std::string& filepath);
 
         // WRITING.
-        void Write(const std::string& filepath) const;
+        void Write(const std::filesystem::path& filepath) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The path to the file for this saved game.

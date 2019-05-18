@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <SFML/Window.hpp>
 #include "Input/Keyboard.h"
 #include "Input/Mouse.h"
@@ -56,6 +57,8 @@ namespace INPUT_CONTROL
         void EnableInput();
 
         void ReadInput();
+
+        std::vector<sf::Keyboard::Key> GetTypedKeys() const;
 
         bool ButtonDown(const sf::Keyboard::Key key) const;
         bool ButtonDown(const sf::Mouse::Button button) const;

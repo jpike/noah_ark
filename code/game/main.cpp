@@ -921,16 +921,17 @@ int main()
                             break;
                         case STATES::GameState::GAME_SELECTION_SCREEN:
                             game_selection_screen.LoadSavedGames();
+                            game_selection_screen.CurrentSubState = STATES::GameSelectionScreen::SubState::LISTING_GAMES;
                             break;
                         case STATES::GameState::GAMEPLAY:
                         {
                             // LOAD THE GAME'S SAVE FILE.
-                            std::unique_ptr<STATES::SavedGameData>& saved_game_data = game_selection_screen.SavedGames.at(game_selection_screen.SelectedGameIndex);
+                            std::shared_ptr<STATES::SavedGameData>& saved_game_data = game_selection_screen.SavedGames.at(game_selection_screen.SelectedGameIndex);
                             bool saved_game_data_loaded = (nullptr != saved_game_data);
                             if (!saved_game_data_loaded)
                             {
                                 // USE THE DEFAULT SAVED GAME DATA FOR A NEW GAME.
-                                saved_game_data = std::make_unique<STATES::SavedGameData>(STATES::SavedGameData::DefaultSavedGameData());
+                                saved_game_data = std::make_shared<STATES::SavedGameData>(STATES::SavedGameData::DefaultSavedGameData());
                             }
 
                             // INITIALIZE THE GAMEPLAY STATE.
@@ -942,7 +943,7 @@ int main()
 
                             bool gameplay_state_initialized = gameplay_state.Initialize(
                                 SCREEN_WIDTH_IN_PIXELS,
-                                *saved_game_data,
+                                saved_game_data,
                                 world);
                             if (!gameplay_state_initialized)
                             {

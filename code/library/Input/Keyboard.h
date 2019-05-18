@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 #include <SFML/Window.hpp>
 
 /// Holds code related to user input for controlling the game.
@@ -21,6 +22,8 @@ namespace INPUT_CONTROL
         explicit Keyboard();
 
         void ReadKeys();
+
+        std::vector<sf::Keyboard::Key> GetTypedKeys() const;
 
         bool IsKeyDown(const sf::Keyboard::Key key) const;
         bool IsKeyUp(const sf::Keyboard::Key key) const;

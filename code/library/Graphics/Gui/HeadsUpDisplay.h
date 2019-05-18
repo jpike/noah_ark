@@ -9,6 +9,7 @@
 #include "Maps/World.h"
 #include "Objects/Noah.h"
 #include "Resources/Assets.h"
+#include "States/SavedGameData.h"
 
 namespace GRAPHICS
 {
@@ -23,6 +24,7 @@ namespace GUI
     public:
         // CONSTRUCTION.
         explicit HeadsUpDisplay(
+            const std::shared_ptr<STATES::SavedGameData>& saved_game_data,
             const std::shared_ptr<MAPS::World>& world,
             const std::shared_ptr<OBJECTS::Noah>& noah_player,
             const unsigned int main_text_box_width_in_pixels,
@@ -54,6 +56,8 @@ namespace GUI
         // PRIVATE MEMBER VARIABLES.
         /// True if the save dialog box is visible; false otherwise.
         bool SaveDialogBoxVisible;
+        /// The current player's saved game.
+        std::shared_ptr<STATES::SavedGameData> SavedGame;
         /// The assets to use for the HUD.
         std::shared_ptr<RESOURCES::Assets> Assets;
         /// The world whose information is being displayed in the HUD.

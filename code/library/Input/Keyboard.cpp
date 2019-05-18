@@ -32,6 +32,27 @@ namespace INPUT_CONTROL
         }
     }
 
+    /// Gets keys that were just typed (pressed + released), if input is enabled.
+    /// @return The typed keys, if input is enabled; empty set of keys otherwise.
+    std::vector<sf::Keyboard::Key> Keyboard::GetTypedKeys() const
+    {
+        // GET ANY TYPED KEYS.
+        std::vector<sf::Keyboard::Key> typed_keys;
+        for (std::size_t key_value = 0;
+            key_value < static_cast<std::size_t>(sf::Keyboard::KeyCount);
+            ++key_value)
+        {
+            // ADD THE CURRENT KEY IF IT WAS JUST TYPED.
+            auto key = static_cast<sf::Keyboard::Key>(key_value);
+            bool key_was_typed = WasKeyPressed(key);
+            if (key_was_typed)
+            {
+                typed_keys.push_back(key);
+            }
+        }
+        return typed_keys;
+    }
+
     /// Checks if a key is currently pressed down.
     /// @param[in]  key - The SFML key to check.
     /// @return     True if the key is down; false otherwise.

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <filesystem>
 #include "Debugging/DebugConsole.h"
 #include "Math/Number.h"
@@ -7,11 +8,12 @@
 
 namespace STATES
 {
+    const std::filesystem::path GameSelectionScreen::SAVED_GAMES_FOLDER_PATH = "SavedGames";
+
     /// Loads any available saved games into the current state.
     void GameSelectionScreen::LoadSavedGames()
     {
         // CHECK IF THE SAVED GAMES FOLDER EXISTS.
-        const std::filesystem::path SAVED_GAMES_FOLDER_PATH = "SavedGames";
         const bool saved_games_folder_exists = std::filesystem::is_directory(SAVED_GAMES_FOLDER_PATH);
         if (!saved_games_folder_exists)
         {
@@ -32,10 +34,10 @@ namespace STATES
             }
 
             // TRY LOADING A SAVED GAME FROM THE FILE.
-            std::unique_ptr<SavedGameData> saved_game = SavedGameData::Load(file.path().string());
+            std::shared_ptr<SavedGameData> saved_game = SavedGameData::Load(file.path().string());
             if (saved_game)
             {
-                SavedGames.push_back(std::move(saved_game));
+                SavedGames.push_back(saved_game);
             }
         }
     }
@@ -45,54 +47,307 @@ namespace STATES
     /// @return The state the game should be in based on the user's input.
     GameState GameSelectionScreen::RespondToInput(const INPUT_CONTROL::InputController& input_controller)
     {
-        // CHECK IF THE BACK BUTTON WAS PRESSED.
-        bool back_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY);
-        if (back_button_pressed)
+        // RESPOND TO INPUT BASED ON THE CURRENT STATE.
+        switch (CurrentSubState)
         {
-            // RETURN TO THE TITLE SCREEN.
-            return GameState::TITLE_SCREEN;
-        }
+            case SubState::LISTING_GAMES:
+            {
+                // CHECK IF THE BACK BUTTON WAS PRESSED.
+                bool back_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY);
+                if (back_button_pressed)
+                {
+                    // RETURN TO THE TITLE SCREEN.
+                    return GameState::TITLE_SCREEN;
+                }
 
-        // CHECK IF THE USER PRESSED A BUTTON TO MOVE UP/DOWN IN THE LIST OF SAVED GAMES.
-        constexpr std::size_t MIN_SELECTED_GAME_INDEX = 0;
-        // The max valid selected game index is equal to the number of saved games
-        // as the index equal to this size is reserved for creating a new game.
-        std::size_t max_selected_game_index = SavedGames.size();
-        bool up_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::UP_KEY);
-        if (up_button_pressed)
-        {
-            // MOVE UP TO THE NEXT SAVED GAME.
-            SelectedGameIndex = MATH::Number::DecrementAndWrapWithinRange(
-                SelectedGameIndex,
-                MIN_SELECTED_GAME_INDEX,
-                max_selected_game_index);
-        }
+                // CHECK IF THE USER PRESSED A BUTTON TO MOVE UP/DOWN IN THE LIST OF SAVED GAMES.
+                constexpr std::size_t MIN_SELECTED_GAME_INDEX = 0;
+                // The max valid selected game index is equal to the number of saved games
+                // as the index equal to this size is reserved for creating a new game.
+                std::size_t max_selected_game_index = SavedGames.size();
+                bool up_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::UP_KEY);
+                if (up_button_pressed)
+                {
+                    // MOVE UP TO THE NEXT SAVED GAME.
+                    SelectedGameIndex = MATH::Number::DecrementAndWrapWithinRange(
+                        SelectedGameIndex,
+                        MIN_SELECTED_GAME_INDEX,
+                        max_selected_game_index);
+                }
 
-        bool down_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DOWN_KEY);
-        if (down_button_pressed)
-        {
-            // MOVE DOWN TO THE NEXT SAVED GAME.
-            SelectedGameIndex = MATH::Number::IncrementAndWrapWithinRange(
-                SelectedGameIndex,
-                MIN_SELECTED_GAME_INDEX,
-                max_selected_game_index);
-        }
+                bool down_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DOWN_KEY);
+                if (down_button_pressed)
+                {
+                    // MOVE DOWN TO THE NEXT SAVED GAME.
+                    SelectedGameIndex = MATH::Number::IncrementAndWrapWithinRange(
+                        SelectedGameIndex,
+                        MIN_SELECTED_GAME_INDEX,
+                        max_selected_game_index);
+                }
 
-        // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
-        bool start_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY);
-        if (start_button_pressed)
-        {
-            /// @todo   Check for if this is for a new game!
-            return GameState::GAMEPLAY;
-        }
-        else
-        {
-            // INDICATE THE GAME SHOULD REMAIN ON THE GAME SELECTION SCREEN.
-            return GameState::GAME_SELECTION_SCREEN;
+                // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
+                bool start_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY);
+                if (start_button_pressed)
+                {
+                    // CHECK IF A NEW GAME IS BEING CHOSEN.
+                    std::size_t saved_game_count = SavedGames.size();
+                    bool new_game_box_selected = (saved_game_count == SelectedGameIndex);
+                    if (new_game_box_selected)
+                    {
+                        // SWITCH TO ENTERING A NEW GAME NAME.
+                        CurrentNewGameFilenameText.clear();
+                        CurrentSubState = SubState::ENTERING_NEW_GAME;
+                        return GameState::GAME_SELECTION_SCREEN;
+                    }
+                    else
+                    {
+                        return GameState::GAMEPLAY;
+                    }
+                }
+                else
+                {
+                    // INDICATE THE GAME SHOULD REMAIN ON THE GAME SELECTION SCREEN.
+                    return GameState::GAME_SELECTION_SCREEN;
+                }
+                break;
+            }
+            case SubState::ENTERING_NEW_GAME:
+            {
+                // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
+                bool start_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY);
+                if (start_button_pressed)
+                {
+                    // START THE GAME IF AT LEAST ONE CHARACTER EXISTS IN THE FILENAME.
+                    if (CurrentNewGameFilenameText.empty())
+                    {
+                        return GameState::GAME_SELECTION_SCREEN;
+                    }
+                    else
+                    {
+                        // CREATE THE NEW SAVED GAME DATA.
+                        std::shared_ptr<SavedGameData> new_saved_game = std::make_shared<SavedGameData>(SavedGameData::DefaultSavedGameData());
+                        new_saved_game->Filepath = SAVED_GAMES_FOLDER_PATH / CurrentNewGameFilenameText;
+                        SavedGames.push_back(new_saved_game);
+                        return GameState::GAMEPLAY;
+                    }
+                }
+
+                // CHECK IF THE BACK BUTTON WAS PRESSED.
+                bool back_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY);
+                if (back_button_pressed)
+                {
+                    // SWITCH BACK TO LISTING OTHER SAVED GAMES.
+                    CurrentSubState = SubState::LISTING_GAMES;
+                    return GameState::GAME_SELECTION_SCREEN;
+                }
+
+                // CHECK IF THE BACKSPACE KEY WAS PRESSED.
+                bool backspace_key_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Backspace);
+                if (backspace_key_pressed)
+                {
+                    // DELETE A CHARACTER FROM THE FILENAME IF ONE EXISTS.
+                    bool new_game_filename_populated = !CurrentNewGameFilenameText.empty();
+                    if (new_game_filename_populated)
+                    {
+                        CurrentNewGameFilenameText.pop_back();
+                    }
+                }
+                // GET ANY VALID FILENAME CHARACTERS THAT HAVE BEEN PRESSED.
+                std::vector<sf::Keyboard::Key> pressed_keys = input_controller.GetTypedKeys();
+                static const std::vector<sf::Keyboard::Key> valid_filename_keys = 
+                {
+                    sf::Keyboard::A,        
+                    sf::Keyboard::B,            
+                    sf::Keyboard::C,            
+                    sf::Keyboard::D,            
+                    sf::Keyboard::E,            
+                    sf::Keyboard::F,            
+                    sf::Keyboard::G,            
+                    sf::Keyboard::H,            
+                    sf::Keyboard::I,            
+                    sf::Keyboard::J,            
+                    sf::Keyboard::K,            
+                    sf::Keyboard::L,            
+                    sf::Keyboard::M,            
+                    sf::Keyboard::N,            
+                    sf::Keyboard::O,            
+                    sf::Keyboard::P,            
+                    sf::Keyboard::Q,            
+                    sf::Keyboard::R,            
+                    sf::Keyboard::S,            
+                    sf::Keyboard::T,            
+                    sf::Keyboard::U,            
+                    sf::Keyboard::V,            
+                    sf::Keyboard::W,            
+                    sf::Keyboard::X,            
+                    sf::Keyboard::Y,            
+                    sf::Keyboard::Z,            
+                    sf::Keyboard::Num0,         
+                    sf::Keyboard::Num1,         
+                    sf::Keyboard::Num2,         
+                    sf::Keyboard::Num3,         
+                    sf::Keyboard::Num4,         
+                    sf::Keyboard::Num5,         
+                    sf::Keyboard::Num6,         
+                    sf::Keyboard::Num7,         
+                    sf::Keyboard::Num8,         
+                    sf::Keyboard::Num9,         
+                    sf::Keyboard::Period,       
+                    sf::Keyboard::Hyphen,       
+                    sf::Keyboard::Numpad0,      
+                    sf::Keyboard::Numpad1,      
+                    sf::Keyboard::Numpad2,      
+                    sf::Keyboard::Numpad3,      
+                    sf::Keyboard::Numpad4,      
+                    sf::Keyboard::Numpad5,      
+                    sf::Keyboard::Numpad6,      
+                    sf::Keyboard::Numpad7,      
+                    sf::Keyboard::Numpad8,      
+                    sf::Keyboard::Numpad9,      
+                };
+                std::vector<sf::Keyboard::Key> valid_pressed_filename_keys;
+                std::set_intersection(
+                    pressed_keys.cbegin(),
+                    pressed_keys.cend(),
+                    valid_filename_keys.cbegin(),
+                    valid_filename_keys.cend(),
+                    std::back_inserter(valid_pressed_filename_keys));
+
+                // CONVERT PRESSED FILENAME CHARACTERS TO ACTUAL TEXT.
+                static const std::map<sf::Keyboard::Key, char> FILENAME_KEY_TO_LOWERCASE_CHARACTER_LOOKUP =
+                {
+                    { sf::Keyboard::A, 'a' },
+                    { sf::Keyboard::B, 'b' },
+                    { sf::Keyboard::C, 'c' },
+                    { sf::Keyboard::D, 'd' },
+                    { sf::Keyboard::E, 'e' },
+                    { sf::Keyboard::F, 'f' },
+                    { sf::Keyboard::G, 'g' },
+                    { sf::Keyboard::H, 'h' },
+                    { sf::Keyboard::I, 'i' },
+                    { sf::Keyboard::J, 'j' },
+                    { sf::Keyboard::K, 'k' },
+                    { sf::Keyboard::L, 'l' },
+                    { sf::Keyboard::M, 'm' },
+                    { sf::Keyboard::N, 'n' },
+                    { sf::Keyboard::O, 'o' },
+                    { sf::Keyboard::P, 'p' },
+                    { sf::Keyboard::Q, 'q' },
+                    { sf::Keyboard::R, 'r' },
+                    { sf::Keyboard::S, 's' },
+                    { sf::Keyboard::T, 't' },
+                    { sf::Keyboard::U, 'u' },
+                    { sf::Keyboard::V, 'v' },
+                    { sf::Keyboard::W, 'w' },
+                    { sf::Keyboard::X, 'x' },
+                    { sf::Keyboard::Y, 'y' },
+                    { sf::Keyboard::Z, 'z' },
+                    { sf::Keyboard::Num0, '0' },
+                    { sf::Keyboard::Num1, '1' },
+                    { sf::Keyboard::Num2, '2' },
+                    { sf::Keyboard::Num3, '3' },
+                    { sf::Keyboard::Num4, '4' },
+                    { sf::Keyboard::Num5, '5' },
+                    { sf::Keyboard::Num6, '6' },
+                    { sf::Keyboard::Num7, '7' },
+                    { sf::Keyboard::Num8, '8' },
+                    { sf::Keyboard::Num9, '9' },
+                    { sf::Keyboard::Period, '.' },
+                    { sf::Keyboard::Hyphen, '-' },
+                    { sf::Keyboard::Numpad0, '0' },
+                    { sf::Keyboard::Numpad1, '1' },
+                    { sf::Keyboard::Numpad2, '2' },
+                    { sf::Keyboard::Numpad3, '3' },
+                    { sf::Keyboard::Numpad4, '4' },
+                    { sf::Keyboard::Numpad5, '5' },
+                    { sf::Keyboard::Numpad6, '6' },
+                    { sf::Keyboard::Numpad7, '7' },
+                    { sf::Keyboard::Numpad8, '8' },
+                    { sf::Keyboard::Numpad9, '9' },
+                };
+                static const std::map<sf::Keyboard::Key, char> FILENAME_KEY_TO_UPPERCASE_CHARACTER_LOOKUP =
+                {
+                    { sf::Keyboard::A, 'A' },
+                    { sf::Keyboard::B, 'B' },
+                    { sf::Keyboard::C, 'C' },
+                    { sf::Keyboard::D, 'D' },
+                    { sf::Keyboard::E, 'E' },
+                    { sf::Keyboard::F, 'F' },
+                    { sf::Keyboard::G, 'G' },
+                    { sf::Keyboard::H, 'H' },
+                    { sf::Keyboard::I, 'I' },
+                    { sf::Keyboard::J, 'J' },
+                    { sf::Keyboard::K, 'K' },
+                    { sf::Keyboard::L, 'L' },
+                    { sf::Keyboard::M, 'M' },
+                    { sf::Keyboard::N, 'N' },
+                    { sf::Keyboard::O, 'O' },
+                    { sf::Keyboard::P, 'P' },
+                    { sf::Keyboard::Q, 'Q' },
+                    { sf::Keyboard::R, 'R' },
+                    { sf::Keyboard::S, 'S' },
+                    { sf::Keyboard::T, 'T' },
+                    { sf::Keyboard::U, 'U' },
+                    { sf::Keyboard::V, 'V' },
+                    { sf::Keyboard::W, 'W' },
+                    { sf::Keyboard::X, 'X' },
+                    { sf::Keyboard::Y, 'Y' },
+                    { sf::Keyboard::Z, 'Z' },
+                    // Uppercase versions of numbers aren't supported.
+                    { sf::Keyboard::Num0, '0' },
+                    { sf::Keyboard::Num1, '1' },
+                    { sf::Keyboard::Num2, '2' },
+                    { sf::Keyboard::Num3, '3' },
+                    { sf::Keyboard::Num4, '4' },
+                    { sf::Keyboard::Num5, '5' },
+                    { sf::Keyboard::Num6, '6' },
+                    { sf::Keyboard::Num7, '7' },
+                    { sf::Keyboard::Num8, '8' },
+                    { sf::Keyboard::Num9, '9' },
+                    // Uppercase versions of the period isn't supported.
+                    { sf::Keyboard::Period, '.' },
+                    { sf::Keyboard::Hyphen, '_' },
+                    // Uppercase versions of numbers aren't supported.
+                    { sf::Keyboard::Numpad0, '0' },
+                    { sf::Keyboard::Numpad1, '1' },
+                    { sf::Keyboard::Numpad2, '2' },
+                    { sf::Keyboard::Numpad3, '3' },
+                    { sf::Keyboard::Numpad4, '4' },
+                    { sf::Keyboard::Numpad5, '5' },
+                    { sf::Keyboard::Numpad6, '6' },
+                    { sf::Keyboard::Numpad7, '7' },
+                    { sf::Keyboard::Numpad8, '8' },
+                    { sf::Keyboard::Numpad9, '9' },
+                };
+                for (sf::Keyboard::Key key : valid_pressed_filename_keys)
+                {
+                    // GET THE APPROPRIATE VERSION OF THE CURRENT KEY'S CHARACTER.
+                    char current_key_character = ' ';
+                    bool left_shift_key_down = input_controller.ButtonDown(sf::Keyboard::LShift);
+                    bool right_shift_key_down = input_controller.ButtonDown(sf::Keyboard::RShift);
+                    bool shift_down = (left_shift_key_down || right_shift_key_down);
+                    if (shift_down)
+                    {
+                        current_key_character = FILENAME_KEY_TO_UPPERCASE_CHARACTER_LOOKUP.at(key);
+                    }
+                    else
+                    {
+                        current_key_character = FILENAME_KEY_TO_LOWERCASE_CHARACTER_LOOKUP.at(key);
+                    }
+
+                    // ADD THE CURRENT KEY'S CHARACTER.
+                    CurrentNewGameFilenameText += current_key_character;
+                }
+
+                return GameState::GAME_SELECTION_SCREEN;
+            }
+            default:
+                // STAY ON THE CURRENT SCREEN.
+                return GameState::GAME_SELECTION_SCREEN;
         }
     }
 
-    /// Renders the title screen.
+    /// Renders the game selection screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
     void GameSelectionScreen::Render(GRAPHICS::Renderer& renderer) const
     {
@@ -157,7 +412,7 @@ namespace STATES
             }
 
             // RENDER AN OPTION FOR THE CURRENT SAVED GAME
-            const std::unique_ptr<SavedGameData>& saved_game = SavedGames.at(saved_game_index);
+            const std::shared_ptr<SavedGameData>& saved_game = SavedGames.at(saved_game_index);
             std::string saved_game_filename = saved_game->Filepath.filename().string();
             renderer.RenderTextInBorderedBox(
                 saved_game_filename,
@@ -184,8 +439,26 @@ namespace STATES
             new_game_box_color = &SELECTED_GAME_OPTION_BOX_BORDER_COLOR;
             new_game_box_border_thickness_in_pixels = SELECTED_GAME_OPTION_BOX_BORDER_THICKNESS_IN_PIXELS;
         }
+
+        // The text for the new game needs to differ based on the current substate.
+        std::string new_game_box_text;
+        switch (CurrentSubState)
+        {
+            case SubState::LISTING_GAMES:
+            {
+                // The player should be shown that they can create a new game.
+                new_game_box_text = "NEW GAME";
+                break;
+            }
+            case SubState::ENTERING_NEW_GAME:
+            {
+                // The player should be shown the text they have currently entered.
+                new_game_box_text = CurrentNewGameFilenameText;
+                break;
+            }
+        }
         renderer.RenderTextInBorderedBox(
-            "NEW GAME",
+            new_game_box_text,
             RESOURCES::AssetId::FONT_TEXTURE,
             GAME_OPTION_TEXT_COLOR,
             TEXT_OFFSET_FROM_BORDER_IN_PIXELS,

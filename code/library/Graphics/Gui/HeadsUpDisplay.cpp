@@ -10,6 +10,7 @@ namespace GRAPHICS
 namespace GUI
 {
     /// Constructor.
+    /// @param[in]  saved_game_data - The current player's saved game.
     /// @param[in]  world - The world whose information is being diplayed in the HUD.
     /// @param[in]  noah_player - The player whose information is being displayed in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
@@ -17,6 +18,7 @@ namespace GUI
     /// @param[in]  assets - The assets to use for the page.
     /// @throws std::exception - Thrown if a parameter is null.
     HeadsUpDisplay::HeadsUpDisplay(
+        const std::shared_ptr<STATES::SavedGameData>& saved_game_data,
         const std::shared_ptr<MAPS::World>& world,
         const std::shared_ptr<OBJECTS::Noah>& noah_player,
         const unsigned int main_text_box_width_in_pixels,
@@ -27,11 +29,15 @@ namespace GUI
     InventoryOpened(false),
     InventoryGui(noah_player->Inventory, assets),
     SaveDialogBoxVisible(false),
+    SavedGame(saved_game_data),
     Assets(assets),
     World(world),
     NoahPlayer(noah_player)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
+        CORE::ThrowInvalidArgumentExceptionIfNull(
+            SavedGame,
+            "Null saved game provided to HUD.");
         CORE::ThrowInvalidArgumentExceptionIfNull(
             Assets,
             "Null assets provided to HUD.");
@@ -56,10 +62,9 @@ namespace GUI
             if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY))
             {
                 // SAVE THE GAME DATA.
-                STATES::SavedGameData saved_game_data;
-                saved_game_data.PlayerWorldPosition = NoahPlayer->GetWorldPosition();
-                saved_game_data.WoodCount = NoahPlayer->Inventory->WoodCount;
-                saved_game_data.FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
+                SavedGame->PlayerWorldPosition = NoahPlayer->GetWorldPosition();
+                SavedGame->WoodCount = NoahPlayer->Inventory->WoodCount;
+                SavedGame->FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
                     NoahPlayer->Inventory->BibleVerses.cbegin(),
                     NoahPlayer->Inventory->BibleVerses.cend());
                 
@@ -102,16 +107,15 @@ namespace GUI
                             tile_map_ark_data.TileMapGridXPosition = tile_map_x_index;
                             tile_map_ark_data.TileMapGridYPosition = tile_map_y_index;
                             tile_map_ark_data.BuiltArkPieceIndices = built_ark_piece_indices;
-                            saved_game_data.BuildArkPieces.push_back(tile_map_ark_data);
+                            SavedGame->BuildArkPieces.push_back(tile_map_ark_data);
                         }
                     }
                 }
 
-                saved_game_data.CollectedAnimals = NoahPlayer->Inventory->CollectedAnimalCounts;
-                saved_game_data.CollectedFood = NoahPlayer->Inventory->CollectedFoodCounts;
+                SavedGame->CollectedAnimals = NoahPlayer->Inventory->CollectedAnimalCounts;
+                SavedGame->CollectedFood = NoahPlayer->Inventory->CollectedFoodCounts;
 
-                /// @todo   Get existing saved game filename!
-                saved_game_data.Write(STATES::SavedGameData::DEFAULT_FILEPATH);
+                SavedGame->Write(SavedGame->Filepath);
 
                 // CLOSE THE SAVE DIALOG BOX.
                 SaveDialogBoxVisible = false;

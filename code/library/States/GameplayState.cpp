@@ -36,9 +36,17 @@ namespace STATES
     /// @return True if initialization succeeded; false otherwise.
     bool GameplayState::Initialize(
         const unsigned int screen_width_in_pixels,
-        const SavedGameData& saved_game_data,
+        const std::shared_ptr<SavedGameData>& saved_game_data,
         const std::shared_ptr<MAPS::World>& world)
     {
+        // MAKE SURE SAVED GAME DATA WAS PROVIDED.
+        bool saved_game_exists = (nullptr != saved_game_data);
+        if (!saved_game_exists)
+        {
+            // The gameplay state requires saved game data.
+            return false;
+        }
+
         // MAKE SURE A WORLD WAS PROVIDED.
         bool world_exists = (nullptr != world);
         if (!world_exists)
@@ -52,7 +60,7 @@ namespace STATES
         CurrentMapGrid = &World->Overworld;
 
         // Built ark pieces need to be initialized.
-        for (const auto& built_ark_piece_data : saved_game_data.BuildArkPieces)
+        for (const auto& built_ark_piece_data : saved_game_data->BuildArkPieces)
         {
             // GET THE TILE MAP FOR THE BUILT ARK PIECES.
             MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(built_ark_piece_data.TileMapGridYPosition, built_ark_piece_data.TileMapGridXPosition);
@@ -72,7 +80,7 @@ namespace STATES
         }
 
         // INITIALIZE THE PLAYER.
-        NoahPlayer = InitializePlayer(saved_game_data);
+        NoahPlayer = InitializePlayer(*saved_game_data);
         bool player_initialized = (nullptr != NoahPlayer);
         if (!player_initialized)
         {
@@ -81,7 +89,7 @@ namespace STATES
         }
 
         // INITIALIZE THE HUD.
-        Hud = InitializeHud(screen_width_in_pixels, World, NoahPlayer);
+        Hud = InitializeHud(screen_width_in_pixels, saved_game_data, World, NoahPlayer);
         bool hud_initialized = (nullptr != Hud);
         if (!hud_initialized)
         {
@@ -93,8 +101,8 @@ namespace STATES
         std::set_difference(
             BIBLE::BIBLE_VERSES.cbegin(),
             BIBLE::BIBLE_VERSES.cend(),
-            saved_game_data.FoundBibleVerses.cbegin(),
-            saved_game_data.FoundBibleVerses.cend(),
+            saved_game_data->FoundBibleVerses.cbegin(),
+            saved_game_data->FoundBibleVerses.cend(),
             std::inserter(BibleVersesLeftToFind, BibleVersesLeftToFind.begin()));
 
         // START PLAYING THE BACKGROUND MUSIC.
@@ -246,11 +254,13 @@ namespace STATES
 
     /// Attempts to initialize the HUD for gameplay.
     /// @param[in]  screen_width_in_pixels - The width of the screen, in pixels.
+    /// @param[in]  saved_game_data - The saved game data.
     /// @param[in]  world - The world for which the HUD is displaying information about.
     /// @param[in]  noah_player - The player whose information to display in the HUD.
     /// @return The initialized HUD, if successful; null otherwise.
     std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> GameplayState::InitializeHud(
         const unsigned int screen_width_in_pixels,
+        const std::shared_ptr<SavedGameData>& saved_game_data,
         const std::shared_ptr<MAPS::World>& world,
         const std::shared_ptr<OBJECTS::Noah>& noah_player)
     {
@@ -274,6 +284,7 @@ namespace STATES
 
         // CREATE THE HUD.
         auto hud = std::make_unique<GRAPHICS::GUI::HeadsUpDisplay>(
+            saved_game_data,
             world,
             noah_player,
             text_box_width_in_pixels,

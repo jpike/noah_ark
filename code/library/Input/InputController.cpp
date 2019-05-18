@@ -26,6 +26,21 @@ namespace INPUT_CONTROL
         }
     }
 
+    /// Gets keys that were just typed (pressed + released), if input is enabled.
+    /// @return The typed keys, if input is enabled; empty set of keys otherwise.
+    std::vector<sf::Keyboard::Key> InputController::GetTypedKeys() const
+    {
+        // INDICATE THAT NO KEYS WERE TYPED IF INPUT IS DISABLED.
+        if (!Enabled)
+        {
+            return {};
+        }
+
+        // GET ANY TYPED KEYS.
+        std::vector<sf::Keyboard::Key> typed_keys = Keyboard.GetTypedKeys();
+        return typed_keys;
+    }
+
     /// Checks if the specified button is currently pressed down.
     /// @param[in]  key - The key for the button to check.
     /// @return True if the specified button is currently pressed (and input is enabled).

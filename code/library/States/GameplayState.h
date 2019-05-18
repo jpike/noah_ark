@@ -34,7 +34,7 @@ namespace STATES
         // INITIALIZATION.
         bool Initialize(
             const unsigned int screen_width_in_pixels,
-            const SavedGameData& saved_game_data,
+            const std::shared_ptr<SavedGameData>& saved_game_data,
             const std::shared_ptr<MAPS::World>& world);
 
         // UPDATING.
@@ -57,6 +57,7 @@ namespace STATES
         std::shared_ptr<OBJECTS::Noah> InitializePlayer(const SavedGameData& saved_game_data);
         std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> InitializeHud(
             const unsigned int screen_width_in_pixels,
+            const std::shared_ptr<SavedGameData>& saved_game_data,
             const std::shared_ptr<MAPS::World>& world,
             const std::shared_ptr<OBJECTS::Noah>& noah_player);
 

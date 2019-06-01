@@ -2,11 +2,11 @@
 
 REM INITIALIZE THE COMPILER ENVIRONMENT.
 WHERE cl.exe
-IF %ERRORLEVEL% NEQ 0 CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
-REM CALL "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+IF %ERRORLEVEL% NEQ 0 CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
+REM CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 WHERE cl.exe
 
-SET TOOL_DIRECTORY_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.14.26428\bin\Hostx64\x64"
+SET TOOL_DIRECTORY_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.20.27508\bin\Hostx64\x64"
 SET COMPILER_PATH="%TOOL_DIRECTORY_PATH%\cl.exe"
 SET LIB_TOOL_PATH="%TOOL_DIRECTORY_PATH%\lib.exe"
 
@@ -28,7 +28,7 @@ REM DEFINE FILES TO COMPILE/LINK.
 REM These paths must be relative to the build directory in which the actual compilation command is executed.
 SET COMPILATION_FILE="..\..\noah_ark_library.project"
 SET MAIN_CODE_DIR="..\..\code\library"
-SET SFML_CODE_DIR="..\..\ThirdParty\SFML\SFML-2.5.0\include"
+SET SFML_CODE_DIR="..\..\..\ThirdParty\SFML\SFML-2.5.1\include"
 
 REM CREATE THE COMMAND LINE OPTIONS FOR THE FILES TO COMPILE/LINK.
 SET INCLUDE_DIRS=/I %MAIN_CODE_DIR% /I %SFML_CODE_DIR%

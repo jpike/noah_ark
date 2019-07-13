@@ -335,8 +335,17 @@ namespace STATES
                         current_key_character = FILENAME_KEY_TO_LOWERCASE_CHARACTER_LOOKUP.at(key);
                     }
 
-                    // ADD THE CURRENT KEY'S CHARACTER.
-                    CurrentNewGameFilenameText += current_key_character;
+                    // ADD THE CURRENT KEY'S CHARACTER IF THERE'S ENOUGH ROOM.
+                    // The length is largely arbitrary but currently set to not result in
+                    // the filename wrapping onto multiple lines.  One thought was to enforce
+                    // an old "8.3" file naming convention, but that was discarded for now
+                    // since it could be confusing due to all of the extra width on screen.
+                    constexpr std::size_t MAX_FILENAME_LENGTH_IN_CHARACTERS = 30;
+                    bool filename_has_more_room = (CurrentNewGameFilenameText.length() < MAX_FILENAME_LENGTH_IN_CHARACTERS);
+                    if (filename_has_more_room)
+                    {
+                        CurrentNewGameFilenameText += current_key_character;
+                    }
                 }
 
                 return GameState::GAME_SELECTION_SCREEN;

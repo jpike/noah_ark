@@ -6,7 +6,7 @@ namespace RESOURCES
 
     const AssetPackageDefinition INTRO_SEQUENCE_ASSET_PACKAGE_DEFINITION({
         AssetDefinition(AssetType::FONT, RESOURCES::AssetId::SERIF_FONT_TEXTURE, "res/images/main_font_serif.png"),
-        AssetDefinition(AssetType::MUSIC, RESOURCES::AssetId::INTRO_MUSIC, "res/sounds/NoahsArkIntro1_80PercentSpeedWithFadeout.wav"),
+        AssetDefinition(AssetType::MUSIC, RESOURCES::AssetId::INTRO_MUSIC, "res/sounds/Intro1.wav"),
         AssetDefinition(AssetType::SHADER, RESOURCES::AssetId::COLORED_TEXTURE_SHADER, "res/shaders/ColoredTexture.frag"),
     });
 

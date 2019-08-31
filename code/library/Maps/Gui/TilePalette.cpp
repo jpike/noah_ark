@@ -41,7 +41,7 @@ namespace GUI
             // This is used for quick rendering and determination of intersection of a
             // tile with a screen position (such as from a mouse).
             constexpr float LEFT_OFFSET_POSITION = 0.0f;
-            const float tile_top_screen_position = tile_id * Tile::DIMENSION_IN_PIXELS<float>;
+            const float tile_top_screen_position = static_cast<float>(tile_id) * Tile::DIMENSION_IN_PIXELS<float>;
             TileScreenBoundsById[tile_id] = MATH::FloatRectangle::FromLeftTopAndDimensions(
                 LEFT_OFFSET_POSITION,
                 tile_top_screen_position,

@@ -100,6 +100,8 @@ namespace RESOURCES
         // MUSIC.
         /// The intro music.
         INTRO_MUSIC,
+        /// The intro music when starting a new game (save file).
+        NEW_GAME_INTRO_MUSIC,
         /// The overworld background music.
         OVERWORLD_BACKGROUND_MUSIC,
     };

@@ -27,6 +27,7 @@ namespace AUDIO
         // MUSIC.
         void AddMusic(const RESOURCES::AssetId music_id, const std::shared_ptr<sf::Music>& music);
         void PlayMusic(const RESOURCES::AssetId music_id);
+        void PlayMusicIfNotAlready(const RESOURCES::AssetId music_id);
         void StopMusic(const RESOURCES::AssetId music_id);
 
     private:

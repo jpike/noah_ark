@@ -19,10 +19,12 @@
 #include "Resources/FoodGraphics.h"
 #include "Resources/PredefinedAssetPackages.h"
 #include "States/CreditsScreen.h"
+#include "States/FloodCutscene.h"
 #include "States/GameplayState.h"
 #include "States/GameSelectionScreen.h"
 #include "States/GameState.h"
 #include "States/IntroSequence.h"
+#include "States/NewGameIntroSequence.h"
 #include "States/SavedGameData.h"
 #include "States/TitleScreen.h"
 
@@ -717,6 +719,8 @@ int main()
         STATES::TitleScreen title_screen;
         STATES::CreditsScreen credits_screen;
         STATES::GameSelectionScreen game_selection_screen;
+        STATES::NewGameIntroSequence new_game_intro_sequence;
+        STATES::FloodCutscene flood_cutscene;
         STATES::GameplayState gameplay_state(speakers, assets);
 
         // DEFINE THE TIME-OF-DAY SHADER.
@@ -799,6 +803,12 @@ int main()
                     case STATES::GameState::GAME_SELECTION_SCREEN:
                         next_game_state = game_selection_screen.RespondToInput(input_controller);
                         break;
+                    case STATES::GameState::NEW_GAME_INTRO_SEQUENCE:
+                        next_game_state = new_game_intro_sequence.Update(elapsed_time, *speakers);
+                        break;
+                    case STATES::GameState::FLOOD_CUTSCENE:
+                        next_game_state = flood_cutscene.Update(elapsed_time);
+                        break;
                     case STATES::GameState::GAMEPLAY:
                         gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
                         break;
@@ -821,6 +831,12 @@ int main()
                         break;
                     case STATES::GameState::GAME_SELECTION_SCREEN:
                         game_selection_screen.Render(renderer);
+                        break;
+                    case STATES::GameState::NEW_GAME_INTRO_SEQUENCE:
+                        new_game_intro_sequence.Render(renderer);
+                        break;
+                    case STATES::GameState::FLOOD_CUTSCENE:
+                        flood_cutscene.Render(renderer);
                         break;
                     case STATES::GameState::GAMEPLAY:
                         gameplay_state.Render(renderer);
@@ -907,6 +923,36 @@ int main()
 
                 window->display();
 
+                // OVERRIDE GAME STATE SWITCHES WITH DEBUG KEY PRESSES.
+                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_INTRO_SEQUENCE_KEY))
+                {
+                    next_game_state = STATES::GameState::INTRO_SEQUENCE;
+                }
+                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_TITLE_SCREEN_KEY))
+                {
+                    next_game_state = STATES::GameState::TITLE_SCREEN;
+                }
+                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_CREDITS_SCREEN_KEY))
+                {
+                    next_game_state = STATES::GameState::CREDITS_SCREEN;
+                }
+                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_GAME_SELECTION_SCREEN_KEY))
+                {
+                    next_game_state = STATES::GameState::GAME_SELECTION_SCREEN;
+                }
+                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_NEW_GAME_INTRO_SEQUENCE_KEY))
+                {
+                    next_game_state = STATES::GameState::NEW_GAME_INTRO_SEQUENCE;
+                }
+                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_FLOOD_CUTSCENE_KEY))
+                {
+                    next_game_state = STATES::GameState::FLOOD_CUTSCENE;
+                }
+                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_GAMEPLAY_KEY))
+                {
+                    next_game_state = STATES::GameState::GAMEPLAY;
+                }
+
                 // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.
                 bool game_state_changed = (next_game_state != game_state);
                 if (game_state_changed)
@@ -922,6 +968,20 @@ int main()
                         case STATES::GameState::GAME_SELECTION_SCREEN:
                             game_selection_screen.LoadSavedGames();
                             game_selection_screen.CurrentSubState = STATES::GameSelectionScreen::SubState::LISTING_GAMES;
+                            break;
+                        case STATES::GameState::NEW_GAME_INTRO_SEQUENCE:
+                        {
+                            // LOAD THE APPROPRIATE MUSIC INTO THE SPEAKERS.
+                            auto new_game_intro_music = assets->GetMusic(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC);
+                            speakers->AddMusic(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC, new_game_intro_music);
+
+                            // RESET THE INTRO SEQUENCE TO THE BEGINNING.
+                            new_game_intro_sequence.ResetToBeginning();
+                            break;
+                        }
+                        case STATES::GameState::FLOOD_CUTSCENE:
+                            // RESET THE ELAPSED TIME FOR THE CUTSCENE.
+                            flood_cutscene.ElapsedTime = sf::Time::Zero;
                             break;
                         case STATES::GameState::GAMEPLAY:
                         {

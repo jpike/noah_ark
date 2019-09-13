@@ -128,7 +128,9 @@ namespace STATES
                         std::shared_ptr<SavedGameData> new_saved_game = std::make_shared<SavedGameData>(SavedGameData::DefaultSavedGameData());
                         new_saved_game->Filepath = SAVED_GAMES_FOLDER_PATH / CurrentNewGameFilenameText;
                         SavedGames.push_back(new_saved_game);
-                        return GameState::GAMEPLAY;
+
+                        // START THE INTRO SEQUENCE FOR A NEW GAME.
+                        return GameState::NEW_GAME_INTRO_SEQUENCE;
                     }
                 }
 

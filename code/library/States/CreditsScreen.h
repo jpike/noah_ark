@@ -18,7 +18,7 @@ namespace STATES
         void Render(GRAPHICS::Renderer& renderer) const;
 
         // MEMBER VARIABLES.
-        /// The total time that the credits screen has been 
+        /// The total time that the credits screen has been shown.
         sf::Time ElapsedTime = sf::Time::Zero;
     };
 }

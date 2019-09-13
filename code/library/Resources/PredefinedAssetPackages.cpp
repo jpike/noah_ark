@@ -5,16 +5,16 @@ namespace RESOURCES
     const std::string INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME = "IntroAssets.package";
 
     const AssetPackageDefinition INTRO_SEQUENCE_ASSET_PACKAGE_DEFINITION({
-        AssetDefinition(AssetType::FONT, RESOURCES::AssetId::SERIF_FONT_TEXTURE, "res/images/main_font_serif.png"),
-        AssetDefinition(AssetType::MUSIC, RESOURCES::AssetId::INTRO_MUSIC, "res/sounds/Intro1.wav"),
-        AssetDefinition(AssetType::SHADER, RESOURCES::AssetId::COLORED_TEXTURE_SHADER, "res/shaders/ColoredTexture.frag"),
+        AssetDefinition(AssetType::FONT, AssetId::SERIF_FONT_TEXTURE, "res/images/main_font_serif.png"),
+        AssetDefinition(AssetType::MUSIC, AssetId::INTRO_MUSIC, "res/sounds/Intro1.wav"),
+        AssetDefinition(AssetType::SHADER, AssetId::COLORED_TEXTURE_SHADER, "res/shaders/ColoredTexture.frag"),
     });
 
     const std::string MAIN_ASSET_PACKAGE_FILENAME = "MainAssets.package";
 
     const AssetPackageDefinition MAIN_ASSET_PACKAGE_DEFINITION({
         // FONTS.
-        AssetDefinition(AssetType::FONT, RESOURCES::AssetId::FONT_TEXTURE, "res/images/main_font1.png"),
+        AssetDefinition(AssetType::FONT, AssetId::FONT_TEXTURE, "res/images/main_font1.png"),
 
         // OTHER TEXTURES.
         AssetDefinition(AssetType::TEXTURE, AssetId::ANIMAL_TEXTURE, "res/images/animal_sprites.png"),
@@ -77,9 +77,10 @@ namespace RESOURCES
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::WOLF_SOUND, "res/sounds/animals/wolf.wav"),
 
         // MUSIC.
+        AssetDefinition(AssetType::MUSIC, AssetId::NEW_GAME_INTRO_MUSIC, "res/sounds/NoahsArkIntro1_80PercentSpeedWithFadeout.wav"),
         AssetDefinition(AssetType::MUSIC, AssetId::OVERWORLD_BACKGROUND_MUSIC, "res/sounds/overworld_music.wav"),
 
         // SHADERS.
-        AssetDefinition(AssetType::SHADER, RESOURCES::AssetId::TIME_OF_DAY_SHADER, "res/shaders/TimeOfDay.frag"),
+        AssetDefinition(AssetType::SHADER, AssetId::TIME_OF_DAY_SHADER, "res/shaders/TimeOfDay.frag"),
     });
 }

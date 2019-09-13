@@ -95,6 +95,29 @@ namespace AUDIO
         }
     }
 
+    /// Starts playing the music with the given ID, assuming it is already stored in the speakers
+    /// and not already playing.  If it is already playing, then it will just continue playing.
+    /// @param[in]  music_id - The ID of the music to play.
+    void Speakers::PlayMusicIfNotAlready(const RESOURCES::AssetId music_id)
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // CHECK IF THE MUSIC EXISTS IN THE SPEAKERS.
+        auto music = Music.find(music_id);
+        bool music_exists = (Music.end() != music) && (nullptr != music->second);
+        if (music_exists)
+        {
+            // PLAY THE MUSIC ONLY IF IT'S NOT ALREADY PLAYING.
+            sf::SoundSource::Status music_status = music->second->getStatus();
+            bool music_playing = (sf::SoundSource::Playing == music_status);
+            if (!music_playing)
+            {
+                music->second->play();
+            }
+        }
+    }
+
     /// Stops playing the music with the given ID, assuming it is already stored in the speakers.
     /// @param[in]  music_id - The ID of the music to stop.
     void Speakers::StopMusic(const RESOURCES::AssetId music_id)

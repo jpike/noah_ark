@@ -20,6 +20,21 @@ namespace INPUT_CONTROL
     {
     public:
         // STATIC CONSTANTS.
+        /// The debug key for switching to the intro sequence.
+        static constexpr sf::Keyboard::Key DEBUG_SWITCH_TO_INTRO_SEQUENCE_KEY = sf::Keyboard::Num1;
+        /// The debug key for switching to the title screen.
+        static constexpr sf::Keyboard::Key DEBUG_SWITCH_TO_TITLE_SCREEN_KEY = sf::Keyboard::Num2;
+        /// The debug key for switching to the credits screen.
+        static constexpr sf::Keyboard::Key DEBUG_SWITCH_TO_CREDITS_SCREEN_KEY = sf::Keyboard::Num3;
+        /// The debug key for switching to the game selection screen.
+        static constexpr sf::Keyboard::Key DEBUG_SWITCH_TO_GAME_SELECTION_SCREEN_KEY = sf::Keyboard::Num4;
+        /// The debug key for switching to the new game intro sequence.
+        static constexpr sf::Keyboard::Key DEBUG_SWITCH_TO_NEW_GAME_INTRO_SEQUENCE_KEY = sf::Keyboard::Num5;
+        /// The debug key for switching to the flood cutscene.
+        static constexpr sf::Keyboard::Key DEBUG_SWITCH_TO_FLOOD_CUTSCENE_KEY = sf::Keyboard::Num6;
+        /// The debug key for switching to the main gameplay state.
+        static constexpr sf::Keyboard::Key DEBUG_SWITCH_TO_GAMEPLAY_KEY = sf::Keyboard::Num7;
+
         /// The key for the up button.
         static constexpr sf::Keyboard::Key UP_KEY = sf::Keyboard::Up;
         /// The key for the down button.
@@ -28,16 +43,19 @@ namespace INPUT_CONTROL
         static constexpr sf::Keyboard::Key LEFT_KEY = sf::Keyboard::Left;
         /// The key for the right button.
         static constexpr sf::Keyboard::Key RIGHT_KEY = sf::Keyboard::Right;
+
         /// The key for the primary action button.
         static constexpr sf::Keyboard::Key PRIMARY_ACTION_KEY = sf::Keyboard::Z;
         /// A textual representation of the primary action key.
         static constexpr char PRIMARY_ACTION_KEY_TEXT = 'Z';
         /// The key for the secondary button.
         static constexpr sf::Keyboard::Key SECONDARY_ACTION_KEY = sf::Keyboard::X;
+
         /// The key for the start button.
         static constexpr sf::Keyboard::Key START_KEY = sf::Keyboard::Return;
         /// The key for the back button.
         static constexpr sf::Keyboard::Key BACK_KEY = sf::Keyboard::Escape;
+
         /// The key for toggling the map editor.
         static constexpr sf::Keyboard::Key MAP_EDITOR_KEY = sf::Keyboard::E;
         /// The key for toggling the map editor's tile palette.
@@ -47,6 +65,7 @@ namespace INPUT_CONTROL
         /// The key for closing the ark doors as a quick way to switch to that state.
         /// The key is completely arbitrary.
         static constexpr sf::Keyboard::Key DEBUG_CLOSE_ARK_DOORS_KEY = sf::Keyboard::J;
+
         /// The button for the main pointer.
         static constexpr sf::Mouse::Button MAIN_POINTER_BUTTON = sf::Mouse::Left;
         /// The button for the secondary pointer.

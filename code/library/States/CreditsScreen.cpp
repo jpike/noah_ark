@@ -113,6 +113,13 @@ namespace STATES
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "Music - Jacob Pike",
+            RESOURCES::AssetId::FONT_TEXTURE,
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
         // RENDER ADDITIONAL CREDITS FOR SOUND EFFECTS.
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
@@ -217,7 +224,7 @@ namespace STATES
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
-            "Visual Studio 2017",
+            "Visual Studio 2019",
             RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
@@ -239,6 +246,13 @@ namespace STATES
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Bfxr",
+            RESOURCES::AssetId::FONT_TEXTURE,
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "Bosca Ceoil",
             RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);

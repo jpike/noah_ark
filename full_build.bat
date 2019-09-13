@@ -15,21 +15,39 @@ CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary
 WHERE cl.exe
 
 CALL build_font_metrics.bat %build_mode%
-CALL build_library.bat %build_mode%
-CALL build_asset_packer.bat %build_mode%
-CALL build_tester.bat %build_mode%
-CALL build_game.bat %build_mode%
-CALL copy_dlls.bat %build_mode%
-CALL copy_resources.bat %build_mode%
+IF %ERRORLEVEL% EQU 0 (
+    CALL build_library.bat %build_mode%
+)
+IF %ERRORLEVEL% EQU 0 (
+    CALL build_asset_packer.bat %build_mode%
+)
+IF %ERRORLEVEL% EQU 0 (
+    CALL build_tester.bat %build_mode%
+)
+IF %ERRORLEVEL% EQU 0 (
+    CALL build_game.bat %build_mode%
+)
+IF %ERRORLEVEL% EQU 0 (
+    CALL copy_dlls.bat %build_mode%
+)
+IF %ERRORLEVEL% EQU 0 (
+    CALL copy_resources.bat %build_mode%
+)
 
-SET build_directory=build\%build_mode%
-PUSHD "%build_directory%"
-    noah_ark_tester.exe
-    asset_packer.exe
-POPD
+IF %ERRORLEVEL% EQU 0 (
+    SET build_directory=build\%build_mode%
+    PUSHD "%build_directory%"
+        IF %ERRORLEVEL% EQU 0 (
+            noah_ark_tester.exe
+        )
+        IF %ERRORLEVEL% EQU 0 (
+            asset_packer.exe
+        )
+    POPD
+)
 
 @ECHO OFF
 
-ECHO Done (full build)
+ECHO Done (full build) (exit code = %ERRORLEVEL%)
 
 @ECHO ON

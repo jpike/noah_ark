@@ -67,10 +67,11 @@ The filenames have been modified and the files shortened for length and size.
     - http://soundbible.com/977-Coyote-Call.html
     
 DEVELOPMENT TOOLS
-Visual Studio 2017
+Visual Studio 2019
 Git/GitHub
 Microsoft Paint
 Bfxr (http://www.bfxr.net/)
+Bosca Ceoil (https://boscaceoil.net/)
 Doxygen (http://www.stack.nl/~dimitri/doxygen/)
 SFML (https://www.sfml-dev.org/)
 Catch (https://github.com/philsquared/Catch)

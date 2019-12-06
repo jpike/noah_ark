@@ -213,6 +213,20 @@ namespace STATES
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
 
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "Lisa Redfern",
+            RESOURCES::AssetId::FONT_TEXTURE,
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "Tony Phillips",
+            RESOURCES::AssetId::FONT_TEXTURE,
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
         // RENDER ADDITIONAL CREDITS FOR DEVELOPMENT TOOLS.
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);

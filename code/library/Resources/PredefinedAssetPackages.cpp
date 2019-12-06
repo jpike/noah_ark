@@ -35,6 +35,17 @@ namespace RESOURCES
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::TREE_SHAKE_SOUND, "res/sounds/tree_shake4.wav"),
 
         // ANIMAL SOUND EFFECTS.
+        /// \todo   Shorten sounds for 
+        /// CRICKET
+        /// DUCK
+        /// ELEPHANT
+        /// GOOSE
+        /// GUINEA_PIG
+        /// HYENA
+        /// MOSQUITO
+        /// SEAGULL
+        /// SNAKE
+        /// SQUIRREL
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::ALLIGATOR_SOUND, "res/sounds/animals/alligator.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::BABOON_SOUND, "res/sounds/animals/baboon.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::BAT_SOUND, "res/sounds/animals/bat.wav"),
@@ -48,22 +59,29 @@ namespace RESOURCES
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::CHEETAH_SOUND, "res/sounds/animals/cheetah.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::CHICKEN_SOUND, "res/sounds/animals/chicken.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::CHIPMUNK_SOUND, "res/sounds/animals/chipmunk.wav"),
+        AssetDefinition(AssetType::SOUND_EFFECT, AssetId::CRICKET_SOUND, "res/sounds/animals/cricket.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::DEER_SOUND, "res/sounds/animals/deer.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::DOG_SOUND, "res/sounds/animals/dog.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::DOVE_SOUND, "res/sounds/animals/dove.wav"),
+        AssetDefinition(AssetType::SOUND_EFFECT, AssetId::DUCK_SOUND, "res/sounds/animals/duck.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::EAGLE_SOUND, "res/sounds/animals/eagle.wav"),
+        AssetDefinition(AssetType::SOUND_EFFECT, AssetId::ELEPHANT_SOUND, "res/sounds/animals/elephant.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::FOX_SOUND, "res/sounds/animals/fox.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::FROG_SOUND, "res/sounds/animals/frog.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::GOAT_SOUND, "res/sounds/animals/goat.wav"),
+        AssetDefinition(AssetType::SOUND_EFFECT, AssetId::GOOSE_SOUND, "res/sounds/animals/goose.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::GORILLA_SOUND, "res/sounds/animals/gorilla.wav"),
+        AssetDefinition(AssetType::SOUND_EFFECT, AssetId::GUINEA_PIG_SOUND, "res/sounds/animals/guineapig.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::HAWK_SOUND, "res/sounds/animals/hawk.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::HIPPO_SOUND, "res/sounds/animals/hippo.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::HORSE_SOUND, "res/sounds/animals/horse.wav"),
+        AssetDefinition(AssetType::SOUND_EFFECT, AssetId::HYENA_SOUND, "res/sounds/animals/hyena.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::KOALA_SOUND, "res/sounds/animals/koala.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::LEOPARD_SOUND, "res/sounds/animals/leopard.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::LION_SOUND, "res/sounds/animals/lion.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::LOCUST_SOUND, "res/sounds/animals/locust.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::MONKEY_SOUND, "res/sounds/animals/monkey.wav"),
+        AssetDefinition(AssetType::SOUND_EFFECT, AssetId::MOSQUITO_SOUND, "res/sounds/animals/mosquito.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::OSPREY_SOUND, "res/sounds/animals/osprey.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::OWL_SOUND, "res/sounds/animals/owl.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::PEACOCK_SOUND, "res/sounds/animals/peacock.wav"),
@@ -72,7 +90,10 @@ namespace RESOURCES
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::POLAR_BEAR_SOUND, "res/sounds/animals/polarbear.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::RACCOON_SOUND, "res/sounds/animals/raccoon.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::RAVEN_SOUND, "res/sounds/animals/raven.wav"),
+        AssetDefinition(AssetType::SOUND_EFFECT, AssetId::SEAGULL_SOUND, "res/sounds/animals/seagull.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::SHEEP_SOUND, "res/sounds/animals/sheep.wav"),
+        AssetDefinition(AssetType::SOUND_EFFECT, AssetId::SNAKE_SOUND, "res/sounds/animals/snake.wav"),
+        AssetDefinition(AssetType::SOUND_EFFECT, AssetId::SQUIRREL_SOUND, "res/sounds/animals/squirrel.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::TURKEY_SOUND, "res/sounds/animals/turkey.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::WOLF_SOUND, "res/sounds/animals/wolf.wav"),
 

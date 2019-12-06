@@ -36,28 +36,40 @@ namespace RESOURCES
                 return RESOURCES::AssetId::CHICKEN_SOUND;
             case OBJECTS::AnimalSpecies::CHIPMUNK:
                 return RESOURCES::AssetId::CHIPMUNK_SOUND;
+            case OBJECTS::AnimalSpecies::CRICKET:
+                return RESOURCES::AssetId::CRICKET_SOUND;
             case OBJECTS::AnimalSpecies::DEER:
                 return RESOURCES::AssetId::DEER_SOUND;
             case OBJECTS::AnimalSpecies::DOG:
                 return RESOURCES::AssetId::DOG_SOUND;
             case OBJECTS::AnimalSpecies::DOVE:
                 return RESOURCES::AssetId::DOVE_SOUND;
+            case OBJECTS::AnimalSpecies::DUCK:
+                return RESOURCES::AssetId::DUCK_SOUND;
             case OBJECTS::AnimalSpecies::EAGLE:
                 return RESOURCES::AssetId::EAGLE_SOUND;
+            case OBJECTS::AnimalSpecies::ELEPHANT:
+                return RESOURCES::AssetId::ELEPHANT_SOUND;
             case OBJECTS::AnimalSpecies::FOX:
                 return RESOURCES::AssetId::FOX_SOUND;
             case OBJECTS::AnimalSpecies::FROG:
                 return RESOURCES::AssetId::FROG_SOUND;
             case OBJECTS::AnimalSpecies::GOAT:
                 return RESOURCES::AssetId::GOAT_SOUND;
+            case OBJECTS::AnimalSpecies::GOOSE:
+                return RESOURCES::AssetId::GOOSE_SOUND;
             case OBJECTS::AnimalSpecies::GORILLA:
                 return RESOURCES::AssetId::GORILLA_SOUND;
+            case OBJECTS::AnimalSpecies::GUINEA_PIG:
+                return RESOURCES::AssetId::GUINEA_PIG_SOUND;
             case OBJECTS::AnimalSpecies::HAWK:
                 return RESOURCES::AssetId::HAWK_SOUND;
             case OBJECTS::AnimalSpecies::HIPPO:
                 return RESOURCES::AssetId::HIPPO_SOUND;
             case OBJECTS::AnimalSpecies::HORSE:
                 return RESOURCES::AssetId::HORSE_SOUND;
+            case OBJECTS::AnimalSpecies::HYENA:
+                return RESOURCES::AssetId::HYENA_SOUND;
             case OBJECTS::AnimalSpecies::KOALA:
                 return RESOURCES::AssetId::KOALA_SOUND;
             case OBJECTS::AnimalSpecies::LEOPARD:
@@ -68,6 +80,8 @@ namespace RESOURCES
                 return RESOURCES::AssetId::LOCUST_SOUND;
             case OBJECTS::AnimalSpecies::MONKEY:
                 return RESOURCES::AssetId::MONKEY_SOUND;
+            case OBJECTS::AnimalSpecies::MOSQUITO:
+                return RESOURCES::AssetId::MOSQUITO_SOUND;
             case OBJECTS::AnimalSpecies::OSPREY:
                 return RESOURCES::AssetId::OSPREY_SOUND;
             case OBJECTS::AnimalSpecies::OWL:
@@ -84,8 +98,14 @@ namespace RESOURCES
                 return RESOURCES::AssetId::RACCOON_SOUND;
             case OBJECTS::AnimalSpecies::RAVEN:
                 return RESOURCES::AssetId::RAVEN_SOUND;
+            case OBJECTS::AnimalSpecies::SEAGULL:
+                return RESOURCES::AssetId::SEAGULL_SOUND;
             case OBJECTS::AnimalSpecies::SHEEP:
                 return RESOURCES::AssetId::SHEEP_SOUND;
+            case OBJECTS::AnimalSpecies::SNAKE:
+                return RESOURCES::AssetId::SNAKE_SOUND;
+            case OBJECTS::AnimalSpecies::SQUIRREL:
+                return RESOURCES::AssetId::SQUIRREL_SOUND;
             case OBJECTS::AnimalSpecies::TURKEY:
                 return RESOURCES::AssetId::TURKEY_SOUND;
             case OBJECTS::AnimalSpecies::WOLF:

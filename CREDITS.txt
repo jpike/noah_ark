@@ -33,6 +33,10 @@ The filenames have been modified and the files shortened for length and size.
     - http://soundbible.com/707-Cat-Purring.html
     - http://soundbible.com/1059-Mummy-Zombie.html
     - http://soundbible.com/1002-Purring.html
+    - http://soundbible.com/1140-Elephant.html
+    - http://soundbible.com/398-Mosquito-Buzzing.html
+    - http://soundbible.com/1283-Angry-Squirrel.html
+    - http://soundbible.com/219-Diamond-Back-Rattle-Snake.html
 - snottyboy
     - http://soundbible.com/1336-Frog-Croaking.html
 - NPS
@@ -48,11 +52,15 @@ The filenames have been modified and the files shortened for length and size.
     - http://soundbible.com/238-Bats-Vocalizing.html
     - http://soundbible.com/241-Bear-Growl-And-Roar.html
     - http://soundbible.com/278-Many-Wolves-Howling.html
+    - http://soundbible.com/235-Geese-Honking.html
 - BlastwaveFx.com
     - http://soundbible.com/619-Goat-Bah.html
 - Daniel Simion
     - http://soundbible.com/2194-Doberman-Pinscher.html
     - http://soundbible.com/2145-Gibbon-Monkey.html
+    - http://soundbible.com/2144-Guinea-Pig.html
+    - http://soundbible.com/2191-Hyena-Laughing.html
+    - http://soundbible.com/2193-Flock-Seagulls.html
 - Caroline Ford
     - http://soundbible.com/1443-Peacock-Bird.html
 - JimBob
@@ -61,6 +69,10 @@ The filenames have been modified and the files shortened for length and size.
     - http://soundbible.com/1853-Raccoon.html
 - wrzesien
     - http://soundbible.com/1160-Mountain-Lion.html
+- Lisa Redfern
+    - http://soundbible.com/2083-Crickets-Chirping-At-Night.html
+- Tony Phillips
+    - http://soundbible.com/1197-Mallard-Duck-2.html
 - Generic Public Domain
     - http://soundbible.com/250-Pelican-Chick.html
     - http://soundbible.com/1147-Ape.html

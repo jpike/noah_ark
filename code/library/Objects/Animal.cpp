@@ -76,6 +76,18 @@ namespace OBJECTS
             case AnimalSpecies::RAVEN: // Leviticus 11:13-15
             case AnimalSpecies::WOLF:
                 return false;
+            case AnimalSpecies::CRICKET:
+            case AnimalSpecies::DUCK:
+            case AnimalSpecies::ELEPHANT:
+            case AnimalSpecies::GOOSE:
+            case AnimalSpecies::GUINEA_PIG:
+            case AnimalSpecies::HYENA:
+            case AnimalSpecies::MOSQUITO:
+            case AnimalSpecies::SEAGULL:
+            case AnimalSpecies::SNAKE:
+            case AnimalSpecies::SQUIRREL:
+                /// @todo   Figure out the animals in this category.
+                return false;
             default:
                 // Assume it isn't clean.
                 return false;

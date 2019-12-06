@@ -299,6 +299,11 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
+            case OBJECTS::AnimalSpecies::CRICKET:
+            {
+                /// \todo
+                break;
+            }
             case OBJECTS::AnimalSpecies::DEER:
             {
                 // FORM THE ANIMATION FOR A DEER.
@@ -356,6 +361,11 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
+            case OBJECTS::AnimalSpecies::DUCK:
+            {
+                /// \todo
+                break;
+            }
             case OBJECTS::AnimalSpecies::EAGLE:
             {
                 // FORM THE ANIMATION FOR EAGLE.
@@ -373,6 +383,11 @@ namespace RESOURCES
                     LOOPING,
                     ANIMATION_DURATION,
                     FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::ELEPHANT:
+            {
+                /// \todo
                 break;
             }
             case OBJECTS::AnimalSpecies::FOX:
@@ -432,6 +447,11 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
+            case OBJECTS::AnimalSpecies::GOOSE:
+            {
+                /// \todo
+                break;
+            }
             case OBJECTS::AnimalSpecies::GORILLA:
             {
                 // FORM THE ANIMATION.
@@ -449,6 +469,11 @@ namespace RESOURCES
                     LOOPING,
                     ANIMATION_DURATION,
                     FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::GUINEA_PIG:
+            {
+                /// \todo
                 break;
             }
             case OBJECTS::AnimalSpecies::HAWK:
@@ -506,6 +531,11 @@ namespace RESOURCES
                     LOOPING,
                     ANIMATION_DURATION,
                     FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::HYENA:
+            {
+                /// \todo
                 break;
             }
             case OBJECTS::AnimalSpecies::KOALA:
@@ -601,6 +631,11 @@ namespace RESOURCES
                     LOOPING,
                     ANIMATION_DURATION,
                     FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::MOSQUITO:
+            {
+                /// \todo
                 break;
             }
             case OBJECTS::AnimalSpecies::OSPREY:
@@ -755,6 +790,11 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
+            case OBJECTS::AnimalSpecies::SEAGULL:
+            {
+                /// \todo
+                break;
+            }
             case OBJECTS::AnimalSpecies::SHEEP:
             {
                 // FORM THE ANIMATION FOR A SHEEP.
@@ -772,6 +812,16 @@ namespace RESOURCES
                     LOOPING,
                     ANIMATION_DURATION,
                     FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::SNAKE:
+            {
+                /// \todo
+                break;
+            }
+            case OBJECTS::AnimalSpecies::SQUIRREL:
+            {
+                /// \todo
                 break;
             }
             case OBJECTS::AnimalSpecies::TURKEY:

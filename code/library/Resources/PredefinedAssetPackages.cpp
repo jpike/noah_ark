@@ -35,17 +35,6 @@ namespace RESOURCES
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::TREE_SHAKE_SOUND, "res/sounds/tree_shake4.wav"),
 
         // ANIMAL SOUND EFFECTS.
-        /// \todo   Shorten sounds for 
-        /// CRICKET
-        /// DUCK
-        /// ELEPHANT
-        /// GOOSE
-        /// GUINEA_PIG
-        /// HYENA
-        /// MOSQUITO
-        /// SEAGULL
-        /// SNAKE
-        /// SQUIRREL
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::ALLIGATOR_SOUND, "res/sounds/animals/alligator.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::BABOON_SOUND, "res/sounds/animals/baboon.wav"),
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::BAT_SOUND, "res/sounds/animals/bat.wav"),

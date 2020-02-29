@@ -211,7 +211,7 @@ namespace GUI
         // so that the two icons aren't too close together.
         const unsigned int PIXEL_BUFFER_SPACE_BETWEEN_AXE_ICON_AND_WOOD_ICON = 16;
         MATH::Vector2ui wood_icon_screen_position = axe_icon_screen_position;
-        wood_icon_screen_position.X += static_cast<unsigned int>(AXE_TEXTURE_SUB_RECTANGLE.GetWidth());
+        wood_icon_screen_position.X += static_cast<unsigned int>(AXE_TEXTURE_SUB_RECTANGLE.Width());
         wood_icon_screen_position.X += PIXEL_BUFFER_SPACE_BETWEEN_AXE_ICON_AND_WOOD_ICON;
 
         std::shared_ptr<GRAPHICS::Texture> wood_texture = Assets->GetTexture(RESOURCES::AssetId::WOOD_LOG_TEXTURE);
@@ -229,7 +229,7 @@ namespace GUI
         MATH::Vector2f wood_text_top_left_screen_position_in_pixels(
             static_cast<float>(wood_icon_screen_position.X), 
             static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
-        wood_text_top_left_screen_position_in_pixels.X += WOOD_LOG_TEXTURE_SUB_RECTANGLE.GetWidth();
+        wood_text_top_left_screen_position_in_pixels.X += WOOD_LOG_TEXTURE_SUB_RECTANGLE.Width();
         renderer.RenderText(wood_count_string, RESOURCES::AssetId::FONT_TEXTURE, wood_text_top_left_screen_position_in_pixels, TextColor);
 
         // RENDER COMPONENTS INDICATING HOW TO OPEN THE INVENTORY.

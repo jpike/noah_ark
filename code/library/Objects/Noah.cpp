@@ -29,7 +29,7 @@ namespace OBJECTS
         const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 16, 16);
         GRAPHICS::Sprite sprite(noah_texture, TEXTURE_SUB_RECT);
         // The sprite origin should be the graphical center of its sub-rectangle.
-        sprite.SetOrigin(TEXTURE_SUB_RECT.GetCenterPosition());
+        sprite.SetOrigin(TEXTURE_SUB_RECT.Center());
         Sprite.Sprite = sprite;
 
         // ADD NOAH'S ANIMATION SEQUENCES.
@@ -163,7 +163,7 @@ namespace OBJECTS
                 // CALCULATE THE POSITION FOR THE AXE.
                 // The axe should appear slightly in front of Noah.
                 MATH::Vector2f axe_position = GetWorldPosition();
-                float noah_half_width = GetWorldBoundingBox().GetWidth() / 2.0f;
+                float noah_half_width = GetWorldBoundingBox().Width() / 2.0f;
                 // The position is slightly tweaked solely based on what looks best.
                 axe_position.X += noah_half_width;
                 axe_position.X -= 1.5f;
@@ -183,7 +183,7 @@ namespace OBJECTS
                 // The offset from Noah's position is calculated
                 // to make the axe appear to come from Noah's hand.
                 MATH::Vector2f axe_position = GetWorldPosition();
-                float noah_half_width = GetWorldBoundingBox().GetWidth() / 2.0f;
+                float noah_half_width = GetWorldBoundingBox().Width() / 2.0f;
                 // The position is slightly tweaked solely based on what looks best.
                 axe_position.X -= noah_half_width;
                 axe_position.X += 2;

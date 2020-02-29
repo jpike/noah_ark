@@ -63,10 +63,10 @@ namespace STATES
         // DRAW THE SUB-HEADING FOR THE GAME'S TITLE.
         // It is centered within the top third of the screen.
         MATH::FloatRectangle screen_rectangle = renderer.Screen->GetBoundingRectangle<float>();
-        float screen_left_x_position = screen_rectangle.GetLeftXPosition();
-        float screen_top_y_position = screen_rectangle.GetTopYPosition();
-        float screen_width_in_pixels = screen_rectangle.GetWidth();
-        float screen_height_in_pixels = screen_rectangle.GetHeight();
+        float screen_left_x_position = screen_rectangle.LeftTop.X;
+        float screen_top_y_position = screen_rectangle.LeftTop.Y;
+        float screen_width_in_pixels = screen_rectangle.Width();
+        float screen_height_in_pixels = screen_rectangle.Height();
         float one_third_of_screen_height_in_pixels = screen_height_in_pixels / 3.0f;
         MATH::FloatRectangle sub_heading_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             screen_left_x_position,

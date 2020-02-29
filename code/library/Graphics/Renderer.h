@@ -9,6 +9,7 @@
 #include "Graphics/Camera.h"
 #include "Graphics/Color.h"
 #include "Graphics/Gui/Font.h"
+#include "Graphics/Gui/Text.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Texture.h"
@@ -29,6 +30,9 @@ namespace GRAPHICS
             const std::shared_ptr<sf::Shader>& colored_text_shader,
             std::unique_ptr<GRAPHICS::Screen>&& screen);
 
+        // LINE RENDERING.
+        void RenderLine(const MATH::Vector2f& start_position, const MATH::Vector2f& end_position, const GRAPHICS::Color& color);
+
         // GENERIC SCREEN-SPACE RENDERING.
         void RenderScreenRectangle(
             const MATH::FloatRectangle& rectangle,
@@ -45,6 +49,7 @@ namespace GRAPHICS
             const MATH::Vector2f& left_top_screen_position_in_pixels);
 
         // TEXT RENDERING.
+        void Render(const GUI::Text& text);
         void RenderText(
             const std::string& text, 
             const RESOURCES::AssetId font_id,

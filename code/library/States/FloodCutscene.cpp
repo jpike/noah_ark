@@ -42,7 +42,7 @@ namespace STATES
         renderer.RenderScreenRectangle(full_screen_rectangle, SKY_COLOR);
 
         // DRAW A MOUNTAIN IN THE BACKGROUND.
-        float screen_width_in_pixels = full_screen_rectangle.GetWidth();
+        float screen_width_in_pixels = full_screen_rectangle.Width();
         float mountain_radius_in_pixels = screen_width_in_pixels / 2.0f;
         constexpr std::size_t TRIANGLE_POINT_COUNT = 3;
         sf::CircleShape mountain(mountain_radius_in_pixels, TRIANGLE_POINT_COUNT);
@@ -50,7 +50,7 @@ namespace STATES
         const sf::Color MOUNTAIN_COLOR(96, 32, 0);
         mountain.setFillColor(MOUNTAIN_COLOR);
 
-        float screen_height_in_pixels = full_screen_rectangle.GetHeight();
+        float screen_height_in_pixels = full_screen_rectangle.Height();
         float one_third_down_screen_y_position = screen_height_in_pixels / 3.0f;
         sf::Vector2f mountain_screen_position(0.0f, one_third_down_screen_y_position);
         mountain.setPosition(mountain_screen_position);
@@ -72,7 +72,7 @@ namespace STATES
 
         float ark_top_y_position = flood_water_top_screen_position - ARK_SIZE_IN_PIXELS.y;
 
-        float screen_center_x_position = full_screen_rectangle.GetCenterXPosition();
+        float screen_center_x_position = full_screen_rectangle.CenterX();
         float ark_left_x_position = screen_center_x_position - (ARK_SIZE_IN_PIXELS.x / 2.0f);
         ark.setPosition(ark_left_x_position, ark_top_y_position);
 

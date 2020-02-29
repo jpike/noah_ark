@@ -107,11 +107,7 @@ namespace INVENTORY
 
         // RENDER A TAB FOR THE BIBLE PORTION OF THE GUI.
         // It should be positioned near the top-left of the GUI.
-        float bible_tab_left_screen_position_in_pixels = background_rectangle.GetLeftXPosition();
-        float bible_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
-        MATH::Vector2f bible_tab_left_top_screen_position_in_pixels(
-            bible_tab_left_screen_position_in_pixels,
-            bible_tab_top_screen_position_in_pixels);
+        MATH::Vector2f bible_tab_left_top_screen_position_in_pixels = background_rectangle.LeftTop;
         RenderTab(
             "Bible",
             bible_tab_left_top_screen_position_in_pixels,
@@ -122,8 +118,8 @@ namespace INVENTORY
         const std::string ANIMALS_TAB_STRING = "Animals";
         size_t animals_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS * ANIMALS_TAB_STRING.length();
         size_t animals_tab_text_half_width_in_pixels = animals_tab_text_width_in_pixels / 2;
-        float animals_tab_left_screen_position_in_pixels = background_rectangle.GetCenterXPosition() - animals_tab_text_half_width_in_pixels;
-        float animals_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
+        float animals_tab_left_screen_position_in_pixels = background_rectangle.CenterX() - animals_tab_text_half_width_in_pixels;
+        float animals_tab_top_screen_position_in_pixels = background_rectangle.LeftTop.Y;
         MATH::Vector2f animals_tab_left_top_screen_position_in_pixels(
             animals_tab_left_screen_position_in_pixels,
             animals_tab_top_screen_position_in_pixels);
@@ -136,8 +132,8 @@ namespace INVENTORY
         // RENDER A TAB FOR THE FOOD PORTION OF THE GUI.
         const std::string FOOD_TAB_STRING = "Food";
         size_t food_tab_text_width_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS * FOOD_TAB_STRING.length();
-        float food_tab_left_screen_position_in_pixels = background_rectangle.GetRightXPosition() - food_tab_text_width_in_pixels;
-        float food_tab_top_screen_position_in_pixels = background_rectangle.GetTopYPosition();
+        float food_tab_left_screen_position_in_pixels = background_rectangle.RightBottom.X - food_tab_text_width_in_pixels;
+        float food_tab_top_screen_position_in_pixels = background_rectangle.LeftTop.Y;
         MATH::Vector2f food_tab_left_top_screen_position_in_pixels(
             food_tab_left_screen_position_in_pixels,
             food_tab_top_screen_position_in_pixels);

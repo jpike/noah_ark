@@ -25,18 +25,18 @@ namespace GRAPHICS
     {
         // CONVERT THE PARAMETERS TO THE FORMAT NEEDED FOR SFML.
         sf::IntRect texture_rectangle(
-            static_cast<int>(texture_sub_rectangle.GetLeftXPosition()),
-            static_cast<int>(texture_sub_rectangle.GetTopYPosition()),
-            static_cast<int>(texture_sub_rectangle.GetWidth()),
-            static_cast<int>(texture_sub_rectangle.GetHeight()));
+            static_cast<int>(texture_sub_rectangle.LeftTop.X),
+            static_cast<int>(texture_sub_rectangle.LeftTop.Y),
+            static_cast<int>(texture_sub_rectangle.Width()),
+            static_cast<int>(texture_sub_rectangle.Height()));
 
         // CREATE THE SFML SPRITE.
         SpriteResource = sf::Sprite(SpriteTexture->TextureResource);
         SpriteResource.setTextureRect(texture_rectangle);
 
         // Sprites should be centered within their texture rectangle by default.
-        float texture_half_width_in_pixels = texture_sub_rectangle.GetWidth() / 2.0f;
-        float texture_half_height_in_pixels = texture_sub_rectangle.GetHeight() / 2.0f;
+        float texture_half_width_in_pixels = texture_sub_rectangle.Width() / 2.0f;
+        float texture_half_height_in_pixels = texture_sub_rectangle.Height() / 2.0f;
         SpriteResource.setOrigin(texture_half_width_in_pixels, texture_half_height_in_pixels);
     }
 
@@ -48,10 +48,10 @@ namespace GRAPHICS
     void Sprite::SetTextureRectangle(const MATH::IntRectangle& texture_rectangle)
     {
         sf::IntRect sfml_rectangle(
-            texture_rectangle.GetLeftXPosition(),
-            texture_rectangle.GetTopYPosition(),
-            texture_rectangle.GetWidth(),
-            texture_rectangle.GetHeight());
+            texture_rectangle.LeftTop.X,
+            texture_rectangle.LeftTop.Y,
+            texture_rectangle.Width(),
+            texture_rectangle.Height());
         SpriteResource.setTextureRect(sfml_rectangle);
     }
 
@@ -104,7 +104,7 @@ namespace GRAPHICS
     float Sprite::GetWidthInPixels() const
     {
         MATH::FloatRectangle bounding_box = GetWorldBoundingBox();
-        float width = bounding_box.GetWidth();
+        float width = bounding_box.Width();
         return width;
     }
 
@@ -113,7 +113,7 @@ namespace GRAPHICS
     float Sprite::GetHeightInPixels() const
     {
         MATH::FloatRectangle bounding_box = GetWorldBoundingBox();
-        float height = bounding_box.GetHeight();
+        float height = bounding_box.Height();
         return height;
     }
 

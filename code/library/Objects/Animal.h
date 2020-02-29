@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <string>
 #include <SFML/System.hpp>
 #include "Graphics/AnimatedSprite.h"
@@ -78,6 +79,10 @@ namespace OBJECTS
         /// for algorithms that need this information.
         COUNT
     };
+
+    /// A lookup for string names of the animal species.
+    /// @todo   Try and convert things so that these are more directly associated with enum values?
+    extern std::array<std::string, static_cast<std::size_t>(AnimalSpecies::COUNT)> ANIMAL_SPECIES_NAMES;
 
     /// A single description that describes the "type" of an animal in the game.
     /// Encapsulating both the species and gender of an animal in a single

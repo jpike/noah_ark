@@ -2,6 +2,60 @@
 
 namespace OBJECTS
 {
+    std::array<std::string, static_cast<std::size_t>(AnimalSpecies::COUNT)> ANIMAL_SPECIES_NAMES
+    {
+        "Alligator",
+        "Baboon",
+        "Bobcat",
+        "Camel",
+        "Cat",
+        "Cattle",
+        "Cheetah",
+        "Chicken",
+        "Chipmunk",
+        "Cricket",
+        "Bat",
+        "Bear",
+        "Bee",
+        "Butterfly",
+        "Deer",
+        "Dog",
+        "Dove",
+        "Duck",
+        "Eagle",
+        "Elephant",
+        "Fox",
+        "Frog",
+        "Goat",
+        "Goose",
+        "Gorilla",
+        "Guinea Pig",
+        "Hawk",
+        "Hippo",
+        "Horse",
+        "Hyena",
+        "Koala",
+        "Leopard",
+        "Lion",
+        "Locust",
+        "Monkey",
+        "Mosquito",
+        "Osprey",
+        "Owl",
+        "Peacock",
+        "Pelican",
+        "Pig",
+        "Polar Bear",
+        "Raccoon",
+        "Raven",
+        "Seagull",
+        "Sheep",
+        "Snake",
+        "Squirrel",
+        "Turkey",
+        "Wolf"
+    };
+
     /// Constructor.
     /// @param[in]  species - The species of the animal.
     /// @param[in]  gender - The gender of the animal.

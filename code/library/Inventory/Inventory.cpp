@@ -122,4 +122,18 @@ namespace INVENTORY
             species_female_animal_collected_count = female_animal_collected_count->second;
         }
     }
+
+    /// Gets the collection statistics for the specified animal species.
+    /// @param[in]  species - The animal species for which to get statistics.
+    /// @return The collection statistics for the animal species.
+    AnimalCollectionStatistics Inventory::GetAnimalCollectionStatistics(const OBJECTS::AnimalSpecies species) const
+    {
+        AnimalCollectionStatistics collection_statistics;
+
+        GetAnimalCollectedCount(species, collection_statistics.MaleFollowingPlayerCount, collection_statistics.FemaleFollowingPlayerCount);
+
+        /// @todo   Get ark counts...does that even make sense to be the "inventory"?
+
+        return collection_statistics;
+    }
 }

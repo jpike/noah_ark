@@ -4,6 +4,7 @@
 #include <set>
 #include <unordered_map>
 #include "Bible/BibleVerses.h"
+#include "Inventory/AnimalCollectionStatistics.h"
 #include "Objects/Animal.h"
 #include "Objects/Axe.h"
 #include "Objects/Food.h"
@@ -25,6 +26,7 @@ namespace INVENTORY
             const OBJECTS::AnimalSpecies species, 
             unsigned int& species_male_animal_collected_count, 
             unsigned int& species_female_animal_collected_count) const;
+        AnimalCollectionStatistics GetAnimalCollectionStatistics(const OBJECTS::AnimalSpecies species) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The axe that can be swung.  It is stored as a shared pointer

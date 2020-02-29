@@ -52,12 +52,12 @@ namespace TEST_ANIMATED_SPRITE
         
         // VERIFY THAT THE ANIMATED SPRITE'S BOUNDING BOX IS CORRECT.
         MATH::FloatRectangle animatedSpriteBoundingBox = animatedSprite.GetWorldBoundingBox();
-        REQUIRE( INITIAL_WORLD_X_POSITION == animatedSpriteBoundingBox.GetCenterXPosition() );
-        REQUIRE( INITIAL_WORLD_Y_POSITION == animatedSpriteBoundingBox.GetCenterYPosition() );
+        REQUIRE( INITIAL_WORLD_X_POSITION == animatedSpriteBoundingBox.CenterX() );
+        REQUIRE( INITIAL_WORLD_Y_POSITION == animatedSpriteBoundingBox.CenterY() );
         // The width/height are cast to integers to allow validation despite floating-point issues.
         // Integral values are expected, so they sould cast directly to integers without problem.
-        REQUIRE( SPRITE_WIDTH == static_cast<int>(animatedSpriteBoundingBox.GetWidth()) );
-        REQUIRE( SPRITE_HEIGHT == static_cast<int>(animatedSpriteBoundingBox.GetHeight()) );
+        REQUIRE( SPRITE_WIDTH == static_cast<int>(animatedSpriteBoundingBox.Width()) );
+        REQUIRE( SPRITE_HEIGHT == static_cast<int>(animatedSpriteBoundingBox.Height()) );
     }
 
     TEST_CASE( "Set new position.  Negative values.", "[AnimatedSprite][SetWorldPosition][NegativeValues]" )
@@ -84,7 +84,7 @@ namespace TEST_ANIMATED_SPRITE
         // VERIFY THAT THE BOUNDING BOX HAS THE NEW CENTER POSITION.
         MATH::FloatRectangle newBoundingBox = animatedSprite.GetWorldBoundingBox();
         // Values are cast to integers for the same reason as the direct position.
-        REQUIRE( static_cast<int>(NEW_X_POSITION) == static_cast<int>(newBoundingBox.GetCenterXPosition()) );
-        REQUIRE( static_cast<int>(NEW_Y_POSITION) == static_cast<int>(newBoundingBox.GetCenterYPosition()) );
+        REQUIRE( static_cast<int>(NEW_X_POSITION) == static_cast<int>(newBoundingBox.CenterX()) );
+        REQUIRE( static_cast<int>(NEW_Y_POSITION) == static_cast<int>(newBoundingBox.CenterY()) );
     }
 }

@@ -1,3 +1,4 @@
+#include <array>
 #include "Core/NullChecking.h"
 #include "Core/String.h"
 #include "Debugging/DebugConsole.h"
@@ -30,6 +31,27 @@ namespace GRAPHICS
             "The colored text shader for the renderer cannot be null.");
     }
 
+    /// Renders a line in screen coordinates.
+    /// @param[in]  start_position - The starting point of the line.
+    /// @param[in]  end_position - The ending point of the line.
+    /// @param[in]  color - The color of the line to render.
+    void Renderer::RenderLine(const MATH::Vector2f& start_position, const MATH::Vector2f& end_position, const GRAPHICS::Color& color)
+    {
+        // CONVERT THE COLOR TO SFML FORMAT.
+        sf::Color line_color(color.Red, color.Green, color.Blue, color.Alpha);
+
+        // CONVERT THE POSITIONS TO SFML FORMAT.
+        constexpr std::size_t LINE_VERTEX_COUNT = 2;
+        std::array<sf::Vertex, LINE_VERTEX_COUNT> line_vertices =
+        {
+            sf::Vertex(sf::Vector2f(start_position.X, start_position.Y), line_color),
+            sf::Vertex(sf::Vector2f(end_position.X, end_position.Y), line_color)
+        };
+
+        // RENDER THE LINE.
+        Screen->RenderTarget.draw(line_vertices.data(), LINE_VERTEX_COUNT, sf::Lines);
+    }
+
     /// Renders a colored rectangle in screen coordinates.
     /// @param[in]  rectangle - The rectangle (in screen coordinates) to render.
     /// @param[in]  color - The color of the rectangle to render.
@@ -41,8 +63,8 @@ namespace GRAPHICS
         // This is necessary so that the rectangle can be rendered
         // appropriately on the screen regardless of how the camera
         // might move around the world.
-        int left_screen_position = static_cast<int>(rectangle.GetLeftXPosition());
-        int top_screen_position = static_cast<int>(rectangle.GetTopYPosition());
+        int left_screen_position = static_cast<int>(rectangle.LeftTop.X);
+        int top_screen_position = static_cast<int>(rectangle.LeftTop.Y);
         sf::Vector2f top_left_world_position = Screen->RenderTarget.mapPixelToCoords(sf::Vector2i(
             left_screen_position,
             top_screen_position));
@@ -51,8 +73,8 @@ namespace GRAPHICS
         sf::RectangleShape renderable_rectangle;
         renderable_rectangle.setFillColor(sf::Color(color.Red, color.Green, color.Blue));
 
-        float width = rectangle.GetWidth();
-        float height = rectangle.GetHeight();
+        float width = rectangle.Width();
+        float height = rectangle.Height();
         renderable_rectangle.setSize(sf::Vector2f(width, height));
 
         renderable_rectangle.setPosition(top_left_world_position);
@@ -142,10 +164,10 @@ namespace GRAPHICS
     {
         // CREATE A SPRITE FOR THE ICON USING THE TEXTURE INFORMATION.
         sf::IntRect texture_rectangle;
-        texture_rectangle.top = static_cast<int>(texture_sub_rectangle.GetTopYPosition());
-        texture_rectangle.left = static_cast<int>(texture_sub_rectangle.GetLeftXPosition());
-        texture_rectangle.width = static_cast<int>(texture_sub_rectangle.GetWidth());
-        texture_rectangle.height = static_cast<int>(texture_sub_rectangle.GetHeight());
+        texture_rectangle.top = static_cast<int>(texture_sub_rectangle.LeftTop.Y);
+        texture_rectangle.left = static_cast<int>(texture_sub_rectangle.LeftTop.X);
+        texture_rectangle.width = static_cast<int>(texture_sub_rectangle.Width());
+        texture_rectangle.height = static_cast<int>(texture_sub_rectangle.Height());
         sf::Sprite gui_icon(texture.TextureResource, texture_rectangle);
 
         // POSITION THE GUI ICON SPRITE.
@@ -185,6 +207,54 @@ namespace GRAPHICS
 
         // RENDER THE GUI ICON.
         Screen->RenderTarget.draw(gui_icon);
+    }
+
+    /// Renders text to the screen.
+    /// @param[in]  text - The text to render.
+    void Renderer::Render(const GUI::Text& text)
+    {
+        // RENDER THE TEXT TO THE CONSOLE IF NO FONT EXISTS.
+        // This is intended primarily to provide debug support.
+        auto id_with_font = Fonts.find(text.FontId);
+        bool font_exists = (id_with_font != Fonts.cend()) && (nullptr != id_with_font->second);
+        if (!font_exists)
+        {
+            DEBUGGING::DebugConsole::WriteLine(text.String);
+            return;
+        }
+
+        // RENDER EACH CHARACTER OF THE TEXT.
+        auto font = id_with_font->second;
+        MATH::Vector2f current_character_left_top_screen_position = text.LeftTopPosition;
+        for (unsigned int character_index = 0; character_index < text.String.size(); ++character_index)
+        {
+            // GET THE GLYPH FOR THE CURRENT CHARACTER.
+            const char character = text.String.at(character_index);
+            GUI::Glyph glyph = font->GetGlyph(character);
+
+            // CREATE A SPRITE FOR THE CURRENT GLYPH.
+            sf::IntRect texture_rectangle = glyph.TextureSubRectangle.ToSfmlRectangle<int>();
+            sf::Sprite current_character_sprite(glyph.Texture->TextureResource, texture_rectangle);
+            current_character_sprite.setPosition(
+                current_character_left_top_screen_position.X,
+                current_character_left_top_screen_position.Y);
+            current_character_sprite.setScale(text.ScaleFactor, text.ScaleFactor);
+
+            // CONFIGURE THE RENDER TARGET FOR SCREEN-SPACE RENDERING.
+            sf::View screen_space_view = Screen->RenderTarget.getDefaultView();
+            Screen->RenderTarget.setView(screen_space_view);
+
+            // RENDER THE CURRENT GLYPH.
+            sf::RenderStates render_states = ConfigureColoredTextShader(text.Color);
+            Screen->RenderTarget.draw(current_character_sprite, render_states);
+
+            // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
+            // One pixel of spacing on each side of a character should be rendered for better readability.
+            constexpr float SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER = 2.0f;
+            float glyph_width = glyph.TextureSubRectangle.Width();
+            float scaled_glyph_width = text.ScaleFactor * glyph_width;
+            current_character_left_top_screen_position.X += scaled_glyph_width + SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
+        }
     }
 
     /// Renders text to the screen at the specified position.
@@ -241,7 +311,7 @@ namespace GRAPHICS
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
             // One pixel of spacing on each side of a character should be rendered for better readability.
             constexpr float SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER = 2.0f;
-            float glyph_width = glyph.TextureSubRectangle.GetWidth();
+            float glyph_width = glyph.TextureSubRectangle.Width();
             float scaled_glyph_width = text_scale_ratio * glyph_width;
             current_character_left_top_screen_position.X += scaled_glyph_width + SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
         }
@@ -273,7 +343,7 @@ namespace GRAPHICS
         // New lines will be created that ensure that words aren't broken up across
         // lines (assuming that each word can fit on a single line).
         std::vector<std::string> new_lines_of_text;
-        float line_width_in_pixels = bounding_screen_rectangle.GetWidth();
+        float line_width_in_pixels = bounding_screen_rectangle.Width();
         float glyph_width_in_pixels = GUI::Glyph::WidthInPixels<float>(text_scale_ratio);
         unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / glyph_width_in_pixels);
         for (const auto& line : original_lines_from_text)
@@ -301,9 +371,9 @@ namespace GRAPHICS
                 else
                 {
                     // CHECK IF THE CURRENT LINE CAN HANDLE THE NEXT WORD.
-                    size_t current_line_width_in_pixels = GUI::Glyph::TextWidthInPixels<size_t>(current_new_line, text_scale_ratio);
-                    size_t space_character_width_in_pixels = GUI::Glyph::TextWidthInPixels<size_t>(" ", text_scale_ratio);
-                    size_t next_word_width_in_pixels = GUI::Glyph::TextWidthInPixels<size_t>(next_word, text_scale_ratio);
+                    size_t current_line_width_in_pixels = GUI::Text::Width<size_t>(current_new_line, text_scale_ratio);
+                    size_t space_character_width_in_pixels = GUI::Text::Width<size_t>(" ", text_scale_ratio);
+                    size_t next_word_width_in_pixels = GUI::Text::Width<size_t>(next_word, text_scale_ratio);
                     size_t line_width_with_next_word_in_characters = 
                         current_line_width_in_pixels + 
                         space_character_width_in_pixels + 
@@ -343,8 +413,8 @@ namespace GRAPHICS
         }
 
         // RENDER EACH LINE OF TEXT.
-        float bounding_rectangle_left_x_screen_position = bounding_screen_rectangle.GetLeftXPosition();
-        float bounding_rectangle_top_y_screen_position = bounding_screen_rectangle.GetTopYPosition();
+        float bounding_rectangle_left_x_screen_position = bounding_screen_rectangle.LeftTop.X;
+        float bounding_rectangle_top_y_screen_position = bounding_screen_rectangle.LeftTop.Y;
         MATH::Vector2f current_line_left_top_screen_position(
             bounding_rectangle_left_x_screen_position,
             bounding_rectangle_top_y_screen_position);
@@ -385,7 +455,7 @@ namespace GRAPHICS
         // New lines will be created that ensure that words aren't broken up across
         // lines (assuming that each word can fit on a single line).
         std::vector<std::string> new_lines_of_text;
-        float line_width_in_pixels = bounding_screen_rectangle.GetWidth();
+        float line_width_in_pixels = bounding_screen_rectangle.Width();
         float glyph_width_in_pixels = GUI::Glyph::WidthInPixels<float>(text_scale_ratio);
         unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / glyph_width_in_pixels);
         for (const auto& line : original_lines_from_text)
@@ -454,17 +524,17 @@ namespace GRAPHICS
         }
 
         // CALCULATE THE STARTING POSITION FOR THE FIRST LINE.
-        float bounding_rectangle_left_x_screen_position = bounding_screen_rectangle.GetLeftXPosition();
+        float bounding_rectangle_left_x_screen_position = bounding_screen_rectangle.LeftTop.X;
         
         // The starting y-position for the first line is offset from the bounding rectangle's
         // top y-position such that half of the unused space appears before and after the text.
-        unsigned int bounding_rectangle_height_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetHeight());
+        unsigned int bounding_rectangle_height_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.Height());
         size_t new_line_count = new_lines_of_text.size();
         unsigned int glyph_height_in_pixels = GUI::Glyph::HeightInPixels<unsigned int>(text_scale_ratio);
         size_t total_text_height_in_pixels = new_line_count * GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS;
         size_t unused_vertical_space_in_pixels = bounding_rectangle_height_in_pixels - total_text_height_in_pixels;
         size_t half_of_unused_vertical_space_in_pixels = unused_vertical_space_in_pixels / 2;
-        float bounding_rectangle_top_y_screen_position = bounding_screen_rectangle.GetTopYPosition();
+        float bounding_rectangle_top_y_screen_position = bounding_screen_rectangle.LeftTop.Y;
         float first_line_top_y_screen_position = bounding_rectangle_top_y_screen_position + half_of_unused_vertical_space_in_pixels;
 
         MATH::Vector2f current_line_left_top_screen_position(
@@ -475,11 +545,11 @@ namespace GRAPHICS
         for (const auto& line : new_lines_of_text)
         {
             // CENTER THE CURRENT LINE HORIZONTALLY.
-            unsigned int current_line_width_in_pixels = GUI::Glyph::TextWidthInPixels<unsigned int>(line, text_scale_ratio);
-            unsigned int bounding_rectangle_width_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.GetWidth());
+            unsigned int current_line_width_in_pixels = GUI::Text::Width<unsigned int>(line, text_scale_ratio);
+            unsigned int bounding_rectangle_width_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.Width());
             unsigned int unused_space_on_current_line_in_pixels = bounding_rectangle_width_in_pixels - current_line_width_in_pixels;
             unsigned int half_of_unused_space_on_current_line_in_pixels = unused_space_on_current_line_in_pixels / 2;
-            current_line_left_top_screen_position.X = bounding_screen_rectangle.GetLeftXPosition();
+            current_line_left_top_screen_position.X = bounding_screen_rectangle.LeftTop.X;
             current_line_left_top_screen_position.X += half_of_unused_space_on_current_line_in_pixels;
 
             // RENDER THE CURRENT LINE.
@@ -515,12 +585,12 @@ namespace GRAPHICS
         border.setOutlineColor(sf::Color(border_color.Red, border_color.Green, border_color.Blue));
         border.setOutlineThickness(border_thickness_in_pixels);
 
-        float box_width_in_pixels = bounding_screen_rectangle.GetWidth();
-        float box_height_in_pixels = bounding_screen_rectangle.GetHeight();
+        float box_width_in_pixels = bounding_screen_rectangle.Width();
+        float box_height_in_pixels = bounding_screen_rectangle.Height();
         border.setSize(sf::Vector2f(box_width_in_pixels, box_height_in_pixels));
 
-        float box_left_x_position_in_pixels = bounding_screen_rectangle.GetLeftXPosition();
-        float box_top_y_position_in_pixels = bounding_screen_rectangle.GetTopYPosition();
+        float box_left_x_position_in_pixels = bounding_screen_rectangle.LeftTop.X;
+        float box_top_y_position_in_pixels = bounding_screen_rectangle.LeftTop.Y;
         border.setPosition(box_left_x_position_in_pixels, box_top_y_position_in_pixels);
 
         Screen->RenderTarget.draw(border);
@@ -547,13 +617,13 @@ namespace GRAPHICS
     void Renderer::Render(const MAPS::MultiTileMapGrid& tile_map_grid)
     {
         MATH::FloatRectangle camera_bounds = Camera.ViewBounds;
-        MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
+        MATH::Vector2f camera_view_center = camera_bounds.Center();
 
         /// @note   This view only needs to be set here.
         /// Private methods assume it has already been set.
         sf::View camera_view;
         camera_view.setCenter(camera_view_center.X, camera_view_center.Y);
-        camera_view.setSize(camera_bounds.GetWidth(), camera_bounds.GetHeight());
+        camera_view.setSize(camera_bounds.Width(), camera_bounds.Height());
         Screen->RenderTarget.setView(camera_view);
 
         // GET THE CURRENT TILE MAP.

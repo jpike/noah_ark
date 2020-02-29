@@ -35,7 +35,7 @@ namespace COLLISION
             float move_distance_this_iteration = std::min(distance_left_to_move, INCREMENTAL_MOVE_DISTANCE_IN_PIXELS);
 
             // CALCULATE THE NEW POSITION OF THE OBJECT FOR THIS ITERATION.
-            MATH::Vector2f object_original_center_world_position = object_current_bounding_box.GetCenterPosition();
+            MATH::Vector2f object_original_center_world_position = object_current_bounding_box.Center();
             MATH::Vector2f remaining_move_vector = MATH::Vector2f::Scale(move_distance_this_iteration, unit_move_vector);
             MATH::Vector2f object_center_world_position = object_original_center_world_position + remaining_move_vector;
             MATH::FloatRectangle object_new_bounding_box = object_current_bounding_box;
@@ -48,7 +48,7 @@ namespace COLLISION
             {
                 // RETURN THE OBJECT'S CURRENT UPDATED WORLD POSITION.
                 // It can't move any further if there isn't a tile underneath it.
-                MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                MATH::Vector2f new_center_world_position = object_current_bounding_box.Center();
                 return new_center_world_position;
             }
 
@@ -58,7 +58,7 @@ namespace COLLISION
             {
                 // RETURN THE OBJECT'S CURRENT UPDATED WORLD POSITION.
                 // It can't move any further if the tile can't be moved over.
-                MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                MATH::Vector2f new_center_world_position = object_current_bounding_box.Center();
                 return new_center_world_position;
             }
 
@@ -75,7 +75,7 @@ namespace COLLISION
                     // in which case movement should not be stopped.
                     // If the object is closer to the tree, then the object was moving toward the tree.
                     // Otherwise, the object was moving away and should be allowed to move.
-                    MATH::Vector2f tree_center_world_position = tree_rectangle.GetCenterPosition();
+                    MATH::Vector2f tree_center_world_position = tree_rectangle.Center();
                     MATH::Vector2f original_tree_to_object_vector = tree_center_world_position - object_original_center_world_position;
                     float original_tree_to_object_distance = original_tree_to_object_vector.Length();
                     MATH::Vector2f new_tree_to_object_vector = tree_center_world_position - object_center_world_position;
@@ -88,14 +88,14 @@ namespace COLLISION
                         // If not moving completely horizontally or vertically, the object may be able
                         // to move a little bit alongside the tree.  Doing this kind of check here
                         // helps prevent objects from getting stuck.
-                        float tree_top_y_world_position = tree_rectangle.GetTopYPosition();
-                        float tree_bottom_y_world_position = tree_rectangle.GetBottomYPosition();
-                        float tree_left_x_world_position = tree_rectangle.GetLeftXPosition();
-                        float tree_right_x_world_position = tree_rectangle.GetRightXPosition();
-                        float object_new_top_y_world_position = object_new_bounding_box.GetTopYPosition();
-                        float object_new_bottom_y_world_position = object_new_bounding_box.GetBottomYPosition();
-                        float object_new_left_x_world_position = object_new_bounding_box.GetLeftXPosition();
-                        float object_new_right_x_world_position = object_new_bounding_box.GetRightXPosition();
+                        float tree_top_y_world_position = tree_rectangle.LeftTop.Y;
+                        float tree_bottom_y_world_position = tree_rectangle.RightBottom.Y;
+                        float tree_left_x_world_position = tree_rectangle.LeftTop.X;
+                        float tree_right_x_world_position = tree_rectangle.RightBottom.X;
+                        float object_new_top_y_world_position = object_new_bounding_box.LeftTop.Y;
+                        float object_new_bottom_y_world_position = object_new_bounding_box.RightBottom.Y;
+                        float object_new_left_x_world_position = object_new_bounding_box.LeftTop.X;
+                        float object_new_right_x_world_position = object_new_bounding_box.RightBottom.X;
                         // 5 cases for the object colliding with the left or right side of the tree:
                         // - Object center y completely within tree bounds.
                         // - Object top y is above tree, object bottom y is below top of tree, and object center right of tree.
@@ -165,14 +165,14 @@ namespace COLLISION
                         if (object_collided_horizontally_with_tree)
                         {
                             // ONLY MOVE THE OBJECT VERTICALLY.
-                            MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                            MATH::Vector2f new_center_world_position = object_current_bounding_box.Center();
                             new_center_world_position.Y = object_center_world_position.Y;
                             return new_center_world_position;
                         }
                         else if (object_collided_vertically_with_tree)
                         {
                             // ONLY MOVE THE OBJECT HORIZONTALLY.
-                            MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                            MATH::Vector2f new_center_world_position = object_current_bounding_box.Center();
                             new_center_world_position.X = object_center_world_position.X;
                             return new_center_world_position;
                         }
@@ -181,7 +181,7 @@ namespace COLLISION
                             // RETURN THE OBJECT'S CURRENT UPDATED WORLD POSITION.
                             // Assume the tree is completely blocking movement.
                             // It can't move any further if there a tree is in the way.
-                            MATH::Vector2f new_center_world_position = object_current_bounding_box.GetCenterPosition();
+                            MATH::Vector2f new_center_world_position = object_current_bounding_box.Center();
                             return new_center_world_position;
                         }
                     }
@@ -196,7 +196,7 @@ namespace COLLISION
         }
 
         // RETURN THE OBJECT'S FINAL NEW WORLD POSITION.
-        MATH::Vector2f final_center_world_position = object_current_bounding_box.GetCenterPosition();
+        MATH::Vector2f final_center_world_position = object_current_bounding_box.Center();
         return final_center_world_position;
     }
 
@@ -221,7 +221,7 @@ namespace COLLISION
         COLLISION::Movement movement(direction, movement_distance_in_pixels);
 
         // SIMULATE MOVEMENT BASED ON THE PARTICULAR DIRECTION.
-        MATH::Vector2f new_world_position = object_world_bounding_box.GetCenterPosition();
+        MATH::Vector2f new_world_position = object_world_bounding_box.Center();
         switch (direction)
         {
             case CORE::Direction::UP:
@@ -307,7 +307,7 @@ namespace COLLISION
     {
         // INITIALIZE THE NEW POSITION FOR THE OBJECT.
         // The object should remain at its current position if no movement occurs.
-        MATH::Vector2f object_new_world_position = object_world_bounding_box.GetCenterPosition();
+        MATH::Vector2f object_new_world_position = object_world_bounding_box.Center();
 
         // VERIFY THAT THE MOVEMENT IS FOR THE 'UP' DIRECTION.
         bool movement_for_up_direction = (CORE::Direction::UP == movement.Direction);
@@ -325,22 +325,22 @@ namespace COLLISION
         while (distance_left_to_move > 0.0f)
         {
             // GET THE CURRENT TILES THAT THE TOP OF THE OBJECT'S BOUNDING BOX IS TOUCHING.
-            float collision_box_top_y_position = object_current_bounding_box.GetTopYPosition();
+            float collision_box_top_y_position = object_current_bounding_box.LeftTop.Y;
 
             // Get the tile for the top-left corner.
-            float collision_box_left_x_position = object_current_bounding_box.GetLeftXPosition();
+            float collision_box_left_x_position = object_current_bounding_box.LeftTop.X;
             // The horizonal tiles retrieved will be adjusted so that small corners touching won't be detected as collisions.
-            float collision_box_width = object_current_bounding_box.GetWidth();
+            float collision_box_width = object_current_bounding_box.Width();
             float horizontal_corner_tiles_adjustment_amount = collision_box_width / 4.0f;
             collision_box_left_x_position += horizontal_corner_tiles_adjustment_amount;
             std::shared_ptr<MAPS::Tile> top_left_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_top_y_position);
 
             // Get the tile right above the collision box's center.
-            float collison_box_center_x_position = object_current_bounding_box.GetCenterXPosition();
+            float collison_box_center_x_position = object_current_bounding_box.CenterX();
             std::shared_ptr<MAPS::Tile> top_center_tile = tile_map_grid.GetTileAtWorldPosition(collison_box_center_x_position, collision_box_top_y_position);
 
             // Get the tile for the top-right corner.
-            float collision_box_right_x_position = object_current_bounding_box.GetRightXPosition();
+            float collision_box_right_x_position = object_current_bounding_box.RightBottom.X;
             collision_box_right_x_position -= horizontal_corner_tiles_adjustment_amount;
             std::shared_ptr<MAPS::Tile> top_right_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_top_y_position);
 
@@ -370,17 +370,17 @@ namespace COLLISION
                 // in which case movement should not be stopped.
                 // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
                 const float MIN_UP_MOVEMENT = -1.0f;
-                float old_collision_box_bottom = object_current_bounding_box.GetBottomYPosition();
-                float old_collision_box_top = object_current_bounding_box.GetTopYPosition();
+                float old_collision_box_bottom = object_current_bounding_box.RightBottom.Y;
+                float old_collision_box_top = object_current_bounding_box.LeftTop.Y;
                 float new_collision_box_top = old_collision_box_top + MIN_UP_MOVEMENT;
-                float tree_bottom = tree_rectangle.GetBottomYPosition();
+                float tree_bottom = tree_rectangle.RightBottom.Y;
 
                 // A minimum distance between the collision box's center and the tree's
                 // center is enforced so that moving objects don't get stuck on
                 // parts of trees not directly related to their current movement.
-                float min_object_tree_distance = tree_rectangle.GetWidth() / 2.0f;
-                float object_center_x = object_current_bounding_box.GetCenterXPosition();
-                float tree_center_x = tree_rectangle.GetCenterXPosition();
+                float min_object_tree_distance = tree_rectangle.Width() / 2.0f;
+                float object_center_x = object_current_bounding_box.CenterX();
+                float tree_center_x = tree_rectangle.CenterX();
                 float object_to_tree_distance = fabs(object_center_x - tree_center_x);
                 bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
 
@@ -427,7 +427,7 @@ namespace COLLISION
         }
 
         // RETURN THE OBJECT'S NEW POSITION.
-        object_new_world_position = object_current_bounding_box.GetCenterPosition();
+        object_new_world_position = object_current_bounding_box.Center();
         return object_new_world_position;
     }
 
@@ -444,7 +444,7 @@ namespace COLLISION
     {
         // INITIALIZE THE NEW POSITION OF THE OBJECT.
         // The object should remain at its current position if no movement occurs.
-        MATH::Vector2f object_new_world_position = object_world_bounding_box.GetCenterPosition();
+        MATH::Vector2f object_new_world_position = object_world_bounding_box.Center();
 
         // VERIFY THAT THE MOVEMENT IS FOR THE 'DOWN' DIRECTION.
         bool movement_for_down_direction = (CORE::Direction::DOWN == movement.Direction);
@@ -462,24 +462,24 @@ namespace COLLISION
         while (distance_left_to_move > 0.0f)
         {
             // GET THE CURRENT TILES THAT THE BOTTOM OF THE OBJECT'S BOUNDING BOX IS TOUCHING.
-            float collision_box_bottom_y_position = object_current_bounding_box.GetBottomYPosition();
+            float collision_box_bottom_y_position = object_current_bounding_box.RightBottom.Y;
 
             // The horizonal tiles retrieved will be adjusted so that small corners touching won't be detected as collisions.
             // We will adjust the corners to move them closer to the center of the collision box.
-            float collision_box_width = object_current_bounding_box.GetWidth();
+            float collision_box_width = object_current_bounding_box.Width();
             float horizontal_corner_tiles_adjustment_amount = collision_box_width / 4.0f;
 
             // Get the tile for the bottom-left corner.
-            float collision_box_left_x_position = object_current_bounding_box.GetLeftXPosition();
+            float collision_box_left_x_position = object_current_bounding_box.LeftTop.X;
             collision_box_left_x_position += horizontal_corner_tiles_adjustment_amount;
             std::shared_ptr<MAPS::Tile> bottom_left_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_bottom_y_position);
 
             // Get the tile right below the collision box's center.
-            float collison_box_center_x_position = object_current_bounding_box.GetCenterXPosition();
+            float collison_box_center_x_position = object_current_bounding_box.CenterX();
             std::shared_ptr<MAPS::Tile> bottom_center_tile = tile_map_grid.GetTileAtWorldPosition(collison_box_center_x_position, collision_box_bottom_y_position);
 
             // Get the tile for the bottom-right corner.
-            float collision_box_right_x_position = object_current_bounding_box.GetRightXPosition();
+            float collision_box_right_x_position = object_current_bounding_box.RightBottom.X;
             collision_box_right_x_position -= horizontal_corner_tiles_adjustment_amount;
             std::shared_ptr<MAPS::Tile> bottom_right_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_bottom_y_position);
 
@@ -509,17 +509,17 @@ namespace COLLISION
                 // in which case movement should not be stopped.
                 // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
                 const float MIN_DOWN_MOVEMENT = 1.0f;
-                float old_collision_box_top = object_current_bounding_box.GetTopYPosition();
-                float old_collision_box_bottom = object_current_bounding_box.GetBottomYPosition();
+                float old_collision_box_top = object_current_bounding_box.LeftTop.Y;
+                float old_collision_box_bottom = object_current_bounding_box.RightBottom.Y;
                 float new_collision_box_bottom = old_collision_box_bottom + MIN_DOWN_MOVEMENT;
-                float tree_top = tree_rectangle.GetTopYPosition();
+                float tree_top = tree_rectangle.LeftTop.Y;
 
                 // A minimum distance between the collision box's center and the tree's
                 // center is enforced so that moving objects don't get stuck on
                 // parts of trees not directly related to their current movement.
-                float min_object_tree_distance = tree_rectangle.GetWidth() / 2.0f;
-                float object_center_x = object_current_bounding_box.GetCenterXPosition();
-                float tree_center_x = tree_rectangle.GetCenterXPosition();
+                float min_object_tree_distance = tree_rectangle.Width() / 2.0f;
+                float object_center_x = object_current_bounding_box.CenterX();
+                float tree_center_x = tree_rectangle.CenterX();
                 float object_to_tree_distance = fabs(object_center_x - tree_center_x);
                 bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
 
@@ -566,7 +566,7 @@ namespace COLLISION
         }
 
         // RETURN THE OBJECT'S NEW POSITION.
-        object_new_world_position = object_current_bounding_box.GetCenterPosition();
+        object_new_world_position = object_current_bounding_box.Center();
         return object_new_world_position;
     }
 
@@ -583,7 +583,7 @@ namespace COLLISION
     {
         // INITIALIZE THE NEW POSITION FOR THE OBJECT.
         // The object should remain at its current position if no movement occurs.
-        MATH::Vector2f object_new_world_position = object_world_bounding_box.GetCenterPosition();
+        MATH::Vector2f object_new_world_position = object_world_bounding_box.Center();
 
         // VERIFY THAT THE MOVEMENT IS FOR THE 'LEFT' DIRECTION.
         bool movement_for_left_direction = (CORE::Direction::LEFT == movement.Direction);
@@ -601,24 +601,24 @@ namespace COLLISION
         while (distance_left_to_move > 0.0f)
         {
             // GET THE CURRENT TILES THAT THE LEFT OF THE OBJECT'S BOUNDING BOX IS TOUCHING.
-            float collision_box_left_x_position = object_current_bounding_box.GetLeftXPosition();
+            float collision_box_left_x_position = object_current_bounding_box.LeftTop.X;
 
             // The vertical tiles retrieved will be adjusted so that small corners touching won't be detected as collisions.
             // We will adjust the corners to move them closer to the center of the collision box.
-            float collision_box_height = object_current_bounding_box.GetHeight();
+            float collision_box_height = object_current_bounding_box.Height();
             float vertical_corner_tiles_adjustment_amount = collision_box_height / 4.0f;
 
             // Get the tile for the top-left corner.
-            float collision_box_top_y_position = object_current_bounding_box.GetTopYPosition();
+            float collision_box_top_y_position = object_current_bounding_box.LeftTop.Y;
             collision_box_top_y_position += vertical_corner_tiles_adjustment_amount;
             std::shared_ptr<MAPS::Tile> top_left_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_top_y_position);
 
             // Get the tile to the direct left of the collision box's center.
-            float collision_box_center_y_position = object_current_bounding_box.GetCenterYPosition();
+            float collision_box_center_y_position = object_current_bounding_box.CenterY();
             std::shared_ptr<MAPS::Tile> center_left_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_center_y_position);
 
             // Get the tile for the bottom-left corner.
-            float collision_box_bottom_y_position = object_current_bounding_box.GetBottomYPosition();
+            float collision_box_bottom_y_position = object_current_bounding_box.RightBottom.Y;
             collision_box_bottom_y_position -= vertical_corner_tiles_adjustment_amount;
             std::shared_ptr<MAPS::Tile> bottom_left_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_left_x_position, collision_box_bottom_y_position);
 
@@ -648,17 +648,17 @@ namespace COLLISION
                 // in which case movement should not be stopped.
                 // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
                 const float MIN_LEFT_MOVEMENT = -1.0f;
-                float old_collision_box_right = object_current_bounding_box.GetRightXPosition();
-                float old_collision_box_left = object_current_bounding_box.GetLeftXPosition();
+                float old_collision_box_right = object_current_bounding_box.RightBottom.X;
+                float old_collision_box_left = object_current_bounding_box.LeftTop.X;
                 float new_collision_box_left = old_collision_box_left + MIN_LEFT_MOVEMENT;
-                float tree_right = tree_rectangle.GetRightXPosition();
+                float tree_right = tree_rectangle.RightBottom.X;
 
                 // A minimum distance between the collision box's center and the tree's
                 // center is enforced so that moving objects don't get stuck on
                 // parts of trees not directly related to their current movement.
-                float min_object_tree_distance = tree_rectangle.GetHeight() / 2.0f;
-                float object_center_y = object_current_bounding_box.GetCenterYPosition();
-                float tree_center_y = tree_rectangle.GetCenterYPosition();
+                float min_object_tree_distance = tree_rectangle.Height() / 2.0f;
+                float object_center_y = object_current_bounding_box.CenterY();
+                float tree_center_y = tree_rectangle.CenterY();
                 float object_to_tree_distance = fabs(object_center_y - tree_center_y);
                 bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
 
@@ -703,7 +703,7 @@ namespace COLLISION
         }
 
         // RETURN THE OBJECT'S NEW POSITION.
-        object_new_world_position = object_current_bounding_box.GetCenterPosition();
+        object_new_world_position = object_current_bounding_box.Center();
         return object_new_world_position;
     }
 
@@ -720,7 +720,7 @@ namespace COLLISION
     {
         // INITIALIZE THE NEW POSITION FOR THE OBJECT.
         // The object should remain at its current position if no movement occurs.
-        MATH::Vector2f object_new_world_position = object_world_bounding_box.GetCenterPosition();
+        MATH::Vector2f object_new_world_position = object_world_bounding_box.Center();
 
         // VERIFY THAT THE MOVEMENT IS FOR THE 'RIGHT' DIRECTION.
         bool movement_for_right_direction = (CORE::Direction::RIGHT == movement.Direction);
@@ -738,24 +738,24 @@ namespace COLLISION
         while (distance_left_to_move > 0.0f)
         {
             // GET THE CURRENT TILES THAT THE RIGHT OF THE OBJECT'S BOUNDING BOX IS TOUCHING.
-            float collision_box_right_x_position = object_current_bounding_box.GetRightXPosition();
+            float collision_box_right_x_position = object_current_bounding_box.RightBottom.X;
 
             // The vertical tiles retrieved will be adjusted so that small corners touching won't be detected as collisions.
             // We will adjust the corners to move them closer to the center of the collision box.
-            float collision_box_height = object_current_bounding_box.GetHeight();
+            float collision_box_height = object_current_bounding_box.Height();
             float vertical_corner_tiles_adjustment_amount = collision_box_height / 4.0f;
 
             // Get the tile for the top-right corner.
-            float collision_box_top_y_position = object_current_bounding_box.GetTopYPosition();
+            float collision_box_top_y_position = object_current_bounding_box.LeftTop.Y;
             collision_box_top_y_position += vertical_corner_tiles_adjustment_amount;
             std::shared_ptr<MAPS::Tile> top_right_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_top_y_position);
 
             // Get the tile to the direct right of the collision box's center.
-            float collision_box_center_y_position = object_current_bounding_box.GetCenterYPosition();
+            float collision_box_center_y_position = object_current_bounding_box.CenterY();
             std::shared_ptr<MAPS::Tile> center_right_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_center_y_position);
 
             // Get the tile for the bottom-right corner.
-            float collision_box_bottom_y_position = object_current_bounding_box.GetBottomYPosition();
+            float collision_box_bottom_y_position = object_current_bounding_box.RightBottom.Y;
             collision_box_bottom_y_position -= vertical_corner_tiles_adjustment_amount;
             std::shared_ptr<MAPS::Tile> bottom_right_tile = tile_map_grid.GetTileAtWorldPosition(collision_box_right_x_position, collision_box_bottom_y_position);
 
@@ -785,17 +785,17 @@ namespace COLLISION
                 // in which case movement should not be stopped.
                 // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
                 const float MIN_RIGHT_MOVEMENT = 1.0f;
-                float old_collision_box_left = object_current_bounding_box.GetLeftXPosition();
-                float old_collision_box_right = object_current_bounding_box.GetRightXPosition();
+                float old_collision_box_left = object_current_bounding_box.LeftTop.X;
+                float old_collision_box_right = object_current_bounding_box.RightBottom.X;
                 float new_collision_box_right = old_collision_box_right + MIN_RIGHT_MOVEMENT;
-                float tree_left = tree_rectangle.GetLeftXPosition();
+                float tree_left = tree_rectangle.LeftTop.X;
 
                 // A minimum distance between the collision box's center and the tree's
                 // center is enforced so that moving objects don't get stuck on
                 // parts of trees not directly related to their current movement.
-                float min_object_tree_distance = tree_rectangle.GetHeight() / 2.0f;
-                float object_center_y = object_current_bounding_box.GetCenterYPosition();
-                float tree_center_y = tree_rectangle.GetCenterYPosition();
+                float min_object_tree_distance = tree_rectangle.Height() / 2.0f;
+                float object_center_y = object_current_bounding_box.CenterY();
+                float tree_center_y = tree_rectangle.CenterY();
                 float object_to_tree_distance = fabs(object_center_y - tree_center_y);
                 bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
 
@@ -841,7 +841,7 @@ namespace COLLISION
         }
 
         // RETURN THE OBJECT'S NEW POSITION.
-        object_new_world_position = object_current_bounding_box.GetCenterPosition();
+        object_new_world_position = object_current_bounding_box.Center();
         return object_new_world_position;
     }
 
@@ -862,7 +862,7 @@ namespace COLLISION
         // one tile map.  Therefore, it should be safe to get just the tile map for the
         // axe blade's center.
         MATH::FloatRectangle axe_blade_bounds = axe.GetBladeBounds();
-        MATH::Vector2f axe_center_position = axe_blade_bounds.GetCenterPosition();
+        MATH::Vector2f axe_center_position = axe_blade_bounds.Center();
         MAPS::TileMap* tile_map = tile_map_grid.GetTileMap(axe_center_position.X, axe_center_position.Y);
         if (!tile_map)
         {
@@ -891,7 +891,7 @@ namespace COLLISION
                 {
                     // CALCULATE THE DESTINATION POSITION FOR THE FALLING FOOD.
                     // It should fall to directly below the tree.
-                    float tree_bottom_y_position = tree->Sprite.GetWorldBoundingBox().GetBottomYPosition();
+                    float tree_bottom_y_position = tree->Sprite.GetWorldBoundingBox().RightBottom.Y;
                     float food_height_in_pixels = tree->Food->Sprite.GetHeightInPixels();
                     float food_half_height_in_pixels = food_height_in_pixels / 2.0f;
                     MATH::Vector2f food_destination_world_position = tree->Food->Sprite.GetWorldPosition();
@@ -983,7 +983,7 @@ namespace COLLISION
         tree_rectangle = MATH::FloatRectangle();
 
         // GET THE TREES NEAR THE RECTANGLE.
-        MATH::Vector2f object_center_position = rectangle.GetCenterPosition();
+        MATH::Vector2f object_center_position = rectangle.Center();
         MAPS::TileMap* current_tile_map = tile_map_grid.GetTileMap(object_center_position.X, object_center_position.Y);
         bool tile_map_exists = (nullptr != current_tile_map);
         if (!tile_map_exists)
@@ -998,11 +998,11 @@ namespace COLLISION
             // SHRINK THE TREE'S BOUNDING BOX SO THAT OBJECTS DON'T GET CAUGHT ON EDGES.
             const float TREE_DIMENSION_SHRINK_AMOUNT = 2.0f;
             MATH::FloatRectangle tree_bounds = tree->GetWorldBoundingBox();
-            float new_tree_width = tree_bounds.GetWidth() - TREE_DIMENSION_SHRINK_AMOUNT;
-            float new_tree_height = tree_bounds.GetHeight() - TREE_DIMENSION_SHRINK_AMOUNT;
+            float new_tree_width = tree_bounds.Width() - TREE_DIMENSION_SHRINK_AMOUNT;
+            float new_tree_height = tree_bounds.Height() - TREE_DIMENSION_SHRINK_AMOUNT;
             MATH::FloatRectangle new_tree_bounds = MATH::FloatRectangle::FromCenterAndDimensions(
-                tree_bounds.GetCenterXPosition(),
-                tree_bounds.GetCenterYPosition(),
+                tree_bounds.CenterX(),
+                tree_bounds.CenterY(),
                 new_tree_width,
                 new_tree_height);
 

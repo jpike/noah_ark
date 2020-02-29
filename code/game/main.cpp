@@ -422,7 +422,7 @@ void PopulateArkInterior(RESOURCES::Assets& assets, MAPS::LayeredMultiTileMapGri
                                 ark_floor_exit_point.BoundingBox = tile_bounding_box;
                                 ark_floor_exit_point.NewMapGrid = next_map_layer;
                                 ark_floor_exit_point.NewTileMap = &above_tile_map;
-                                ark_floor_exit_point.NewPlayerWorldPosition = tile_bounding_box.GetCenterPosition();
+                                ark_floor_exit_point.NewPlayerWorldPosition = tile_bounding_box.Center();
 
                                 current_tile_map.ExitPoints.push_back(ark_floor_exit_point);
                             }
@@ -442,7 +442,7 @@ void PopulateArkInterior(RESOURCES::Assets& assets, MAPS::LayeredMultiTileMapGri
                                 ark_floor_exit_point.BoundingBox = tile_bounding_box;
                                 ark_floor_exit_point.NewMapGrid = previous_map_layer;
                                 ark_floor_exit_point.NewTileMap = &below_tile_map;
-                                ark_floor_exit_point.NewPlayerWorldPosition = tile_bounding_box.GetCenterPosition();
+                                ark_floor_exit_point.NewPlayerWorldPosition = tile_bounding_box.Center();
 
                                 current_tile_map.ExitPoints.push_back(ark_floor_exit_point);
                             }
@@ -475,8 +475,8 @@ std::shared_ptr<MAPS::World> LoadWorld(RESOURCES::Assets& assets)
     MAPS::TileMap* starting_ark_interior_tile_map = &starting_ark_map_grid.TileMaps(1, 0);
     // For now, this is hardcoded to an arbitrary place near the bottom of the starting tile map.
     MATH::FloatRectangle ark_interior_bounding_box = starting_ark_interior_tile_map->GetWorldBoundingBox();
-    float ark_interior_center_x_position = ark_interior_bounding_box.GetCenterXPosition();
-    float ark_interior_bottom_y_position = ark_interior_bounding_box.GetBottomYPosition();
+    float ark_interior_center_x_position = ark_interior_bounding_box.CenterX();
+    float ark_interior_bottom_y_position = ark_interior_bounding_box.RightBottom.Y;
     MATH::Vector2f ark_interior_bottom_center_position(ark_interior_center_x_position, ark_interior_bottom_y_position);
     MATH::Vector2f ark_interior_player_start_position = ark_interior_bottom_center_position;
     ark_interior_player_start_position.Y -= MAPS::Tile::DIMENSION_IN_PIXELS<float> * 3.0f;
@@ -520,8 +520,8 @@ std::shared_ptr<MAPS::World> LoadWorld(RESOURCES::Assets& assets)
                     ark_to_overworld_exit_point.BoundingBox = ark_interior_exit_point_bounding_box;
                     ark_to_overworld_exit_point.NewMapGrid = &world->Overworld;
                     ark_to_overworld_exit_point.NewTileMap = &overworld_tile_map;
-                    MATH::Vector2f overworld_exit_starting_position = ark_piece_bounding_box.GetCenterPosition();
-                    overworld_exit_starting_position.Y = ark_piece_bounding_box.GetBottomYPosition();
+                    MATH::Vector2f overworld_exit_starting_position = ark_piece_bounding_box.Center();
+                    overworld_exit_starting_position.Y = ark_piece_bounding_box.RightBottom.Y;
                     ark_to_overworld_exit_point.NewPlayerWorldPosition = overworld_exit_starting_position;
 
                     starting_ark_interior_tile_map->ExitPoints.push_back(ark_to_overworld_exit_point);

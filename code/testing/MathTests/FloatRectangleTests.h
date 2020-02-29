@@ -20,10 +20,10 @@ namespace FLOAT_RECTANGLE_TESTS
             HEIGHT);
 
         // VALIDATE THE RECTANGLE.
-        REQUIRE( CENTER_X_POSITION == testRectangle.GetCenterXPosition() );
-        REQUIRE( CENTER_Y_POSITION == testRectangle.GetCenterYPosition() );
-        REQUIRE( WIDTH == testRectangle.GetWidth() );
-        REQUIRE( HEIGHT == testRectangle.GetHeight() );
+        REQUIRE( CENTER_X_POSITION == testRectangle.CenterX() );
+        REQUIRE( CENTER_Y_POSITION == testRectangle.CenterY() );
+        REQUIRE( WIDTH == testRectangle.Width() );
+        REQUIRE( HEIGHT == testRectangle.Height() );
     }
 
     TEST_CASE( "Change the center position.", "[FloatRectangle][SetCenterPosition]" )
@@ -45,10 +45,10 @@ namespace FLOAT_RECTANGLE_TESTS
         testRectangle.SetCenterPosition(NEW_CENTER_X_POSITION, NEW_CENTER_Y_POSITION);
 
         // VALIDATE THE CHANGED RECTANGLE.
-        REQUIRE( NEW_CENTER_X_POSITION == testRectangle.GetCenterXPosition() );
-        REQUIRE( NEW_CENTER_Y_POSITION == testRectangle.GetCenterYPosition() );
-        REQUIRE( WIDTH == testRectangle.GetWidth() );
-        REQUIRE( HEIGHT == testRectangle.GetHeight() );
+        REQUIRE( NEW_CENTER_X_POSITION == testRectangle.CenterX() );
+        REQUIRE( NEW_CENTER_Y_POSITION == testRectangle.CenterY() );
+        REQUIRE( WIDTH == testRectangle.Width() );
+        REQUIRE( HEIGHT == testRectangle.Height() );
     }
 
 }

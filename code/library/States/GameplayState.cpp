@@ -129,7 +129,7 @@ namespace STATES
         {
             // MAKE SURE THE TILE MAP EDITOR GUI HAS THE CURRENT TILE MAP.
             MATH::FloatRectangle camera_bounds = camera.ViewBounds;
-            MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
+            MATH::Vector2f camera_view_center = camera_bounds.Center();
             MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(camera_view_center.X, camera_view_center.Y);
             TileMapEditorGui.CurrentTileMap = current_tile_map;
             
@@ -306,7 +306,7 @@ namespace STATES
     {
         // GET THE CURRENT TILE MAP.
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
-        MATH::Vector2f camera_view_center = camera_bounds.GetCenterPosition();
+        MATH::Vector2f camera_view_center = camera_bounds.Center();
         MAPS::TileMap* current_tile_map = map_grid.GetTileMap(camera_view_center.X, camera_view_center.Y);
         if (!current_tile_map)
         {
@@ -593,8 +593,8 @@ namespace STATES
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
                 MATH::FloatRectangle noah_world_bounding_box = NoahPlayer->GetWorldBoundingBox();
-                float camera_top_y_position = camera_bounds.GetTopYPosition();
-                bool player_moved_out_of_view = (noah_world_bounding_box.GetTopYPosition() < camera_top_y_position);
+                float camera_top_y_position = camera_bounds.LeftTop.Y;
+                bool player_moved_out_of_view = (noah_world_bounding_box.LeftTop.Y < camera_top_y_position);
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A TOP TILE MAP EXISTS FOR NOAH TO MOVE TO.
@@ -624,12 +624,12 @@ namespace STATES
                         // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
                         // Since there is no top tile map to scroll to, this will keep Noah on-screen.
                         MATH::FloatRectangle tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
-                        float tile_map_top_boundary = tile_map_bounding_box.GetTopYPosition();
+                        float tile_map_top_boundary = tile_map_bounding_box.LeftTop.Y;
 
                         // To keep Noah completely on screen, his center position should be half
                         // his height below the top tile map boundary.
                         MATH::Vector2f noah_world_position = old_noah_position;
-                        float noah_half_height = noah_world_bounding_box.GetHeight() / 2.0f;
+                        float noah_half_height = noah_world_bounding_box.Height() / 2.0f;
                         noah_world_position.Y = tile_map_top_boundary + noah_half_height;
 
                         NoahPlayer->SetWorldPosition(noah_world_position);
@@ -655,8 +655,8 @@ namespace STATES
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
                 MATH::FloatRectangle noah_world_bounding_box = NoahPlayer->GetWorldBoundingBox();
-                float camera_bottom_y_position = camera_bounds.GetBottomYPosition();
-                bool player_moved_out_of_view = (noah_world_bounding_box.GetBottomYPosition() > camera_bottom_y_position);
+                float camera_bottom_y_position = camera_bounds.RightBottom.Y;
+                bool player_moved_out_of_view = (noah_world_bounding_box.RightBottom.Y > camera_bottom_y_position);
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A BOTTOM TILE MAP EXISTS FOR NOAH TO MOVE TO.
@@ -686,12 +686,12 @@ namespace STATES
                         // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
                         // Since there is no bottom tile map to scroll to, this will keep Noah on-screen.
                         MATH::FloatRectangle tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
-                        float tile_map_bottom_boundary = tile_map_bounding_box.GetBottomYPosition();
+                        float tile_map_bottom_boundary = tile_map_bounding_box.RightBottom.Y;
 
                         // To keep Noah completely on screen, his center position should be half
                         // his height above the bottom tile map boundary.
                         MATH::Vector2f noah_world_position = old_noah_position;
-                        float noah_half_height = NoahPlayer->GetWorldBoundingBox().GetHeight() / 2.0f;
+                        float noah_half_height = NoahPlayer->GetWorldBoundingBox().Height() / 2.0f;
                         noah_world_position.Y = tile_map_bottom_boundary - noah_half_height;
 
                         NoahPlayer->SetWorldPosition(noah_world_position);
@@ -717,8 +717,8 @@ namespace STATES
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
                 MATH::FloatRectangle noah_world_bounding_box = NoahPlayer->GetWorldBoundingBox();
-                float camera_left_x_position = camera_bounds.GetLeftXPosition();
-                bool player_moved_out_of_view = (noah_world_bounding_box.GetLeftXPosition() < camera_left_x_position);
+                float camera_left_x_position = camera_bounds.LeftTop.X;
+                bool player_moved_out_of_view = (noah_world_bounding_box.LeftTop.X < camera_left_x_position);
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A LEFT TILE MAP EXISTS FOR NOAH TO MOVE TO.
@@ -748,12 +748,12 @@ namespace STATES
                         // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
                         // Since there is no left tile map to scroll to, this will keep Noah on-screen.
                         MATH::FloatRectangle tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
-                        float tile_map_left_boundary = tile_map_bounding_box.GetLeftXPosition();
+                        float tile_map_left_boundary = tile_map_bounding_box.LeftTop.X;
 
                         // To keep Noah completely on screen, his center position should be half
                         // his width to the right of the left tile map boundary.
                         MATH::Vector2f noah_world_position = old_noah_position;
-                        float noah_half_width = NoahPlayer->GetWorldBoundingBox().GetWidth() / 2.0f;
+                        float noah_half_width = NoahPlayer->GetWorldBoundingBox().Width() / 2.0f;
                         noah_world_position.X = tile_map_left_boundary + noah_half_width;
 
                         NoahPlayer->SetWorldPosition(noah_world_position);
@@ -779,8 +779,8 @@ namespace STATES
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
                 MATH::FloatRectangle noah_world_bounding_box = NoahPlayer->GetWorldBoundingBox();
-                float camera_right_x_position = camera_bounds.GetRightXPosition();
-                bool player_moved_out_of_view = (noah_world_bounding_box.GetRightXPosition() > camera_right_x_position);
+                float camera_right_x_position = camera_bounds.RightBottom.X;
+                bool player_moved_out_of_view = (noah_world_bounding_box.RightBottom.X > camera_right_x_position);
                 if (player_moved_out_of_view)
                 {
                     // CHECK IF A RIGHT TILE MAP EXISTS FOR NOAH TO MOVE TO.
@@ -810,12 +810,12 @@ namespace STATES
                         // KEEP NOAH WITHIN THE BOUNDS OF THE CURRENT TILE MAP.
                         // Since there is no right tile map to scroll to, this will keep Noah on-screen.
                         MATH::FloatRectangle tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
-                        float tile_map_right_boundary = tile_map_bounding_box.GetRightXPosition();
+                        float tile_map_right_boundary = tile_map_bounding_box.RightBottom.X;
 
                         // To keep Noah completely on screen, his center position should be half
                         // his width to the left of the right tile map boundary.
                         MATH::Vector2f noah_world_position = old_noah_position;
-                        float noah_half_width = NoahPlayer->GetWorldBoundingBox().GetWidth() / 2.0f;
+                        float noah_half_width = NoahPlayer->GetWorldBoundingBox().Width() / 2.0f;
                         noah_world_position.X = tile_map_right_boundary - noah_half_width;
 
                         NoahPlayer->SetWorldPosition(noah_world_position);
@@ -1001,8 +1001,8 @@ namespace STATES
             MATH::FloatRectangle wood_log_bounding_box = wood_logs->GetWorldBoundingBox();
             MATH::FloatRectangle noah_bounding_box = NoahPlayer->GetWorldBoundingBox();
             bool noah_collided_with_wood_logs = noah_bounding_box.Contains(
-                wood_log_bounding_box.GetCenterXPosition(),
-                wood_log_bounding_box.GetCenterYPosition());
+                wood_log_bounding_box.CenterX(),
+                wood_log_bounding_box.CenterY());
             if (noah_collided_with_wood_logs)
             {
                 // ADD THE WOOD TO NOAH'S INVENTORY.

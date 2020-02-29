@@ -39,7 +39,7 @@ namespace INVENTORY
         // DETERMINE THE LIST OF VERSES TO RENDER.
         // The list should generally have the currently selected verse in the middle and
         // show about an even number of verses on each side to fill the remaining space in the box.
-        unsigned int box_height_in_pixels = static_cast<unsigned int>(bounding_rectangle.GetHeight());
+        unsigned int box_height_in_pixels = static_cast<unsigned int>(bounding_rectangle.Height());
         const unsigned int ONE_LESS_VERSE_TO_AVOID_EXCEEDING_BOX_BOUNDS = 1;
         unsigned int verses_to_render_count = (box_height_in_pixels / GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS) - ONE_LESS_VERSE_TO_AVOID_EXCEEDING_BOX_BOUNDS;
         unsigned int verses_to_render_half_count = verses_to_render_count / 2;
@@ -63,9 +63,7 @@ namespace INVENTORY
         last_verse_to_render_index = std::min(last_verse_to_render_index, last_valid_verse_index);        
 
         // RENDER THE LIST OF VERSES.
-        MATH::Vector2f current_verse_screen_top_left_position_in_pixels(
-            bounding_rectangle.GetLeftXPosition(),
-            bounding_rectangle.GetTopYPosition());
+        MATH::Vector2f current_verse_screen_top_left_position_in_pixels = bounding_rectangle.LeftTop;
         for (unsigned int verse_index = first_verse_to_render_index;
             verse_index <= last_verse_to_render_index;
             ++verse_index)
@@ -77,9 +75,9 @@ namespace INVENTORY
                 // RENDER A DARKER BOX FOR THE SELECTED VERSE.
                 GRAPHICS::Color selected_verse_background_color = GRAPHICS::Color::RED_BROWN;
                 MATH::FloatRectangle selected_verse_background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
-                    bounding_rectangle.GetLeftXPosition(),
+                    bounding_rectangle.LeftTop.X,
                     current_verse_screen_top_left_position_in_pixels.Y,
-                    bounding_rectangle.GetWidth(),
+                    bounding_rectangle.Width(),
                     static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS));
                 renderer.RenderScreenRectangle(
                     selected_verse_background_rectangle,
@@ -101,7 +99,7 @@ namespace INVENTORY
             else
             {
                 // USE QUESTION MARKS FOR THE BIBLE VERSE.
-                unsigned int box_width_in_pixels = static_cast<unsigned int>(bounding_rectangle.GetWidth());
+                unsigned int box_width_in_pixels = static_cast<unsigned int>(bounding_rectangle.Width());
                 unsigned int character_count_per_line = (box_width_in_pixels / GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS);
                 bible_verse_display_string.assign(character_count_per_line, '?');
             }

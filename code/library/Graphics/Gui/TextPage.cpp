@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Graphics/Gui/Text.h"
 #include "Graphics/Gui/TextPage.h"
 
 namespace GRAPHICS
@@ -48,7 +49,7 @@ namespace GUI
 
         // CHECK IF THE CURRENT UNFILLED LINE OF TEXT CAN HOLD THE NEW WORD.
         std::string current_line_with_new_word = current_line_as_string + word;
-        size_t current_line_with_new_word_width_in_pixels = Glyph::TextWidthInPixels<size_t>(
+        size_t current_line_with_new_word_width_in_pixels = Text::Width<size_t>(
             current_line_with_new_word,
             TextPage::TEXT_SCALE_RATIO);
         size_t max_width_per_line_in_pixels = MaxCharacterCountPerLine * Glyph::DEFAULT_WIDTH_IN_PIXELS;

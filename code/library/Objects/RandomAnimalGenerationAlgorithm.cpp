@@ -42,10 +42,10 @@ namespace OBJECTS
 
         // DETERMINE THE LOCATION OF THE TILE MAP AT WHICH THE ANIMAL SHOULD BE PLACED.
         MATH::FloatRectangle tile_map_world_boundaries = tile_map.GetWorldBoundingBox();
-        float tile_map_left_x_position = tile_map_world_boundaries.GetLeftXPosition();
-        float tile_map_right_x_position = tile_map_world_boundaries.GetRightXPosition();
-        float tile_map_top_y_position = tile_map_world_boundaries.GetTopYPosition();
-        float tile_map_bottom_y_position = tile_map_world_boundaries.GetBottomYPosition();
+        float tile_map_left_x_position = tile_map_world_boundaries.LeftTop.X;
+        float tile_map_right_x_position = tile_map_world_boundaries.RightBottom.X;
+        float tile_map_top_y_position = tile_map_world_boundaries.LeftTop.Y;
+        float tile_map_bottom_y_position = tile_map_world_boundaries.RightBottom.Y;
         float random_x_position = random_number_generator.RandomInRange<float>(tile_map_left_x_position, tile_map_right_x_position);
         float random_y_position = random_number_generator.RandomInRange<float>(tile_map_top_y_position, tile_map_bottom_y_position);
         std::shared_ptr<MAPS::Tile> tile_at_animal_generation_point = tile_map.GetTileAtWorldPosition(

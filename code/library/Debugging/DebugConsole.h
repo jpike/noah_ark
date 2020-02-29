@@ -65,10 +65,10 @@ namespace DEBUGGING
     {
 #ifdef _DEBUG
         std::string rectangle_text =
-            std::to_string(rectangle.GetLeftXPosition()) + " " +
-            std::to_string(rectangle.GetTopYPosition()) + " " +
-            std::to_string(rectangle.GetRightXPosition()) + " " +
-            std::to_string(rectangle.GetBottomYPosition());
+            std::to_string(rectangle.LeftTop.X) + " " +
+            std::to_string(rectangle.LeftTop.Y) + " " +
+            std::to_string(rectangle.RightBottom.X) + " " +
+            std::to_string(rectangle.RightBottom.Y);
 
         WriteLine(prefix_text + rectangle_text);
 #endif

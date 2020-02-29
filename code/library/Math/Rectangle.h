@@ -36,31 +36,25 @@ namespace MATH
             const CoordinateType center_y_position,
             const CoordinateType width,
             const CoordinateType height);
-        explicit Rectangle();
+        explicit Rectangle() = default;
         explicit Rectangle(const sf::Rect<CoordinateType>& sfml_rectangle);
-        ~Rectangle();
 
         // OPERATORS.
         bool operator== (const Rectangle& rhs_rectangle) const;
 
         // POSITIONING.
-        CoordinateType GetCenterXPosition() const;
-        CoordinateType GetCenterYPosition() const;
-        MATH::Vector2<CoordinateType> GetCenterPosition() const;
-        CoordinateType GetLeftXPosition() const;
-        CoordinateType GetRightXPosition() const;
-        CoordinateType GetTopYPosition() const;
-        CoordinateType GetBottomYPosition() const;
-        MATH::Vector2<CoordinateType> GetLeftXTopYPosition() const;
-        MATH::Vector2<CoordinateType> GetLeftXBottomYPosition() const;
+        CoordinateType CenterX() const;
+        CoordinateType CenterY() const;
+        MATH::Vector2<CoordinateType> Center() const;
+        MATH::Vector2<CoordinateType> LeftXBottomY() const;
         void SetCenterPosition(const CoordinateType center_x_position, const CoordinateType center_y_position);
 
         // MOVEMENT.
         void Move(const MATH::Vector2<CoordinateType>& movement);
 
         // DIMENSIONS.
-        CoordinateType GetWidth() const;
-        CoordinateType GetHeight() const;
+        CoordinateType Width() const;
+        CoordinateType Height() const;
 
         // COLLISION TESTING.
         bool Contains(const CoordinateType x_position, const CoordinateType y_position) const;
@@ -70,16 +64,11 @@ namespace MATH
         template <typename DestinationCoordinateType>
         sf::Rect<DestinationCoordinateType> ToSfmlRectangle() const;
 
-    private:
-        // HELPER METHODS.
-        static sf::Rect<CoordinateType> RecalculateRectangle(
-            const CoordinateType center_x_position,
-            const CoordinateType center_y_position,
-            const CoordinateType width,
-            const CoordinateType height);
-
         // MEMBER VARIABLES.
-        sf::Rect<CoordinateType> SfmlRectangle;    ///< The underlying SFML rectangle.
+        // The left, top (x, y) coordinates of the rectangle.
+        MATH::Vector2<CoordinateType> LeftTop = MATH::Vector2<CoordinateType>();
+        // The right, bottom (x, y) coordinates of the rectangle.
+        MATH::Vector2<CoordinateType> RightBottom = MATH::Vector2<CoordinateType>();
     };
 
     // DEFINE COMMON RECTANGLE TYPES.
@@ -105,10 +94,10 @@ namespace MATH
     {
         Rectangle<CoordinateType> rectangle;
 
-        rectangle.SfmlRectangle.left = left_position;
-        rectangle.SfmlRectangle.top = top_position;
-        rectangle.SfmlRectangle.width = width;
-        rectangle.SfmlRectangle.height = height;
+        rectangle.LeftTop.X = left_position;
+        rectangle.LeftTop.Y = top_position;
+        rectangle.RightBottom.X = left_position + width;
+        rectangle.RightBottom.Y = top_position + height;
 
         return rectangle;
     }
@@ -125,33 +114,26 @@ namespace MATH
         const CoordinateType width,
         const CoordinateType height)
     {
-        sf::Rect<CoordinateType> sfml_rectangle = RecalculateRectangle(
-            center_x_position,
-            center_y_position,
-            width,
-            height);
+        // CALCULATE THE LEFT COORDINATE.
+        CoordinateType half_width = width / static_cast<CoordinateType>(2);
+        CoordinateType left_x_position = center_x_position - half_width;
 
-        Rectangle<CoordinateType> rectangle(sfml_rectangle);
+        // CALCULATE THE TOP COORDINATE.
+        CoordinateType half_height = height / static_cast<CoordinateType>(2);
+        // Y decreases going up on the screen.
+        CoordinateType top_y_position = center_y_position - half_height;
+
+        // CREATE THE RECTANGLE.
+        Rectangle<CoordinateType> rectangle = FromLeftTopAndDimensions(left_x_position, top_y_position, width, height);
         return rectangle;
     }
-
-    /// Default constructor to create an invalid rectangle
-    /// with 0 for all values.
-    template <typename CoordinateType>
-    Rectangle<CoordinateType>::Rectangle() :
-    SfmlRectangle()
-    {}
 
     /// Constructor accepting an SFML rectangle.
     /// @param[in]  sfml_rectangle - The SFML rectangle to use for this rectangle.
     template <typename CoordinateType>
     Rectangle<CoordinateType>::Rectangle(const sf::Rect<CoordinateType>& sfml_rectangle) :
-    SfmlRectangle(sfml_rectangle)
-    {}
-
-    /// Destructor.
-    template <typename CoordinateType>
-    Rectangle<CoordinateType>::~Rectangle()
+        LeftTop(sfml_rectangle.left, sfml_rectangle.top),
+        RightBottom(sfml_rectangle.left + sfml_rectangle.width, sfml_rectangle.top + sfml_rectangle.height)
     {}
 
     /// Equality operator.
@@ -160,98 +142,49 @@ namespace MATH
     template <typename CoordinateType>
     bool Rectangle<CoordinateType>::operator== (const Rectangle<CoordinateType>& rhs_rectangle) const
     {
-        bool equal = (SfmlRectangle == rhs_rectangle.SfmlRectangle);
+        bool equal = (
+            LeftTop == rhs_rectangle.LeftTop &&
+            RightBottom == rhs_rectangle.RightBottom);
         return equal;
     }
 
     /// Gets the center X position of the rectangle.
     /// @return The center X position of the rectangle.
     template <typename CoordinateType>
-    CoordinateType Rectangle<CoordinateType>::GetCenterXPosition() const
+    CoordinateType Rectangle<CoordinateType>::CenterX() const
     {
         // Calculate the center using the midpoint formula.
-        const CoordinateType left_x_position = GetLeftXPosition();
-        const CoordinateType right_x_position = GetRightXPosition();
-        const CoordinateType horizontal_midpoint = (left_x_position + right_x_position) / static_cast<CoordinateType>(2);
+        CoordinateType horizontal_midpoint = (LeftTop.X + RightBottom.X) / static_cast<CoordinateType>(2);
         return horizontal_midpoint;
     }
 
     /// Gets the center Y position of the rectangle.
     /// @return The center Y position of the rectangle.
     template <typename CoordinateType>
-    CoordinateType Rectangle<CoordinateType>::GetCenterYPosition() const
+    CoordinateType Rectangle<CoordinateType>::CenterY() const
     {
         // Calculate the center using the midpoint formula.
-        const CoordinateType top_y_position = GetTopYPosition();
-        const CoordinateType bottom_y_position = GetBottomYPosition();
-        const CoordinateType vertical_midpoint = (top_y_position + bottom_y_position) / static_cast<CoordinateType>(2);
+        CoordinateType vertical_midpoint = (LeftTop.Y + RightBottom.Y) / static_cast<CoordinateType>(2);
         return vertical_midpoint;
     }
 
     /// Gets the center position of the rectangle.
     /// @return The center position of the rectangle.
     template <typename CoordinateType>
-    MATH::Vector2<CoordinateType> Rectangle<CoordinateType>::GetCenterPosition() const
+    MATH::Vector2<CoordinateType> Rectangle<CoordinateType>::Center() const
     {
-        CoordinateType center_x_position = GetCenterXPosition();
-        CoordinateType center_y_position = GetCenterYPosition();
+        CoordinateType center_x_position = CenterX();
+        CoordinateType center_y_position = CenterY();
         MATH::Vector2<CoordinateType> center_position(center_x_position, center_y_position);
         return center_position;
-    }
-
-    /// Gets the left X position of the rectangle.
-    /// @return The left X position of the rectangle.
-    template <typename CoordinateType>
-    CoordinateType Rectangle<CoordinateType>::GetLeftXPosition() const
-    {
-        return SfmlRectangle.left;
-    }
-
-    /// Gets the right X position of the rectangle.
-    /// @return The right X position of the rectangle.
-    template <typename CoordinateType>
-    CoordinateType Rectangle<CoordinateType>::GetRightXPosition() const
-    {
-        const CoordinateType right_x_position = SfmlRectangle.left + SfmlRectangle.width;
-        return right_x_position;
-    }
-
-    /// Gets the top Y position of the rectangle.
-    /// @return The top Y position of the rectangle.
-    template <typename CoordinateType>
-    CoordinateType Rectangle<CoordinateType>::GetTopYPosition() const
-    {
-        return SfmlRectangle.top;
-    }
-
-    /// Gets the bottom Y position of the rectangle.
-    /// @return The bottom Y position of the rectangle.
-    template <typename CoordinateType>
-    CoordinateType Rectangle<CoordinateType>::GetBottomYPosition() const
-    {
-        const CoordinateType bottom_y_position = SfmlRectangle.top + SfmlRectangle.height;
-        return bottom_y_position;
-    }
-
-    /// Gets the left X and top Y corner position of the rectangle.
-    /// @return The left-top corner of the rectangle.
-    template <typename CoordinateType>
-    MATH::Vector2<CoordinateType> Rectangle<CoordinateType>::GetLeftXTopYPosition() const
-    {
-        CoordinateType left_x_position = GetLeftXPosition();
-        CoordinateType top_y_position = GetTopYPosition();
-        MATH::Vector2<CoordinateType> left_top_corner(left_x_position, top_y_position);
-        return left_top_corner;
     }
 
     /// Gets the left X and bottom Y corner position of the rectangle.
     /// @return The left-bottom corner of the rectangle.
     template <typename CoordinateType>
-    MATH::Vector2<CoordinateType> Rectangle<CoordinateType>::GetLeftXBottomYPosition() const
+    MATH::Vector2<CoordinateType> Rectangle<CoordinateType>::LeftXBottomY() const
     {
-        CoordinateType left_x_position = GetLeftXPosition();
-        CoordinateType bottom_y_position = GetBottomYPosition();
-        MATH::Vector2<CoordinateType> left_bottom_corner(left_x_position, bottom_y_position);
+        MATH::Vector2<CoordinateType> left_bottom_corner(LeftTop.X, RightBottom.Y);
         return left_bottom_corner;
     }
 
@@ -261,12 +194,7 @@ namespace MATH
     template <typename CoordinateType>
     void Rectangle<CoordinateType>::SetCenterPosition(const CoordinateType center_x_position, const CoordinateType center_y_position)
     {
-        // RE-CREATE THE SFML RECTANGLE FROM THE PROVIDED PARAMETERS.
-        SfmlRectangle = RecalculateRectangle(
-            center_x_position,
-            center_y_position,
-            GetWidth(),
-            GetHeight());
+        *this = FromCenterAndDimensions(center_x_position, center_y_position, Width(), Height());
     }
 
     /// Moves the rectangle based on the specified vector.
@@ -274,24 +202,26 @@ namespace MATH
     template <typename CoordinateType>
     void Rectangle<CoordinateType>::Move(const MATH::Vector2<CoordinateType>& movement)
     {
-        SfmlRectangle.left += movement.X;
-        SfmlRectangle.top += movement.Y;
+        LeftTop += movement;
+        RightBottom += movement;
     }
 
     /// Gets the width of the rectangle.
     /// @return The width of the rectangle.
     template <typename CoordinateType>
-    CoordinateType Rectangle<CoordinateType>::GetWidth() const
+    CoordinateType Rectangle<CoordinateType>::Width() const
     {
-        return SfmlRectangle.width;
+        CoordinateType width = RightBottom.X - LeftTop.X;
+        return width;
     }
 
     /// Gets the height of the rectangle.
     /// @return The height of the rectangle.
     template <typename CoordinateType>
-    CoordinateType Rectangle<CoordinateType>::GetHeight() const
+    CoordinateType Rectangle<CoordinateType>::Height() const
     {
-        return SfmlRectangle.height;
+        CoordinateType height = RightBottom.Y - LeftTop.Y;
+        return height;
     }
 
     /// Determines if the specified point is contained in this rectangle.
@@ -301,7 +231,8 @@ namespace MATH
     template <typename CoordinateType>
     bool Rectangle<CoordinateType>::Contains(const CoordinateType x_position, const CoordinateType y_position) const
     {
-        return SfmlRectangle.contains(x_position, y_position);
+        sf::Rect<CoordinateType> sfml_rectangle(LeftTop.X, LeftTop.Y, Width(), Height());
+        return sfml_rectangle.contains(x_position, y_position);
     }
 
     /// Checks if the other rectangle intersects any portion of this rectangle.
@@ -310,34 +241,8 @@ namespace MATH
     template <typename CoordinateType>
     bool Rectangle<CoordinateType>::Intersects(const Rectangle<CoordinateType>& other_rectangle) const
     {
-        return SfmlRectangle.intersects(other_rectangle.SfmlRectangle);
-    }
-
-    /// Recalculates the rectangle based on the provided information.
-    /// @param[in]  center_x_position - The center X position of the rectangle.
-    /// @param[in]  center_y_position - The center Y position of the rectangle.
-    /// @param[in]  width - The width of the rectangle.
-    /// @param[in]  height - The height of the rectangle.
-    /// @return     The underlying SFML rectangle based on the provided parameters.
-    template <typename CoordinateType>
-    sf::Rect<CoordinateType> Rectangle<CoordinateType>::RecalculateRectangle(
-        const CoordinateType center_x_position,
-        const CoordinateType center_y_position,
-        const CoordinateType width,
-        const CoordinateType height)
-    {
-        // CALCULATE THE LEFT COORDINATE.
-        const CoordinateType half_width = width / static_cast<CoordinateType>(2);
-        const CoordinateType left_x_position = center_x_position - half_width;
-
-        // CALCULATE THE TOP COORDINATE.
-        const CoordinateType half_height = height / static_cast<CoordinateType>(2);
-        // Y decreases going up on the screen.
-        const CoordinateType top_y_position = center_y_position - half_height;
-
-        // CONVERT THE RECTANGLE TO SFML FORMAT.
-        sf::Rect<CoordinateType> rectangle = sf::Rect<CoordinateType>(left_x_position, top_y_position, width, height);
-        return rectangle;
+        sf::Rect<CoordinateType> sfml_rectangle(LeftTop.X, LeftTop.Y, Width(), Height());
+        return sfml_rectangle.intersects(other_rectangle.ToSfmlRectangle<CoordinateType>());
     }
 
     /// Converts the rectangle to an SFML rectangle with the specified coordinate type.
@@ -349,10 +254,10 @@ namespace MATH
     sf::Rect<DestinationCoordinateType> Rectangle<CoordinateType>::ToSfmlRectangle() const
     {
         sf::Rect<DestinationCoordinateType> converted_rectangle;
-        converted_rectangle.left = static_cast<DestinationCoordinateType>(SfmlRectangle.left);
-        converted_rectangle.top = static_cast<DestinationCoordinateType>(SfmlRectangle.top);
-        converted_rectangle.width = static_cast<DestinationCoordinateType>(SfmlRectangle.width);
-        converted_rectangle.height = static_cast<DestinationCoordinateType>(SfmlRectangle.height);
+        converted_rectangle.left = static_cast<DestinationCoordinateType>(LeftTop.X);
+        converted_rectangle.top = static_cast<DestinationCoordinateType>(LeftTop.Y);
+        converted_rectangle.width = static_cast<DestinationCoordinateType>(Width());
+        converted_rectangle.height = static_cast<DestinationCoordinateType>(Height());
         return converted_rectangle;
     }
 }

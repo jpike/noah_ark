@@ -49,10 +49,10 @@ namespace GRAPHICS
         // CREATE THE SPRITE WITH THE FIRST TEXTURE RECTANGLE FROM THE ANIMATION SEQUENCE.
         MATH::IntRectangle first_frame_rectangle = animation_sequence->GetCurrentFrame();
         MATH::FloatRectangle texture_subrectangle = MATH::FloatRectangle::FromCenterAndDimensions(
-            static_cast<float>(first_frame_rectangle.GetCenterXPosition()),
-            static_cast<float>(first_frame_rectangle.GetCenterYPosition()),
-            static_cast<float>(first_frame_rectangle.GetWidth()),
-            static_cast<float>(first_frame_rectangle.GetHeight()));
+            static_cast<float>(first_frame_rectangle.CenterX()),
+            static_cast<float>(first_frame_rectangle.CenterY()),
+            static_cast<float>(first_frame_rectangle.Width()),
+            static_cast<float>(first_frame_rectangle.Height()));
         Sprite = GRAPHICS::Sprite(texture, texture_subrectangle);
 
         // ADD THE INITIAL ANIMATION SEQUENCE TO THIS SPRITE.

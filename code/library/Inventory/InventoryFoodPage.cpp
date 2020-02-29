@@ -48,13 +48,13 @@ namespace INVENTORY
         const float BOX_DIMENSION_IN_PIXELS = 48.0f;
         const float PADDING_BETWEEN_BOXES_IN_PIXELS = 16.0f;
         const float BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS + PADDING_BETWEEN_BOXES_IN_PIXELS;
-        float page_width_in_pixels = background_rectangle.GetWidth();
+        float page_width_in_pixels = background_rectangle.Width();
         unsigned int boxes_per_row = static_cast<unsigned int>(page_width_in_pixels / BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS);
 
         // RENDER BOXES FOR EACH COLLECTED FOOD TYPE.
         const float BOX_HALF_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS / 2.0f;
-        float starting_box_center_x_position = background_rectangle.GetLeftXPosition() + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS;
-        float starting_box_center_y_position = background_rectangle.GetTopYPosition() + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS;
+        float starting_box_center_x_position = background_rectangle.LeftTop.X + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS;
+        float starting_box_center_y_position = background_rectangle.LeftTop.Y + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS;
         const unsigned int FIRST_VALID_FOOD_ID = static_cast<unsigned int>(OBJECTS::FoodType::NONE) + 1;
         for (unsigned int food_id = FIRST_VALID_FOOD_ID; food_id < static_cast<unsigned int>(OBJECTS::FoodType::COUNT); ++food_id)
         {
@@ -120,7 +120,7 @@ namespace INVENTORY
             std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(food_type, *Assets);
             if (food_sprite)
             {
-                MATH::Vector2f food_icon_left_top_screen_position = box_screen_rectangle.GetLeftXTopYPosition();
+                MATH::Vector2f food_icon_left_top_screen_position = box_screen_rectangle.LeftTop;
                 renderer.RenderGuiIcon(*food_sprite, food_icon_left_top_screen_position);
 
                 // RENDER THE COLLECTED COUNT FOR THE FOOD TYPE.

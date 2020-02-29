@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "Core/String.h"
+#include "Graphics/Gui/Text.h"
 #include "Graphics/Gui/TextPage.h"
 
 /// A namespace for testing the TextPage class.
@@ -338,7 +339,7 @@ namespace TEST_TEXT_PAGE
                 // CHECK IF THE CURRENT LINE HAS ROOM FOR A SPACE.
                 // It will be added for the next word if there is room.
                 std::string previously_rendered_words_on_current_line_plus_space = previously_rendered_words_on_current_line + " ";
-                size_t previously_rendered_words_on_current_line_plus_space_width_in_pixels = GRAPHICS::GUI::Glyph::TextWidthInPixels<size_t>(
+                size_t previously_rendered_words_on_current_line_plus_space_width_in_pixels = GRAPHICS::GUI::Text::Width<size_t>(
                     previously_rendered_words_on_current_line_plus_space,
                     GRAPHICS::GUI::TextPage::TEXT_SCALE_RATIO);
                 size_t max_line_width_in_pixels = text_page.MaxCharacterCountPerLine * GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS;
@@ -352,7 +353,7 @@ namespace TEST_TEXT_PAGE
 
                 // CHECK IF THE NEXT WORD FITS ON CURRENT LINE.
                 std::string current_line_with_next_word = previously_rendered_words_on_current_line + *next_word;
-                size_t current_line_with_next_word_width_in_pixels = GRAPHICS::GUI::Glyph::TextWidthInPixels<size_t>(
+                size_t current_line_with_next_word_width_in_pixels = GRAPHICS::GUI::Text::Width<size_t>(
                     current_line_with_next_word, 
                     GRAPHICS::GUI::TextPage::TEXT_SCALE_RATIO);
                 bool next_word_fits_on_current_line = (current_line_with_next_word_width_in_pixels <= max_line_width_in_pixels);

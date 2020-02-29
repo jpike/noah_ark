@@ -33,8 +33,6 @@ namespace GUI
         static T SpaceOnLeftInPixels(const char character);
         template <typename T>
         static T SpaceOnRightInPixels(const char character);
-        template <typename T>
-        static T TextWidthInPixels(const std::string& text, const float text_scale_ratio);
 
         // MEMBER VARIABLES.
         /// The texture containing this glyph.
@@ -81,7 +79,7 @@ namespace GUI
     {
         const MATH::FloatRectangle& texture_bounding_box = TEXTURE_SUB_RECTANGLES[character];
         float glyph_left_offset_in_pixels = GetBoundingBoxLeftPositionInPixels<float>(character);
-        float glyph_left_x_position_in_pixels = texture_bounding_box.GetLeftXPosition();
+        float glyph_left_x_position_in_pixels = texture_bounding_box.LeftTop.X;
         float space_on_left_in_pixels = glyph_left_x_position_in_pixels - glyph_left_offset_in_pixels;
         return static_cast<T>(space_on_left_in_pixels);
     }
@@ -94,36 +92,10 @@ namespace GUI
     T Glyph::SpaceOnRightInPixels(const char character)
     {
         const MATH::FloatRectangle& texture_bounding_box = TEXTURE_SUB_RECTANGLES[character];
-        float glyph_right_x_position_in_pixels = texture_bounding_box.GetRightXPosition();
+        float glyph_right_x_position_in_pixels = texture_bounding_box.RightBottom.X;
         float glyph_left_offset_in_pixels = GetBoundingBoxLeftPositionInPixels<float>(character);
         float space_on_right_in_pixels = static_cast<float>(DEFAULT_WIDTH_IN_PIXELS) - (glyph_right_x_position_in_pixels - glyph_left_offset_in_pixels);
         return static_cast<T>(space_on_right_in_pixels);
-    }
-
-    /// Calculates the width of some text, in pixels.
-    /// @tparam T - The type of the returned value.  Will be directly casted.
-    /// @param[in]  text - The text whose total width to calculate.
-    /// @param[in]  scale_factor - The scaling factor of the glyphs.  1 is normal scaling.
-    template <typename T>
-    T Glyph::TextWidthInPixels(const std::string& text, const float scale_factor)
-    {
-        float text_width_in_pixels = 0.0f;
-
-        // COUNT THE WIDTH OF EACH GLYPH.
-        for (const char character : text)
-        {
-            const MATH::FloatRectangle& glyph_bounding_box = TEXTURE_SUB_RECTANGLES[character];
-            float glyph_default_width_in_pixels = glyph_bounding_box.GetWidth();
-            float glyph_scaled_width_in_pixels = scale_factor * glyph_default_width_in_pixels;
-
-            /// @todo   Better centralize this constant.  It's duplicated in the Renderer.
-            /// Some new text abstractions may be appropriate.
-            constexpr float SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER = 2.0f;
-
-            text_width_in_pixels += glyph_scaled_width_in_pixels + SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
-        }
-
-        return static_cast<T>(text_width_in_pixels);
     }
 
     /// Gets the left position of the glyph's bounding box for the character.

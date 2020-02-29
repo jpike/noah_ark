@@ -74,7 +74,7 @@ namespace MAPS
     float Tile::GetLeftXPosition() const
     {
         MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
-        return tile_bounding_box.GetLeftXPosition();
+        return tile_bounding_box.LeftTop.X;
     }
 
     /// Gets the right X position of the tile's bounding box, in world coordinates.
@@ -82,7 +82,7 @@ namespace MAPS
     float Tile::GetRightXPosition() const
     {
         MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
-        return tile_bounding_box.GetRightXPosition();
+        return tile_bounding_box.RightBottom.X;
     }
 
     /// Gets the top Y position of the tile's bounding box, in world coordinates.
@@ -90,7 +90,7 @@ namespace MAPS
     float Tile::GetTopYPosition() const
     {
         MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
-        return tile_bounding_box.GetTopYPosition();
+        return tile_bounding_box.LeftTop.Y;
     }
 
     /// Gets the bottomt Y position of the tile's bounding box, in world coordinates.
@@ -98,7 +98,7 @@ namespace MAPS
     float Tile::GetBottomYPosition() const
     {
         MATH::FloatRectangle tile_bounding_box = Sprite.GetWorldBoundingBox();
-        return tile_bounding_box.GetBottomYPosition();
+        return tile_bounding_box.RightBottom.Y;
     }
 
     /// Determines if the tile is walkable.

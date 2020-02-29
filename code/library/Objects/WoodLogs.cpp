@@ -12,12 +12,12 @@ namespace OBJECTS
         MATH::FloatRectangle sprite_bounding_box = Sprite.GetWorldBoundingBox();
 
         const float BOX_DIMENSION_SCALE_FACTOR = 0.3f;
-        float wood_logs_width = sprite_bounding_box.GetWidth() * BOX_DIMENSION_SCALE_FACTOR;
-        float wood_logs_height = sprite_bounding_box.GetHeight() * BOX_DIMENSION_SCALE_FACTOR;
+        float wood_logs_width = sprite_bounding_box.Width() * BOX_DIMENSION_SCALE_FACTOR;
+        float wood_logs_height = sprite_bounding_box.Height() * BOX_DIMENSION_SCALE_FACTOR;
 
         MATH::FloatRectangle wood_logs_bounding_box = MATH::FloatRectangle::FromCenterAndDimensions(
-            sprite_bounding_box.GetCenterXPosition(),
-            sprite_bounding_box.GetCenterYPosition(),
+            sprite_bounding_box.CenterX(),
+            sprite_bounding_box.CenterY(),
             wood_logs_width,
             wood_logs_height);
         return wood_logs_bounding_box;

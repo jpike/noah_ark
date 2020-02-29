@@ -19,10 +19,10 @@ namespace OBJECTS
         // CALCULATE THE CENTER OF THE TREE'S TRUNK.
         // It is vertically placed halfway up the pixel grid.
         const float OFFSET_FROM_TREE_BOTTOM_TO_TRUNK_CENTER_IN_PIXELS = 8.0f;
-        float tree_bottom_world_y_position = world_bounding_box.GetBottomYPosition();
+        float tree_bottom_world_y_position = world_bounding_box.RightBottom.Y;
         // Y gets smaller going up.
         float trunk_center_y_position = tree_bottom_world_y_position - OFFSET_FROM_TREE_BOTTOM_TO_TRUNK_CENTER_IN_PIXELS;
-        float trunk_center_x_position = world_bounding_box.GetCenterXPosition();
+        float trunk_center_x_position = world_bounding_box.CenterX();
         MATH::Vector2f trunk_center_world_position(
             trunk_center_x_position,
             trunk_center_y_position);

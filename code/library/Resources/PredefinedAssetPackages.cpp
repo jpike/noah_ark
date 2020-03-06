@@ -6,7 +6,7 @@ namespace RESOURCES
 
     const AssetPackageDefinition INTRO_SEQUENCE_ASSET_PACKAGE_DEFINITION({
         AssetDefinition(AssetType::FONT, AssetId::SERIF_FONT_TEXTURE, "res/images/main_font_serif.png"),
-        AssetDefinition(AssetType::MUSIC, AssetId::INTRO_MUSIC, "res/sounds/Intro1.wav"),
+        AssetDefinition(AssetType::MUSIC, AssetId::INTRO_MUSIC, "res/sounds/NoahsArkIntro1_80PercentSpeedWithFadeout.wav"),
         AssetDefinition(AssetType::SHADER, AssetId::COLORED_TEXTURE_SHADER, "res/shaders/ColoredTexture.frag"),
     });
 
@@ -87,7 +87,7 @@ namespace RESOURCES
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::WOLF_SOUND, "res/sounds/animals/wolf.wav"),
 
         // MUSIC.
-        AssetDefinition(AssetType::MUSIC, AssetId::NEW_GAME_INTRO_MUSIC, "res/sounds/NoahsArkIntro1_80PercentSpeedWithFadeout.wav"),
+        AssetDefinition(AssetType::MUSIC, AssetId::NEW_GAME_INTRO_MUSIC, "res/sounds/Intro1.wav"),
         AssetDefinition(AssetType::MUSIC, AssetId::OVERWORLD_BACKGROUND_MUSIC, "res/sounds/overworld_music.wav"),
 
         // SHADERS.

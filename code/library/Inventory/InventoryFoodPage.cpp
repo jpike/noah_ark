@@ -30,14 +30,14 @@ namespace INVENTORY
         // It is offset from the top of the screen by the amount of the
         // GUI stuff that should always be displayed above it.  Otherwise,
         // it should cover the remainder of the screen.
-        const float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
-        const float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
-        const float BACKGROUND_HEIGHT_IN_PIXELS = renderer.Screen->HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
+        constexpr float TOP_SCREEN_OFFSET_IN_PIXELS = static_cast<float>(2 * GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
+        constexpr float SCREEN_LEFT_POSITION_IN_PIXELS = 0.0f;
+        float background_height_in_pixels = renderer.Screen->HeightInPixels<float>() - TOP_SCREEN_OFFSET_IN_PIXELS;
         MATH::FloatRectangle background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             SCREEN_LEFT_POSITION_IN_PIXELS,
             TOP_SCREEN_OFFSET_IN_PIXELS,
             renderer.Screen->WidthInPixels<float>(),
-            BACKGROUND_HEIGHT_IN_PIXELS);
+            background_height_in_pixels);
 
         renderer.RenderScreenRectangle(
             background_rectangle,
@@ -45,16 +45,19 @@ namespace INVENTORY
 
         // CALCULATE HOW MANY FOOD BOXES CAN APPEAR PER ROW AND COLUMN.
         // Some padding is added around the boxes in order to space them out.
-        const float BOX_DIMENSION_IN_PIXELS = 48.0f;
-        const float PADDING_BETWEEN_BOXES_IN_PIXELS = 16.0f;
-        const float BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS + PADDING_BETWEEN_BOXES_IN_PIXELS;
+        constexpr float BOX_DIMENSION_IN_PIXELS = 52.0f;
+        constexpr float PADDING_BETWEEN_BOXES_IN_PIXELS = 10.0f;
+        constexpr float BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS + PADDING_BETWEEN_BOXES_IN_PIXELS;
         float page_width_in_pixels = background_rectangle.Width();
         unsigned int boxes_per_row = static_cast<unsigned int>(page_width_in_pixels / BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS);
 
         // RENDER BOXES FOR EACH COLLECTED FOOD TYPE.
         const float BOX_HALF_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS / 2.0f;
-        float starting_box_center_x_position = background_rectangle.LeftTop.X + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS;
-        float starting_box_center_y_position = background_rectangle.LeftTop.Y + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS;
+        // Some initial offset is added to help the food boxes appear centered.
+        constexpr float INITIAL_LEFT_OFFSET_IN_PIXELS = 3.0f;
+        constexpr float INITIAL_TOP_OFFSET_IN_PIXELS = 16.0f;
+        float starting_box_center_x_position = background_rectangle.LeftTop.X + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS + INITIAL_LEFT_OFFSET_IN_PIXELS;
+        float starting_box_center_y_position = background_rectangle.LeftTop.Y + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS + INITIAL_TOP_OFFSET_IN_PIXELS;
         const unsigned int FIRST_VALID_FOOD_ID = static_cast<unsigned int>(OBJECTS::FoodType::NONE) + 1;
         for (unsigned int food_id = FIRST_VALID_FOOD_ID; food_id < static_cast<unsigned int>(OBJECTS::FoodType::COUNT); ++food_id)
         {
@@ -63,8 +66,6 @@ namespace INVENTORY
             unsigned int food_collected_count = Inventory->GetCollectedFoodCount(food_type);
 
             // CALCULATE THE BOX FOR THIS FOOD TYPE.
-            /// @todo Support scrolling through multiples "pages" within this inventory page
-            /// as not all food will be able to fit on a single screen.
             // Since the first food enum isn't valid, the ID must be adjusted to
             // make things zero-based for calculating the box indices.
             unsigned int zero_based_food_id = food_id - 1;

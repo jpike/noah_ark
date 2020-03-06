@@ -33,7 +33,7 @@ namespace STATES
     {
         // CALCULATE THE OFFSET OF THE TOP OF THE CREDITS BASED ON THE ELAPSED TIME.
         // This helps implement scrolling of the credits text upward.
-        const float SCROLL_RATE_IN_PIXELS_PER_SECOND = -4.0f;
+        constexpr float SCROLL_RATE_IN_PIXELS_PER_SECOND = -4.0f;
         float elapsed_time_in_seconds = ElapsedTime.asSeconds();
         float credits_text_top_offset_in_pixels = SCROLL_RATE_IN_PIXELS_PER_SECOND * elapsed_time_in_seconds;
 
@@ -45,7 +45,7 @@ namespace STATES
         float screen_top_y_position = screen_rectangle.LeftTop.Y;
         float screen_width_in_pixels = screen_rectangle.Width();
         float screen_height_in_pixels = screen_rectangle.Height();
-        const float SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
+        constexpr float SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
         float credits_text_start_top_y_position = screen_top_y_position + credits_text_top_offset_in_pixels;
         MATH::FloatRectangle credits_title_text_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             screen_left_x_position,
@@ -66,8 +66,8 @@ namespace STATES
         float start_of_credits_top_y_position_in_pixels = 2 * SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS + credits_text_start_top_y_position;
 
         // This text takes multiple lines to render using the current font.
-        const unsigned int GOD_CREDIT_TEXT_LINE_COUNT = 4;
-        const float GOD_CREDIT_TEXT_HEIGHT_IN_PIXELS = static_cast<float>(GOD_CREDIT_TEXT_LINE_COUNT * SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS);
+        constexpr unsigned int GOD_CREDIT_TEXT_LINE_COUNT = 4;
+        constexpr float GOD_CREDIT_TEXT_HEIGHT_IN_PIXELS = static_cast<float>(GOD_CREDIT_TEXT_LINE_COUNT * SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS);
         MATH::FloatRectangle current_credit_text_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             screen_left_x_position,
             start_of_credits_top_y_position_in_pixels,
@@ -82,7 +82,7 @@ namespace STATES
 
         // RENDER ADDITIONAL CREDITS FOR INDIVIDUAL PEOPLE.
         // Some additional spacing is added to help offset this credit text from other text.
-        const float SPACING_BEFORE_REMAINING_CREDITS = (2 * SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS);
+        constexpr float SPACING_BEFORE_REMAINING_CREDITS = (2 * SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS);
         float current_credits_text_top_y_position_in_pixels = 
             start_of_credits_top_y_position_in_pixels +
             GOD_CREDIT_TEXT_HEIGHT_IN_PIXELS +

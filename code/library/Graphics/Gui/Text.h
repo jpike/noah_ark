@@ -12,6 +12,11 @@ namespace GRAPHICS::GUI
     class Text
     {
     public:
+        // STATIC CONSTANTS.
+        /// The horizontal spacing (in pixels) between characters in text.
+        /// One pixel of spacing on each side of a character is used for better readability.
+        static constexpr float HORIZONTAL_SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER = 2.0f;
+
         // DIMENSION METHODS.
         template <typename NumericType>
         static NumericType Width(const std::string& text, const float scale_factor);
@@ -55,12 +60,7 @@ namespace GRAPHICS::GUI
             const MATH::FloatRectangle& glyph_bounding_box = Glyph::TEXTURE_SUB_RECTANGLES[character];
             float glyph_default_width_in_pixels = glyph_bounding_box.Width();
             float glyph_scaled_width_in_pixels = scale_factor * glyph_default_width_in_pixels;
-
-            /// @todo   Better centralize this constant.  It's duplicated in the Renderer.
-            /// Some new text abstractions may be appropriate.
-            constexpr float SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER = 2.0f;
-
-            text_width_in_pixels += glyph_scaled_width_in_pixels + SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
+            text_width_in_pixels += glyph_scaled_width_in_pixels + HORIZONTAL_SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
         }
 
         return static_cast<NumericType>(text_width_in_pixels);

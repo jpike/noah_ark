@@ -3,7 +3,12 @@
 
 namespace STATES
 {
+#if _DEBUG
+    // A shorter time is used for debug builds to speed up debugging.
+    const sf::Time NewGameIntroSequence::MAX_TIME_PER_FRAME = sf::seconds(3);
+#else
     const sf::Time NewGameIntroSequence::MAX_TIME_PER_FRAME = sf::seconds(9);
+#endif
 
     /// Resets the intro sequence so that it can start playing from the beginning.
     void NewGameIntroSequence::ResetToBeginning()

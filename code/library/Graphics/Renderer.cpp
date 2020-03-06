@@ -249,11 +249,10 @@ namespace GRAPHICS
             Screen->RenderTarget.draw(current_character_sprite, render_states);
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
-            // One pixel of spacing on each side of a character should be rendered for better readability.
-            constexpr float SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER = 2.0f;
+            
             float glyph_width = glyph.TextureSubRectangle.Width();
             float scaled_glyph_width = text.ScaleFactor * glyph_width;
-            current_character_left_top_screen_position.X += scaled_glyph_width + SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
+            current_character_left_top_screen_position.X += scaled_glyph_width + GUI::Text::HORIZONTAL_SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
         }
     }
 
@@ -309,11 +308,9 @@ namespace GRAPHICS
             Screen->RenderTarget.draw(current_character_sprite, render_states);
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
-            // One pixel of spacing on each side of a character should be rendered for better readability.
-            constexpr float SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER = 2.0f;
             float glyph_width = glyph.TextureSubRectangle.Width();
             float scaled_glyph_width = text_scale_ratio * glyph_width;
-            current_character_left_top_screen_position.X += scaled_glyph_width + SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
+            current_character_left_top_screen_position.X += scaled_glyph_width + GUI::Text::HORIZONTAL_SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
         }
     }
 

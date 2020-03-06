@@ -51,7 +51,13 @@ namespace GRAPHICS
     void Camera::Scroll(const sf::Time& elapsed_time)
     {
         // CHECK IF SCROLLING IS FINISHED.
-        const float MAX_SCROLL_TIME_IN_SECONDS = 3.0f;
+#if _DEBUG
+        // A shorter time is used for debug builds to speed up debugging.
+        // Currently seems a bit too fast for the final game, but that might change.
+        constexpr float MAX_SCROLL_TIME_IN_SECONDS = 1.5f;
+#else
+        constexpr float MAX_SCROLL_TIME_IN_SECONDS = 2.0f;
+#endif
         float elapsed_time_in_seconds = elapsed_time.asSeconds();
         CurrentTotalScrollTimeInSeconds += elapsed_time_in_seconds;
         bool scrolling_finished = (CurrentTotalScrollTimeInSeconds >= MAX_SCROLL_TIME_IN_SECONDS);

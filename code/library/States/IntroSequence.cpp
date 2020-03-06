@@ -6,7 +6,12 @@
 
 namespace STATES
 {
+#if _DEBUG
+    // A shorter time is used for debug builds to speed up debugging.
+    const sf::Time IntroSequence::MAX_TIME_PER_FRAME = sf::seconds(3);
+#else
     const sf::Time IntroSequence::MAX_TIME_PER_FRAME = sf::seconds(10);
+#endif
 
     /// Gets the Bible verses, in order displayed as part of the intro sequence.
     /// @return Bible verses included in the intro sequence.

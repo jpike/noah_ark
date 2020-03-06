@@ -8,12 +8,10 @@
 //      - For gameplay
 // - Make title fall from top
 // - Fix blinking on credits screen
-// - Speed up transition between screens
-// - Increase animal appearance rate
 // - Create remaining animal sprites
+// - Figure out cleanliness of remaining animals
 // - Add blinking cursor to new game screen
 // - Make directions for game selection screen clearer
-// - Create way to speed up intro sequences/switching between states
 // - Improve ESC menu during main gameplay
 // - Have animals follow Noah
 // - Have animals go into ark
@@ -24,13 +22,15 @@
 // - People...specifically Noah's family
 // - Add gathering of family
 // - Have animals cry if hit with axe
-// - Quicker scrolliing through animals (hold down continues scrolling)
 // - Flood cutscene graphics
 // - Ark gameplay
 // - Post-ark gameplay/cutscenes
 // - Completed game credits
 // - New game text box + effects
-// - Cutscene/text boxes for transition into ark.
+// - Cutscene/text boxes for transition into ark
+// - Polish (custom fancy graphics) for inventory GUI
+// - Better word wrapping with verses
+// - Handle stopping music when quickly switching between states?
 
 #include <chrono>
 #include <ctime>
@@ -576,10 +576,9 @@ std::shared_ptr<MAPS::World> LoadWorld(RESOURCES::Assets& assets)
 }
 
 /// Loads the sounds/music for the game, adding them to the speakers.
-/// @todo   Rethink this function since it doesn't load the intro music.
 /// @param[in,out]  assets - The assets from which to load the sounds/music.
 /// @param[in,out]  speakers - The speakers to add sounds to.
-void LoadSounds(RESOURCES::Assets& assets, AUDIO::Speakers& speakers)
+void LoadSoundsAfterIntroAssets(RESOURCES::Assets& assets, AUDIO::Speakers& speakers)
 {
     auto load_start_time = std::chrono::system_clock::now();
 
@@ -656,7 +655,7 @@ std::shared_ptr<MAPS::World> LoadRemainingAssets(RESOURCES::Assets& assets, AUDI
     auto load_time_diff = load_end_time - load_start_time;
     DEBUGGING::DebugConsole::WriteLine("Remaining asset raw load time: ", load_time_diff.count());
 
-    LoadSounds(assets, speakers);
+    LoadSoundsAfterIntroAssets(assets, speakers);
     std::shared_ptr<MAPS::World> world = LoadWorld(assets);
     return world;
 }
@@ -710,17 +709,6 @@ int main()
 
         // LOAD REMAINING ASSETS.
         std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadRemainingAssets, std::ref(*assets), std::ref(*speakers));
-
-        // LOAD REMAINING SOUND EFFECTS/MUSIC.
-        // This is loaded in a background thread in order to let the rest of the game continue
-        // while assets not needed for the intro sequence are loaded.
-        /// @todo std::future<void> audio_being_loaded = std::async(LoadSounds, std::ref(*assets), std::ref(*speakers));
-        /// @todo   When to wait for this to finish?
-
-        // LOAD THE MAPS.
-        // The world is loaded in the background in separate threads to avoid having
-        // map loading slow the startup time of the rest of the game.
-        /// @todo   std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorld, std::ref(*assets));
 
         // CREATE THE SCREEN.
         std::unique_ptr<GRAPHICS::Screen> screen = GRAPHICS::Screen::Create(SCREEN_WIDTH_IN_PIXELS, SCREEN_HEIGHT_IN_PIXELS);
@@ -1020,7 +1008,13 @@ int main()
                         case STATES::GameState::GAMEPLAY:
                         {
                             // LOAD THE GAME'S SAVE FILE.
-                            std::shared_ptr<STATES::SavedGameData>& saved_game_data = game_selection_screen.SavedGames.at(game_selection_screen.SelectedGameIndex);
+                            // The empty check is for handling the case where no saved games exist yet, primarily when
+                            // switching between states in debug mode.
+                            std::shared_ptr<STATES::SavedGameData> saved_game_data;
+                            if (!game_selection_screen.SavedGames.empty())
+                            {
+                                saved_game_data = game_selection_screen.SavedGames.at(game_selection_screen.SelectedGameIndex);
+                            }
                             bool saved_game_data_loaded = (nullptr != saved_game_data);
                             if (!saved_game_data_loaded)
                             {
@@ -1029,7 +1023,18 @@ int main()
                             }
 
                             // INITIALIZE THE GAMEPLAY STATE.
-                            auto world = world_being_loaded.get();
+                            // This protection against the world being invalid is primarily to handle
+                            // debug code for quickly switching between states.
+                            std::shared_ptr<MAPS::World> world;
+                            bool world_loading_valid = world_being_loaded.valid();
+                            if (world_loading_valid)
+                            {
+                                world = world_being_loaded.get();
+                            }
+                            else
+                            {
+                                world = gameplay_state.World;
+                            }
                             if (!world)
                             {
                                 return EXIT_FAILURE;

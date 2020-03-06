@@ -1,8 +1,10 @@
 #pragma once
 
 #include <memory>
+#include <SFML/System.hpp>
 #include "Graphics/Color.h"
 #include "Graphics/Renderer.h"
+#include "Input/InputController.h"
 #include "Inventory/Inventory.h"
 #include "Math/Rectangle.h"
 #include "Objects/Animal.h"
@@ -25,21 +27,25 @@ namespace INVENTORY
             const std::shared_ptr<const Inventory>& inventory,
             const std::shared_ptr<RESOURCES::Assets>& assets);
 
+        // UPDATING.
+        void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
+
         // RENDERING.
         void Render(GRAPHICS::Renderer& renderer) const;
 
     private:
-        // RENDERING.
-        void RenderAnimalBox(
-            const OBJECTS::AnimalSpecies species,
-            const unsigned int species_male_animal_collected_count,
-            const unsigned int species_female_animal_collected_count,
-            const MATH::FloatRectangle& box_screen_rectangle,
-            GRAPHICS::Renderer& renderer) const;
+        // ANIMAL SELECTION.
+        void SelectPreviousAnimalSpecies();
+        void SelectNextAnimalSpecies();
 
         // MEMBER VARIABLES.
         /// The inventory displayed on the page.
         std::shared_ptr<const Inventory> Inventory;
+        /// The index of the currently selected animal species in the global list.
+        std::size_t SelectedAnimalSpeciesIndex;
+        /// The elapsed time a scroll key has been held down before switching to a different animal.
+        /// Used for smoother scrolling through the animals on this page.
+        sf::Time ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals;
         /// The assets available for use on the page.
         std::shared_ptr<RESOURCES::Assets> Assets;
     };

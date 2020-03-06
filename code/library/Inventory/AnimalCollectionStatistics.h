@@ -8,6 +8,8 @@ namespace INVENTORY
     public:
         // METHODS.
         bool Collected() const;
+        bool MaleCollected() const;
+        bool FemaleCollected() const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The number of male animals collected and following the player.

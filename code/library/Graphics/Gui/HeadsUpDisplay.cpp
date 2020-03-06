@@ -49,9 +49,10 @@ namespace GUI
             "Null Noah player provided to HUD.");
     }
 
-    /// Has the HUD respond to the provided user input.
+    /// Updates the HUD.
+    /// @param[in]  elapsed_time - The elapsed time since the last frame.
     /// @param[in]  input_controller - The controller on which to check user input.
-    void HeadsUpDisplay::RespondToInput(const INPUT_CONTROL::InputController& input_controller)
+    void HeadsUpDisplay::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
     {
         // CHECK IF THE SAVE DIALOG BOX IS OPEN.
         // If so, it should take precedence over other parts of the HUD.
@@ -156,7 +157,7 @@ namespace GUI
             }
             else if (InventoryOpened)
             {
-                InventoryGui.RespondToInput(input_controller);
+                InventoryGui.Update(elapsed_time, input_controller);
             }
             else
             {

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <limits>
 #include "Collision/CollisionDetectionAlgorithms.h"
 #include "Core/NullChecking.h"
 #include "Debugging/DebugConsole.h"
@@ -146,8 +147,8 @@ namespace STATES
         }
 #endif
 
-        // UPDATE THE HUD IN RESPONSE TO USER INPUT.
-        Hud->RespondToInput(input_controller);
+        // UPDATE THE HUD.
+        Hud->Update(elapsed_time, input_controller);
 
         // CHECK IF A MODAL HUD COMPONENT IS DISPLAYED.
         // If a modal GUI component is displayed, then the regular controls for the player
@@ -1149,10 +1150,15 @@ namespace STATES
                 input_controller.EnableInput();
 
                 // SEE IF AN ANIMAL SHOULD RANDOMLY APPEAR IN THE NEW TILE MAP.
-                const unsigned int EVENLY_DIVISIBLE = 0;
-                const unsigned int GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS = 2;
+                // This is always set to "true" for debug builds to help speed up collection process.
+#if _DEBUG
+                bool random_animal_should_be_generated = true;
+#else
+                constexpr unsigned int EVENLY_DIVISIBLE = 0;
+                constexpr unsigned int GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS = 2;
                 unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>();
                 bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
+#endif
                 if (random_animal_should_be_generated)
                 {
                     DEBUGGING::DebugConsole::WriteLine("Generating random animal...");

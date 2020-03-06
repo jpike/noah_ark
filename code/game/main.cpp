@@ -1,3 +1,37 @@
+// BIG TODO LIST:
+// - Get/create better fonts:
+//      - Regular serif/sans-serif
+//      - Title screen?
+// - Create new background music with better timing:
+//      - For intro
+//      - For new game intro
+//      - For gameplay
+// - Make title fall from top
+// - Fix blinking on credits screen
+// - Speed up transition between screens
+// - Increase animal appearance rate
+// - Create remaining animal sprites
+// - Add blinking cursor to new game screen
+// - Make directions for game selection screen clearer
+// - Create way to speed up intro sequences/switching between states
+// - Improve ESC menu during main gameplay
+// - Have animals follow Noah
+// - Have animals go into ark
+// - Add underground caves
+// - Add special stuff for specific Bible verses
+// - Allow planting of trees
+// - Raft creation for crossing waterways
+// - People...specifically Noah's family
+// - Add gathering of family
+// - Have animals cry if hit with axe
+// - Quicker scrolliing through animals (hold down continues scrolling)
+// - Flood cutscene graphics
+// - Ark gameplay
+// - Post-ark gameplay/cutscenes
+// - Completed game credits
+// - New game text box + effects
+// - Cutscene/text boxes for transition into ark.
+
 #include <chrono>
 #include <ctime>
 #include <exception>

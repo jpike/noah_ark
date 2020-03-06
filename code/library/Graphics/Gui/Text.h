@@ -15,6 +15,8 @@ namespace GRAPHICS::GUI
         // DIMENSION METHODS.
         template <typename NumericType>
         static NumericType Width(const std::string& text, const float scale_factor);
+        template <typename NumericType>
+        static NumericType Height(const float scale_factor);
 
         // POSITION METHODS.
         float RightPosition() const;
@@ -38,7 +40,7 @@ namespace GRAPHICS::GUI
     /// Calculates the width of some text, in pixels.
     /// This method is static to support usage in cases where they may not be a fully-formed "Text"
     /// object and someone just wants to get the text width for string.
-    /// @tparam T - The type of the returned value.  Will be directly casted.
+    /// @tparam NumericType - The type of the returned value.  Will be directly casted.
     /// @param[in]  text - The text whose total width to calculate.
     /// @param[in]  scale_factor - The scaling factor of the glyphs.  1 is normal scaling.
     /// @return The width of the text, in pixels.
@@ -62,5 +64,17 @@ namespace GRAPHICS::GUI
         }
 
         return static_cast<NumericType>(text_width_in_pixels);
+    }
+
+    /// Calculates the height of the text, based on the provided scale factor.
+    /// This method is static for consistency with the Width() method.
+    /// @tparam NumericType - The type of the returned value.  Will be directly casted.
+    /// @param[in]  scale_factor - The scaling factor of the text.  1 is normal scaling.
+    /// @return The scaled height of the text, in pixels.
+    template <typename NumericType>
+    static NumericType Text::Height(const float scale_factor)
+    {
+        float text_height = Glyph::HeightInPixels<float>(scale_factor);
+        return static_cast<NumericType>(text_height);
     }
 }

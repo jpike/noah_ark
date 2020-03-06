@@ -60,7 +60,7 @@ namespace INVENTORY
 
         size_t last_verse_to_render_index = first_verse_to_render_index + verses_to_render_count;
         size_t last_valid_verse_index = BIBLE::BIBLE_VERSES.size() - 1;
-        last_verse_to_render_index = std::min(last_verse_to_render_index, last_valid_verse_index);        
+        last_verse_to_render_index = std::min(last_verse_to_render_index, last_valid_verse_index);
 
         // RENDER THE LIST OF VERSES.
         MATH::Vector2f current_verse_screen_top_left_position_in_pixels = bounding_rectangle.LeftTop;

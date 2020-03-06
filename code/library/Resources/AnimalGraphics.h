@@ -12,6 +12,9 @@ namespace RESOURCES
     class AnimalGraphics
     {
     public:
+        /// The width of an animal sprite, in pixels.
+        static constexpr float SPRITE_WIDTH_IN_PIXELS = 16.0f;
+
         static std::shared_ptr<GRAPHICS::AnimatedSprite> GetSprite(
             const OBJECTS::AnimalType animal_type, 
             Assets& assets);

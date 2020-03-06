@@ -23,10 +23,6 @@ namespace INVENTORY
         // RENDERING.
         void Render(GRAPHICS::Renderer& renderer) const;
 
-        // VERSE SELECTION.
-        void SelectPreviousVerse();
-        void SelectNextVerse();
-
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The GUI text box for displaying the currently selected Bible verse
         /// in the player's inventory.

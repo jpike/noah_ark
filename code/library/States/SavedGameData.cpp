@@ -219,6 +219,10 @@ namespace STATES
     /// @param[in]  filepath - The path to the file to write the saved game data.
     void SavedGameData::Write(const std::filesystem::path& filepath) const
     {
+        // ENSURE APPROPRIATE DIRECTORIES EXIST.
+        std::filesystem::path parent_directory_path = std::filesystem::path(filepath).parent_path();
+        std::filesystem::create_directories(parent_directory_path);
+
         // OPEN THE FILE.
         std::ofstream saved_game_data_file(filepath);
         bool file_opened = saved_game_data_file.is_open();

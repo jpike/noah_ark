@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <SFML/System.hpp>
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/TextBox.h"
 #include "Graphics/Renderer.h"
@@ -31,8 +32,8 @@ namespace GUI
             const unsigned int main_text_box_height_in_pixels,
             const std::shared_ptr<RESOURCES::Assets>& assets);
 
-        // INPUT.
-        void RespondToInput(const INPUT_CONTROL::InputController& input_controller);
+        // UPDATE.
+        void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
         void Render(GRAPHICS::Renderer& renderer) const;

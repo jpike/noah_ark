@@ -21,9 +21,10 @@ namespace INVENTORY
         CORE::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to HUD.");
     }
 
-    /// Has the inventory GUI respond to the provided user input
+    /// Updates the inventory GUI.
+    /// @param[in]  elapsed_time - The elapsed time since the last frame.
     /// @param[in]  input_controller - The controller on which to check user input.
-    void InventoryGui::RespondToInput(const INPUT_CONTROL::InputController& input_controller)
+    void InventoryGui::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
     {
         // CHECK WHICH TAB IS OPENED.
         switch (CurrentTab)
@@ -50,7 +51,10 @@ namespace INVENTORY
             }
             case TabType::ANIMALS:
             {
-                // CHECK WHICH BUTTON WAS PRESSED.
+                // UPDATE THE ANIMALS PAGE.
+                AnimalsPage.Update(elapsed_time, input_controller);
+
+                // RESPOND TO INPUT THAT MIGHT SWITCH THE TAB OF THE INVENTORY GUI.
                 if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::LEFT_KEY))
                 {
                     // SWITCH TO THE BIBLE TAB ON THE LEFT.

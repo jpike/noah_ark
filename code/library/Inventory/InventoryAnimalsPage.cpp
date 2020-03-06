@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/NullChecking.h"
 #include "Inventory/InventoryAnimalsPage.h"
 #include "Resources/AnimalGraphics.h"
@@ -15,11 +16,89 @@ namespace INVENTORY
         const std::shared_ptr<const INVENTORY::Inventory>& inventory,
         const std::shared_ptr<RESOURCES::Assets>& assets) :
     Inventory(inventory),
+    SelectedAnimalSpeciesIndex(0),
+    ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals(),
     Assets(assets)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to inventory animals page.");
         CORE::ThrowInvalidArgumentExceptionIfNull(Assets, "Null assets provided to inventory animals page.");
+    }
+
+    /// Updates the animals page.
+    /// @param[in]  elapsed_time - The elapsed time since the last frame.
+    /// @param[in]  input_controller - The controller on which to check user input.
+    void InventoryAnimalsPage::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
+    {
+        // CHECK IF A SCROLLING BUTTON WAS PRESSED OR RELEASED.
+        // This ensures that even if the press/release occurs really quickly, the user will still
+        // see the list scroll to the next row.
+        if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::UP_KEY))
+        {
+            // MOVE TO THE PREVIOUS ANIMAL SPECIES.
+            SelectPreviousAnimalSpecies();
+
+            // RESET THE TIMER TRACKING HOW LONG A SCROLL KEY HAS BEEN DOWN SINCE A COMPLETE KEY PRESS OCCURRED.
+            ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals = sf::Time::Zero;
+
+            // Nothing else needs to be done if a full key press was detected.
+            return;
+        }
+        if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DOWN_KEY))
+        {
+            // MOVE TO THE NEXT ANIMAL SPECIES.
+            SelectNextAnimalSpecies();
+
+            // RESET THE TIMER TRACKING HOW LONG A SCROLL KEY HAS BEEN DOWN SINCE A COMPLETE KEY PRESS OCCURRED.
+            ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals = sf::Time::Zero;
+
+            // Nothing else needs to be done if a full key press was detected.
+            return;
+        }
+
+        // TRACK HOW LONG A KEY HAS BEEN PRESSED FOR SCROLLING THROUGH ANIMALS.
+        // Having the user press and release a key for scrolling through animals takes too long,
+        // particularly when this page doesn't involve as much reading as the Bible verses page.
+        // Therefore, to allow easier scrolling, scrolling is allowed if the user holds an
+        // appropriate key down long enough.  We can't just always check if the keys are down
+        // since that would result in scrolling too fast - potentially preventing the player
+        // from being able to land on selecting a particular animal.
+        const sf::Time ELAPSED_TIME_FOR_KEY_DOWN_BEFORE_MOVING_TO_ADJACENT_ANIMAL = sf::seconds(0.1f);
+        if (input_controller.ButtonDown(INPUT_CONTROL::InputController::UP_KEY))
+        {
+            // UPDATE THE ELAPSED TIME FOR A SCROLLING KEY BEING PRESSED.
+            ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals += elapsed_time;
+
+            // MOVE TO THE PREVIOUS ANIMAL IF ENOUGH TIME ELAPSED.
+            bool scroll_key_held_down_long_enough = (ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals >= ELAPSED_TIME_FOR_KEY_DOWN_BEFORE_MOVING_TO_ADJACENT_ANIMAL);
+            if (scroll_key_held_down_long_enough)
+            {
+                SelectPreviousAnimalSpecies();
+
+                // Since the previous animal has been switched to, the timer needs to be reset.
+                ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals = sf::Time::Zero;
+            }
+        }
+        else if (input_controller.ButtonDown(INPUT_CONTROL::InputController::DOWN_KEY))
+        {
+            // UPDATE THE ELAPSED TIME FOR A SCROLLING KEY BEING PRESSED.
+            ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals += elapsed_time;
+
+            // MOVE TO THE NEXT ANIMAL IF ENOUGH TIME ELAPSED.
+            bool scroll_key_held_down_long_enough = (ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals >= ELAPSED_TIME_FOR_KEY_DOWN_BEFORE_MOVING_TO_ADJACENT_ANIMAL);
+            if (scroll_key_held_down_long_enough)
+            {
+                SelectNextAnimalSpecies();
+
+                // Since the previous animal has been switched to, the timer needs to be reset.
+                ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals = sf::Time::Zero;
+            }
+        }
+        else
+        {
+            // RESET THE TIMER TRACKING HOW LONG A SCROLL KEY HAS BEEN DOWN SINCE NO KEY WAS DOWN THIS FRAME.
+            ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals = sf::Time::Zero;
+        }
     }
 
     /// Renders the inventory GUI animals page to the provided screen.
@@ -71,6 +150,8 @@ namespace INVENTORY
         constexpr float COLUMN_HEADER_TEXT_LEFT_SCREEN_OFFSET = 4.0f;
         GRAPHICS::GUI::Text species_column_header_text =
         {
+            // An extra space is added before the male/female label to have that label more line up
+            // with the positions of actual icons.
             .String = "SPECIES (M,F)",
             .LeftTopPosition = MATH::Vector2f(animals_table_rectangle.LeftTop.X + COLUMN_HEADER_TEXT_LEFT_SCREEN_OFFSET, animals_table_rectangle.LeftTop.Y)
         };
@@ -94,11 +175,60 @@ namespace INVENTORY
         };
         renderer.Render(count_in_ark_column_header_text);
 
-        // RENDER ROWS FOR EACH ANIMAL SPECIES.
-        /// @todo   Add a cut-off and scrolling.
-        float current_animal_species_row_top_y_position = species_column_header_text.BottomPosition();
-        for (unsigned int species_id = 0; species_id < static_cast<unsigned int>(OBJECTS::AnimalSpecies::COUNT); ++species_id)
+        // DETERMINE THE LIST OF ANIMAL SPECIES TO RENDER.
+        // The list should generally have the currently selected species in the middle and
+        // show about an even number of species on each side to fill the remaining space in the box.
+        float column_screen_height = GRAPHICS::GUI::Text::Height<float>(species_column_header_text.ScaleFactor);
+        std::size_t animal_species_list_visible_box_height_in_pixels = static_cast<std::size_t>(animals_table_rectangle.Height() - column_screen_height);
+
+        constexpr float DEFAULT_TEXT_SCALE_FACTOR = 1.0f;
+        std::size_t row_screen_height = GRAPHICS::GUI::Glyph::HeightInPixels<std::size_t>(DEFAULT_TEXT_SCALE_FACTOR);
+
+        constexpr std::size_t ONE_LESS_SPECIES_TO_AVOID_EXCEEDING_BOX_BOUNDS = 1;
+        std::size_t species_to_render_count = (animal_species_list_visible_box_height_in_pixels / row_screen_height) - ONE_LESS_SPECIES_TO_AVOID_EXCEEDING_BOX_BOUNDS;
+        std::size_t species_to_render_half_count = species_to_render_count / 2;
+
+        // If there aren't enough species before the selected species, just start rendering
+        // with the first possible species.  This effectively prevents "scrolling" within
+        // the list box from occurring until it is becomes more necessary to start showing
+        // more verses.
+        std::size_t first_species_to_render_index = 0;
+        bool enough_previous_species = (SelectedAnimalSpeciesIndex > species_to_render_half_count);
+        if (enough_previous_species)
         {
+            // Start rendering species prior to the selected one so that the selected species
+            // appears in the middle, allowing players to more easily see what surrounding
+            // species might exist.
+            first_species_to_render_index = SelectedAnimalSpeciesIndex - species_to_render_half_count;
+        }
+
+        constexpr std::size_t SPECIES_COUNT = static_cast<std::size_t>(OBJECTS::AnimalSpecies::COUNT);
+        std::size_t last_species_to_render_index = first_species_to_render_index + species_to_render_count;
+        std::size_t last_valid_species_index = SPECIES_COUNT - 1;
+        last_species_to_render_index = std::min(last_species_to_render_index, last_valid_species_index);
+
+        // RENDER ROWS FOR EACH ANIMAL SPECIES IN VIEW.
+        float current_animal_species_row_top_y_position = species_column_header_text.BottomPosition();
+        for (std::size_t species_id = first_species_to_render_index; species_id <= last_species_to_render_index; ++species_id)
+        {
+            // CHECK IF THE CURRENT SPECIES IS THE SELECTED SPECIES.
+            bool current_species_is_selected = (SelectedAnimalSpeciesIndex == species_id);
+            if (current_species_is_selected)
+            {
+                // RENDER A DARKER BOX FOR THE SELECTED SPECIES.
+                constexpr uint8_t ARBITRARY_SELECTED_COLOR_SCALE_FACTOR = 2;
+                GRAPHICS::Color selected_species_background_color = animal_box_background_color;
+                selected_species_background_color.ScaleRgbDown(ARBITRARY_SELECTED_COLOR_SCALE_FACTOR);
+                MATH::FloatRectangle selected_species_background_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+                    animals_table_rectangle.LeftTop.X,
+                    current_animal_species_row_top_y_position,
+                    animals_table_rectangle.Width(),
+                    static_cast<float>(row_screen_height));
+                renderer.RenderScreenRectangle(
+                    selected_species_background_rectangle,
+                    selected_species_background_color);
+            }
+
             // CHECK IF THE SPECIES HAS BEEN COLLECTED.
             OBJECTS::AnimalSpecies species = static_cast<OBJECTS::AnimalSpecies>(species_id);
             AnimalCollectionStatistics species_collection_statistics = Inventory->GetAnimalCollectionStatistics(species);
@@ -113,7 +243,40 @@ namespace INVENTORY
                 };
                 renderer.Render(collected_species_text);
 
-                /// @todo   Render icons for male/female animals.
+                // RENDER AN ICON FOR THE MALE ANIMAL (IF COLLECTED).
+                // It should be placed toward the right end of this column, leaving room for the female icon.
+                constexpr float COUNT_BOTH_MALE_AND_FEMALE_ICONS = 2.0f;
+                float male_animal_icon_left_screen_position = species_column_header_text.RightPosition() - (COUNT_BOTH_MALE_AND_FEMALE_ICONS * RESOURCES::AnimalGraphics::SPRITE_WIDTH_IN_PIXELS);
+                MATH::Vector2f male_animal_icon_left_top_screen_position = MATH::Vector2f(
+                    male_animal_icon_left_screen_position,
+                    collected_species_text.LeftTopPosition.Y);
+                bool male_of_species_collected = species_collection_statistics.MaleCollected();
+                if (male_of_species_collected)
+                {
+                    OBJECTS::AnimalType male_animal_type(species, OBJECTS::AnimalGender::MALE);
+                    std::shared_ptr<GRAPHICS::AnimatedSprite> male_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(male_animal_type, *Assets);
+                    if (male_animal_sprite)
+                    {
+                        renderer.RenderGuiIcon(male_animal_sprite->Sprite, male_animal_icon_left_top_screen_position);
+                    }
+                }
+
+                // RENDER AN ICON FOR THE FEMALE ANIMAL (IF COLLECTED).
+                bool female_of_species_collected = species_collection_statistics.FemaleCollected();
+                if (female_of_species_collected)
+                {
+                    OBJECTS::AnimalType female_animal_type(species, OBJECTS::AnimalGender::FEMALE);
+                    std::shared_ptr<GRAPHICS::AnimatedSprite> female_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(female_animal_type, *Assets);
+                    if (female_animal_sprite)
+                    {
+                        // It should be placed at the right end of this column, after the male icon.
+                        // A little bit of extra padding is added to space out the icons.
+                        constexpr float SPACING_IN_PIXELS_BETWEEN_ANIMAL_ICONS = 8.0f;
+                        MATH::Vector2f female_animal_icon_left_top_screen_position = male_animal_icon_left_top_screen_position;
+                        female_animal_icon_left_top_screen_position.X += RESOURCES::AnimalGraphics::SPRITE_WIDTH_IN_PIXELS + SPACING_IN_PIXELS_BETWEEN_ANIMAL_ICONS;
+                        renderer.RenderGuiIcon(female_animal_sprite->Sprite, female_animal_icon_left_top_screen_position);
+                    }
+                }
 
                 // RENDER TEXT INDICATING HOW MANY OF THE SPECIES ARE FOLLOWING THE PLAYER.
                 GRAPHICS::GUI::Text species_following_player_text
@@ -144,9 +307,7 @@ namespace INVENTORY
             }
 
             // CALCULATE THE Y POSITION FOR THE NEW ROW.
-            constexpr float DEFAULT_TEXT_SCALE_FACTOR = 1.0f;
-            float row_screen_height = GRAPHICS::GUI::Glyph::HeightInPixels<float>(DEFAULT_TEXT_SCALE_FACTOR);
-            current_animal_species_row_top_y_position += row_screen_height;
+            current_animal_species_row_top_y_position += static_cast<float>(row_screen_height);
         }
 
         // RENDER LINES SEPARATING MAJOR COMPONENTS OF THE TABLE.
@@ -182,123 +343,27 @@ namespace INVENTORY
             following_ark_column_separator_line_x_position,
             animals_table_rectangle.RightBottom.Y);
         renderer.RenderLine(following_ark_column_separator_line_start_position, following_ark_column_separator_line_end_position, ANIMALS_TABLE_BORDER_COLOR);
-
-#if OLD_BOX_VERSION
-        // CALCULATE HOW MANY ANIMAL BOXES CAN APPEAR PER ROW AND COLUMN.
-        // Some padding is added around the boxes in order to space them out.
-        /// @todo   I'm not sure I like having the boxes spaced out like this (as opposed to how
-        /// all of the animal icons were nice and compact together before).  This may be just because
-        /// the boxes are primitive (no borders), but it is worthwhile to revisit this
-        /// approach later.
-        const float BOX_DIMENSION_IN_PIXELS = 48.0f;
-        const float PADDING_BETWEEN_BOXES_IN_PIXELS = 16.0f;
-        const float BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS + PADDING_BETWEEN_BOXES_IN_PIXELS;
-        float page_width_in_pixels = background_rectangle.GetWidth();
-        unsigned int boxes_per_row = static_cast<unsigned int>(page_width_in_pixels / BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS);
-
-        // RENDER BOXES FOR EACH COLLECTED ANIMAL.
-        const float BOX_HALF_DIMENSION_IN_PIXELS = BOX_DIMENSION_IN_PIXELS / 2.0f;
-        float starting_box_center_x_position = background_rectangle.GetLeftXPosition() + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS;
-        float starting_box_center_y_position = background_rectangle.GetTopYPosition() + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS;
-        for (unsigned int species_id = 0; species_id < static_cast<unsigned int>(OBJECTS::AnimalSpecies::COUNT); ++species_id)
-        {
-            // GET THE COLLECTED COUNT INFORMATION FOR EACH GENDER OF THE SPECIES.
-            OBJECTS::AnimalSpecies species = static_cast<OBJECTS::AnimalSpecies>(species_id);
-            unsigned int species_male_animal_collected_count = 0;
-            unsigned int species_female_animal_collected_count = 0;
-            Inventory->GetAnimalCollectedCount(species, species_male_animal_collected_count, species_female_animal_collected_count);
-
-            // CALCULATE THE BOX FOR THIS ANIMAL SPECIES.
-            /// @todo Support scrolling through multiples "pages" within this inventory page
-            /// as not all animals will be able to fit on a single screen.
-            unsigned int box_row_index = species_id / boxes_per_row;
-            unsigned int box_column_index = species_id % boxes_per_row;
-
-            float current_box_x_offset = static_cast<float>(box_column_index * BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS);
-            float current_box_center_x_position = starting_box_center_x_position + current_box_x_offset;
-
-            float current_box_y_offset = static_cast<float>(box_row_index * BOX_WIDTH_PADDING_DIMENSION_IN_PIXELS);
-            float current_box_center_y_position = starting_box_center_y_position + current_box_y_offset;
-
-            MATH::FloatRectangle box_screen_rectangle = MATH::FloatRectangle::FromCenterAndDimensions(
-                current_box_center_x_position,
-                current_box_center_y_position,
-                BOX_DIMENSION_IN_PIXELS,
-                BOX_DIMENSION_IN_PIXELS);
-
-            // RENDER A BOX FOR ANIMAL SPECIES.
-            RenderAnimalBox(
-                species, 
-                species_male_animal_collected_count, 
-                species_female_animal_collected_count,
-                box_screen_rectangle,
-                renderer);
-        }
-#endif
     }
 
-    /// Renders a box for an animal on the page.
-    /// @param[in]  species - The species of animal to render.
-    /// @param[in]  species_male_animal_collected_count - The count of male animals collected of the species.
-    /// @param[in]  species_female_animal_collected_count - The count of female animals collected of the species.
-    /// @param[in]  box_screen_rectangle - The placement/dimensions of the box to render, in screen coordinates.
-    /// @param[in,out]  renderer - The renderer to use.
-    void InventoryAnimalsPage::RenderAnimalBox(
-        const OBJECTS::AnimalSpecies species,
-        const unsigned int species_male_animal_collected_count,
-        const unsigned int species_female_animal_collected_count,
-        const MATH::FloatRectangle& box_screen_rectangle,
-        GRAPHICS::Renderer& renderer) const
+    /// Selects the previous animal species in the list, if one exists.
+    /// If a previous species does not exist, the currently selected species remains.
+    void InventoryAnimalsPage::SelectPreviousAnimalSpecies()
     {
-        // RENDER A SLIGHTLY DARKER RECTANGLE FOR THE BACKGROUND.
-        const uint8_t ARBITRARY_BACKGROUND_COLOR_SCALE_FACTOR = 2;
-        GRAPHICS::Color animal_box_background_color = BACKGROUND_COLOR;
-        animal_box_background_color.ScaleRgbDown(ARBITRARY_BACKGROUND_COLOR_SCALE_FACTOR);
-        renderer.RenderScreenRectangle(box_screen_rectangle, animal_box_background_color);
+        // If subtracting 1 causes the species index to go negative,
+        // the number will actually be a larger positive number
+        // (due to being an unsigned integer), so the min function
+        // call will work to ensure the selected verse doesn't
+        // go below the verse at index 0.
+        std::size_t previous_species_index = SelectedAnimalSpeciesIndex - 1;
+        SelectedAnimalSpeciesIndex = std::min(SelectedAnimalSpeciesIndex, previous_species_index);
+    }
 
-        // RENDER INFORMATION ABOUT ANY COLLECTED MALE ANIMALS.
-        bool male_animal_collected = (species_male_animal_collected_count > 0);
-        if (male_animal_collected)
-        {
-            // RENDER AN ICON FOR THE MALE ANIMAL.
-            // It should appear in the left-top corner of the box.
-            OBJECTS::AnimalType male_animal_type(species, OBJECTS::AnimalGender::MALE);
-            std::shared_ptr<GRAPHICS::AnimatedSprite> male_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(male_animal_type, *Assets);
-            if (male_animal_sprite)
-            {
-                MATH::Vector2f male_animal_icon_left_top_screen_position = box_screen_rectangle.LeftTop;
-                renderer.RenderGuiIcon(male_animal_sprite->Sprite, male_animal_icon_left_top_screen_position);
-
-                // RENDER THE COLLECTED COUNT FOR THE MALE ANIMAL.
-                // It should appear just to the right of the male animal icon.
-                std::string male_collected_count_text = "x" + std::to_string(species_male_animal_collected_count);
-                MATH::Vector2f male_collected_count_left_top_screen_position = male_animal_icon_left_top_screen_position;
-                male_collected_count_left_top_screen_position.X += male_animal_sprite->Sprite.GetWidthInPixels();
-                renderer.RenderText(male_collected_count_text, RESOURCES::AssetId::FONT_TEXTURE, male_collected_count_left_top_screen_position);
-            }
-        }
-
-        // RENDER INFORMATION ABOUT ANY COLLECTED FEMALE ANIMALS.
-        bool female_animal_collected = (species_female_animal_collected_count > 0);
-        if (female_animal_collected)
-        {
-            // RENDER AN ICON FOR THE FEMALE ANIMAL.
-            // It should appear in the left-bottom corner of the box.
-            OBJECTS::AnimalType female_animal_type(species, OBJECTS::AnimalGender::FEMALE);
-            std::shared_ptr<GRAPHICS::AnimatedSprite> female_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(female_animal_type, *Assets);
-            if (female_animal_sprite)
-            {
-                MATH::Vector2f female_animal_icon_left_top_screen_position = box_screen_rectangle.LeftXBottomY();
-                female_animal_icon_left_top_screen_position.Y -= female_animal_sprite->Sprite.GetHeightInPixels();
-                renderer.RenderGuiIcon(female_animal_sprite->Sprite, female_animal_icon_left_top_screen_position);
-
-                // RENDER THE COLLECTED COUNT FOR THE FEMALE ANIMAL.
-                // It should appear just to the right of the female animal icon.
-                std::string female_collected_count_text = "x" + std::to_string(species_female_animal_collected_count);
-                MATH::Vector2f female_collected_count_left_top_screen_position = female_animal_icon_left_top_screen_position;
-                female_collected_count_left_top_screen_position.X += female_animal_sprite->Sprite.GetWidthInPixels();
-                renderer.RenderText(female_collected_count_text, RESOURCES::AssetId::FONT_TEXTURE, female_collected_count_left_top_screen_position);
-            }
-        }
+    /// Selects the next animal species in the list, if one exists.
+    /// If a next species does not exist, the currently selected species remains.
+    void InventoryAnimalsPage::SelectNextAnimalSpecies()
+    {
+        std::size_t next_species_index = SelectedAnimalSpeciesIndex + 1;
+        std::size_t last_valid_species_index = static_cast<std::size_t>(OBJECTS::AnimalSpecies::COUNT) - 1;
+        SelectedAnimalSpeciesIndex = std::min(next_species_index, last_valid_species_index);
     }
 }

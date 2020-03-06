@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <SFML/System.hpp>
 #include "Graphics/Color.h"
 #include "Graphics/Renderer.h"
 #include "Input/InputController.h"
@@ -66,8 +67,8 @@ namespace INVENTORY
             const std::shared_ptr<const Inventory>& inventory,
             const std::shared_ptr<RESOURCES::Assets>& assets);
 
-        // INPUT.
-        void RespondToInput(const INPUT_CONTROL::InputController& input_controller);
+        // UPDATING.
+        void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
         void Render(GRAPHICS::Renderer& renderer) const;

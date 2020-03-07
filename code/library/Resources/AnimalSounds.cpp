@@ -80,8 +80,6 @@ namespace RESOURCES
                 return RESOURCES::AssetId::LOCUST_SOUND;
             case OBJECTS::AnimalSpecies::MONKEY:
                 return RESOURCES::AssetId::MONKEY_SOUND;
-            case OBJECTS::AnimalSpecies::MOSQUITO:
-                return RESOURCES::AssetId::MOSQUITO_SOUND;
             case OBJECTS::AnimalSpecies::OSPREY:
                 return RESOURCES::AssetId::OSPREY_SOUND;
             case OBJECTS::AnimalSpecies::OWL:
@@ -98,8 +96,6 @@ namespace RESOURCES
                 return RESOURCES::AssetId::RACCOON_SOUND;
             case OBJECTS::AnimalSpecies::RAVEN:
                 return RESOURCES::AssetId::RAVEN_SOUND;
-            case OBJECTS::AnimalSpecies::SEAGULL:
-                return RESOURCES::AssetId::SEAGULL_SOUND;
             case OBJECTS::AnimalSpecies::SHEEP:
                 return RESOURCES::AssetId::SHEEP_SOUND;
             case OBJECTS::AnimalSpecies::SNAKE:

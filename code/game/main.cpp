@@ -8,7 +8,6 @@
 //      - For gameplay
 // - Make title fall from top
 // - Fix blinking on credits screen
-// - Create remaining animal sprites
 // - Figure out cleanliness of remaining animals
 // - Add blinking cursor to new game screen
 // - Make directions for game selection screen clearer

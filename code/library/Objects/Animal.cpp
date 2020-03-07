@@ -39,7 +39,6 @@ namespace OBJECTS
         "Lion",
         "Locust",
         "Monkey",
-        "Mosquito",
         "Osprey",
         "Owl",
         "Peacock",
@@ -48,7 +47,6 @@ namespace OBJECTS
         "Polar Bear",
         "Raccoon",
         "Raven",
-        "Seagull",
         "Sheep",
         "Snake",
         "Squirrel",
@@ -136,8 +134,6 @@ namespace OBJECTS
             case AnimalSpecies::GOOSE:
             case AnimalSpecies::GUINEA_PIG:
             case AnimalSpecies::HYENA:
-            case AnimalSpecies::MOSQUITO:
-            case AnimalSpecies::SEAGULL:
             case AnimalSpecies::SNAKE:
             case AnimalSpecies::SQUIRREL:
                 /// @todo   Figure out the animals in this category.

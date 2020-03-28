@@ -6,11 +6,6 @@
 //      - For intro
 //      - For new game intro
 //      - For gameplay
-// - Make title fall from top
-// - Fix blinking on credits screen
-// - Figure out cleanliness of remaining animals
-// - Add blinking cursor to new game screen
-// - Make directions for game selection screen clearer
 // - Improve ESC menu during main gameplay
 // - Have animals follow Noah
 // - Have animals go into ark
@@ -816,13 +811,13 @@ int main()
                         break;
                     }
                     case STATES::GameState::TITLE_SCREEN:
-                        next_game_state = title_screen.RespondToInput(input_controller);
+                        next_game_state = title_screen.Update(elapsed_time, input_controller);
                         break;
                     case STATES::GameState::CREDITS_SCREEN:
                         next_game_state = credits_screen.Update(elapsed_time, input_controller);
                         break;
                     case STATES::GameState::GAME_SELECTION_SCREEN:
-                        next_game_state = game_selection_screen.RespondToInput(input_controller);
+                        next_game_state = game_selection_screen.Update(elapsed_time, input_controller);
                         break;
                     case STATES::GameState::NEW_GAME_INTRO_SEQUENCE:
                         next_game_state = new_game_intro_sequence.Update(elapsed_time, *speakers);

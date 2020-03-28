@@ -119,7 +119,7 @@ namespace INVENTORY
     /// Gets the currently selected verse, if available in the inventory.
     /// @return The currently selected verse, if available in the inventory;
     ///     null otherwise.
-    const BIBLE::BibleVerse* const InventoryBibleVerseListBox::GetSelectedVerse() const
+    const BIBLE::BibleVerse* InventoryBibleVerseListBox::GetSelectedVerse() const
     {
         // MAKE SURE THE SELECTED VERSE IS IN THE PLAYER'S INVENTORY.
         // Players need to collect verses before they can be fully viewed

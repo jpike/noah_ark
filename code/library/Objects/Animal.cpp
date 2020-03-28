@@ -87,9 +87,12 @@ namespace OBJECTS
             // RETURN TRUE FOR ALL CLEAN ANIMALS.
             case AnimalSpecies::CATTLE: // Deuteronomy 14:4
             case AnimalSpecies::CHICKEN:
+            case AnimalSpecies::CRICKET: // Leviticus 11:22
             case AnimalSpecies::DEER: // Deuteronomy 14:5
             case AnimalSpecies::DOVE: // Genesis 15:9
+            case AnimalSpecies::DUCK:
             case AnimalSpecies::GOAT: // Deuteronomy 14:4
+            case AnimalSpecies::GOOSE:
             case AnimalSpecies::LOCUST: // Leviticus 11:22
             case AnimalSpecies::PEACOCK:
             case AnimalSpecies::SHEEP: // Deuteronomy 14:4
@@ -109,12 +112,15 @@ namespace OBJECTS
             case AnimalSpecies::CHIPMUNK:
             case AnimalSpecies::DOG:
             case AnimalSpecies::EAGLE: // Leviticus 11:13
+            case AnimalSpecies::ELEPHANT:
             case AnimalSpecies::FOX:
             case AnimalSpecies::FROG: // Leviticus 11:9-10
             case AnimalSpecies::GORILLA:
+            case AnimalSpecies::GUINEA_PIG:
             case AnimalSpecies::HAWK: // Leviticus 11:16
             case AnimalSpecies::HIPPO:
             case AnimalSpecies::HORSE:
+            case AnimalSpecies::HYENA:
             case AnimalSpecies::KOALA:
             case AnimalSpecies::LEOPARD:
             case AnimalSpecies::LION:
@@ -126,17 +132,9 @@ namespace OBJECTS
             case AnimalSpecies::POLAR_BEAR:
             case AnimalSpecies::RACCOON:
             case AnimalSpecies::RAVEN: // Leviticus 11:13-15
-            case AnimalSpecies::WOLF:
-                return false;
-            case AnimalSpecies::CRICKET:
-            case AnimalSpecies::DUCK:
-            case AnimalSpecies::ELEPHANT:
-            case AnimalSpecies::GOOSE:
-            case AnimalSpecies::GUINEA_PIG:
-            case AnimalSpecies::HYENA:
-            case AnimalSpecies::SNAKE:
+            case AnimalSpecies::SNAKE: // Leviticus 11:22
             case AnimalSpecies::SQUIRREL:
-                /// @todo   Figure out the animals in this category.
+            case AnimalSpecies::WOLF:
                 return false;
             default:
                 // Assume it isn't clean.

@@ -24,7 +24,7 @@ namespace INVENTORY
             GRAPHICS::Renderer& renderer) const;
 
         // VERSE METHODS.
-        const BIBLE::BibleVerse* const GetSelectedVerse() const;
+        const BIBLE::BibleVerse* GetSelectedVerse() const;
         void SelectPreviousVerse();
         void SelectNextVerse();
 

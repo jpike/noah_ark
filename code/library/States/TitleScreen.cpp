@@ -9,11 +9,15 @@ namespace STATES
         MenuOptions({ GameState::GAME_SELECTION_SCREEN, GameState::CREDITS_SCREEN })
     {}
 
-    /// Handles any user input for the title screen.
+    /// Updates the title screen based on elapsed time and user input.
+    /// @param[in]  elapsed_time - The elapsed time since the last frame.
     /// @param[in]  input_controller - The controller supplying user input to respond to.
-    /// @return The state the game should be in based on the user's input.
-    GameState TitleScreen::RespondToInput(const INPUT_CONTROL::InputController& input_controller)
+    /// @return The state the game after updating the title screen.
+    GameState TitleScreen::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
     {
+        // UPDATE THE ELAPSED TIME FOR THE TITLE SCREEN.
+        ElapsedTime += elapsed_time;
+
         // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
         bool start_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY);
         if (start_button_pressed)
@@ -60,17 +64,39 @@ namespace STATES
     /// @param[in,out]  renderer - The renderer to use for rendering.
     void TitleScreen::Render(GRAPHICS::Renderer& renderer) const
     {
-        // DRAW THE SUB-HEADING FOR THE GAME'S TITLE.
-        // It is centered within the top third of the screen.
+        // CALCULATE INITIAL PARAMETERS FOR THE GAME'S TITLE.
+        // The sub-heading is centered within the top third of the screen,
+        // and the main title will be below that.  However, these two components
+        // end up scrolling in from the top initially.
         MATH::FloatRectangle screen_rectangle = renderer.Screen->GetBoundingRectangle<float>();
         float screen_left_x_position = screen_rectangle.LeftTop.X;
         float screen_top_y_position = screen_rectangle.LeftTop.Y;
         float screen_width_in_pixels = screen_rectangle.Width();
         float screen_height_in_pixels = screen_rectangle.Height();
         float one_third_of_screen_height_in_pixels = screen_height_in_pixels / 3.0f;
+
+        // CALCULATE THE OFFSET OF THE TITLE BASED ON ELAPSED TIME.
+        // It should scroll in from the top.
+        const sf::Time TITLE_TOTAL_SCROLL_IN_TIME = sf::seconds(1);
+        float title_y_scroll_offset_in_pixels = 0.0f;
+        bool title_still_scrolling_in = (ElapsedTime < TITLE_TOTAL_SCROLL_IN_TIME);
+        if (title_still_scrolling_in)
+        {
+            // How far the title components have scrolled in from the top should be based on
+            // how much of the total elapsed time has passed.  For easier placement in the
+            // final positions, the scroll offset will be negative to place the title components
+            // higher up on the screen while they're still scrolling in.
+            float ratio_of_elapsed_time = ElapsedTime / TITLE_TOTAL_SCROLL_IN_TIME;
+            float ratio_of_remaining_elapsed_time = 1.0f - ratio_of_elapsed_time;
+            title_y_scroll_offset_in_pixels = -1.0f * one_third_of_screen_height_in_pixels * ratio_of_remaining_elapsed_time;
+        }
+
+        // DRAW THE SUB-HEADING FOR THE GAME'S TITLE.
+        // It is centered within the top third of the screen once fully scrolled in.
+        float sub_heading_top_y_position = screen_top_y_position + title_y_scroll_offset_in_pixels;
         MATH::FloatRectangle sub_heading_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             screen_left_x_position,
-            screen_top_y_position,
+            sub_heading_top_y_position,
             screen_width_in_pixels,
             one_third_of_screen_height_in_pixels);
         const float BIBLE_GAMES_HEADING_TEXT_SCALE = 1.5f;
@@ -82,10 +108,11 @@ namespace STATES
             BIBLE_GAMES_HEADING_TEXT_SCALE);
 
         // DRAW THE MAIN GAME'S TITLE.
-        // It is centered within the middle third of the screen.
+        // It is centered within the middle third of the screen once fully scrolled in.
+        float main_title_top_y_position = one_third_of_screen_height_in_pixels + title_y_scroll_offset_in_pixels;
         MATH::FloatRectangle main_title_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             screen_left_x_position,
-            one_third_of_screen_height_in_pixels,
+            main_title_top_y_position,
             screen_width_in_pixels,
             one_third_of_screen_height_in_pixels);
         const float TITLE_TEXT_SCALE = 3.0f;

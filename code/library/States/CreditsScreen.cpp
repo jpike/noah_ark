@@ -1,3 +1,4 @@
+#include <cmath>
 #include "States/CreditsScreen.h"
 
 namespace STATES
@@ -35,7 +36,8 @@ namespace STATES
         // This helps implement scrolling of the credits text upward.
         constexpr float SCROLL_RATE_IN_PIXELS_PER_SECOND = -4.0f;
         float elapsed_time_in_seconds = ElapsedTime.asSeconds();
-        float credits_text_top_offset_in_pixels = SCROLL_RATE_IN_PIXELS_PER_SECOND * elapsed_time_in_seconds;
+        // The result needs to be rounded to an integer to avoid flickering due to sub-pixel values.
+        float credits_text_top_offset_in_pixels = std::round(SCROLL_RATE_IN_PIXELS_PER_SECOND * elapsed_time_in_seconds);
 
         // RENDER TEXT INDICATING THE PURPOSE OF THIS SCREEN.
         const GRAPHICS::Color CREDITS_TEXT_COLOR = GRAPHICS::Color::WHITE;

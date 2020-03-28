@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <memory>
 #include <vector>
+#include <SFML/System.hpp>
 #include "Graphics/Renderer.h"
 #include "Input/InputController.h"
 #include "States/GameState.h"
@@ -15,6 +16,13 @@ namespace STATES
     class GameSelectionScreen
     {
     public:
+        /// The max length of the filename for a saved game.
+        /// The length is largely arbitrary but currently set to not result in
+        /// the filename wrapping onto multiple lines.  One thought was to enforce
+        /// an old "8.3" file naming convention, but that was discarded for now
+        /// since it could be confusing due to all of the extra width on screen.
+        static constexpr std::size_t MAX_SAVED_GAME_FILENAME_LENGTH_IN_CHARACTERS = 30;
+
         /// The possible substates of the game.
         enum class SubState
         {
@@ -25,13 +33,15 @@ namespace STATES
         };
 
         /// The path to the saved games folder.
-        static const std::filesystem::path GameSelectionScreen::SAVED_GAMES_FOLDER_PATH;
+        static const std::filesystem::path SAVED_GAMES_FOLDER_PATH;
 
         void LoadSavedGames();
 
-        GameState RespondToInput(const INPUT_CONTROL::InputController& input_controller);
+        GameState Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
         void Render(GRAPHICS::Renderer& renderer) const;
 
+        /// The total time that the title screen has been shown.
+        sf::Time ElapsedTime = sf::Time::Zero;
         /// The current substate.
         SubState CurrentSubState = SubState::LISTING_GAMES;
         /// The current text being entered by the user for a new saved game filename.

@@ -1,6 +1,8 @@
 #include <algorithm>
+#include <cmath>
 #include <filesystem>
 #include "Debugging/DebugConsole.h"
+#include "Graphics/Gui/Text.h"
 #include "Math/Number.h"
 #include "Math/Rectangle.h"
 #include "Resources/AssetId.h"
@@ -42,11 +44,15 @@ namespace STATES
         }
     }
 
-    /// Handles any user input for the game selection screen.
+    /// Updates the game selection screen based on elapsed time and user input.
+    /// @param[in]  elapsed_time - The elapsed time since the last frame.
     /// @param[in]  input_controller - The controller supplying user input to respond to.
-    /// @return The state the game should be in based on the user's input.
-    GameState GameSelectionScreen::RespondToInput(const INPUT_CONTROL::InputController& input_controller)
+    /// @return The state the game should be after updating the game selection screen.
+    GameState GameSelectionScreen::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
     {
+        // TRACK THE ELAPSED TIME.
+        ElapsedTime += elapsed_time;
+
         // RESPOND TO INPUT BASED ON THE CURRENT STATE.
         switch (CurrentSubState)
         {
@@ -338,12 +344,7 @@ namespace STATES
                     }
 
                     // ADD THE CURRENT KEY'S CHARACTER IF THERE'S ENOUGH ROOM.
-                    // The length is largely arbitrary but currently set to not result in
-                    // the filename wrapping onto multiple lines.  One thought was to enforce
-                    // an old "8.3" file naming convention, but that was discarded for now
-                    // since it could be confusing due to all of the extra width on screen.
-                    constexpr std::size_t MAX_FILENAME_LENGTH_IN_CHARACTERS = 30;
-                    bool filename_has_more_room = (CurrentNewGameFilenameText.length() < MAX_FILENAME_LENGTH_IN_CHARACTERS);
+                    bool filename_has_more_room = (CurrentNewGameFilenameText.length() < MAX_SAVED_GAME_FILENAME_LENGTH_IN_CHARACTERS);
                     if (filename_has_more_room)
                     {
                         CurrentNewGameFilenameText += current_key_character;
@@ -476,5 +477,64 @@ namespace STATES
             game_selection_option_bounding_screen_rectangle,
             *new_game_box_color,
             new_game_box_border_thickness_in_pixels);
+
+        // An underscore should be rendered for the next character to help indicate if a user
+        // can type more characters for a new game.
+        std::size_t current_new_game_filename_length_in_characters = CurrentNewGameFilenameText.length();
+        bool filename_has_more_room = (current_new_game_filename_length_in_characters < MAX_SAVED_GAME_FILENAME_LENGTH_IN_CHARACTERS);
+        bool user_entering_filename = SubState::ENTERING_NEW_GAME == CurrentSubState;
+        bool user_can_type_more_characters_for_new_game = (user_entering_filename && filename_has_more_room);
+        if (user_can_type_more_characters_for_new_game)
+        {
+            // SEE IF AN UNDERSCORE SHOULD BE RENDERED.
+            // It blinks based on a sine curve for a smooth indication of interactivity.
+            constexpr float PI = 3.14159f;
+            constexpr float SINE_WAVE_PERIOD = 2.0f * PI;
+            constexpr float CURSOR_PERIOD_IN_SECONDS = 1.0f;
+            float elapsed_time_ratio = static_cast<float>(ElapsedTime.asSeconds()) / CURSOR_PERIOD_IN_SECONDS;
+            float elapsed_time_converted_to_angle_range_within_one_circle = elapsed_time_ratio * SINE_WAVE_PERIOD;
+            float sine_of_elapsed_time = std::sinf(elapsed_time_converted_to_angle_range_within_one_circle);
+            bool next_character_placeholder_visible = (sine_of_elapsed_time < 0.0f);
+            if (next_character_placeholder_visible)
+            {
+                // RENDER AN UNDERSCORE FOR THE NEXT CHARACTER.
+                constexpr float DEFAULT_TEXT_SCALE_FACTOR = 1.0f;
+                // The x position of the placeholder should be after the currently typed text within the box.
+                float current_new_game_filename_text_width_in_pixels = GRAPHICS::GUI::Text::Width<float>(CurrentNewGameFilenameText, DEFAULT_TEXT_SCALE_FACTOR);
+                float next_character_placeholder_left_x_position = (
+                    game_selection_option_bounding_screen_rectangle.LeftTop.X +
+                    TEXT_OFFSET_FROM_BORDER_IN_PIXELS.X +
+                    current_new_game_filename_text_width_in_pixels);
+                // The center Y is chosen since that should generally line up with where typed characters appear.
+                float next_character_placeholder_top_y_position = game_selection_option_bounding_screen_rectangle.CenterY();
+                GRAPHICS::GUI::Text next_character_placeholder_text =
+                {
+                    .String = "_",
+                    .LeftTopPosition = MATH::Vector2f(next_character_placeholder_left_x_position, next_character_placeholder_top_y_position),
+                    .Color = GRAPHICS::Color::WHITE
+                };
+                renderer.Render(next_character_placeholder_text);
+            }
+        }
+
+        // RENDER SOME HELP TEXT AT THE BOTTOM OF THE SCREEN.
+        constexpr float DEFAULT_SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
+        float screen_y_position_one_line_before_bottom = screen_height_in_pixels - DEFAULT_SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS;
+        MATH::FloatRectangle help_text_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+            0.0f,
+            screen_y_position_one_line_before_bottom,
+            screen_width_in_pixels,
+            DEFAULT_SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS);
+        // A black rectangle is rendered behind the text to avoid having the text overlap
+        // with other text from the screen and make things hard to read.
+        renderer.RenderScreenRectangle(help_text_screen_rectangle, GRAPHICS::Color::BLACK);
+        // The help text is scaled to half size to let multiple lines fit on screen.
+        constexpr float HELP_TEXT_SCALE_FACTOR = 0.5f;
+        renderer.RenderText(
+            "[ESC] to title | Up/down arrow keys to select game\nEnter to select save game slot | Type filename for new game",
+            RESOURCES::AssetId::FONT_TEXTURE,
+            help_text_screen_rectangle,
+            GRAPHICS::Color::WHITE,
+            HELP_TEXT_SCALE_FACTOR);
     }
 }

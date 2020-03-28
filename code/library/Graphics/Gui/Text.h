@@ -72,7 +72,7 @@ namespace GRAPHICS::GUI
     /// @param[in]  scale_factor - The scaling factor of the text.  1 is normal scaling.
     /// @return The scaled height of the text, in pixels.
     template <typename NumericType>
-    static NumericType Text::Height(const float scale_factor)
+    NumericType Text::Height(const float scale_factor)
     {
         float text_height = Glyph::HeightInPixels<float>(scale_factor);
         return static_cast<NumericType>(text_height);

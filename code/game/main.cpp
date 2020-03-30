@@ -3,7 +3,6 @@
 //      - For intro
 //      - For new game intro
 //      - For gameplay
-// - Improve ESC menu during main gameplay
 // - Have animals follow Noah
 // - Have animals go into ark
 // - Add underground caves
@@ -823,7 +822,7 @@ int main()
                         next_game_state = flood_cutscene.Update(elapsed_time);
                         break;
                     case STATES::GameState::GAMEPLAY:
-                        gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
+                        next_game_state = gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
                         break;
                 }
 

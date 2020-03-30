@@ -28,7 +28,7 @@ namespace GUI
     TextColor(GRAPHICS::Color::BLACK),
     InventoryOpened(false),
     InventoryGui(noah_player->Inventory, assets),
-    SaveDialogBoxVisible(false),
+    PauseMenuVisible(false),
     SavedGame(saved_game_data),
     Assets(assets),
     World(world),
@@ -52,12 +52,13 @@ namespace GUI
     /// Updates the HUD.
     /// @param[in]  elapsed_time - The elapsed time since the last frame.
     /// @param[in]  input_controller - The controller on which to check user input.
-    void HeadsUpDisplay::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
+    /// @return The next state the game should be in based on the HUD.
+    STATES::GameState HeadsUpDisplay::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
     {
-        // CHECK IF THE SAVE DIALOG BOX IS OPEN.
+        // CHECK IF THE PAUSE MENU IS OPEN.
         // If so, it should take precedence over other parts of the HUD.
         // After that, the main text box should take precedence over the inventory.
-        if (SaveDialogBoxVisible)
+        if (PauseMenuVisible)
         {
             // CHECK IF AN APPLICABLE BUTTON WAS PRESSED.
             if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY))
@@ -118,13 +119,18 @@ namespace GUI
 
                 SavedGame->Write(SavedGame->Filepath);
 
-                // CLOSE THE SAVE DIALOG BOX.
-                SaveDialogBoxVisible = false;
+                // CLOSE THE PAUSE MENU.
+                PauseMenuVisible = false;
+            }
+            else if (input_controller.ButtonWasPressed(sf::Keyboard::T))
+            {
+                // RETURN TO THE TITLE SCREEN.
+                return STATES::GameState::TITLE_SCREEN;
             }
             else if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY))
             {
-                // CLOSE THE SAVE DIALOG BOX.
-                SaveDialogBoxVisible = false;
+                // CLOSE THE PAUSE MENU.
+                PauseMenuVisible = false;
             }
         }
         else if (MainTextBox.IsVisible)
@@ -161,14 +167,17 @@ namespace GUI
             }
             else
             {
-                // OPEN THE SAVE DIALOG BOX IF THE APPROPRIATE BUTTON WAS PRESSED.
-                bool save_dialog_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY);
-                if (save_dialog_button_pressed)
+                // OPEN THE PAISE IF THE APPROPRIATE BUTTON WAS PRESSED.
+                bool pause_menu_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY);
+                if (pause_menu_button_pressed)
                 {
-                    SaveDialogBoxVisible = true;
+                    PauseMenuVisible = true;
                 }
             }
         }
+
+        // STAY ON THE CURRENT GAMEPLAY STATE.
+        return STATES::GameState::GAMEPLAY;
     }
 
     /// Renders the HUD to the provided target.
@@ -273,11 +282,15 @@ namespace GUI
             MainTextBox.Render(renderer);
         }
 
-        // RENDER THE SAVE DIALOG BOX IF IT IS VISIBLE.
-        if (SaveDialogBoxVisible)
+        // RENDER THE PAUSE MENUIF IT IS VISIBLE.
+        if (PauseMenuVisible)
         {
+            // The saved game filename is included in the text to clarify for users
+            // what game is being saved.
+            std::string saved_game_filename = SavedGame->Filepath.filename().string();
+            std::string pause_menu_text = "[ENTER] - Save " + saved_game_filename + "\n[T] - Title\n\n[ESC] - Cancel";
             renderer.RenderCenteredText(
-                "[ENTER] - Save\n[ESC] - Cancel",
+                pause_menu_text,
                 RESOURCES::AssetId::FONT_TEXTURE,
                 renderer.Screen->GetBoundingRectangle<float>());
         }
@@ -287,7 +300,7 @@ namespace GUI
     /// @return True if a modal component of the HUD is displayed; false otherwise.
     bool HeadsUpDisplay::ModalComponentDisplayed() const
     {
-        bool modal_component_displayed = InventoryOpened || SaveDialogBoxVisible;
+        bool modal_component_displayed = InventoryOpened || PauseMenuVisible;
         return modal_component_displayed;
     }
 }

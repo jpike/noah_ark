@@ -73,8 +73,7 @@ namespace TEST_TEXT_BOX
 
         // VERIFY THAT THE THIRD PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
         const std::string EXPECTED_THIRD_PAGE_TEXT =
-            "him, into the ark, because of the waters\n"
-            "of the flood.\n";
+            "the ark, because of the waters of the flood.\n";
         float elapsed_time_in_seconds_for_third_page = elapsed_time_in_seconds_for_next_character * EXPECTED_THIRD_PAGE_TEXT.length();
         text_box.Update(sf::seconds(elapsed_time_in_seconds_for_third_page));
         std::stringstream third_page_output;

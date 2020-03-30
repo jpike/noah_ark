@@ -10,6 +10,7 @@
 #include "Maps/World.h"
 #include "Objects/Noah.h"
 #include "Resources/Assets.h"
+#include "States/GameState.h"
 #include "States/SavedGameData.h"
 
 namespace GRAPHICS
@@ -33,7 +34,7 @@ namespace GUI
             const std::shared_ptr<RESOURCES::Assets>& assets);
 
         // UPDATE.
-        void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
+        STATES::GameState Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
         void Render(GRAPHICS::Renderer& renderer) const;
@@ -55,8 +56,8 @@ namespace GUI
 
     private:
         // PRIVATE MEMBER VARIABLES.
-        /// True if the save dialog box is visible; false otherwise.
-        bool SaveDialogBoxVisible;
+        /// True if the pause menu box is visible; false otherwise.
+        bool PauseMenuVisible;
         /// The current player's saved game.
         std::shared_ptr<STATES::SavedGameData> SavedGame;
         /// The assets to use for the HUD.

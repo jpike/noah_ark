@@ -118,7 +118,8 @@ namespace STATES
     /// @param[in]  elapsed_time - The amount of time by which to update the game state.
     /// @param[in,out]  input_controller - The controller supplying player input.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
-    void GameplayState::Update(
+    /// @return The next game state after updating.
+    GameState GameplayState::Update(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera)
@@ -138,7 +139,7 @@ namespace STATES
             // If the tile map editor is displayed, it should have
             // full control over updating to avoid interference
             // by other components.
-            return;
+            return GameState::GAMEPLAY;
         }
         else
         {
@@ -148,7 +149,8 @@ namespace STATES
 #endif
 
         // UPDATE THE HUD.
-        Hud->Update(elapsed_time, input_controller);
+        // As of now, only the HUD is capable of altering the gameplay state.
+        GameState next_game_state = Hud->Update(elapsed_time, input_controller);
 
         // CHECK IF A MODAL HUD COMPONENT IS DISPLAYED.
         // If a modal GUI component is displayed, then the regular controls for the player
@@ -157,11 +159,14 @@ namespace STATES
         if (modal_hud_components_displayed)
         {
             // No further updating is needed.
-            return;
+            return next_game_state;
         }
 
         // UPDATE THE CURRENT MAP GRID.
         UpdateMapGrid(elapsed_time, input_controller, camera, *CurrentMapGrid);
+
+        // RETURN THE NEXT GAME STATE.
+        return next_game_state;
     }
 
     /// Renders the current frame of the gameplay state.

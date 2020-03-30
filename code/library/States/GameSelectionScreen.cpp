@@ -423,7 +423,9 @@ namespace STATES
                 current_box_border_thickness_in_pixels = SELECTED_GAME_OPTION_BOX_BORDER_THICKNESS_IN_PIXELS;
             }
 
-            // RENDER AN OPTION FOR THE CURRENT SAVED GAME
+            // RENDER AN OPTION FOR THE CURRENT SAVED GAME.
+            /// @todo   Once standard C++ library with Visual Studio has appropriate last modified time/to-string
+            ///     functionality, add last modified time here.
             const std::shared_ptr<SavedGameData>& saved_game = SavedGames.at(saved_game_index);
             std::string saved_game_filename = saved_game->Filepath.filename().string();
             renderer.RenderTextInBorderedBox(

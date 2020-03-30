@@ -16,6 +16,7 @@
 #include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
 #include "Resources/Assets.h"
+#include "States/GameState.h"
 #include "States/SavedGameData.h"
 
 namespace STATES
@@ -38,7 +39,7 @@ namespace STATES
             const std::shared_ptr<MAPS::World>& world);
 
         // UPDATING.
-        void Update(
+        GameState Update(
             const sf::Time& elapsed_time, 
             INPUT_CONTROL::InputController& input_controller,
             GRAPHICS::Camera& camera);

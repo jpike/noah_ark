@@ -59,6 +59,13 @@ namespace GRAPHICS::GUI
         {
             const MATH::FloatRectangle& glyph_bounding_box = Glyph::TEXTURE_SUB_RECTANGLES[character];
             float glyph_default_width_in_pixels = glyph_bounding_box.Width();
+            // If a space is being rendered, then the width is shortened for better readability.
+            // This isn't done for other kinds of whitespace to better preserve distance for those.
+            bool character_is_space = ' ' == character;
+            if (character_is_space)
+            {
+                glyph_default_width_in_pixels /= 2.0f;
+            }
             float glyph_scaled_width_in_pixels = scale_factor * glyph_default_width_in_pixels;
             text_width_in_pixels += glyph_scaled_width_in_pixels + HORIZONTAL_SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
         }

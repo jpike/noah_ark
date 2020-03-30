@@ -55,8 +55,8 @@ namespace TEST_TEXT_BOX
 
         // VERIFY THAT THE SECOND PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
         const std::string EXPECTED_SECOND_PAGE_TEXT =
-            "1 7:7 - And Noah went in, and his sons,\n"
-            "and his wife, and his sons' wives with\n";
+            "1 7:7 - And Noah went in, and his sons, and\n"
+            "his wife, and his sons' wives with him, into\n";
         float elapsed_time_in_seconds_for_second_page = elapsed_time_in_seconds_for_next_character * EXPECTED_SECOND_PAGE_TEXT.length();
         text_box.Update(sf::seconds(elapsed_time_in_seconds_for_second_page));
         std::stringstream second_page_output;

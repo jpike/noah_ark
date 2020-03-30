@@ -1,7 +1,4 @@
 // BIG TODO LIST:
-// - Get/create better fonts:
-//      - Regular serif/sans-serif
-//      - Title screen?
 // - Create new background music with better timing:
 //      - For intro
 //      - For new game intro

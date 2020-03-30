@@ -309,6 +309,13 @@ namespace GRAPHICS
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
             float glyph_width = glyph.TextureSubRectangle.Width();
+            // If a space is being rendered, then the width is shortened for better readability.
+            // This isn't done for other kinds of whitespace to better preserve distance for those.
+            bool character_is_space = ' ' == character;
+            if (character_is_space)
+            {
+                glyph_width /= 2.0f;
+            }
             float scaled_glyph_width = text_scale_ratio * glyph_width;
             current_character_left_top_screen_position.X += scaled_glyph_width + GUI::Text::HORIZONTAL_SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER;
         }

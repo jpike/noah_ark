@@ -208,12 +208,12 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 64 : 80;
+                int top_texture_offset_in_pixels = is_male ? 32 : 48;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(128, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(144, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(224, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(240, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(

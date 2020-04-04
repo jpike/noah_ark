@@ -49,6 +49,9 @@ namespace INVENTORY
 
         // COUNT THE COLLECTED ANIMAL.
         ++CollectedAnimalCounts[animal->Type];
+
+        // ADD THE ANIMAL TO THE GROUP.
+        FollowingAnimals.Add(animal);
     }
 
     /// Determines all animals of the specified type have been collected.

@@ -289,13 +289,19 @@ namespace OBJECTS
                 return 16.0f;
             case AnimalSpecies::CHIPMUNK:
                 return 16.0f;
+            case AnimalSpecies::CRICKET:
+                return 16.0f;
             case AnimalSpecies::DEER:
                 return 32.0f;
             case AnimalSpecies::DOG:
                 return 16.0f;
             case AnimalSpecies::DOVE:
                 return 32.0f;
+            case AnimalSpecies::DUCK:
+                return 16.0f;
             case AnimalSpecies::EAGLE:
+                return 32.0f;
+            case AnimalSpecies::ELEPHANT:
                 return 32.0f;
             case AnimalSpecies::FOX:
                 return 16.0f;
@@ -303,7 +309,11 @@ namespace OBJECTS
                 return 16.0f;
             case AnimalSpecies::GOAT:
                 return 16.0f;
+            case AnimalSpecies::GOOSE:
+                return 16.0f;
             case AnimalSpecies::GORILLA:
+                return 16.0f;
+            case AnimalSpecies::GUINEA_PIG:
                 return 16.0f;
             case AnimalSpecies::HAWK:
                 return 32.0f;
@@ -311,6 +321,8 @@ namespace OBJECTS
                 return 16.0f;
             case AnimalSpecies::HORSE:
                 return 32.0f;
+            case AnimalSpecies::HYENA:
+                return 16.0f;
             case AnimalSpecies::KOALA:
                 return 16.0f;
             case AnimalSpecies::LEOPARD:
@@ -338,6 +350,10 @@ namespace OBJECTS
             case AnimalSpecies::RAVEN:
                 return 32.0f;
             case AnimalSpecies::SHEEP:
+                return 16.0f;
+            case AnimalSpecies::SNAKE:
+                return 16.0f;
+            case AnimalSpecies::SQUIRREL:
                 return 16.0f;
             case AnimalSpecies::TURKEY:
                 return 16.0f;

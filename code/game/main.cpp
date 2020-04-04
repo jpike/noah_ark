@@ -3,7 +3,6 @@
 //      - For intro
 //      - For new game intro
 //      - For gameplay
-// - Have animals follow Noah
 // - Have animals go into ark
 // - Add underground caves
 // - Add special stuff for specific Bible verses

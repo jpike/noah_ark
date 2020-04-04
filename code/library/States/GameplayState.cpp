@@ -186,6 +186,9 @@ namespace STATES
         }
         else
         {
+            // RENDER ANY ANIMALS FOLLOWING NOAH.
+            NoahPlayer->Inventory->FollowingAnimals.Render(*renderer.Screen);
+
             // CHECK WHICH DIRECTION NOAH IS FACING.
             // If he's facing up, the axe needs to be rendered first
             // so that it appears in-front of him (behind him from
@@ -248,6 +251,11 @@ namespace STATES
 
         // SET NOAH'S INITIAL POSITION.
         noah_player->SetWorldPosition(saved_game_data.PlayerWorldPosition);
+        // The following animals should appear right behind Noah.
+        // For simplicity, they're initialized to start at Noah's position,
+        // but they'll quickly be updated to be placed behind him by regular
+        // updating code.
+        noah_player->Inventory->FollowingAnimals.CurrentCenterWorldPosition = saved_game_data.PlayerWorldPosition;
 
         // POPULATE THE REST OF NOAH'S INVENTORY.
         noah_player->Inventory->WoodCount = saved_game_data.WoodCount;
@@ -431,6 +439,33 @@ namespace STATES
                     }
                 }
             }
+
+            // UPDATE ANIMALS FOLLOWING NOAH.
+            // They should appear right behind Noah.
+            MATH::FloatRectangle noah_world_bounding_box = NoahPlayer->GetWorldBoundingBox();
+            // Defaults to appearing in the same location as Noah for easier visibility into problems.
+            MATH::Vector2f noah_center_world_position = noah_world_bounding_box.Center();
+            MATH::Vector2f following_animal_group_world_position = noah_center_world_position;
+            switch (NoahPlayer->FacingDirection)
+            {
+                case CORE::Direction::UP:
+                    // The animals should appear below Noah.
+                    following_animal_group_world_position.Y = noah_world_bounding_box.RightBottom.Y + OBJECTS::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                    break;
+                case CORE::Direction::DOWN:
+                    // The animals should appear above Noah.
+                    following_animal_group_world_position.Y = noah_world_bounding_box.LeftTop.Y - OBJECTS::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                    break;
+                case CORE::Direction::LEFT:
+                    // The animals should appear to the right of Noah.
+                    following_animal_group_world_position.X = noah_world_bounding_box.RightBottom.X + OBJECTS::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                    break;
+                case CORE::Direction::RIGHT:
+                    // The animals should appear to the left of Noah.
+                    following_animal_group_world_position.X = noah_world_bounding_box.LeftTop.X - OBJECTS::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                    break;
+            }
+            NoahPlayer->Inventory->FollowingAnimals.Update(elapsed_time, following_animal_group_world_position);
 
             // MOVE ANIMALS IN THE WORLD.
             MoveAnimals(elapsed_time, *current_tile_map, map_grid);
@@ -833,6 +868,20 @@ namespace STATES
         // CHECK IF NOAH MOVED THIS FRAME.
         if (noah_moved_this_frame)
         {
+            // MOVE ANY FOLLOWING ANIMALS ALONG WITH NOAH.
+            /// @todo   Clean this up...I don't think how non-encapsulated this is, but this might be easier
+            /// to clean-up after some more changes later.  Maybe we should have a simpler "just stay this
+            /// close to Noah" logic, which could add more dynamism?
+            MATH::Vector2f new_noah_position = NoahPlayer->GetWorldPosition();
+            MATH::Vector2f noah_movement = new_noah_position - old_noah_position;
+            NoahPlayer->Inventory->FollowingAnimals.CurrentCenterWorldPosition += noah_movement;
+            for (const std::shared_ptr<OBJECTS::Animal>& animal : NoahPlayer->Inventory->FollowingAnimals.Animals)
+            {
+                MATH::Vector2f old_animal_world_position = animal->Sprite.GetWorldPosition();
+                MATH::Vector2f new_animal_world_position = old_animal_world_position + noah_movement;
+                animal->Sprite.SetWorldPosition(new_animal_world_position);
+            }
+
             // UPDATE NOAH'S ANIMATION.
             NoahPlayer->Sprite.Update(elapsed_time);
 

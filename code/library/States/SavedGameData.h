@@ -43,6 +43,9 @@ namespace STATES
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The path to the file for this saved game.
         std::filesystem::path Filepath = "";
+        /// True if the instructions that are displayed in a text box at the start
+        /// of a new game are completed; false otherwise.
+        bool NewGameInstructionsCompleted = false;
         /// The player's world position.
         MATH::Vector2f PlayerWorldPosition = MATH::Vector2f();
         /// The amount of wood found by the player.

@@ -15,13 +15,13 @@
 // - Ark gameplay
 // - Post-ark gameplay/cutscenes
 // - Completed game credits
-// - New game text box + effects
 // - Cutscene/text boxes for transition into ark
 // - Polish (custom fancy graphics) for inventory GUI
 // - Better word wrapping with verses
 // - Handle stopping music when quickly switching between states?
 
 #include <chrono>
+#include <cmath>
 #include <ctime>
 #include <exception>
 #include <initializer_list>
@@ -734,13 +734,14 @@ int main()
         STATES::FloodCutscene flood_cutscene;
         STATES::GameplayState gameplay_state(speakers, assets);
 
-        // DEFINE THE TIME-OF-DAY SHADER.
-        // It is only needed in main, but it doesn't need to be loaded until main gameplay starts.
+        // DEFINE IMPORTANT SHADERS.
+        // They are only needed in main, but it doesn't need to be loaded until main gameplay starts.
         std::shared_ptr<sf::Shader> time_of_day_shader = nullptr;
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         STATES::GameState game_state = STATES::GameState::INTRO_SEQUENCE;
         sf::Clock game_loop_clock;
+        sf::Time total_elapsed_time;
         while (window->isOpen())
         {
             // PROCESS WINDOW EVENTS.
@@ -784,6 +785,7 @@ int main()
 
                 // GET THE ELAPSED TIME FOR THE NEW FRAME.
                 sf::Time elapsed_time = game_loop_clock.restart();
+                total_elapsed_time += elapsed_time;
 
                 // UPDATE THE GAME'S CURRENT STATE.
                 STATES::GameState next_game_state = game_state;
@@ -858,12 +860,46 @@ int main()
                 renderer.Screen->RenderTarget.display();
                 sf::Sprite screen_sprite(renderer.Screen->RenderTarget.getTexture());
 
-                // For main gameplay, the world should be tinted based on the time of day.
+                // For main gameplay, the world should be tinted based on the time of day most of the time.
                 bool in_main_gameplay = (STATES::GameState::GAMEPLAY == game_state);
                 if (in_main_gameplay)
                 {
-                    // MAKE SURE THE TIME-OF-DAY SHADER EXISTS.
-                    if (time_of_day_shader)
+                    // MAKE SURE THE APPROPRIATE SHADER EXISTS.
+                    // If the player is beginning a new game with God speaking to Noah, then the pulsing light
+                    // shader should be used to help communicate that God is speaking to the player.
+                    /// @todo   Might be better to have a fancier "spinning light" style-effect.
+                    bool pulse_light_for_new_game_text = (!gameplay_state.NewGameInstructionsCompleted && colored_texture_shader);
+                    if (pulse_light_for_new_game_text)
+                    {
+                        // COMPUTE THE TINT TO APPLY TO THE SCREEN.
+                        // It should pulse based on elapsed time.
+                        float elapsed_time_in_seconds = total_elapsed_time.asSeconds();
+                        // The range of sin() is [-1, 1].  Since we want to compute an additional lighting factor
+                        // to add to the base lighting amount, without making it too dark/too bright, the scale
+                        // of this additional lighting is adjusted to be [-0.4, 0.6].
+                        // The initial multiplication brings the range to [-0.5, 0.5].
+                        constexpr float ADDITIONAL_LIGHTING_FACTOR_RANGE = 0.5f;
+                        float additional_lighting_factor = ADDITIONAL_LIGHTING_FACTOR_RANGE * std::sinf(elapsed_time_in_seconds);
+                        // An addition shifts it into the appropriate range.
+                        constexpr float ADDITIONAL_LIGHTING_FACTOR_SHIFT_AMOUNT = 0.1f;
+                        additional_lighting_factor += ADDITIONAL_LIGHTING_FACTOR_SHIFT_AMOUNT;
+
+                        // To ensure that the lighting stays bright enough even as the pulsing occurs and also
+                        // tends toward brighter (more indicative of God) than darker, the additional factor
+                        // above is added to a base lighting amount.
+                        // is added in.
+                        constexpr float BASE_LIGHTING_AMOUNT = 1.0f;
+                        float lighting_scale_factor = BASE_LIGHTING_AMOUNT + additional_lighting_factor;
+
+                        // RENDER THE SCREEN WITH THE CURRENT LIGHTING.
+                        constexpr float ALPHA_FOR_FULLY_OPAQUE = 1.0f;
+                        sf::RenderStates pulsing_light_rendering = sf::RenderStates::Default;
+                        colored_texture_shader->setUniform("color", sf::Glsl::Vec4(lighting_scale_factor, lighting_scale_factor, lighting_scale_factor, ALPHA_FOR_FULLY_OPAQUE));
+                        colored_texture_shader->setUniform("texture", sf::Shader::CurrentTexture);
+                        pulsing_light_rendering.shader = colored_texture_shader.get();
+                        window->draw(screen_sprite, pulsing_light_rendering);
+                    }
+                    else if (time_of_day_shader)
                     {
                         // GET THE CURRENT COLOR SCALE BASED ON TIME-OF-DAY.
                         // If an error occurs getting the current time of day,
@@ -1042,7 +1078,7 @@ int main()
                             MATH::Vector2f player_start_world_position = gameplay_state.NoahPlayer->GetWorldPosition();
                             renderer.Camera.SetCenter(player_start_world_position);
 
-                            // GET THE TIME OF DAY SHADER.
+                            // GET IMPORTANT SHADERS.
                             time_of_day_shader = assets->GetShader(RESOURCES::AssetId::TIME_OF_DAY_SHADER);
                             if (!time_of_day_shader)
                             {

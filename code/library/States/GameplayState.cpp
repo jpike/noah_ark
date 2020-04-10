@@ -1,5 +1,7 @@
 #include <algorithm>
+#include <cassert>
 #include <limits>
+#include "Bible/BibleVerses.h"
 #include "Collision/CollisionDetectionAlgorithms.h"
 #include "Core/NullChecking.h"
 #include "Debugging/DebugConsole.h"
@@ -23,7 +25,8 @@ namespace STATES
         Assets(assets),
         Hud(),
         CurrentMapGrid(nullptr),
-        TileMapEditorGui(assets->GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE))
+        TileMapEditorGui(assets->GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE)),
+        NewGameInstructionsCompleted(false)
     {
         // MAKE SURE PARAMETERS WERE PROVIDED.
         CORE::ThrowInvalidArgumentExceptionIfNull(Speakers, "Speakers cannot be null for gameplay state.");
@@ -106,8 +109,8 @@ namespace STATES
             saved_game_data->FoundBibleVerses.cend(),
             std::inserter(BibleVersesLeftToFind, BibleVersesLeftToFind.begin()));
 
-        // START PLAYING THE BACKGROUND MUSIC.
-        Speakers->PlayMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
+        // CHECK IF THE NEW GAME INTRO TEXT HAS ALREADY BEEN COMPLETED.
+        NewGameInstructionsCompleted = saved_game_data->NewGameInstructionsCompleted;
 
         // INDICATE WHETHER OR NOT INITIALIZATION SUCCEEDED.
         bool initialization_succeeded = hud_initialized;
@@ -148,9 +151,72 @@ namespace STATES
         }
 #endif
 
+        // CHECK IF THE NEW GAME INSTRUCTIONS ARE CURRENTLY BEING DISPLAYED.
+        if (!NewGameInstructionsCompleted)
+        {
+            // INITIALIZE THE TEXT TO BE DISPLAYED IF IT HASN'T BEEN STARTED YET.
+            bool new_game_instruction_text_initialized = !Hud->MainTextBox.Pages.empty();
+            if (!new_game_instruction_text_initialized)
+            {
+                // GET THE TEXT AND BIBLE VERSES FOR THE NEW GAME INSTRUCTIONS.
+                std::string new_game_instruction_text;
+                constexpr unsigned int MIN_GENESIS_6_VERSE_NUMBER = 13;
+                constexpr unsigned int MAX_GENESIS_6_VERSE_NUMBER = 21;
+                for (unsigned int genesis_6_verse_number = MIN_GENESIS_6_VERSE_NUMBER; genesis_6_verse_number <= MAX_GENESIS_6_VERSE_NUMBER; ++genesis_6_verse_number)
+                {
+                    // GET THE CURRENT VERSE.
+                    const BIBLE::BibleVerse* current_verse = BIBLE::FindBibleVerse(BIBLE::BibleBook::GENESIS, 6, genesis_6_verse_number);
+                    if (!current_verse)
+                    {
+                        // This is just a small precaution but shouldn't actually occur.
+                        assert(current_verse);
+                        continue;
+                    }
+
+                    // ADD THE VERSE TEXT TO THE NEW GAME INSTRUCTION TEXT.
+                    // The text for the first verse (Genesis 6:13) is hardcoded in a tweaked form to make it more naturally sound like God is talking to the player (Noah).
+                    // This is done in the loop (rather than hardcoded before the loop) to ensure that this verse still gets added to the player's inventory.
+                    bool first_verse = (MIN_GENESIS_6_VERSE_NUMBER == genesis_6_verse_number);
+                    if (first_verse)
+                    {
+                        new_game_instruction_text += "GOD: The end of all flesh is come before me; for the earth is filled with violence through them; and, behold, I will destroy them with the earth.";
+                    }
+                    else
+                    {
+                        new_game_instruction_text += current_verse->Text;
+                    }
+
+                    // A space should be added before the next verse if there is another verse to add
+                    // since all of these verses end in punctuation.
+                    bool more_verses_to_add = (MAX_GENESIS_6_VERSE_NUMBER != genesis_6_verse_number);
+                    if (more_verses_to_add)
+                    {
+                        new_game_instruction_text += ' ';
+                    }
+
+                    // ADD THE VERSE TO THE PLAYER'S INVENTORY.
+                    // That way, it will already be collected once the player is done.
+                    NoahPlayer->Inventory->BibleVerses.insert(*current_verse);
+                }
+
+
+                // START DISPLAYING THE TEXT IN THE TEXT BOX.
+                Hud->MainTextBox.StartDisplayingText(new_game_instruction_text);
+            }
+        }
+
         // UPDATE THE HUD.
         // As of now, only the HUD is capable of altering the gameplay state.
         GameState next_game_state = Hud->Update(elapsed_time, input_controller);
+
+        // INDICATE THAT THE NEW GAME INSTRUCTIONS HAVE BEEN COMPLETED IF THE USER HAS GONE THROUGH ALL TEXT.
+        // This must be done after updating the HUD to prevent an infinite loop from occurring regarding the
+        // displaying of the new game instruction text.
+        /// @todo   Maybe this would be simpler as a separate game state?
+        if (!NewGameInstructionsCompleted)
+        {
+            NewGameInstructionsCompleted = !Hud->MainTextBox.IsVisible;
+        }
 
         // CHECK IF A MODAL HUD COMPONENT IS DISPLAYED.
         // If a modal GUI component is displayed, then the regular controls for the player
@@ -164,6 +230,14 @@ namespace STATES
 
         // UPDATE THE CURRENT MAP GRID.
         UpdateMapGrid(elapsed_time, input_controller, camera, *CurrentMapGrid);
+
+        // START PLAYING THE BACKGROUND MUSIC IF THE NEW GAME INSTRUCTIONS HAVE COMPLETED.
+        // Silenced is used while God speaks during these instructions for reverence.
+        // Might potentially consider switching to something more subtle though.
+        if (NewGameInstructionsCompleted)
+        {
+            Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
+        }
 
         // RETURN THE NEXT GAME STATE.
         return next_game_state;

@@ -48,6 +48,9 @@ namespace STATES
         void Render(GRAPHICS::Renderer& renderer);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// True if the instructions that are displayed in a text box at the start
+        /// of a new game are completed; false otherwise.
+        bool NewGameInstructionsCompleted;
         /// The main game world.
         std::shared_ptr<MAPS::World> World;
         /// Noah (the player) character within the game.

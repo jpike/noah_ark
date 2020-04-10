@@ -41,6 +41,8 @@ namespace GUI
         // PUBLIC MEMBER VARIABLES.
         /// True if the text box is visible; false otherwise.
         bool IsVisible = false;
+        /// The pages of text currently in the text box.
+        std::vector<TextPage> Pages;
 
     private:
         // PRIVATE MEMBER VARIABLES.
@@ -48,8 +50,6 @@ namespace GUI
         unsigned int WidthInPixels;
         /// The height of the text box (excluding borders) in pixels.
         unsigned int HeightInPixels;
-        /// The pages of text currently in the text box.
-        std::vector<TextPage> Pages;
         /// The index of the current page of text displayed in the text box.
         unsigned int CurrentPageIndex;
         /// True if the arrow indicating that the user can progress the text box is visible; false otherwise.

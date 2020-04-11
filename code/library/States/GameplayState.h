@@ -110,5 +110,9 @@ namespace STATES
         MAPS::MultiTileMapGrid* CurrentMapGrid;
         /// The tile map editor GUI.
         MAPS::GUI::TileMapEditorGui TileMapEditorGui;
+        /// Animals being transferred from following Noah into the ark.
+        /// @todo   Probably best to not have this in the game state and instead just
+        /// have animals have different "modes" of behavior.
+        std::vector< std::shared_ptr<OBJECTS::Animal> > AnimalsGoingIntoArk;
     };
 }

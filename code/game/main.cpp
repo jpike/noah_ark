@@ -3,7 +3,7 @@
 //      - For intro
 //      - For new game intro
 //      - For gameplay
-// - Have animals go into ark
+// - Move animals more properly in ark
 // - Add underground caves
 // - Add special stuff for specific Bible verses
 // - Allow planting of trees

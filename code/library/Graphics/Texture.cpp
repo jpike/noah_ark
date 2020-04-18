@@ -2,6 +2,20 @@
 
 namespace GRAPHICS
 {
+    /// Attempts to load a texture from the provided image.
+    /// @param[in]  image - The image to load from.
+    /// @return The texture, if successfully loaded; a dummy
+    ///     texture will be returned if part of loading fails.
+    std::shared_ptr<Texture> Texture::Load(const sf::Image& image)
+    {
+        // CREATE THE TEXTURE FROM THE IMAGE.
+        std::shared_ptr<GRAPHICS::Texture> texture = std::make_shared<GRAPHICS::Texture>();
+        // The return value is ignored so that the code can continue to execute.
+        // It will just have an "empty" texture to have to deal with.
+        texture->TextureResource.loadFromImage(image);
+        return texture;
+    }
+
     /// Attempts to load a texture from the provided filepath.
     /// Pixels in the texture with a color of magenta will be
     /// considered transparent.

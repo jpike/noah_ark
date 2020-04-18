@@ -12,6 +12,7 @@ namespace GRAPHICS
     {
     public:
         // STATIC METHODS.
+        static std::shared_ptr<Texture> Load(const sf::Image& image);
         static std::shared_ptr<Texture> Load(const std::string& filepath);
         static std::shared_ptr<Texture> LoadFromMemory(const std::string& binary_data);
 

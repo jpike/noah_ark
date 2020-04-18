@@ -178,11 +178,10 @@ namespace INVENTORY
         // DETERMINE THE LIST OF ANIMAL SPECIES TO RENDER.
         // The list should generally have the currently selected species in the middle and
         // show about an even number of species on each side to fill the remaining space in the box.
-        float column_screen_height = GRAPHICS::GUI::Text::Height<float>(species_column_header_text.ScaleFactor);
+        float column_screen_height = species_column_header_text.ScaleFactor * static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
         std::size_t animal_species_list_visible_box_height_in_pixels = static_cast<std::size_t>(animals_table_rectangle.Height() - column_screen_height);
 
-        constexpr float DEFAULT_TEXT_SCALE_FACTOR = 1.0f;
-        std::size_t row_screen_height = GRAPHICS::GUI::Glyph::HeightInPixels<std::size_t>(DEFAULT_TEXT_SCALE_FACTOR);
+        std::size_t row_screen_height = static_cast<std::size_t>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
 
         constexpr std::size_t ONE_LESS_SPECIES_TO_AVOID_EXCEEDING_BOX_BOUNDS = 1;
         std::size_t species_to_render_count = (animal_species_list_visible_box_height_in_pixels / row_screen_height) - ONE_LESS_SPECIES_TO_AVOID_EXCEEDING_BOX_BOUNDS;

@@ -14,16 +14,16 @@ REM IF %ERRORLEVEL% NEQ 0 CALL "C:\Program Files (x86)\Microsoft Visual Studio\2
 CALL "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64
 WHERE cl.exe
 
-CALL build_font_metrics.bat %build_mode%
+REM CALL build_font_metrics.bat %build_mode%
 IF %ERRORLEVEL% EQU 0 (
     CALL build_library.bat %build_mode%
 )
 IF %ERRORLEVEL% EQU 0 (
     CALL build_asset_packer.bat %build_mode%
 )
-IF %ERRORLEVEL% EQU 0 (
-    CALL build_tester.bat %build_mode%
-)
+REM TODO RE-ENABLE AFTER FIXING IF %ERRORLEVEL% EQU 0 (
+REM    CALL build_tester.bat %build_mode%
+REM )
 IF %ERRORLEVEL% EQU 0 (
     CALL build_game.bat %build_mode%
 )

@@ -4,6 +4,7 @@ namespace GRAPHICS
 {
 namespace GUI
 {
+#if 0
     const std::array<MATH::FloatRectangle, Glyph::TOTAL_COUNT> Glyph::TEXTURE_SUB_RECTANGLES = 
     {
         MATH::FloatRectangle::FromLeftTopAndDimensions(
@@ -1287,5 +1288,6 @@ namespace GUI
             12.0f,
             static_cast<float>(Glyph::DEFAULT_HEIGHT_IN_PIXELS)),
     };
+#endif
 }
 }

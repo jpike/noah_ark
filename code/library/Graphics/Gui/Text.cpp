@@ -8,7 +8,8 @@ namespace GRAPHICS::GUI
     /// @return The right position of the text's bounding box.
     float Text::RightPosition() const
     {
-        float width = Width<float>(String, ScaleFactor);
+        /// @todo   Hack.
+        float width = ScaleFactor * static_cast<float>(Glyph::DEFAULT_WIDTH_IN_PIXELS) * static_cast<float>(String.length());
         float right_position = LeftTopPosition.X + width;
         return right_position;
     }
@@ -17,7 +18,7 @@ namespace GRAPHICS::GUI
     /// @return The bottom position of the text's bounding box.
     float Text::BottomPosition() const
     {
-        float text_height = Glyph::HeightInPixels<float>(ScaleFactor);
+        float text_height = ScaleFactor * static_cast<float>(Glyph::DEFAULT_HEIGHT_IN_PIXELS);
         float bottom_position = LeftTopPosition.Y + text_height;
         return bottom_position;
     }

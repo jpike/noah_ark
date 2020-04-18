@@ -27,6 +27,7 @@
 #include <initializer_list>
 #include <memory>
 #include <string>
+#include <Windows.h>
 #include <SFML/Graphics.hpp>
 #include "Debugging/DebugConsole.h"
 #include "Graphics/Renderer.h"
@@ -621,6 +622,23 @@ bool LoadIntroSequenceAssets(RESOURCES::Assets& asset_collection)
 
     std::vector<RESOURCES::Asset> intro_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME);
     bool assets_loaded = !intro_assets.empty() && asset_collection.Populate(intro_assets);
+
+    std::shared_ptr<GRAPHICS::GUI::Font> default_sans_serif_font = GRAPHICS::GUI::Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+    if (!default_sans_serif_font)
+    {
+        DEBUGGING::DebugConsole::WriteErrorLine("Failed to load default sans serif font.");
+        return false;
+    }
+
+    std::shared_ptr<GRAPHICS::GUI::Font> default_serif_font = GRAPHICS::GUI::Font::LoadSystemDefaultFont(ANSI_FIXED_FONT);
+    if (!default_serif_font)
+    {
+        DEBUGGING::DebugConsole::WriteErrorLine("Failed to load default serif font.");
+        return false;
+    }
+
+    asset_collection.Fonts[RESOURCES::AssetId::FONT_TEXTURE] = default_sans_serif_font;
+    asset_collection.Fonts[RESOURCES::AssetId::SERIF_FONT_TEXTURE] = default_serif_font;
 
     auto load_end_time = std::chrono::system_clock::now();
     auto load_time_diff = load_end_time - load_start_time;

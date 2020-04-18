@@ -49,9 +49,13 @@ namespace GUI
 
         // CHECK IF THE CURRENT UNFILLED LINE OF TEXT CAN HOLD THE NEW WORD.
         std::string current_line_with_new_word = current_line_as_string + word;
+#if TODO_OLD_IMPLEMENTATION
         size_t current_line_with_new_word_width_in_pixels = Text::Width<size_t>(
             current_line_with_new_word,
             TextPage::TEXT_SCALE_RATIO);
+#endif
+        size_t current_line_with_new_word_width_in_pixels = static_cast<size_t>(
+            TextPage::TEXT_SCALE_RATIO * Glyph::DEFAULT_WIDTH_IN_PIXELS * current_line_with_new_word.length());
         size_t max_width_per_line_in_pixels = MaxCharacterCountPerLine * Glyph::DEFAULT_WIDTH_IN_PIXELS;
         bool current_line_can_hold_new_word = (current_line_with_new_word_width_in_pixels <= max_width_per_line_in_pixels);
         if (current_line_can_hold_new_word)

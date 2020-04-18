@@ -500,9 +500,9 @@ namespace STATES
             if (next_character_placeholder_visible)
             {
                 // RENDER AN UNDERSCORE FOR THE NEXT CHARACTER.
-                constexpr float DEFAULT_TEXT_SCALE_FACTOR = 1.0f;
                 // The x position of the placeholder should be after the currently typed text within the box.
-                float current_new_game_filename_text_width_in_pixels = GRAPHICS::GUI::Text::Width<float>(CurrentNewGameFilenameText, DEFAULT_TEXT_SCALE_FACTOR);
+                /// @todo   Hack
+                float current_new_game_filename_text_width_in_pixels = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS * CurrentNewGameFilenameText.length());
                 float next_character_placeholder_left_x_position = (
                     game_selection_option_bounding_screen_rectangle.LeftTop.X +
                     TEXT_OFFSET_FROM_BORDER_IN_PIXELS.X +

@@ -45,8 +45,9 @@ namespace AUDIO
     }
 
     /// Starts playing the sound with the given ID, assuming it is already stored in the speakers.
+    /// This method name has "Effect" appended to it to avoid conflicts with Windows API #defines.
     /// @param[in]  sound_id - The ID of the sound to play.
-    void Speakers::PlaySound(const RESOURCES::AssetId sound_id)
+    void Speakers::PlaySoundEffect(const RESOURCES::AssetId sound_id)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);

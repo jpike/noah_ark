@@ -21,30 +21,22 @@ namespace GUI
         static constexpr unsigned int DEFAULT_HEIGHT_IN_PIXELS = 16;
         /// The total number of glyphs (characters).
         static constexpr unsigned int TOTAL_COUNT = 256;
-        /// The texture sub-rectangles for each glyph (character).
-        static const std::array<MATH::FloatRectangle, Glyph::TOTAL_COUNT> TEXTURE_SUB_RECTANGLES;
 
-        // STATIC METHODS.
+        // DIMENSION METHODS.
         template <typename T>
-        static T WidthInPixels(const float scale_factor);
+        T WidthInPixels(const float scale_factor);
         template <typename T>
-        static T HeightInPixels(const float scale_factor);
-        template <typename T>
-        static T SpaceOnLeftInPixels(const char character);
-        template <typename T>
-        static T SpaceOnRightInPixels(const char character);
+        T HeightInPixels(const float scale_factor);
 
         // MEMBER VARIABLES.
+        /// The character represented by this glyph.
+        char Character = 0;
         /// The texture containing this glyph.
         std::shared_ptr<Texture> Texture = nullptr;
         /// The sub-rectangle of the texture identifying the boundaries of the glyph.
         /// (0,0) indicates the top-left of the texture, with x coordinates increasing
         /// from left-to-right and y coordinates increasing from top-to-bottom.
         MATH::FloatRectangle TextureSubRectangle = MATH::FloatRectangle();
-
-    private:
-        template <typename T>
-        static T GetBoundingBoxLeftPositionInPixels(const char character);
     };
 
     /// Calculates the width of a glyph, based on the provided scale factor.
@@ -55,7 +47,8 @@ namespace GUI
     template <typename T>
     T Glyph::WidthInPixels(const float scale_factor)
     {
-        float scaled_width_in_pixels = scale_factor * static_cast<float>(DEFAULT_WIDTH_IN_PIXELS);
+        float normal_width_in_pixels = TextureSubRectangle.Width();
+        float scaled_width_in_pixels = scale_factor * normal_width_in_pixels;
         return static_cast<T>(scaled_width_in_pixels);
     }
 
@@ -66,50 +59,9 @@ namespace GUI
     template <typename T>
     T Glyph::HeightInPixels(const float scale_factor)
     {
-        float scaled_height_in_pixels = scale_factor * static_cast<float>(DEFAULT_HEIGHT_IN_PIXELS);
+        float normal_height_in_pixels = TextureSubRectangle.Height();
+        float scaled_height_in_pixels = scale_factor * normal_height_in_pixels;
         return static_cast<T>(scaled_height_in_pixels);
-    }
-
-    /// Gets the space on the left of the specified character.
-    /// @tparam T - The type of the returned value.  Will be directly casted.
-    /// @param[in]  character - The character for which to get space on the left in the glyph.
-    /// @return The amount of space on the left of the character's glyph, in pixels.
-    template <typename T>
-    T Glyph::SpaceOnLeftInPixels(const char character)
-    {
-        const MATH::FloatRectangle& texture_bounding_box = TEXTURE_SUB_RECTANGLES[character];
-        float glyph_left_offset_in_pixels = GetBoundingBoxLeftPositionInPixels<float>(character);
-        float glyph_left_x_position_in_pixels = texture_bounding_box.LeftTop.X;
-        float space_on_left_in_pixels = glyph_left_x_position_in_pixels - glyph_left_offset_in_pixels;
-        return static_cast<T>(space_on_left_in_pixels);
-    }
-
-    /// Gets the space on the right of the specified character.
-    /// @tparam T - The type of the returned value.  Will be directly casted.
-    /// @param[in]  character - The character for which to get space on the right in the glyph.
-    /// @return The amount of space on the right of the character's glyph, in pixels.
-    template <typename T>
-    T Glyph::SpaceOnRightInPixels(const char character)
-    {
-        const MATH::FloatRectangle& texture_bounding_box = TEXTURE_SUB_RECTANGLES[character];
-        float glyph_right_x_position_in_pixels = texture_bounding_box.RightBottom.X;
-        float glyph_left_offset_in_pixels = GetBoundingBoxLeftPositionInPixels<float>(character);
-        float space_on_right_in_pixels = static_cast<float>(DEFAULT_WIDTH_IN_PIXELS) - (glyph_right_x_position_in_pixels - glyph_left_offset_in_pixels);
-        return static_cast<T>(space_on_right_in_pixels);
-    }
-
-    /// Gets the left position of the glyph's bounding box for the character.
-    /// @tparam T - The type of the returned value.  Will be directly casted.
-    /// @param[in]  character - The character for which to get left position of the glyph's bounding box.
-    /// @return The left position of the glyph's bounding box, in pixels.
-    template <typename T>
-    T Glyph::GetBoundingBoxLeftPositionInPixels(const char character)
-    {
-        // CALCULATE THE TOP-LEFT COORDINATES OF THE GLYPH.
-        constexpr char CHARACTERS_PER_ROW_COUNT = 16;
-        char character_horizontal_index = character % CHARACTERS_PER_ROW_COUNT;
-        T glyph_left_position = static_cast<T>(character_horizontal_index * DEFAULT_WIDTH_IN_PIXELS);
-        return glyph_left_position;
     }
 }
 }

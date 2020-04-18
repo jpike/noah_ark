@@ -22,7 +22,7 @@ namespace AUDIO
         // SOUND EFFECTS.
         void AddSound(const RESOURCES::AssetId sound_id, const std::shared_ptr<sf::SoundBuffer>& audio_samples);
         bool SoundIsPlaying(const RESOURCES::AssetId sound_id);
-        void PlaySound(const RESOURCES::AssetId sound_id);
+        void PlaySoundEffect(const RESOURCES::AssetId sound_id);
 
         // MUSIC.
         void AddMusic(const RESOURCES::AssetId music_id, const std::shared_ptr<sf::Music>& music);

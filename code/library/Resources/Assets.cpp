@@ -207,7 +207,8 @@ namespace RESOURCES
         if (font_texture_loaded)
         {
             // CACHE THE FONT IN THIS COLLECTION BEFORE RETURNING.
-            std::shared_ptr<GRAPHICS::GUI::Font> font = std::make_shared<GRAPHICS::GUI::Font>(font_texture);
+            /// @todo   Clean-up!
+            std::shared_ptr<GRAPHICS::GUI::Font> font = std::make_shared<GRAPHICS::GUI::Font>();
             Fonts[font_texture_id] = font;
             return font;
         }
@@ -241,7 +242,8 @@ namespace RESOURCES
         if (font_texture_loaded)
         {
             // CACHE THE FONT IN THIS COLLECTION BEFORE RETURNING.
-            std::shared_ptr<GRAPHICS::GUI::Font> font = std::make_shared<GRAPHICS::GUI::Font>(font_texture);
+            /// @todo   Clean-up!
+            std::shared_ptr<GRAPHICS::GUI::Font> font = std::make_shared<GRAPHICS::GUI::Font>();
             Fonts[font_texture_id] = font;
             return font;
         }

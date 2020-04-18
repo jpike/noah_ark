@@ -580,7 +580,7 @@ namespace STATES
                 bool tree_shake_sound_playing = Speakers->SoundIsPlaying(RESOURCES::AssetId::TREE_SHAKE_SOUND);
                 if (!tree_shake_sound_playing)
                 {
-                    Speakers->PlaySound(RESOURCES::AssetId::TREE_SHAKE_SOUND);
+                    Speakers->PlaySoundEffect(RESOURCES::AssetId::TREE_SHAKE_SOUND);
                 }
             }
         }
@@ -978,7 +978,7 @@ namespace STATES
                 }
 
                 // Play a sound to indicate a piece of the ark is being built.
-                Speakers->PlaySound(RESOURCES::AssetId::ARK_BUILDING_SOUND);
+                Speakers->PlaySoundEffect(RESOURCES::AssetId::ARK_BUILDING_SOUND);
             }
             
             // CHECK IF THE PLAYER STEPPED ON AN EXIT POINT.
@@ -1276,7 +1276,7 @@ namespace STATES
                     if (bible_verses_remain_to_be_found)
                     {
                         // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
-                        Speakers->PlaySound(RESOURCES::AssetId::COLLECT_BIBLE_VERSE_SOUND);
+                        Speakers->PlaySoundEffect(RESOURCES::AssetId::COLLECT_BIBLE_VERSE_SOUND);
 
                         // SELECT A RANDOM BIBLE VERSE.
                         size_t remaining_bible_verse_count = BibleVersesLeftToFind.size();
@@ -1318,7 +1318,7 @@ namespace STATES
             if (food_intersects_with_noah)
             {
                 // PLAY THE SOUND EFFECT FOR COLLECTING FOOD.
-                Speakers->PlaySound(RESOURCES::AssetId::FOOD_PICKUP_SOUND);
+                Speakers->PlaySoundEffect(RESOURCES::AssetId::FOOD_PICKUP_SOUND);
 
                 // ADD THE FOOD TO THE PLAYER'S INVENTORY.
                 DEBUGGING::DebugConsole::WriteLine("Collected food: ", static_cast<int>(food->Type));
@@ -1352,7 +1352,7 @@ namespace STATES
             if (animal_intersects_with_noah)
             {
                 // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
-                Speakers->PlaySound((*animal)->SoundId);
+                Speakers->PlaySoundEffect((*animal)->SoundId);
 
                 // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
                 DEBUGGING::DebugConsole::WriteLine("Collected animal.");
@@ -1424,7 +1424,7 @@ namespace STATES
                         DEBUGGING::DebugConsole::WriteLine("Random animal generated: ", static_cast<unsigned int>(animal->Type.Species));
 
                         // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
-                        Speakers->PlaySound(animal->SoundId);
+                        Speakers->PlaySoundEffect(animal->SoundId);
 
                         // START ANIMATING THE ANIMAL.
                         animal->Sprite.Play();

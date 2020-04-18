@@ -126,12 +126,14 @@ namespace GRAPHICS
 
         // GET THE GLYPH FOR THE KEY.
         auto font = id_with_font->second;
-        GRAPHICS::GUI::Glyph glyph = font->GetGlyph(key);
+        GRAPHICS::GUI::Glyph& glyph = font->GlyphsByCharacter[static_cast<unsigned int>(key)];
 
         // GET THE LEFT POSITION OF THE KEY SPRITE.
         // It should be offset based on the amount of space on the left of the glyph
         // in order to center it.
-        float space_on_left_of_glyph_in_pixels = GRAPHICS::GUI::Glyph::SpaceOnLeftInPixels<float>(key);
+        float key_glyph_width_in_pixels = glyph.TextureSubRectangle.Width();
+        float space_around_glyph_in_pixels = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS) - key_glyph_width_in_pixels;
+        float space_on_left_of_glyph_in_pixels = space_around_glyph_in_pixels / 2.0f;
         float key_character_sprite_left_screen_position_in_pixels = 
             static_cast<float>(left_top_screen_position_in_pixels.X) + space_on_left_of_glyph_in_pixels;
 
@@ -230,7 +232,7 @@ namespace GRAPHICS
         {
             // GET THE GLYPH FOR THE CURRENT CHARACTER.
             const char character = text.String.at(character_index);
-            GUI::Glyph glyph = font->GetGlyph(character);
+            GUI::Glyph& glyph = font->GlyphsByCharacter[static_cast<unsigned char>(character)];
 
             // CREATE A SPRITE FOR THE CURRENT GLYPH.
             sf::IntRect texture_rectangle = glyph.TextureSubRectangle.ToSfmlRectangle<int>();
@@ -289,7 +291,7 @@ namespace GRAPHICS
         {
             // GET THE GLYPH FOR THE CURRENT CHARACTER.
             const char character = text.at(character_index);
-            GUI::Glyph glyph = font->GetGlyph(character);
+            GUI::Glyph& glyph = font->GlyphsByCharacter[static_cast<unsigned char>(character)];
 
             // CREATE A SPRITE FOR THE CURRENT GLYPH.
             sf::IntRect texture_rectangle = glyph.TextureSubRectangle.ToSfmlRectangle<int>();
@@ -348,7 +350,8 @@ namespace GRAPHICS
         // lines (assuming that each word can fit on a single line).
         std::vector<std::string> new_lines_of_text;
         float line_width_in_pixels = bounding_screen_rectangle.Width();
-        float glyph_width_in_pixels = GUI::Glyph::WidthInPixels<float>(text_scale_ratio);
+        /// @todo   A bit of a hacked assumption.
+        float glyph_width_in_pixels = text_scale_ratio * static_cast<float>(GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS) / 2.0f;
         unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / glyph_width_in_pixels);
         for (const auto& line : original_lines_from_text)
         {
@@ -375,9 +378,31 @@ namespace GRAPHICS
                 else
                 {
                     // CHECK IF THE CURRENT LINE CAN HANDLE THE NEXT WORD.
+#if TODO_OLD_IMPLEMENTATION
                     size_t current_line_width_in_pixels = GUI::Text::Width<size_t>(current_new_line, text_scale_ratio);
                     size_t space_character_width_in_pixels = GUI::Text::Width<size_t>(" ", text_scale_ratio);
                     size_t next_word_width_in_pixels = GUI::Text::Width<size_t>(next_word, text_scale_ratio);
+#endif
+                    std::shared_ptr<GUI::Font>& font = Fonts[font_id];
+                    GUI::Text current_line_text =
+                    {
+                        .String = current_new_line,
+                        .FontId = font_id,
+                        .LeftTopPosition = MATH::Vector2f(0.0f, 0.0f),
+                        .ScaleFactor = text_scale_ratio,
+                        .Color = text_color
+                    };
+                    size_t current_line_width_in_pixels = current_line_text.Width<size_t>(*font);
+                    size_t space_character_width_in_pixels = GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS / 2;
+                    GUI::Text next_word_text =
+                    {
+                        .String = next_word,
+                        .FontId = font_id,
+                        .LeftTopPosition = MATH::Vector2f(0.0f, 0.0f),
+                        .ScaleFactor = text_scale_ratio,
+                        .Color = text_color
+                    };
+                    size_t next_word_width_in_pixels = next_word_text.Width<size_t>(*font);
                     size_t line_width_with_next_word_in_characters = 
                         current_line_width_in_pixels + 
                         space_character_width_in_pixels + 
@@ -428,7 +453,8 @@ namespace GRAPHICS
             RenderText(line, font_id, current_line_left_top_screen_position, text_color, text_scale_ratio);
 
             // MOVE TO THE NEXT LINE.
-            float glyph_height_in_pixels = GUI::Glyph::HeightInPixels<float>(text_scale_ratio);
+            /// @todo   A bit of a hacked assumption.
+            float glyph_height_in_pixels = text_scale_ratio * static_cast<float>(GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
             current_line_left_top_screen_position.Y += glyph_height_in_pixels;
         }
     }
@@ -460,7 +486,8 @@ namespace GRAPHICS
         // lines (assuming that each word can fit on a single line).
         std::vector<std::string> new_lines_of_text;
         float line_width_in_pixels = bounding_screen_rectangle.Width();
-        float glyph_width_in_pixels = GUI::Glyph::WidthInPixels<float>(text_scale_ratio);
+        /// @todo   A bit of a hacked assumption.
+        float glyph_width_in_pixels = text_scale_ratio * (static_cast<float>(GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS) / 2.0f + GUI::Text::HORIZONTAL_SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER);
         unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / glyph_width_in_pixels);
         for (const auto& line : original_lines_from_text)
         {
@@ -534,8 +561,9 @@ namespace GRAPHICS
         // top y-position such that half of the unused space appears before and after the text.
         unsigned int bounding_rectangle_height_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.Height());
         size_t new_line_count = new_lines_of_text.size();
-        unsigned int glyph_height_in_pixels = GUI::Glyph::HeightInPixels<unsigned int>(text_scale_ratio);
-        size_t total_text_height_in_pixels = new_line_count * GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS;
+        /// @todo   A bit of a hacked assumption.
+        unsigned int glyph_height_in_pixels = static_cast<unsigned int>(text_scale_ratio * GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
+        size_t total_text_height_in_pixels = new_line_count * glyph_height_in_pixels;
         size_t unused_vertical_space_in_pixels = bounding_rectangle_height_in_pixels - total_text_height_in_pixels;
         size_t half_of_unused_vertical_space_in_pixels = unused_vertical_space_in_pixels / 2;
         float bounding_rectangle_top_y_screen_position = bounding_screen_rectangle.LeftTop.Y;
@@ -546,10 +574,22 @@ namespace GRAPHICS
             first_line_top_y_screen_position);
 
         // RENDER EACH LINE OF TEXT.
+        /// @todo   Error-handling!
+        std::shared_ptr<GUI::Font>& font = Fonts[font_id];
         for (const auto& line : new_lines_of_text)
         {
+            // CREATE THE GUI FORM OF THE TEXT.
+            GUI::Text current_line_of_text =
+            {
+                .String = line,
+                .FontId = font_id,
+                .LeftTopPosition = current_line_left_top_screen_position,
+                .ScaleFactor = text_scale_ratio,
+                .Color = text_color
+            };
+
             // CENTER THE CURRENT LINE HORIZONTALLY.
-            unsigned int current_line_width_in_pixels = GUI::Text::Width<unsigned int>(line, text_scale_ratio);
+            unsigned int current_line_width_in_pixels = current_line_of_text.Width<unsigned int>(*font);
             unsigned int bounding_rectangle_width_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.Width());
             unsigned int unused_space_on_current_line_in_pixels = bounding_rectangle_width_in_pixels - current_line_width_in_pixels;
             unsigned int half_of_unused_space_on_current_line_in_pixels = unused_space_on_current_line_in_pixels / 2;

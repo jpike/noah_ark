@@ -878,7 +878,7 @@ namespace COLLISION
             if (axe_hit_tree)
             {
                 // PLAY THE SOUND EFFECT FOR THE AXE HITTING A TREE.
-                speakers.PlaySound(RESOURCES::AssetId::AXE_HIT_SOUND);
+                speakers.PlaySoundEffect(RESOURCES::AssetId::AXE_HIT_SOUND);
 
                 // DAMAGE THE TREE.
                 tree->TakeHit();

@@ -4,10 +4,8 @@
 #include "Graphics/Texture.h"
 #include "Graphics/Gui/Glyph.h"
 
-namespace GRAPHICS
-{
 /// Holds code related to graphical user interfaces.
-namespace GUI
+namespace GRAPHICS::GUI
 {
     /// A font is a particular styling of characters that can be used for rendering text.
     /// Each character is represented by a glyph within the font.
@@ -20,13 +18,23 @@ namespace GUI
     class Font
     {
     public:
-        explicit Font(const std::shared_ptr<Texture>& texture);
+        // STATIC CONSTANTS.
+        /// The total number of characters supported by the font.
+        static constexpr unsigned int CHARACTER_COUNT = 256;
+        /// The dimension (width or height) of a single glyph, in pixels.
+        static constexpr unsigned int GLYPH_MAX_DIMENSION_IN_PIXELS = 16;
+        /// The number of glyphs in a single row or column of the font's bitmap.
+        static constexpr unsigned int GLYPH_MAX_COUNT_PER_ROW_OR_COLUMN = 16;
+        /// The dimension (width or height) of the glyph bitmap, in pixels.
+        static constexpr unsigned int FONT_BITMAP_DIMENSION_IN_PIXELS = GLYPH_MAX_DIMENSION_IN_PIXELS * GLYPH_MAX_COUNT_PER_ROW_OR_COLUMN;
 
-        Glyph GetGlyph(const char character) const;
+        // CONSTRUCTION.
+        static std::shared_ptr<Font> LoadSystemDefaultFont(const int font_id);
 
-    private:
+        // MEMBER VARIABLES.
+        /// The glyphs as stored by regular unsigned ASCII character value.
+        std::array<Glyph, CHARACTER_COUNT> GlyphsByCharacter = {};
         /// The font's texture.
-        std::shared_ptr<Texture> Texture = nullptr;
+        std::shared_ptr<Texture> Texture = std::make_shared<GRAPHICS::Texture>();
     };
-}
 }

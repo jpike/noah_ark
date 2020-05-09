@@ -26,9 +26,7 @@ namespace GRAPHICS
     {
     public:
         // CONSTRUCTION.
-        explicit Renderer(
-            const std::shared_ptr<sf::Shader>& colored_text_shader,
-            std::unique_ptr<GRAPHICS::Screen>&& screen);
+        explicit Renderer(std::unique_ptr<GRAPHICS::Screen>&& screen);
 
         // LINE RENDERING.
         void RenderLine(const MATH::Vector2f& start_position, const MATH::Vector2f& end_position, const GRAPHICS::Color& color);

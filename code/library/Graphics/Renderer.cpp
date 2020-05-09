@@ -7,28 +7,22 @@
 namespace GRAPHICS
 {
     /// Constructor.
-    /// @param[in]  colored_text_shader - The shader to use for coloring text.
     /// @param[in,out]  screen - The screen to render to.
     /// @throws std::exception - Thrown if a parameter is null.
-    Renderer::Renderer(
-        const std::shared_ptr<sf::Shader>& colored_text_shader,
-        std::unique_ptr<GRAPHICS::Screen>&& screen) :
+    Renderer::Renderer(std::unique_ptr<GRAPHICS::Screen>&& screen) :
     Screen(std::move(screen)),
     Camera(MATH::FloatRectangle::FromCenterAndDimensions(
         Screen->RenderTarget.getView().getCenter().x,
         Screen->RenderTarget.getView().getCenter().y,
         Screen->RenderTarget.getView().getSize().x,
         Screen->RenderTarget.getView().getSize().y)),
-    ColoredTextShader(colored_text_shader)
+    Fonts(),
+    ColoredTextShader()
     {
         // MAKE SURE REQUIRED PARAMETERS EXISTS.
         CORE::ThrowInvalidArgumentExceptionIfNull(
             Screen,
             "The screen for the renderer cannot be null.");
-        
-        CORE::ThrowInvalidArgumentExceptionIfNull(
-            ColoredTextShader,
-            "The colored text shader for the renderer cannot be null.");
     }
 
     /// Renders a line in screen coordinates.

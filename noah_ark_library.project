@@ -69,6 +69,7 @@
 #include "States/FloodCutscene.cpp"
 #include "States/GameSelectionScreen.cpp"
 #include "States/GameplayState.cpp"
+#include "States/GameStates.cpp"
 #include "States/IntroSequence.cpp"
 #include "States/NewGameIntroSequence.cpp"
 #include "States/SavedGameData.cpp"

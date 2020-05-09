@@ -19,6 +19,7 @@
 // - Polish (custom fancy graphics) for inventory GUI
 // - Better word wrapping with verses
 // - Handle stopping music when quickly switching between states?
+// - Sword guarding garden of Eden
 
 #include <chrono>
 #include <cmath>
@@ -42,15 +43,9 @@
 #include "Resources/Assets.h"
 #include "Resources/FoodGraphics.h"
 #include "Resources/PredefinedAssetPackages.h"
-#include "States/CreditsScreen.h"
-#include "States/FloodCutscene.h"
-#include "States/GameplayState.h"
-#include "States/GameSelectionScreen.h"
+#include "States/GameStates.h"
 #include "States/GameState.h"
-#include "States/IntroSequence.h"
-#include "States/NewGameIntroSequence.h"
 #include "States/SavedGameData.h"
-#include "States/TitleScreen.h"
 
 /// The game exited successfully.
 int EXIT_CODE_SUCCESS = 0;
@@ -604,6 +599,12 @@ void LoadSoundsAfterIntroAssets(RESOURCES::Assets& assets, AUDIO::Speakers& spea
     }
 
     // ADD ALL OF THE MUSIC TO THE SPEAKERS.
+    auto new_game_intro_music = assets.GetMusic(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC);
+    if (new_game_intro_music)
+    {
+        speakers.AddMusic(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC, new_game_intro_music);
+    }
+
     std::shared_ptr<sf::Music> overworld_music = assets.GetMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
     if (overworld_music)
     {
@@ -647,12 +648,12 @@ bool LoadIntroSequenceAssets(RESOURCES::Assets& asset_collection)
     return assets_loaded;
 }
 
-std::shared_ptr<MAPS::World> LoadRemainingAssets(RESOURCES::Assets& assets, AUDIO::Speakers& speakers)
+std::shared_ptr<RESOURCES::Assets> LoadRemainingAssets(const std::shared_ptr<RESOURCES::Assets>& assets, AUDIO::Speakers& speakers)
 {
     auto load_start_time = std::chrono::system_clock::now();
     
     std::vector<RESOURCES::Asset> remaining_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::MAIN_ASSET_PACKAGE_FILENAME);
-    bool assets_loaded = !remaining_assets.empty() && assets.Populate(remaining_assets);
+    bool assets_loaded = !remaining_assets.empty() && assets->Populate(remaining_assets);
     if (!assets_loaded)
     {
         return nullptr;
@@ -662,8 +663,22 @@ std::shared_ptr<MAPS::World> LoadRemainingAssets(RESOURCES::Assets& assets, AUDI
     auto load_time_diff = load_end_time - load_start_time;
     DEBUGGING::DebugConsole::WriteLine("Remaining asset raw load time: ", load_time_diff.count());
 
-    LoadSoundsAfterIntroAssets(assets, speakers);
-    std::shared_ptr<MAPS::World> world = LoadWorld(assets);
+    LoadSoundsAfterIntroAssets(*assets, speakers);
+
+    return assets;
+}
+
+std::shared_ptr<MAPS::World> LoadWorldAfterAssetsFinishLoading(std::shared_future< std::shared_ptr<RESOURCES::Assets> > assets_being_loaded)
+{
+    // GET THE ASSETS ONCE THEY'VE FINISHED BEING LOADED.
+    std::shared_ptr<RESOURCES::Assets> assets = assets_being_loaded.get();
+    if (!assets)
+    {
+        return nullptr;
+    }
+
+    // LOAD THE WORLD.   
+    std::shared_ptr<MAPS::World> world = LoadWorld(*assets);
     return world;
 }
 
@@ -700,12 +715,6 @@ int main()
             return EXIT_CODE_FAILURE_LOADING_ASSETS;
         }
 
-        auto colored_texture_shader = assets->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
-        if (!colored_texture_shader)
-        {
-            return EXIT_CODE_FAILURE_LOADING_ASSETS;
-        }
-
         std::shared_ptr<AUDIO::Speakers> speakers = std::make_shared<AUDIO::Speakers>();
         auto intro_music = assets->GetMusic(RESOURCES::AssetId::INTRO_MUSIC);
         if (!intro_music)
@@ -713,9 +722,11 @@ int main()
             return EXIT_CODE_FAILURE_LOADING_ASSETS;
         }
         speakers->AddMusic(RESOURCES::AssetId::INTRO_MUSIC, intro_music);
+        speakers->PlayMusic(RESOURCES::AssetId::INTRO_MUSIC);
 
         // LOAD REMAINING ASSETS.
-        std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadRemainingAssets, std::ref(*assets), std::ref(*speakers));
+        std::shared_future< std::shared_ptr<RESOURCES::Assets> > assets_being_loaded = std::async(LoadRemainingAssets, assets, std::ref(*speakers));
+        std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorldAfterAssetsFinishLoading, assets_being_loaded);
 
         // CREATE THE SCREEN.
         std::unique_ptr<GRAPHICS::Screen> screen = GRAPHICS::Screen::Create(SCREEN_WIDTH_IN_PIXELS, SCREEN_HEIGHT_IN_PIXELS);
@@ -726,9 +737,14 @@ int main()
         }
 
         // INITIALIZE THE RENDERER.
-        GRAPHICS::Renderer renderer(
-            colored_texture_shader,
-            std::move(screen));
+        GRAPHICS::Renderer renderer(std::move(screen));
+
+        auto colored_texture_shader = assets->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
+        if (!colored_texture_shader)
+        {
+            return EXIT_CODE_FAILURE_LOADING_ASSETS;
+        }
+        renderer.ColoredTextShader = colored_texture_shader;
 
         // Fonts must be added separately.
         auto serif_font = assets->GetFont(RESOURCES::AssetId::SERIF_FONT_TEXTURE);
@@ -742,22 +758,15 @@ int main()
         renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE] = default_font;
 
         // INITIALIZE REMAINING SUBSYSTEMS.
+        STATES::GameStates game_states(speakers, assets);
+
         INPUT_CONTROL::InputController input_controller;
-        STATES::IntroSequence intro_sequence;
-        speakers->PlayMusic(RESOURCES::AssetId::INTRO_MUSIC);
-        STATES::TitleScreen title_screen;
-        STATES::CreditsScreen credits_screen;
-        STATES::GameSelectionScreen game_selection_screen;
-        STATES::NewGameIntroSequence new_game_intro_sequence;
-        STATES::FloodCutscene flood_cutscene;
-        STATES::GameplayState gameplay_state(speakers, assets);
 
         // DEFINE IMPORTANT SHADERS.
         // They are only needed in main, but it doesn't need to be loaded until main gameplay starts.
         std::shared_ptr<sf::Shader> time_of_day_shader = nullptr;
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
-        STATES::GameState game_state = STATES::GameState::INTRO_SEQUENCE;
         sf::Clock game_loop_clock;
         sf::Time total_elapsed_time;
         while (window->isOpen())
@@ -806,87 +815,27 @@ int main()
                 total_elapsed_time += elapsed_time;
 
                 // UPDATE THE GAME'S CURRENT STATE.
-                STATES::GameState next_game_state = game_state;
-                switch (game_state)
-                {
-                    case STATES::GameState::INTRO_SEQUENCE:
-                    {
-                        // UPDATE THE INTRO SEQUENCE.
-                        intro_sequence.Update(elapsed_time);
-
-                        // MOVE TO THE TITLE SCREEN IF THE INTRO SEQUENCE HAS FINISHED.
-                        bool intro_sequence_finished = intro_sequence.Completed();
-                        if (intro_sequence_finished)
-                        {
-                            // The intro music isn't stopped before going to the next state
-                            // to avoid a hard cutoff.  It is timed such that it should end
-                            // shortly.
-                            next_game_state = STATES::GameState::TITLE_SCREEN;
-                        }
-                        break;
-                    }
-                    case STATES::GameState::TITLE_SCREEN:
-                        next_game_state = title_screen.Update(elapsed_time, input_controller);
-                        break;
-                    case STATES::GameState::CREDITS_SCREEN:
-                        next_game_state = credits_screen.Update(elapsed_time, input_controller);
-                        break;
-                    case STATES::GameState::GAME_SELECTION_SCREEN:
-                        next_game_state = game_selection_screen.Update(elapsed_time, input_controller);
-                        break;
-                    case STATES::GameState::NEW_GAME_INTRO_SEQUENCE:
-                        next_game_state = new_game_intro_sequence.Update(elapsed_time, *speakers);
-                        break;
-                    case STATES::GameState::FLOOD_CUTSCENE:
-                        next_game_state = flood_cutscene.Update(elapsed_time);
-                        break;
-                    case STATES::GameState::GAMEPLAY:
-                        next_game_state = gameplay_state.Update(elapsed_time, input_controller, renderer.Camera);
-                        break;
-                }
+                STATES::GameState next_game_state = game_states.Update(elapsed_time, input_controller, renderer.Camera, *speakers);
 
                 // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
                 renderer.Screen->Clear();
 
                 // RENDER THE CURRENT STATE OF THE GAME.
-                switch (game_state)
-                {
-                    case STATES::GameState::INTRO_SEQUENCE:
-                        intro_sequence.Render(renderer);
-                        break;
-                    case STATES::GameState::TITLE_SCREEN:
-                        title_screen.Render(renderer);
-                        break;
-                    case STATES::GameState::CREDITS_SCREEN:
-                        credits_screen.Render(renderer);
-                        break;
-                    case STATES::GameState::GAME_SELECTION_SCREEN:
-                        game_selection_screen.Render(renderer);
-                        break;
-                    case STATES::GameState::NEW_GAME_INTRO_SEQUENCE:
-                        new_game_intro_sequence.Render(renderer);
-                        break;
-                    case STATES::GameState::FLOOD_CUTSCENE:
-                        flood_cutscene.Render(renderer);
-                        break;
-                    case STATES::GameState::GAMEPLAY:
-                        gameplay_state.Render(renderer);
-                        break;
-                }
+                game_states.Render(renderer);
 
                 // DISPLAY THE RENDERED FRAME IN THE WINDOW.
                 renderer.Screen->RenderTarget.display();
                 sf::Sprite screen_sprite(renderer.Screen->RenderTarget.getTexture());
 
                 // For main gameplay, the world should be tinted based on the time of day most of the time.
-                bool in_main_gameplay = (STATES::GameState::GAMEPLAY == game_state);
+                bool in_main_gameplay = (STATES::GameState::GAMEPLAY == game_states.CurrentGameState);
                 if (in_main_gameplay)
                 {
                     // MAKE SURE THE APPROPRIATE SHADER EXISTS.
                     // If the player is beginning a new game with God speaking to Noah, then the pulsing light
                     // shader should be used to help communicate that God is speaking to the player.
                     /// @todo   Might be better to have a fancier "spinning light" style-effect.
-                    bool pulse_light_for_new_game_text = (!gameplay_state.NewGameInstructionsCompleted && colored_texture_shader);
+                    bool pulse_light_for_new_game_text = (!game_states.GameplayState.NewGameInstructionsCompleted && colored_texture_shader);
                     if (pulse_light_for_new_game_text)
                     {
                         // COMPUTE THE TINT TO APPLY TO THE SCREEN.
@@ -1019,94 +968,40 @@ int main()
                 }
 
                 // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.
-                bool game_state_changed = (next_game_state != game_state);
-                if (game_state_changed)
+                bool remaining_assets_needed = (STATES::GameState::INTRO_SEQUENCE != next_game_state);
+                if (remaining_assets_needed)
                 {
-                    // CHANGE THE GAME'S STATE.
-                    game_state = next_game_state;
-                    switch (game_state)
+                    assets_being_loaded.wait();
+                }
+                
+                std::shared_ptr<MAPS::World> world;
+                bool world_needed = (STATES::GameState::GAMEPLAY == next_game_state);
+                if (world_needed)
+                {
+                    // This protection against the world being invalid is primarily to handle
+                    // debug code for quickly switching between states.
+                    bool world_loading_valid = world_being_loaded.valid();
+                    if (world_loading_valid)
                     {
-                        case STATES::GameState::CREDITS_SCREEN:
-                            // RESET THE ELAPSED TIME FOR THE CREDITS SCREEN.
-                            credits_screen.ElapsedTime = sf::Time::Zero;
-                            break;
-                        case STATES::GameState::GAME_SELECTION_SCREEN:
-                            game_selection_screen.LoadSavedGames();
-                            game_selection_screen.CurrentSubState = STATES::GameSelectionScreen::SubState::LISTING_GAMES;
-                            break;
-                        case STATES::GameState::NEW_GAME_INTRO_SEQUENCE:
-                        {
-                            // LOAD THE APPROPRIATE MUSIC INTO THE SPEAKERS.
-                            auto new_game_intro_music = assets->GetMusic(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC);
-                            speakers->AddMusic(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC, new_game_intro_music);
+                        world = world_being_loaded.get();
+                    }
+                    else
+                    {
+                        world = game_states.GameplayState.World;
+                    }
+                    if (!world)
+                    {
+                        return EXIT_FAILURE;
+                    }
 
-                            // RESET THE INTRO SEQUENCE TO THE BEGINNING.
-                            new_game_intro_sequence.ResetToBeginning();
-                            break;
-                        }
-                        case STATES::GameState::FLOOD_CUTSCENE:
-                            // RESET THE ELAPSED TIME FOR THE CUTSCENE.
-                            flood_cutscene.ElapsedTime = sf::Time::Zero;
-                            break;
-                        case STATES::GameState::GAMEPLAY:
-                        {
-                            // LOAD THE GAME'S SAVE FILE.
-                            // The empty check is for handling the case where no saved games exist yet, primarily when
-                            // switching between states in debug mode.
-                            std::shared_ptr<STATES::SavedGameData> saved_game_data;
-                            if (!game_selection_screen.SavedGames.empty())
-                            {
-                                saved_game_data = game_selection_screen.SavedGames.at(game_selection_screen.SelectedGameIndex);
-                            }
-                            bool saved_game_data_loaded = (nullptr != saved_game_data);
-                            if (!saved_game_data_loaded)
-                            {
-                                // USE THE DEFAULT SAVED GAME DATA FOR A NEW GAME.
-                                saved_game_data = std::make_shared<STATES::SavedGameData>(STATES::SavedGameData::DefaultSavedGameData());
-                            }
-
-                            // INITIALIZE THE GAMEPLAY STATE.
-                            // This protection against the world being invalid is primarily to handle
-                            // debug code for quickly switching between states.
-                            std::shared_ptr<MAPS::World> world;
-                            bool world_loading_valid = world_being_loaded.valid();
-                            if (world_loading_valid)
-                            {
-                                world = world_being_loaded.get();
-                            }
-                            else
-                            {
-                                world = gameplay_state.World;
-                            }
-                            if (!world)
-                            {
-                                return EXIT_FAILURE;
-                            }
-
-                            bool gameplay_state_initialized = gameplay_state.Initialize(
-                                SCREEN_WIDTH_IN_PIXELS,
-                                saved_game_data,
-                                world);
-                            if (!gameplay_state_initialized)
-                            {
-                                return EXIT_FAILURE;
-                            }
-
-                            // FOCUS THE CAMERA ON THE PLAYER.
-                            MATH::Vector2f player_start_world_position = gameplay_state.NoahPlayer->GetWorldPosition();
-                            renderer.Camera.SetCenter(player_start_world_position);
-
-                            // GET IMPORTANT SHADERS.
-                            time_of_day_shader = assets->GetShader(RESOURCES::AssetId::TIME_OF_DAY_SHADER);
-                            if (!time_of_day_shader)
-                            {
-                                return EXIT_FAILURE;
-                            }
-
-                            break;
-                        }
+                    // GET IMPORTANT SHADERS.
+                    time_of_day_shader = assets->GetShader(RESOURCES::AssetId::TIME_OF_DAY_SHADER);
+                    if (!time_of_day_shader)
+                    {
+                        return EXIT_FAILURE;
                     }
                 }
+                game_states.SwitchStatesIfChanged(next_game_state, world, renderer);
             }
         }
 

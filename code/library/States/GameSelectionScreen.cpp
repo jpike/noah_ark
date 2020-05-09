@@ -520,23 +520,21 @@ namespace STATES
         }
 
         // RENDER SOME HELP TEXT AT THE BOTTOM OF THE SCREEN.
-        constexpr float DEFAULT_SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
-        float screen_y_position_one_line_before_bottom = screen_height_in_pixels - DEFAULT_SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS;
+        constexpr float HELP_TEXT_LINE_COUNT = 2.0f;
+        constexpr float HELP_TEXT_HEIGHT_IN_PIXELS = HELP_TEXT_LINE_COUNT * static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
+        float help_text_top_y_position = screen_height_in_pixels - HELP_TEXT_HEIGHT_IN_PIXELS;
         MATH::FloatRectangle help_text_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             0.0f,
-            screen_y_position_one_line_before_bottom,
+            help_text_top_y_position,
             screen_width_in_pixels,
-            DEFAULT_SINGLE_TEXT_LINE_HEIGHT_IN_PIXELS);
+            HELP_TEXT_HEIGHT_IN_PIXELS);
         // A black rectangle is rendered behind the text to avoid having the text overlap
         // with other text from the screen and make things hard to read.
         renderer.RenderScreenRectangle(help_text_screen_rectangle, GRAPHICS::Color::BLACK);
-        // The help text is scaled to half size to let multiple lines fit on screen.
-        constexpr float HELP_TEXT_SCALE_FACTOR = 0.5f;
         renderer.RenderText(
-            "[ESC] to title | Up/down arrow keys to select game\nEnter to select save game slot | Type filename for new game",
+            "[ESC] to title | Up/down arrow keys to select game\nEnter to select slot | Type filename for new game",
             RESOURCES::AssetId::FONT_TEXTURE,
             help_text_screen_rectangle,
-            GRAPHICS::Color::WHITE,
-            HELP_TEXT_SCALE_FACTOR);
+            GRAPHICS::Color::WHITE);
     }
 }

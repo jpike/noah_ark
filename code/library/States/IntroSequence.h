@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Bible/BibleVerse.h"
 #include "Graphics/Gui/Font.h"
@@ -26,7 +27,7 @@ namespace STATES
         // OTHER METHODS.
         bool Completed() const;
         void Update(const sf::Time& elapsed_time);
-        void Render(GRAPHICS::Renderer& renderer) const;
+        sf::Sprite Render(GRAPHICS::Renderer& renderer) const;
 
     private:
         // STATIC CONSTANTS.

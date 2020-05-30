@@ -79,14 +79,15 @@ namespace STATES
 
     /// Renders the current frame of the intro sequence on screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void IntroSequence::Render(GRAPHICS::Renderer& renderer) const
+    /// @return The rendered intro sequence.
+    sf::Sprite IntroSequence::Render(GRAPHICS::Renderer& renderer) const
     {
         // MAKE SURE THE INTRO SEQUENCE HASN'T COMPLETED.
         bool intro_sequence_completed = Completed();
         if (intro_sequence_completed)
         {
             // Nothing should be rendered if the intro sequence has completed.
-            return;
+            return sf::Sprite();
         }
 
         // MAKE SURE FRAMES EXIST.
@@ -94,7 +95,7 @@ namespace STATES
         if (!frames_exist)
         {
             // There's nothing to render.
-            return;
+            return sf::Sprite();
         }
 
         // RENDER THE CURRENT BIBLE VERSE.
@@ -117,5 +118,9 @@ namespace STATES
             RESOURCES::AssetId::SERIF_FONT_TEXTURE, 
             renderer.Screen->GetBoundingRectangle<float>(), 
             text_color);
+
+        // RETURN THE FINAL RENDERED SCREEN.
+        sf::Sprite screen = renderer.RenderFinalScreen();
+        return screen;
     }
 }

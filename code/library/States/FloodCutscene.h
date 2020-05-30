@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Graphics/Renderer.h"
 #include "Math/RandomNumberGenerator.h"
@@ -15,7 +16,7 @@ namespace STATES
     public:
         // PUBLIC METHODS.
         GameState Update(const sf::Time& elapsed_time);
-        void Render(GRAPHICS::Renderer& renderer);
+        sf::Sprite Render(GRAPHICS::Renderer& renderer);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The total time that the credits screen has been shown.

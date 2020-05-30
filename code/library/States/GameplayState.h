@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Audio/Speakers.h"
 #include "Bible/BibleVerse.h"
@@ -45,7 +46,7 @@ namespace STATES
             GRAPHICS::Camera& camera);
 
         // RENDERING.
-        void Render(GRAPHICS::Renderer& renderer);
+        sf::Sprite Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// True if the instructions that are displayed in a text box at the start

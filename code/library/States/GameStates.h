@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Audio/Speakers.h"
 #include "Graphics/Camera.h"
@@ -35,7 +36,7 @@ namespace STATES
             INPUT_CONTROL::InputController& input_controller, 
             GRAPHICS::Camera& camera,
             AUDIO::Speakers& speakers);
-        void Render(GRAPHICS::Renderer& renderer);
+        sf::Sprite Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer);
         void SwitchStatesIfChanged(const GameState& new_state, const std::shared_ptr<MAPS::World>& world, GRAPHICS::Renderer& renderer);
 
         /// The current state the game is in.

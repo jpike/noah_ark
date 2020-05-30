@@ -62,7 +62,8 @@ namespace STATES
 
     /// Renders the title screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void TitleScreen::Render(GRAPHICS::Renderer& renderer) const
+    /// @return The rendered title screen.
+    sf::Sprite TitleScreen::Render(GRAPHICS::Renderer& renderer) const
     {
         // CALCULATE INITIAL PARAMETERS FOR THE GAME'S TITLE.
         // The sub-heading is centered within the top third of the screen,
@@ -196,5 +197,9 @@ namespace STATES
             // UPDATE THE POSITION FOR THE NEXT MENU OPTION.
             current_menu_option_top_screen_position += menu_option_screen_height;
         }        
+
+        // RETURN THE FINAL RENDERED SCREEN.
+        sf::Sprite screen = renderer.RenderFinalScreen();
+        return screen;
     }
 }

@@ -27,13 +27,14 @@ namespace STATES
 
     /// Renders the current frame of the cutscene.
     /// @param[in,out]  renderer - The renderer to use.
-    void FloodCutscene::Render(GRAPHICS::Renderer& renderer)
+    /// @return The rendered flood cutscene.
+    sf::Sprite FloodCutscene::Render(GRAPHICS::Renderer& renderer)
     {
         // DON'T RENDER ANYTHING IF THE CUTSCENE IS COMPLETE.
         bool cutscene_completed = Completed();
         if (cutscene_completed)
         {
-            return;
+            return sf::Sprite();
         }
 
         // DRAW THE SKY BACKGROUND.
@@ -113,6 +114,10 @@ namespace STATES
         }
 
         renderer.Screen->RenderTarget.draw(rain_line_vertices.data(), rain_line_vertices.size(), sf::Lines);
+
+        // RETURN THE FINAL RENDERED SCREEN.
+        sf::Sprite screen = renderer.RenderFinalScreen();
+        return screen;
     }
 
     // Determines if the cutscene has been completed.

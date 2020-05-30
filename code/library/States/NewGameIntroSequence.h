@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Audio/Speakers.h"
 #include "Bible/BibleVerse.h"
@@ -17,7 +18,7 @@ namespace STATES
         // METHODS.
         void ResetToBeginning();
         GameState Update(const sf::Time& elapsed_time, AUDIO::Speakers& speakers);
-        void Render(GRAPHICS::Renderer& renderer) const;
+        sf::Sprite Render(GRAPHICS::Renderer& renderer) const;
 
     private:
         // STATIC CONSTANTS.

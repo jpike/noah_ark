@@ -361,7 +361,8 @@ namespace STATES
 
     /// Renders the game selection screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void GameSelectionScreen::Render(GRAPHICS::Renderer& renderer) const
+    /// @return The rendered game selection screen.
+    sf::Sprite GameSelectionScreen::Render(GRAPHICS::Renderer& renderer) const
     {
         // RENDER OPTIONS FOR EACH OF THE SAVED GAMES.
         const GRAPHICS::Color GAME_OPTION_TEXT_COLOR = GRAPHICS::Color::WHITE;
@@ -536,5 +537,9 @@ namespace STATES
             RESOURCES::AssetId::FONT_TEXTURE,
             help_text_screen_rectangle,
             GRAPHICS::Color::WHITE);
+
+        // RETURN THE FINAL RENDERED SCREEN.
+        sf::Sprite screen = renderer.RenderFinalScreen();
+        return screen;
     }
 }

@@ -30,7 +30,8 @@ namespace STATES
 
     /// Renders the credits screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void CreditsScreen::Render(GRAPHICS::Renderer& renderer) const
+    /// @return The rendered credits screen.
+    sf::Sprite CreditsScreen::Render(GRAPHICS::Renderer& renderer) const
     {
         // CALCULATE THE OFFSET OF THE TOP OF THE CREDITS BASED ON THE ELAPSED TIME.
         // This helps implement scrolling of the credits text upward.
@@ -325,5 +326,9 @@ namespace STATES
             RESOURCES::AssetId::FONT_TEXTURE,
             help_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
+
+        // RETURN THE FINAL RENDERED SCREEN.
+        sf::Sprite screen = renderer.RenderFinalScreen();
+        return screen;
     }
 }

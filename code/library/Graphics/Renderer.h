@@ -28,6 +28,9 @@ namespace GRAPHICS
         // CONSTRUCTION.
         explicit Renderer(std::unique_ptr<GRAPHICS::Screen>&& screen);
 
+        // FINAL RENDER RETRIEVAL.
+        sf::Sprite RenderFinalScreen(const sf::RenderStates& render_settings = sf::RenderStates::Default);
+
         // LINE RENDERING.
         void RenderLine(const MATH::Vector2f& start_position, const MATH::Vector2f& end_position, const GRAPHICS::Color& color);
 
@@ -87,6 +90,8 @@ namespace GRAPHICS
         std::unordered_map< RESOURCES::AssetId, std::shared_ptr<GRAPHICS::GUI::Font> > Fonts;
         /// The shader to use for colored text.
         std::shared_ptr<sf::Shader> ColoredTextShader;
+        /// The shader to use for shading based on the time of day.
+        std::shared_ptr<sf::Shader> TimeOfDayShader;
 
     private:
         // RENDERING.

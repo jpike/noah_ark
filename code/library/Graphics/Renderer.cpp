@@ -17,12 +17,30 @@ namespace GRAPHICS
         Screen->RenderTarget.getView().getSize().x,
         Screen->RenderTarget.getView().getSize().y)),
     Fonts(),
-    ColoredTextShader()
+    ColoredTextShader(),
+    TimeOfDayShader()
     {
         // MAKE SURE REQUIRED PARAMETERS EXISTS.
         CORE::ThrowInvalidArgumentExceptionIfNull(
             Screen,
             "The screen for the renderer cannot be null.");
+    }
+
+    /// Renders the final screen based on the current state of rendering operations.
+    /// @param[in]  render_settings - The settings to use for rendering.
+    /// @return The rendered screen.
+    sf::Sprite Renderer::RenderFinalScreen(const sf::RenderStates& render_settings)
+    {
+        // RENDER THE DEFAULT STATE OF THE SCREEN.
+        Screen->RenderTarget.display();
+        sf::Sprite screen(Screen->RenderTarget.getTexture());
+
+        // APPLY THE RENDER SETTINGS TO THE SCREEN.
+        Screen->RenderTarget.draw(screen, render_settings);
+        Screen->RenderTarget.display();
+        screen.setTexture(Screen->RenderTarget.getTexture());
+
+        return screen;
     }
 
     /// Renders a line in screen coordinates.

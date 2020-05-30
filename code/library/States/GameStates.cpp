@@ -60,33 +60,41 @@ namespace STATES
     }
 
     /// Renders the current state of the game.
+    /// @param[in]  total_elapsed_time - The total elapsed time since the game began; used for certain rendering effects.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void GameStates::Render(GRAPHICS::Renderer& renderer)
+    /// @return The rendered state of the game.
+    sf::Sprite GameStates::Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer)
     {
+        // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
+        renderer.Screen->Clear();
+
+        // RENDER THE CURRENT GAME STATE.
+        sf::Sprite screen_sprite;
         switch (CurrentGameState)
         {
             case GameState::INTRO_SEQUENCE:
-                IntroSequence.Render(renderer);
+                screen_sprite = IntroSequence.Render(renderer);
                 break;
             case GameState::TITLE_SCREEN:
-                TitleScreen.Render(renderer);
+                screen_sprite = TitleScreen.Render(renderer);
                 break;
             case GameState::CREDITS_SCREEN:
-                CreditsScreen.Render(renderer);
+                screen_sprite = CreditsScreen.Render(renderer);
                 break;
             case GameState::GAME_SELECTION_SCREEN:
-                GameSelectionScreen.Render(renderer);
+                screen_sprite = GameSelectionScreen.Render(renderer);
                 break;
             case GameState::NEW_GAME_INTRO_SEQUENCE:
-                NewGameIntroSequence.Render(renderer);
+                screen_sprite = NewGameIntroSequence.Render(renderer);
                 break;
             case GameState::FLOOD_CUTSCENE:
-                FloodCutscene.Render(renderer);
+                screen_sprite = FloodCutscene.Render(renderer);
                 break;
             case GameState::GAMEPLAY:
-                GameplayState.Render(renderer);
+                screen_sprite = GameplayState.Render(total_elapsed_time, renderer);
                 break;
         }
+        return screen_sprite;
     }
 
     /// Switches to the new state, if the state has changed.

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Graphics/Renderer.h"
 #include "Input/InputController.h"
@@ -18,7 +19,7 @@ namespace STATES
 
         // OTHER METHODS.
         GameState Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
-        void Render(GRAPHICS::Renderer& renderer) const;
+        sf::Sprite Render(GRAPHICS::Renderer& renderer) const;
 
     private:
         // MEMBER VARIABLES.

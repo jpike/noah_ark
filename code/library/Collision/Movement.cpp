@@ -7,7 +7,7 @@ namespace COLLISION
     /// @param[in]  direction - The direction of the movement.
     /// @param[in]  distance_in_pixels - The distance of the movement (in pixels).
     Movement::Movement(
-        const CORE::Direction direction,
+        const GAMEPLAY::Direction direction,
         const float distance_in_pixels) :
     Direction(direction),
     DistanceInPixels(distance_in_pixels)
@@ -20,17 +20,17 @@ namespace COLLISION
         // CONVERT THE MOVEMENT TO A VECTOR.
         switch (Direction)
         {
-            case CORE::Direction::UP:
+            case GAMEPLAY::Direction::UP:
                 // Y decreases going up.
                 return MATH::Vector2f(0.0f, -1.0f * DistanceInPixels);
-            case CORE::Direction::DOWN:
+            case GAMEPLAY::Direction::DOWN:
                 // Y increases going down.
                 return MATH::Vector2f(0.0f, DistanceInPixels);
-            case CORE::Direction::LEFT:
+            case GAMEPLAY::Direction::LEFT:
                 return MATH::Vector2f(-1.0f * DistanceInPixels, 0.0f);
-            case CORE::Direction::RIGHT:
+            case GAMEPLAY::Direction::RIGHT:
                 return MATH::Vector2f(DistanceInPixels, 0.0f);
-            case CORE::Direction::INVALID:
+            case GAMEPLAY::Direction::INVALID:
                 // Intentionally fall through.
             default:
                 // No valid movement vector can be determined.

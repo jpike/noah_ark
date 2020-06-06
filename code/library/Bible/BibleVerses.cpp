@@ -159,8 +159,8 @@ namespace BIBLE
     /// @return The requested Bible verse, if found; nullptr if not found.
     const BIBLE::BibleVerse* FindBibleVerse(
         const BIBLE::BibleBook book,
-        const BIBLE::ChapterNumber chapter,
-        const BIBLE::VerseNumber verse)
+        const unsigned int chapter,
+        const unsigned int verse)
     {
         // SEARCH FOR THE SPECIFIED VERSE.
         for (const auto& current_verse : BIBLE_VERSES)

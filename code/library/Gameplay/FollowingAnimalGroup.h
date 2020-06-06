@@ -8,7 +8,7 @@
 #include "Math/Vector2.h"
 #include "Objects/Animal.h"
 
-namespace OBJECTS
+namespace GAMEPLAY
 {
     /// A group of animals that are currently following Noah
     /// (as opposed to being in the ark).
@@ -18,7 +18,7 @@ namespace OBJECTS
         /// The dimension (width and height) of the group, in pixels.
         static constexpr float DIMENSION_IN_PIXELS = 32.0f;
 
-        void Add(const std::shared_ptr<Animal>& animal);
+        void Add(const std::shared_ptr<OBJECTS::Animal>& animal);
 
         void Update(const sf::Time& elapsed_time, const MATH::Vector2f& new_center_world_position);
         void Render(GRAPHICS::Screen& screen);
@@ -28,7 +28,7 @@ namespace OBJECTS
         /// The animals currently in the group.
         /// Stored as shared pointers to allow for updating the animals
         /// while also sharing ownership with other code.
-        std::vector< std::shared_ptr<Animal> > Animals = {};
+        std::vector< std::shared_ptr<OBJECTS::Animal> > Animals = {};
 
     private:
         /// A random number generator used for giving animals random positions in the group.

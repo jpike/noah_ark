@@ -4,7 +4,8 @@
 #include <string>
 #include <vector>
 
-namespace CORE
+/// Holds code related to strings.
+namespace STRING
 {
     /// A class to hold utility methods related to strings.
     ///

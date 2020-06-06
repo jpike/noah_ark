@@ -1,7 +1,7 @@
 #include <cctype>
-#include "Core/String.h"
+#include "String/String.h"
 
-namespace CORE
+namespace STRING
 {
     /// Splits the provided string into separate lines based on newline
     /// characters embedded in the string.  Only '\n' is currently supported

@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Graphics/Color.h"
 #include "Graphics/Gui/Glyph.h"
 #include "Graphics/Renderer.h"
@@ -16,7 +16,7 @@ namespace INVENTORY
     SelectedVerseIndex(0)
     {
         // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             Inventory,
             "Inventory cannot be null for Bible verse list box.");
     }

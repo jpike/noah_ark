@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "Core/Array2D.h"
+#include "Containers/Array2D.h"
 #include "Maps/Tile.h"
 #include "Math/Vector2.h"
 
@@ -33,6 +33,6 @@ namespace MAPS
         /// The tiles in this layer.  Stored as offsets from top-left corner,
         /// which is (0,0) (column/x,row/y).  Stored as shared pointers to support
         /// storage directly when created from a tileset.
-        CORE::Array2D< std::shared_ptr<MAPS::Tile> > Tiles;
+        CONTAINERS::Array2D< std::shared_ptr<MAPS::Tile> > Tiles;
     };
 }

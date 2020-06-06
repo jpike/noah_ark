@@ -1,8 +1,8 @@
 #include <array>
-#include "Core/NullChecking.h"
-#include "Core/String.h"
 #include "Debugging/DebugConsole.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Graphics/Renderer.h"
+#include "String/String.h"
 
 namespace GRAPHICS
 {
@@ -21,7 +21,7 @@ namespace GRAPHICS
     TimeOfDayShader()
     {
         // MAKE SURE REQUIRED PARAMETERS EXISTS.
-        CORE::ThrowInvalidArgumentExceptionIfNull(
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             Screen,
             "The screen for the renderer cannot be null.");
     }
@@ -355,7 +355,7 @@ namespace GRAPHICS
         const float text_scale_ratio)
     {
         // SPLIT THE PROVIDED TEXT INTO LINES BASED ON EMBEDDED LINE BREAKS.
-        std::vector<std::string> original_lines_from_text = CORE::String::SplitIntoLines(text);
+        std::vector<std::string> original_lines_from_text = STRING::String::SplitIntoLines(text);
 
         // SPLIT EACH LINE BASED ON WORD BOUNDARIES.
         // New lines will be created that ensure that words aren't broken up across
@@ -368,7 +368,7 @@ namespace GRAPHICS
         for (const auto& line : original_lines_from_text)
         {
             // SPLIT THE CURRENT LINE INTO INDIVIDUAL WORDS.
-            std::deque<std::string> words_in_current_line = CORE::String::SplitIntoWords(
+            std::deque<std::string> words_in_current_line = STRING::String::SplitIntoWords(
                 line,
                 max_characters_per_line);
 
@@ -491,7 +491,7 @@ namespace GRAPHICS
         const float text_scale_ratio)
     {
         // SPLIT THE PROVIDED TEXT INTO LINES BASED ON EMBEDDED LINE BREAKS.
-        std::vector<std::string> original_lines_from_text = CORE::String::SplitIntoLines(text);
+        std::vector<std::string> original_lines_from_text = STRING::String::SplitIntoLines(text);
 
         // SPLIT EACH LINE BASED ON WORD BOUNDARIES.
         // New lines will be created that ensure that words aren't broken up across
@@ -504,7 +504,7 @@ namespace GRAPHICS
         for (const auto& line : original_lines_from_text)
         {
             // SPLIT THE CURRENT LINE INTO INDIVIDUAL WORDS.
-            std::deque<std::string> words_in_current_line = CORE::String::SplitIntoWords(
+            std::deque<std::string> words_in_current_line = STRING::String::SplitIntoWords(
                 line,
                 max_characters_per_line);
 

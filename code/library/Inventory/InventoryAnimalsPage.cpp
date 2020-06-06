@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Inventory/InventoryAnimalsPage.h"
 #include "Resources/AnimalGraphics.h"
 
@@ -21,8 +21,8 @@ namespace INVENTORY
     Assets(assets)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to inventory animals page.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(Assets, "Null assets provided to inventory animals page.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to inventory animals page.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Assets, "Null assets provided to inventory animals page.");
     }
 
     /// Updates the animals page.
@@ -33,7 +33,7 @@ namespace INVENTORY
         // CHECK IF A SCROLLING BUTTON WAS PRESSED OR RELEASED.
         // This ensures that even if the press/release occurs really quickly, the user will still
         // see the list scroll to the next row.
-        if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::UP_KEY))
+        if (input_controller.ButtonWasPressed(sf::Keyboard::Up))
         {
             // MOVE TO THE PREVIOUS ANIMAL SPECIES.
             SelectPreviousAnimalSpecies();
@@ -44,7 +44,7 @@ namespace INVENTORY
             // Nothing else needs to be done if a full key press was detected.
             return;
         }
-        if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DOWN_KEY))
+        if (input_controller.ButtonWasPressed(sf::Keyboard::Down))
         {
             // MOVE TO THE NEXT ANIMAL SPECIES.
             SelectNextAnimalSpecies();
@@ -64,7 +64,7 @@ namespace INVENTORY
         // since that would result in scrolling too fast - potentially preventing the player
         // from being able to land on selecting a particular animal.
         const sf::Time ELAPSED_TIME_FOR_KEY_DOWN_BEFORE_MOVING_TO_ADJACENT_ANIMAL = sf::seconds(0.1f);
-        if (input_controller.ButtonDown(INPUT_CONTROL::InputController::UP_KEY))
+        if (input_controller.ButtonDown(sf::Keyboard::Up))
         {
             // UPDATE THE ELAPSED TIME FOR A SCROLLING KEY BEING PRESSED.
             ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals += elapsed_time;
@@ -79,7 +79,7 @@ namespace INVENTORY
                 ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals = sf::Time::Zero;
             }
         }
-        else if (input_controller.ButtonDown(INPUT_CONTROL::InputController::DOWN_KEY))
+        else if (input_controller.ButtonDown(sf::Keyboard::Down))
         {
             // UPDATE THE ELAPSED TIME FOR A SCROLLING KEY BEING PRESSED.
             ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals += elapsed_time;

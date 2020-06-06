@@ -9,7 +9,6 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include "Audio/SoundEffect.h"
-#include "Core/Array2D.h"
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Texture.h"
 #include "Graphics/Gui/Font.h"
@@ -34,7 +33,6 @@ namespace RESOURCES
         std::shared_ptr<GRAPHICS::Texture> GetTexture(const AssetId texture_id);
         std::shared_ptr<GRAPHICS::Texture> GetTexture(const AssetId texture_id, const std::string& binary_data);
         std::shared_ptr<GRAPHICS::GUI::Font> GetFont(const AssetId font_texture_id);
-        std::shared_ptr<GRAPHICS::GUI::Font> GetFont(const AssetId font_texture_id, const std::string& binary_data);
         std::shared_ptr<sf::Shader> GetShader(const AssetId shader_id);
         std::shared_ptr<sf::Shader> GetShader(const AssetId shader_id, const std::string& binary_data);
         std::shared_ptr<sf::SoundBuffer> GetSound(const AssetId sound_id);

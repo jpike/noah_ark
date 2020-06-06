@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/System.hpp>
-#include "Core/Direction.h"
+#include "Gameplay/Direction.h"
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
@@ -85,7 +85,7 @@ namespace OBJECTS
     private:
         // MEMBER VARIABLES.
         /// The direction the axe is currently being swung.
-        CORE::Direction SwingingDirection = CORE::Direction::INVALID;
+        GAMEPLAY::Direction SwingingDirection = GAMEPLAY::Direction::INVALID;
         /// True if the axe is currently swinging; false otherwise.
         bool CurrentlySwinging = false;
         /// True if the axe is currently swinging out; false otherwise.

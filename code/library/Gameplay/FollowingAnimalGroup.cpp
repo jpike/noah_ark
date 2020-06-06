@@ -1,11 +1,11 @@
 #include <cmath>
-#include "Objects/FollowingAnimalGroup.h"
+#include "Gameplay/FollowingAnimalGroup.h"
 
-namespace OBJECTS
+namespace GAMEPLAY
 {
     /// Adds the specified animal to the group.
     /// @param[in]  animal - The animal to add.
-    void FollowingAnimalGroup::Add(const std::shared_ptr<Animal>& animal)
+    void FollowingAnimalGroup::Add(const std::shared_ptr<OBJECTS::Animal>& animal)
     {
         // MAKE SURE THE ANIMAL EXISTS.
         bool animal_exists = (nullptr != animal);
@@ -63,7 +63,7 @@ namespace OBJECTS
         // UPDATE THE POSITIONS/ANIMATIONS OF ALL OF THE ANIMALS.
         // The animal positions are in global world coordinates, but if the center world position of the group
         // is changing, then they need to be adjusted to be relative to the new center rather than the old center.
-        for (const std::shared_ptr<Animal>& animal : Animals)
+        for (const std::shared_ptr<OBJECTS::Animal>& animal : Animals)
         {
             // MOVE THE ANIMAL ALONG WITH THE GROUP.
             MATH::Vector2f old_animal_world_position = animal->Sprite.GetWorldPosition();
@@ -144,7 +144,7 @@ namespace OBJECTS
 #endif
 
         // RENDER EACH ANIMAL.
-        for (const std::shared_ptr<Animal>& animal : Animals)
+        for (const std::shared_ptr<OBJECTS::Animal>& animal : Animals)
         {
 #if DRAW_FOLLOWING_ANIMAL_GROUP_DEBUG_RECTANGLES
             sf::RectangleShape animal_rectangle;

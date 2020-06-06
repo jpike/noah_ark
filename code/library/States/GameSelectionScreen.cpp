@@ -59,7 +59,7 @@ namespace STATES
             case SubState::LISTING_GAMES:
             {
                 // CHECK IF THE BACK BUTTON WAS PRESSED.
-                bool back_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY);
+                bool back_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Escape);
                 if (back_button_pressed)
                 {
                     // RETURN TO THE TITLE SCREEN.
@@ -71,7 +71,7 @@ namespace STATES
                 // The max valid selected game index is equal to the number of saved games
                 // as the index equal to this size is reserved for creating a new game.
                 std::size_t max_selected_game_index = SavedGames.size();
-                bool up_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::UP_KEY);
+                bool up_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Up);
                 if (up_button_pressed)
                 {
                     // MOVE UP TO THE NEXT SAVED GAME.
@@ -81,7 +81,7 @@ namespace STATES
                         max_selected_game_index);
                 }
 
-                bool down_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DOWN_KEY);
+                bool down_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Down);
                 if (down_button_pressed)
                 {
                     // MOVE DOWN TO THE NEXT SAVED GAME.
@@ -92,7 +92,7 @@ namespace STATES
                 }
 
                 // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
-                bool start_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY);
+                bool start_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Return);
                 if (start_button_pressed)
                 {
                     // CHECK IF A NEW GAME IS BEING CHOSEN.
@@ -120,7 +120,7 @@ namespace STATES
             case SubState::ENTERING_NEW_GAME:
             {
                 // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
-                bool start_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY);
+                bool start_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Return);
                 if (start_button_pressed)
                 {
                     // START THE GAME IF AT LEAST ONE CHARACTER EXISTS IN THE FILENAME.
@@ -141,7 +141,7 @@ namespace STATES
                 }
 
                 // CHECK IF THE BACK BUTTON WAS PRESSED.
-                bool back_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY);
+                bool back_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Escape);
                 if (back_button_pressed)
                 {
                     // SWITCH BACK TO LISTING OTHER SAVED GAMES.
@@ -150,7 +150,7 @@ namespace STATES
                 }
 
                 // CHECK IF THE BACKSPACE KEY WAS PRESSED.
-                bool backspace_key_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Backspace);
+                bool backspace_key_pressed = input_controller.ButtonWasPressed(sf::Keyboard::BackSpace);
                 if (backspace_key_pressed)
                 {
                     // DELETE A CHARACTER FROM THE FILENAME IF ONE EXISTS.

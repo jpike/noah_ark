@@ -1,4 +1,4 @@
-#include "Core/String.h"
+#include "String/String.h"
 #include "Graphics/Gui/TextBox.h"
 
 namespace GRAPHICS
@@ -30,7 +30,7 @@ namespace GUI
         // SPLIT THE TEXT INTO SEPARATE LINES.
         // This allows newline characters in the text to be properly
         // preserved when rendered in the text box.
-        std::vector<std::string> lines = CORE::String::SplitIntoLines(text);
+        std::vector<std::string> lines = STRING::String::SplitIntoLines(text);
 
         // ADD EACH LINE OF TEXT TO APPROPRIATE PAGES IN THE TEXT BOX.
         for (const std::string& line : lines)
@@ -48,7 +48,7 @@ namespace GUI
             // only having one space between words.  There also is not
             // a use case yet where having multiple sequential spaces
             // is valuable.
-            std::deque<std::string> words = CORE::String::SplitIntoWords(line, max_character_count_per_line);
+            std::deque<std::string> words = STRING::String::SplitIntoWords(line, max_character_count_per_line);
 
             bool words_exist = !words.empty();
             if (!words_exist)

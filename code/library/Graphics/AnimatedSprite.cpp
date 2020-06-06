@@ -1,5 +1,5 @@
 #include <stdexcept>
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Graphics/AnimatedSprite.h"
 
 namespace GRAPHICS
@@ -34,10 +34,10 @@ namespace GRAPHICS
         CurrentAnimationSequenceName()
     {
         // MAKE SURE A TEXTURE WAS PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(texture, "Must provide texture when creating animated sprite.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(texture, "Must provide texture when creating animated sprite.");
 
         // MAKE SURE AN ANIMATION SEQUENCE WAS PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(animation_sequence, "Must provide animation sequence when creating animated sprite.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(animation_sequence, "Must provide animation sequence when creating animated sprite.");
 
         // MAKE SURE AT LEAST ONE FRAME OF THE ANIMATION SEQUENCE EXISTS.
         bool animation_sequence_has_frame = (animation_sequence->GetFrameCount() > 0);

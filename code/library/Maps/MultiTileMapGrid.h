@@ -3,8 +3,8 @@
 #include <memory>
 #include <vector>
 #include <SFML/Audio.hpp>
-#include "Core/Array2D.h"
-#include "Events/AxeSwingEvent.h"
+#include "Containers/Array2D.h"
+#include "Gameplay/AxeSwingEvent.h"
 #include "Maps/TileMap.h"
 #include "Objects/Noah.h"
 
@@ -32,8 +32,8 @@ namespace MAPS
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// Tile maps in the grid, arranged by column/row position in the grid rather than
         /// by absolute world positions.  (0,0) (column/x,row/y) is the top-left tile map.
-        CORE::Array2D<MAPS::TileMap> TileMaps;
+        CONTAINERS::Array2D<MAPS::TileMap> TileMaps;
         /// Axe swings currently occurring in the map grid.
-        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> > AxeSwings;
+        std::vector< std::shared_ptr<GAMEPLAY::AxeSwingEvent> > AxeSwings;
     };
 }

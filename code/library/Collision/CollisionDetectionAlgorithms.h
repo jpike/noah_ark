@@ -6,8 +6,8 @@
 #include <SFML/System.hpp>
 #include "Audio/Speakers.h"
 #include "Collision/Movement.h"
-#include "Core/Direction.h"
-#include "Events/AxeSwingEvent.h"
+#include "Gameplay/Direction.h"
+#include "Gameplay/AxeSwingEvent.h"
 #include "Maps/MultiTileMapGrid.h"
 #include "Maps/Tile.h"
 #include "Math/Rectangle.h"
@@ -30,7 +30,7 @@ namespace COLLISION
             MAPS::MultiTileMapGrid& tile_map_grid);
         static MATH::Vector2f MoveObject(
             const MATH::FloatRectangle& object_world_bounding_box,
-            const CORE::Direction direction,
+            const GAMEPLAY::Direction direction,
             const float move_speed_in_pixels_per_second,
             const sf::Time& elapsed_time,
             MAPS::MultiTileMapGrid& tile_map_grid);
@@ -38,7 +38,7 @@ namespace COLLISION
         // AXE SWINGS.
         static void HandleAxeSwings(
             MAPS::MultiTileMapGrid& tile_map_grid,
-            std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings,
+            std::vector< std::shared_ptr<GAMEPLAY::AxeSwingEvent> >& axe_swings,
             AUDIO::Speakers& speakers,
             RESOURCES::Assets& assets);
 

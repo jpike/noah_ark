@@ -79,7 +79,6 @@ namespace OBJECTS
     };
 
     /// A lookup for string names of the animal species.
-    /// @todo   Try and convert things so that these are more directly associated with enum values?
     extern std::array<std::string, static_cast<std::size_t>(AnimalSpecies::COUNT)> ANIMAL_SPECIES_NAMES;
 
     /// A single description that describes the "type" of an animal in the game.
@@ -159,7 +158,6 @@ namespace std
         {
             std::size_t species_hash = std::hash<int>{}(static_cast<int>(animal_type.Species));
             std::size_t gender_hash = std::hash<int>{}(static_cast<int>(animal_type.Gender));
-            /// @todo Better hash function.
             std::size_t animal_type_hash = species_hash ^ gender_hash;
             return animal_type_hash;
         }

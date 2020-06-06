@@ -1,4 +1,4 @@
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Maps/Tileset.h"
 
 namespace MAPS
@@ -9,7 +9,7 @@ namespace MAPS
     Tileset::Tileset(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture)
     {
         // MAKE SURE THE TEXTURE EXISTS.
-        CORE::ThrowInvalidArgumentExceptionIfNull(tileset_texture, "Tileset texture must not be null.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(tileset_texture, "Tileset texture must not be null.");
         
         // POPULATE A TILESET FROM THE TEXTURE.
         const MAPS::TileId FIRST_TILE_ID = 1;

@@ -1,4 +1,4 @@
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
@@ -35,16 +35,16 @@ namespace GUI
     NoahPlayer(noah_player)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             SavedGame,
             "Null saved game provided to HUD.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             Assets,
             "Null assets provided to HUD.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             World,
             "Null world provided to HUD.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             NoahPlayer,
             "Null Noah player provided to HUD.");
     }
@@ -61,7 +61,7 @@ namespace GUI
         if (PauseMenuVisible)
         {
             // CHECK IF AN APPLICABLE BUTTON WAS PRESSED.
-            if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY))
+            if (input_controller.ButtonWasPressed(sf::Keyboard::Return))
             {
                 // SAVE THE GAME DATA.
                 SavedGame->PlayerWorldPosition = NoahPlayer->GetWorldPosition();
@@ -127,7 +127,7 @@ namespace GUI
                 // RETURN TO THE TITLE SCREEN.
                 return STATES::GameState::TITLE_SCREEN;
             }
-            else if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY))
+            else if (input_controller.ButtonWasPressed(sf::Keyboard::Escape))
             {
                 // CLOSE THE PAUSE MENU.
                 PauseMenuVisible = false;
@@ -167,8 +167,8 @@ namespace GUI
             }
             else
             {
-                // OPEN THE PAISE IF THE APPROPRIATE BUTTON WAS PRESSED.
-                bool pause_menu_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY);
+                // OPEN THE PAUSE MENU IF THE APPROPRIATE BUTTON WAS PRESSED.
+                bool pause_menu_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Escape);
                 if (pause_menu_button_pressed)
                 {
                     PauseMenuVisible = true;

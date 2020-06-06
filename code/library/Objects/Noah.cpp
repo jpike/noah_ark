@@ -1,4 +1,4 @@
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Objects/Noah.h"
 
 namespace OBJECTS
@@ -17,13 +17,13 @@ namespace OBJECTS
     Noah::Noah(
         const std::shared_ptr<GRAPHICS::Texture>& noah_texture,
         const std::shared_ptr<OBJECTS::Axe>& axe) :
-    FacingDirection(CORE::Direction::INVALID),
+    FacingDirection(GAMEPLAY::Direction::INVALID),
     Sprite(),
     Inventory(std::make_shared<INVENTORY::Inventory>())
     {
         // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(noah_texture, "Texture required for Noah.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(axe, "Axe required for Noah.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(noah_texture, "Texture required for Noah.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(axe, "Axe required for Noah.");
 
         // CREATE THE SPRITE FOR NOAH.
         const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 16, 16);
@@ -88,7 +88,7 @@ namespace OBJECTS
 
         // SET NOAH TO FACE DOWN BY DEFAULT.
         Sprite.UseAnimationSequence(NOAH_WALK_FRONT_ANIMATION->AnimationName);
-        FacingDirection = CORE::Direction::DOWN;
+        FacingDirection = GAMEPLAY::Direction::DOWN;
 
         // INITIALIZE THE AXE.
         Inventory->Axe = axe;
@@ -121,7 +121,7 @@ namespace OBJECTS
     /// but instead just updates his direction and animation.
     /// @param[in]  direction - The direction Noah should begin walking.
     /// @param[in]  walking_animation_name - The name of the walking animation to start playing for the direction.
-    void Noah::BeginWalking(const CORE::Direction direction, const std::string& walking_animation_name)
+    void Noah::BeginWalking(const GAMEPLAY::Direction direction, const std::string& walking_animation_name)
     {
         // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
         FacingDirection = direction;
@@ -133,7 +133,7 @@ namespace OBJECTS
 
     /// Causes Noah to begin swinging his axe, if he has one and isn't already swinging it.
     /// @return The event describing the axe swing, if an axe swing is started.
-    std::shared_ptr<EVENTS::AxeSwingEvent> Noah::SwingAxe() const
+    std::shared_ptr<GAMEPLAY::AxeSwingEvent> Noah::SwingAxe() const
     {
         // CHECK IF NOAH HAS AN AXE.
         bool axe_exists = (nullptr != Inventory->Axe);
@@ -158,7 +158,7 @@ namespace OBJECTS
         // SWING THE AXE IN THE SAME DIRECTION NOAH IS FACING.
         switch (FacingDirection)
         {
-            case CORE::Direction::UP:
+            case GAMEPLAY::Direction::UP:
             {
                 // CALCULATE THE POSITION FOR THE AXE.
                 // The axe should appear slightly in front of Noah.
@@ -174,10 +174,10 @@ namespace OBJECTS
                 Inventory->Axe->SwingUp();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Inventory->Axe);
+                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory->Axe);
                 return axe_swing;
             }
-            case CORE::Direction::DOWN:
+            case GAMEPLAY::Direction::DOWN:
             {
                 // CALCULATE THE POSITION FOR THE AXE.
                 // The offset from Noah's position is calculated
@@ -194,10 +194,10 @@ namespace OBJECTS
                 Inventory->Axe->SwingDown();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Inventory->Axe);
+                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory->Axe);
                 return axe_swing;
             }
-            case CORE::Direction::LEFT:
+            case GAMEPLAY::Direction::LEFT:
             {
                 // CALCULATE THE POSITION FOR THE AXE.
                 // The axe should appear slightly in front of Noah.
@@ -211,10 +211,10 @@ namespace OBJECTS
                 Inventory->Axe->SwingLeft();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Inventory->Axe);
+                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory->Axe);
                 return axe_swing;
             }
-            case CORE::Direction::RIGHT:
+            case GAMEPLAY::Direction::RIGHT:
             {
                 // CALCULATE THE POSITION FOR THE AXE.
                 // The axe should appear slightly in front of Noah.
@@ -228,7 +228,7 @@ namespace OBJECTS
                 Inventory->Axe->SwingRight();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = std::make_shared<EVENTS::AxeSwingEvent>(Inventory->Axe);
+                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory->Axe);
                 return axe_swing;
             }
             default:

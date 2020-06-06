@@ -210,7 +210,7 @@ namespace COLLISION
     /// @return The new center world position of the object.
     MATH::Vector2f CollisionDetectionAlgorithms::MoveObject(
         const MATH::FloatRectangle& object_world_bounding_box,
-        const CORE::Direction direction,
+        const GAMEPLAY::Direction direction,
         const float move_speed_in_pixels_per_second,
         const sf::Time& elapsed_time,
         MAPS::MultiTileMapGrid& tile_map_grid)
@@ -224,19 +224,19 @@ namespace COLLISION
         MATH::Vector2f new_world_position = object_world_bounding_box.Center();
         switch (direction)
         {
-            case CORE::Direction::UP:
+            case GAMEPLAY::Direction::UP:
                 new_world_position = MoveObjectUp(object_world_bounding_box, movement, tile_map_grid);
                 break;
-            case CORE::Direction::DOWN:
+            case GAMEPLAY::Direction::DOWN:
                 new_world_position = MoveObjectDown(object_world_bounding_box, movement, tile_map_grid);
                 break;
-            case CORE::Direction::LEFT:
+            case GAMEPLAY::Direction::LEFT:
                 new_world_position = MoveObjectLeft(object_world_bounding_box, movement, tile_map_grid);
                 break;
-            case CORE::Direction::RIGHT:
+            case GAMEPLAY::Direction::RIGHT:
                 new_world_position = MoveObjectRight(object_world_bounding_box, movement, tile_map_grid);
                 break;
-            case CORE::Direction::INVALID:
+            case GAMEPLAY::Direction::INVALID:
                 // Intentionally fall through.
             default:
                 // No movement can be simulated for an invalid direction.
@@ -253,7 +253,7 @@ namespace COLLISION
     /// @param[in,out]  assets - Assets that might be needed.
     void CollisionDetectionAlgorithms::HandleAxeSwings(
         MAPS::MultiTileMapGrid& tile_map_grid,
-        std::vector< std::shared_ptr<EVENTS::AxeSwingEvent> >& axe_swings,
+        std::vector< std::shared_ptr<GAMEPLAY::AxeSwingEvent> >& axe_swings,
         AUDIO::Speakers& speakers,
         RESOURCES::Assets& assets)
     {
@@ -272,7 +272,7 @@ namespace COLLISION
                 continue;
             }
 
-            const EVENTS::AxeSwingEvent axe_swing = (**axe_swing_event);
+            const GAMEPLAY::AxeSwingEvent axe_swing = (**axe_swing_event);
 
             // CHECK IF THE AXE SWING EVENT HAS REACHED ITS MAXIMUM EXTENSION POINT.
             // The axe swing event should only be processed once it has finish
@@ -310,7 +310,7 @@ namespace COLLISION
         MATH::Vector2f object_new_world_position = object_world_bounding_box.Center();
 
         // VERIFY THAT THE MOVEMENT IS FOR THE 'UP' DIRECTION.
-        bool movement_for_up_direction = (CORE::Direction::UP == movement.Direction);
+        bool movement_for_up_direction = (GAMEPLAY::Direction::UP == movement.Direction);
         if (!movement_for_up_direction)
         {
             // An invalid movement was provided to this method since the direction was not up.
@@ -447,7 +447,7 @@ namespace COLLISION
         MATH::Vector2f object_new_world_position = object_world_bounding_box.Center();
 
         // VERIFY THAT THE MOVEMENT IS FOR THE 'DOWN' DIRECTION.
-        bool movement_for_down_direction = (CORE::Direction::DOWN == movement.Direction);
+        bool movement_for_down_direction = (GAMEPLAY::Direction::DOWN == movement.Direction);
         if (!movement_for_down_direction)
         {
             // An invalid movement was provided to this method since the direction was not down.
@@ -586,7 +586,7 @@ namespace COLLISION
         MATH::Vector2f object_new_world_position = object_world_bounding_box.Center();
 
         // VERIFY THAT THE MOVEMENT IS FOR THE 'LEFT' DIRECTION.
-        bool movement_for_left_direction = (CORE::Direction::LEFT == movement.Direction);
+        bool movement_for_left_direction = (GAMEPLAY::Direction::LEFT == movement.Direction);
         if (!movement_for_left_direction)
         {
             // An invalid movement was provided to this method since the direction was not left.
@@ -723,7 +723,7 @@ namespace COLLISION
         MATH::Vector2f object_new_world_position = object_world_bounding_box.Center();
 
         // VERIFY THAT THE MOVEMENT IS FOR THE 'RIGHT' DIRECTION.
-        bool movement_for_right_direction = (CORE::Direction::RIGHT == movement.Direction);
+        bool movement_for_right_direction = (GAMEPLAY::Direction::RIGHT == movement.Direction);
         if (!movement_for_right_direction)
         {
             // An invalid movement was provided to this method since the direction was not right.

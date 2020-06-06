@@ -4,8 +4,7 @@
 #include "Math/Rectangle.h"
 #include "Objects/Axe.h"
 
-/// Holds code representing in-game events that may cross subsystem boundaries.
-namespace EVENTS
+namespace GAMEPLAY
 {
     /// An event describing the swinging of an axe, primarily for the
     /// purposes of detecting when an axe being swung collides with

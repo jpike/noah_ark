@@ -1,4 +1,4 @@
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Graphics/Color.h"
 #include "Inventory/InventoryGui.h"
 
@@ -18,7 +18,7 @@ namespace INVENTORY
     FoodPage(inventory, assets)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to HUD.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to HUD.");
     }
 
     /// Updates the inventory GUI.
@@ -32,17 +32,17 @@ namespace INVENTORY
             case TabType::BIBLE:
             {
                 // CHECK WHICH BUTTON WAS PRESSED.
-                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::UP_KEY))
+                if (input_controller.ButtonWasPressed(sf::Keyboard::Up))
                 {
                     // SELECT THE PREVIOUS BIBLE VERSE.
                     BiblePage.BibleVerseListBox.SelectPreviousVerse();
                 }
-                else if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DOWN_KEY))
+                else if (input_controller.ButtonWasPressed(sf::Keyboard::Down))
                 {
                     // SELECT THE NEXT BIBLE VERSE.
                     BiblePage.BibleVerseListBox.SelectNextVerse();
                 }
-                else if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::RIGHT_KEY))
+                else if (input_controller.ButtonWasPressed(sf::Keyboard::Right))
                 {
                     // SWITCH TO THE ANIMALS TAB ON THE RIGHT.
                     CurrentTab = TabType::ANIMALS;
@@ -55,12 +55,12 @@ namespace INVENTORY
                 AnimalsPage.Update(elapsed_time, input_controller);
 
                 // RESPOND TO INPUT THAT MIGHT SWITCH THE TAB OF THE INVENTORY GUI.
-                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::LEFT_KEY))
+                if (input_controller.ButtonWasPressed(sf::Keyboard::Left))
                 {
                     // SWITCH TO THE BIBLE TAB ON THE LEFT.
                     CurrentTab = TabType::BIBLE;
                 }
-                else if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::RIGHT_KEY))
+                else if (input_controller.ButtonWasPressed(sf::Keyboard::Right))
                 {
                     // SWITCH TO THE FOOD TAB ON THE RIGHT.
                     CurrentTab = TabType::FOOD;
@@ -70,7 +70,7 @@ namespace INVENTORY
             case TabType::FOOD:
             {
                 // CHECK WHICH BUTTON WAS PRESSED.
-                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::LEFT_KEY))
+                if (input_controller.ButtonWasPressed(sf::Keyboard::Left))
                 {
                     // SWITCH TO THE ANIMALS TAB ON THE LEFT.
                     CurrentTab = TabType::ANIMALS;

@@ -1,4 +1,4 @@
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Objects/Axe.h"
 
 namespace OBJECTS
@@ -37,7 +37,7 @@ namespace OBJECTS
     Sprite()
     {
         // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(texture, "Texture required for axe.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(texture, "Texture required for axe.");
 
         // INITIALIZE THE SPRITE.
         const float AXE_SPRITE_X_OFFSET_IN_PIXELS = 52.0f;
@@ -56,7 +56,7 @@ namespace OBJECTS
     void Axe::SwingUp()
     {
         // STORE THE DIRECTION OF THE SWING.
-        SwingingDirection = CORE::Direction::UP;
+        SwingingDirection = GAMEPLAY::Direction::UP;
 
         // DEFINE THE PARAMETERS FOR SWINGING THE AXE UP.
         // The origin should be at the bottom of the axe handle
@@ -96,7 +96,7 @@ namespace OBJECTS
     void Axe::SwingDown()
     {
         // STORE THE DIRECTION OF THE SWING.
-        SwingingDirection = CORE::Direction::DOWN;
+        SwingingDirection = GAMEPLAY::Direction::DOWN;
 
         // DEFINE THE PARAMETERS FOR SWINGING THE AXE DOWN.
         // The origin should be at the bottom of the axe handle
@@ -137,7 +137,7 @@ namespace OBJECTS
     void Axe::SwingLeft()
     {
         // STORE THE DIRECTION OF THE SWING.
-        SwingingDirection = CORE::Direction::LEFT;
+        SwingingDirection = GAMEPLAY::Direction::LEFT;
 
         // DEFINE THE PARAMETERS FOR SWINGING THE AXE LEFT.
         // The origin should be at the bottom of the axe handle
@@ -177,7 +177,7 @@ namespace OBJECTS
     void Axe::SwingRight()
     {
         // STORE THE DIRECTION OF THE SWING.
-        SwingingDirection = CORE::Direction::RIGHT;
+        SwingingDirection = GAMEPLAY::Direction::RIGHT;
 
         // DEFINE THE PARAMETERS FOR SWINGING THE AXE RIGHT.
         // The origin should be at the bottom of the axe handle

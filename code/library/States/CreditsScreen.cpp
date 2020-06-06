@@ -12,7 +12,7 @@ namespace STATES
         const INPUT_CONTROL::InputController& input_controller)
     {
         // CHECK IF THE BACK BUTTON WAS PRESSED.
-        bool back_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::BACK_KEY);
+        bool back_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Escape);
         if (back_button_pressed)
         {
             // RETURN TO THE TITLE SCREEN.

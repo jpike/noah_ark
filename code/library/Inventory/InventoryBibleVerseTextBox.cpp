@@ -1,5 +1,3 @@
-#include "Core/NullChecking.h"
-#include "Core/String.h"
 #include "Graphics/Color.h"
 #include "Graphics/Renderer.h"
 #include "Inventory/InventoryBibleVerseTextBox.h"

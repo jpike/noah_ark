@@ -3,7 +3,8 @@
 #include <stdexcept>
 #include <string>
 
-namespace CORE
+/// Holds code related to handling errors.
+namespace ERROR_HANDLING
 {
     /// Throws an invalid argument exception if the provided parameter is null.
     /// @tparam NullableType - The type of the nullable object to check.

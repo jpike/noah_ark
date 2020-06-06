@@ -1,7 +1,7 @@
-#include "Core/NullChecking.h"
-#include "Events/AxeSwingEvent.h"
+#include "ErrorHandling/NullChecking.h"
+#include "Gameplay/AxeSwingEvent.h"
 
-namespace EVENTS
+namespace GAMEPLAY
 {
     /// Constructor.
     /// @param[in]  axe - The axe that is being swung.
@@ -9,7 +9,7 @@ namespace EVENTS
     Axe(axe)
     {
         // MAKE SURE AN AXE WAS PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(Axe, "Null axe given to axe swing event.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Axe, "Null axe given to axe swing event.");
     }
 
     /// Determines if the axe is fully swung out.

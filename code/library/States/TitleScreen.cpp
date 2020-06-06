@@ -19,7 +19,7 @@ namespace STATES
         ElapsedTime += elapsed_time;
 
         // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
-        bool start_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::START_KEY);
+        bool start_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Return);
         if (start_button_pressed)
         {
             // GET THE STATE FOR THE CURRENTLY SELECTED MENU OPTION.
@@ -29,8 +29,8 @@ namespace STATES
         else
         {
             // CHECK IF AN ARROW KEY WAS PRESSED TO MOVE TO ANOTHER MENU OPTION.
-            bool up_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::UP_KEY);
-            bool down_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DOWN_KEY);
+            bool up_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Up);
+            bool down_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Down);
             if (up_button_pressed)
             {
                 // MOVE TO THE PREVIOUS MENU OPTION.

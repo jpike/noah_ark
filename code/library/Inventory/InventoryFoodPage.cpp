@@ -1,4 +1,4 @@
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Inventory/InventoryFoodPage.h"
 #include "Resources/FoodGraphics.h"
 
@@ -18,8 +18,8 @@ namespace INVENTORY
     Assets(assets)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to inventory food page.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(Assets, "Null assets provided to inventory food page.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to inventory food page.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Assets, "Null assets provided to inventory food page.");
     }
 
     /// Renders the inventory GUI food page to the provided screen.

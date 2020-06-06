@@ -30,6 +30,9 @@ namespace AUDIO
         void PlayMusicIfNotAlready(const RESOURCES::AssetId music_id);
         void StopMusic(const RESOURCES::AssetId music_id);
 
+        // GENERAL.
+        void StopAllAudio();
+
     private:
         // MEMBER VARIABLES.
         /// A mutex to provide thread-safety for this class.

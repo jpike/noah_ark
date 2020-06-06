@@ -1,5 +1,5 @@
 #include "Audio/SoundEffect.h"
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 
 namespace AUDIO
 {
@@ -11,7 +11,7 @@ namespace AUDIO
     Sound()
     {
         // MAKE SURE AUDIO SAMPLES WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(AudioSamples, "Audio samples were not provided when constructing a sound effect.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(AudioSamples, "Audio samples were not provided when constructing a sound effect.");
 
         // CREATE THE SOUND FOR THE AUDIO SAMPLES.
         Sound.setBuffer(*AudioSamples);

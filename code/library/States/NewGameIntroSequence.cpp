@@ -24,8 +24,6 @@ namespace STATES
     GameState NewGameIntroSequence::Update(const sf::Time& elapsed_time, AUDIO::Speakers& speakers)
     {
         // PLAY THE APPROPRIATE MUSIC IF NOT ALREADY PLAYING.
-        /// @todo   This may be a bad idea to do this every frame.
-        /// Consider outputting sequence of sounds/music requests that can be processed externally.
         speakers.PlayMusicIfNotAlready(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC);
 
         // UPDATE THE ELAPSED TIME FOR THE CURRENT FRAME.
@@ -113,8 +111,8 @@ namespace STATES
             // GET THE BIBLE VERSES FOR THE INTRO SEQUENCE.
             const BIBLE::BibleVerse* intro_verse_1 = BIBLE::FindBibleVerse(
                 BIBLE::BibleBook::GENESIS,
-                BIBLE::ChapterNumber(6),
-                BIBLE::VerseNumber(5));
+                6,
+                5);
             bool intro_verse_1_exists = (nullptr != intro_verse_1);
             if (intro_verse_1_exists)
             {
@@ -123,8 +121,8 @@ namespace STATES
 
             const BIBLE::BibleVerse* intro_verse_2 = BIBLE::FindBibleVerse(
                 BIBLE::BibleBook::GENESIS,
-                BIBLE::ChapterNumber(6),
-                BIBLE::VerseNumber(6));
+                6,
+                6);
             bool intro_verse_2_exists = (nullptr != intro_verse_2);
             if (intro_verse_2_exists)
             {
@@ -133,8 +131,8 @@ namespace STATES
 
             const BIBLE::BibleVerse* intro_verse_3 = BIBLE::FindBibleVerse(
                 BIBLE::BibleBook::GENESIS,
-                BIBLE::ChapterNumber(6),
-                BIBLE::VerseNumber(7));
+                6,
+                7);
             bool intro_verse_3_exists = (nullptr != intro_verse_3);
             if (intro_verse_3_exists)
             {
@@ -143,8 +141,8 @@ namespace STATES
 
             const BIBLE::BibleVerse* intro_verse_4 = BIBLE::FindBibleVerse(
                 BIBLE::BibleBook::GENESIS,
-                BIBLE::ChapterNumber(6),
-                BIBLE::VerseNumber(8));
+                6,
+                8);
             bool intro_verse_4_exists = (nullptr != intro_verse_4);
             if (intro_verse_4_exists)
             {

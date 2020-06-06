@@ -1,6 +1,6 @@
 #include <array>
-#include "Core/Container.h"
-#include "Core/NullChecking.h"
+#include "Containers/Container.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Objects/ArkPiece.h"
 
 namespace OBJECTS
@@ -16,7 +16,7 @@ namespace OBJECTS
         IsExternalDoorway(false)
     {
         // MAKE SURE A VALID TEXTURE WAS PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(texture, "Ark piece texture cannot be null.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(texture, "Ark piece texture cannot be null.");
 
         // SET THE TEXTURE RECTANGLE BASED ON THE ID.
         const unsigned int ARK_TILES_PER_ROW = 8;
@@ -40,6 +40,6 @@ namespace OBJECTS
         {
             22, 23, 30, 31
         };
-        IsExternalDoorway = CORE::Container::Contains(DOORWAY_TILE_IDS, Id);
+        IsExternalDoorway = CONTAINERS::Container::Contains(DOORWAY_TILE_IDS, Id);
     }
 }

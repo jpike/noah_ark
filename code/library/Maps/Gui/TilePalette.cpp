@@ -1,6 +1,6 @@
 #include <stdexcept>
-#include "Core/NullChecking.h"
 #include "Debugging/DebugConsole.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Maps/Gui/TilePalette.h"
 
 namespace MAPS
@@ -17,7 +17,7 @@ namespace GUI
         TileScreenBoundsById()
     {
         // MAKE SURE A TILESET TEXTURE WAS PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(tileset_texture, "Tile palette provided with null tileset texture.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(tileset_texture, "Tile palette provided with null tileset texture.");
 
         // CREATE THE TILES RENDERED BY THIS EDITOR GUI.
         for (unsigned int tile_id_number = static_cast<unsigned int>(TileType::Id::INVALID) + 1;

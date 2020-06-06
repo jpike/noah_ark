@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cmath>
 #include "Bible/BibleVerses.h"
-#include "Core/NullChecking.h"
 #include "States/IntroSequence.h"
 
 namespace STATES
@@ -25,8 +24,8 @@ namespace STATES
             // GET THE BIBLE VERSES FOR THE INTRO SEQUENCE.
             const BIBLE::BibleVerse* intro_verse_1 = BIBLE::FindBibleVerse(
                 BIBLE::BibleBook::GENESIS,
-                BIBLE::ChapterNumber(5),
-                BIBLE::VerseNumber(28));
+                5,
+                28);
             bool intro_verse_1_exists = (nullptr != intro_verse_1);
             if (intro_verse_1_exists)
             {
@@ -35,8 +34,8 @@ namespace STATES
 
             const BIBLE::BibleVerse* intro_verse_2 = BIBLE::FindBibleVerse(
                 BIBLE::BibleBook::GENESIS,
-                BIBLE::ChapterNumber(5),
-                BIBLE::VerseNumber(29));
+                5,
+                29);
             bool intro_verse_2_exists = (nullptr != intro_verse_2);
             if (intro_verse_2_exists)
             {

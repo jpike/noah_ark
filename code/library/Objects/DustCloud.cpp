@@ -1,4 +1,4 @@
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Objects/DustCloud.h"
 
 namespace OBJECTS
@@ -11,7 +11,7 @@ namespace OBJECTS
         TotalElapsedTimeInSeconds(0.0f)
     {
         // MAKE SURE A VALID TEXTURE WAS PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(texture, "Dust cloud texture cannot be null.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(texture, "Dust cloud texture cannot be null.");
 
         // CREATE THE ANIMATED SPRITE FOR THE DUST CLOUD.
         const std::string DUST_CLOUD_ANIMATION_ID = "dust_cloud";

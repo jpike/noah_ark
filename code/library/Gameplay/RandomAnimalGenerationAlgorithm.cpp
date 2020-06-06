@@ -1,9 +1,9 @@
 #include "Debugging/DebugConsole.h"
-#include "Objects/RandomAnimalGenerationAlgorithm.h"
+#include "Gameplay/RandomAnimalGenerationAlgorithm.h"
 #include "Resources/AnimalGraphics.h"
 #include "Resources/AnimalSounds.h"
 
-namespace OBJECTS
+namespace GAMEPLAY
 {
     /// Attempts to generate an animal that can be placed in the provided tile map.
     /// The randomly generated animal will be one that hasn't been fully collected
@@ -14,22 +14,22 @@ namespace OBJECTS
     ///     for the algorithm.
     /// @param[in,out]  assets - The assets from which to get assets necessary for an animal.
     /// @return An animal, if one was successfully generated; null otherwise.
-    std::shared_ptr<Animal> RandomAnimalGenerationAlgorithm::GenerateAnimal(
+    std::shared_ptr<OBJECTS::Animal> RandomAnimalGenerationAlgorithm::GenerateAnimal(
         const OBJECTS::Noah& noah_player,
         const MAPS::TileMap& tile_map,
         MATH::RandomNumberGenerator& random_number_generator,
         RESOURCES::Assets& assets)
     {
         // DETERMINE THE SPECIES OF ANIMAL TO GENERATE.
-        AnimalSpecies random_species = random_number_generator.RandomEnum<AnimalSpecies>();
+        OBJECTS::AnimalSpecies random_species = random_number_generator.RandomEnum<OBJECTS::AnimalSpecies>();
         DEBUGGING::DebugConsole::WriteLine("Random species: ", static_cast<unsigned int>(random_species));
 
         // DETERMINE THE GENDER OF ANIMAL TO GENERATE.
-        AnimalGender random_gender = random_number_generator.RandomEnum<AnimalGender>();
+        OBJECTS::AnimalGender random_gender = random_number_generator.RandomEnum<OBJECTS::AnimalGender>();
         DEBUGGING::DebugConsole::WriteLine("Random gender: ", static_cast<unsigned int>(random_gender));
 
         // CHECK IF THE ANIMAL TYPE HAS BEEN FULLY COLLECTED.
-        AnimalType animal_type(random_species, random_gender);
+        OBJECTS::AnimalType animal_type(random_species, random_gender);
         bool animal_type_fully_collected = noah_player.Inventory->AnimalTypeFullyCollected(animal_type);
         if (animal_type_fully_collected)
         {
@@ -114,7 +114,7 @@ namespace OBJECTS
         }
 
         // CREATE THE ANIMAL DETERMINED BY THE ALGORITHM.
-        std::shared_ptr<Animal> animal = MakeAnimal(
+        std::shared_ptr<OBJECTS::Animal> animal = MakeAnimal(
             animal_type,
             random_x_position,
             random_y_position,
@@ -128,8 +128,8 @@ namespace OBJECTS
     /// @param[in]  world_y_position - The world y position of the center of the animal.
     /// @param[in,out]  assets - The assets from which to get assets necessary for the animal.
     /// @return The specified animal, if successfully created; null otherwise.
-    std::shared_ptr<Animal> RandomAnimalGenerationAlgorithm::MakeAnimal(
-        const AnimalType& animal_type,
+    std::shared_ptr<OBJECTS::Animal> RandomAnimalGenerationAlgorithm::MakeAnimal(
+        const OBJECTS::AnimalType& animal_type,
         const float world_x_position,
         const float world_y_position,
         RESOURCES::Assets& assets)
@@ -148,7 +148,7 @@ namespace OBJECTS
         RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(animal_type.Species);
 
         // CREATE THE ANIMAL.
-        std::shared_ptr<Animal> animal = std::make_shared<Animal>(
+        std::shared_ptr<OBJECTS::Animal> animal = std::make_shared<OBJECTS::Animal>(
             animal_type, 
             GRAPHICS::AnimatedSprite(*animal_sprite),
             animal_sound_id);

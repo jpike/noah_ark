@@ -11,6 +11,6 @@ namespace BIBLE
 
     const BIBLE::BibleVerse* FindBibleVerse(
         const BIBLE::BibleBook book,
-        const BIBLE::ChapterNumber chapter,
-        const BIBLE::VerseNumber verse);
+        const unsigned int chapter,
+        const unsigned int verse);
 }

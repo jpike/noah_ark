@@ -7,7 +7,7 @@
 #include "Objects/Noah.h"
 #include "Resources/Assets.h"
 
-namespace OBJECTS
+namespace GAMEPLAY
 {
     /// An algorithm for generating random animals in the game world.
     /// This class encapsulates the following details:
@@ -22,15 +22,15 @@ namespace OBJECTS
     class RandomAnimalGenerationAlgorithm
     {
     public:
-        static std::shared_ptr<Animal> GenerateAnimal(
+        static std::shared_ptr<OBJECTS::Animal> GenerateAnimal(
             const OBJECTS::Noah& noah,
             const MAPS::TileMap& tile_map,
             MATH::RandomNumberGenerator& random_number_generator,
             RESOURCES::Assets& assets);
 
     private:
-        static std::shared_ptr<Animal> MakeAnimal(
-            const AnimalType& animal_type,
+        static std::shared_ptr<OBJECTS::Animal> MakeAnimal(
+            const OBJECTS::AnimalType& animal_type,
             const float world_x_position,
             const float world_y_position,
             RESOURCES::Assets& assets);

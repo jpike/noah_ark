@@ -60,15 +60,6 @@ namespace RESOURCES
         {
             switch (asset.Type)
             {
-                case RESOURCES::AssetType::FONT:
-                {
-                    std::shared_ptr<GRAPHICS::GUI::Font> font = GetFont(asset.Id, asset.BinaryData);
-                    if (!font)
-                    {
-                        return false;
-                    }
-                    break;
-                }
                 case RESOURCES::AssetType::MUSIC:
                 {
                     std::shared_ptr<sf::Music> music = GetMusic(asset.Id, asset.BinaryData);
@@ -200,53 +191,6 @@ namespace RESOURCES
         {
             return id_with_font->second;
         }
-
-        // GET THE FONT'S TEXTURE.
-        std::shared_ptr<GRAPHICS::Texture> font_texture = GetTexture(font_texture_id);
-        bool font_texture_loaded = (nullptr != font_texture);
-        if (font_texture_loaded)
-        {
-            // CACHE THE FONT IN THIS COLLECTION BEFORE RETURNING.
-            /// @todo   Clean-up!
-            std::shared_ptr<GRAPHICS::GUI::Font> font = std::make_shared<GRAPHICS::GUI::Font>();
-            Fonts[font_texture_id] = font;
-            return font;
-        }
-        else
-        {
-            // INDICATE THAT THE FONT COULD NOT BE LOADED.
-            return nullptr;
-        }
-    }
-
-    /// Attempts to retrieve the font identified by the specified texture ID.
-    /// @param[in]  font_texture_id - The ID of the texture associated with the font.
-    /// @param[in]  binary_data - The binary font data.
-    /// @return The requested font, if successfully loaded; null otherwise.
-    std::shared_ptr<GRAPHICS::GUI::Font> Assets::GetFont(const AssetId font_texture_id, const std::string& binary_data)
-    {
-        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
-        std::lock_guard<std::recursive_mutex> lock(AssetMutex);
-
-        // RETURN THE FONT IF IT HAS ALREADY BEEN LOADED.
-        auto id_with_font = Fonts.find(font_texture_id);
-        bool font_already_loaded = (Fonts.cend() != id_with_font);
-        if (font_already_loaded)
-        {
-            return id_with_font->second;
-        }
-
-        // GET THE FONT'S TEXTURE.
-        std::shared_ptr<GRAPHICS::Texture> font_texture = GetTexture(font_texture_id, binary_data);
-        bool font_texture_loaded = (nullptr != font_texture);
-        if (font_texture_loaded)
-        {
-            // CACHE THE FONT IN THIS COLLECTION BEFORE RETURNING.
-            /// @todo   Clean-up!
-            std::shared_ptr<GRAPHICS::GUI::Font> font = std::make_shared<GRAPHICS::GUI::Font>();
-            Fonts[font_texture_id] = font;
-            return font;
-        }
         else
         {
             // INDICATE THAT THE FONT COULD NOT BE LOADED.
@@ -268,38 +212,6 @@ namespace RESOURCES
         if (shader_already_loaded)
         {
             return id_with_shader->second;
-        }
-
-        // TRY LOADING THE SHADER.
-        bool shader_loaded = false;
-        std::shared_ptr<sf::Shader> shader = std::make_shared<sf::Shader>();
-        switch (shader_id)
-        {
-            case AssetId::COLORED_TEXTURE_SHADER:
-            {
-                // LOAD THE SHADER FROM ITS CODE.
-                const std::string COLORED_TEXTURE_FRAGMENT_SHADER_CODE = R"(
-                    uniform vec4 color; // Current color to use to tint texture.
-                    uniform sampler2D texture;  // Current texture being rendered.
-
-                    void main()
-                    {
-                        // GET THE CURRENT PIXEL FROM THE TEXTURE.
-                        vec4 current_pixel_color = texture2D(texture, gl_TexCoord[0].xy);
-
-                        // APPLY THE COLOR TO THE PIXEL.
-                        gl_FragColor = color * current_pixel_color;
-                    }
-                )";
-                shader_loaded = shader->loadFromMemory(COLORED_TEXTURE_FRAGMENT_SHADER_CODE, sf::Shader::Fragment);
-                break;
-            }
-        }
-
-        // RETURN THE SHADER ONLY IF SUCCESSFULLY LOADED.
-        if (shader_loaded)
-        {
-            return shader;
         }
         else
         {

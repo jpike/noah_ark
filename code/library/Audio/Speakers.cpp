@@ -134,4 +134,23 @@ namespace AUDIO
             music->second->stop();
         }
     }
+
+    /// Stops all audio that may be playing in the speakers.
+    void Speakers::StopAllAudio()
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // STOP ANY PLAYING SOUNDS.
+        for (auto& id_and_sound : Sounds)
+        {
+            id_and_sound.second.Stop();
+        }
+        
+        // STOP ANY PLAYING MUSIC.
+        for (auto& id_and_music : Music)
+        {
+            id_and_music.second->stop();
+        }
+    }
 }

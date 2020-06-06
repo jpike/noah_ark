@@ -1,8 +1,4 @@
 // BIG TODO LIST:
-// - Create new background music with better timing:
-//      - For intro
-//      - For new game intro
-//      - For gameplay
 // - Move animals more properly in ark
 // - Add underground caves
 // - Add special stuff for specific Bible verses
@@ -18,12 +14,15 @@
 // - Cutscene/text boxes for transition into ark
 // - Polish (custom fancy graphics) for inventory GUI
 // - Better word wrapping with verses
-// - Handle stopping music when quickly switching between states?
 // - Sword guarding garden of Eden
+//
+// Areas for code cleanup:
+// - Graphics
+// - Inventory
+// - States
 
 #include <chrono>
 #include <exception>
-#include <initializer_list>
 #include <memory>
 #include <string>
 #include <Windows.h>
@@ -32,10 +31,6 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Input/InputController.h"
-#include "Maps/Data/ArkInteriorTileMapData.h"
-#include "Maps/Data/OverworldMapData.h"
-#include "Maps/Tileset.h"
-#include "Math/Number.h"
 #include "Resources/AnimalSounds.h"
 #include "Resources/AssetPackage.h"
 #include "Resources/Assets.h"
@@ -43,7 +38,6 @@
 #include "Resources/PredefinedAssetPackages.h"
 #include "States/GameStates.h"
 #include "States/GameState.h"
-#include "States/SavedGameData.h"
 
 bool LoadIntroSequenceAssets(RESOURCES::Assets& asset_collection)
 {
@@ -320,33 +314,40 @@ int main()
                 window->display();
 
                 // OVERRIDE GAME STATE SWITCHES WITH DEBUG KEY PRESSES.
-                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_INTRO_SEQUENCE_KEY))
+                if (input_controller.ButtonWasPressed(sf::Keyboard::Num1))
                 {
                     next_game_state = STATES::GameState::INTRO_SEQUENCE;
+                    speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_TITLE_SCREEN_KEY))
+                if (input_controller.ButtonWasPressed(sf::Keyboard::Num2))
                 {
                     next_game_state = STATES::GameState::TITLE_SCREEN;
+                    speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_CREDITS_SCREEN_KEY))
+                if (input_controller.ButtonWasPressed(sf::Keyboard::Num3))
                 {
                     next_game_state = STATES::GameState::CREDITS_SCREEN;
+                    speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_GAME_SELECTION_SCREEN_KEY))
+                if (input_controller.ButtonWasPressed(sf::Keyboard::Num4))
                 {
                     next_game_state = STATES::GameState::GAME_SELECTION_SCREEN;
+                    speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_NEW_GAME_INTRO_SEQUENCE_KEY))
+                if (input_controller.ButtonWasPressed(sf::Keyboard::Num5))
                 {
                     next_game_state = STATES::GameState::NEW_GAME_INTRO_SEQUENCE;
+                    speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_FLOOD_CUTSCENE_KEY))
+                if (input_controller.ButtonWasPressed(sf::Keyboard::Num6))
                 {
                     next_game_state = STATES::GameState::FLOOD_CUTSCENE;
+                    speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_SWITCH_TO_GAMEPLAY_KEY))
+                if (input_controller.ButtonWasPressed(sf::Keyboard::Num7))
                 {
                     next_game_state = STATES::GameState::GAMEPLAY;
+                    speakers->StopAllAudio();
                 }
 
                 // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.

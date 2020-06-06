@@ -6,9 +6,9 @@
 #include <limits>
 #include "Bible/BibleVerses.h"
 #include "Collision/CollisionDetectionAlgorithms.h"
-#include "Core/NullChecking.h"
 #include "Debugging/DebugConsole.h"
-#include "Objects/RandomAnimalGenerationAlgorithm.h"
+#include "ErrorHandling/NullChecking.h"
+#include "Gameplay/RandomAnimalGenerationAlgorithm.h"
 #include "States/GameplayState.h"
 
 namespace STATES
@@ -33,8 +33,8 @@ namespace STATES
         AnimalsGoingIntoArk()
     {
         // MAKE SURE PARAMETERS WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(Speakers, "Speakers cannot be null for gameplay state.");
-        CORE::ThrowInvalidArgumentExceptionIfNull(Assets, "Assets cannot be null for gameplay state.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Speakers, "Speakers cannot be null for gameplay state.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Assets, "Assets cannot be null for gameplay state.");
     }
 
     /// Initializes the gameplay state.
@@ -279,7 +279,7 @@ namespace STATES
             // If he's facing up, the axe needs to be rendered first
             // so that it appears in-front of him (behind him from
             // the player's view).
-            bool noah_facing_up = (CORE::Direction::UP == NoahPlayer->FacingDirection);
+            bool noah_facing_up = (GAMEPLAY::Direction::UP == NoahPlayer->FacingDirection);
             if (noah_facing_up)
             {
                 // RENDER THE AXE.
@@ -741,7 +741,7 @@ namespace STATES
             // SWING THE PLAYER'S AXE.
             // A new axe swing may not be created if the player's
             // axe is already being swung.
-            std::shared_ptr<EVENTS::AxeSwingEvent> axe_swing = NoahPlayer->SwingAxe();
+            std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = NoahPlayer->SwingAxe();
             bool axe_swing_occurred = (nullptr != axe_swing);
             if (axe_swing_occurred)
             {
@@ -772,18 +772,18 @@ namespace STATES
         {
             // MOVE NOAH IN RESPONSE TO USER INPUT.
             const float PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS = 8.0f;
-            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::UP_KEY))
+            if (input_controller.ButtonDown(sf::Keyboard::Up))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
 
                 // START NOAH WALKING UP.
-                NoahPlayer->BeginWalking(CORE::Direction::UP, OBJECTS::Noah::WALK_BACK_ANIMATION_NAME);
+                NoahPlayer->BeginWalking(GAMEPLAY::Direction::UP, OBJECTS::Noah::WALK_BACK_ANIMATION_NAME);
 
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
                     NoahPlayer->GetWorldBoundingBox(),
-                    CORE::Direction::UP,
+                    GAMEPLAY::Direction::UP,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
                     map_grid);
@@ -834,18 +834,18 @@ namespace STATES
                     }
                 }
             }
-            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::DOWN_KEY))
+            if (input_controller.ButtonDown(sf::Keyboard::Down))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
 
                 // START NOAH WALKING DOWN.
-                NoahPlayer->BeginWalking(CORE::Direction::DOWN, OBJECTS::Noah::WALK_FRONT_ANIMATION_NAME);
+                NoahPlayer->BeginWalking(GAMEPLAY::Direction::DOWN, OBJECTS::Noah::WALK_FRONT_ANIMATION_NAME);
 
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
                     NoahPlayer->GetWorldBoundingBox(),
-                    CORE::Direction::DOWN,
+                    GAMEPLAY::Direction::DOWN,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
                     map_grid);
@@ -896,18 +896,18 @@ namespace STATES
                     }
                 }
             } 
-            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::LEFT_KEY))
+            if (input_controller.ButtonDown(sf::Keyboard::Left))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
 
                 // START NOAH WALKING LEFT.
-                NoahPlayer->BeginWalking(CORE::Direction::LEFT, OBJECTS::Noah::WALK_LEFT_ANIMATION_NAME);
+                NoahPlayer->BeginWalking(GAMEPLAY::Direction::LEFT, OBJECTS::Noah::WALK_LEFT_ANIMATION_NAME);
 
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
                     NoahPlayer->GetWorldBoundingBox(),
-                    CORE::Direction::LEFT,
+                    GAMEPLAY::Direction::LEFT,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
                     map_grid);
@@ -958,18 +958,18 @@ namespace STATES
                     }
                 }
             } 
-            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::RIGHT_KEY))
+            if (input_controller.ButtonDown(sf::Keyboard::Right))
             {
                 // TRACK NOAH AS MOVING THIS FRAME.
                 noah_moved_this_frame = true;
 
                 // START NOAH WALKING RIGHT.
-                NoahPlayer->BeginWalking(CORE::Direction::RIGHT, OBJECTS::Noah::WALK_RIGHT_ANIMATION_NAME);
+                NoahPlayer->BeginWalking(GAMEPLAY::Direction::RIGHT, OBJECTS::Noah::WALK_RIGHT_ANIMATION_NAME);
 
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
                     NoahPlayer->GetWorldBoundingBox(),
-                    CORE::Direction::RIGHT,
+                    GAMEPLAY::Direction::RIGHT,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
                     map_grid);
@@ -1127,21 +1127,21 @@ namespace STATES
         MATH::Vector2f following_animal_group_world_position = noah_center_world_position;
         switch (NoahPlayer->FacingDirection)
         {
-            case CORE::Direction::UP:
+            case GAMEPLAY::Direction::UP:
                 // The animals should appear below Noah.
-                following_animal_group_world_position.Y = noah_world_bounding_box.RightBottom.Y + OBJECTS::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                following_animal_group_world_position.Y = noah_world_bounding_box.RightBottom.Y + GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
                 break;
-            case CORE::Direction::DOWN:
+            case GAMEPLAY::Direction::DOWN:
                 // The animals should appear above Noah.
-                following_animal_group_world_position.Y = noah_world_bounding_box.LeftTop.Y - OBJECTS::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                following_animal_group_world_position.Y = noah_world_bounding_box.LeftTop.Y - GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
                 break;
-            case CORE::Direction::LEFT:
+            case GAMEPLAY::Direction::LEFT:
                 // The animals should appear to the right of Noah.
-                following_animal_group_world_position.X = noah_world_bounding_box.RightBottom.X + OBJECTS::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                following_animal_group_world_position.X = noah_world_bounding_box.RightBottom.X + GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
                 break;
-            case CORE::Direction::RIGHT:
+            case GAMEPLAY::Direction::RIGHT:
                 // The animals should appear to the left of Noah.
-                following_animal_group_world_position.X = noah_world_bounding_box.LeftTop.X - OBJECTS::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                following_animal_group_world_position.X = noah_world_bounding_box.LeftTop.X - GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
                 break;
         }
         NoahPlayer->Inventory->FollowingAnimals.Update(elapsed_time, following_animal_group_world_position);
@@ -1516,7 +1516,7 @@ namespace STATES
                     DEBUGGING::DebugConsole::WriteLine("Tile map LTRB: ", tile_map_bounding_box);
 
                     // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
-                    std::shared_ptr<OBJECTS::Animal> animal = OBJECTS::RandomAnimalGenerationAlgorithm::GenerateAnimal(
+                    std::shared_ptr<OBJECTS::Animal> animal = GAMEPLAY::RandomAnimalGenerationAlgorithm::GenerateAnimal(
                         *NoahPlayer,
                         current_tile_map,
                         RandomNumberGenerator,

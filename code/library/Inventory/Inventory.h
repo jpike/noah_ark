@@ -4,10 +4,10 @@
 #include <set>
 #include <unordered_map>
 #include "Bible/BibleVerses.h"
+#include "Gameplay/FollowingAnimalGroup.h"
 #include "Inventory/AnimalCollectionStatistics.h"
 #include "Objects/Animal.h"
 #include "Objects/Axe.h"
-#include "Objects/FollowingAnimalGroup.h"
 #include "Objects/Food.h"
 
 /// Holds code related to the player's inventory of items in the game.
@@ -44,6 +44,6 @@ namespace INVENTORY
         /// Counts of collected animals by type.
         std::unordered_map<OBJECTS::AnimalType, unsigned int> CollectedAnimalCounts = {};
         /// The group of animals currently following being Noah (as opposed to those in the ark).
-        OBJECTS::FollowingAnimalGroup FollowingAnimals = {};
+        GAMEPLAY::FollowingAnimalGroup FollowingAnimals = {};
     };
 }

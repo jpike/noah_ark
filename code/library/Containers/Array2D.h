@@ -4,8 +4,8 @@
 #include <stdexcept>
 #include <vector>
 
-/// Holds generic "core" functionality that doesn't yet have a more suitable namespace.
-namespace CORE
+/// Holds code related to containers/collections.
+namespace CONTAINERS
 {
     /// A class to simplify interaction with 2D arrays.
     /// While 2D arrays are possible in C++, they are

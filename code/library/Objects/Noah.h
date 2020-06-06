@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 #include "Bible/BibleVerses.h"
-#include "Core/Direction.h"
-#include "Events/AxeSwingEvent.h"
+#include "Gameplay/AxeSwingEvent.h"
+#include "Gameplay/Direction.h"
 #include "Graphics/AnimatedSprite.h"
 #include "Graphics/Texture.h"
 #include "Inventory/Inventory.h"
@@ -46,14 +46,14 @@ namespace OBJECTS
         MATH::FloatRectangle GetWorldBoundingBox() const;
         
         // MOVEMENT.
-        void BeginWalking(const CORE::Direction direction, const std::string& walking_animation_name);
+        void BeginWalking(const GAMEPLAY::Direction direction, const std::string& walking_animation_name);
 
         // AXE SWINGING.
-        std::shared_ptr<EVENTS::AxeSwingEvent> SwingAxe() const;
+        std::shared_ptr<GAMEPLAY::AxeSwingEvent> SwingAxe() const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The direction Noah is currently facing.
-        CORE::Direction FacingDirection;
+        GAMEPLAY::Direction FacingDirection;
         /// The sprite used for rendering Noah.
         GRAPHICS::AnimatedSprite Sprite;
         /// The inventory of items held by Noah.

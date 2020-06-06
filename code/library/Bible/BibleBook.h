@@ -9,15 +9,24 @@ namespace BIBLE
     /// Used to avoid duplication and provide type checking.
     enum class BibleBook
     {
-        INVALID, ///< An invalid book enumeration value.
-        GENESIS, ///< The book of Genesis.
-        ISAIAH, ///< The book of Isaiah.
-        EZEKIEL, ///< The book of Ezekiel.
-        MATTHEW, ///< The book of Matthew.
-        LUKE, ///< The book of Luke.
-        HEBREWS, ///< The book of Hebrews.
-        FIRST_PETER, ///< The book of 1 Peter.
-        SECOND_PETER ///< The book of 2 Peter.
+        /// An invalid book enumeration value.
+        INVALID,
+        /// The book of Genesis.
+        GENESIS,
+        /// The book of Isaiah.
+        ISAIAH, 
+        /// The book of Ezekiel.
+        EZEKIEL, 
+        /// The book of Matthew.
+        MATTHEW, 
+        /// The book of Luke.
+        LUKE, 
+        /// The book of Hebrews.
+        HEBREWS, 
+        /// The book of 1 Peter.
+        FIRST_PETER, 
+        /// The book of 2 Peter.
+        SECOND_PETER 
     };
 
     std::string ToString(const BibleBook book);

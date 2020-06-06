@@ -1,4 +1,4 @@
-#include "Core/NullChecking.h"
+#include "ErrorHandling/NullChecking.h"
 #include "Inventory/InventoryBiblePage.h"
 
 namespace INVENTORY
@@ -14,7 +14,7 @@ namespace INVENTORY
     BibleVerseListBox(inventory)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
-        CORE::ThrowInvalidArgumentExceptionIfNull(inventory, "Null inventory provided to inventory Bible page.");
+        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(inventory, "Null inventory provided to inventory Bible page.");
     }
 
     /// Renders the inventory GUI Bible page to the provided screen.

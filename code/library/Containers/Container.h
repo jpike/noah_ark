@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-namespace CORE
+namespace CONTAINERS
 {
     /// Holds generic code related to containers (collections).
     /// Designed to provide easier-to-use interfaces for common container types.

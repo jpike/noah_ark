@@ -45,6 +45,7 @@
 #include "Maps/Tile.cpp"
 #include "Maps/TileMap.cpp"
 #include "Maps/Tileset.cpp"
+#include "Maps/World.cpp"
 #include "Objects/Animal.cpp"
 #include "Objects/ArkPiece.cpp"
 #include "Objects/Axe.cpp"

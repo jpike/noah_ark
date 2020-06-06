@@ -15,8 +15,17 @@ namespace GRAPHICS
     class Screen
     {
     public:
+        // STATIC CONSTANTS.
+        // The display area is set to the dimensions of a single tile map.
+        /// The default width of the screen, in pixels.
+        static constexpr unsigned int DEFAULT_WIDTH_IN_PIXELS = 512;
+        /// The default height of the screen, in pixels.
+        static constexpr unsigned int DEFAULT_HEIGHT_IN_PIXELS = 384;
+
         // CONSTRUCTION.
-        static std::unique_ptr<Screen> Create(const unsigned int width_in_pixels, const unsigned int height_in_pixels);
+        static std::unique_ptr<Screen> Create(
+            const unsigned int width_in_pixels = DEFAULT_WIDTH_IN_PIXELS,
+            const unsigned int height_in_pixels = DEFAULT_HEIGHT_IN_PIXELS);
 
         // CLEARING.
         void Clear();

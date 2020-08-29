@@ -56,7 +56,7 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 64 : 80;
+                int top_texture_offset_in_pixels = is_male ? 0 : 16;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -75,26 +75,7 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 64 : 80;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(64, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(80, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::BAT:
-            {
-                // FORM THE ANIMATION FOR A BAT.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 32 : 48;
+                int top_texture_offset_in_pixels = is_male ? 0 : 16;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -109,11 +90,30 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
+            case OBJECTS::AnimalSpecies::BAT:
+            {
+                // FORM THE ANIMATION FOR A BAT.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 0 : 16;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(64, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(80, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
             case OBJECTS::AnimalSpecies::BEAR:
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 64 : 80;
+                int top_texture_offset_in_pixels = is_male ? 0 : 16;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -132,7 +132,7 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 64 : 80;
+                int top_texture_offset_in_pixels = is_male ? 0 : 16;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -151,7 +151,7 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 64 : 80;
+                int top_texture_offset_in_pixels = is_male ? 0 : 16;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -170,12 +170,12 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 96 : 112;
+                int top_texture_offset_in_pixels = is_male ? 0 : 16;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(64, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(80, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(192, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(208, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -193,8 +193,8 @@ namespace RESOURCES
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(128, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(144, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(224, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(240, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -212,8 +212,8 @@ namespace RESOURCES
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(224, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(240, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(0, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(16, top_texture_offset_in_pixels, 16, 16), 
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -227,7 +227,45 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION FOR CATTLE.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 0 : 16;
+                int top_texture_offset_in_pixels = is_male ? 32 : 48;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(32, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(48, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::CHEETAH:
+            {
+                // FORM THE ANIMATION.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 32 : 48;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(64, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(80, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::CHICKEN:
+            {
+                // FORM THE ANIMATION.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 32 : 48;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -242,54 +280,16 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
-            case OBJECTS::AnimalSpecies::CHEETAH:
-            {
-                // FORM THE ANIMATION.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 96 : 112;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(0, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(16, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::CHICKEN:
-            {
-                // FORM THE ANIMATION.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 96 : 112;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(192, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(208, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
             case OBJECTS::AnimalSpecies::CHIPMUNK:
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 96 : 112;
+                int top_texture_offset_in_pixels = is_male ? 32 : 48;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(224, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(240, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(128, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(144, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -303,12 +303,12 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 160 : 176;
+                int top_texture_offset_in_pixels = is_male ? 32 : 48;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(0, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(16, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(160, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(176, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -326,8 +326,8 @@ namespace RESOURCES
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(64, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(80, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(192, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(208, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -341,140 +341,7 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 96 : 112;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(96, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(112, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::DOVE:
-            {
-                // FORM THE ANIMATION FOR A DOVE.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 0 : 16;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(32, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(48, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::DUCK:
-            {
-                // FORM THE ANIMATION.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 160 : 176;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(32, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(48, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::EAGLE:
-            {
-                // FORM THE ANIMATION FOR EAGLE.
-                // The frames differ based on gender.
                 int top_texture_offset_in_pixels = is_male ? 32 : 48;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(96, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(112, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::ELEPHANT:
-            {
-                // FORM THE ANIMATION.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 160 : 176;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(64, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(80, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::FOX:
-            {
-                // FORM THE ANIMATION.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 96 : 112;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(128, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(144, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::FROG:
-            {
-                // FORM THE ANIMATION FOR A FROG.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 0 : 16;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(160, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(176, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::GOAT:
-            {
-                // FORM THE ANIMATION FOR A GOAT.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 0 : 16;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -489,16 +356,16 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
-            case OBJECTS::AnimalSpecies::GOOSE:
+            case OBJECTS::AnimalSpecies::DOVE:
             {
-                // FORM THE ANIMATION.
+                // FORM THE ANIMATION FOR A DOVE.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 160 : 176;
+                int top_texture_offset_in_pixels = is_male ? 64 : 80;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(96, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(112, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(0, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(16, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -508,7 +375,7 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
-            case OBJECTS::AnimalSpecies::GORILLA:
+            case OBJECTS::AnimalSpecies::DUCK:
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
@@ -527,11 +394,49 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
-            case OBJECTS::AnimalSpecies::GUINEA_PIG:
+            case OBJECTS::AnimalSpecies::EAGLE:
+            {
+                // FORM THE ANIMATION FOR EAGLE.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 64 : 80;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(64, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(80, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::ELEPHANT:
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 160 : 176;
+                int top_texture_offset_in_pixels = is_male ? 64 : 80;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(96, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(112, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::FOX:
+            {
+                // FORM THE ANIMATION.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 64 : 80;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -546,16 +451,111 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
+            case OBJECTS::AnimalSpecies::FROG:
+            {
+                // FORM THE ANIMATION FOR A FROG.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 64 : 80;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(160, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(176, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::GOAT:
+            {
+                // FORM THE ANIMATION FOR A GOAT.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 64 : 80;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(192, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(208, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::GOOSE:
+            {
+                // FORM THE ANIMATION.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 64 : 80;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(224, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(240, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::GORILLA:
+            {
+                // FORM THE ANIMATION.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 96 : 112;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(0, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(16, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::GUINEA_PIG:
+            {
+                // FORM THE ANIMATION.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 96 : 112;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(32, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(48, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
             case OBJECTS::AnimalSpecies::HAWK:
             {
                 // FORM THE ANIMATION FOR A HAWK.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 32 : 48;
+                int top_texture_offset_in_pixels = is_male ? 96 : 112;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(128, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(144, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(64, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(80, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -573,8 +573,8 @@ namespace RESOURCES
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(160, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(176, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(96, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(112, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -592,8 +592,8 @@ namespace RESOURCES
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(192, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(208, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(128, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(144, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -607,7 +607,7 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 160 : 176;
+                int top_texture_offset_in_pixels = is_male ? 96 : 112;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -630,6 +630,25 @@ namespace RESOURCES
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(192, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(208, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::LEOPARD:
+            {
+                // FORM THE ANIMATION.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 96 : 112;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
                     MATH::IntRectangle::FromLeftTopAndDimensions(224, top_texture_offset_in_pixels, 16, 16),
                     MATH::IntRectangle::FromLeftTopAndDimensions(240, top_texture_offset_in_pixels, 16, 16),
                 };
@@ -641,7 +660,7 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
-            case OBJECTS::AnimalSpecies::LEOPARD:
+            case OBJECTS::AnimalSpecies::LION:
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
@@ -660,9 +679,9 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
-            case OBJECTS::AnimalSpecies::LION:
+            case OBJECTS::AnimalSpecies::LOCUST:
             {
-                // FORM THE ANIMATION.
+                // FORM THE ANIMATION FOR A LOCUST.
                 // The frames differ based on gender.
                 int top_texture_offset_in_pixels = is_male ? 128 : 144;
                 const std::vector<MATH::IntRectangle> FRAMES =
@@ -670,25 +689,6 @@ namespace RESOURCES
                     // Frames are duplicated some so that things appear to loop a few times.
                     MATH::IntRectangle::FromLeftTopAndDimensions(32, top_texture_offset_in_pixels, 16, 16),
                     MATH::IntRectangle::FromLeftTopAndDimensions(48, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::LOCUST:
-            {
-                // FORM THE ANIMATION FOR A LOCUST.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 0 : 16;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(192, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(208, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -721,12 +721,12 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION FOR A OSPREY.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 32 : 48;
+                int top_texture_offset_in_pixels = is_male ? 128 : 144;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(160, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(176, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(96, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(112, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -740,12 +740,12 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION FOR A OWL.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 32 : 48;
+                int top_texture_offset_in_pixels = is_male ? 128 : 144;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(192, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(208, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(128, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(144, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -763,8 +763,8 @@ namespace RESOURCES
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(96, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(112, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(160, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(176, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -778,7 +778,26 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION FOR A PELICAN.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 32 : 48;
+                int top_texture_offset_in_pixels = is_male ? 128 : 144;
+                const std::vector<MATH::IntRectangle> FRAMES =
+                {
+                    // Frames are duplicated some so that things appear to loop a few times.
+                    MATH::IntRectangle::FromLeftTopAndDimensions(192, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(208, top_texture_offset_in_pixels, 16, 16),
+                };
+
+                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
+                    OBJECTS::Animal::ANIMATION_NAME,
+                    LOOPING,
+                    ANIMATION_DURATION,
+                    FRAMES);
+                break;
+            }
+            case OBJECTS::AnimalSpecies::PIG:
+            {
+                // FORM THE ANIMATION FOR A PIG.
+                // The frames differ based on gender.
+                int top_texture_offset_in_pixels = is_male ? 128 : 144;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -793,35 +812,16 @@ namespace RESOURCES
                     FRAMES);
                 break;
             }
-            case OBJECTS::AnimalSpecies::PIG:
+            case OBJECTS::AnimalSpecies::POLAR_BEAR:
             {
-                // FORM THE ANIMATION FOR A PIG.
+                // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 32 : 48;
+                int top_texture_offset_in_pixels = is_male ? 160 : 176;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
                     MATH::IntRectangle::FromLeftTopAndDimensions(0, top_texture_offset_in_pixels, 16, 16),
                     MATH::IntRectangle::FromLeftTopAndDimensions(16, top_texture_offset_in_pixels, 16, 16),
-                };
-
-                animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
-                    OBJECTS::Animal::ANIMATION_NAME,
-                    LOOPING,
-                    ANIMATION_DURATION,
-                    FRAMES);
-                break;
-            }
-            case OBJECTS::AnimalSpecies::POLAR_BEAR:
-            {
-                // FORM THE ANIMATION.
-                // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 128 : 144;
-                const std::vector<MATH::IntRectangle> FRAMES =
-                {
-                    // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(128, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(144, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -835,12 +835,12 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 128 : 144;
+                int top_texture_offset_in_pixels = is_male ? 160 : 176;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(160, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(176, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(32, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(48, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -854,12 +854,12 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION FOR A RAVEN.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 0 : 16;
+                int top_texture_offset_in_pixels = is_male ? 160 : 176;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(0, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(16, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(64, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(80, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -873,12 +873,12 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION FOR A SHEEP.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 0 : 16;
+                int top_texture_offset_in_pixels = is_male ? 160 : 176;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(64, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(80, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(96, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(112, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -896,8 +896,8 @@ namespace RESOURCES
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(192, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(208, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(128, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(144, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -915,8 +915,8 @@ namespace RESOURCES
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
-                    MATH::IntRectangle::FromLeftTopAndDimensions(224, top_texture_offset_in_pixels, 16, 16),
-                    MATH::IntRectangle::FromLeftTopAndDimensions(240, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(160, top_texture_offset_in_pixels, 16, 16),
+                    MATH::IntRectangle::FromLeftTopAndDimensions(176, top_texture_offset_in_pixels, 16, 16),
                 };
 
                 animal_animation = std::make_shared<GRAPHICS::AnimationSequence>(
@@ -930,7 +930,7 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 128 : 144;
+                int top_texture_offset_in_pixels = is_male ? 160 : 176;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.
@@ -949,7 +949,7 @@ namespace RESOURCES
             {
                 // FORM THE ANIMATION.
                 // The frames differ based on gender.
-                int top_texture_offset_in_pixels = is_male ? 128 : 144;
+                int top_texture_offset_in_pixels = is_male ? 160 : 176;
                 const std::vector<MATH::IntRectangle> FRAMES =
                 {
                     // Frames are duplicated some so that things appear to loop a few times.

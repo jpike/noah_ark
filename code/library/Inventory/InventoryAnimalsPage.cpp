@@ -243,9 +243,13 @@ namespace INVENTORY
                 renderer.Render(collected_species_text);
 
                 // RENDER AN ICON FOR THE MALE ANIMAL (IF COLLECTED).
-                // It should be placed toward the right end of this column, leaving room for the female icon.
+                // It should be placed toward the right end of the species column, leaving room for the female icon.
                 constexpr float COUNT_BOTH_MALE_AND_FEMALE_ICONS = 2.0f;
-                float male_animal_icon_left_screen_position = species_column_header_text.RightPosition() - (COUNT_BOTH_MALE_AND_FEMALE_ICONS * RESOURCES::AnimalGraphics::SPRITE_WIDTH_IN_PIXELS);
+                constexpr float SPACING_BEFORE_START_OF_NEXT_COLUMN_HEADER = 16.0f;
+                float male_animal_icon_left_screen_position = (
+                    count_following_column_header_left_position - 
+                    SPACING_BEFORE_START_OF_NEXT_COLUMN_HEADER -
+                    (COUNT_BOTH_MALE_AND_FEMALE_ICONS * RESOURCES::AnimalGraphics::SPRITE_WIDTH_IN_PIXELS));
                 MATH::Vector2f male_animal_icon_left_top_screen_position = MATH::Vector2f(
                     male_animal_icon_left_screen_position,
                     collected_species_text.LeftTopPosition.Y);

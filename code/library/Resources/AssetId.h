@@ -36,6 +36,12 @@ namespace RESOURCES
         TREE_TEXTURE,
         /// The texture with wood logs.
         WOOD_LOG_TEXTURE,
+        /// The mountain for the flood cutscene.
+        FLOOD_CUTSCENE_MOUNTAIN,
+        /// The waters for the flood cutscene.
+        FLOOD_CUTSCENE_WATERS,
+        /// The ark for the flood cutscene.
+        FLOOD_CUTSCENE_ARK,
 
         // SHADERS.
         /// A shader that tints a texture based on a color parameter.

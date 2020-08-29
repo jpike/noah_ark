@@ -37,7 +37,11 @@ namespace STATES
             GRAPHICS::Camera& camera,
             AUDIO::Speakers& speakers);
         sf::Sprite Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer);
-        void SwitchStatesIfChanged(const GameState& new_state, const std::shared_ptr<MAPS::World>& world, GRAPHICS::Renderer& renderer);
+        void SwitchStatesIfChanged(
+            const GameState& new_state, 
+            const std::shared_ptr<MAPS::World>& world, 
+            RESOURCES::Assets& assets,
+            GRAPHICS::Renderer& renderer);
 
         /// The current state the game is in.
         GameState CurrentGameState = GameState::INTRO_SEQUENCE;

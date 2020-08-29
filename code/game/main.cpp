@@ -6,14 +6,12 @@
 // - Raft creation for crossing waterways
 // - People...specifically Noah's family
 // - Add gathering of family
-// - Have animals cry if hit with axe
 // - Flood cutscene graphics
 // - Ark gameplay
 // - Post-ark gameplay/cutscenes
 // - Completed game credits
 // - Cutscene/text boxes for transition into ark
 // - Polish (custom fancy graphics) for inventory GUI
-// - Better word wrapping with verses
 // - Sword guarding garden of Eden
 //
 // Areas for code cleanup:
@@ -384,7 +382,7 @@ int main()
                         return EXIT_FAILURE;
                     }
                 }
-                game_states.SwitchStatesIfChanged(next_game_state, world, renderer);
+                game_states.SwitchStatesIfChanged(next_game_state, world, *assets, renderer);
             }
         }
 

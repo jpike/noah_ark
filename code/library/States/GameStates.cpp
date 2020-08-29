@@ -100,9 +100,14 @@ namespace STATES
     /// Switches to the new state, if the state has changed.
     /// @param[in]  new_state - The potentially new state the game should be in.
     /// @param[in]  world - The game world needed for some states.
+    /// @param[in,out]  assets - The assets to use for initializing any new state.
     /// @param[in,out]  renderer - The renderer used for the game.
     /// @todo   Clean-up parameters!
-    void GameStates::SwitchStatesIfChanged(const GameState& new_state, const std::shared_ptr<MAPS::World>& world, GRAPHICS::Renderer& renderer)
+    void GameStates::SwitchStatesIfChanged(
+        const GameState& new_state, 
+        const std::shared_ptr<MAPS::World>& world, 
+        RESOURCES::Assets& assets,
+        GRAPHICS::Renderer& renderer)
     {
         // CHECK IF THE GAME STATE HAS CHANGED.
         bool game_state_changed = (new_state != CurrentGameState);
@@ -131,9 +136,27 @@ namespace STATES
                 break;
             }
             case GameState::FLOOD_CUTSCENE:
+            {
                 // RESET THE ELAPSED TIME FOR THE CUTSCENE.
                 FloodCutscene.ElapsedTime = sf::Time::Zero;
+
+                // INITIALIZE THE CUTSCENE SPRITES.
+                /// @todo   Cleaner way to do this!
+                std::shared_ptr<GRAPHICS::Texture> mountain_texture = assets.GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_MOUNTAIN);
+                MATH::FloatRectangle mountain_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 256, 256);
+                FloodCutscene.Mountain = GRAPHICS::Sprite(mountain_texture, mountain_sprite_rectangle);
+
+                std::shared_ptr<GRAPHICS::Texture> ark_texture = assets.GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_ARK);
+                MATH::FloatRectangle ark_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 100, 50);
+                FloodCutscene.Ark = GRAPHICS::Sprite(ark_texture, ark_sprite_rectangle);
+
+                // The flood sprite is slightly larger than the screen height to account for the "waves" at the top and allowing
+                // the sprite to rise up while still having the bottom of the screen appear blue.
+                std::shared_ptr<GRAPHICS::Texture> flood_water_texture = assets.GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_WATERS);
+                MATH::FloatRectangle flood_water_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 512, 416);
+                FloodCutscene.FloodWaters = GRAPHICS::Sprite(flood_water_texture, flood_water_sprite_rectangle);
                 break;
+            }
             case GameState::GAMEPLAY:
             {
                 // LOAD THE GAME'S SAVE FILE.

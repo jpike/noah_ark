@@ -22,6 +22,9 @@ namespace RESOURCES
         AssetDefinition(AssetType::TEXTURE, AssetId::NOAH_TEXTURE, "res/images/noah_sprite1.png"),
         AssetDefinition(AssetType::TEXTURE, AssetId::TREE_TEXTURE, "res/images/tree_sprite1.png"),
         AssetDefinition(AssetType::TEXTURE, AssetId::WOOD_LOG_TEXTURE, "res/images/tree_sprite1.png"),
+        AssetDefinition(AssetType::TEXTURE, AssetId::FLOOD_CUTSCENE_MOUNTAIN, "res/images/mountain.png"),
+        AssetDefinition(AssetType::TEXTURE, AssetId::FLOOD_CUTSCENE_WATERS, "res/images/flood_waters.png"),
+        AssetDefinition(AssetType::TEXTURE, AssetId::FLOOD_CUTSCENE_ARK, "res/images/flood_scene_ark.png"),
 
         // GENERAL SOUND EFFECTS.
         AssetDefinition(AssetType::SOUND_EFFECT, AssetId::ARK_BUILDING_SOUND, "res/sounds/ark_build_sound1.wav"),

@@ -6,7 +6,6 @@
 // - Raft creation for crossing waterways
 // - People...specifically Noah's family
 // - Add gathering of family
-// - Flood cutscene graphics
 // - Ark gameplay
 // - Post-ark gameplay/cutscenes
 // - Completed game credits

@@ -390,11 +390,6 @@ namespace GRAPHICS
                 else
                 {
                     // CHECK IF THE CURRENT LINE CAN HANDLE THE NEXT WORD.
-#if TODO_OLD_IMPLEMENTATION
-                    size_t current_line_width_in_pixels = GUI::Text::Width<size_t>(current_new_line, text_scale_ratio);
-                    size_t space_character_width_in_pixels = GUI::Text::Width<size_t>(" ", text_scale_ratio);
-                    size_t next_word_width_in_pixels = GUI::Text::Width<size_t>(next_word, text_scale_ratio);
-#endif
                     std::shared_ptr<GUI::Font>& font = Fonts[font_id];
                     GUI::Text current_line_text =
                     {

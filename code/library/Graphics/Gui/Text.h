@@ -55,7 +55,6 @@ namespace GRAPHICS::GUI
         // COUNT THE WIDTH OF EACH GLYPH.
         for (const char character : String)
         {
-            /// @todo   Take into account actual width here?
             const Glyph& glyph = font.GlyphsByCharacter[static_cast<unsigned char>(character)];
             float glyph_default_width_in_pixels = glyph.TextureSubRectangle.Width();
 

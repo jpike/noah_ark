@@ -1,16 +1,17 @@
 #include "String/String.h"
 #include "Graphics/Gui/TextBox.h"
 
-namespace GRAPHICS
-{
-namespace GUI
+namespace GRAPHICS::GUI
 {
     /// Constructor.  The text box is invisible by default.
     /// @param[in]  width_in_pixels - The width of the text box, in pixels.
     /// @param[in]  height_in_pixels - The height of the text box, in pixels.
+    /// @param[in]  font - The font to use for rendering text.
     TextBox::TextBox(
         const unsigned int width_in_pixels,
-        const unsigned int height_in_pixels) :
+        const unsigned int height_in_pixels,
+        const std::shared_ptr<GRAPHICS::GUI::Font>& font) :
+    Font(font),
     WidthInPixels(width_in_pixels),
     HeightInPixels(height_in_pixels),
     Pages(),
@@ -36,8 +37,9 @@ namespace GUI
         for (const std::string& line : lines)
         {
             // CALCULATE HOW MUCH TEXT CAN EXIST ON A SINGLE LINE.
-            TextPage new_page(WidthInPixels, HeightInPixels);
-            unsigned int max_character_count_per_line = new_page.MaxCharacterCountPerLine;
+            TextPage new_page(WidthInPixels, HeightInPixels, Font);
+            unsigned int max_character_count_per_line = static_cast<unsigned int>(
+                static_cast<float>(new_page.MaxAvailableWidthForTextInPixels) / static_cast<float>(Glyph::DEFAULT_WIDTH_IN_PIXELS));
 
             // SPLIT THE LINE INTO WORDS.
             // In order to avoid having a word broken up onto multiple lines,
@@ -74,7 +76,7 @@ namespace GUI
                 // If it wasn't added, there wasn't room on the current page.
                 if (!word_added)
                 {
-                    Pages.push_back(TextPage(WidthInPixels, HeightInPixels));
+                    Pages.push_back(TextPage(WidthInPixels, HeightInPixels, Font));
                     current_page = &Pages.back();
                     word_added = current_page->Add(current_word);
                 }
@@ -260,5 +262,4 @@ namespace GUI
         auto& current_text_page = Pages[CurrentPageIndex];
         current_text_page.Render(output_stream);
     }
-}
 }

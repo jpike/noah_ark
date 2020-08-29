@@ -5,7 +5,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "Core/String.h"
+#include <Windows.h>
+#include "String/String.h"
 #include "Graphics/Gui/TextBox.h"
 
 /// A namespace for testing the TextBox class.
@@ -27,7 +28,8 @@ namespace TEST_TEXT_BOX
         // CREATE A TEXT BOX.
         const unsigned int WIDTH_IN_PIXELS = 512;
         const unsigned int HEIGHT_IN_PIXELS = 32;
-        TextBox text_box(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
+        std::shared_ptr<Font> font = Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+        TextBox text_box(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, font);
 
         // DEFINE THE MESSAGE TO START DISPLAYING.
         // The Bible verse message was chosen based on a realistic scenario where this was failing.
@@ -55,8 +57,8 @@ namespace TEST_TEXT_BOX
 
         // VERIFY THAT THE SECOND PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
         const std::string EXPECTED_SECOND_PAGE_TEXT =
-            "1 7:7 - And Noah went in, and his sons, and\n"
-            "his wife, and his sons' wives with him, into\n";
+            "1 7:7 - And Noah went in, and his sons, and his\n"
+            "wife, and his sons' wives with him, into the ark,\n";
         float elapsed_time_in_seconds_for_second_page = elapsed_time_in_seconds_for_next_character * EXPECTED_SECOND_PAGE_TEXT.length();
         text_box.Update(sf::seconds(elapsed_time_in_seconds_for_second_page));
         std::stringstream second_page_output;
@@ -73,7 +75,7 @@ namespace TEST_TEXT_BOX
 
         // VERIFY THAT THE THIRD PAGE OF TEXT CAN BE PROPERLY DISPLAYED.
         const std::string EXPECTED_THIRD_PAGE_TEXT =
-            "the ark, because of the waters of the flood.\n";
+            "because of the waters of the flood.\n";
         float elapsed_time_in_seconds_for_third_page = elapsed_time_in_seconds_for_next_character * EXPECTED_THIRD_PAGE_TEXT.length();
         text_box.Update(sf::seconds(elapsed_time_in_seconds_for_third_page));
         std::stringstream third_page_output;

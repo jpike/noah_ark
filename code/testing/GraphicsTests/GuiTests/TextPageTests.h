@@ -5,7 +5,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "Core/String.h"
+#include <Windows.h>
+#include "String/String.h"
 #include "Graphics/Gui/Text.h"
 #include "Graphics/Gui/TextPage.h"
 
@@ -19,7 +20,8 @@ namespace TEST_TEXT_PAGE
         // ADD AN EMPTY STRING TO A TEXT PAGE.
         const unsigned int WIDTH_IN_PIXELS = 512;
         const unsigned int HEIGHT_IN_PIXELS = 32;
-        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
+        std::shared_ptr<Font> font = Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, font);
 
         const std::string EMPTY_STRING = "";
         bool text_added = text_page.Add(EMPTY_STRING);
@@ -42,7 +44,8 @@ namespace TEST_TEXT_PAGE
         // ADD A SINGLE CHARACTER TO A TEXT PAGE.
         const unsigned int WIDTH_IN_PIXELS = 512;
         const unsigned int HEIGHT_IN_PIXELS = 32;
-        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
+        std::shared_ptr<Font> font = Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, font);
 
         const std::string SINGLE_CHARACTER = "a";
         bool text_added = text_page.Add(SINGLE_CHARACTER);
@@ -63,7 +66,8 @@ namespace TEST_TEXT_PAGE
         // ADD A SINGLE CHARACTER TO A TEXT PAGE.
         const unsigned int WIDTH_IN_PIXELS = 512;
         const unsigned int HEIGHT_IN_PIXELS = 32;
-        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
+        std::shared_ptr<Font> font = Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, font);
 
         const std::string SINGLE_CHARACTER = "a";
         bool text_added = text_page.Add(SINGLE_CHARACTER);
@@ -88,7 +92,8 @@ namespace TEST_TEXT_PAGE
         // ADD A SINGLE WORD TO A TEXT PAGE.
         const unsigned int WIDTH_IN_PIXELS = 512;
         const unsigned int HEIGHT_IN_PIXELS = 32;
-        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
+        std::shared_ptr<Font> font = Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, font);
 
         const std::string SINGLE_WORD = "word";
         bool text_added = text_page.Add(SINGLE_WORD);
@@ -119,7 +124,8 @@ namespace TEST_TEXT_PAGE
         // ADD MULTIPLE WORDS TO A TEXT PAGE.
         const unsigned int WIDTH_IN_PIXELS = 512;
         const unsigned int HEIGHT_IN_PIXELS = 32;
-        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
+        std::shared_ptr<Font> font = Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, font);
 
         const std::vector<std::string> WORDS =
         {
@@ -190,9 +196,12 @@ namespace TEST_TEXT_PAGE
         // ADD A FULL LINE OF TEXT TO A TEXT PAGE.
         const unsigned int WIDTH_IN_PIXELS = 512;
         const unsigned int HEIGHT_IN_PIXELS = 32;
-        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
+        std::shared_ptr<Font> font = Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, font);
 
-        std::string full_line_of_text(text_page.MaxCharacterCountPerLine, 'x');
+        unsigned int max_character_count_per_line = static_cast<unsigned int>(
+            static_cast<float>(text_page.MaxAvailableWidthForTextInPixels) / static_cast<float>(Glyph::DEFAULT_WIDTH_IN_PIXELS));
+        std::string full_line_of_text(max_character_count_per_line, 'x');
         bool text_added = text_page.Add(full_line_of_text);
         REQUIRE(text_added);
 
@@ -227,12 +236,15 @@ namespace TEST_TEXT_PAGE
         // ADD 2 FULL LINES OF TEXT TO A TEXT PAGE.
         const unsigned int WIDTH_IN_PIXELS = 512;
         const unsigned int HEIGHT_IN_PIXELS = 32;
-        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
+        std::shared_ptr<Font> font = Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, font);
 
+        unsigned int max_character_count_per_line = static_cast<unsigned int>(
+            static_cast<float>(text_page.MaxAvailableWidthForTextInPixels) / static_cast<float>(Glyph::DEFAULT_WIDTH_IN_PIXELS));
         std::vector<std::string> lines =
         {
-            std::string(text_page.MaxCharacterCountPerLine, 'x'),
-            std::string(text_page.MaxCharacterCountPerLine, 'y'),
+            std::string(max_character_count_per_line, 'x'),
+            std::string(max_character_count_per_line, 'y'),
         };
         for (const std::string& line : lines)
         {
@@ -289,12 +301,15 @@ namespace TEST_TEXT_PAGE
         // ADD WORDS FROM A BIBLE VERSE TO A TEXT PAGE.
         const unsigned int WIDTH_IN_PIXELS = 512;
         const unsigned int HEIGHT_IN_PIXELS = 32;
-        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS);
+        std::shared_ptr<Font> font = Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+        TextPage text_page(WIDTH_IN_PIXELS, HEIGHT_IN_PIXELS, font);
 
         // The Bible verse was chosen to fit within a single text page.
-        std::deque<std::string> words = CORE::String::SplitIntoWords(
+        unsigned int max_character_count_per_line = static_cast<unsigned int>(
+            static_cast<float>(text_page.MaxAvailableWidthForTextInPixels) / static_cast<float>(Glyph::DEFAULT_WIDTH_IN_PIXELS));
+        std::deque<std::string> words = STRING::String::SplitIntoWords(
             "But Noah found grace in the eyes of the Lord.",
-            text_page.MaxCharacterCountPerLine);
+            max_character_count_per_line);
         for (const std::string& word : words)
         {
             bool word_added = text_page.Add(word);
@@ -339,10 +354,9 @@ namespace TEST_TEXT_PAGE
                 // CHECK IF THE CURRENT LINE HAS ROOM FOR A SPACE.
                 // It will be added for the next word if there is room.
                 std::string previously_rendered_words_on_current_line_plus_space = previously_rendered_words_on_current_line + " ";
-                size_t previously_rendered_words_on_current_line_plus_space_width_in_pixels = GRAPHICS::GUI::Text::Width<size_t>(
-                    previously_rendered_words_on_current_line_plus_space,
-                    GRAPHICS::GUI::TextPage::TEXT_SCALE_RATIO);
-                size_t max_line_width_in_pixels = text_page.MaxCharacterCountPerLine * GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS;
+                Text previous_text = { .String = previously_rendered_words_on_current_line_plus_space };
+                std::size_t previously_rendered_words_on_current_line_plus_space_width_in_pixels = previous_text.Width<std::size_t>(*font);
+                std::size_t max_line_width_in_pixels = max_character_count_per_line * GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS;
                 bool space_fits_on_current_line = (previously_rendered_words_on_current_line_plus_space_width_in_pixels <= max_line_width_in_pixels);
                 if (space_fits_on_current_line)
                 {
@@ -353,9 +367,8 @@ namespace TEST_TEXT_PAGE
 
                 // CHECK IF THE NEXT WORD FITS ON CURRENT LINE.
                 std::string current_line_with_next_word = previously_rendered_words_on_current_line + *next_word;
-                size_t current_line_with_next_word_width_in_pixels = GRAPHICS::GUI::Text::Width<size_t>(
-                    current_line_with_next_word, 
-                    GRAPHICS::GUI::TextPage::TEXT_SCALE_RATIO);
+                Text text_with_next_word = { .String = current_line_with_next_word };
+                std::size_t current_line_with_next_word_width_in_pixels = text_with_next_word.Width<std::size_t>(*font);
                 bool next_word_fits_on_current_line = (current_line_with_next_word_width_in_pixels <= max_line_width_in_pixels);
                 if (next_word_fits_on_current_line)
                 {

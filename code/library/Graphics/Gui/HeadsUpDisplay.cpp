@@ -24,7 +24,7 @@ namespace GUI
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels,
         const std::shared_ptr<RESOURCES::Assets>& assets) :
-    MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels),
+    MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, assets->GetFont(RESOURCES::AssetId::FONT_TEXTURE)),
     TextColor(GRAPHICS::Color::BLACK),
     InventoryOpened(false),
     InventoryGui(noah_player->Inventory, assets),

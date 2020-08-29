@@ -2,19 +2,16 @@
 #include "Graphics/Gui/Text.h"
 #include "Graphics/Gui/TextPage.h"
 
-namespace GRAPHICS
+namespace GRAPHICS::GUI
 {
-namespace GUI
-{
-    const float TextPage::ELAPSED_TIME_BETWEEN_CHARACTERS_IN_SECONDS = 0.03f;
-    const float TextPage::TEXT_SCALE_RATIO = 1.0f;
-
     /// Constructor.
     /// @param[in]  width_in_pixels - The width of the text page, in pixels.
     /// @param[in]  height_in_pixels - The height of the text page, in pixels.
-    TextPage::TextPage(const unsigned int width_in_pixels, const unsigned int height_in_pixels) :
+    /// @param[in]  font - The font to use for rendering text in the page.
+    TextPage::TextPage(const unsigned int width_in_pixels, const unsigned int height_in_pixels, const std::shared_ptr<GRAPHICS::GUI::Font>& font) :
+        MaxAvailableWidthForTextInPixels(width_in_pixels - (Glyph::DEFAULT_WIDTH_IN_PIXELS * ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE)),
         LineCount(height_in_pixels / Glyph::DEFAULT_HEIGHT_IN_PIXELS),
-        MaxCharacterCountPerLine((width_in_pixels / Glyph::DEFAULT_WIDTH_IN_PIXELS) - ONE_CHARACTER_OF_PADDING_ON_EACH_SIDE_OF_LINE),
+        Font(font),
         LinesOfText(LineCount),
         LastUnfilledLineIndex(0),
         TotalElapsedTimeInSecondsTextHasBeenDisplayed(0.0f)
@@ -49,15 +46,9 @@ namespace GUI
 
         // CHECK IF THE CURRENT UNFILLED LINE OF TEXT CAN HOLD THE NEW WORD.
         std::string current_line_with_new_word = current_line_as_string + word;
-#if TODO_OLD_IMPLEMENTATION
-        size_t current_line_with_new_word_width_in_pixels = Text::Width<size_t>(
-            current_line_with_new_word,
-            TextPage::TEXT_SCALE_RATIO);
-#endif
-        size_t current_line_with_new_word_width_in_pixels = static_cast<size_t>(
-            TextPage::TEXT_SCALE_RATIO * Glyph::DEFAULT_WIDTH_IN_PIXELS * current_line_with_new_word.length());
-        size_t max_width_per_line_in_pixels = MaxCharacterCountPerLine * Glyph::DEFAULT_WIDTH_IN_PIXELS;
-        bool current_line_can_hold_new_word = (current_line_with_new_word_width_in_pixels <= max_width_per_line_in_pixels);
+        Text current_line_text_with_new_word = { .String = current_line_with_new_word };
+        std::size_t current_line_with_new_word_width_in_pixels = current_line_text_with_new_word.Width<std::size_t>(*Font);
+        bool current_line_can_hold_new_word = (current_line_with_new_word_width_in_pixels <= MaxAvailableWidthForTextInPixels);
         if (current_line_can_hold_new_word)
         {
             // ADD THE SPACE BEFORE THE NEW WORD.
@@ -288,5 +279,4 @@ namespace GUI
 
         return current_line;
     }
-}
 }

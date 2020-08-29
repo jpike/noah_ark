@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <stdexcept>
-#include "Core/Array2D.h"
+#include "Containers/Array2D.h"
 
 /// A namespace for testing the Array2D class.
 namespace ARRAY_2D_TESTS
@@ -12,7 +12,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> array_2d(WIDTH, HEIGHT);
 
         // VALIDATE THE DIMENSIONS.
         unsigned int actual_width = array_2d.GetWidth();
@@ -27,7 +27,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int WIDTH = 3;
         const unsigned int HEIGHT = 2;
-        CORE::Array2D<int> array_2d(WIDTH, HEIGHT, {
+        CONTAINERS::Array2D<int> array_2d(WIDTH, HEIGHT, {
             1, 2, 3,
             4, 5, 6 } );
 
@@ -55,7 +55,7 @@ namespace ARRAY_2D_TESTS
             // CREATE A 2D ARRAY WITHOUT ENOUGH INITIAL DATA.
             const unsigned int WIDTH = 3;
             const unsigned int HEIGHT = 2;
-            CORE::Array2D<int> array_2d(WIDTH, HEIGHT, {
+            CONTAINERS::Array2D<int> array_2d(WIDTH, HEIGHT, {
                 1, 2, 3,
                 4, 5 });
         }
@@ -73,8 +73,8 @@ namespace ARRAY_2D_TESTS
         // CREATE TWO EQUAL ARRAYS.
         const unsigned int WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> first_array_2d(WIDTH, HEIGHT);
-        CORE::Array2D<int> second_array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> first_array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> second_array_2d(WIDTH, HEIGHT);
 
         // MAKE SURE THE ARRAYS ARE EQUAL.
         bool arrays_equal = (first_array_2d == second_array_2d);
@@ -89,10 +89,10 @@ namespace ARRAY_2D_TESTS
         // CREATE TWO ARRAYS WITH DIFFERENT WIDTHS.
         const unsigned int FIRST_WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> first_array_2d(FIRST_WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> first_array_2d(FIRST_WIDTH, HEIGHT);
 
         const unsigned int SECOND_WIDTH = 5;
-        CORE::Array2D<int> second_array_2d(SECOND_WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> second_array_2d(SECOND_WIDTH, HEIGHT);
 
         // MAKE SURE THE ARRAYS AREN'T EQUAL.
         bool arrays_equal = (first_array_2d == second_array_2d);
@@ -107,10 +107,10 @@ namespace ARRAY_2D_TESTS
         // CREATE TWO ARRAYS WITH DIFFERENT HEIGHTS.
         const unsigned int WIDTH = 4;
         const unsigned int FIRST_HEIGHT = 3;
-        CORE::Array2D<int> first_array_2d(WIDTH, FIRST_HEIGHT);
+        CONTAINERS::Array2D<int> first_array_2d(WIDTH, FIRST_HEIGHT);
 
         const unsigned int SECOND_HEIGHT = 6;
-        CORE::Array2D<int> second_array_2d(WIDTH, SECOND_HEIGHT);
+        CONTAINERS::Array2D<int> second_array_2d(WIDTH, SECOND_HEIGHT);
 
         // MAKE SURE THE ARRAYS AREN'T EQUAL.
         bool arrays_equal = (first_array_2d == second_array_2d);
@@ -125,8 +125,8 @@ namespace ARRAY_2D_TESTS
         // CREATE TWO ARRAYS WITH DIFFERENT DATA.
         const unsigned int WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> first_array_2d(WIDTH, HEIGHT);
-        CORE::Array2D<int> second_array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> first_array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> second_array_2d(WIDTH, HEIGHT);
 
         const unsigned int ELEMENT_X = 0;
         const unsigned int ELEMENT_Y = 0;
@@ -146,7 +146,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int ORIGINAL_WIDTH = 4;
         const unsigned int ORIGINAL_HEIGHT = 3;
-        CORE::Array2D<int> array_2d(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
+        CONTAINERS::Array2D<int> array_2d(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
 
         // RESIZE THE ARRAY.
         const unsigned int NEW_WIDTH = 24;
@@ -166,7 +166,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int ORIGINAL_WIDTH = 4;
         const unsigned int ORIGINAL_HEIGHT = 3;
-        CORE::Array2D< std::unique_ptr<int> > array_2d(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
+        CONTAINERS::Array2D< std::unique_ptr<int> > array_2d(ORIGINAL_WIDTH, ORIGINAL_HEIGHT);
 
         // RESIZE THE ARRAY.
         const unsigned int NEW_WIDTH = 24;
@@ -186,7 +186,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> array_2d(WIDTH, HEIGHT);
 
         // SET AN ELEMENT.
         const int ELEMENT_X = 2;
@@ -204,7 +204,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> array_2d(WIDTH, HEIGHT);
 
         // SET THE ELEMENT AT THE MINIMUM COORDINATES.
         const unsigned int MIN_X = 0;
@@ -222,7 +222,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> array_2d(WIDTH, HEIGHT);
 
         // SET THE ELEMENT AT THE MAXIMUM COORDINATES.
         const unsigned int MAX_X = WIDTH - 1;
@@ -240,7 +240,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> array_2d(WIDTH, HEIGHT);
 
         // SET THE ELEMENT AT THE BEGINNING OF THE SECOND ROW.
         const unsigned int MIN_X = 0;
@@ -258,7 +258,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> array_2d(WIDTH, HEIGHT);
 
         // SET THE ELEMENT AT THE END OF THE FIRST ROW.
         const unsigned int MAX_X = WIDTH - 1;
@@ -276,7 +276,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> array_2d(WIDTH, HEIGHT);
 
         // TRY ACCESSING AN ELEMENT OUTSIDE OF THE ARRAY'S HORIZONTAL BOUNDS.
         bool exception_thrown = false;
@@ -300,7 +300,7 @@ namespace ARRAY_2D_TESTS
         // CREATE A 2D ARRAY.
         const unsigned int WIDTH = 4;
         const unsigned int HEIGHT = 3;
-        CORE::Array2D<int> array_2d(WIDTH, HEIGHT);
+        CONTAINERS::Array2D<int> array_2d(WIDTH, HEIGHT);
 
         // TRY ACCESSING AN ELEMENT OUTSIDE OF THE ARRAY'S VERTICAL BOUNDS.
         bool exception_thrown = false;

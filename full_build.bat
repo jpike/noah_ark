@@ -21,9 +21,9 @@ IF %ERRORLEVEL% EQU 0 (
 IF %ERRORLEVEL% EQU 0 (
     CALL build_asset_packer.bat %build_mode%
 )
-REM TODO RE-ENABLE AFTER FIXING IF %ERRORLEVEL% EQU 0 (
-REM    CALL build_tester.bat %build_mode%
-REM )
+IF %ERRORLEVEL% EQU 0 (
+    CALL build_tester.bat %build_mode%
+)
 IF %ERRORLEVEL% EQU 0 (
     CALL build_game.bat %build_mode%
 )

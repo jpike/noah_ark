@@ -9,9 +9,7 @@
 #include "Graphics/Gui/TextPage.h"
 #include "Graphics/Renderer.h"
 
-namespace GRAPHICS
-{
-namespace GUI
+namespace GRAPHICS::GUI
 {
     /// A text box for displaying messages to a player.
     /// The text box can display up to 2 lines of text at a time.
@@ -24,7 +22,8 @@ namespace GUI
         // CONSTRUCTION.
         explicit TextBox(
             const unsigned int width_in_pixels, 
-            const unsigned int height_in_pixels);
+            const unsigned int height_in_pixels,
+            const std::shared_ptr<Font>& font);
 
         // OTHER PUBLIC METHODS.
         void StartDisplayingText(const std::string& text);
@@ -46,6 +45,8 @@ namespace GUI
 
     private:
         // PRIVATE MEMBER VARIABLES.
+        /// The font used for rendering text.
+        std::shared_ptr<Font> Font;
         /// The width of the text box (excluding borders) in pixels.
         unsigned int WidthInPixels;
         /// The height of the text box (excluding borders) in pixels.
@@ -58,5 +59,4 @@ namespace GUI
         /// in the text box was shown or hidden.  Used to make the arrow blink.
         float TotalElapsedTimeInSecondsSinceLastArrowBlink;
     };
-}
 }

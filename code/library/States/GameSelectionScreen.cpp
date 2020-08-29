@@ -24,6 +24,9 @@ namespace STATES
         }
 
         // TRY LOADING SAVED GAMES FROM EACH FILE IN THE SAVED GAMES FOLDER.
+        // To avoid having saved games getting duplicated, the list of games should be cleared
+        // each time the saved games are newly loaded.
+        SavedGames.clear();
         for (const auto& file : std::filesystem::directory_iterator(SAVED_GAMES_FOLDER_PATH))
         {
             DEBUGGING::DebugConsole::WriteLine(file.path().string());

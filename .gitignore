@@ -1,4 +1,6 @@
+build/
 releases/
+SavedGames/
 
 cloc-1.62.exe
 

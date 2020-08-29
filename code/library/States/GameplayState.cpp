@@ -541,7 +541,7 @@ namespace STATES
                 NoahPlayer->SetWorldPosition(map_exit_point->NewPlayerWorldPosition);
 
                 // UPDATE THE HUD'S TEXT COLOR BASED THE MAP.
-                bool entered_ark = World->ArkInterior.Contains(CurrentMapGrid);
+                bool entered_ark = World->Ark.Interior.Contains(CurrentMapGrid);
                 if (entered_ark)
                 {
                     // White is more readable on-top of the black borders around the ark interior.
@@ -558,7 +558,7 @@ namespace STATES
             }
 
             // CLOSE THE ARK DOOR'S IF THE PLAYER IS IN THE ARK AFTER COLLECTION ALL ITEMS.
-            bool inside_ark = World->ArkInterior.Contains(&map_grid);
+            bool inside_ark = World->Ark.Interior.Contains(&map_grid);
             if (inside_ark)
             {
                 /// @todo   Add non-debug logic for this.
@@ -630,17 +630,22 @@ namespace STATES
             // UPDATE FOOD FALLING IN THE WORLD.
             UpdateFallingFood(elapsed_time, *current_tile_map);
 
-            // HANDLE PLAYER COLLISIONS.
-            std::string message_for_text_box;
-            CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, message_for_text_box);
-            CollectFoodCollidingWithPlayer(*current_tile_map);
-            CollectAnimalsCollidingWithPlayer(*current_tile_map);
-
-            // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
-            bool text_box_message_exists = !message_for_text_box.empty();
-            if (text_box_message_exists)
+            // HANDLE PLAYER COLLISIONS WITH OUTSIDE OBJECTS.
+            // These collisions aren't applicable for inside the ark and should be prohibited to prevent
+            // things like recollecting of animals that have just entered into the ark.
+            if (!inside_ark)
             {
-                Hud->MainTextBox.StartDisplayingText(message_for_text_box);
+                std::string message_for_text_box;
+                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, message_for_text_box);
+                CollectFoodCollidingWithPlayer(*current_tile_map);
+                CollectAnimalsCollidingWithPlayer(*current_tile_map);
+
+                // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
+                bool text_box_message_exists = !message_for_text_box.empty();
+                if (text_box_message_exists)
+                {
+                    Hud->MainTextBox.StartDisplayingText(message_for_text_box);
+                }
             }
         }
 
@@ -1148,7 +1153,7 @@ namespace STATES
 
         // CHECK IF THE CURRENT TILE MAP HAS A VISIBLE EXTERNAL ARK DOORWAY.
         // This is how animals following Noah get transferred into the ark.
-        bool inside_ark = World->ArkInterior.Contains(&map_grid);
+        bool inside_ark = World->Ark.Interior.Contains(&map_grid);
         const OBJECTS::ArkPiece* doorway_into_ark = nullptr;
         for (const OBJECTS::ArkPiece& ark_piece : tile_map.ArkPieces)
         {
@@ -1174,6 +1179,9 @@ namespace STATES
             MAPS::ExitPoint* entry_point_into_ark = tile_map.GetExitPointAtWorldPosition(ark_doorway_world_position);
             for (auto animal = AnimalsGoingIntoArk.begin(); animal != AnimalsGoingIntoArk.end(); )
             {
+                // UPDATE THE ANIMAL'S ANIMATION.
+                (*animal)->Sprite.Update(elapsed_time);
+
                 // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE DOORWAY.
                 MATH::Vector2f animal_world_position = (*animal)->Sprite.GetWorldPosition();
                 MATH::Vector2f animal_to_ark_doorway_vector = ark_doorway_world_position - animal_world_position;
@@ -1203,8 +1211,6 @@ namespace STATES
                         assert(entry_room_inside_ark);
                         if (entry_room_inside_ark)
                         {
-                            /// @todo   Place somewhere else other than the player's position?
-                            /// This doesn't actually seem to be working correctly.
                             (*animal)->Sprite.SetWorldPosition(entry_point_into_ark->NewPlayerWorldPosition);
                             entry_room_inside_ark->Animals.push_back(*animal);
                         }
@@ -1281,14 +1287,13 @@ namespace STATES
                 MATH::Vector2f new_animal_world_position = old_animal_world_position;
 
                 // A sine wave is used to control vertical jumping.
-                constexpr float MAX_VERTICAL_JUMP_AMOUNT_IN_PIXELS = 0.6f;
+                constexpr float MAX_VERTICAL_JUMP_AMOUNT_IN_PIXELS = 3.0f;
                 float sine_of_y_position = std::sinf(old_animal_world_position.Y);
                 float vertical_jump_amount_in_pixels = MAX_VERTICAL_JUMP_AMOUNT_IN_PIXELS * sine_of_y_position;
                 new_animal_world_position.Y += vertical_jump_amount_in_pixels;
 
                 // A cosine wave is used to control horizontal jumping.
-                // This is smaller than the vertical jump amount in order to be more realistic/less distracting.
-                constexpr float MAX_HORIZONTAL_JUMP_AMOUNT_IN_PIXELS = 0.1f;
+                constexpr float MAX_HORIZONTAL_JUMP_AMOUNT_IN_PIXELS = 3.0f;
                 float cosine_of_x_position = std::cosf(old_animal_world_position.X);
                 float horizontal_jump_amount_in_pixels = MAX_HORIZONTAL_JUMP_AMOUNT_IN_PIXELS * cosine_of_x_position;
                 new_animal_world_position.X += horizontal_jump_amount_in_pixels;

@@ -35,6 +35,7 @@
 #include "Inventory/InventoryBibleVerseTextBox.cpp"
 #include "Inventory/InventoryFoodPage.cpp"
 #include "Inventory/InventoryGui.cpp"
+#include "Maps/Ark.cpp"
 #include "Maps/Data/ArkInteriorTileMapData.cpp"
 #include "Maps/Data/OverworldMapData.cpp"
 #include "Maps/Data/TileMapData.cpp"

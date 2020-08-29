@@ -28,7 +28,7 @@ REM DEFINE FILES TO COMPILE/LINK.
 REM These paths must be relative to the build directory in which the actual compilation command is executed.
 SET COMPILATION_FILE="..\..\noah_ark_library.project"
 SET MAIN_CODE_DIR="..\..\code\library"
-SET SFML_CODE_DIR="..\..\..\ThirdParty\SFML\SFML-2.5.1\include"
+SET SFML_CODE_DIR="..\..\ThirdParty\SFML\include"
 
 REM CREATE THE COMMAND LINE OPTIONS FOR THE FILES TO COMPILE/LINK.
 SET INCLUDE_DIRS=/I %MAIN_CODE_DIR% /I %SFML_CODE_DIR%

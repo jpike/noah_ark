@@ -1,6 +1,10 @@
-With the exception of certain third-party items (with individual licenses in the ThirdPartyLicenses folder), this project,
+With the exception of certain third-party items (with individual licenses in the ThirdParty folder), this project,
 including source code, documentation, assets (graphics, sound, etc.), and built game, is released into the public domain.
-Further elaboration on the public domain nature of this project is below.
+Further elaboration on the public domain nature of this project is below.  The main third-party items that are under their
+own licenses (NOT THIS ONE) are:
+- Animal sounds
+- SFML (and dependency libraries)
+- Catch
 
 This is free and unencumbered software released into the public domain.
 

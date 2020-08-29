@@ -10,17 +10,17 @@ Gameplay details are still being fleshed out, but some preliminary details are p
 
 ## Programming
 
-The game is being programmed using C++ within a Visual Studio 2017 environment.  Doxygen is used to document the code.
+The game is being programmed using C++ within a Visual Studio 2019 environment.  Doxygen is used to document the code.
 
 The game is designed for command line builds using various .bat files and also opening as a folder in Visual Studio.
 
-Several dependencies are used:
-* [SFML 2.5.0](http://sfml-dev.org/) - The main library for windowing, graphics, and input. ([zlib/libpng license](http://sfml-dev.org/license.php)).
+Several dependencies are used (see ThirdParty folder):
+* [SFML 2.5.1](http://sfml-dev.org/) - The main library for windowing, graphics, and input. ([zlib/libpng license](http://sfml-dev.org/license.php)).
 * [Catch](https://github.com/philsquared/Catch) - Unit testing ([Boost Software license](https://github.com/philsquared/Catch/blob/master/LICENSE_1_0.txt)).
 
-The dependencies described above are not included with this project and must be downloaded externally.  They're expected to be underneath a ThirdParty folder within the root folder of this project.
+The dependencies described above are included in the ThirdParty folder.
 
-** Note that a custom build of the SFML libraries is used for linking.  This is because at the current time, no Visual Studio 2017 pre-built libraries exist.  And even if they did, the pre-built libraries tend to not support full static linking of the Visual C++ runtime, so a custom build was needed.
+** Note that a custom build of the SFML libraries is used for linking.  This is because at the current time, no Visual Studio 2019 pre-built libraries exist.  And even if they did, the pre-built libraries tend to not support full static linking of the Visual C++ runtime, so a custom build was needed.
 
 ## Graphics
 

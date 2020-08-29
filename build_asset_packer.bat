@@ -28,15 +28,15 @@ REM DEFINE FILES TO COMPILE/LINK.
 REM These paths must be relative to the build directory in which the actual compilation command is executed.
 SET COMPILATION_FILE="..\..\code\asset_packer\main.cpp"
 SET MAIN_CODE_DIR="..\..\code\library"
-SET SFML_DIR="..\..\..\ThirdParty\SFML\SFML-2.5.1"
+SET SFML_DIR="..\..\ThirdParty\SFML"
 SET SFML_CODE_DIR="%SFML_DIR%\include"
 SET SFML_EXTERNAL_LIB_DIR="%SFML_DIR%\extlibs\libs-msvc\x64"
 REM Exact SFML libraries will vary depending on build mode.
 IF "%build_mode%"=="release" (
-    SET SFML_LIB_DIR="%SFML_DIR%\build\lib\Release"
+    SET SFML_LIB_DIR="%SFML_DIR%\lib\Release"
     SET SFML_LIBRARIES=sfml-audio-s.lib sfml-graphics-s.lib sfml-main.lib sfml-system-s.lib sfml-window-s.lib
 ) ELSE (
-    SET SFML_LIB_DIR="%SFML_DIR%\build\lib\Debug"
+    SET SFML_LIB_DIR="%SFML_DIR%\lib\Debug"
     SET SFML_LIBRARIES=sfml-audio-s-d.lib sfml-graphics-s-d.lib sfml-main-d.lib sfml-system-s-d.lib sfml-window-s-d.lib
 )
 SET OTHER_THIRD_PARTY_LIBS=opengl32.lib freetype.lib winmm.lib gdi32.lib openal32.lib flac.lib vorbisenc.lib vorbisfile.lib vorbis.lib ogg.lib user32.lib advapi32.lib

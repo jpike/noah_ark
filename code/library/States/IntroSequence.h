@@ -5,6 +5,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include "Audio/Speakers.h"
 #include "Bible/BibleVerse.h"
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Renderer.h"
@@ -23,6 +24,9 @@ namespace STATES
     public:
         // STATIC METHODS.
         static const std::vector<BIBLE::BibleVerse>& IntroBibleVerses();
+
+        // INITIALIZATION.
+        void Initialize(AUDIO::Speakers& speakers);
 
         // OTHER METHODS.
         bool Completed() const;

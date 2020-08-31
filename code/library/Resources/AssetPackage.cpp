@@ -11,7 +11,7 @@ namespace RESOURCES
     ///     May be relative or absolute.
     /// @return The assets from the package, if read successfully from the file;
     ///     empty otherwise.
-    std::vector<Asset> AssetPackage::ReadFile(const std::filesystem::path& filepath)
+    std::unordered_map<AssetId, Asset> AssetPackage::ReadFile(const std::filesystem::path& filepath)
     {
         // TRY OPENING THE FILE.
         std::ifstream asset_package_file(filepath, std::ios::binary | std::ios::in);
@@ -23,7 +23,7 @@ namespace RESOURCES
         }
 
         // READ IN ALL ASSETS FROM THE FILE.
-        std::vector<Asset> assets;
+        std::unordered_map<AssetId, Asset> assets;
 
         auto more_assets_in_file = [](std::ifstream& file) -> bool
         {
@@ -36,7 +36,7 @@ namespace RESOURCES
             std::optional<Asset> asset = Asset::Read(asset_package_file);
             if (asset)
             {
-                assets.emplace_back(*asset);
+                assets[asset->Id] = *asset;
             }
         }
 

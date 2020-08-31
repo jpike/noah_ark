@@ -14,7 +14,8 @@
                 "${env.VCToolsInstallDir}include",
                 "${projectRoot}/code/library",
                 "${projectRoot}/code/testing",
-                "${projectRoot}/../ThirdParty/SFML/SFML-2.5.1/include",
+                "${projectRoot}/ThirdParty/SFML/include",
+                "${projectRoot}/ThirdParty/SFML/extlibs/headers/AL",
                 "${projectRoot}/ThirdParty/catch"
             ]
         },
@@ -31,7 +32,8 @@
                 "${env.VCToolsInstallDir}include",
                 "${projectRoot}/code/library",
                 "${projectRoot}/code/testing",
-                "${projectRoot}/../ThirdParty/SFML/SFML-2.5.1/include",
+                "${projectRoot}/ThirdParty/SFML/include",
+                "${projectRoot}/ThirdParty/SFML/extlibs/headers/AL",
                 "${projectRoot}/ThirdParty/catch"
             ]
         }

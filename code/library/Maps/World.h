@@ -3,6 +3,7 @@
 #include <memory>
 #include "Maps/Ark.h"
 #include "Maps/MultiTileMapGrid.h"
+#include "Objects/Noah.h"
 #include "Resources/Assets.h"
 
 namespace MAPS
@@ -25,6 +26,8 @@ namespace MAPS
         MultiTileMapGrid Overworld = MultiTileMapGrid(OVERWORLD_WIDTH_IN_TILE_MAPS, OVERWORLD_HEIGHT_IN_TILE_MAPS);
         /// The ark.
         Ark Ark = {};
+        /// Noah (the player) character within the game.
+        OBJECTS::Noah NoahPlayer = {};
 
     private:
         // HELPER METHODS.

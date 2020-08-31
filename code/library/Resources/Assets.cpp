@@ -2,6 +2,7 @@
 #include <cstring>
 #include <future>
 #include <vector>
+#include <al.h>
 #include "Debugging/DebugConsole.h"
 #include "Resources/Assets.h"
 
@@ -42,7 +43,7 @@ namespace RESOURCES
             // ABORT IF THE ASSET FAILED TO BE LOADED.
             if (!asset_loaded)
             {
-                return false;
+                /// @todo   Allow other assets to continue being loaded?  return false;
             }
         }
 
@@ -65,7 +66,7 @@ namespace RESOURCES
                     std::shared_ptr<sf::Music> music = GetMusic(asset.Id, asset.BinaryData);
                     if (!music)
                     {
-                        return false;
+                        /// @todo   Allow other assets to continue being loaded?  return false;
                     }
                     break;
                 }
@@ -74,7 +75,7 @@ namespace RESOURCES
                     std::shared_ptr<sf::Shader> shader = GetShader(asset.Id, asset.BinaryData);
                     if (!shader)
                     {
-                        return false;
+                        /// @todo   Allow other assets to continue being loaded?  return false;
                     }
                     break;
                 }
@@ -83,7 +84,7 @@ namespace RESOURCES
                     std::shared_ptr<sf::SoundBuffer> sound = GetSound(asset.Id, asset.BinaryData);
                     if (!sound)
                     {
-                        return false;
+                        /// @todo   Allow other assets to continue being loaded?  return false;
                     }
                     break;
                 }
@@ -92,7 +93,7 @@ namespace RESOURCES
                     std::shared_ptr<GRAPHICS::Texture> texture = GetTexture(asset.Id, asset.BinaryData);
                     if (!texture)
                     {
-                        return false;
+                        /// @todo   Allow other assets to continue being loaded?  return false;
                     }
                     break;
                 }
@@ -289,6 +290,15 @@ namespace RESOURCES
             return nullptr;
         }
 
+        // CHECK TO SEE IF AN OPEN AL ERROR OCCURRED.
+        // This could occur if there isn't an audio device for some reason.
+        ALenum open_al_error = alGetError();
+        bool open_al_error_ocurred = (AL_NO_ERROR != open_al_error);
+        if (open_al_error_ocurred)
+        {
+            return nullptr;
+        }
+
         // SAVE THE SOUND TO AVOID TAKING TIME TO LOAD IT IN THE FUTURE.
         AudioSamples[sound_id] = sound_buffer;
         return sound_buffer;
@@ -318,6 +328,15 @@ namespace RESOURCES
         std::shared_ptr<sf::SoundBuffer> sound_buffer = std::make_shared<sf::SoundBuffer>();
         bool audio_samples_loaded = sound_buffer->loadFromMemory(binary_data.data(), binary_data.size());
         if (!audio_samples_loaded)
+        {
+            return nullptr;
+        }
+
+        // CHECK TO SEE IF AN OPEN AL ERROR OCCURRED.
+        // This could occur if there isn't an audio device for some reason.
+        ALenum open_al_error = alGetError();
+        bool open_al_error_ocurred = (AL_NO_ERROR != open_al_error);
+        if (open_al_error_ocurred)
         {
             return nullptr;
         }
@@ -364,6 +383,15 @@ namespace RESOURCES
             return nullptr;
         }
 
+        // CHECK TO SEE IF AN OPEN AL ERROR OCCURRED.
+        // This could occur if there isn't an audio device for some reason.
+        ALenum open_al_error = alGetError();
+        bool open_al_error_ocurred = (AL_NO_ERROR != open_al_error);
+        if (open_al_error_ocurred)
+        {
+            return nullptr;
+        }
+
         // SAVE THE MUSIC TO AVOID TAKING TIME TO LOAD IT IN THE FUTURE.
         Music[music_id] = music;
         return music;
@@ -399,6 +427,15 @@ namespace RESOURCES
         std::shared_ptr<sf::Music> music = std::make_shared<sf::Music>();
         bool music_loaded = music->openFromMemory(music_data.get(), music_size_in_bytes);
         if (!music_loaded)
+        {
+            return nullptr;
+        }
+
+        // CHECK TO SEE IF AN OPEN AL ERROR OCCURRED.
+        // This could occur if there isn't an audio device for some reason.
+        ALenum open_al_error = alGetError();
+        bool open_al_error_ocurred = (AL_NO_ERROR != open_al_error);
+        if (open_al_error_ocurred)
         {
             return nullptr;
         }

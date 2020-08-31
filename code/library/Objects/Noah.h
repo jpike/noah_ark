@@ -34,9 +34,11 @@ namespace OBJECTS
         static const std::string WALK_RIGHT_ANIMATION_NAME;
 
         // CONSTRUCTION.
+#if TODO
         explicit Noah(
             const std::shared_ptr<GRAPHICS::Texture>& noah_texture,
             const std::shared_ptr<OBJECTS::Axe>& axe);
+#endif
 
         // POSITIONING.
         MATH::Vector2f GetWorldPosition() const;
@@ -53,10 +55,10 @@ namespace OBJECTS
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The direction Noah is currently facing.
-        GAMEPLAY::Direction FacingDirection;
+        GAMEPLAY::Direction FacingDirection = GAMEPLAY::Direction::INVALID;
         /// The sprite used for rendering Noah.
-        GRAPHICS::AnimatedSprite Sprite;
+        GRAPHICS::AnimatedSprite Sprite = GRAPHICS::AnimatedSprite();
         /// The inventory of items held by Noah.
-        std::shared_ptr<INVENTORY::Inventory> Inventory;
+        std::shared_ptr<INVENTORY::Inventory> Inventory = nullptr;
     };
 }

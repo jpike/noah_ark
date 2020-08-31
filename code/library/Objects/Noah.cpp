@@ -10,6 +10,7 @@ namespace OBJECTS
     const std::string Noah::WALK_LEFT_ANIMATION_NAME = "noah_walk_left";
     const std::string Noah::WALK_RIGHT_ANIMATION_NAME = "noah_walk_right";
 
+#if TODO
     /// Constructor.
     /// @param[in]  noah_texture - The texture to use for Noah.
     /// @param[in]  axe - The axe for Noah.
@@ -93,6 +94,7 @@ namespace OBJECTS
         // INITIALIZE THE AXE.
         Inventory->Axe = axe;
     }
+#endif
 
     /// Gets the world position of Noah.
     /// @return The world position of Noah.

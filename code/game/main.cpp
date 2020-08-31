@@ -18,6 +18,7 @@
 // - Inventory
 // - States
 
+#include <cassert>
 #include <chrono>
 #include <exception>
 #include <memory>
@@ -35,37 +36,6 @@
 #include "Resources/PredefinedAssetPackages.h"
 #include "States/GameStates.h"
 #include "States/GameState.h"
-
-bool LoadIntroSequenceAssets(RESOURCES::Assets& asset_collection)
-{
-    auto load_start_time = std::chrono::system_clock::now();
-
-    std::vector<RESOURCES::Asset> intro_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME);
-    bool assets_loaded = !intro_assets.empty() && asset_collection.Populate(intro_assets);
-
-    std::shared_ptr<GRAPHICS::GUI::Font> default_sans_serif_font = GRAPHICS::GUI::Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
-    if (!default_sans_serif_font)
-    {
-        DEBUGGING::DebugConsole::WriteErrorLine("Failed to load default sans serif font.");
-        return false;
-    }
-
-    std::shared_ptr<GRAPHICS::GUI::Font> default_serif_font = GRAPHICS::GUI::Font::LoadSystemDefaultFont(ANSI_FIXED_FONT);
-    if (!default_serif_font)
-    {
-        DEBUGGING::DebugConsole::WriteErrorLine("Failed to load default serif font.");
-        return false;
-    }
-
-    asset_collection.Fonts[RESOURCES::AssetId::FONT_TEXTURE] = default_sans_serif_font;
-    asset_collection.Fonts[RESOURCES::AssetId::SERIF_FONT_TEXTURE] = default_serif_font;
-
-    auto load_end_time = std::chrono::system_clock::now();
-    auto load_time_diff = load_end_time - load_start_time;
-    DEBUGGING::DebugConsole::WriteLine("Intro sequence load time: ", load_time_diff.count());
-
-    return assets_loaded;
-}
 
 /// Loads the world.
 /// @param[in,out]  assets - The assets to use for the world.
@@ -151,18 +121,36 @@ std::shared_ptr<RESOURCES::Assets> LoadRemainingAssets(const std::shared_ptr<RES
 {
     auto load_start_time = std::chrono::system_clock::now();
     
-    std::vector<RESOURCES::Asset> remaining_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::MAIN_ASSET_PACKAGE_FILENAME);
-    bool assets_loaded = !remaining_assets.empty() && assets->Populate(remaining_assets);
+    std::unordered_map<RESOURCES::AssetId, RESOURCES::Asset> remaining_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::MAIN_ASSET_PACKAGE_FILENAME);
+    std::vector<RESOURCES::Asset> temporary_assets;
+    for (const auto& [asset_id, asset] : remaining_assets)
+    {
+        if (asset.Type == RESOURCES::AssetType::MUSIC || asset.Type == RESOURCES::AssetType::SOUND_EFFECT)
+        {
+            if (speakers.Enabled)
+            {
+                temporary_assets.push_back(asset);
+            }
+        }
+        else
+        {
+            temporary_assets.push_back(asset);
+        }
+    }
+    bool assets_loaded = !remaining_assets.empty() && assets->Populate(temporary_assets);
     if (!assets_loaded)
     {
-        return nullptr;
+        /// @todo   Allow game to continue even if not all assets loaded?  return nullptr;
     }
 
     auto load_end_time = std::chrono::system_clock::now();
     auto load_time_diff = load_end_time - load_start_time;
     DEBUGGING::DebugConsole::WriteLine("Remaining asset raw load time: ", load_time_diff.count());
 
-    LoadSoundsAfterIntroAssets(*assets, speakers);
+    if (speakers.Enabled)
+    {
+        LoadSoundsAfterIntroAssets(*assets, speakers);
+    }
 
     return assets;
 }
@@ -182,8 +170,7 @@ std::shared_ptr<MAPS::World> LoadWorldAfterAssetsFinishLoading(std::shared_futur
 }
 
 /// The main entry point for the game.
-/// Runs the Noah's Ark game until the user
-/// chooses to exit or an error occurs.
+/// Runs the Noah's Ark game until the user chooses to exit or an error occurs.
 /// @return 0 for success; 1 upon failure.
 int main()
 {
@@ -198,65 +185,44 @@ int main()
         // Ensure that only one key event is generated for each key press.
         window->setKeyRepeatEnabled(false);
 
-        // LOAD ASSETS NEEDED FOR THE INTRO SEQUENCE.
-        // Some assets are explicitly loaded first as they are needed for initial
-        // rendering of the intro sequence and title screen.  By loading them first,
-        // quick startup time for the game can be maintained, showing the intro
-        // sequence while other assets are being loaded.
-        std::shared_ptr<RESOURCES::Assets> assets = std::make_shared<RESOURCES::Assets>();
-        bool intro_sequence_assets_loaded = LoadIntroSequenceAssets(*assets);
-        if (!intro_sequence_assets_loaded)
-        {
-            DEBUGGING::DebugConsole::WriteErrorLine("Failed to load intro sequence assets.");
-            return EXIT_FAILURE;
-        }
-
-        std::shared_ptr<AUDIO::Speakers> speakers = std::make_shared<AUDIO::Speakers>();
-        auto intro_music = assets->GetMusic(RESOURCES::AssetId::INTRO_MUSIC);
-        if (!intro_music)
-        {
-            return EXIT_FAILURE;
-        }
-        speakers->AddMusic(RESOURCES::AssetId::INTRO_MUSIC, intro_music);
-        speakers->PlayMusic(RESOURCES::AssetId::INTRO_MUSIC);
-
-        // LOAD REMAINING ASSETS.
-        std::shared_future< std::shared_ptr<RESOURCES::Assets> > assets_being_loaded = std::async(LoadRemainingAssets, assets, std::ref(*speakers));
-        std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorldAfterAssetsFinishLoading, assets_being_loaded);
-
-        // CREATE THE SCREEN.
-        std::unique_ptr<GRAPHICS::Screen> screen = GRAPHICS::Screen::Create();
-        if (!screen)
-        {
-            DEBUGGING::DebugConsole::WriteErrorLine("Failed to create game screen.");
-            return EXIT_FAILURE;
-        }
+        // LOAD THE INITIAL ASSETS.
+        std::unordered_map<RESOURCES::AssetId, RESOURCES::Asset> intro_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME);
 
         // INITIALIZE THE RENDERER.
+        std::unique_ptr<GRAPHICS::Screen> screen = GRAPHICS::Screen::Create();
         GRAPHICS::Renderer renderer(std::move(screen));
 
-        auto colored_texture_shader = assets->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
-        auto serif_font = assets->GetFont(RESOURCES::AssetId::SERIF_FONT_TEXTURE);
-        auto default_font = assets->GetFont(RESOURCES::AssetId::FONT_TEXTURE);
-        bool renderer_assets_loaded = (colored_texture_shader && serif_font && default_font);
-        
-        if (!renderer_assets_loaded)
-        {
-            return EXIT_FAILURE;
-        }
+        const auto& colored_texture_shader = intro_assets[RESOURCES::AssetId::COLORED_TEXTURE_SHADER];
+        bool colored_texture_shader_loaded = renderer.ColoredTextShader.loadFromMemory(colored_texture_shader.BinaryData, sf::Shader::Fragment);
+        assert(colored_texture_shader_loaded);
 
-        renderer.ColoredTextShader = colored_texture_shader;
-        renderer.Fonts[RESOURCES::AssetId::SERIF_FONT_TEXTURE] = serif_font;
-        renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE] = default_font;
+        std::shared_ptr<GRAPHICS::GUI::Font> default_sans_serif_font = GRAPHICS::GUI::Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
+        assert(default_sans_serif_font);
+        renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE] = default_sans_serif_font;
 
-        // INITIALIZE REMAINING SUBSYSTEMS.
-        STATES::GameStates game_states(speakers, assets);
+        std::shared_ptr<GRAPHICS::GUI::Font> default_serif_font = GRAPHICS::GUI::Font::LoadSystemDefaultFont(ANSI_FIXED_FONT);
+        assert(default_serif_font);
+        renderer.Fonts[RESOURCES::AssetId::SERIF_FONT_TEXTURE] = default_serif_font;
 
-        INPUT_CONTROL::InputController input_controller;
+        // INITIALIZE THE SPEAKERS.
+        std::shared_ptr<AUDIO::Speakers> speakers = std::make_shared<AUDIO::Speakers>();
+        const auto& intro_music_asset = intro_assets[RESOURCES::AssetId::INTRO_MUSIC];
+        std::shared_ptr<sf::Music> intro_music = speakers->LoadMusic(intro_music_asset.Id, intro_music_asset.BinaryData);
+        speakers->Enabled = (nullptr != intro_music);
+
+        // INITIALIZE THE INTRO SEQUENCE.
+        STATES::GameStates game_states;
+        game_states.IntroSequence.Initialize(*speakers);
+
+        // LOAD REMAINING ASSETS.
+        std::shared_ptr<RESOURCES::Assets> assets = std::make_shared<RESOURCES::Assets>();
+        std::shared_future< std::shared_ptr<RESOURCES::Assets> > assets_being_loaded = std::async(LoadRemainingAssets, assets, std::ref(*speakers));
+        std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorldAfterAssetsFinishLoading, assets_being_loaded);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         sf::Clock game_loop_clock;
         sf::Time total_elapsed_time;
+        INPUT_CONTROL::InputController input_controller;
         while (window->isOpen())
         {
             // PROCESS WINDOW EVENTS.

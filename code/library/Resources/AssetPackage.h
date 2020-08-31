@@ -1,8 +1,9 @@
 #pragma once
 
 #include <filesystem>
-#include <vector>
+#include <unordered_map>
 #include "Resources/Asset.h"
+#include "Resources/AssetId.h"
 #include "Resources/AssetPackageDefinition.h"
 
 namespace RESOURCES
@@ -19,7 +20,7 @@ namespace RESOURCES
     {
     public:
         // FILE ACCESS.
-        static std::vector<Asset> ReadFile(const std::filesystem::path& filepath);
+        static std::unordered_map<AssetId, Asset> ReadFile(const std::filesystem::path& filepath);
         static bool WriteFile(const AssetPackageDefinition& asset_package_definition, const std::filesystem::path& filepath);
     };
 }

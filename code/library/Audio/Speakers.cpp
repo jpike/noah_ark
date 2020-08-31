@@ -1,3 +1,4 @@
+#include <al.h>
 #include "Audio/Speakers.h"
 
 namespace AUDIO
@@ -10,6 +11,13 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
+        // It's not worth spending time on anything if the speakers are disabled.
+        if (!Enabled)
+        {
+            return;
+        }
 
         // MAKE SURE THE AUDIO SAMPLES EXIST.
         if (!audio_samples)
@@ -29,6 +37,13 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
+        // It's not worth spending time on anything if the speakers are disabled.
+        if (!Enabled)
+        {
+            return false;
+        }
 
         // CHECK IF THE SOUND EXISTS.
         auto sound_effect = Sounds.find(sound_id);
@@ -52,6 +67,13 @@ namespace AUDIO
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
 
+        // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
+        // It's not worth spending time on anything if the speakers are disabled.
+        if (!Enabled)
+        {
+            return;
+        }
+
         // PLAY THE SOUND IF IT EXISTS.
         auto sound_effect = Sounds.find(sound_id);
         bool sound_exists = (Sounds.end() != sound_effect);
@@ -59,6 +81,51 @@ namespace AUDIO
         {
             sound_effect->second.Play();
         }
+    }
+
+    /// Attempts to load music from binary data into the speakers.
+    /// If music with the specified ID already exists in the speakers, it will be overwritten.
+    /// @param[in]  music_id - The unique ID for the music.
+    /// @param[in]  music_binary_data - The raw binary data for the music.
+    /// @return The music, if successfully loaded; null otherwise.
+    std::shared_ptr<sf::Music> Speakers::LoadMusic(const RESOURCES::AssetId music_id, const std::string& music_binary_data)
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
+        // It's not worth spending time on anything if the speakers are disabled.
+        if (!Enabled)
+        {
+            return nullptr;
+        }
+
+        // CREATE A PERMANENT COPY OF THE BINARY DATA.
+        std::size_t music_size_in_bytes = music_binary_data.size();
+        MusicData[music_id] = std::make_unique<uint8_t[]>(music_size_in_bytes);
+        const std::unique_ptr<uint8_t[]>& music_data = MusicData[music_id];
+        std::memcpy(music_data.get(), music_binary_data.data(), music_size_in_bytes);
+
+        // LOAD THE MUSIC.
+        std::shared_ptr<sf::Music> music = std::make_shared<sf::Music>();
+        bool music_loaded = music->openFromMemory(music_data.get(), music_size_in_bytes);
+        if (!music_loaded)
+        {
+            return nullptr;
+        }
+
+        // CHECK TO SEE IF AN OPEN AL ERROR OCCURRED.
+        // This could occur if there isn't an audio device for some reason.
+        ALenum open_al_error = alGetError();
+        bool open_al_error_ocurred = (AL_NO_ERROR != open_al_error);
+        if (open_al_error_ocurred)
+        {
+            return nullptr;
+        }
+
+        // ADD THE MUSIC TO THE SPEAKERS.
+        AddMusic(music_id, music);
+        return music;
     }
 
     /// Adds music to the speakers for playing.
@@ -69,6 +136,13 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
+        // It's not worth spending time on anything if the speakers are disabled.
+        if (!Enabled)
+        {
+            return;
+        }
 
         // MAKE SURE THE MUSIC EXISTS.
         if (!music)
@@ -87,6 +161,13 @@ namespace AUDIO
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
 
+        // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
+        // It's not worth spending time on anything if the speakers are disabled.
+        if (!Enabled)
+        {
+            return;
+        }
+
         // PLAY THE MUSIC IF IT EXISTS.
         auto music = Music.find(music_id);
         bool music_exists = (Music.end() != music) && (nullptr != music->second);
@@ -103,6 +184,13 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
+        // It's not worth spending time on anything if the speakers are disabled.
+        if (!Enabled)
+        {
+            return;
+        }
 
         // CHECK IF THE MUSIC EXISTS IN THE SPEAKERS.
         auto music = Music.find(music_id);
@@ -126,6 +214,13 @@ namespace AUDIO
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
 
+        // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
+        // It's not worth spending time on anything if the speakers are disabled.
+        if (!Enabled)
+        {
+            return;
+        }
+
         // STOP THE MUSIC IF IT EXISTS.
         auto music = Music.find(music_id);
         bool music_exists = (Music.end() != music) && (nullptr != music->second);
@@ -140,6 +235,13 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
+        // It's not worth spending time on anything if the speakers are disabled.
+        if (!Enabled)
+        {
+            return;
+        }
 
         // STOP ANY PLAYING SOUNDS.
         for (auto& id_and_sound : Sounds)

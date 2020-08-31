@@ -13,6 +13,97 @@
 
 namespace STATES
 {
+    /// Initializes the gameplay state.
+    /// @param[in]  screen_width_in_pixels - The width of the screen, in pixels.
+    /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
+    /// @param[in,out]  world - The world for the gameplay state.
+    /// @return True if initialization succeeded; false otherwise.
+    bool GameplayState::Initialize(
+        const unsigned int screen_width_in_pixels,
+        const std::shared_ptr<SavedGameData>& saved_game_data,
+        const std::shared_ptr<MAPS::World>& world)
+    {
+        // MAKE SURE SAVED GAME DATA WAS PROVIDED.
+        bool saved_game_exists = (nullptr != saved_game_data);
+        if (!saved_game_exists)
+        {
+            // The gameplay state requires saved game data.
+            return false;
+        }
+
+        // MAKE SURE A WORLD WAS PROVIDED.
+        bool world_exists = (nullptr != world);
+        if (!world_exists)
+        {
+            // The gameplay state requires a world.
+            return false;
+        }
+
+        // INITIALIZE THE WORLD.
+        World = world;
+        CurrentMapGrid = &World->Overworld;
+
+        // Built ark pieces need to be initialized.
+        for (const auto& built_ark_piece_data : saved_game_data->BuildArkPieces)
+        {
+            // GET THE TILE MAP FOR THE BUILT ARK PIECES.
+            MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(built_ark_piece_data.TileMapGridYPosition, built_ark_piece_data.TileMapGridXPosition);
+            if (!current_tile_map)
+            {
+                // The game can't be properly initialized if a tile map is missing.
+                return false;
+            }
+
+            // UPDATE THE BUILT ARK PIECES IN THE CURRENT TILE MAP.
+            for (size_t ark_piece_index : built_ark_piece_data.BuiltArkPieceIndices)
+            {
+                // SET THE CURRENT ARK PIECE AS BUILT.
+                auto& ark_piece = current_tile_map->ArkPieces.at(ark_piece_index);
+                ark_piece.Built = true;
+            }
+        }
+
+        /// @todo
+        screen_width_in_pixels;
+        return true;
+    }
+
+    /// Updates the state of the gameplay based on elapsed time and player input.
+    /// @param[in]  elapsed_time - The amount of time by which to update the game state.
+    /// @param[in,out]  input_controller - The controller supplying player input.
+    /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
+    /// @return The next game state after updating.
+    GameState GameplayState::Update(
+        const sf::Time& elapsed_time,
+        INPUT_CONTROL::InputController& input_controller,
+        GRAPHICS::Camera& camera)
+    {
+        /// @todo
+        elapsed_time;
+        input_controller;
+        camera;
+
+        return GameState::GAMEPLAY;
+    }
+
+    /// Renders the current frame of the gameplay state.
+    /// @param[in]  total_elapsed_time - The total elapsed time since the game began; used for certain rendering effects.
+    /// @param[in,out]  renderer - The renderer to use for rendering.
+    /// @return The rendered gameplay state.
+    sf::Sprite GameplayState::Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer)
+    {
+        // RENDER CONTENT SPECIFIC TO THE CURRENT MAP.
+        renderer.Render(*CurrentMapGrid);
+
+        /// @todo
+        total_elapsed_time;
+
+        // RETURN THE FINAL RENDERED SCREEN.
+        sf::Sprite screen = renderer.RenderFinalScreen(sf::RenderStates::Default);
+        return screen;
+    }
+
+#if TODO_OLD
     /// Constructor.
     /// @param[in,out]  speakers - The speakers for which to play sound effects.
     /// @param[in]  assets - The assets to be used during gameplay.
@@ -1550,4 +1641,5 @@ namespace STATES
             camera.SetCenter(center_world_position);
         }
     }
+#endif
 }

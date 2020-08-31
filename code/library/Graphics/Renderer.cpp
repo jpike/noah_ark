@@ -797,9 +797,9 @@ namespace GRAPHICS
     {
         // CONFIGURE THE SHADER IN THE RENDER STATES.
         sf::RenderStates render_states = sf::RenderStates::Default;
-        ColoredTextShader->setUniform("color", sf::Glsl::Vec4(sf::Color(color.Red, color.Green, color.Blue, color.Alpha)));
-        ColoredTextShader->setUniform("texture", sf::Shader::CurrentTexture);
-        render_states.shader = ColoredTextShader.get();
+        ColoredTextShader.setUniform("color", sf::Glsl::Vec4(sf::Color(color.Red, color.Green, color.Blue, color.Alpha)));
+        ColoredTextShader.setUniform("texture", sf::Shader::CurrentTexture);
+        render_states.shader = &ColoredTextShader;
         return render_states;
     }
 }

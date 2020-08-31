@@ -89,7 +89,7 @@ namespace GRAPHICS
         /// Fonts to use for rendering text.
         std::unordered_map< RESOURCES::AssetId, std::shared_ptr<GRAPHICS::GUI::Font> > Fonts;
         /// The shader to use for colored text.
-        std::shared_ptr<sf::Shader> ColoredTextShader;
+        sf::Shader ColoredTextShader;
         /// The shader to use for shading based on the time of day.
         std::shared_ptr<sf::Shader> TimeOfDayShader;
 

@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <cmath>
 #include "Bible/BibleVerses.h"
+#include "Resources/AssetPackage.h"
+#include "Resources/PredefinedAssetPackages.h"
 #include "States/IntroSequence.h"
 
 namespace STATES
@@ -44,6 +46,19 @@ namespace STATES
         }
 
         return intro_bible_verses;
+    }
+
+    /// Attempts to initialize the intro sequence to its starting state.
+    /// @param[in,out]  speakers - The speakers to use for playing audio.
+    void IntroSequence::Initialize(AUDIO::Speakers& speakers)
+    {
+        // RESET THE INTRO SEQUENCE TO THE BEGINNING.
+        CurrentFrameIndex = 0;
+        ElapsedTimeForCurrentFrame = sf::Time::Zero;
+
+        // RESTART PLAYING ONLY THE INTRO MUSIC.
+        speakers.StopAllAudio();
+        speakers.PlayMusic(RESOURCES::AssetId::INTRO_MUSIC);
     }
 
     /// Determines if the intro sequence has completed.

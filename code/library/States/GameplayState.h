@@ -28,6 +28,38 @@ namespace STATES
     class GameplayState
     {
     public:
+        // INITIALIZATION.
+        bool Initialize(
+            const unsigned int screen_width_in_pixels,
+            const std::shared_ptr<SavedGameData>& saved_game_data,
+            const std::shared_ptr<MAPS::World>& world);
+
+        // UPDATING.
+        GameState Update(
+            const sf::Time& elapsed_time,
+            INPUT_CONTROL::InputController& input_controller,
+            GRAPHICS::Camera& camera);
+
+        // RENDERING.
+        sf::Sprite Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer);
+
+        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The main game world.
+        std::shared_ptr<MAPS::World> World = nullptr;
+
+    private:
+        // PRIVATE MEMBER VARIABLES.
+        /// The current map being displayed within the world.
+        MAPS::MultiTileMapGrid* CurrentMapGrid = nullptr;
+    };
+
+#if TODO_OLD
+    /// The state of the game featuring the main gameplay of the player moving Noah
+    /// throughout the overworld and inside the ark (before, during, and after
+    /// the flood).
+    class GameplayState
+    {
+    public:
         // CONSTRUCTION.
         explicit GameplayState(
             const std::shared_ptr<AUDIO::Speakers>& speakers,
@@ -116,4 +148,5 @@ namespace STATES
         /// have animals have different "modes" of behavior.
         std::vector< std::shared_ptr<OBJECTS::Animal> > AnimalsGoingIntoArk;
     };
+#endif
 }

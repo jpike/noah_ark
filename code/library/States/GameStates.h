@@ -24,13 +24,6 @@ namespace STATES
     class GameStates
     {
     public:
-        /// @todo   Revisit whether we can get rid of this constructor.
-        explicit GameStates(
-            const std::shared_ptr<AUDIO::Speakers>& speakers,
-            const std::shared_ptr<RESOURCES::Assets>& assets) :
-        GameplayState(speakers, assets)
-        {}
-
         GameState Update(
             const sf::Time& elapsed_time, 
             INPUT_CONTROL::InputController& input_controller, 

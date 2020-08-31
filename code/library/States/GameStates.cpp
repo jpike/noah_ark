@@ -186,7 +186,7 @@ namespace STATES
                 }
 
                 // FOCUS THE CAMERA ON THE PLAYER.
-                MATH::Vector2f player_start_world_position = GameplayState.NoahPlayer->GetWorldPosition();
+                MATH::Vector2f player_start_world_position = GameplayState.World->NoahPlayer.GetWorldPosition();
                 renderer.Camera.SetCenter(player_start_world_position);
                 break;
             }

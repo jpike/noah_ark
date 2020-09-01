@@ -1,3 +1,4 @@
+#include "Audio/Music.cpp"
 #include "Audio/SoundEffect.cpp"
 #include "Audio/Speakers.cpp"
 #include "Bible/BibleBook.cpp"
@@ -24,6 +25,7 @@
 #include "Graphics/Screen.cpp"
 #include "Graphics/Sprite.cpp"
 #include "Graphics/Texture.cpp"
+#include "Hardware/GamingHardware.cpp"
 #include "Input/InputController.cpp"
 #include "Input/Keyboard.cpp"
 #include "Input/Mouse.cpp"

@@ -9,8 +9,8 @@ namespace GRAPHICS
     /// Constructor.
     /// @param[in,out]  screen - The screen to render to.
     /// @throws std::exception - Thrown if a parameter is null.
-    Renderer::Renderer(std::unique_ptr<GRAPHICS::Screen>&& screen) :
-    Screen(std::move(screen)),
+    Renderer::Renderer(const std::shared_ptr<GRAPHICS::Screen>& screen) :
+    Screen(screen),
     Camera(MATH::FloatRectangle::FromCenterAndDimensions(
         Screen->RenderTarget.getView().getCenter().x,
         Screen->RenderTarget.getView().getCenter().y,

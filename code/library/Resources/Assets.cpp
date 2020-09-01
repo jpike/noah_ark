@@ -63,7 +63,7 @@ namespace RESOURCES
             {
                 case RESOURCES::AssetType::MUSIC:
                 {
-                    std::shared_ptr<sf::Music> music = GetMusic(asset.Id, asset.BinaryData);
+                    std::shared_ptr<AUDIO::Music> music = GetMusic(asset.Id, asset.BinaryData);
                     if (!music)
                     {
                         /// @todo   Allow other assets to continue being loaded?  return false;
@@ -351,7 +351,7 @@ namespace RESOURCES
     /// been loaded, the previously loaded instance will be returned.
     /// @param[in]  music_id - The ID of the music to load.
     /// @return The requested music, if successfully loaded; null otherwise.
-    std::shared_ptr<sf::Music> Assets::GetMusic(const AssetId music_id)
+    std::shared_ptr<AUDIO::Music> Assets::GetMusic(const AssetId music_id)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(AssetMutex);
@@ -375,19 +375,10 @@ namespace RESOURCES
         }
 
         // LOAD THE MUSIC.
-        // The muisc ID maps directly to a filepath.
-        std::shared_ptr<sf::Music> music = std::make_shared<sf::Music>();
-        bool music_loaded = music->openFromFile(music_id_with_filepath->second);
+        // The music ID maps directly to a filepath.
+        std::shared_ptr<AUDIO::Music> music = std::make_shared<AUDIO::Music>();
+        bool music_loaded = music->Sfml.openFromFile(music_id_with_filepath->second);
         if (!music_loaded)
-        {
-            return nullptr;
-        }
-
-        // CHECK TO SEE IF AN OPEN AL ERROR OCCURRED.
-        // This could occur if there isn't an audio device for some reason.
-        ALenum open_al_error = alGetError();
-        bool open_al_error_ocurred = (AL_NO_ERROR != open_al_error);
-        if (open_al_error_ocurred)
         {
             return nullptr;
         }
@@ -403,7 +394,7 @@ namespace RESOURCES
     /// @param[in]  music_id - The ID of the music to load.
     /// @param[in]  binary_data - The binary data of the music.
     /// @return The requested music, if successfully loaded; null otherwise.
-    std::shared_ptr<sf::Music> Assets::GetMusic(const AssetId music_id, const std::string& binary_data)
+    std::shared_ptr<AUDIO::Music> Assets::GetMusic(const AssetId music_id, const std::string& binary_data)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(AssetMutex);
@@ -416,26 +407,9 @@ namespace RESOURCES
             // RETURN THE PREVIOUSLY LOADED MUSIC.
             return id_with_music->second;
         }
-
-        // CREATE A PERMANENT COPY OF THE BINARY DATA.
-        std::size_t music_size_in_bytes = binary_data.size();
-        MusicData[music_id] = std::make_unique<uint8_t[]>(music_size_in_bytes);
-        const std::unique_ptr<uint8_t[]>& music_data = MusicData[music_id];
-        std::memcpy(music_data.get(), binary_data.data(), music_size_in_bytes);
-
         // LOAD THE MUSIC.
-        std::shared_ptr<sf::Music> music = std::make_shared<sf::Music>();
-        bool music_loaded = music->openFromMemory(music_data.get(), music_size_in_bytes);
-        if (!music_loaded)
-        {
-            return nullptr;
-        }
-
-        // CHECK TO SEE IF AN OPEN AL ERROR OCCURRED.
-        // This could occur if there isn't an audio device for some reason.
-        ALenum open_al_error = alGetError();
-        bool open_al_error_ocurred = (AL_NO_ERROR != open_al_error);
-        if (open_al_error_ocurred)
+        std::shared_ptr<AUDIO::Music> music = AUDIO::Music::LoadFromMemory(binary_data);
+        if (!music)
         {
             return nullptr;
         }

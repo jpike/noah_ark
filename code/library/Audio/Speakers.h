@@ -4,7 +4,7 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
-#include <SFML/Audio.hpp>
+#include "Audio/Music.h"
 #include "Audio/SoundEffect.h"
 #include "Resources/AssetId.h"
 
@@ -19,14 +19,17 @@ namespace AUDIO
     class Speakers
     {
     public:
+        // CONSTRUCTION.
+        explicit Speakers();
+
         // SOUND EFFECTS.
         void AddSound(const RESOURCES::AssetId sound_id, const std::shared_ptr<sf::SoundBuffer>& audio_samples);
         bool SoundIsPlaying(const RESOURCES::AssetId sound_id);
         void PlaySoundEffect(const RESOURCES::AssetId sound_id);
 
         // MUSIC.
-        std::shared_ptr<sf::Music> LoadMusic(const RESOURCES::AssetId music_id, const std::string& music_binary_data);
-        void AddMusic(const RESOURCES::AssetId music_id, const std::shared_ptr<sf::Music>& music);
+        void LoadMusic(const RESOURCES::AssetId music_id, const std::string& music_binary_data);
+        void AddMusic(const RESOURCES::AssetId music_id, const std::shared_ptr<AUDIO::Music>& music);
         void PlayMusic(const RESOURCES::AssetId music_id);
         void PlayMusicIfNotAlready(const RESOURCES::AssetId music_id);
         void StopMusic(const RESOURCES::AssetId music_id);
@@ -37,7 +40,7 @@ namespace AUDIO
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// True if the speakers are enabled; false otherwise.
         /// Speakers may need to be disabled to allow the game to be played even if no audio devices are available.
-        bool Enabled = true;
+        bool Enabled = false;
 
     private:
         // MEMBER VARIABLES.
@@ -46,10 +49,6 @@ namespace AUDIO
         /// The sound effects currently loaded into the speakers.
         std::unordered_map<RESOURCES::AssetId, AUDIO::SoundEffect> Sounds = {};
         /// THe music currently loaded into the speakers.
-        std::unordered_map<RESOURCES::AssetId, std::shared_ptr<sf::Music>> Music = {};
-        /// Raw binary music data mapped by asset ID.  Must remain in-memory due to how SFML works
-        /// (https://www.sfml-dev.org/documentation/2.5.0/classsf_1_1Music.php#ae93b21bcf28ff0b5fec458039111386e).
-        /// This doesn't need to be done for other assets since they don't need to remain in memory.
-        std::unordered_map<RESOURCES::AssetId, std::unique_ptr<uint8_t[]>> MusicData = {};
+        std::unordered_map<RESOURCES::AssetId, std::shared_ptr<AUDIO::Music>> Music = {};
     };
 }

@@ -6,8 +6,8 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include "Audio/Music.h"
 #include "Audio/SoundEffect.h"
 #include "Graphics/AnimationSequence.h"
 #include "Graphics/Texture.h"
@@ -37,8 +37,8 @@ namespace RESOURCES
         std::shared_ptr<sf::Shader> GetShader(const AssetId shader_id, const std::string& binary_data);
         std::shared_ptr<sf::SoundBuffer> GetSound(const AssetId sound_id);
         std::shared_ptr<sf::SoundBuffer> GetSound(const AssetId sound_id, const::std::string& binary_data);
-        std::shared_ptr<sf::Music> GetMusic(const AssetId music_id);
-        std::shared_ptr<sf::Music> GetMusic(const AssetId music_id, const std::string& binary_data);
+        std::shared_ptr<AUDIO::Music> GetMusic(const AssetId music_id);
+        std::shared_ptr<AUDIO::Music> GetMusic(const AssetId music_id, const std::string& binary_data);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// Textures that have been loaded.  They need to remain in memory to allow them to be used.
@@ -51,15 +51,11 @@ namespace RESOURCES
         /// They are mapped by the sound resource IDs.
         std::unordered_map< AssetId, std::shared_ptr<sf::SoundBuffer> > AudioSamples = {};
         /// Music that has been loaded.
-        std::unordered_map< AssetId, std::shared_ptr<sf::Music> > Music = {};
+        std::unordered_map< AssetId, std::shared_ptr<AUDIO::Music> > Music = {};
 
     private:
         // MEMBER VARIABLES.
         /// A mutex to provide thread-safety for this class.
         std::recursive_mutex AssetMutex = {};
-        /// Raw binary music data mapped by asset ID.  Must remain in-memory due to how SFML works
-        /// (https://www.sfml-dev.org/documentation/2.5.0/classsf_1_1Music.php#ae93b21bcf28ff0b5fec458039111386e).
-        /// This doesn't need to be done for other assets since they don't need to remain in memory.
-        std::unordered_map< AssetId, std::unique_ptr<uint8_t[]> > MusicData = {};
     };
 }

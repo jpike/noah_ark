@@ -28,6 +28,7 @@
 #include "Debugging/DebugConsole.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
+#include "Hardware/GamingHardware.h"
 #include "Input/InputController.h"
 #include "Resources/AnimalSounds.h"
 #include "Resources/AssetPackage.h"
@@ -101,14 +102,14 @@ void LoadSoundsAfterIntroAssets(RESOURCES::Assets& assets, AUDIO::Speakers& spea
         speakers.AddMusic(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC, new_game_intro_music);
     }
 
-    std::shared_ptr<sf::Music> overworld_music = assets.GetMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
+    auto overworld_music = assets.GetMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
     if (overworld_music)
     {
         // The pitch is lowered to give the background music a more somber, ambient tone.
         // It might be possible to make it go lower to achieve more of an ambient effect,
         // at the expense of sounding more "scary".
-        overworld_music->setPitch(0.5f);
-        overworld_music->setLoop(true);
+        overworld_music->Sfml.setPitch(0.5f);
+        overworld_music->Sfml.setLoop(true);
         speakers.AddMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC, overworld_music);
     }
 
@@ -188,9 +189,11 @@ int main()
         // LOAD THE INITIAL ASSETS.
         std::unordered_map<RESOURCES::AssetId, RESOURCES::Asset> intro_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME);
 
+        // INITIALIZE THE GAMING HARDWARE.
+        HARDWARE::GamingHardware gaming_hardware = HARDWARE::GamingHardware::Initialize();
+
         // INITIALIZE THE RENDERER.
-        std::unique_ptr<GRAPHICS::Screen> screen = GRAPHICS::Screen::Create();
-        GRAPHICS::Renderer renderer(std::move(screen));
+        GRAPHICS::Renderer renderer(gaming_hardware.Screen);
 
         const auto& colored_texture_shader = intro_assets[RESOURCES::AssetId::COLORED_TEXTURE_SHADER];
         bool colored_texture_shader_loaded = renderer.ColoredTextShader.loadFromMemory(colored_texture_shader.BinaryData, sf::Shader::Fragment);
@@ -205,18 +208,16 @@ int main()
         renderer.Fonts[RESOURCES::AssetId::SERIF_FONT_TEXTURE] = default_serif_font;
 
         // INITIALIZE THE SPEAKERS.
-        std::shared_ptr<AUDIO::Speakers> speakers = std::make_shared<AUDIO::Speakers>();
         const auto& intro_music_asset = intro_assets[RESOURCES::AssetId::INTRO_MUSIC];
-        std::shared_ptr<sf::Music> intro_music = speakers->LoadMusic(intro_music_asset.Id, intro_music_asset.BinaryData);
-        speakers->Enabled = (nullptr != intro_music);
+        gaming_hardware.Speakers->LoadMusic(intro_music_asset.Id, intro_music_asset.BinaryData);
 
         // INITIALIZE THE INTRO SEQUENCE.
         STATES::GameStates game_states;
-        game_states.IntroSequence.Initialize(*speakers);
+        game_states.IntroSequence.Initialize(*gaming_hardware.Speakers);
 
         // LOAD REMAINING ASSETS.
         std::shared_ptr<RESOURCES::Assets> assets = std::make_shared<RESOURCES::Assets>();
-        std::shared_future< std::shared_ptr<RESOURCES::Assets> > assets_being_loaded = std::async(LoadRemainingAssets, assets, std::ref(*speakers));
+        std::shared_future< std::shared_ptr<RESOURCES::Assets> > assets_being_loaded = std::async(LoadRemainingAssets, assets, std::ref(*gaming_hardware.Speakers));
         std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorldAfterAssetsFinishLoading, assets_being_loaded);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
@@ -269,7 +270,7 @@ int main()
                 total_elapsed_time += elapsed_time;
 
                 // UPDATE THE GAME'S CURRENT STATE.
-                STATES::GameState next_game_state = game_states.Update(elapsed_time, input_controller, renderer.Camera, *speakers, *assets);
+                STATES::GameState next_game_state = game_states.Update(elapsed_time, input_controller, renderer.Camera, *gaming_hardware.Speakers, *assets);
 
                 // RENDER THE CURRENT STATE OF THE GAME TO THE WINDOW.
                 sf::Sprite screen_sprite = game_states.Render(total_elapsed_time, renderer);
@@ -280,37 +281,37 @@ int main()
                 if (input_controller.ButtonWasPressed(sf::Keyboard::Num1))
                 {
                     next_game_state = STATES::GameState::INTRO_SEQUENCE;
-                    speakers->StopAllAudio();
+                    gaming_hardware.Speakers->StopAllAudio();
                 }
                 if (input_controller.ButtonWasPressed(sf::Keyboard::Num2))
                 {
                     next_game_state = STATES::GameState::TITLE_SCREEN;
-                    speakers->StopAllAudio();
+                    gaming_hardware.Speakers->StopAllAudio();
                 }
                 if (input_controller.ButtonWasPressed(sf::Keyboard::Num3))
                 {
                     next_game_state = STATES::GameState::CREDITS_SCREEN;
-                    speakers->StopAllAudio();
+                    gaming_hardware.Speakers->StopAllAudio();
                 }
                 if (input_controller.ButtonWasPressed(sf::Keyboard::Num4))
                 {
                     next_game_state = STATES::GameState::GAME_SELECTION_SCREEN;
-                    speakers->StopAllAudio();
+                    gaming_hardware.Speakers->StopAllAudio();
                 }
                 if (input_controller.ButtonWasPressed(sf::Keyboard::Num5))
                 {
                     next_game_state = STATES::GameState::NEW_GAME_INTRO_SEQUENCE;
-                    speakers->StopAllAudio();
+                    gaming_hardware.Speakers->StopAllAudio();
                 }
                 if (input_controller.ButtonWasPressed(sf::Keyboard::Num6))
                 {
                     next_game_state = STATES::GameState::FLOOD_CUTSCENE;
-                    speakers->StopAllAudio();
+                    gaming_hardware.Speakers->StopAllAudio();
                 }
                 if (input_controller.ButtonWasPressed(sf::Keyboard::Num7))
                 {
                     next_game_state = STATES::GameState::GAMEPLAY;
-                    speakers->StopAllAudio();
+                    gaming_hardware.Speakers->StopAllAudio();
                 }
 
                 // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.

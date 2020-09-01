@@ -26,7 +26,7 @@ namespace GRAPHICS
     {
     public:
         // CONSTRUCTION.
-        explicit Renderer(std::unique_ptr<GRAPHICS::Screen>&& screen);
+        explicit Renderer(const std::shared_ptr<GRAPHICS::Screen>& screen);
 
         // FINAL RENDER RETRIEVAL.
         sf::Sprite RenderFinalScreen(const sf::RenderStates& render_settings = sf::RenderStates::Default);
@@ -83,7 +83,7 @@ namespace GRAPHICS
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The screen that gets rendered to.
-        std::unique_ptr<GRAPHICS::Screen> Screen;
+        std::shared_ptr<GRAPHICS::Screen> Screen;
         /// The camera defining what portion of the world is currently viewable.
         GRAPHICS::Camera Camera;
         /// Fonts to use for rendering text.

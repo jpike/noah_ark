@@ -1,8 +1,28 @@
-#include <al.h>
+#include <alc.h>
 #include "Audio/Speakers.h"
 
 namespace AUDIO
 {
+    /// Initializes the speakers.
+    Speakers::Speakers()
+    {
+        // CHECK IF SPEAKERS ARE ENABLED.
+        // This kind of code isn't exposed directly through SFML,
+        // so we have to replicate checking the device state here.
+        // This is done during construction to avoid having to
+        // repeat error checking in a bunch of other methods.
+        constexpr ALCchar* DEFAULT_DEVICE = nullptr;
+        ALCdevice* audio_device = alcOpenDevice(DEFAULT_DEVICE);
+        Enabled = (nullptr != audio_device);
+
+        // CLOSE ANY AUDIO DEVICE THAT WAS OPENED.
+        // SFML will open up its own copy of the default device.
+        if (audio_device)
+        {
+            alcCloseDevice(audio_device);
+        }
+    }
+
     /// Adds a sound to the speakers for playing.
     /// If a sound with the specified ID already exists in the speakers, it will be overwritten.
     /// @param[in]  sound_id - The unique ID for the sound.
@@ -87,8 +107,7 @@ namespace AUDIO
     /// If music with the specified ID already exists in the speakers, it will be overwritten.
     /// @param[in]  music_id - The unique ID for the music.
     /// @param[in]  music_binary_data - The raw binary data for the music.
-    /// @return The music, if successfully loaded; null otherwise.
-    std::shared_ptr<sf::Music> Speakers::LoadMusic(const RESOURCES::AssetId music_id, const std::string& music_binary_data)
+    void Speakers::LoadMusic(const RESOURCES::AssetId music_id, const std::string& music_binary_data)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
@@ -97,42 +116,22 @@ namespace AUDIO
         // It's not worth spending time on anything if the speakers are disabled.
         if (!Enabled)
         {
-            return nullptr;
+            return;
         }
 
-        // CREATE A PERMANENT COPY OF THE BINARY DATA.
-        std::size_t music_size_in_bytes = music_binary_data.size();
-        MusicData[music_id] = std::make_unique<uint8_t[]>(music_size_in_bytes);
-        const std::unique_ptr<uint8_t[]>& music_data = MusicData[music_id];
-        std::memcpy(music_data.get(), music_binary_data.data(), music_size_in_bytes);
-
-        // LOAD THE MUSIC.
-        std::shared_ptr<sf::Music> music = std::make_shared<sf::Music>();
-        bool music_loaded = music->openFromMemory(music_data.get(), music_size_in_bytes);
-        if (!music_loaded)
+        // LOAD THE MUSIC INTO THE SPEAKERS.
+        std::unique_ptr<AUDIO::Music> music = AUDIO::Music::LoadFromMemory(music_binary_data);
+        if (music)
         {
-            return nullptr;
+            AddMusic(music_id, std::move(music));
         }
-
-        // CHECK TO SEE IF AN OPEN AL ERROR OCCURRED.
-        // This could occur if there isn't an audio device for some reason.
-        ALenum open_al_error = alGetError();
-        bool open_al_error_ocurred = (AL_NO_ERROR != open_al_error);
-        if (open_al_error_ocurred)
-        {
-            return nullptr;
-        }
-
-        // ADD THE MUSIC TO THE SPEAKERS.
-        AddMusic(music_id, music);
-        return music;
     }
 
     /// Adds music to the speakers for playing.
     /// If music with the specified ID already exists in the speakers, it will be overwritten.
     /// @param[in]  music_id - The unique ID for the music.
     /// @param[in]  music - The music.
-    void Speakers::AddMusic(const RESOURCES::AssetId music_id, const std::shared_ptr<sf::Music>& music)
+    void Speakers::AddMusic(const RESOURCES::AssetId music_id, const std::shared_ptr<AUDIO::Music>& music)
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
@@ -173,7 +172,7 @@ namespace AUDIO
         bool music_exists = (Music.end() != music) && (nullptr != music->second);
         if (music_exists)
         {
-            music->second->play();
+            music->second->Sfml.play();
         }
     }
 
@@ -198,11 +197,11 @@ namespace AUDIO
         if (music_exists)
         {
             // PLAY THE MUSIC ONLY IF IT'S NOT ALREADY PLAYING.
-            sf::SoundSource::Status music_status = music->second->getStatus();
+            sf::SoundSource::Status music_status = music->second->Sfml.getStatus();
             bool music_playing = (sf::SoundSource::Playing == music_status);
             if (!music_playing)
             {
-                music->second->play();
+                music->second->Sfml.play();
             }
         }
     }
@@ -226,7 +225,7 @@ namespace AUDIO
         bool music_exists = (Music.end() != music) && (nullptr != music->second);
         if (music_exists)
         {
-            music->second->stop();
+            music->second->Sfml.stop();
         }
     }
 
@@ -252,7 +251,7 @@ namespace AUDIO
         // STOP ANY PLAYING MUSIC.
         for (auto& id_and_music : Music)
         {
-            id_and_music.second->stop();
+            id_and_music.second->Sfml.stop();
         }
     }
 }

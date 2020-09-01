@@ -6,6 +6,7 @@
 #include "Audio/Speakers.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Renderer.h"
+#include "Hardware/GamingHardware.h"
 #include "Input/InputController.h"
 #include "Maps/World.h"
 #include "States/CreditsScreen.h"
@@ -25,12 +26,10 @@ namespace STATES
     {
     public:
         GameState Update(
-            const sf::Time& elapsed_time, 
-            INPUT_CONTROL::InputController& input_controller, 
+            HARDWARE::GamingHardware& gaming_hardware,
             GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers,
             RESOURCES::Assets& assets);
-        sf::Sprite Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer);
+        sf::Sprite Render(HARDWARE::GamingHardware& gaming_hardware, GRAPHICS::Renderer& renderer);
         void SwitchStatesIfChanged(
             const GameState& new_state, 
             const std::shared_ptr<MAPS::World>& world, 

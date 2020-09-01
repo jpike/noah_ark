@@ -221,9 +221,6 @@ int main()
         std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorldAfterAssetsFinishLoading, assets_being_loaded);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
-        sf::Clock game_loop_clock;
-        sf::Time total_elapsed_time;
-        INPUT_CONTROL::InputController input_controller;
         while (window->isOpen())
         {
             // PROCESS WINDOW EVENTS.
@@ -243,14 +240,14 @@ int main()
                         // This will prevent the user from accidentally moving
                         // the player until the window regains focus.
                         DEBUGGING::DebugConsole::WriteLine("Disabling input.");
-                        input_controller.DisableInput();
+                        gaming_hardware.InputController.DisableInput();
                         break;
                     case sf::Event::GainedFocus:
                         // ENABLE INPUT.
                         // This will allow the user to resume moving the player
                         // now that the window has focus.
                         DEBUGGING::DebugConsole::WriteLine("Enabling input.");
-                        input_controller.EnableInput();
+                        gaming_hardware.InputController.EnableInput();
                         break;
                 }
             }
@@ -260,55 +257,54 @@ int main()
             {
                 // READ USER INPUT.
                 sf::Vector2i mouse_screen_position = sf::Mouse::getPosition(*window);
-                input_controller.Mouse.ScreenPosition = MATH::Vector2f(
+                gaming_hardware.InputController.Mouse.ScreenPosition = MATH::Vector2f(
                     static_cast<float>(mouse_screen_position.x),
                     static_cast<float>(mouse_screen_position.y));
-                input_controller.ReadInput();
+                gaming_hardware.InputController.ReadInput();
 
                 // GET THE ELAPSED TIME FOR THE NEW FRAME.
-                sf::Time elapsed_time = game_loop_clock.restart();
-                total_elapsed_time += elapsed_time;
+                gaming_hardware.TickClockForFrame();
 
                 // UPDATE THE GAME'S CURRENT STATE.
-                STATES::GameState next_game_state = game_states.Update(elapsed_time, input_controller, renderer.Camera, *gaming_hardware.Speakers, *assets);
+                STATES::GameState next_game_state = game_states.Update(gaming_hardware, renderer.Camera, *assets);
 
                 // RENDER THE CURRENT STATE OF THE GAME TO THE WINDOW.
-                sf::Sprite screen_sprite = game_states.Render(total_elapsed_time, renderer);
+                sf::Sprite screen_sprite = game_states.Render(gaming_hardware, renderer);
                 window->draw(screen_sprite);
                 window->display();
 
                 // OVERRIDE GAME STATE SWITCHES WITH DEBUG KEY PRESSES.
-                if (input_controller.ButtonWasPressed(sf::Keyboard::Num1))
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num1))
                 {
                     next_game_state = STATES::GameState::INTRO_SEQUENCE;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(sf::Keyboard::Num2))
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num2))
                 {
                     next_game_state = STATES::GameState::TITLE_SCREEN;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(sf::Keyboard::Num3))
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num3))
                 {
                     next_game_state = STATES::GameState::CREDITS_SCREEN;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(sf::Keyboard::Num4))
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num4))
                 {
                     next_game_state = STATES::GameState::GAME_SELECTION_SCREEN;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(sf::Keyboard::Num5))
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num5))
                 {
                     next_game_state = STATES::GameState::NEW_GAME_INTRO_SEQUENCE;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(sf::Keyboard::Num6))
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num6))
                 {
                     next_game_state = STATES::GameState::FLOOD_CUTSCENE;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
-                if (input_controller.ButtonWasPressed(sf::Keyboard::Num7))
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num7))
                 {
                     next_game_state = STATES::GameState::GAMEPLAY;
                     gaming_hardware.Speakers->StopAllAudio();

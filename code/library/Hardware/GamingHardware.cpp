@@ -16,4 +16,11 @@ namespace HARDWARE
 
         return gaming_hardware;
     }
+
+    /// Ticks the clock for a single frame, updating internal member variables.
+    void GamingHardware::TickClockForFrame()
+    {
+        ElapsedTimeSinceLastFrame = GameLoopClock.restart();
+        TotalElapsedTime += ElapsedTimeSinceLastFrame;
+    }
 }

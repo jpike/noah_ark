@@ -17,11 +17,16 @@ namespace HARDWARE
         // CONSTRUCTION.
         static GamingHardware Initialize();
 
+        // OTHER METHODS.
+        void TickClockForFrame();
+
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The clock keeping track of time for the purposes of the game loop.
         sf::Clock GameLoopClock = {};
-        /// The total elapsd time since the game started.
+        /// The total elapsed time since the game started.
         sf::Time TotalElapsedTime = sf::Time::Zero;
+        /// The elapsed time just since the last frame.
+        sf::Time ElapsedTimeSinceLastFrame = sf::Time::Zero;
         /// The controller supplying user input for the game.
         INPUT_CONTROL::InputController InputController = {};
         /// The screen to which the game is rendered.

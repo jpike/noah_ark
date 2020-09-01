@@ -3,18 +3,14 @@
 namespace STATES
 {
     /// Updates the current state of the game.
-    /// @param[in]  elapsed_time - The elapsed time since the last time the game was updated.
-    /// @param[in,out]  input_controller - The game controller supplying user input.
+    /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output devices.
     /// @param[in,out]  camera - The camera defining the viewable region of the game world.
-    /// @param[in,out]  speakers - The speakers in which audio can be output to.
     /// @param[in,out]  assets - The assets to use for certain updates.
     /// @return The next state that the game should switch to.  The current state as tracked
     ///     in this class is not automatically updated to this new state.
     GameState GameStates::Update(
-        const sf::Time& elapsed_time, 
-        INPUT_CONTROL::InputController& input_controller, 
+        HARDWARE::GamingHardware& gaming_hardware,
         GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers,
         RESOURCES::Assets& assets)
     {
         // UPDATE THE CURRENT STATE OF THE GAME.
@@ -24,7 +20,7 @@ namespace STATES
             case GameState::INTRO_SEQUENCE:
             {
                 // UPDATE THE INTRO SEQUENCE.
-                IntroSequence.Update(elapsed_time);
+                IntroSequence.Update(gaming_hardware.ElapsedTimeSinceLastFrame);
 
                 // MOVE TO THE TITLE SCREEN IF THE INTRO SEQUENCE HAS FINISHED.
                 bool intro_sequence_finished = IntroSequence.Completed();
@@ -38,22 +34,27 @@ namespace STATES
                 break;
             }
             case GameState::TITLE_SCREEN:
-                next_game_state = TitleScreen.Update(elapsed_time, input_controller);
+                next_game_state = TitleScreen.Update(gaming_hardware.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
                 break;
             case GameState::CREDITS_SCREEN:
-                next_game_state = CreditsScreen.Update(elapsed_time, input_controller);
+                next_game_state = CreditsScreen.Update(gaming_hardware.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
                 break;
             case GameState::GAME_SELECTION_SCREEN:
-                next_game_state = GameSelectionScreen.Update(elapsed_time, input_controller);
+                next_game_state = GameSelectionScreen.Update(gaming_hardware.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
                 break;
             case GameState::NEW_GAME_INTRO_SEQUENCE:
-                next_game_state = NewGameIntroSequence.Update(elapsed_time, speakers);
+                next_game_state = NewGameIntroSequence.Update(gaming_hardware.ElapsedTimeSinceLastFrame, *gaming_hardware.Speakers);
                 break;
             case GameState::FLOOD_CUTSCENE:
-                next_game_state = FloodCutscene.Update(elapsed_time);
+                next_game_state = FloodCutscene.Update(gaming_hardware.ElapsedTimeSinceLastFrame);
                 break;
             case GameState::GAMEPLAY:
-                next_game_state = GameplayState.Update(elapsed_time, input_controller, camera, speakers, assets);
+                next_game_state = GameplayState.Update(
+                    gaming_hardware.ElapsedTimeSinceLastFrame, 
+                    gaming_hardware.InputController, 
+                    camera, 
+                    *gaming_hardware.Speakers,
+                    assets);
                 break;
         }
 
@@ -62,10 +63,10 @@ namespace STATES
     }
 
     /// Renders the current state of the game.
-    /// @param[in]  total_elapsed_time - The total elapsed time since the game began; used for certain rendering effects.
+    /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output devices.
     /// @param[in,out]  renderer - The renderer to use for rendering.
     /// @return The rendered state of the game.
-    sf::Sprite GameStates::Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer)
+    sf::Sprite GameStates::Render(HARDWARE::GamingHardware& gaming_hardware, GRAPHICS::Renderer& renderer)
     {
         // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
         renderer.Screen->Clear();
@@ -93,7 +94,7 @@ namespace STATES
                 screen_sprite = FloodCutscene.Render(renderer);
                 break;
             case GameState::GAMEPLAY:
-                screen_sprite = GameplayState.Render(total_elapsed_time, renderer);
+                screen_sprite = GameplayState.Render(gaming_hardware.TotalElapsedTime, renderer);
                 break;
         }
         return screen_sprite;

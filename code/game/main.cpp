@@ -269,7 +269,7 @@ int main()
                 total_elapsed_time += elapsed_time;
 
                 // UPDATE THE GAME'S CURRENT STATE.
-                STATES::GameState next_game_state = game_states.Update(elapsed_time, input_controller, renderer.Camera, *speakers);
+                STATES::GameState next_game_state = game_states.Update(elapsed_time, input_controller, renderer.Camera, *speakers, *assets);
 
                 // RENDER THE CURRENT STATE OF THE GAME TO THE WINDOW.
                 sf::Sprite screen_sprite = game_states.Render(total_elapsed_time, renderer);

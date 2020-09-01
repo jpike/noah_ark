@@ -7,13 +7,15 @@ namespace STATES
     /// @param[in,out]  input_controller - The game controller supplying user input.
     /// @param[in,out]  camera - The camera defining the viewable region of the game world.
     /// @param[in,out]  speakers - The speakers in which audio can be output to.
+    /// @param[in,out]  assets - The assets to use for certain updates.
     /// @return The next state that the game should switch to.  The current state as tracked
     ///     in this class is not automatically updated to this new state.
     GameState GameStates::Update(
         const sf::Time& elapsed_time, 
         INPUT_CONTROL::InputController& input_controller, 
         GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers)
+        AUDIO::Speakers& speakers,
+        RESOURCES::Assets& assets)
     {
         // UPDATE THE CURRENT STATE OF THE GAME.
         GameState next_game_state = CurrentGameState;
@@ -51,7 +53,7 @@ namespace STATES
                 next_game_state = FloodCutscene.Update(elapsed_time);
                 break;
             case GameState::GAMEPLAY:
-                next_game_state = GameplayState.Update(elapsed_time, input_controller, camera, speakers);
+                next_game_state = GameplayState.Update(elapsed_time, input_controller, camera, speakers, assets);
                 break;
         }
 
@@ -179,6 +181,7 @@ namespace STATES
                     renderer.Screen->WidthInPixels<unsigned int>(),
                     saved_game_data,
                     world,
+                    renderer,
                     assets);
                 if (!gameplay_state_initialized)
                 {

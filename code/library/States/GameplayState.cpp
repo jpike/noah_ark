@@ -17,12 +17,14 @@ namespace STATES
     /// @param[in]  screen_width_in_pixels - The width of the screen, in pixels.
     /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
     /// @param[in,out]  world - The world for the gameplay state.
+    /// @param[in,out]  renderer - The renderer used fro some initialization.
     /// @param[in,out]  assets - The assets to use for initialization.
     /// @return True if initialization succeeded; false otherwise.
     bool GameplayState::Initialize(
         const unsigned int screen_width_in_pixels,
         const std::shared_ptr<SavedGameData>& saved_game_data,
         const std::shared_ptr<MAPS::World>& world,
+        GRAPHICS::Renderer& renderer,
         const std::shared_ptr<RESOURCES::Assets>& assets)
     {
         // MAKE SURE SAVED GAME DATA WAS PROVIDED.
@@ -85,6 +87,7 @@ namespace STATES
             text_box_width_in_pixels,
             text_box_height_in_pixels,
             assets);
+        Hud->MainTextBox.Font = renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE];
 
         // INITIALIZE THE BIBLE VERSES LEFT TO FIND.
         std::set_difference(
@@ -110,12 +113,14 @@ namespace STATES
     /// @param[in,out]  input_controller - The controller supplying player input.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
     /// @param[in,out]  speakers - The speakers in which to play out any audio.
+    /// @param[in,out]  assets - The assets to use for certain updates.
     /// @return The next game state after updating.
     GameState GameplayState::Update(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers)
+        AUDIO::Speakers& speakers,
+        RESOURCES::Assets& assets)
     {
 #ifdef _DEBUG
         // UPDATE THE TILE MAP EDITOR IN RESPONSE TO USER INPUT.
@@ -219,7 +224,7 @@ namespace STATES
         }
 
         // UPDATE THE CURRENT MAP GRID.
-        /// @todo UpdateMapGrid(elapsed_time, input_controller, camera, *CurrentMapGrid);
+        UpdateMapGrid(elapsed_time, input_controller, camera, speakers, *CurrentMapGrid, assets);
 
         // START PLAYING THE BACKGROUND MUSIC IF THE NEW GAME INSTRUCTIONS HAVE COMPLETED.
         // Silenced is used while God speaks during these instructions for reverence.
@@ -394,17 +399,20 @@ namespace STATES
         return screen;
     }
 
-#if TODO_OLD
     /// Updates a map grid based on elapsed time and player input.
     /// @param[in]  elapsed_time - The amount of time by which to update the game state.
     /// @param[in,out]  input_controller - The controller supplying player input.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
+    /// @param[in,out]  speakers - The speakers in which to play audio.
     /// @param[in,out]  map_grid - The map grid to update.
+    /// @param[in,out]  assets - The assets to use for certain updates.
     void GameplayState::UpdateMapGrid(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera,
-        MAPS::MultiTileMapGrid& map_grid)
+        AUDIO::Speakers& speakers,
+        MAPS::MultiTileMapGrid& map_grid,
+        RESOURCES::Assets& assets)
     {
         // GET THE CURRENT TILE MAP.
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
@@ -431,7 +439,9 @@ namespace STATES
                 input_controller, 
                 *current_tile_map, 
                 map_grid, 
-                camera);
+                camera,
+                speakers,
+                assets);
             if (map_exit_point)
             {
                 // SWITCH OVER TO THE NEW MAP GRID.
@@ -442,7 +452,7 @@ namespace STATES
                 camera.SetCenter(center_world_position);
 
                 // MOVE THE PLAYER TO THE START POINT OF THE NEW TILE MAP.
-                NoahPlayer->SetWorldPosition(map_exit_point->NewPlayerWorldPosition);
+                World->NoahPlayer->SetWorldPosition(map_exit_point->NewPlayerWorldPosition);
 
                 // UPDATE THE HUD'S TEXT COLOR BASED THE MAP.
                 bool entered_ark = World->Ark.Interior.Contains(CurrentMapGrid);
@@ -474,7 +484,7 @@ namespace STATES
                 {
                     // GET THE TILESET.
                     // It's needed for switching tiles.
-                    std::shared_ptr<GRAPHICS::Texture> tileset_texture = Assets->GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);
+                    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);
                     if (tileset_texture)
                     {
                         MAPS::Tileset tileset(tileset_texture);
@@ -540,9 +550,9 @@ namespace STATES
             if (!inside_ark)
             {
                 std::string message_for_text_box;
-                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, message_for_text_box);
-                CollectFoodCollidingWithPlayer(*current_tile_map);
-                CollectAnimalsCollidingWithPlayer(*current_tile_map);
+                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, speakers, assets, message_for_text_box);
+                CollectFoodCollidingWithPlayer(*current_tile_map, speakers);
+                CollectAnimalsCollidingWithPlayer(*current_tile_map, speakers);
 
                 // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
                 bool text_box_message_exists = !message_for_text_box.empty();
@@ -589,10 +599,10 @@ namespace STATES
             {
                 // ONLY START PLAYING THE SOUND IF IT ISN'T ALREADY PLAYING.
                 // This results in a smoother sound experience.
-                bool tree_shake_sound_playing = Speakers->SoundIsPlaying(RESOURCES::AssetId::TREE_SHAKE_SOUND);
+                bool tree_shake_sound_playing = speakers.SoundIsPlaying(RESOURCES::AssetId::TREE_SHAKE_SOUND);
                 if (!tree_shake_sound_playing)
                 {
-                    Speakers->PlaySoundEffect(RESOURCES::AssetId::TREE_SHAKE_SOUND);
+                    speakers.PlaySoundEffect(RESOURCES::AssetId::TREE_SHAKE_SOUND);
                 }
             }
         }
@@ -618,14 +628,16 @@ namespace STATES
         }
 
         // UPDATE NOAH'S AXE AND SPRITE.
-        NoahPlayer->Inventory->Axe->Update(elapsed_time);
+        World->NoahPlayer->Inventory->Axe->Update(elapsed_time);
 
         // UPDATE THE CAMERA'S WORLD VIEW.
         UpdateCameraWorldView(
             elapsed_time,
             camera,
+            speakers,
             input_controller,
-            *current_tile_map);
+            *current_tile_map,
+            assets);
     }
 
     /// Updates the player and related items in the tile map based on input and elapsed time.
@@ -634,13 +646,17 @@ namespace STATES
     /// @param[in,out]  current_tile_map - The tile map the player is currently located in.
     /// @param[in,out]  map_grid - The map grid containing the current tile map.
     /// @param[in,out]  camera - The camera defining the viewable region of the map grid.
+    /// @param[in,out]  speakers - The speakers from which to play any audio.
+    /// @param[in,out]  assets - The assets to use for certain updates.
     /// @return The map exit point, if the player stepped on such a point.
     MAPS::ExitPoint* GameplayState::UpdatePlayerBasedOnInput(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         MAPS::TileMap& current_tile_map,
         MAPS::MultiTileMapGrid& map_grid,
-        GRAPHICS::Camera& camera)
+        GRAPHICS::Camera& camera,
+        AUDIO::Speakers& speakers,
+        RESOURCES::Assets& assets)
     {
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
 
@@ -650,7 +666,7 @@ namespace STATES
             // SWING THE PLAYER'S AXE.
             // A new axe swing may not be created if the player's
             // axe is already being swung.
-            std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = NoahPlayer->SwingAxe();
+            std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = World->NoahPlayer->SwingAxe();
             bool axe_swing_occurred = (nullptr != axe_swing);
             if (axe_swing_occurred)
             {
@@ -661,7 +677,7 @@ namespace STATES
 
         // GET THE TILE UNDER NOAH.
         // This is needed to help track if Noah moves onto a different type of tile.
-        MATH::Vector2f old_noah_position = NoahPlayer->GetWorldPosition();
+        MATH::Vector2f old_noah_position = World->NoahPlayer->GetWorldPosition();
         std::shared_ptr<MAPS::Tile> original_tile_under_noah = current_tile_map.GetTileAtWorldPosition(
             old_noah_position.X,
             old_noah_position.Y);
@@ -675,7 +691,7 @@ namespace STATES
         // Movement is prevented to have the axe's position remain attached to Noah.
         // We need to keep track if Noah moved this frame so that we can stop any walking animations for him if he didn't move.
         bool noah_moved_this_frame = false;
-        bool axe_is_swinging = (nullptr != NoahPlayer->Inventory->Axe) && NoahPlayer->Inventory->Axe->IsSwinging();
+        bool axe_is_swinging = (nullptr != World->NoahPlayer->Inventory->Axe) && World->NoahPlayer->Inventory->Axe->IsSwinging();
         bool player_movement_allowed = (!axe_is_swinging);
         if (player_movement_allowed)
         {
@@ -687,19 +703,19 @@ namespace STATES
                 noah_moved_this_frame = true;
 
                 // START NOAH WALKING UP.
-                NoahPlayer->BeginWalking(GAMEPLAY::Direction::UP, OBJECTS::Noah::WALK_BACK_ANIMATION_NAME);
+                World->NoahPlayer->BeginWalking(GAMEPLAY::Direction::UP, OBJECTS::Noah::WALK_BACK_ANIMATION_NAME);
 
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
-                    NoahPlayer->GetWorldBoundingBox(),
+                    World->NoahPlayer->GetWorldBoundingBox(),
                     GAMEPLAY::Direction::UP,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
                     map_grid);
-                NoahPlayer->SetWorldPosition(new_position);
+                World->NoahPlayer->SetWorldPosition(new_position);
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
-                MATH::FloatRectangle noah_world_bounding_box = NoahPlayer->GetWorldBoundingBox();
+                MATH::FloatRectangle noah_world_bounding_box = World->NoahPlayer->GetWorldBoundingBox();
                 float camera_top_y_position = camera_bounds.LeftTop.Y;
                 bool player_moved_out_of_view = (noah_world_bounding_box.LeftTop.Y < camera_top_y_position);
                 if (player_moved_out_of_view)
@@ -714,9 +730,9 @@ namespace STATES
                     if (top_tile_map_exists)
                     {
                         // MOVE NOAH A FEW MORE PIXELS UP SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
-                        MATH::Vector2f noah_world_position = NoahPlayer->GetWorldPosition();
+                        MATH::Vector2f noah_world_position = World->NoahPlayer->GetWorldPosition();
                         noah_world_position.Y -= PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
-                        NoahPlayer->SetWorldPosition(noah_world_position);
+                        World->NoahPlayer->SetWorldPosition(noah_world_position);
 
                         // START SCROLLING TO THE TOP TILE MAP.
                         MATH::Vector2f scroll_start_position = current_tile_map.GetCenterWorldPosition();
@@ -739,7 +755,7 @@ namespace STATES
                         float noah_half_height = noah_world_bounding_box.Height() / 2.0f;
                         noah_world_position.Y = tile_map_top_boundary + noah_half_height;
 
-                        NoahPlayer->SetWorldPosition(noah_world_position);
+                        World->NoahPlayer->SetWorldPosition(noah_world_position);
                     }
                 }
             }
@@ -749,19 +765,19 @@ namespace STATES
                 noah_moved_this_frame = true;
 
                 // START NOAH WALKING DOWN.
-                NoahPlayer->BeginWalking(GAMEPLAY::Direction::DOWN, OBJECTS::Noah::WALK_FRONT_ANIMATION_NAME);
+                World->NoahPlayer->BeginWalking(GAMEPLAY::Direction::DOWN, OBJECTS::Noah::WALK_FRONT_ANIMATION_NAME);
 
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
-                    NoahPlayer->GetWorldBoundingBox(),
+                    World->NoahPlayer->GetWorldBoundingBox(),
                     GAMEPLAY::Direction::DOWN,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
                     map_grid);
-                NoahPlayer->SetWorldPosition(new_position);
+                World->NoahPlayer->SetWorldPosition(new_position);
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
-                MATH::FloatRectangle noah_world_bounding_box = NoahPlayer->GetWorldBoundingBox();
+                MATH::FloatRectangle noah_world_bounding_box = World->NoahPlayer->GetWorldBoundingBox();
                 float camera_bottom_y_position = camera_bounds.RightBottom.Y;
                 bool player_moved_out_of_view = (noah_world_bounding_box.RightBottom.Y > camera_bottom_y_position);
                 if (player_moved_out_of_view)
@@ -776,9 +792,9 @@ namespace STATES
                     if (bottom_tile_map_exists)
                     {
                         // MOVE NOAH A FEW MORE PIXELS DOWN SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
-                        MATH::Vector2f noah_world_position = NoahPlayer->GetWorldPosition();
+                        MATH::Vector2f noah_world_position = World->NoahPlayer->GetWorldPosition();
                         noah_world_position.Y += PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
-                        NoahPlayer->SetWorldPosition(noah_world_position);
+                        World->NoahPlayer->SetWorldPosition(noah_world_position);
 
                         // START SCROLLING TO THE BOTTOM TILE MAP.
                         MATH::Vector2f scroll_start_position = current_tile_map.GetCenterWorldPosition();
@@ -798,10 +814,10 @@ namespace STATES
                         // To keep Noah completely on screen, his center position should be half
                         // his height above the bottom tile map boundary.
                         MATH::Vector2f noah_world_position = old_noah_position;
-                        float noah_half_height = NoahPlayer->GetWorldBoundingBox().Height() / 2.0f;
+                        float noah_half_height = World->NoahPlayer->GetWorldBoundingBox().Height() / 2.0f;
                         noah_world_position.Y = tile_map_bottom_boundary - noah_half_height;
 
-                        NoahPlayer->SetWorldPosition(noah_world_position);
+                        World->NoahPlayer->SetWorldPosition(noah_world_position);
                     }
                 }
             } 
@@ -811,19 +827,19 @@ namespace STATES
                 noah_moved_this_frame = true;
 
                 // START NOAH WALKING LEFT.
-                NoahPlayer->BeginWalking(GAMEPLAY::Direction::LEFT, OBJECTS::Noah::WALK_LEFT_ANIMATION_NAME);
+                World->NoahPlayer->BeginWalking(GAMEPLAY::Direction::LEFT, OBJECTS::Noah::WALK_LEFT_ANIMATION_NAME);
 
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
-                    NoahPlayer->GetWorldBoundingBox(),
+                    World->NoahPlayer->GetWorldBoundingBox(),
                     GAMEPLAY::Direction::LEFT,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
                     map_grid);
-                NoahPlayer->SetWorldPosition(new_position);
+                World->NoahPlayer->SetWorldPosition(new_position);
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
-                MATH::FloatRectangle noah_world_bounding_box = NoahPlayer->GetWorldBoundingBox();
+                MATH::FloatRectangle noah_world_bounding_box = World->NoahPlayer->GetWorldBoundingBox();
                 float camera_left_x_position = camera_bounds.LeftTop.X;
                 bool player_moved_out_of_view = (noah_world_bounding_box.LeftTop.X < camera_left_x_position);
                 if (player_moved_out_of_view)
@@ -838,9 +854,9 @@ namespace STATES
                     if (left_tile_map_exists)
                     {
                         // MOVE NOAH A FEW MORE PIXELS LEFT SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
-                        MATH::Vector2f noah_world_position = NoahPlayer->GetWorldPosition();
+                        MATH::Vector2f noah_world_position = World->NoahPlayer->GetWorldPosition();
                         noah_world_position.X -= PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
-                        NoahPlayer->SetWorldPosition(noah_world_position);
+                        World->NoahPlayer->SetWorldPosition(noah_world_position);
 
                         // START SCROLLING TO THE LEFT TILE MAP.
                         MATH::Vector2f scroll_start_position = current_tile_map.GetCenterWorldPosition();
@@ -860,10 +876,10 @@ namespace STATES
                         // To keep Noah completely on screen, his center position should be half
                         // his width to the right of the left tile map boundary.
                         MATH::Vector2f noah_world_position = old_noah_position;
-                        float noah_half_width = NoahPlayer->GetWorldBoundingBox().Width() / 2.0f;
+                        float noah_half_width = World->NoahPlayer->GetWorldBoundingBox().Width() / 2.0f;
                         noah_world_position.X = tile_map_left_boundary + noah_half_width;
 
-                        NoahPlayer->SetWorldPosition(noah_world_position);
+                        World->NoahPlayer->SetWorldPosition(noah_world_position);
                     }
                 }
             } 
@@ -873,19 +889,19 @@ namespace STATES
                 noah_moved_this_frame = true;
 
                 // START NOAH WALKING RIGHT.
-                NoahPlayer->BeginWalking(GAMEPLAY::Direction::RIGHT, OBJECTS::Noah::WALK_RIGHT_ANIMATION_NAME);
+                World->NoahPlayer->BeginWalking(GAMEPLAY::Direction::RIGHT, OBJECTS::Noah::WALK_RIGHT_ANIMATION_NAME);
 
                 // MOVE NOAH WHILE HANDLING COLLISIONS.
                 MATH::Vector2f new_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
-                    NoahPlayer->GetWorldBoundingBox(),
+                    World->NoahPlayer->GetWorldBoundingBox(),
                     GAMEPLAY::Direction::RIGHT,
                     OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
                     elapsed_time,
                     map_grid);
-                NoahPlayer->SetWorldPosition(new_position);
+                World->NoahPlayer->SetWorldPosition(new_position);
 
                 // CHECK IF NOAH MOVED OUT OF THE CAMERA'S VIEW.
-                MATH::FloatRectangle noah_world_bounding_box = NoahPlayer->GetWorldBoundingBox();
+                MATH::FloatRectangle noah_world_bounding_box = World->NoahPlayer->GetWorldBoundingBox();
                 float camera_right_x_position = camera_bounds.RightBottom.X;
                 bool player_moved_out_of_view = (noah_world_bounding_box.RightBottom.X > camera_right_x_position);
                 if (player_moved_out_of_view)
@@ -900,9 +916,9 @@ namespace STATES
                     if (right_tile_map_exists)
                     {
                         // MOVE NOAH A FEW MORE PIXELS RIGHT SO THAT HE WILL BE MORE VISIBLE ON THE NEW MAP.
-                        MATH::Vector2f noah_world_position = NoahPlayer->GetWorldPosition();
+                        MATH::Vector2f noah_world_position = World->NoahPlayer->GetWorldPosition();
                         noah_world_position.X += PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS;
-                        NoahPlayer->SetWorldPosition(noah_world_position);
+                        World->NoahPlayer->SetWorldPosition(noah_world_position);
 
                         // START SCROLLING TO THE RIGHT TILE MAP.
                         MATH::Vector2f scroll_start_position = current_tile_map.GetCenterWorldPosition();
@@ -922,10 +938,10 @@ namespace STATES
                         // To keep Noah completely on screen, his center position should be half
                         // his width to the left of the right tile map boundary.
                         MATH::Vector2f noah_world_position = old_noah_position;
-                        float noah_half_width = NoahPlayer->GetWorldBoundingBox().Width() / 2.0f;
+                        float noah_half_width = World->NoahPlayer->GetWorldBoundingBox().Width() / 2.0f;
                         noah_world_position.X = tile_map_right_boundary - noah_half_width;
 
-                        NoahPlayer->SetWorldPosition(noah_world_position);
+                        World->NoahPlayer->SetWorldPosition(noah_world_position);
                     }
                 }
             } 
@@ -938,10 +954,10 @@ namespace STATES
             /// @todo   Clean this up...I don't like how non-encapsulated this is, but this might be easier
             /// to clean-up after some more changes later.  Maybe we should have a simpler "just stay this
             /// close to Noah" logic, which could add more dynamism?
-            MATH::Vector2f new_noah_position = NoahPlayer->GetWorldPosition();
+            MATH::Vector2f new_noah_position = World->NoahPlayer->GetWorldPosition();
             MATH::Vector2f noah_movement = new_noah_position - old_noah_position;
-            NoahPlayer->Inventory->FollowingAnimals.CurrentCenterWorldPosition += noah_movement;
-            for (const std::shared_ptr<OBJECTS::Animal>& animal : NoahPlayer->Inventory->FollowingAnimals.Animals)
+            World->NoahPlayer->Inventory->FollowingAnimals.CurrentCenterWorldPosition += noah_movement;
+            for (const std::shared_ptr<OBJECTS::Animal>& animal : World->NoahPlayer->Inventory->FollowingAnimals.Animals)
             {
                 MATH::Vector2f old_animal_world_position = animal->Sprite.GetWorldPosition();
                 MATH::Vector2f new_animal_world_position = old_animal_world_position + noah_movement;
@@ -949,10 +965,10 @@ namespace STATES
             }
 
             // UPDATE NOAH'S ANIMATION.
-            NoahPlayer->Sprite.Update(elapsed_time);
+            World->NoahPlayer->Sprite.Update(elapsed_time);
 
             // BUILD A PIECE OF THE ARK IF NOAH STEPPED ONTO AN APPROPRIATE SPOT.
-            MATH::Vector2f noah_world_position = NoahPlayer->GetWorldPosition();
+            MATH::Vector2f noah_world_position = World->NoahPlayer->GetWorldPosition();
             MAPS::TileMap* tile_map_underneath_noah = map_grid.GetTileMap(noah_world_position.X, noah_world_position.Y);
             if (!tile_map_underneath_noah)
             {
@@ -962,18 +978,18 @@ namespace STATES
             
             // An ark piece only needs to be built once and requires wood to be built.
             OBJECTS::ArkPiece* ark_piece = tile_map_underneath_noah->GetArkPieceAtWorldPosition(noah_world_position);
-            bool noah_has_wood = (NoahPlayer->Inventory->WoodCount > 0);
+            bool noah_has_wood = (World->NoahPlayer->Inventory->WoodCount > 0);
             bool ark_piece_can_be_built = (ark_piece && !ark_piece->Built && noah_has_wood);
             if (ark_piece_can_be_built)
             {
                 // USE THE WOOD FROM NOAH'S INVENTORY.
-                --NoahPlayer->Inventory->WoodCount;
+                --World->NoahPlayer->Inventory->WoodCount;
 
                 // BUILD THE ARK PIECE.
                 ark_piece->Built = true;
 
                 // When building an ark piece, a dust cloud should appear.
-                std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = Assets->GetTexture(RESOURCES::AssetId::DUST_CLOUD_TEXTURE);
+                std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = assets.GetTexture(RESOURCES::AssetId::DUST_CLOUD_TEXTURE);
                 if (dust_cloud_texture)
                 {
                     OBJECTS::DustCloud dust_cloud(dust_cloud_texture);
@@ -990,7 +1006,7 @@ namespace STATES
                 }
 
                 // Play a sound to indicate a piece of the ark is being built.
-                Speakers->PlaySoundEffect(RESOURCES::AssetId::ARK_BUILDING_SOUND);
+                speakers.PlaySoundEffect(RESOURCES::AssetId::ARK_BUILDING_SOUND);
             }
             
             // CHECK IF THE PLAYER STEPPED ON AN EXIT POINT.
@@ -1015,7 +1031,7 @@ namespace STATES
         else
         {
             // STOP NOAH'S ANIMATION FROM PLAYING SINCE THE PLAYER DIDN'T MOVE THIS FRAME.
-            NoahPlayer->Sprite.ResetAnimation();
+            World->NoahPlayer->Sprite.ResetAnimation();
         }
 
         // INDICATE THAT THE PLAYER DIDN'T STEP ON AN EXIT POINT.
@@ -1030,11 +1046,11 @@ namespace STATES
     {
         // UPDATE ANIMALS FOLLOWING NOAH.
         // They should appear right behind Noah.
-        MATH::FloatRectangle noah_world_bounding_box = NoahPlayer->GetWorldBoundingBox();
+        MATH::FloatRectangle noah_world_bounding_box = World->NoahPlayer->GetWorldBoundingBox();
         // Defaults to appearing in the same location as Noah for easier visibility into problems.
         MATH::Vector2f noah_center_world_position = noah_world_bounding_box.Center();
         MATH::Vector2f following_animal_group_world_position = noah_center_world_position;
-        switch (NoahPlayer->FacingDirection)
+        switch (World->NoahPlayer->FacingDirection)
         {
             case GAMEPLAY::Direction::UP:
                 // The animals should appear below Noah.
@@ -1053,7 +1069,7 @@ namespace STATES
                 following_animal_group_world_position.X = noah_world_bounding_box.LeftTop.X - GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
                 break;
         }
-        NoahPlayer->Inventory->FollowingAnimals.Update(elapsed_time, following_animal_group_world_position);
+        World->NoahPlayer->Inventory->FollowingAnimals.Update(elapsed_time, following_animal_group_world_position);
 
         // CHECK IF THE CURRENT TILE MAP HAS A VISIBLE EXTERNAL ARK DOORWAY.
         // This is how animals following Noah get transferred into the ark.
@@ -1073,9 +1089,9 @@ namespace STATES
             // TRANSFER THE ANIMALS CURRENTLY FOLLOWING NOAH OVER TO MOVING INTO THE ARK.
             AnimalsGoingIntoArk.insert(
                 AnimalsGoingIntoArk.cend(),
-                NoahPlayer->Inventory->FollowingAnimals.Animals.cbegin(),
-                NoahPlayer->Inventory->FollowingAnimals.Animals.cend());
-            NoahPlayer->Inventory->FollowingAnimals.Animals.clear();
+                World->NoahPlayer->Inventory->FollowingAnimals.Animals.cbegin(),
+                World->NoahPlayer->Inventory->FollowingAnimals.Animals.cend());
+            World->NoahPlayer->Inventory->FollowingAnimals.Animals.clear();
 
             // MOVE THE ANIMALS GOING INTO THE ARK CLOSER INTO THE ARK.
             MATH::FloatRectangle ark_doorway_bounding_box = doorway_into_ark->Sprite.GetWorldBoundingBox();
@@ -1138,7 +1154,7 @@ namespace STATES
             {
                 // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE PLAYER.
                 // The animal should move closer to Noah based on Genesis 6:20.
-                MATH::Vector2f noah_world_position = NoahPlayer->GetWorldPosition();
+                MATH::Vector2f noah_world_position = World->NoahPlayer->GetWorldPosition();
                 MATH::Vector2f animal_world_position = animal->Sprite.GetWorldPosition();
                 MATH::Vector2f animal_to_noah_vector = noah_world_position - animal_world_position;
                 MATH::Vector2f animal_to_noah_direction = MATH::Vector2f::Normalize(animal_to_noah_vector);
@@ -1242,23 +1258,27 @@ namespace STATES
     /// If so, the wood logs, and potentially Bible verses, are added to the player's inventory.
     /// @param[in,out]  tile_map - The tile map to examine wood logs in.
     /// @param[in,out]  map_grid - The grid containing the tile map.
+    /// @param[in,out]  speakers - The speakers from which to play any audio.
+    /// @param[in,out]  assets - The assets to use for certain updates.
     /// @param[out] message_for_text_box - A message for the HUD's main text box, if
     ///     a Bible verse was collected.
     void GameplayState::CollectWoodAndBibleVersesCollidingWithPlayer(
         MAPS::TileMap& tile_map,
         MAPS::MultiTileMapGrid& map_grid,
+        AUDIO::Speakers& speakers,
+        RESOURCES::Assets& assets,
         std::string& message_for_text_box)
     {
         // INDICATE THAT NO MESSAGE EXISTS FOR THE TEXT BOX YET.
         message_for_text_box.clear();
 
         // HANDLE PLAYER COLLISIONS WITH WOOD LOGS.
-        COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(map_grid, map_grid.AxeSwings, *Speakers, *Assets);
+        COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(map_grid, map_grid.AxeSwings, speakers, assets);
         for (auto wood_logs = tile_map.WoodLogs.begin(); wood_logs != tile_map.WoodLogs.end();)
         {
             // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
             MATH::FloatRectangle wood_log_bounding_box = wood_logs->GetWorldBoundingBox();
-            MATH::FloatRectangle noah_bounding_box = NoahPlayer->GetWorldBoundingBox();
+            MATH::FloatRectangle noah_bounding_box = World->NoahPlayer->GetWorldBoundingBox();
             bool noah_collided_with_wood_logs = noah_bounding_box.Contains(
                 wood_log_bounding_box.CenterX(),
                 wood_log_bounding_box.CenterY());
@@ -1269,7 +1289,7 @@ namespace STATES
                 unsigned int MIN_WOOD_COUNT = 1;
                 unsigned int MAX_WOOD_COUNT = 3;
                 unsigned int random_wood_count = RandomNumberGenerator.RandomInRange<unsigned int>(MIN_WOOD_COUNT, MAX_WOOD_COUNT);
-                NoahPlayer->Inventory->AddWood(random_wood_count);
+                World->NoahPlayer->Inventory->AddWood(random_wood_count);
 
                 // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
                 wood_logs = tile_map.WoodLogs.erase(wood_logs);
@@ -1288,7 +1308,7 @@ namespace STATES
                     if (bible_verses_remain_to_be_found)
                     {
                         // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
-                        Speakers->PlaySoundEffect(RESOURCES::AssetId::COLLECT_BIBLE_VERSE_SOUND);
+                        speakers.PlaySoundEffect(RESOURCES::AssetId::COLLECT_BIBLE_VERSE_SOUND);
 
                         // SELECT A RANDOM BIBLE VERSE.
                         size_t remaining_bible_verse_count = BibleVersesLeftToFind.size();
@@ -1296,7 +1316,7 @@ namespace STATES
                         auto bible_verse = BibleVersesLeftToFind.begin() + random_bible_verse_index;
 
                         // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
-                        NoahPlayer->Inventory->BibleVerses.insert(*bible_verse);
+                        World->NoahPlayer->Inventory->BibleVerses.insert(*bible_verse);
 
                         // POPULATE THE MESSAGE TO DISPLAY IN THE MAIN TEXT BOX.
                         message_for_text_box = "You got a Bible verse!\n" + bible_verse->ToString();
@@ -1317,7 +1337,8 @@ namespace STATES
     /// Determines if the player is colliding with any food in the tile map.
     /// If so, the food is added to the player's inventory.
     /// @param[in,out]  tile_map - The tile map to examine food in.
-    void GameplayState::CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map)
+    /// @param[in,out]  speakers - The speakers from which to play any audio.
+    void GameplayState::CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map, AUDIO::Speakers& speakers)
     {
         // HANDLE PLAYER COLLISIONS WITH FOOD.
         for (auto food = tile_map.FoodOnGround.cbegin();
@@ -1325,16 +1346,16 @@ namespace STATES
         {
             // CHECK IF THE CURRENT FOOD ITEM INTERSECTS WITH THE PLAYER.
             MATH::FloatRectangle food_bounding_box = food->Sprite.GetWorldBoundingBox();
-            MATH::FloatRectangle noah_bounding_box = NoahPlayer->GetWorldBoundingBox();
+            MATH::FloatRectangle noah_bounding_box = World->NoahPlayer->GetWorldBoundingBox();
             bool food_intersects_with_noah = food_bounding_box.Intersects(noah_bounding_box);
             if (food_intersects_with_noah)
             {
                 // PLAY THE SOUND EFFECT FOR COLLECTING FOOD.
-                Speakers->PlaySoundEffect(RESOURCES::AssetId::FOOD_PICKUP_SOUND);
+                speakers.PlaySoundEffect(RESOURCES::AssetId::FOOD_PICKUP_SOUND);
 
                 // ADD THE FOOD TO THE PLAYER'S INVENTORY.
                 DEBUGGING::DebugConsole::WriteLine("Collected food: ", static_cast<int>(food->Type));
-                NoahPlayer->Inventory->AddFood(*food);
+                World->NoahPlayer->Inventory->AddFood(*food);
 
                 // REMOVE THE FOOD ITEM FROM THOSE IN THE CURRENT TILE MAP.
                 // This should move to the next food ITEM.
@@ -1351,7 +1372,8 @@ namespace STATES
     /// Determines if the player is colliding with any animals in the tile map.
     /// If so, the animals are added to the player's inventory.
     /// @param[in,out]  tile_map - The tile map to examine animals in.
-    void GameplayState::CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map)
+    /// @param[in,out]  speakers - The speakers from which to play any audio.
+    void GameplayState::CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map, AUDIO::Speakers& speakers)
     {
         // HANDLE PLAYER COLLISIONS WITH ANIMALS.
         for (auto animal = tile_map.Animals.cbegin();
@@ -1359,16 +1381,16 @@ namespace STATES
         {
             // CHECK IF THE CURRENT ANIMAL INTERSECTS WITH THE PLAYER.
             MATH::FloatRectangle animal_bounding_box = (*animal)->Sprite.GetWorldBoundingBox();
-            MATH::FloatRectangle noah_bounding_box = NoahPlayer->GetWorldBoundingBox();
+            MATH::FloatRectangle noah_bounding_box = World->NoahPlayer->GetWorldBoundingBox();
             bool animal_intersects_with_noah = animal_bounding_box.Intersects(noah_bounding_box);
             if (animal_intersects_with_noah)
             {
                 // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
-                Speakers->PlaySoundEffect((*animal)->SoundId);
+                speakers.PlaySoundEffect((*animal)->SoundId);
 
                 // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
                 DEBUGGING::DebugConsole::WriteLine("Collected animal.");
-                NoahPlayer->Inventory->AddAnimal(*animal);
+                World->NoahPlayer->Inventory->AddAnimal(*animal);
 
                 // REMOVE THE ANIMAL FROM THOSE IN THE CURRENT TILE MAP.
                 // This should move to the next animal.
@@ -1386,14 +1408,18 @@ namespace STATES
     /// in what the camera is viewing.
     /// @param[in]  elapsed_time - The elapsed time by which to update the camera.
     /// @param[in,out]  camera - The camera to update.
+    /// @param[in,out]  speakers - The speakers from which to play any audio.
     /// @param[in,out]  input_controller - The input controller that might
     ///     be tweaked based on camera movement.
     /// @param[in,out]  current_tile_map - The current tile map in view by the camera.
+    /// @param[in,out]  assets - The assets to use for certain updates.
     void GameplayState::UpdateCameraWorldView(
         const sf::Time& elapsed_time,
         GRAPHICS::Camera& camera,
+        AUDIO::Speakers& speakers,
         INPUT_CONTROL::InputController& input_controller,
-        MAPS::TileMap& current_tile_map)
+        MAPS::TileMap& current_tile_map,
+        RESOURCES::Assets& assets)
     {
         if (camera.IsScrolling)
         {
@@ -1426,17 +1452,17 @@ namespace STATES
 
                     // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
                     std::shared_ptr<OBJECTS::Animal> animal = GAMEPLAY::RandomAnimalGenerationAlgorithm::GenerateAnimal(
-                        *NoahPlayer,
+                        *World->NoahPlayer,
                         current_tile_map,
                         RandomNumberGenerator,
-                        *Assets);
+                        assets);
                     bool animal_generated = (nullptr != animal);
                     if (animal_generated)
                     {
                         DEBUGGING::DebugConsole::WriteLine("Random animal generated: ", static_cast<unsigned int>(animal->Type.Species));
 
                         // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
-                        Speakers->PlaySoundEffect(animal->SoundId);
+                        speakers.PlaySoundEffect(animal->SoundId);
 
                         // START ANIMATING THE ANIMAL.
                         animal->Sprite.Play();
@@ -1454,5 +1480,4 @@ namespace STATES
             camera.SetCenter(center_world_position);
         }
     }
-#endif
 }

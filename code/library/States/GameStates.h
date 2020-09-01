@@ -28,7 +28,8 @@ namespace STATES
             const sf::Time& elapsed_time, 
             INPUT_CONTROL::InputController& input_controller, 
             GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers);
+            AUDIO::Speakers& speakers,
+            RESOURCES::Assets& assets);
         sf::Sprite Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer);
         void SwitchStatesIfChanged(
             const GameState& new_state, 

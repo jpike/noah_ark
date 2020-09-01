@@ -12,6 +12,7 @@
 #include "Inventory/Inventory.h"
 #include "Math/Vector2.h"
 #include "Objects/Axe.h"
+#include "States/SavedGameData.h"
 
 /// Holds codes for specific objects in the game.
 namespace OBJECTS
@@ -34,11 +35,10 @@ namespace OBJECTS
         static const std::string WALK_RIGHT_ANIMATION_NAME;
 
         // CONSTRUCTION.
-#if TODO
         explicit Noah(
+            const STATES::SavedGameData& saved_game_data,
             const std::shared_ptr<GRAPHICS::Texture>& noah_texture,
             const std::shared_ptr<OBJECTS::Axe>& axe);
-#endif
 
         // POSITIONING.
         MATH::Vector2f GetWorldPosition() const;

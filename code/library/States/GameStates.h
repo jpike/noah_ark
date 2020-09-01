@@ -33,7 +33,7 @@ namespace STATES
         void SwitchStatesIfChanged(
             const GameState& new_state, 
             const std::shared_ptr<MAPS::World>& world, 
-            RESOURCES::Assets& assets,
+            const std::shared_ptr<RESOURCES::Assets>& assets,
             GRAPHICS::Renderer& renderer);
 
         /// The current state the game is in.

@@ -32,18 +32,23 @@ namespace STATES
         bool Initialize(
             const unsigned int screen_width_in_pixels,
             const std::shared_ptr<SavedGameData>& saved_game_data,
-            const std::shared_ptr<MAPS::World>& world);
+            const std::shared_ptr<MAPS::World>& world,
+            const std::shared_ptr<RESOURCES::Assets>& assets);
 
         // UPDATING.
         GameState Update(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
-            GRAPHICS::Camera& camera);
+            GRAPHICS::Camera& camera,
+            AUDIO::Speakers& speakers);
 
         // RENDERING.
         sf::Sprite Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// True if the instructions that are displayed in a text box at the start
+        /// of a new game are completed; false otherwise.
+        bool NewGameInstructionsCompleted = false;
         /// The main game world.
         std::shared_ptr<MAPS::World> World = nullptr;
 
@@ -51,6 +56,16 @@ namespace STATES
         // PRIVATE MEMBER VARIABLES.
         /// The current map being displayed within the world.
         MAPS::MultiTileMapGrid* CurrentMapGrid = nullptr;
+        /// The heads-up display.
+        std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> Hud = nullptr;
+        /// Bible verses that still need to be found by the player.
+        std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind = {};
+        /// The tile map editor GUI.
+        std::unique_ptr<MAPS::GUI::TileMapEditorGui> TileMapEditorGui = nullptr;
+        /// Animals being transferred from following Noah into the ark.
+        /// @todo   Probably best to not have this in the game state and instead just
+        /// have animals have different "modes" of behavior.
+        std::vector<std::shared_ptr<OBJECTS::Animal>> AnimalsGoingIntoArk = {};
     };
 
 #if TODO_OLD

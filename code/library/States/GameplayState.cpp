@@ -17,11 +17,13 @@ namespace STATES
     /// @param[in]  screen_width_in_pixels - The width of the screen, in pixels.
     /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
     /// @param[in,out]  world - The world for the gameplay state.
+    /// @param[in,out]  assets - The assets to use for initialization.
     /// @return True if initialization succeeded; false otherwise.
     bool GameplayState::Initialize(
         const unsigned int screen_width_in_pixels,
         const std::shared_ptr<SavedGameData>& saved_game_data,
-        const std::shared_ptr<MAPS::World>& world)
+        const std::shared_ptr<MAPS::World>& world,
+        const std::shared_ptr<RESOURCES::Assets>& assets)
     {
         // MAKE SURE SAVED GAME DATA WAS PROVIDED.
         bool saved_game_exists = (nullptr != saved_game_data);
@@ -44,157 +46,45 @@ namespace STATES
         CurrentMapGrid = &World->Overworld;
 
         // Built ark pieces need to be initialized.
-        for (const auto& built_ark_piece_data : saved_game_data->BuildArkPieces)
-        {
-            // GET THE TILE MAP FOR THE BUILT ARK PIECES.
-            MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(built_ark_piece_data.TileMapGridYPosition, built_ark_piece_data.TileMapGridXPosition);
-            if (!current_tile_map)
-            {
-                // The game can't be properly initialized if a tile map is missing.
-                return false;
-            }
-
-            // UPDATE THE BUILT ARK PIECES IN THE CURRENT TILE MAP.
-            for (size_t ark_piece_index : built_ark_piece_data.BuiltArkPieceIndices)
-            {
-                // SET THE CURRENT ARK PIECE AS BUILT.
-                auto& ark_piece = current_tile_map->ArkPieces.at(ark_piece_index);
-                ark_piece.Built = true;
-            }
-        }
-
-        /// @todo
-        screen_width_in_pixels;
-        return true;
-    }
-
-    /// Updates the state of the gameplay based on elapsed time and player input.
-    /// @param[in]  elapsed_time - The amount of time by which to update the game state.
-    /// @param[in,out]  input_controller - The controller supplying player input.
-    /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
-    /// @return The next game state after updating.
-    GameState GameplayState::Update(
-        const sf::Time& elapsed_time,
-        INPUT_CONTROL::InputController& input_controller,
-        GRAPHICS::Camera& camera)
-    {
-        /// @todo
-        elapsed_time;
-        input_controller;
-        camera;
-
-        return GameState::GAMEPLAY;
-    }
-
-    /// Renders the current frame of the gameplay state.
-    /// @param[in]  total_elapsed_time - The total elapsed time since the game began; used for certain rendering effects.
-    /// @param[in,out]  renderer - The renderer to use for rendering.
-    /// @return The rendered gameplay state.
-    sf::Sprite GameplayState::Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer)
-    {
-        // RENDER CONTENT SPECIFIC TO THE CURRENT MAP.
-        renderer.Render(*CurrentMapGrid);
-
-        /// @todo
-        total_elapsed_time;
-
-        // RETURN THE FINAL RENDERED SCREEN.
-        sf::Sprite screen = renderer.RenderFinalScreen(sf::RenderStates::Default);
-        return screen;
-    }
-
-#if TODO_OLD
-    /// Constructor.
-    /// @param[in,out]  speakers - The speakers for which to play sound effects.
-    /// @param[in]  assets - The assets to be used during gameplay.
-    /// @throws std::exception - Thrown if the assets are null.
-    GameplayState::GameplayState(
-        const std::shared_ptr<AUDIO::Speakers>& speakers,
-        const std::shared_ptr<RESOURCES::Assets>& assets) :
-        NewGameInstructionsCompleted(false),
-        World(),
-        NoahPlayer(),
-        RandomNumberGenerator(),
-        Speakers(speakers),
-        BibleVersesLeftToFind(),
-        Assets(assets),
-        Hud(),
-        CurrentMapGrid(nullptr),
-        TileMapEditorGui(assets->GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE)),
-        AnimalsGoingIntoArk()
-    {
-        // MAKE SURE PARAMETERS WERE PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Speakers, "Speakers cannot be null for gameplay state.");
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Assets, "Assets cannot be null for gameplay state.");
-    }
-
-    /// Initializes the gameplay state.
-    /// @param[in]  screen_width_in_pixels - The width of the screen, in pixels.
-    /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
-    /// @param[in,out]  world - The world for the gameplay state.
-    /// @return True if initialization succeeded; false otherwise.
-    bool GameplayState::Initialize(
-        const unsigned int screen_width_in_pixels,
-        const std::shared_ptr<SavedGameData>& saved_game_data,
-        const std::shared_ptr<MAPS::World>& world)
-    {
-        // MAKE SURE SAVED GAME DATA WAS PROVIDED.
-        bool saved_game_exists = (nullptr != saved_game_data);
-        if (!saved_game_exists)
-        {
-            // The gameplay state requires saved game data.
-            return false;
-        }
-
-        // MAKE SURE A WORLD WAS PROVIDED.
-        bool world_exists = (nullptr != world);
-        if (!world_exists)
-        {
-            // The gameplay state requires a world.
-            return false;
-        }
-
-        // INITIALIZE THE WORLD.
-        World = world;
-        CurrentMapGrid = &World->Overworld;
-
-        // Built ark pieces need to be initialized.
-        for (const auto& built_ark_piece_data : saved_game_data->BuildArkPieces)
-        {
-            // GET THE TILE MAP FOR THE BUILT ARK PIECES.
-            MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(built_ark_piece_data.TileMapGridYPosition, built_ark_piece_data.TileMapGridXPosition);
-            if (!current_tile_map)
-            {
-                // The game can't be properly initialized if a tile map is missing.
-                return false;
-            }
-
-            // UPDATE THE BUILT ARK PIECES IN THE CURRENT TILE MAP.
-            for (size_t ark_piece_index : built_ark_piece_data.BuiltArkPieceIndices)
-            {
-                // SET THE CURRENT ARK PIECE AS BUILT.
-                auto& ark_piece = current_tile_map->ArkPieces.at(ark_piece_index);
-                ark_piece.Built = true;
-            }
-        }
+        World->InitializeBuiltArkInOverworld(saved_game_data->BuildArkPieces);
 
         // INITIALIZE THE PLAYER.
-        NoahPlayer = InitializePlayer(*saved_game_data);
-        bool player_initialized = (nullptr != NoahPlayer);
-        if (!player_initialized)
+        std::shared_ptr<GRAPHICS::Texture> noah_texture = assets->GetTexture(RESOURCES::AssetId::NOAH_TEXTURE);
+        if (!noah_texture)
         {
-            // The gameplay state requires a player.
             return false;
         }
 
-        // INITIALIZE THE HUD.
-        Hud = InitializeHud(screen_width_in_pixels, saved_game_data, World, NoahPlayer);
-        bool hud_initialized = (nullptr != Hud);
-        if (!hud_initialized)
+        // GET THE AXE TEXTURE FOR NOAH.
+        std::shared_ptr<GRAPHICS::Texture> axe_texture = assets->GetTexture(RESOURCES::AssetId::AXE_TEXTURE);
+        if (!axe_texture)
         {
-            // The gameplay state requires a HUD.
             return false;
         }
+
+        std::shared_ptr<OBJECTS::Axe> axe = std::make_shared<OBJECTS::Axe>(axe_texture);
+
+        World->NoahPlayer = std::make_shared<OBJECTS::Noah>(*saved_game_data, noah_texture, axe);
+
+        // INITIALIZE THE HUD.
+        std::shared_ptr<GRAPHICS::Texture> wood_log_texture = assets->GetTexture(RESOURCES::AssetId::WOOD_LOG_TEXTURE);
+        if (!wood_log_texture)
+        {
+            return false;
+        }
+
+        unsigned int text_box_width_in_pixels = screen_width_in_pixels;
+        const unsigned int LINE_COUNT = 2;
+        unsigned int text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
+
+        // CREATE THE HUD.
+        Hud = std::make_unique<GRAPHICS::GUI::HeadsUpDisplay>(
+            saved_game_data,
+            world,
+            World->NoahPlayer,
+            text_box_width_in_pixels,
+            text_box_height_in_pixels,
+            assets);
 
         // INITIALIZE THE BIBLE VERSES LEFT TO FIND.
         std::set_difference(
@@ -207,32 +97,37 @@ namespace STATES
         // CHECK IF THE NEW GAME INTRO TEXT HAS ALREADY BEEN COMPLETED.
         NewGameInstructionsCompleted = saved_game_data->NewGameInstructionsCompleted;
 
-        // INDICATE WHETHER OR NOT INITIALIZATION SUCCEEDED.
-        bool initialization_succeeded = hud_initialized;
-        return initialization_succeeded;
+        // INITIALIZE THE TILE MAP EDITOR GUI.
+        std::shared_ptr<GRAPHICS::Texture> main_tileset_texture = assets->GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);
+        TileMapEditorGui = std::make_unique<MAPS::GUI::TileMapEditorGui>(main_tileset_texture);
+
+        // INDICATE THAT INITIALIZATION SUCCEEDED.
+        return true;
     }
 
     /// Updates the state of the gameplay based on elapsed time and player input.
     /// @param[in]  elapsed_time - The amount of time by which to update the game state.
     /// @param[in,out]  input_controller - The controller supplying player input.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
+    /// @param[in,out]  speakers - The speakers in which to play out any audio.
     /// @return The next game state after updating.
     GameState GameplayState::Update(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
-        GRAPHICS::Camera& camera)
+        GRAPHICS::Camera& camera,
+        AUDIO::Speakers& speakers)
     {
 #ifdef _DEBUG
         // UPDATE THE TILE MAP EDITOR IN RESPONSE TO USER INPUT.
-        TileMapEditorGui.RespondToInput(input_controller);
-        if (TileMapEditorGui.Visible)
+        TileMapEditorGui->RespondToInput(input_controller);
+        if (TileMapEditorGui->Visible)
         {
             // MAKE SURE THE TILE MAP EDITOR GUI HAS THE CURRENT TILE MAP.
             MATH::FloatRectangle camera_bounds = camera.ViewBounds;
             MATH::Vector2f camera_view_center = camera_bounds.Center();
             MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(camera_view_center.X, camera_view_center.Y);
-            TileMapEditorGui.CurrentTileMap = current_tile_map;
-            
+            TileMapEditorGui->CurrentTileMap = current_tile_map;
+
             // FINISH UPDATING.
             // If the tile map editor is displayed, it should have
             // full control over updating to avoid interference
@@ -242,7 +137,7 @@ namespace STATES
         else
         {
             // CLEAR THE TILE MAP EDITOR GUI'S CURRENT TILE MAP.
-            TileMapEditorGui.CurrentTileMap = nullptr;
+            TileMapEditorGui->CurrentTileMap = nullptr;
         }
 #endif
 
@@ -291,7 +186,7 @@ namespace STATES
 
                     // ADD THE VERSE TO THE PLAYER'S INVENTORY.
                     // That way, it will already be collected once the player is done.
-                    NoahPlayer->Inventory->BibleVerses.insert(*current_verse);
+                    World->NoahPlayer->Inventory->BibleVerses.insert(*current_verse);
                 }
 
 
@@ -324,14 +219,14 @@ namespace STATES
         }
 
         // UPDATE THE CURRENT MAP GRID.
-        UpdateMapGrid(elapsed_time, input_controller, camera, *CurrentMapGrid);
+        /// @todo UpdateMapGrid(elapsed_time, input_controller, camera, *CurrentMapGrid);
 
         // START PLAYING THE BACKGROUND MUSIC IF THE NEW GAME INSTRUCTIONS HAVE COMPLETED.
         // Silenced is used while God speaks during these instructions for reverence.
         // Might potentially consider switching to something more subtle though.
         if (NewGameInstructionsCompleted)
         {
-            Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
+            speakers.PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
         }
 
         // RETURN THE NEXT GAME STATE.
@@ -348,12 +243,12 @@ namespace STATES
         renderer.Render(*CurrentMapGrid);
 
         // CHECK IF THE TILE MAP EDITOR GUI IS VISIBLE.
-        if (TileMapEditorGui.Visible)
+        if (TileMapEditorGui->Visible)
         {
             // RENDER THE TILE MAP EDITOR GUI.
             // Other components like the player and HUD aren't rendered
             // because they would distract from the editor.
-            TileMapEditorGui.Render(renderer);
+            TileMapEditorGui->Render(renderer);
         }
         else
         {
@@ -364,35 +259,35 @@ namespace STATES
             }
 
             // RENDER ANY ANIMALS FOLLOWING NOAH.
-            NoahPlayer->Inventory->FollowingAnimals.Render(*renderer.Screen);
+            World->NoahPlayer->Inventory->FollowingAnimals.Render(*renderer.Screen);
 
             // CHECK WHICH DIRECTION NOAH IS FACING.
             // If he's facing up, the axe needs to be rendered first
             // so that it appears in-front of him (behind him from
             // the player's view).
-            bool noah_facing_up = (GAMEPLAY::Direction::UP == NoahPlayer->FacingDirection);
+            bool noah_facing_up = (GAMEPLAY::Direction::UP == World->NoahPlayer->FacingDirection);
             if (noah_facing_up)
             {
                 // RENDER THE AXE.
                 // The axe should only be rendered if it is swinging.
-                if (NoahPlayer->Inventory->Axe->IsSwinging())
+                if (World->NoahPlayer->Inventory->Axe->IsSwinging())
                 {
-                    NoahPlayer->Inventory->Axe->Sprite.Render(*renderer.Screen);
+                    World->NoahPlayer->Inventory->Axe->Sprite.Render(*renderer.Screen);
                 }
 
                 // RENDER THE PLAYER.
-                NoahPlayer->Sprite.Render(*renderer.Screen);
+                World->NoahPlayer->Sprite.Render(*renderer.Screen);
             }
             else
             {
                 // RENDER THE PLAYER.
-                NoahPlayer->Sprite.Render(*renderer.Screen);
+                World->NoahPlayer->Sprite.Render(*renderer.Screen);
 
                 // RENDER THE AXE.
                 // The axe should only be rendered if it is swinging.
-                if (NoahPlayer->Inventory->Axe->IsSwinging())
+                if (World->NoahPlayer->Inventory->Axe->IsSwinging())
                 {
-                    NoahPlayer->Inventory->Axe->Sprite.Render(*renderer.Screen);
+                    World->NoahPlayer->Inventory->Axe->Sprite.Render(*renderer.Screen);
                 }
             }
 
@@ -403,12 +298,12 @@ namespace STATES
         // COMPUTE THE LIGHTING FOR THE CURRENT GAMEPLAY.
         // For main gameplay, the world should be tinted based on the time of day most of the time.
         sf::RenderStates lighting = sf::RenderStates::Default;
-        
+
         // MAKE SURE THE APPROPRIATE SHADER EXISTS.
         // If the player is beginning a new game with God speaking to Noah, then the pulsing light
         // shader should be used to help communicate that God is speaking to the player.
         /// @todo   Might be better to have a fancier "spinning light" style-effect.
-        bool pulse_light_for_new_game_text = (!NewGameInstructionsCompleted && renderer.ColoredTextShader);
+        bool pulse_light_for_new_game_text = !NewGameInstructionsCompleted;
         if (pulse_light_for_new_game_text)
         {
             // COMPUTE THE TINT TO APPLY TO THE SCREEN.
@@ -433,9 +328,9 @@ namespace STATES
 
             // RENDER THE SCREEN WITH THE CURRENT LIGHTING.
             constexpr float ALPHA_FOR_FULLY_OPAQUE = 1.0f;
-            renderer.ColoredTextShader->setUniform("color", sf::Glsl::Vec4(lighting_scale_factor, lighting_scale_factor, lighting_scale_factor, ALPHA_FOR_FULLY_OPAQUE));
-            renderer.ColoredTextShader->setUniform("texture", sf::Shader::CurrentTexture);
-            lighting.shader = renderer.ColoredTextShader.get();
+            renderer.ColoredTextShader.setUniform("color", sf::Glsl::Vec4(lighting_scale_factor, lighting_scale_factor, lighting_scale_factor, ALPHA_FOR_FULLY_OPAQUE));
+            renderer.ColoredTextShader.setUniform("texture", sf::Shader::CurrentTexture);
+            lighting.shader = &renderer.ColoredTextShader;
         }
         else if (renderer.TimeOfDayShader)
         {
@@ -499,89 +394,7 @@ namespace STATES
         return screen;
     }
 
-    /// Attempts to initialize the player character from saved game data.
-    /// @param[in]  saved_game_data - The saved game data from which to initialize the player.
-    /// @return The initialized player, if successful; null otherwise.
-    std::shared_ptr<OBJECTS::Noah> GameplayState::InitializePlayer(const SavedGameData& saved_game_data)
-    {
-        // GET THE TEXTURE FOR NOAH.
-        std::shared_ptr<GRAPHICS::Texture> noah_texture = Assets->GetTexture(RESOURCES::AssetId::NOAH_TEXTURE);
-        if (!noah_texture)
-        {
-            return nullptr;
-        }
-
-        // GET THE AXE TEXTURE FOR NOAH.
-        std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AssetId::AXE_TEXTURE);
-        if (!axe_texture)
-        {
-            return nullptr;
-        }
-
-        // CREATE THE AXE.
-        std::shared_ptr<OBJECTS::Axe> axe = std::make_shared<OBJECTS::Axe>(axe_texture);
-
-        // CREATE NOAH.
-        auto noah_player = std::make_shared<OBJECTS::Noah>(noah_texture, axe);
-
-        // SET NOAH'S INITIAL POSITION.
-        noah_player->SetWorldPosition(saved_game_data.PlayerWorldPosition);
-        // The following animals should appear right behind Noah.
-        // For simplicity, they're initialized to start at Noah's position,
-        // but they'll quickly be updated to be placed behind him by regular
-        // updating code.
-        noah_player->Inventory->FollowingAnimals.CurrentCenterWorldPosition = saved_game_data.PlayerWorldPosition;
-
-        // POPULATE THE REST OF NOAH'S INVENTORY.
-        noah_player->Inventory->WoodCount = saved_game_data.WoodCount;
-        noah_player->Inventory->BibleVerses.insert(saved_game_data.FoundBibleVerses.cbegin(), saved_game_data.FoundBibleVerses.cend());
-        noah_player->Inventory->CollectedAnimalCounts = saved_game_data.CollectedAnimals;
-        noah_player->Inventory->CollectedFoodCounts = saved_game_data.CollectedFood;
-
-        return noah_player;
-    }
-
-    /// Attempts to initialize the HUD for gameplay.
-    /// @param[in]  screen_width_in_pixels - The width of the screen, in pixels.
-    /// @param[in]  saved_game_data - The saved game data.
-    /// @param[in]  world - The world for which the HUD is displaying information about.
-    /// @param[in]  noah_player - The player whose information to display in the HUD.
-    /// @return The initialized HUD, if successful; null otherwise.
-    std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> GameplayState::InitializeHud(
-        const unsigned int screen_width_in_pixels,
-        const std::shared_ptr<SavedGameData>& saved_game_data,
-        const std::shared_ptr<MAPS::World>& world,
-        const std::shared_ptr<OBJECTS::Noah>& noah_player)
-    {
-        // GET ASSETS NEEDED FOR THE HUD.
-        std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AssetId::AXE_TEXTURE);
-        if (!axe_texture)
-        {
-            return nullptr;
-        }
-
-        std::shared_ptr<GRAPHICS::Texture> wood_log_texture = Assets->GetTexture(RESOURCES::AssetId::WOOD_LOG_TEXTURE);
-        if (!wood_log_texture)
-        {
-            return nullptr;
-        }
-
-        // CALCULATE THE TEXT BOX DIMENSIONS.
-        unsigned int text_box_width_in_pixels = screen_width_in_pixels;
-        const unsigned int LINE_COUNT = 2;
-        unsigned int text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
-
-        // CREATE THE HUD.
-        auto hud = std::make_unique<GRAPHICS::GUI::HeadsUpDisplay>(
-            saved_game_data,
-            world,
-            noah_player,
-            text_box_width_in_pixels,
-            text_box_height_in_pixels,
-            Assets);
-        return hud;
-    }
-
+#if TODO_OLD
     /// Updates a map grid based on elapsed time and player input.
     /// @param[in]  elapsed_time - The amount of time by which to update the game state.
     /// @param[in,out]  input_controller - The controller supplying player input.

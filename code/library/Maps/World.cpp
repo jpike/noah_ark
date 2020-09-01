@@ -84,6 +84,31 @@ namespace MAPS
         return world;
     }
 
+    /// Initializes the built ark within the overworld.
+    /// @param[in]  built_ark_pieces - The built pieces of the ark.
+    void World::InitializeBuiltArkInOverworld(const std::vector<STATES::BuiltArkPieceTileMapData>& built_ark_pieces)
+    {
+        for (const auto& built_ark_piece_data : built_ark_pieces)
+        {
+            // GET THE TILE MAP FOR THE BUILT ARK PIECES.
+            MAPS::TileMap* current_tile_map = Overworld.GetTileMap(built_ark_piece_data.TileMapGridYPosition, built_ark_piece_data.TileMapGridXPosition);
+            if (!current_tile_map)
+            {
+                // Continue trying to initialize other ark pieces.
+                /// @todo   Different error handling?
+                continue;
+            }
+
+            // UPDATE THE BUILT ARK PIECES IN THE CURRENT TILE MAP.
+            for (std::size_t ark_piece_index : built_ark_piece_data.BuiltArkPieceIndices)
+            {
+                // SET THE CURRENT ARK PIECE AS BUILT.
+                auto& ark_piece = current_tile_map->ArkPieces.at(ark_piece_index);
+                ark_piece.Built = true;
+            }
+        }
+    }
+
     /// Populates the overworld based on data read from in-memory assets.
     /// @param[in,out]  assets - The assets for the overworld.
     void World::PopulateOverworld(RESOURCES::Assets& assets)

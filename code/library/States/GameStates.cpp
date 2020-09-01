@@ -51,7 +51,7 @@ namespace STATES
                 next_game_state = FloodCutscene.Update(elapsed_time);
                 break;
             case GameState::GAMEPLAY:
-                next_game_state = GameplayState.Update(elapsed_time, input_controller, camera);
+                next_game_state = GameplayState.Update(elapsed_time, input_controller, camera, speakers);
                 break;
         }
 
@@ -106,7 +106,7 @@ namespace STATES
     void GameStates::SwitchStatesIfChanged(
         const GameState& new_state, 
         const std::shared_ptr<MAPS::World>& world, 
-        RESOURCES::Assets& assets,
+        const std::shared_ptr<RESOURCES::Assets>& assets,
         GRAPHICS::Renderer& renderer)
     {
         // CHECK IF THE GAME STATE HAS CHANGED.
@@ -142,17 +142,17 @@ namespace STATES
 
                 // INITIALIZE THE CUTSCENE SPRITES.
                 /// @todo   Cleaner way to do this!
-                std::shared_ptr<GRAPHICS::Texture> mountain_texture = assets.GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_MOUNTAIN);
+                std::shared_ptr<GRAPHICS::Texture> mountain_texture = assets->GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_MOUNTAIN);
                 MATH::FloatRectangle mountain_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 256, 256);
                 FloodCutscene.Mountain = GRAPHICS::Sprite(mountain_texture, mountain_sprite_rectangle);
 
-                std::shared_ptr<GRAPHICS::Texture> ark_texture = assets.GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_ARK);
+                std::shared_ptr<GRAPHICS::Texture> ark_texture = assets->GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_ARK);
                 MATH::FloatRectangle ark_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 100, 50);
                 FloodCutscene.Ark = GRAPHICS::Sprite(ark_texture, ark_sprite_rectangle);
 
                 // The flood sprite is slightly larger than the screen height to account for the "waves" at the top and allowing
                 // the sprite to rise up while still having the bottom of the screen appear blue.
-                std::shared_ptr<GRAPHICS::Texture> flood_water_texture = assets.GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_WATERS);
+                std::shared_ptr<GRAPHICS::Texture> flood_water_texture = assets->GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_WATERS);
                 MATH::FloatRectangle flood_water_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 512, 416);
                 FloodCutscene.FloodWaters = GRAPHICS::Sprite(flood_water_texture, flood_water_sprite_rectangle);
                 break;
@@ -178,7 +178,8 @@ namespace STATES
                 bool gameplay_state_initialized = GameplayState.Initialize(
                     renderer.Screen->WidthInPixels<unsigned int>(),
                     saved_game_data,
-                    world);
+                    world,
+                    assets);
                 if (!gameplay_state_initialized)
                 {
                     /// @todo   Error-handling!
@@ -186,7 +187,7 @@ namespace STATES
                 }
 
                 // FOCUS THE CAMERA ON THE PLAYER.
-                MATH::Vector2f player_start_world_position = GameplayState.World->NoahPlayer.GetWorldPosition();
+                MATH::Vector2f player_start_world_position = GameplayState.World->NoahPlayer->GetWorldPosition();
                 renderer.Camera.SetCenter(player_start_world_position);
                 break;
             }

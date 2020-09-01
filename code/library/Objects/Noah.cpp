@@ -10,12 +10,12 @@ namespace OBJECTS
     const std::string Noah::WALK_LEFT_ANIMATION_NAME = "noah_walk_left";
     const std::string Noah::WALK_RIGHT_ANIMATION_NAME = "noah_walk_right";
 
-#if TODO
     /// Constructor.
     /// @param[in]  noah_texture - The texture to use for Noah.
     /// @param[in]  axe - The axe for Noah.
     /// @throws std::exception - Thrown if a parameter is null.
     Noah::Noah(
+        const STATES::SavedGameData& saved_game_data,
         const std::shared_ptr<GRAPHICS::Texture>& noah_texture,
         const std::shared_ptr<OBJECTS::Axe>& axe) :
     FacingDirection(GAMEPLAY::Direction::INVALID),
@@ -32,6 +32,7 @@ namespace OBJECTS
         // The sprite origin should be the graphical center of its sub-rectangle.
         sprite.SetOrigin(TEXTURE_SUB_RECT.Center());
         Sprite.Sprite = sprite;
+        Sprite.SetWorldPosition(saved_game_data.PlayerWorldPosition);
 
         // ADD NOAH'S ANIMATION SEQUENCES.
         const bool IS_LOOPING = true;
@@ -91,10 +92,21 @@ namespace OBJECTS
         Sprite.UseAnimationSequence(NOAH_WALK_FRONT_ANIMATION->AnimationName);
         FacingDirection = GAMEPLAY::Direction::DOWN;
 
-        // INITIALIZE THE AXE.
+        // INITIALIZE THE INVENTORY.
         Inventory->Axe = axe;
+
+        // The following animals should appear right behind Noah.
+        // For simplicity, they're initialized to start at Noah's position,
+        // but they'll quickly be updated to be placed behind him by regular
+        // updating code.
+        Inventory->FollowingAnimals.CurrentCenterWorldPosition = saved_game_data.PlayerWorldPosition;
+
+        // POPULATE THE REST OF NOAH'S INVENTORY.
+        Inventory->WoodCount = saved_game_data.WoodCount;
+        Inventory->BibleVerses.insert(saved_game_data.FoundBibleVerses.cbegin(), saved_game_data.FoundBibleVerses.cend());
+        Inventory->CollectedAnimalCounts = saved_game_data.CollectedAnimals;
+        Inventory->CollectedFoodCounts = saved_game_data.CollectedFood;
     }
-#endif
 
     /// Gets the world position of Noah.
     /// @return The world position of Noah.

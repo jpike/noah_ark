@@ -347,7 +347,7 @@ int main()
                         return EXIT_FAILURE;
                     }
                 }
-                game_states.SwitchStatesIfChanged(next_game_state, world, *assets, renderer);
+                game_states.SwitchStatesIfChanged(next_game_state, world, assets, renderer);
             }
         }
 

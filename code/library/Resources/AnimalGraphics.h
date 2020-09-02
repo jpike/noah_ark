@@ -3,7 +3,6 @@
 #include <memory>
 #include "Graphics/AnimatedSprite.h"
 #include "Objects/Animal.h"
-#include "Resources/Assets.h"
 
 namespace RESOURCES
 {
@@ -15,9 +14,7 @@ namespace RESOURCES
         /// The width of an animal sprite, in pixels.
         static constexpr float SPRITE_WIDTH_IN_PIXELS = 16.0f;
 
-        static std::shared_ptr<GRAPHICS::AnimatedSprite> GetSprite(
-            const OBJECTS::AnimalType animal_type, 
-            Assets& assets);
+        static std::shared_ptr<GRAPHICS::AnimatedSprite> GetSprite(const OBJECTS::AnimalType animal_type);
 
     private:
         static std::shared_ptr<GRAPHICS::AnimationSequence> GetAnimalAnimation(const OBJECTS::AnimalType& animal_type);

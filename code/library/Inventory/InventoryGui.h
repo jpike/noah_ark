@@ -11,7 +11,6 @@
 #include "Inventory/InventoryBiblePage.h"
 #include "Inventory/InventoryFoodPage.h"
 #include "Math/Vector2.h"
-#include "Resources/Assets.h"
 
 namespace INVENTORY
 {
@@ -63,9 +62,7 @@ namespace INVENTORY
         };
 
         // CONSTRUCTION.
-        explicit InventoryGui(
-            const std::shared_ptr<const Inventory>& inventory,
-            const std::shared_ptr<RESOURCES::Assets>& assets);
+        explicit InventoryGui(const std::shared_ptr<const Inventory>& inventory);
 
         // UPDATING.
         void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);

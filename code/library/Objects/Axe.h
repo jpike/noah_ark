@@ -5,7 +5,6 @@
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
-#include "Resources/Assets.h"
 
 namespace OBJECTS
 {

@@ -5,8 +5,7 @@
 namespace MAPS
 {
     /// Populates the ark interior based on data read from in-memory assets.
-    /// @param[in,out]  assets - The assets for the overworld.
-    void Ark::Populate(RESOURCES::Assets& assets)
+    void Ark::Populate()
     {
         // LOAD THE TILESET TEXTURE.
         std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);

@@ -16,7 +16,8 @@
                 "${projectRoot}/code/testing",
                 "${projectRoot}/ThirdParty/SFML/include",
                 "${projectRoot}/ThirdParty/SFML/extlibs/headers/AL",
-                "${projectRoot}/ThirdParty/catch"
+                "${projectRoot}/ThirdParty/catch",
+                "${projectRoot}/ThirdParty/GSL/include"
             ]
         },
         {
@@ -34,7 +35,8 @@
                 "${projectRoot}/code/testing",
                 "${projectRoot}/ThirdParty/SFML/include",
                 "${projectRoot}/ThirdParty/SFML/extlibs/headers/AL",
-                "${projectRoot}/ThirdParty/catch"
+                "${projectRoot}/ThirdParty/catch",
+                "${projectRoot}/ThirdParty/GSL/include"
             ]
         }
     ]

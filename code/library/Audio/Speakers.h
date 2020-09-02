@@ -23,6 +23,7 @@ namespace AUDIO
         explicit Speakers();
 
         // SOUND EFFECTS.
+        void LoadSound(const RESOURCES::AssetId sound_id, const std::string& sound_binary_data);
         void AddSound(const RESOURCES::AssetId sound_id, const std::shared_ptr<sf::SoundBuffer>& audio_samples);
         bool SoundIsPlaying(const RESOURCES::AssetId sound_id);
         void PlaySoundEffect(const RESOURCES::AssetId sound_id);
@@ -33,6 +34,7 @@ namespace AUDIO
         void PlayMusic(const RESOURCES::AssetId music_id);
         void PlayMusicIfNotAlready(const RESOURCES::AssetId music_id);
         void StopMusic(const RESOURCES::AssetId music_id);
+        std::shared_ptr<AUDIO::Music> GetMusic(const RESOURCES::AssetId music_id);
 
         // GENERAL.
         void StopAllAudio();

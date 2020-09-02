@@ -4,15 +4,11 @@
 namespace OBJECTS
 {
     /// Constructs a dust cloud using the provided texture resource.
-    /// @param[in]  texture - The texture with the dust cloud graphics.
-    /// @throws std::invalid_argument - Thrown if the texture is null.
-    DustCloud::DustCloud(const std::shared_ptr<GRAPHICS::Texture>& texture) :
+    /// @param[in]  texture_id - The ID of the texture with the dust cloud graphics.
+    DustCloud::DustCloud(const RESOURCES::AssetId texture_id) :
         Sprite(),
         TotalElapsedTimeInSeconds(0.0f)
     {
-        // MAKE SURE A VALID TEXTURE WAS PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(texture, "Dust cloud texture cannot be null.");
-
         // CREATE THE ANIMATED SPRITE FOR THE DUST CLOUD.
         const std::string DUST_CLOUD_ANIMATION_ID = "dust_cloud";
         const bool IS_LOOPING = false;
@@ -30,7 +26,7 @@ namespace OBJECTS
             IS_LOOPING,
             TOTAL_DURATION,
             FRAMES);
-        Sprite = GRAPHICS::AnimatedSprite(texture, DUST_CLOUD_ANIMATION);
+        Sprite = GRAPHICS::AnimatedSprite(texture_id, DUST_CLOUD_ANIMATION);
     }
 
     /// Determines if the cloud has disappeared or faded away.

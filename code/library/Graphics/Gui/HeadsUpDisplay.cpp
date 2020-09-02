@@ -15,22 +15,19 @@ namespace GUI
     /// @param[in]  noah_player - The player whose information is being displayed in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
-    /// @param[in]  assets - The assets to use for the page.
     /// @throws std::exception - Thrown if a parameter is null.
     HeadsUpDisplay::HeadsUpDisplay(
         const std::shared_ptr<STATES::SavedGameData>& saved_game_data,
         const std::shared_ptr<MAPS::World>& world,
         const std::shared_ptr<OBJECTS::Noah>& noah_player,
         const unsigned int main_text_box_width_in_pixels,
-        const unsigned int main_text_box_height_in_pixels,
-        const std::shared_ptr<RESOURCES::Assets>& assets) :
+        const unsigned int main_text_box_height_in_pixels) :
     MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, assets->GetFont(RESOURCES::AssetId::FONT_TEXTURE)),
     TextColor(GRAPHICS::Color::BLACK),
     InventoryOpened(false),
-    InventoryGui(noah_player->Inventory, assets),
+    InventoryGui(noah_player->Inventory),
     PauseMenuVisible(false),
     SavedGame(saved_game_data),
-    Assets(assets),
     World(world),
     NoahPlayer(noah_player)
     {
@@ -38,9 +35,6 @@ namespace GUI
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             SavedGame,
             "Null saved game provided to HUD.");
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
-            Assets,
-            "Null assets provided to HUD.");
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             World,
             "Null world provided to HUD.");
@@ -207,11 +201,7 @@ namespace GUI
         MATH::Vector2ui axe_icon_screen_position = TOP_LEFT_SCREEN_POSITION_IN_PIXELS;
         axe_icon_screen_position.X += KEY_ICON_WIDTH_IN_PIXELS;
 
-        std::shared_ptr<GRAPHICS::Texture> axe_texture = Assets->GetTexture(RESOURCES::AssetId::AXE_TEXTURE);
-        if (axe_texture)
-        {
-            renderer.RenderGuiIcon(*axe_texture, AXE_TEXTURE_SUB_RECTANGLE, axe_icon_screen_position);
-        }
+        renderer.RenderGuiIcon(RESOURCES::AssetId::AXE_TEXTURE, AXE_TEXTURE_SUB_RECTANGLE, axe_icon_screen_position);
 
         // RENDER COMPONENTS INDICATING HOW MUCH WOOD HAS BEEN COLLECTED.
         // A wood icon is rendered to help players know what the text next to it corresponds to.
@@ -224,11 +214,7 @@ namespace GUI
         wood_icon_screen_position.X += static_cast<unsigned int>(AXE_TEXTURE_SUB_RECTANGLE.Width());
         wood_icon_screen_position.X += PIXEL_BUFFER_SPACE_BETWEEN_AXE_ICON_AND_WOOD_ICON;
 
-        std::shared_ptr<GRAPHICS::Texture> wood_texture = Assets->GetTexture(RESOURCES::AssetId::WOOD_LOG_TEXTURE);
-        if (wood_texture)
-        {
-            renderer.RenderGuiIcon(*wood_texture, WOOD_LOG_TEXTURE_SUB_RECTANGLE, wood_icon_screen_position);
-        }
+        renderer.RenderGuiIcon(RESOURCES::AssetId::WOOD_LOG_TEXTURE, WOOD_LOG_TEXTURE_SUB_RECTANGLE, wood_icon_screen_position);
 
         // Text is rendered for "x#" to communicate how much wood has been collected.
         // For example, "x10" (no quotes) would be rendered if the player has collected

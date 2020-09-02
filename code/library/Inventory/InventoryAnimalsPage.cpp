@@ -10,19 +10,14 @@ namespace INVENTORY
 
     /// Constructor.
     /// @param[in]  inventory - The inventory to display in the GUI.
-    /// @param[in]  assets - The assets to use for the page.
     /// @throws std::exception - Thrown if a parameter is null.
-    InventoryAnimalsPage::InventoryAnimalsPage(
-        const std::shared_ptr<const INVENTORY::Inventory>& inventory,
-        const std::shared_ptr<RESOURCES::Assets>& assets) :
+    InventoryAnimalsPage::InventoryAnimalsPage(const std::shared_ptr<const INVENTORY::Inventory>& inventory) :
     Inventory(inventory),
     SelectedAnimalSpeciesIndex(0),
-    ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals(),
-    Assets(assets)
+    ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals()
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to inventory animals page.");
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Assets, "Null assets provided to inventory animals page.");
     }
 
     /// Updates the animals page.
@@ -257,7 +252,7 @@ namespace INVENTORY
                 if (male_of_species_collected)
                 {
                     OBJECTS::AnimalType male_animal_type(species, OBJECTS::AnimalGender::MALE);
-                    std::shared_ptr<GRAPHICS::AnimatedSprite> male_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(male_animal_type, *Assets);
+                    std::shared_ptr<GRAPHICS::AnimatedSprite> male_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(male_animal_type);
                     if (male_animal_sprite)
                     {
                         renderer.RenderGuiIcon(male_animal_sprite->Sprite, male_animal_icon_left_top_screen_position);
@@ -269,7 +264,7 @@ namespace INVENTORY
                 if (female_of_species_collected)
                 {
                     OBJECTS::AnimalType female_animal_type(species, OBJECTS::AnimalGender::FEMALE);
-                    std::shared_ptr<GRAPHICS::AnimatedSprite> female_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(female_animal_type, *Assets);
+                    std::shared_ptr<GRAPHICS::AnimatedSprite> female_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(female_animal_type);
                     if (female_animal_sprite)
                     {
                         // It should be placed at the right end of this column, after the male icon.

@@ -27,13 +27,11 @@ namespace STATES
     public:
         GameState Update(
             HARDWARE::GamingHardware& gaming_hardware,
-            GRAPHICS::Camera& camera,
-            RESOURCES::Assets& assets);
+            GRAPHICS::Camera& camera);
         sf::Sprite Render(HARDWARE::GamingHardware& gaming_hardware, GRAPHICS::Renderer& renderer);
         void SwitchStatesIfChanged(
             const GameState& new_state, 
-            const std::shared_ptr<MAPS::World>& world, 
-            const std::shared_ptr<RESOURCES::Assets>& assets,
+            const std::shared_ptr<MAPS::World>& world,
             GRAPHICS::Renderer& renderer);
 
         /// The current state the game is in.

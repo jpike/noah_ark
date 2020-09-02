@@ -4,7 +4,7 @@ namespace GRAPHICS
 {
     /// Creates an invisible sprite positioned at (0,0,0).
     Sprite::Sprite() :
-    SpriteTexture(),
+    TextureId(RESOURCES::AssetId::INVALID),
     SpriteResource(),
     IsVisible(false)
     {
@@ -13,13 +13,13 @@ namespace GRAPHICS
     }
 
     /// Creates an invisible sprite based on the provided texture information.
-    /// @param[in]  texture - The texture containing graphics for the sprite.
+    /// @param[in]  texture_id - The ID of the texture containing graphics for the sprite.
     /// @param[in]  texture_sub_rectangle - The sub-rectangle of the texture
     /// defining which portion should be used for the sprite.
     Sprite::Sprite(
-        const std::shared_ptr<const Texture>& texture,
+        const RESOURCES::AssetId texture_id,
         const MATH::FloatRectangle& texture_sub_rectangle) :
-    SpriteTexture(texture),
+    TextureId(texture_id),
     SpriteResource(),
     IsVisible(false)
     {
@@ -31,7 +31,7 @@ namespace GRAPHICS
             static_cast<int>(texture_sub_rectangle.Height()));
 
         // CREATE THE SFML SPRITE.
-        SpriteResource = sf::Sprite(SpriteTexture->TextureResource);
+        SpriteResource;
         SpriteResource.setTextureRect(texture_rectangle);
 
         // Sprites should be centered within their texture rectangle by default.

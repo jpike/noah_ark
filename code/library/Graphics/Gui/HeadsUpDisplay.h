@@ -9,7 +9,6 @@
 #include "Inventory/InventoryGui.h"
 #include "Maps/World.h"
 #include "Objects/Noah.h"
-#include "Resources/Assets.h"
 #include "States/GameState.h"
 #include "States/SavedGameData.h"
 
@@ -30,8 +29,7 @@ namespace GUI
             const std::shared_ptr<MAPS::World>& world,
             const std::shared_ptr<OBJECTS::Noah>& noah_player,
             const unsigned int main_text_box_width_in_pixels,
-            const unsigned int main_text_box_height_in_pixels,
-            const std::shared_ptr<RESOURCES::Assets>& assets);
+            const unsigned int main_text_box_height_in_pixels);
 
         // UPDATE.
         STATES::GameState Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
@@ -60,8 +58,6 @@ namespace GUI
         bool PauseMenuVisible;
         /// The current player's saved game.
         std::shared_ptr<STATES::SavedGameData> SavedGame;
-        /// The assets to use for the HUD.
-        std::shared_ptr<RESOURCES::Assets> Assets;
         /// The world whose information is being displayed in the HUD.
         std::shared_ptr<MAPS::World> World;
         /// The player whose information is being displayed in the HUD.

@@ -9,17 +9,12 @@ namespace INVENTORY
 
     /// Constructor.
     /// @param[in]  inventory - The inventory to display in the GUI.
-    /// @param[in]  assets - The assets to use for the page.
     /// @throws std::exception - Thrown if a parameter is null.
-    InventoryFoodPage::InventoryFoodPage(
-        const std::shared_ptr<const INVENTORY::Inventory>& inventory,
-        const std::shared_ptr<RESOURCES::Assets>& assets) :
-    Inventory(inventory),
-    Assets(assets)
+    InventoryFoodPage::InventoryFoodPage(const std::shared_ptr<const INVENTORY::Inventory>& inventory) :
+    Inventory(inventory)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to inventory food page.");
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Assets, "Null assets provided to inventory food page.");
     }
 
     /// Renders the inventory GUI food page to the provided screen.
@@ -118,7 +113,7 @@ namespace INVENTORY
         {
             // RENDER AN ICON FOR THE FOOD.
             // It should appear in the left-top corner of the box.
-            std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(food_type, *Assets);
+            std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(food_type);
             if (food_sprite)
             {
                 MATH::Vector2f food_icon_left_top_screen_position = box_screen_rectangle.LeftTop;

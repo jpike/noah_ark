@@ -8,14 +8,13 @@
 namespace MAPS
 {
     /// Populates the world using the provided assets.
-    /// @param[in,out]  assets - The assets to use for populating the world.
     /// @return The world, if successfully populated; null otherwise.
-    std::shared_ptr<World> World::Populate(RESOURCES::Assets& assets)
+    std::shared_ptr<World> World::Populate()
     {
         // POPULATE THE WORLD.
         std::shared_ptr<MAPS::World> world = std::make_shared<MAPS::World>();
-        world->PopulateOverworld(assets);
-        world->Ark.Populate(assets);
+        world->PopulateOverworld();
+        world->Ark.Populate();
 
         // CREATE THE EXIT POINTS BETWEEN MAP GRIDS.
         // The ark interior data used for exit points is currently hard-coded to simplify
@@ -110,8 +109,7 @@ namespace MAPS
     }
 
     /// Populates the overworld based on data read from in-memory assets.
-    /// @param[in,out]  assets - The assets for the overworld.
-    void World::PopulateOverworld(RESOURCES::Assets& assets)
+    void World::PopulateOverworld()
     {
         // LOAD THE TILESET TEXTURE.
         std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);

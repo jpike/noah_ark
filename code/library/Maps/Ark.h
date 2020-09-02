@@ -2,7 +2,6 @@
 
 #include <optional>
 #include "Maps/LayeredMultiTileMapGrids.h"
-#include "Resources/Assets.h"
 
 namespace MAPS
 {
@@ -17,7 +16,7 @@ namespace MAPS
         static constexpr unsigned int INTERIOR_HEIGHT_IN_TILE_MAPS = 1;
 
         // POPULATION.
-        void Populate(RESOURCES::Assets& assets);
+        void Populate();
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The interior of the ark.

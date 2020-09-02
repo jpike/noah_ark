@@ -16,7 +16,6 @@
 #include "Maps/World.h"
 #include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
-#include "Resources/Assets.h"
 #include "States/GameState.h"
 #include "States/SavedGameData.h"
 
@@ -33,16 +32,14 @@ namespace STATES
             const unsigned int screen_width_in_pixels,
             const std::shared_ptr<SavedGameData>& saved_game_data,
             const std::shared_ptr<MAPS::World>& world,
-            GRAPHICS::Renderer& renderer,
-            const std::shared_ptr<RESOURCES::Assets>& assets);
+            GRAPHICS::Renderer& renderer);
 
         // UPDATING.
         GameState Update(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
             GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers,
-            RESOURCES::Assets& assets);
+            AUDIO::Speakers& speakers);
 
         // RENDERING.
         sf::Sprite Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer);
@@ -61,16 +58,14 @@ namespace STATES
             INPUT_CONTROL::InputController& input_controller,
             GRAPHICS::Camera& camera,
             AUDIO::Speakers& speakers,
-            MAPS::MultiTileMapGrid& map_grid,
-            RESOURCES::Assets& assets);
+            MAPS::MultiTileMapGrid& map_grid);
         MAPS::ExitPoint* UpdatePlayerBasedOnInput(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
             MAPS::TileMap& current_tile_map,
             MAPS::MultiTileMapGrid& map_grid,
             GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers,
-            RESOURCES::Assets& assets);
+            AUDIO::Speakers& speakers);
         void MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map, MAPS::MultiTileMapGrid& map_grid);
         void UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
 
@@ -79,7 +74,6 @@ namespace STATES
             MAPS::TileMap& tile_map,
             MAPS::MultiTileMapGrid& map_grid,
             AUDIO::Speakers& speakers,
-            RESOURCES::Assets& assets,
             std::string& message_for_text_box);
         void CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map, AUDIO::Speakers& speakers);
         void CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map, AUDIO::Speakers& speakers);
@@ -90,8 +84,7 @@ namespace STATES
             GRAPHICS::Camera& camera,
             AUDIO::Speakers& speakers,
             INPUT_CONTROL::InputController& input_controller,
-            MAPS::TileMap& current_tile_map,
-            RESOURCES::Assets& assets);
+            MAPS::TileMap& current_tile_map);
 
         // PRIVATE MEMBER VARIABLES.
         /// The current map being displayed within the world.

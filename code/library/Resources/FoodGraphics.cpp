@@ -4,11 +4,8 @@ namespace RESOURCES
 {
     /// Gets a sprite for the specified food type.
     /// @param[in]  food_type - The type of food to get a sprite for.
-    /// @param[in,out]  assets - The assets from which to get the sprite.
     /// @return The food sprite, if successfully retrieved; null otherwise.
-    std::shared_ptr<GRAPHICS::Sprite> FoodGraphics::GetSprite(
-        const OBJECTS::FoodType food_type,
-        Assets& assets)
+    std::shared_ptr<GRAPHICS::Sprite> FoodGraphics::GetSprite(const OBJECTS::FoodType food_type)
     {
         // GET THE FOOD TEXTURE.
         std::shared_ptr<GRAPHICS::Texture> food_texture = assets.GetTexture(RESOURCES::AssetId::FOOD_TEXTURE);

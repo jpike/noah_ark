@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <SFML/Audio.hpp>
 
 /// Holds code related to audio (sound effects, music) for the game.
@@ -11,6 +12,7 @@ namespace AUDIO
     {
     public:
         // CONSTRUCTION.
+        static std::unique_ptr<SoundEffect> LoadFromMemory(const std::string& binary_data);
         explicit SoundEffect() = default;
         explicit SoundEffect(const std::shared_ptr<sf::SoundBuffer>& audio_samples);
 

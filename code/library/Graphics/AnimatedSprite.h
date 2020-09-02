@@ -10,6 +10,7 @@
 #include "Graphics/Sprite.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
+#include "Resources/AssetId.h"
 
 namespace GRAPHICS
 {
@@ -26,7 +27,7 @@ namespace GRAPHICS
         explicit AnimatedSprite();
         explicit AnimatedSprite(const GRAPHICS::Sprite& sprite);
         explicit AnimatedSprite(
-            const std::shared_ptr<GRAPHICS::Texture>& texture,
+            const RESOURCES::AssetId texture_id,
             const std::shared_ptr<GRAPHICS::AnimationSequence>& animation_sequence);
 
         // RENDERING/UPDATING.

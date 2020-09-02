@@ -21,21 +21,18 @@ namespace GRAPHICS
     {}
 
     /// Constructor to create an animated sprite with a single initial animation sequence.
-    /// @param[in]  texture - The texture to use for the sprite.
+    /// @param[in]  texture_id - The ID of the texture to use for the sprite.
     /// @param[in]  animation_sequence - The initial animation sequence for the sprite.
     ///     The first frame of the animation sequence defines the initial sub-rectangle
     ///     of the texture to use for the sprite.
     /// @throws std::exception - Thrown if a parameter is invalid.
     AnimatedSprite::AnimatedSprite(
-        const std::shared_ptr<GRAPHICS::Texture>& texture,
+        const RESOURCES::AssetId texture_id,
         const std::shared_ptr<GRAPHICS::AnimationSequence>& animation_sequence) :
         Sprite(),
         AnimationSequences(),
         CurrentAnimationSequenceName()
     {
-        // MAKE SURE A TEXTURE WAS PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(texture, "Must provide texture when creating animated sprite.");
-
         // MAKE SURE AN ANIMATION SEQUENCE WAS PROVIDED.
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(animation_sequence, "Must provide animation sequence when creating animated sprite.");
 
@@ -53,7 +50,7 @@ namespace GRAPHICS
             static_cast<float>(first_frame_rectangle.CenterY()),
             static_cast<float>(first_frame_rectangle.Width()),
             static_cast<float>(first_frame_rectangle.Height()));
-        Sprite = GRAPHICS::Sprite(texture, texture_subrectangle);
+        Sprite = GRAPHICS::Sprite(texture_id, texture_subrectangle);
 
         // ADD THE INITIAL ANIMATION SEQUENCE TO THIS SPRITE.
         AddAnimationSequence(animation_sequence);

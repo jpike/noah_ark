@@ -4,11 +4,8 @@ namespace RESOURCES
 {
     /// Gets a sprite for the specified animal type.
     /// @param[in]  animal_type - The type of animal to get a sprite for.
-    /// @param[in,out]  assets - The assets from which to get the sprite.
     /// @return The animal sprite, if successfully retrieved; null otherwise.
-    std::shared_ptr<GRAPHICS::AnimatedSprite> AnimalGraphics::GetSprite(
-        const OBJECTS::AnimalType animal_type,
-        Assets& assets)
+    std::shared_ptr<GRAPHICS::AnimatedSprite> AnimalGraphics::GetSprite(const OBJECTS::AnimalType animal_type)
     {
         // GET THE ANIMAL TEXTURE.
         std::shared_ptr<GRAPHICS::Texture> animal_texture = assets.GetTexture(RESOURCES::AssetId::ANIMAL_TEXTURE);

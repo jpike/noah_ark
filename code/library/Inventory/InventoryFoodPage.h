@@ -6,7 +6,6 @@
 #include "Inventory/Inventory.h"
 #include "Math/Rectangle.h"
 #include "Objects/Food.h"
-#include "Resources/Assets.h"
 
 namespace INVENTORY
 {
@@ -21,9 +20,7 @@ namespace INVENTORY
         static const GRAPHICS::Color BACKGROUND_COLOR;
 
         // CONSTRUCTION.
-        explicit InventoryFoodPage(
-            const std::shared_ptr<const Inventory>& inventory,
-            const std::shared_ptr<RESOURCES::Assets>& assets);
+        explicit InventoryFoodPage(const std::shared_ptr<const Inventory>& inventory);
 
         // RENDERING.
         void Render(GRAPHICS::Renderer& renderer) const;
@@ -39,7 +36,5 @@ namespace INVENTORY
         // MEMBER VARIABLES.
         /// The inventory displayed on the page.
         std::shared_ptr<const Inventory> Inventory;
-        /// The assets available for use on the page.
-        std::shared_ptr<RESOURCES::Assets> Assets;
     };
 }

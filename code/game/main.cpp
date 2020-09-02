@@ -21,6 +21,7 @@
 #include <cassert>
 #include <chrono>
 #include <exception>
+#include <future>
 #include <memory>
 #include <string>
 #include <Windows.h>
@@ -32,20 +33,18 @@
 #include "Input/InputController.h"
 #include "Resources/AnimalSounds.h"
 #include "Resources/AssetPackage.h"
-#include "Resources/Assets.h"
 #include "Resources/FoodGraphics.h"
 #include "Resources/PredefinedAssetPackages.h"
 #include "States/GameStates.h"
 #include "States/GameState.h"
 
 /// Loads the world.
-/// @param[in,out]  assets - The assets to use for the world.
 /// @return The world, if successfully loaded; null otherwise.
-std::shared_ptr<MAPS::World> LoadWorld(RESOURCES::Assets& assets)
+std::shared_ptr<MAPS::World> LoadWorld()
 {
     // CREATE THE EMPTY WORLD.
     auto load_start_time = std::chrono::system_clock::now();
-    std::shared_ptr<MAPS::World> world = MAPS::World::Populate(assets);
+    std::shared_ptr<MAPS::World> world = MAPS::World::Populate();
     auto load_end_time = std::chrono::system_clock::now();
 
     // Overworld load time: 82,263,372 (file-based)
@@ -57,116 +56,63 @@ std::shared_ptr<MAPS::World> LoadWorld(RESOURCES::Assets& assets)
     return world;
 }
 
-/// Loads the sounds/music for the game, adding them to the speakers.
-/// @param[in,out]  assets - The assets from which to load the sounds/music.
-/// @param[in,out]  speakers - The speakers to add sounds to.
-void LoadSoundsAfterIntroAssets(RESOURCES::Assets& assets, AUDIO::Speakers& speakers)
-{
-    auto load_start_time = std::chrono::system_clock::now();
-
-    // ADD EACH GENERIC SOUND EFFECT TO THE SPEAKERS.
-    const std::array<RESOURCES::AssetId, 5> GENERIC_SOUND_EFFECT_IDS =
-    {
-        RESOURCES::AssetId::ARK_BUILDING_SOUND,
-        RESOURCES::AssetId::AXE_HIT_SOUND,
-        RESOURCES::AssetId::COLLECT_BIBLE_VERSE_SOUND,
-        RESOURCES::AssetId::FOOD_PICKUP_SOUND,
-        RESOURCES::AssetId::TREE_SHAKE_SOUND
-
-    };
-    for (const RESOURCES::AssetId sound_id : GENERIC_SOUND_EFFECT_IDS)
-    {
-        std::shared_ptr<sf::SoundBuffer> audio_samples = assets.GetSound(sound_id);
-        if (audio_samples)
-        {
-            speakers.AddSound(sound_id, audio_samples);
-        }
-    }
-
-    // ADD ALL OF THE ANIMAL SOUND EFFECTS TO THE SPEAKERS.
-    for (int species_id = 0; species_id < static_cast<int>(OBJECTS::AnimalSpecies::COUNT); ++species_id)
-    {
-        OBJECTS::AnimalSpecies species = static_cast<OBJECTS::AnimalSpecies>(species_id);
-        RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(species);
-        std::shared_ptr<sf::SoundBuffer> audio_samples = assets.GetSound(animal_sound_id);
-        if (audio_samples)
-        {
-            speakers.AddSound(animal_sound_id, audio_samples);
-        }
-    }
-
-    // ADD ALL OF THE MUSIC TO THE SPEAKERS.
-    auto new_game_intro_music = assets.GetMusic(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC);
-    if (new_game_intro_music)
-    {
-        speakers.AddMusic(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC, new_game_intro_music);
-    }
-
-    auto overworld_music = assets.GetMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
-    if (overworld_music)
-    {
-        // The pitch is lowered to give the background music a more somber, ambient tone.
-        // It might be possible to make it go lower to achieve more of an ambient effect,
-        // at the expense of sounding more "scary".
-        overworld_music->Sfml.setPitch(0.5f);
-        overworld_music->Sfml.setLoop(true);
-        speakers.AddMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC, overworld_music);
-    }
-
-    auto load_end_time = std::chrono::system_clock::now();
-    auto load_time_diff = load_end_time - load_start_time;
-    DEBUGGING::DebugConsole::WriteLine("Sound load time: ", load_time_diff.count());
-}
-
-std::shared_ptr<RESOURCES::Assets> LoadRemainingAssets(const std::shared_ptr<RESOURCES::Assets>& assets, AUDIO::Speakers& speakers)
+void LoadRemainingAssets(HARDWARE::GamingHardware& gaming_hardware)
 {
     auto load_start_time = std::chrono::system_clock::now();
     
     std::unordered_map<RESOURCES::AssetId, RESOURCES::Asset> remaining_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::MAIN_ASSET_PACKAGE_FILENAME);
-    std::vector<RESOURCES::Asset> temporary_assets;
     for (const auto& [asset_id, asset] : remaining_assets)
     {
-        if (asset.Type == RESOURCES::AssetType::MUSIC || asset.Type == RESOURCES::AssetType::SOUND_EFFECT)
+        switch (asset.Type)
         {
-            if (speakers.Enabled)
+            case RESOURCES::AssetType::TEXTURE:
+                gaming_hardware.GraphicsDevice->LoadTexture(asset.Id, asset.BinaryData);
+                break;
+            case RESOURCES::AssetType::FONT:
+                assert(false && "Fonts not supported for loading this way!");
+                break;
+            case RESOURCES::AssetType::SOUND_EFFECT:
+                gaming_hardware.Speakers->LoadSound(asset.Id, asset.BinaryData);
+                break;
+            case RESOURCES::AssetType::MUSIC:
             {
-                temporary_assets.push_back(asset);
+                gaming_hardware.Speakers->LoadMusic(asset.Id, asset.BinaryData);
+
+                /// @todo Make this particular adjustment be in the actual file?
+                auto overworld_music = gaming_hardware.Speakers->GetMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
+                if (overworld_music)
+                {
+                    // The pitch is lowered to give the background music a more somber, ambient tone.
+                    // It might be possible to make it go lower to achieve more of an ambient effect,
+                    // at the expense of sounding more "scary".
+                    overworld_music->Sfml.setPitch(0.5f);
+                    overworld_music->Sfml.setLoop(true);
+                }
+
+                break;
             }
+            case RESOURCES::AssetType::SHADER:
+                break;
+            case RESOURCES::AssetType::INVALID:
+                [[fallthrough]];
+            default:
+                assert(false && "Invalid asset type found!");
+                break;
         }
-        else
-        {
-            temporary_assets.push_back(asset);
-        }
-    }
-    bool assets_loaded = !remaining_assets.empty() && assets->Populate(temporary_assets);
-    if (!assets_loaded)
-    {
-        /// @todo   Allow game to continue even if not all assets loaded?  return nullptr;
     }
 
     auto load_end_time = std::chrono::system_clock::now();
     auto load_time_diff = load_end_time - load_start_time;
     DEBUGGING::DebugConsole::WriteLine("Remaining asset raw load time: ", load_time_diff.count());
-
-    if (speakers.Enabled)
-    {
-        LoadSoundsAfterIntroAssets(*assets, speakers);
-    }
-
-    return assets;
 }
 
-std::shared_ptr<MAPS::World> LoadWorldAfterAssetsFinishLoading(std::shared_future< std::shared_ptr<RESOURCES::Assets> > assets_being_loaded)
+std::shared_ptr<MAPS::World> LoadWorldAfterAssetsFinishLoading(std::shared_future<void> assets_being_loaded)
 {
-    // GET THE ASSETS ONCE THEY'VE FINISHED BEING LOADED.
-    std::shared_ptr<RESOURCES::Assets> assets = assets_being_loaded.get();
-    if (!assets)
-    {
-        return nullptr;
-    }
+    // WAIT FOR THE ASSETS TO FINISH LOADING.
+    assets_being_loaded.wait();
 
     // LOAD THE WORLD.   
-    std::shared_ptr<MAPS::World> world = LoadWorld(*assets);
+    std::shared_ptr<MAPS::World> world = LoadWorld();
     return world;
 }
 
@@ -190,7 +136,12 @@ int main()
         std::unordered_map<RESOURCES::AssetId, RESOURCES::Asset> intro_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME);
 
         // INITIALIZE THE GAMING HARDWARE.
-        HARDWARE::GamingHardware gaming_hardware = HARDWARE::GamingHardware::Initialize();
+        HARDWARE::GamingHardware gaming_hardware;
+
+        std::shared_future<void> assets_being_loaded = std::async(LoadRemainingAssets, std::ref(gaming_hardware));
+
+        const auto& intro_music_asset = intro_assets[RESOURCES::AssetId::INTRO_MUSIC];
+        gaming_hardware.Speakers->LoadMusic(intro_music_asset.Id, intro_music_asset.BinaryData);
 
         // INITIALIZE THE RENDERER.
         GRAPHICS::Renderer renderer(gaming_hardware.Screen);
@@ -207,18 +158,13 @@ int main()
         assert(default_serif_font);
         renderer.Fonts[RESOURCES::AssetId::SERIF_FONT_TEXTURE] = default_serif_font;
 
-        // INITIALIZE THE SPEAKERS.
-        const auto& intro_music_asset = intro_assets[RESOURCES::AssetId::INTRO_MUSIC];
-        gaming_hardware.Speakers->LoadMusic(intro_music_asset.Id, intro_music_asset.BinaryData);
-
         // INITIALIZE THE INTRO SEQUENCE.
         STATES::GameStates game_states;
         game_states.IntroSequence.Initialize(*gaming_hardware.Speakers);
 
         // LOAD REMAINING ASSETS.
-        std::shared_ptr<RESOURCES::Assets> assets = std::make_shared<RESOURCES::Assets>();
-        std::shared_future< std::shared_ptr<RESOURCES::Assets> > assets_being_loaded = std::async(LoadRemainingAssets, assets, std::ref(*gaming_hardware.Speakers));
-        std::future< std::shared_ptr<MAPS::World> > world_being_loaded = std::async(LoadWorldAfterAssetsFinishLoading, assets_being_loaded);
+        std::shared_future<void> assets_being_loaded = std::async(LoadRemainingAssets, std::ref(gaming_hardware));
+        std::future<std::shared_ptr<MAPS::World>> world_being_loaded = std::async(LoadWorldAfterAssetsFinishLoading, assets_being_loaded);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         while (window->isOpen())
@@ -262,11 +208,11 @@ int main()
                     static_cast<float>(mouse_screen_position.y));
                 gaming_hardware.InputController.ReadInput();
 
-                // GET THE ELAPSED TIME FOR THE NEW FRAME.
-                gaming_hardware.TickClockForFrame();
+                // UPDATE THE ELAPSED TIME FOR THE NEW FRAME.
+                gaming_hardware.Clock.UpdateElapsedTime();
 
                 // UPDATE THE GAME'S CURRENT STATE.
-                STATES::GameState next_game_state = game_states.Update(gaming_hardware, renderer.Camera, *assets);
+                STATES::GameState next_game_state = game_states.Update(gaming_hardware, renderer.Camera);
 
                 // RENDER THE CURRENT STATE OF THE GAME TO THE WINDOW.
                 sf::Sprite screen_sprite = game_states.Render(gaming_hardware, renderer);
@@ -344,7 +290,7 @@ int main()
                         return EXIT_FAILURE;
                     }
                 }
-                game_states.SwitchStatesIfChanged(next_game_state, world, assets, renderer);
+                game_states.SwitchStatesIfChanged(next_game_state, world, renderer);
             }
         }
 

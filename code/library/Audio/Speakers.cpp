@@ -23,6 +23,30 @@ namespace AUDIO
         }
     }
 
+    /// Attempts to load sound from binary data into the speakers.
+    /// If sound with the specified ID already exists in the speakers, it will be overwritten.
+    /// @param[in]  sound_id - The unique ID for the sound.
+    /// @param[in]  sound_binary_data - The raw binary data for the sound.
+    void Speakers::LoadSound(const RESOURCES::AssetId sound_id, const std::string& sound_binary_data)
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
+        // It's not worth spending time on anything if the speakers are disabled.
+        if (!Enabled)
+        {
+            return;
+        }
+
+        // LOAD THE SOUND INTO THE SPEAKERS.
+        std::unique_ptr<AUDIO::SoundEffect> sound = AUDIO::SoundEffect::LoadFromMemory(sound_binary_data);
+        if (sound)
+        {
+            Sounds[sound_id] = *sound;
+        }
+    }
+
     /// Adds a sound to the speakers for playing.
     /// If a sound with the specified ID already exists in the speakers, it will be overwritten.
     /// @param[in]  sound_id - The unique ID for the sound.
@@ -253,5 +277,18 @@ namespace AUDIO
         {
             id_and_music.second->Sfml.stop();
         }
+    }
+
+    /// Gets music with the specified ID, if it exists.
+    /// @param[in]  music_id - The ID of the music to get.
+    /// @return The music, if it exists; null otherwise.
+    std::shared_ptr<AUDIO::Music> Speakers::GetMusic(const RESOURCES::AssetId music_id)
+    {
+        // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
+        std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // RETURN THE MUSIC IF IT EXISTS.
+        std::shared_ptr<AUDIO::Music> music = Music[music_id];
+        return music;
     }
 }

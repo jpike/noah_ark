@@ -8,7 +8,6 @@
 #include "Inventory/Inventory.h"
 #include "Math/Rectangle.h"
 #include "Objects/Animal.h"
-#include "Resources/Assets.h"
 
 namespace INVENTORY
 {
@@ -23,9 +22,7 @@ namespace INVENTORY
         static const GRAPHICS::Color BACKGROUND_COLOR;
 
         // CONSTRUCTION.
-        explicit InventoryAnimalsPage(
-            const std::shared_ptr<const Inventory>& inventory,
-            const std::shared_ptr<RESOURCES::Assets>& assets);
+        explicit InventoryAnimalsPage(const std::shared_ptr<const Inventory>& inventory);
 
         // UPDATING.
         void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
@@ -46,7 +43,5 @@ namespace INVENTORY
         /// The elapsed time a scroll key has been held down before switching to a different animal.
         /// Used for smoother scrolling through the animals on this page.
         sf::Time ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals;
-        /// The assets available for use on the page.
-        std::shared_ptr<RESOURCES::Assets> Assets;
     };
 }

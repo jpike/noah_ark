@@ -18,14 +18,12 @@ namespace STATES
     /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
     /// @param[in,out]  world - The world for the gameplay state.
     /// @param[in,out]  renderer - The renderer used fro some initialization.
-    /// @param[in,out]  assets - The assets to use for initialization.
     /// @return True if initialization succeeded; false otherwise.
     bool GameplayState::Initialize(
         const unsigned int screen_width_in_pixels,
         const std::shared_ptr<SavedGameData>& saved_game_data,
         const std::shared_ptr<MAPS::World>& world,
-        GRAPHICS::Renderer& renderer,
-        const std::shared_ptr<RESOURCES::Assets>& assets)
+        GRAPHICS::Renderer& renderer)
     {
         // MAKE SURE SAVED GAME DATA WAS PROVIDED.
         bool saved_game_exists = (nullptr != saved_game_data);
@@ -85,8 +83,7 @@ namespace STATES
             world,
             World->NoahPlayer,
             text_box_width_in_pixels,
-            text_box_height_in_pixels,
-            assets);
+            text_box_height_in_pixels);
         Hud->MainTextBox.Font = renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE];
 
         // INITIALIZE THE BIBLE VERSES LEFT TO FIND.
@@ -113,14 +110,12 @@ namespace STATES
     /// @param[in,out]  input_controller - The controller supplying player input.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
     /// @param[in,out]  speakers - The speakers in which to play out any audio.
-    /// @param[in,out]  assets - The assets to use for certain updates.
     /// @return The next game state after updating.
     GameState GameplayState::Update(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers,
-        RESOURCES::Assets& assets)
+        AUDIO::Speakers& speakers)
     {
 #ifdef _DEBUG
         // UPDATE THE TILE MAP EDITOR IN RESPONSE TO USER INPUT.
@@ -224,7 +219,7 @@ namespace STATES
         }
 
         // UPDATE THE CURRENT MAP GRID.
-        UpdateMapGrid(elapsed_time, input_controller, camera, speakers, *CurrentMapGrid, assets);
+        UpdateMapGrid(elapsed_time, input_controller, camera, speakers, *CurrentMapGrid);
 
         // START PLAYING THE BACKGROUND MUSIC IF THE NEW GAME INSTRUCTIONS HAVE COMPLETED.
         // Silenced is used while God speaks during these instructions for reverence.
@@ -405,14 +400,12 @@ namespace STATES
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
     /// @param[in,out]  speakers - The speakers in which to play audio.
     /// @param[in,out]  map_grid - The map grid to update.
-    /// @param[in,out]  assets - The assets to use for certain updates.
     void GameplayState::UpdateMapGrid(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         GRAPHICS::Camera& camera,
         AUDIO::Speakers& speakers,
-        MAPS::MultiTileMapGrid& map_grid,
-        RESOURCES::Assets& assets)
+        MAPS::MultiTileMapGrid& map_grid)
     {
         // GET THE CURRENT TILE MAP.
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
@@ -440,8 +433,7 @@ namespace STATES
                 *current_tile_map, 
                 map_grid, 
                 camera,
-                speakers,
-                assets);
+                speakers);
             if (map_exit_point)
             {
                 // SWITCH OVER TO THE NEW MAP GRID.
@@ -550,7 +542,7 @@ namespace STATES
             if (!inside_ark)
             {
                 std::string message_for_text_box;
-                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, speakers, assets, message_for_text_box);
+                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, speakers, message_for_text_box);
                 CollectFoodCollidingWithPlayer(*current_tile_map, speakers);
                 CollectAnimalsCollidingWithPlayer(*current_tile_map, speakers);
 
@@ -636,8 +628,7 @@ namespace STATES
             camera,
             speakers,
             input_controller,
-            *current_tile_map,
-            assets);
+            *current_tile_map);
     }
 
     /// Updates the player and related items in the tile map based on input and elapsed time.
@@ -647,7 +638,6 @@ namespace STATES
     /// @param[in,out]  map_grid - The map grid containing the current tile map.
     /// @param[in,out]  camera - The camera defining the viewable region of the map grid.
     /// @param[in,out]  speakers - The speakers from which to play any audio.
-    /// @param[in,out]  assets - The assets to use for certain updates.
     /// @return The map exit point, if the player stepped on such a point.
     MAPS::ExitPoint* GameplayState::UpdatePlayerBasedOnInput(
         const sf::Time& elapsed_time,
@@ -655,8 +645,7 @@ namespace STATES
         MAPS::TileMap& current_tile_map,
         MAPS::MultiTileMapGrid& map_grid,
         GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers,
-        RESOURCES::Assets& assets)
+        AUDIO::Speakers& speakers)
     {
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
 
@@ -1259,21 +1248,19 @@ namespace STATES
     /// @param[in,out]  tile_map - The tile map to examine wood logs in.
     /// @param[in,out]  map_grid - The grid containing the tile map.
     /// @param[in,out]  speakers - The speakers from which to play any audio.
-    /// @param[in,out]  assets - The assets to use for certain updates.
     /// @param[out] message_for_text_box - A message for the HUD's main text box, if
     ///     a Bible verse was collected.
     void GameplayState::CollectWoodAndBibleVersesCollidingWithPlayer(
         MAPS::TileMap& tile_map,
         MAPS::MultiTileMapGrid& map_grid,
         AUDIO::Speakers& speakers,
-        RESOURCES::Assets& assets,
         std::string& message_for_text_box)
     {
         // INDICATE THAT NO MESSAGE EXISTS FOR THE TEXT BOX YET.
         message_for_text_box.clear();
 
         // HANDLE PLAYER COLLISIONS WITH WOOD LOGS.
-        COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(map_grid, map_grid.AxeSwings, speakers, assets);
+        COLLISION::CollisionDetectionAlgorithms::HandleAxeSwings(map_grid, map_grid.AxeSwings, speakers);
         for (auto wood_logs = tile_map.WoodLogs.begin(); wood_logs != tile_map.WoodLogs.end();)
         {
             // CHECK IF THE WOOD LOGS INTERSECT WITH NOAH.
@@ -1412,14 +1399,12 @@ namespace STATES
     /// @param[in,out]  input_controller - The input controller that might
     ///     be tweaked based on camera movement.
     /// @param[in,out]  current_tile_map - The current tile map in view by the camera.
-    /// @param[in,out]  assets - The assets to use for certain updates.
     void GameplayState::UpdateCameraWorldView(
         const sf::Time& elapsed_time,
         GRAPHICS::Camera& camera,
         AUDIO::Speakers& speakers,
         INPUT_CONTROL::InputController& input_controller,
-        MAPS::TileMap& current_tile_map,
-        RESOURCES::Assets& assets)
+        MAPS::TileMap& current_tile_map)
     {
         if (camera.IsScrolling)
         {
@@ -1454,8 +1439,7 @@ namespace STATES
                     std::shared_ptr<OBJECTS::Animal> animal = GAMEPLAY::RandomAnimalGenerationAlgorithm::GenerateAnimal(
                         *World->NoahPlayer,
                         current_tile_map,
-                        RandomNumberGenerator,
-                        assets);
+                        RandomNumberGenerator);
                     bool animal_generated = (nullptr != animal);
                     if (animal_generated)
                     {

@@ -6,16 +6,13 @@ namespace INVENTORY
 {
     /// Constructor.
     /// @param[in]  inventory - The inventory to display in the GUI.
-    /// @param[in]  assets - The assets to use for the page.
     /// @throws std::exception - Thrown if a parameter is null.
-    InventoryGui::InventoryGui(
-        const std::shared_ptr<const INVENTORY::Inventory>& inventory,
-        const std::shared_ptr<RESOURCES::Assets>& assets) :
+    InventoryGui::InventoryGui(const std::shared_ptr<const INVENTORY::Inventory>& inventory) :
     Inventory(inventory),
     CurrentTab(TabType::BIBLE),
     BiblePage(inventory),
-    AnimalsPage(inventory, assets),
-    FoodPage(inventory, assets)
+    AnimalsPage(inventory),
+    FoodPage(inventory)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to HUD.");

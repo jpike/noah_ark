@@ -5,7 +5,6 @@
 #include "Maps/Ark.h"
 #include "Maps/MultiTileMapGrid.h"
 #include "Objects/Noah.h"
-#include "Resources/Assets.h"
 #include "States/BuiltArkPieceTileMapData.h"
 
 namespace MAPS
@@ -21,7 +20,7 @@ namespace MAPS
         static constexpr unsigned int OVERWORLD_HEIGHT_IN_TILE_MAPS = 7;
 
         // INITIALIZATION.
-        static std::shared_ptr<World> Populate(RESOURCES::Assets& assets);
+        static std::shared_ptr<World> Populate();
         void InitializeBuiltArkInOverworld(const std::vector<STATES::BuiltArkPieceTileMapData>& built_ark_pieces);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
@@ -34,6 +33,6 @@ namespace MAPS
 
     private:
         // HELPER METHODS.
-        void PopulateOverworld(RESOURCES::Assets& assets);
+        void PopulateOverworld();
     };
 }

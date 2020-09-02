@@ -6,21 +6,10 @@ namespace HARDWARE
     /// If an error occurs initializing some subset of the hardware,
     /// the partially initialized hardware will be returned to allow
     /// the game to still be played with fewer features.
-    /// @return The gaming hardware.
-    GamingHardware GamingHardware::Initialize()
+    GamingHardware::GamingHardware()
     {
-        GamingHardware gaming_hardware;
-
-        gaming_hardware.Screen = GRAPHICS::Screen::Create();
-        gaming_hardware.Speakers = std::make_unique<AUDIO::Speakers>();
-
-        return gaming_hardware;
-    }
-
-    /// Ticks the clock for a single frame, updating internal member variables.
-    void GamingHardware::TickClockForFrame()
-    {
-        ElapsedTimeSinceLastFrame = GameLoopClock.restart();
-        TotalElapsedTime += ElapsedTimeSinceLastFrame;
+        Screen = GRAPHICS::Screen::Create();
+        GraphicsDevice = std::make_unique<GRAPHICS::GraphicsDevice>();
+        Speakers = std::make_unique<AUDIO::Speakers>();
     }
 }

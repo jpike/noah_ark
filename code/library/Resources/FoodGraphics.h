@@ -3,7 +3,6 @@
 #include <memory>
 #include "Graphics/Sprite.h"
 #include "Objects/Food.h"
-#include "Resources/Assets.h"
 
 namespace RESOURCES
 {
@@ -12,8 +11,6 @@ namespace RESOURCES
     class FoodGraphics
     {
     public:
-        static std::shared_ptr<GRAPHICS::Sprite> GetSprite(
-            const OBJECTS::FoodType food_type,
-            Assets& assets);
+        static std::shared_ptr<GRAPHICS::Sprite> GetSprite(const OBJECTS::FoodType food_type);
     };
 }

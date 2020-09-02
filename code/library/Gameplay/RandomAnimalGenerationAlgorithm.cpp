@@ -12,13 +12,11 @@ namespace GAMEPLAY
     /// @param[in]  tile_map - The tile map in which the animal needs to be generated.
     /// @param[in,out]  random_number_generator - The random number generator to use
     ///     for the algorithm.
-    /// @param[in,out]  assets - The assets from which to get assets necessary for an animal.
     /// @return An animal, if one was successfully generated; null otherwise.
     std::shared_ptr<OBJECTS::Animal> RandomAnimalGenerationAlgorithm::GenerateAnimal(
         const OBJECTS::Noah& noah_player,
         const MAPS::TileMap& tile_map,
-        MATH::RandomNumberGenerator& random_number_generator,
-        RESOURCES::Assets& assets)
+        MATH::RandomNumberGenerator& random_number_generator)
     {
         // DETERMINE THE SPECIES OF ANIMAL TO GENERATE.
         OBJECTS::AnimalSpecies random_species = random_number_generator.RandomEnum<OBJECTS::AnimalSpecies>();
@@ -117,8 +115,7 @@ namespace GAMEPLAY
         std::shared_ptr<OBJECTS::Animal> animal = MakeAnimal(
             animal_type,
             random_x_position,
-            random_y_position,
-            assets);
+            random_y_position);
         return animal;
     }
 
@@ -126,16 +123,14 @@ namespace GAMEPLAY
     /// @param[in]  animal_type - The type of animal to make.
     /// @param[in]  world_x_position - The world x position of the center of the animal.
     /// @param[in]  world_y_position - The world y position of the center of the animal.
-    /// @param[in,out]  assets - The assets from which to get assets necessary for the animal.
     /// @return The specified animal, if successfully created; null otherwise.
     std::shared_ptr<OBJECTS::Animal> RandomAnimalGenerationAlgorithm::MakeAnimal(
         const OBJECTS::AnimalType& animal_type,
         const float world_x_position,
-        const float world_y_position,
-        RESOURCES::Assets& assets)
+        const float world_y_position)
     {
         // CREATE THE ANIMAL'S SPRITE.
-        std::shared_ptr<GRAPHICS::AnimatedSprite> animal_sprite = RESOURCES::AnimalGraphics::GetSprite(animal_type, assets);
+        std::shared_ptr<GRAPHICS::AnimatedSprite> animal_sprite = RESOURCES::AnimalGraphics::GetSprite(animal_type);
         if (!animal_sprite)
         {
             return nullptr;

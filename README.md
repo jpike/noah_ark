@@ -17,6 +17,7 @@ The game is designed for command line builds using various .bat files and also o
 Several dependencies are used (see ThirdParty folder):
 * [SFML 2.5.1](http://sfml-dev.org/) - The main library for windowing, graphics, and input. ([zlib/libpng license](http://sfml-dev.org/license.php)).
 ** Note than [OpenAL](https://kcat.strangesoft.net/openal.html) from SFML is also used directly for more control ([LGPL license](http://www.gnu.org/licenses/lgpl-3.0.html)).
+* [GSL](https://github.com/Microsoft/GSL) ([MIT license](https://github.com/microsoft/GSL/blob/master/LICENSE))
 * [Catch](https://github.com/philsquared/Catch) - Unit testing ([Boost Software license](https://github.com/philsquared/Catch/blob/master/LICENSE_1_0.txt)).
 
 The dependencies described above are included in the ThirdParty folder.

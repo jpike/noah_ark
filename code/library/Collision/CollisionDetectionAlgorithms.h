@@ -12,7 +12,6 @@
 #include "Maps/Tile.h"
 #include "Math/Rectangle.h"
 #include "Objects/Axe.h"
-#include "Resources/Assets.h"
 
 /// Holds code related to handling collisions of objects in the game world.
 namespace COLLISION
@@ -39,8 +38,7 @@ namespace COLLISION
         static void HandleAxeSwings(
             MAPS::MultiTileMapGrid& tile_map_grid,
             std::vector< std::shared_ptr<GAMEPLAY::AxeSwingEvent> >& axe_swings,
-            AUDIO::Speakers& speakers,
-            RESOURCES::Assets& assets);
+            AUDIO::Speakers& speakers);
 
     private:
         // MOVEMENT.
@@ -65,8 +63,7 @@ namespace COLLISION
         static void HandleAxeCollisionsWithTrees(
             const OBJECTS::Axe& axe, 
             MAPS::MultiTileMapGrid& tile_map_grid,
-            AUDIO::Speakers& speakers,
-            RESOURCES::Assets& assets);
+            AUDIO::Speakers& speakers);
 
         // OBJECT-SPECIFIC COLLISION DETECTION.
         static bool CollidesWithTree(const MATH::FloatRectangle& rectangle, MAPS::MultiTileMapGrid& tile_map_grid, MATH::FloatRectangle& tree_rectangle);

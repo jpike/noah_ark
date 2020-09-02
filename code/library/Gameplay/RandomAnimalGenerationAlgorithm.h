@@ -5,7 +5,6 @@
 #include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
 #include "Objects/Noah.h"
-#include "Resources/Assets.h"
 
 namespace GAMEPLAY
 {
@@ -25,14 +24,12 @@ namespace GAMEPLAY
         static std::shared_ptr<OBJECTS::Animal> GenerateAnimal(
             const OBJECTS::Noah& noah,
             const MAPS::TileMap& tile_map,
-            MATH::RandomNumberGenerator& random_number_generator,
-            RESOURCES::Assets& assets);
+            MATH::RandomNumberGenerator& random_number_generator);
 
     private:
         static std::shared_ptr<OBJECTS::Animal> MakeAnimal(
             const OBJECTS::AnimalType& animal_type,
             const float world_x_position,
-            const float world_y_position,
-            RESOURCES::Assets& assets);
+            const float world_y_position);
     };
 }

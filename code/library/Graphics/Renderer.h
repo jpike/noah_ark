@@ -86,8 +86,10 @@ namespace GRAPHICS
         std::shared_ptr<GRAPHICS::Screen> Screen;
         /// The camera defining what portion of the world is currently viewable.
         GRAPHICS::Camera Camera;
+        /// Textures to use for rendering.
+        std::unordered_map<RESOURCES::AssetId, std::shared_ptr<GRAPHICS::Texture>> Textures;
         /// Fonts to use for rendering text.
-        std::unordered_map< RESOURCES::AssetId, std::shared_ptr<GRAPHICS::GUI::Font> > Fonts;
+        std::unordered_map<RESOURCES::AssetId, std::shared_ptr<GRAPHICS::GUI::Font>> Fonts;
         /// The shader to use for colored text.
         sf::Shader ColoredTextShader;
         /// The shader to use for shading based on the time of day.

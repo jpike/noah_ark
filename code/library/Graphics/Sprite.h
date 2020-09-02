@@ -7,6 +7,7 @@
 #include "Graphics/Texture.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
+#include "Resources/AssetId.h"
 
 namespace GRAPHICS
 {
@@ -17,7 +18,7 @@ namespace GRAPHICS
         // CONSTRUCTION/DESTRUCTION.
         explicit Sprite();
         explicit Sprite(
-            const std::shared_ptr<const Texture>& texture,
+            const RESOURCES::AssetId texture_id,
             const MATH::FloatRectangle& texture_sub_rectangle);
 
         // OTHER METHODS.
@@ -48,11 +49,8 @@ namespace GRAPHICS
         void SetColor(const GRAPHICS::Color& color);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
-        /// The texture providing graphics for this sprite.
-        /// Stored here to ensure the texture stays in memory as long as the sprite
-        /// is in memory.  Does not seem to result in any noticeable increases in
-        /// memory usage.
-        std::shared_ptr<const Texture> SpriteTexture;
+        /// The ID of the texture providing graphics for this sprite.
+        RESOURCES::AssetId TextureId = RESOURCES::AssetId::INVALID;
         /// The underlying SFML sprite resource.
         sf::Sprite SpriteResource;
         /// Whether or not the sprite is visible.

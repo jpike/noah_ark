@@ -5,13 +5,11 @@ namespace STATES
     /// Updates the current state of the game.
     /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output devices.
     /// @param[in,out]  camera - The camera defining the viewable region of the game world.
-    /// @param[in,out]  assets - The assets to use for certain updates.
     /// @return The next state that the game should switch to.  The current state as tracked
     ///     in this class is not automatically updated to this new state.
     GameState GameStates::Update(
         HARDWARE::GamingHardware& gaming_hardware,
-        GRAPHICS::Camera& camera,
-        RESOURCES::Assets& assets)
+        GRAPHICS::Camera& camera)
     {
         // UPDATE THE CURRENT STATE OF THE GAME.
         GameState next_game_state = CurrentGameState;
@@ -53,8 +51,7 @@ namespace STATES
                     gaming_hardware.ElapsedTimeSinceLastFrame, 
                     gaming_hardware.InputController, 
                     camera, 
-                    *gaming_hardware.Speakers,
-                    assets);
+                    *gaming_hardware.Speakers);
                 break;
         }
 
@@ -103,13 +100,11 @@ namespace STATES
     /// Switches to the new state, if the state has changed.
     /// @param[in]  new_state - The potentially new state the game should be in.
     /// @param[in]  world - The game world needed for some states.
-    /// @param[in,out]  assets - The assets to use for initializing any new state.
     /// @param[in,out]  renderer - The renderer used for the game.
     /// @todo   Clean-up parameters!
     void GameStates::SwitchStatesIfChanged(
         const GameState& new_state, 
-        const std::shared_ptr<MAPS::World>& world, 
-        const std::shared_ptr<RESOURCES::Assets>& assets,
+        const std::shared_ptr<MAPS::World>& world,
         GRAPHICS::Renderer& renderer)
     {
         // CHECK IF THE GAME STATE HAS CHANGED.
@@ -182,8 +177,7 @@ namespace STATES
                     renderer.Screen->WidthInPixels<unsigned int>(),
                     saved_game_data,
                     world,
-                    renderer,
-                    assets);
+                    renderer);
                 if (!gameplay_state_initialized)
                 {
                     /// @todo   Error-handling!

@@ -3,7 +3,7 @@
 #include <memory>
 #include <SFML/System.hpp>
 #include "Graphics/AnimatedSprite.h"
-#include "Graphics/Texture.h"
+#include "Resources/AssetId.h"
 
 namespace OBJECTS
 {
@@ -14,7 +14,7 @@ namespace OBJECTS
     {
     public:
         // CONSTRUCTION.
-        explicit DustCloud(const std::shared_ptr<GRAPHICS::Texture>& texture);
+        explicit DustCloud(const RESOURCES::AssetId texture_id);
 
         // STATUS QUERYING.
         bool HasDisappeared() const;

@@ -2,6 +2,29 @@
 
 namespace GRAPHICS
 {
+    /// Creates a solid color texture of a specific size.
+    /// @param[in]  width_in_pixels - The width of the texture to create.
+    /// @param[in]  height_in_pixels - The height of the texture to create.
+    /// @param[in]  color - The color of the texture to create.
+    /// @return The created texture.
+    MEMORY::NonNullSharedPointer<GRAPHICS::Texture> Texture::CreateSolid(
+        const unsigned int width_in_pixels,
+        const unsigned int height_in_pixels,
+        const GRAPHICS::Color& color)
+    {
+        // CREATE THE APPROPRIATE IMAGE.
+        sf::Image image;
+        sf::Color sfml_color(color.Red, color.Green, color.Blue, color.Alpha);
+        image.create(width_in_pixels, height_in_pixels, sfml_color);
+
+        // CREATE THE TEXTURE FROM THE IMAGE.
+        auto texture = MEMORY::NonNullSharedPointer<GRAPHICS::Texture>(std::make_shared<GRAPHICS::Texture>());
+        // The return value is ignored so that the code can continue to execute.
+        // It will just have an "empty" texture to have to deal with.
+        texture->TextureResource.loadFromImage(image);
+        return texture;
+    }
+
     /// Attempts to load a texture from the provided image.
     /// @param[in]  image - The image to load from.
     /// @return The texture, if successfully loaded; a dummy

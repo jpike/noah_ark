@@ -1,8 +1,6 @@
 #pragma once
 
-#include <memory>
 #include "Graphics/Sprite.h"
-#include "Graphics/Texture.h"
 
 namespace OBJECTS
 {
@@ -15,7 +13,7 @@ namespace OBJECTS
     {
     public:
         // CONSTRUCTION.
-        explicit ArkPiece(const unsigned int id, const std::shared_ptr<GRAPHICS::Texture>& texture);
+        explicit ArkPiece(const unsigned int id);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// An ID for the ark piece that identifies which graphical tile is used to display it.

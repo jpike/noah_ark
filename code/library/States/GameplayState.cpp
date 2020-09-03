@@ -49,30 +49,10 @@ namespace STATES
         World->InitializeBuiltArkInOverworld(saved_game_data->BuildArkPieces);
 
         // INITIALIZE THE PLAYER.
-        std::shared_ptr<GRAPHICS::Texture> noah_texture = assets->GetTexture(RESOURCES::AssetId::NOAH_TEXTURE);
-        if (!noah_texture)
-        {
-            return false;
-        }
-
-        // GET THE AXE TEXTURE FOR NOAH.
-        std::shared_ptr<GRAPHICS::Texture> axe_texture = assets->GetTexture(RESOURCES::AssetId::AXE_TEXTURE);
-        if (!axe_texture)
-        {
-            return false;
-        }
-
-        std::shared_ptr<OBJECTS::Axe> axe = std::make_shared<OBJECTS::Axe>(axe_texture);
-
-        World->NoahPlayer = std::make_shared<OBJECTS::Noah>(*saved_game_data, noah_texture, axe);
+        std::shared_ptr<OBJECTS::Axe> axe = std::make_shared<OBJECTS::Axe>();
+        World->NoahPlayer = std::make_shared<OBJECTS::Noah>(*saved_game_data, axe);
 
         // INITIALIZE THE HUD.
-        std::shared_ptr<GRAPHICS::Texture> wood_log_texture = assets->GetTexture(RESOURCES::AssetId::WOOD_LOG_TEXTURE);
-        if (!wood_log_texture)
-        {
-            return false;
-        }
-
         unsigned int text_box_width_in_pixels = screen_width_in_pixels;
         const unsigned int LINE_COUNT = 2;
         unsigned int text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
@@ -82,9 +62,9 @@ namespace STATES
             saved_game_data,
             world,
             World->NoahPlayer,
+            renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE],
             text_box_width_in_pixels,
             text_box_height_in_pixels);
-        Hud->MainTextBox.Font = renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE];
 
         // INITIALIZE THE BIBLE VERSES LEFT TO FIND.
         std::set_difference(
@@ -98,8 +78,7 @@ namespace STATES
         NewGameInstructionsCompleted = saved_game_data->NewGameInstructionsCompleted;
 
         // INITIALIZE THE TILE MAP EDITOR GUI.
-        std::shared_ptr<GRAPHICS::Texture> main_tileset_texture = assets->GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);
-        TileMapEditorGui = std::make_unique<MAPS::GUI::TileMapEditorGui>(main_tileset_texture);
+        TileMapEditorGui = std::make_unique<MAPS::GUI::TileMapEditorGui>();
 
         // INDICATE THAT INITIALIZATION SUCCEEDED.
         return true;
@@ -241,6 +220,8 @@ namespace STATES
     {
         // RENDER CONTENT SPECIFIC TO THE CURRENT MAP.
         renderer.Render(*CurrentMapGrid);
+
+        /// @todo   Fix rendering after this point to reflect textures no longer being directly stored in sprites!
 
         // CHECK IF THE TILE MAP EDITOR GUI IS VISIBLE.
         if (TileMapEditorGui->Visible)
@@ -476,53 +457,49 @@ namespace STATES
                 {
                     // GET THE TILESET.
                     // It's needed for switching tiles.
-                    std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);
-                    if (tileset_texture)
-                    {
-                        MAPS::Tileset tileset(tileset_texture);
+                    MAPS::Tileset tileset;
                         
-                        // CHANGE ANY ARK EXIT DOORS TO BE CLOSED.
-                        for (unsigned int tile_row = 0; tile_row < MAPS::TileMap::HEIGHT_IN_TILES; ++tile_row)
+                    // CHANGE ANY ARK EXIT DOORS TO BE CLOSED.
+                    for (unsigned int tile_row = 0; tile_row < MAPS::TileMap::HEIGHT_IN_TILES; ++tile_row)
+                    {
+                        for (unsigned int tile_column = 0; tile_column < MAPS::TileMap::WIDTH_IN_TILES; ++tile_column)
                         {
-                            for (unsigned int tile_column = 0; tile_column < MAPS::TileMap::WIDTH_IN_TILES; ++tile_column)
+                            // GET THE CURRENT TILE.
+                            std::shared_ptr<MAPS::Tile> current_tile = current_tile_map->Ground.Tiles(tile_column, tile_row);
+                            if (!current_tile)
                             {
-                                // GET THE CURRENT TILE.
-                                std::shared_ptr<MAPS::Tile> current_tile = current_tile_map->Ground.Tiles(tile_column, tile_row);
-                                if (!current_tile)
-                                {
-                                    continue;
-                                }
+                                continue;
+                            }
 
-                                // CHANGE THE TILE IF IT IS FOR AN ARK EXIT DOOR.
-                                switch (current_tile->Type)
+                            // CHANGE THE TILE IF IT IS FOR AN ARK EXIT DOOR.
+                            switch (current_tile->Type)
+                            {
+                                case MAPS::TileType::ARK_INTERIOR_CENTER_EXIT:
                                 {
-                                    case MAPS::TileType::ARK_INTERIOR_CENTER_EXIT:
+                                    std::shared_ptr<MAPS::Tile> center_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_CENTER_EXIT_CLOSED);
+                                    if (center_closed_tile)
                                     {
-                                        std::shared_ptr<MAPS::Tile> center_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_CENTER_EXIT_CLOSED);
-                                        if (center_closed_tile)
-                                        {
-                                            current_tile_map->Ground.SetTile(tile_column, tile_row, center_closed_tile);
-                                        }
-                                        break;
+                                        current_tile_map->Ground.SetTile(tile_column, tile_row, center_closed_tile);
                                     }
-                                    case MAPS::TileType::ARK_INTERIOR_LEFT_EXIT:
+                                    break;
+                                }
+                                case MAPS::TileType::ARK_INTERIOR_LEFT_EXIT:
+                                {
+                                    std::shared_ptr<MAPS::Tile> left_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_LEFT_EXIT_CLOSED);
+                                    if (left_closed_tile)
                                     {
-                                        std::shared_ptr<MAPS::Tile> left_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_LEFT_EXIT_CLOSED);
-                                        if (left_closed_tile)
-                                        {
-                                            current_tile_map->Ground.SetTile(tile_column, tile_row, left_closed_tile);
-                                        }
-                                        break;
+                                        current_tile_map->Ground.SetTile(tile_column, tile_row, left_closed_tile);
                                     }
-                                    case MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT:
+                                    break;
+                                }
+                                case MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT:
+                                {
+                                    std::shared_ptr<MAPS::Tile> right_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT_CLOSED);
+                                    if (right_closed_tile)
                                     {
-                                        std::shared_ptr<MAPS::Tile> right_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT_CLOSED);
-                                        if (right_closed_tile)
-                                        {
-                                            current_tile_map->Ground.SetTile(tile_column, tile_row, right_closed_tile);
-                                        }
-                                        break;
+                                        current_tile_map->Ground.SetTile(tile_column, tile_row, right_closed_tile);
                                     }
+                                    break;
                                 }
                             }
                         }
@@ -978,21 +955,17 @@ namespace STATES
                 ark_piece->Built = true;
 
                 // When building an ark piece, a dust cloud should appear.
-                std::shared_ptr<GRAPHICS::Texture> dust_cloud_texture = assets.GetTexture(RESOURCES::AssetId::DUST_CLOUD_TEXTURE);
-                if (dust_cloud_texture)
-                {
-                    OBJECTS::DustCloud dust_cloud(dust_cloud_texture);
+                OBJECTS::DustCloud dust_cloud(RESOURCES::AssetId::DUST_CLOUD_TEXTURE);
 
-                    // The dust cloud should be positioned over the ark piece.
-                    MATH::Vector2f dust_cloud_center_world_position = ark_piece->Sprite.GetWorldPosition();
-                    dust_cloud.Sprite.SetWorldPosition(dust_cloud_center_world_position);
+                // The dust cloud should be positioned over the ark piece.
+                MATH::Vector2f dust_cloud_center_world_position = ark_piece->Sprite.GetWorldPosition();
+                dust_cloud.Sprite.SetWorldPosition(dust_cloud_center_world_position);
 
-                    // The dust cloud should start animating immediately.
-                    dust_cloud.Sprite.Play();
+                // The dust cloud should start animating immediately.
+                dust_cloud.Sprite.Play();
 
-                    // The dust cloud needs to be added to the tile map so that it gets updated.
-                    tile_map_underneath_noah->DustClouds.push_back(dust_cloud);
-                }
+                // The dust cloud needs to be added to the tile map so that it gets updated.
+                tile_map_underneath_noah->DustClouds.push_back(dust_cloud);
 
                 // Play a sound to indicate a piece of the ark is being built.
                 speakers.PlaySoundEffect(RESOURCES::AssetId::ARK_BUILDING_SOUND);

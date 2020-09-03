@@ -9,7 +9,7 @@ namespace HARDWARE
     GamingHardware::GamingHardware()
     {
         Screen = GRAPHICS::Screen::Create();
-        GraphicsDevice = std::make_unique<GRAPHICS::GraphicsDevice>();
+        GraphicsDevice = std::make_shared<GRAPHICS::GraphicsDevice>();
         Speakers = std::make_unique<AUDIO::Speakers>();
     }
 }

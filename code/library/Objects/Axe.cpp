@@ -1,4 +1,3 @@
-#include "ErrorHandling/NullChecking.h"
 #include "Objects/Axe.h"
 
 namespace OBJECTS
@@ -31,14 +30,9 @@ namespace OBJECTS
     }
 
     /// Constructor.
-    /// @param[in]  texture - The texture for the axe.
-    /// @throws std::exception - Thrown if a parameter is null.
-    Axe::Axe(const std::shared_ptr<GRAPHICS::Texture>& texture) :
+    Axe::Axe() :
     Sprite()
     {
-        // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(texture, "Texture required for axe.");
-
         // INITIALIZE THE SPRITE.
         const float AXE_SPRITE_X_OFFSET_IN_PIXELS = 52.0f;
         const float AXE_SPRITE_Y_OFFSET_IN_PIXELS = 0.0f;
@@ -49,7 +43,7 @@ namespace OBJECTS
             AXE_SPRITE_Y_OFFSET_IN_PIXELS,
             AXE_WIDTH_IN_PIXELS,
             AXE_HEIGHT_IN_PIXELS);
-        Sprite = GRAPHICS::Sprite(texture, axe_texture_sub_rectangle);
+        Sprite = GRAPHICS::Sprite(RESOURCES::AssetId::AXE_TEXTURE, axe_texture_sub_rectangle);
     }
 
     /// Swings the axe up.

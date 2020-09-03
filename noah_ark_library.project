@@ -21,6 +21,7 @@
 #include "Graphics/AnimationSequence.cpp"
 #include "Graphics/Camera.cpp"
 #include "Graphics/Color.cpp"
+#include "Graphics/GraphicsDevice.cpp"
 #include "Graphics/Renderer.cpp"
 #include "Graphics/Screen.cpp"
 #include "Graphics/Sprite.cpp"

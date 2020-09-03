@@ -19,7 +19,7 @@ namespace GUI
     {
     public:
         // CONSTRUCTION.
-        explicit TilePalette(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture);
+        explicit TilePalette();
 
         // INPUT METHODS.
         std::shared_ptr<Tile> RespondToInput(const INPUT_CONTROL::InputController& input_controller);

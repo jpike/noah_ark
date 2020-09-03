@@ -8,17 +8,12 @@ namespace MAPS
 namespace GUI
 {
     /// Initializes an invisible palette to use the provided tileset texture.
-    /// @param[in]  tileset_texture - The texture for the tileset used by the palette.
-    /// @throws std::exception - Thrown if the parameter is null or a tile fails to be created.
-    TilePalette::TilePalette(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture):
+    TilePalette::TilePalette():
         Visible(false),
-        Tileset(tileset_texture),
+        Tileset(),
         TilesById(),
         TileScreenBoundsById()
     {
-        // MAKE SURE A TILESET TEXTURE WAS PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(tileset_texture, "Tile palette provided with null tileset texture.");
-
         // CREATE THE TILES RENDERED BY THIS EDITOR GUI.
         for (unsigned int tile_id_number = static_cast<unsigned int>(TileType::Id::INVALID) + 1;
             tile_id_number < static_cast<unsigned int>(TileType::Id::COUNT);

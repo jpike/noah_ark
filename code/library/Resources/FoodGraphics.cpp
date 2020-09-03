@@ -7,13 +7,6 @@ namespace RESOURCES
     /// @return The food sprite, if successfully retrieved; null otherwise.
     std::shared_ptr<GRAPHICS::Sprite> FoodGraphics::GetSprite(const OBJECTS::FoodType food_type)
     {
-        // GET THE FOOD TEXTURE.
-        std::shared_ptr<GRAPHICS::Texture> food_texture = assets.GetTexture(RESOURCES::AssetId::FOOD_TEXTURE);
-        if (!food_texture)
-        {
-            return nullptr;
-        }
-
         // GET THE TEXTURE RECTANGLE FOR THE SPRITE.
         MATH::FloatRectangle texture_sub_rectangle;
         switch (food_type)
@@ -304,7 +297,7 @@ namespace RESOURCES
         }
 
         // CREATE THE FOOD'S SPRITE.
-        auto food_sprite = std::make_shared<GRAPHICS::Sprite>(food_texture, texture_sub_rectangle);
+        auto food_sprite = std::make_shared<GRAPHICS::Sprite>(RESOURCES::AssetId::FOOD_TEXTURE, texture_sub_rectangle);
         return food_sprite;
     }
 }

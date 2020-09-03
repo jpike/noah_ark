@@ -19,7 +19,7 @@ namespace GUI
     {
     public:
         // CONSTRUCTION.
-        explicit TileMapEditorGui(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture);
+        explicit TileMapEditorGui();
 
         // INPUT METHODS.
         void RespondToInput(const INPUT_CONTROL::InputController& input_controller);

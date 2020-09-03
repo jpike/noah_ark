@@ -11,24 +11,21 @@ namespace OBJECTS
     const std::string Noah::WALK_RIGHT_ANIMATION_NAME = "noah_walk_right";
 
     /// Constructor.
-    /// @param[in]  noah_texture - The texture to use for Noah.
     /// @param[in]  axe - The axe for Noah.
     /// @throws std::exception - Thrown if a parameter is null.
     Noah::Noah(
         const STATES::SavedGameData& saved_game_data,
-        const std::shared_ptr<GRAPHICS::Texture>& noah_texture,
         const std::shared_ptr<OBJECTS::Axe>& axe) :
     FacingDirection(GAMEPLAY::Direction::INVALID),
     Sprite(),
     Inventory(std::make_shared<INVENTORY::Inventory>())
     {
         // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(noah_texture, "Texture required for Noah.");
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(axe, "Axe required for Noah.");
 
         // CREATE THE SPRITE FOR NOAH.
         const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 16, 16);
-        GRAPHICS::Sprite sprite(noah_texture, TEXTURE_SUB_RECT);
+        GRAPHICS::Sprite sprite(RESOURCES::AssetId::NOAH_TEXTURE, TEXTURE_SUB_RECT);
         // The sprite origin should be the graphical center of its sub-rectangle.
         sprite.SetOrigin(TEXTURE_SUB_RECT.Center());
         Sprite.Sprite = sprite;

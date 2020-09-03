@@ -7,13 +7,6 @@ namespace RESOURCES
     /// @return The animal sprite, if successfully retrieved; null otherwise.
     std::shared_ptr<GRAPHICS::AnimatedSprite> AnimalGraphics::GetSprite(const OBJECTS::AnimalType animal_type)
     {
-        // GET THE ANIMAL TEXTURE.
-        std::shared_ptr<GRAPHICS::Texture> animal_texture = assets.GetTexture(RESOURCES::AssetId::ANIMAL_TEXTURE);
-        if (!animal_texture)
-        {
-            return nullptr;
-        }
-
         // GET THE ANIMAL'S ANIMATION SEQUENCE.
         std::shared_ptr<GRAPHICS::AnimationSequence> animation_sequence = GetAnimalAnimation(animal_type);
         if (!animation_sequence)
@@ -22,7 +15,7 @@ namespace RESOURCES
         }
 
         // CREATE THE ANIMAL'S SPRITE.
-        auto animal_sprite = std::make_shared<GRAPHICS::AnimatedSprite>(animal_texture, animation_sequence);
+        auto animal_sprite = std::make_shared<GRAPHICS::AnimatedSprite>(RESOURCES::AssetId::ANIMAL_TEXTURE, animation_sequence);
         return animal_sprite;
     }
 

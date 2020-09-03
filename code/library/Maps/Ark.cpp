@@ -7,20 +7,11 @@ namespace MAPS
     /// Populates the ark interior based on data read from in-memory assets.
     void Ark::Populate()
     {
-        // LOAD THE TILESET TEXTURE.
-        std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);
-        if (!tileset_texture)
-        {
-            return;
-        }
-
         // CLEAR ANY PREVIOUS INFORMATION IN THE INTERIOR.
         Interior.LayersFromBottomToTop.clear();
 
-        // CREATE THE TILESET.
-        MAPS::Tileset tileset(tileset_texture);
-
         // LOAD TILE MAPS FOR EACH LAYER INTO THE ARK INTERIOR.
+        MAPS::Tileset tileset;
         std::size_t layer_count = MAPS::DATA::ARK_INTERIOR_LAYER_DATA_FROM_BOTTOM_TO_TOP.size();
         for (std::size_t layer_index = 0; layer_index < layer_count; ++layer_index)
         {

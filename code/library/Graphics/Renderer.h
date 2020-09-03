@@ -8,6 +8,7 @@
 #include "Graphics/AnimatedSprite.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Color.h"
+#include "Graphics/GraphicsDevice.h"
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/Text.h"
 #include "Graphics/Screen.h"
@@ -42,7 +43,7 @@ namespace GRAPHICS
             const char key,
             const MATH::Vector2ui& left_top_screen_position_in_pixels);
         void RenderGuiIcon(
-            const GRAPHICS::Texture& texture,
+            const RESOURCES::AssetId texture_id,
             const MATH::FloatRectangle& texture_sub_rectangle,
             const MATH::Vector2ui& left_top_screen_position_in_pixels);
         void RenderGuiIcon(
@@ -82,6 +83,8 @@ namespace GRAPHICS
         void Render(const MAPS::MultiTileMapGrid& tile_map_grid);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The graphics device to use for rendering.
+        std::shared_ptr<GRAPHICS::GraphicsDevice> GraphicsDevice = nullptr;
         /// The screen that gets rendered to.
         std::shared_ptr<GRAPHICS::Screen> Screen;
         /// The camera defining what portion of the world is currently viewable.

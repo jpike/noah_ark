@@ -18,7 +18,7 @@ namespace STATES
             case GameState::INTRO_SEQUENCE:
             {
                 // UPDATE THE INTRO SEQUENCE.
-                IntroSequence.Update(gaming_hardware.ElapsedTimeSinceLastFrame);
+                IntroSequence.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
                 // MOVE TO THE TITLE SCREEN IF THE INTRO SEQUENCE HAS FINISHED.
                 bool intro_sequence_finished = IntroSequence.Completed();
@@ -32,23 +32,23 @@ namespace STATES
                 break;
             }
             case GameState::TITLE_SCREEN:
-                next_game_state = TitleScreen.Update(gaming_hardware.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
+                next_game_state = TitleScreen.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
                 break;
             case GameState::CREDITS_SCREEN:
-                next_game_state = CreditsScreen.Update(gaming_hardware.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
+                next_game_state = CreditsScreen.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
                 break;
             case GameState::GAME_SELECTION_SCREEN:
-                next_game_state = GameSelectionScreen.Update(gaming_hardware.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
+                next_game_state = GameSelectionScreen.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
                 break;
             case GameState::NEW_GAME_INTRO_SEQUENCE:
-                next_game_state = NewGameIntroSequence.Update(gaming_hardware.ElapsedTimeSinceLastFrame, *gaming_hardware.Speakers);
+                next_game_state = NewGameIntroSequence.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, *gaming_hardware.Speakers);
                 break;
             case GameState::FLOOD_CUTSCENE:
-                next_game_state = FloodCutscene.Update(gaming_hardware.ElapsedTimeSinceLastFrame);
+                next_game_state = FloodCutscene.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
                 break;
             case GameState::GAMEPLAY:
                 next_game_state = GameplayState.Update(
-                    gaming_hardware.ElapsedTimeSinceLastFrame, 
+                    gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
                     gaming_hardware.InputController, 
                     camera, 
                     *gaming_hardware.Speakers);
@@ -91,7 +91,7 @@ namespace STATES
                 screen_sprite = FloodCutscene.Render(renderer);
                 break;
             case GameState::GAMEPLAY:
-                screen_sprite = GameplayState.Render(gaming_hardware.TotalElapsedTime, renderer);
+                screen_sprite = GameplayState.Render(gaming_hardware.Clock.TotalElapsedTime, renderer);
                 break;
         }
         return screen_sprite;
@@ -140,19 +140,16 @@ namespace STATES
 
                 // INITIALIZE THE CUTSCENE SPRITES.
                 /// @todo   Cleaner way to do this!
-                std::shared_ptr<GRAPHICS::Texture> mountain_texture = assets->GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_MOUNTAIN);
                 MATH::FloatRectangle mountain_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 256, 256);
-                FloodCutscene.Mountain = GRAPHICS::Sprite(mountain_texture, mountain_sprite_rectangle);
+                FloodCutscene.Mountain = GRAPHICS::Sprite(RESOURCES::AssetId::FLOOD_CUTSCENE_MOUNTAIN, mountain_sprite_rectangle);
 
-                std::shared_ptr<GRAPHICS::Texture> ark_texture = assets->GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_ARK);
                 MATH::FloatRectangle ark_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 100, 50);
-                FloodCutscene.Ark = GRAPHICS::Sprite(ark_texture, ark_sprite_rectangle);
+                FloodCutscene.Ark = GRAPHICS::Sprite(RESOURCES::AssetId::FLOOD_CUTSCENE_ARK, ark_sprite_rectangle);
 
                 // The flood sprite is slightly larger than the screen height to account for the "waves" at the top and allowing
                 // the sprite to rise up while still having the bottom of the screen appear blue.
-                std::shared_ptr<GRAPHICS::Texture> flood_water_texture = assets->GetTexture(RESOURCES::AssetId::FLOOD_CUTSCENE_WATERS);
                 MATH::FloatRectangle flood_water_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 512, 416);
-                FloodCutscene.FloodWaters = GRAPHICS::Sprite(flood_water_texture, flood_water_sprite_rectangle);
+                FloodCutscene.FloodWaters = GRAPHICS::Sprite(RESOURCES::AssetId::FLOOD_CUTSCENE_WATERS, flood_water_sprite_rectangle);
                 break;
             }
             case GameState::GAMEPLAY:

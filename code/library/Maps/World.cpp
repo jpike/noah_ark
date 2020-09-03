@@ -111,22 +111,8 @@ namespace MAPS
     /// Populates the overworld based on data read from in-memory assets.
     void World::PopulateOverworld()
     {
-        // LOAD THE TILESET TEXTURE.
-        std::shared_ptr<GRAPHICS::Texture> tileset_texture = assets.GetTexture(RESOURCES::AssetId::MAIN_TILESET_TEXTURE);
-        if (!tileset_texture)
-        {
-            return;
-        }
-
-        // LOAD THE TREE TEXTURE.
-        std::shared_ptr<GRAPHICS::Texture> tree_texture = assets.GetTexture(RESOURCES::AssetId::TREE_TEXTURE);
-        if (!tree_texture)
-        {
-            return;
-        }
-
         // CREATE THE TILESET.
-        MAPS::Tileset tileset(tileset_texture);
+        MAPS::Tileset tileset;
 
         // CREATE A RANDOM NUMBER GENERATOR FOR CREATING FOOD.
         MATH::RandomNumberGenerator random_number_generator;
@@ -193,41 +179,36 @@ namespace MAPS
                 // POPULATE THE ARK LAYER IF ONE EXISTS.
                 if (tile_map_data.ArkLayer)
                 {
-                    // GET THE ARK TEXTURE.
-                    std::shared_ptr<GRAPHICS::Texture> ark_texture = assets.GetTexture(RESOURCES::AssetId::ARK_TEXTURE);
-                    if (ark_texture)
+                    // CREATE PIECES IN THE ARK LAYER.
+                    for (unsigned int current_tile_y = 0;
+                        current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
+                        ++current_tile_y)
                     {
-                        // CREATE PIECES IN THE ARK LAYER.
-                        for (unsigned int current_tile_y = 0;
-                            current_tile_y < MAPS::TileMap::HEIGHT_IN_TILES;
-                            ++current_tile_y)
+                        // CREATE ARK PIECES FOR THIS ROW.
+                        for (unsigned int current_tile_x = 0;
+                            current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
+                            ++current_tile_x)
                         {
-                            // CREATE ARK PIECES FOR THIS ROW.
-                            for (unsigned int current_tile_x = 0;
-                                current_tile_x < MAPS::TileMap::WIDTH_IN_TILES;
-                                ++current_tile_x)
+                            // CHECK IF THE TILE ID IS VALID.
+                            // Some tiles in this layer may not be for valid ark pieces.
+                            MAPS::TileId tile_id = (*tile_map_data.ArkLayer)(current_tile_x, current_tile_y);
+                            bool tild_id_valid = (tile_id > 0);
+                            if (!tild_id_valid)
                             {
-                                // CHECK IF THE TILE ID IS VALID.
-                                // Some tiles in this layer may not be for valid ark pieces.
-                                MAPS::TileId tile_id = (*tile_map_data.ArkLayer)(current_tile_x, current_tile_y);
-                                bool tild_id_valid = (tile_id > 0);
-                                if (!tild_id_valid)
-                                {
-                                    continue;
-                                }
-
-                                // CREATE THE ARK PIECE.
-                                OBJECTS::ArkPiece ark_piece(tile_id, ark_texture);
-                                MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
-                                float tile_left_x_position = static_cast<float>(current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
-                                float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;
-                                float tile_top_y_position = static_cast<float>(current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
-                                float ark_piece_world_y_position = map_top_world_position + tile_top_y_position + ark_piece_local_center.Y;
-                                ark_piece.Sprite.SetWorldPosition(ark_piece_world_x_position, ark_piece_world_y_position);
-
-                                // ADD THE ARK PIECE TO THE TILE MAP.
-                                tile_map.ArkPieces.push_back(ark_piece);
+                                continue;
                             }
+
+                            // CREATE THE ARK PIECE.
+                            OBJECTS::ArkPiece ark_piece(tile_id);
+                            MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
+                            float tile_left_x_position = static_cast<float>(current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
+                            float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;
+                            float tile_top_y_position = static_cast<float>(current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
+                            float ark_piece_world_y_position = map_top_world_position + tile_top_y_position + ark_piece_local_center.Y;
+                            ark_piece.Sprite.SetWorldPosition(ark_piece_world_x_position, ark_piece_world_y_position);
+
+                            // ADD THE ARK PIECE TO THE TILE MAP.
+                            tile_map.ArkPieces.push_back(ark_piece);
                         }
                     }
                 }
@@ -257,7 +238,7 @@ namespace MAPS
                                 MATH::FloatRectangle tree_texture_sub_rectangle = TALL_TREE_TEXTURE_SUB_RECTANGLE;
 
                                 // CREATE THE TREE'S SPRITE.
-                                GRAPHICS::AnimatedSprite tree_sprite(GRAPHICS::Sprite(tree_texture, tree_texture_sub_rectangle));
+                                GRAPHICS::AnimatedSprite tree_sprite(GRAPHICS::Sprite(RESOURCES::AssetId::TREE_TEXTURE, tree_texture_sub_rectangle));
                                 MATH::Vector2f tree_local_center = tree_sprite.Sprite.GetOrigin();
                                 auto tree_left_x = current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>;
                                 auto tree_top_y = current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>;
@@ -303,7 +284,7 @@ namespace MAPS
 
                                     // GET THE SPRITE FOR THE FOOD.
                                     // The food can only be created if the sprite was retrieved.
-                                    std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(food_type, assets);
+                                    std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(food_type);
                                     if (food_sprite)
                                     {
                                         // CREATE THE FOOD.

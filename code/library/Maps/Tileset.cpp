@@ -1,20 +1,15 @@
-#include "ErrorHandling/NullChecking.h"
 #include "Maps/Tileset.h"
 
 namespace MAPS
 {
     /// Creates a tileset.
-    /// @param[in]  tileset_texture - The texture to use for the tileset; must not be null.
-    /// @throws std::exception - Thrown if the texture is null.
-    Tileset::Tileset(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture)
+    Tileset::Tileset()
     {
-        // MAKE SURE THE TEXTURE EXISTS.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(tileset_texture, "Tileset texture must not be null.");
-        
         // POPULATE A TILESET FROM THE TEXTURE.
         const MAPS::TileId FIRST_TILE_ID = 1;
         MAPS::TileId current_tile_id = FIRST_TILE_ID;
-        MATH::Vector2ui tileset_texture_dimensions = tileset_texture->GetSize();
+        // This dimensions are hardcoded to avoid needing to have to pass the actual texture resource here.
+        MATH::Vector2ui tileset_texture_dimensions(128, 48);
         unsigned int row_count_of_tiles = tileset_texture_dimensions.Y / Tile::DIMENSION_IN_PIXELS<unsigned int>;
         unsigned int column_count_of_tiles = tileset_texture_dimensions.X / Tile::DIMENSION_IN_PIXELS<unsigned int>;
         for (unsigned int tile_row_index = 0;
@@ -37,7 +32,7 @@ namespace MAPS
                     Tile::DIMENSION_IN_PIXELS<float>);
 
                 // STORE THE CURRENT TILE.
-                SetTile(current_tile_id, tileset_texture, tile_texture_rect);
+                SetTile(current_tile_id, tile_texture_rect);
 
                 // UPDATE THE TILE ID FOR THE NEXT TILE.
                 ++current_tile_id;
@@ -47,15 +42,12 @@ namespace MAPS
 
     /// Sets the data in the set for the tile with the specified ID.
     /// @param[in]  tile_id - The unique ID of the tile.
-    /// @param[in]  texture - The texture with graphics resources for the tile.
     /// @param[in]  texture_sub_rectangle - The sub-rectangle within
     ///     the texture holding graphics for the tile.
     void Tileset::SetTile(
         const TileId tile_id,
-        const std::shared_ptr<GRAPHICS::Texture>& texture,
         const MATH::FloatRectangle& texture_sub_rectangle)
     {
-        TileTextures[tile_id] = texture;
         TileTextureSubRectangles[tile_id] = texture_sub_rectangle;
     }
 
@@ -65,14 +57,6 @@ namespace MAPS
     /// @return The tile, if successfully created; null otherwise.
     std::shared_ptr<Tile> Tileset::CreateTile(const TileId tile_id) const
     {
-        // GET THE TEXTURE FOR THE TILE.
-        auto id_with_texture = TileTextures.find(tile_id);
-        bool texture_exists = (TileTextures.cend() != id_with_texture);
-        if (!texture_exists)
-        {
-            return nullptr;
-        }
-
         // GET THE TEXTURE SUB-RECTANGLE FOR THE TILE.
         auto id_with_sub_rectangle = TileTextureSubRectangles.find(tile_id);
         bool sub_rectangle_exists = (TileTextureSubRectangles.cend() != id_with_sub_rectangle);
@@ -83,7 +67,7 @@ namespace MAPS
 
         // CREATE A SPRITE FOR THE TILE.
         GRAPHICS::AnimatedSprite sprite(GRAPHICS::Sprite(
-            id_with_texture->second,
+            RESOURCES::AssetId::MAIN_TILESET_TEXTURE,
             id_with_sub_rectangle->second));
 
         // ADD ANIMATION SEQUENCES FOR WATER TILES.

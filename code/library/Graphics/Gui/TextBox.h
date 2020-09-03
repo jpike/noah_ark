@@ -40,8 +40,10 @@ namespace GRAPHICS::GUI
         // PUBLIC MEMBER VARIABLES.
         /// True if the text box is visible; false otherwise.
         bool IsVisible = false;
+        /// The font used for rendering text.
+        std::shared_ptr<Font> Font = nullptr;
         /// The pages of text currently in the text box.
-        std::vector<TextPage> Pages;
+        std::vector<TextPage> Pages = {};
 
     private:
         // PRIVATE MEMBER VARIABLES.

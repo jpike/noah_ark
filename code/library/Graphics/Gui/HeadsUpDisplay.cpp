@@ -13,6 +13,7 @@ namespace GUI
     /// @param[in]  saved_game_data - The current player's saved game.
     /// @param[in]  world - The world whose information is being diplayed in the HUD.
     /// @param[in]  noah_player - The player whose information is being displayed in the HUD.
+    /// @param[in]  font - The font to use in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
     /// @throws std::exception - Thrown if a parameter is null.
@@ -20,9 +21,10 @@ namespace GUI
         const std::shared_ptr<STATES::SavedGameData>& saved_game_data,
         const std::shared_ptr<MAPS::World>& world,
         const std::shared_ptr<OBJECTS::Noah>& noah_player,
+        const std::shared_ptr<GRAPHICS::GUI::Font>& font,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels) :
-    MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, assets->GetFont(RESOURCES::AssetId::FONT_TEXTURE)),
+    MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, font),
     TextColor(GRAPHICS::Color::BLACK),
     InventoryOpened(false),
     InventoryGui(noah_player->Inventory),

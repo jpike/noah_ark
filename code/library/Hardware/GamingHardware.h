@@ -28,7 +28,7 @@ namespace HARDWARE
         std::shared_ptr<GRAPHICS::Screen> Screen = nullptr;
         /// The device for rendering graphics on the system.
         /// Dynamically allocated since the device has a mutex that prevents copying/moving.
-        std::unique_ptr<GRAPHICS::GraphicsDevice> GraphicsDevice = nullptr;
+        std::shared_ptr<GRAPHICS::GraphicsDevice> GraphicsDevice = nullptr;
         /// The speakers out of which audio can be played.
         /// Dynamically allocated since the speakers have a mutex that prevents copying/moving.
         std::unique_ptr<AUDIO::Speakers> Speakers = nullptr;

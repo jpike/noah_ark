@@ -37,7 +37,6 @@ namespace OBJECTS
         // CONSTRUCTION.
         explicit Noah(
             const STATES::SavedGameData& saved_game_data,
-            const std::shared_ptr<GRAPHICS::Texture>& noah_texture,
             const std::shared_ptr<OBJECTS::Axe>& axe);
 
         // POSITIONING.

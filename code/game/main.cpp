@@ -18,6 +18,9 @@
 // - Inventory
 // - States
 
+// To avoid annoyances with Windows min/max #defines.
+#define NOMINMAX
+
 #include <cassert>
 #include <chrono>
 #include <exception>
@@ -92,6 +95,8 @@ void LoadRemainingAssets(HARDWARE::GamingHardware& gaming_hardware)
                 break;
             }
             case RESOURCES::AssetType::SHADER:
+                // All shaders are currently fragment shaders.
+                gaming_hardware.GraphicsDevice->LoadShader(asset.Id, sf::Shader::Fragment, asset.BinaryData);
                 break;
             case RESOURCES::AssetType::INVALID:
                 [[fallthrough]];
@@ -145,6 +150,7 @@ int main()
 
         // INITIALIZE THE RENDERER.
         GRAPHICS::Renderer renderer(gaming_hardware.Screen);
+        renderer.GraphicsDevice = gaming_hardware.GraphicsDevice;
 
         const auto& colored_texture_shader = intro_assets[RESOURCES::AssetId::COLORED_TEXTURE_SHADER];
         bool colored_texture_shader_loaded = renderer.ColoredTextShader.loadFromMemory(colored_texture_shader.BinaryData, sf::Shader::Fragment);
@@ -162,8 +168,7 @@ int main()
         STATES::GameStates game_states;
         game_states.IntroSequence.Initialize(*gaming_hardware.Speakers);
 
-        // LOAD REMAINING ASSETS.
-        std::shared_future<void> assets_being_loaded = std::async(LoadRemainingAssets, std::ref(gaming_hardware));
+        // LOAD THE WORLD.
         std::future<std::shared_ptr<MAPS::World>> world_being_loaded = std::async(LoadWorldAfterAssetsFinishLoading, assets_being_loaded);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
@@ -284,7 +289,7 @@ int main()
                     }
 
                     // GET IMPORTANT SHADERS.
-                    renderer.TimeOfDayShader = assets->GetShader(RESOURCES::AssetId::TIME_OF_DAY_SHADER);
+                    renderer.TimeOfDayShader = gaming_hardware.GraphicsDevice->GetShader(RESOURCES::AssetId::TIME_OF_DAY_SHADER);
                     if (!renderer.TimeOfDayShader)
                     {
                         return EXIT_FAILURE;

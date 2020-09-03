@@ -28,6 +28,7 @@ namespace GUI
             const std::shared_ptr<STATES::SavedGameData>& saved_game_data,
             const std::shared_ptr<MAPS::World>& world,
             const std::shared_ptr<OBJECTS::Noah>& noah_player,
+            const std::shared_ptr<GRAPHICS::GUI::Font>& font,
             const unsigned int main_text_box_width_in_pixels,
             const unsigned int main_text_box_height_in_pixels);
 

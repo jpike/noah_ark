@@ -60,8 +60,7 @@ namespace OBJECTS
     {
     public:
         // CONSTRUCTION.
-        explicit Axe() = default;
-        explicit Axe(const std::shared_ptr<GRAPHICS::Texture>& texture);
+        explicit Axe();
 
         // SWINGING METHODS.
         void SwingUp();

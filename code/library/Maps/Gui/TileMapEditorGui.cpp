@@ -8,12 +8,10 @@ namespace MAPS
 namespace GUI
 {
     /// Creates an invisible instance of the tile map editor GUI.
-    /// @param[in]  tileset_texture - The texture for the tileset used by the GUI.
-    /// @throws std::exception - Thrown if the parameter is null or a tile fails to be created.
-    TileMapEditorGui::TileMapEditorGui(const std::shared_ptr<GRAPHICS::Texture>& tileset_texture) :
+    TileMapEditorGui::TileMapEditorGui() :
     Visible(false),
     CurrentTileMap(nullptr),
-    TilePalette(tileset_texture),
+    TilePalette(),
     SelectedTile(),
     MouseScreenPosition()
     {}

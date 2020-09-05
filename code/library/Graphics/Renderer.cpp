@@ -1,31 +1,10 @@
 #include <array>
 #include "Debugging/DebugConsole.h"
-#include "ErrorHandling/NullChecking.h"
 #include "Graphics/Renderer.h"
 #include "String/String.h"
 
 namespace GRAPHICS
 {
-    /// Constructor.
-    /// @param[in,out]  screen - The screen to render to.
-    /// @throws std::exception - Thrown if a parameter is null.
-    Renderer::Renderer(const std::shared_ptr<GRAPHICS::Screen>& screen) :
-        Screen(screen),
-        Camera(MATH::FloatRectangle::FromCenterAndDimensions(
-            Screen->RenderTarget.getView().getCenter().x,
-            Screen->RenderTarget.getView().getCenter().y,
-            Screen->RenderTarget.getView().getSize().x,
-            Screen->RenderTarget.getView().getSize().y)),
-        Fonts(),
-        ColoredTextShader(),
-        TimeOfDayShader()
-    {
-        // MAKE SURE REQUIRED PARAMETERS EXISTS.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
-            Screen,
-            "The screen for the renderer cannot be null.");
-    }
-
     /// Renders the final screen based on the current state of rendering operations.
     /// @param[in]  render_settings - The settings to use for rendering.
     /// @return The rendered screen.
@@ -161,7 +140,12 @@ namespace GRAPHICS
         Screen->RenderTarget.setView(screen_space_view);
 
         // RENDER THE GLYPH FOR THE KEY.
-        sf::RenderStates render_states = ConfigureColoredTextShader(Color::BLACK);
+        sf::RenderStates render_states = sf::RenderStates::Default;
+        std::shared_ptr<sf::Shader> colored_text_shader = GraphicsDevice->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
+        if (colored_text_shader)
+        {
+            render_states = ConfigureColoredTextShader(Color::BLACK, *colored_text_shader);
+        }
         Screen->RenderTarget.draw(key_character_sprite, render_states);
     }
 
@@ -274,7 +258,12 @@ namespace GRAPHICS
             Screen->RenderTarget.setView(screen_space_view);
 
             // RENDER THE CURRENT GLYPH.
-            sf::RenderStates render_states = ConfigureColoredTextShader(text.Color);
+            sf::RenderStates render_states = sf::RenderStates::Default;
+            std::shared_ptr<sf::Shader> colored_text_shader = GraphicsDevice->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
+            if (colored_text_shader)
+            {
+                render_states = ConfigureColoredTextShader(text.Color, *colored_text_shader);
+            }
             Screen->RenderTarget.draw(current_character_sprite, render_states);
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
@@ -333,7 +322,12 @@ namespace GRAPHICS
             Screen->RenderTarget.setView(screen_space_view);
 
             // RENDER THE CURRENT GLYPH.
-            sf::RenderStates render_states = ConfigureColoredTextShader(text_color);
+            sf::RenderStates render_states = sf::RenderStates::Default;
+            std::shared_ptr<sf::Shader> colored_text_shader = GraphicsDevice->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
+            if (colored_text_shader)
+            {
+                render_states = ConfigureColoredTextShader(text_color, *colored_text_shader);
+            }
             Screen->RenderTarget.draw(current_character_sprite, render_states);
 
             // CALCULATE THE LEFT-TOP SCREEN POSITION OF THE NEXT CHARACTER.
@@ -833,14 +827,15 @@ namespace GRAPHICS
     /// Configures the colored text shader to render text using the specified color,
     /// returning the corresponding render states.
     /// @param[in]  color - The color for the text to render.
+    /// @param[in,out]  colored_text_shader - The shader to configure.
     /// @return The render states for the configured colored text shader.
-    sf::RenderStates Renderer::ConfigureColoredTextShader(const Color& color)
+    sf::RenderStates Renderer::ConfigureColoredTextShader(const Color& color, sf::Shader& colored_text_shader)
     {
         // CONFIGURE THE SHADER IN THE RENDER STATES.
         sf::RenderStates render_states = sf::RenderStates::Default;
-        ColoredTextShader.setUniform("color", sf::Glsl::Vec4(sf::Color(color.Red, color.Green, color.Blue, color.Alpha)));
-        ColoredTextShader.setUniform("texture", sf::Shader::CurrentTexture);
-        render_states.shader = &ColoredTextShader;
+        colored_text_shader.setUniform("color", sf::Glsl::Vec4(sf::Color(color.Red, color.Green, color.Blue, color.Alpha)));
+        colored_text_shader.setUniform("texture", sf::Shader::CurrentTexture);
+        render_states.shader = &colored_text_shader;
         return render_states;
     }
 }

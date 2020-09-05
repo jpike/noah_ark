@@ -26,9 +26,6 @@ namespace GRAPHICS
     class Renderer
     {
     public:
-        // CONSTRUCTION.
-        explicit Renderer(const std::shared_ptr<GRAPHICS::Screen>& screen);
-
         // FINAL RENDER RETRIEVAL.
         sf::Sprite RenderFinalScreen(const sf::RenderStates& render_settings = sf::RenderStates::Default);
 
@@ -87,23 +84,17 @@ namespace GRAPHICS
         /// The graphics device to use for rendering.
         std::shared_ptr<GRAPHICS::GraphicsDevice> GraphicsDevice = nullptr;
         /// The screen that gets rendered to.
-        std::shared_ptr<GRAPHICS::Screen> Screen;
+        std::shared_ptr<GRAPHICS::Screen> Screen = nullptr;
         /// The camera defining what portion of the world is currently viewable.
-        GRAPHICS::Camera Camera;
-        /// Textures to use for rendering.
-        std::unordered_map<RESOURCES::AssetId, std::shared_ptr<GRAPHICS::Texture>> Textures;
+        GRAPHICS::Camera Camera = GRAPHICS::Camera(MATH::FloatRectangle());
         /// Fonts to use for rendering text.
-        std::unordered_map<RESOURCES::AssetId, std::shared_ptr<GRAPHICS::GUI::Font>> Fonts;
-        /// The shader to use for colored text.
-        sf::Shader ColoredTextShader;
-        /// The shader to use for shading based on the time of day.
-        std::shared_ptr<sf::Shader> TimeOfDayShader;
+        std::unordered_map<RESOURCES::AssetId, std::shared_ptr<GRAPHICS::GUI::Font>> Fonts = {};
 
     private:
         // RENDERING.
         void Render(const MAPS::TileMap& tile_map);
 
         // SHADERS.
-        sf::RenderStates ConfigureColoredTextShader(const Color& color);
+        sf::RenderStates ConfigureColoredTextShader(const Color& color, sf::Shader& colored_text_shader);
     };
 }

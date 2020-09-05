@@ -55,6 +55,8 @@ std::shared_ptr<MAPS::World> LoadWorld()
     // World load time (with ark interior): 31,132,753
     auto load_time_diff = load_end_time - load_start_time;
     DEBUGGING::DebugConsole::WriteLine("World load time: ", load_time_diff.count());
+    DEBUGGING::DebugConsole::WriteLine("World load time (ms): ", std::chrono::duration_cast<std::chrono::milliseconds>(load_time_diff).count());
+    DEBUGGING::DebugConsole::WriteLine("World load time (s): ", std::chrono::duration_cast<std::chrono::seconds>(load_time_diff).count());
 
     return world;
 }
@@ -109,16 +111,8 @@ void LoadRemainingAssets(HARDWARE::GamingHardware& gaming_hardware)
     auto load_end_time = std::chrono::system_clock::now();
     auto load_time_diff = load_end_time - load_start_time;
     DEBUGGING::DebugConsole::WriteLine("Remaining asset raw load time: ", load_time_diff.count());
-}
-
-std::shared_ptr<MAPS::World> LoadWorldAfterAssetsFinishLoading(std::shared_future<void> assets_being_loaded)
-{
-    // WAIT FOR THE ASSETS TO FINISH LOADING.
-    assets_being_loaded.wait();
-
-    // LOAD THE WORLD.   
-    std::shared_ptr<MAPS::World> world = LoadWorld();
-    return world;
+    DEBUGGING::DebugConsole::WriteLine("Remaining asset load time (ms): ", std::chrono::duration_cast<std::chrono::milliseconds>(load_time_diff).count());
+    DEBUGGING::DebugConsole::WriteLine("Remaining asset load time (s): ", std::chrono::duration_cast<std::chrono::seconds>(load_time_diff).count());
 }
 
 /// The main entry point for the game.
@@ -143,18 +137,23 @@ int main()
         // INITIALIZE THE GAMING HARDWARE.
         HARDWARE::GamingHardware gaming_hardware;
 
-        std::shared_future<void> assets_being_loaded = std::async(LoadRemainingAssets, std::ref(gaming_hardware));
-
         const auto& intro_music_asset = intro_assets[RESOURCES::AssetId::INTRO_MUSIC];
         gaming_hardware.Speakers->LoadMusic(intro_music_asset.Id, intro_music_asset.BinaryData);
 
-        // INITIALIZE THE RENDERER.
-        GRAPHICS::Renderer renderer(gaming_hardware.Screen);
-        renderer.GraphicsDevice = gaming_hardware.GraphicsDevice;
-
         const auto& colored_texture_shader = intro_assets[RESOURCES::AssetId::COLORED_TEXTURE_SHADER];
-        bool colored_texture_shader_loaded = renderer.ColoredTextShader.loadFromMemory(colored_texture_shader.BinaryData, sf::Shader::Fragment);
-        assert(colored_texture_shader_loaded);
+        gaming_hardware.GraphicsDevice->LoadShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER, sf::Shader::Fragment, colored_texture_shader.BinaryData);
+
+        std::shared_future<void> assets_being_loaded = std::async(LoadRemainingAssets, std::ref(gaming_hardware));
+
+        // INITIALIZE THE RENDERER.
+        GRAPHICS::Renderer renderer;
+        renderer.GraphicsDevice = gaming_hardware.GraphicsDevice;
+        renderer.Screen = gaming_hardware.Screen;
+        renderer.Camera = GRAPHICS::Camera(MATH::FloatRectangle::FromCenterAndDimensions(
+            renderer.Screen->RenderTarget.getView().getCenter().x,
+            renderer.Screen->RenderTarget.getView().getCenter().y,
+            renderer.Screen->RenderTarget.getView().getSize().x,
+            renderer.Screen->RenderTarget.getView().getSize().y));
 
         std::shared_ptr<GRAPHICS::GUI::Font> default_sans_serif_font = GRAPHICS::GUI::Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
         assert(default_sans_serif_font);
@@ -169,7 +168,7 @@ int main()
         game_states.IntroSequence.Initialize(*gaming_hardware.Speakers);
 
         // LOAD THE WORLD.
-        std::future<std::shared_ptr<MAPS::World>> world_being_loaded = std::async(LoadWorldAfterAssetsFinishLoading, assets_being_loaded);
+        std::future<std::shared_ptr<MAPS::World>> world_being_loaded = std::async(LoadWorld);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         while (window->isOpen())
@@ -261,13 +260,7 @@ int main()
                     gaming_hardware.Speakers->StopAllAudio();
                 }
 
-                // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.
-                bool remaining_assets_needed = (STATES::GameState::INTRO_SEQUENCE != next_game_state);
-                if (remaining_assets_needed)
-                {
-                    assets_being_loaded.wait();
-                }
-                
+                // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.                
                 std::shared_ptr<MAPS::World> world;
                 bool world_needed = (STATES::GameState::GAMEPLAY == next_game_state);
                 if (world_needed)
@@ -285,13 +278,7 @@ int main()
                     }
                     if (!world)
                     {
-                        return EXIT_FAILURE;
-                    }
-
-                    // GET IMPORTANT SHADERS.
-                    renderer.TimeOfDayShader = gaming_hardware.GraphicsDevice->GetShader(RESOURCES::AssetId::TIME_OF_DAY_SHADER);
-                    if (!renderer.TimeOfDayShader)
-                    {
+                        DEBUGGING::DebugConsole::WriteErrorLine("Failed to load world");
                         return EXIT_FAILURE;
                     }
                 }

@@ -1,4 +1,3 @@
-#include "ErrorHandling/NullChecking.h"
 #include "Inventory/InventoryBiblePage.h"
 
 namespace INVENTORY
@@ -6,20 +5,9 @@ namespace INVENTORY
     // The exact color is currently arbitrary.
     const GRAPHICS::Color InventoryBiblePage::BACKGROUND_COLOR = GRAPHICS::Color::ORANGE;
 
-    /// Constructor.
-    /// @param[in]  inventory - The inventory to display in the GUI.
-    /// @throws std::exception - Thrown if a parameter is null.
-    InventoryBiblePage::InventoryBiblePage(const std::shared_ptr<const Inventory>& inventory) :
-    BibleVerseTextBox(),
-    BibleVerseListBox(inventory)
-    {
-        // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(inventory, "Null inventory provided to inventory Bible page.");
-    }
-
     /// Renders the inventory GUI Bible page to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryBiblePage::Render(GRAPHICS::Renderer& renderer) const
+    void InventoryBiblePage::Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -39,7 +27,13 @@ namespace INVENTORY
             BACKGROUND_COLOR);
 
         // RENDER THE BOX FOR THE MAIN BIBLE VERSE DISPLAY.
-        const BIBLE::BibleVerse* const selected_bible_verse = BibleVerseListBox.GetSelectedVerse();
+        const BIBLE::BibleVerse* selected_bible_verse = BibleVerseListBox.GetSelectedVerse();
+        auto verse_from_inventory = inventory.BibleVerses.find(*selected_bible_verse);
+        bool verse_in_inventory = (verse_from_inventory != inventory.BibleVerses.cend());
+        if (!verse_in_inventory)
+        {
+            selected_bible_verse = nullptr;
+        }
 
         // The exact positioning/size of this box is tentative.
         const float BIBLE_VERSE_TEXT_BOX_SINGLE_SIDE_PADDING_IN_PIXELS = 4.0f;
@@ -75,6 +69,7 @@ namespace INVENTORY
             bible_verse_list_box_height_in_pixels);
 
         BibleVerseListBox.Render(
+            inventory.BibleVerses,
             bible_verse_list_box_rectangle,
             renderer);
     }

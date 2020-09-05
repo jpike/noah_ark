@@ -26,7 +26,6 @@ namespace GUI
     public:
         // CONSTRUCTION.
         explicit HeadsUpDisplay(
-            const std::shared_ptr<MAPS::World>& world,
             const std::shared_ptr<GRAPHICS::GUI::Font>& font,
             const unsigned int main_text_box_width_in_pixels,
             const unsigned int main_text_box_height_in_pixels);
@@ -34,11 +33,13 @@ namespace GUI
         // UPDATE.
         STATES::GameState Update(
             const HARDWARE::GamingHardware& gaming_hardware,
+            const MAPS::World& world,
             STATES::SavedGameData& current_game_data);
 
         // RENDERING.
         void Render(
             const STATES::SavedGameData& current_game_data,
+            const INVENTORY::Inventory& inventory,
             GRAPHICS::Renderer& renderer) const;
 
         // OTHER METHODS.
@@ -51,17 +52,12 @@ namespace GUI
         /// text displayed in the main text box or the inventory GUI
         /// but only other text displayed directly by this HUD.
         GRAPHICS::Color TextColor;
+        /// True if the pause menu box is visible; false otherwise.
+        bool PauseMenuVisible;
         /// True if the full inventory GUI is displayed; false otherwise.
         bool InventoryOpened;
         /// The GUI for displaying the full inventory.
         INVENTORY::InventoryGui InventoryGui;
-
-    private:
-        // PRIVATE MEMBER VARIABLES.
-        /// True if the pause menu box is visible; false otherwise.
-        bool PauseMenuVisible;
-        /// The world whose information is being displayed in the HUD.
-        std::shared_ptr<MAPS::World> World;
     };
 }
 }

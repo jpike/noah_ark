@@ -61,14 +61,11 @@ namespace INVENTORY
             FOOD
         };
 
-        // CONSTRUCTION.
-        explicit InventoryGui(const std::shared_ptr<const Inventory>& inventory);
-
         // UPDATING.
         void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
-        void Render(GRAPHICS::Renderer& renderer) const;
+        void Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const;
 
     private:
         // RENDERING.
@@ -79,15 +76,13 @@ namespace INVENTORY
             GRAPHICS::Renderer& renderer) const;
 
         // MEMBER VARIABLES.
-        /// The player's inventory to display in the GUI.
-        std::shared_ptr<const Inventory> Inventory;
         /// The type of tab currently being displayed.
-        TabType CurrentTab;
+        TabType CurrentTab = TabType::BIBLE;
         /// The page of the inventory GUI displaying collected Bible verses.
-        InventoryBiblePage BiblePage;
+        InventoryBiblePage BiblePage = {};
         /// The page of the inventory GUI displaying collected animals.
-        InventoryAnimalsPage AnimalsPage;
+        InventoryAnimalsPage AnimalsPage = {};
         /// The page of the inventory GUI displaying collected food.
-        InventoryFoodPage FoodPage;
+        InventoryFoodPage FoodPage = {};
     };
 }

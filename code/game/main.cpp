@@ -176,7 +176,6 @@ int main()
         const unsigned int LINE_COUNT = 2;
         unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
         GRAPHICS::GUI::HeadsUpDisplay hud(
-            world,
             default_sans_serif_font,
             main_text_box_width_in_pixels,
             main_text_box_height_in_pixels);

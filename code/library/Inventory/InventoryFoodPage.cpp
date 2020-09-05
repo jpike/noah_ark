@@ -1,4 +1,3 @@
-#include "ErrorHandling/NullChecking.h"
 #include "Inventory/InventoryFoodPage.h"
 #include "Resources/FoodGraphics.h"
 
@@ -7,19 +6,9 @@ namespace INVENTORY
     // The exact color is currently arbitrary.
     const GRAPHICS::Color InventoryFoodPage::BACKGROUND_COLOR = GRAPHICS::Color::GREEN;
 
-    /// Constructor.
-    /// @param[in]  inventory - The inventory to display in the GUI.
-    /// @throws std::exception - Thrown if a parameter is null.
-    InventoryFoodPage::InventoryFoodPage(const std::shared_ptr<const INVENTORY::Inventory>& inventory) :
-    Inventory(inventory)
-    {
-        // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to inventory food page.");
-    }
-
     /// Renders the inventory GUI food page to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryFoodPage::Render(GRAPHICS::Renderer& renderer) const
+    void InventoryFoodPage::Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -58,7 +47,7 @@ namespace INVENTORY
         {
             // GET THE COLLECTED COUNT FOR THE FOOD TYPE.
             OBJECTS::FoodType food_type = static_cast<OBJECTS::FoodType>(food_id);
-            unsigned int food_collected_count = Inventory->GetCollectedFoodCount(food_type);
+            unsigned int food_collected_count = inventory.GetCollectedFoodCount(food_type);
 
             // CALCULATE THE BOX FOR THIS FOOD TYPE.
             // Since the first food enum isn't valid, the ID must be adjusted to

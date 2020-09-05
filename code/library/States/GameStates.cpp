@@ -34,7 +34,7 @@ namespace STATES
                 next_game_state = NewGameIntroSequence.Update(gaming_hardware);
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
-                next_game_state = NewGameInstructionSequence.Update(gaming_hardware, CurrentSavedGame, hud);
+                next_game_state = NewGameInstructionSequence.Update(gaming_hardware, world, CurrentSavedGame, hud);
                 break;
             case GameState::FLOOD_CUTSCENE:
                 next_game_state = FloodCutscene.Update(gaming_hardware);

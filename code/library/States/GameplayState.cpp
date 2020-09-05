@@ -83,7 +83,7 @@ namespace STATES
 
         // UPDATE THE HUD.
         // As of now, only the HUD is capable of altering the gameplay state.
-        GameState next_game_state = hud.Update(gaming_hardware, current_game_data);
+        GameState next_game_state = hud.Update(gaming_hardware, world, current_game_data);
 
         // CHECK IF A MODAL HUD COMPONENT IS DISPLAYED.
         // If a modal GUI component is displayed, then the regular controls for the player
@@ -181,7 +181,7 @@ namespace STATES
             }
 
             // RENDER THE HUD.
-            hud.Render(current_game_data, renderer);
+            hud.Render(current_game_data, *world.NoahPlayer.Inventory, renderer);
         }
 
         // COMPUTE THE LIGHTING FOR THE CURRENT GAMEPLAY.

@@ -7,26 +7,13 @@
 
 namespace INVENTORY
 {
-    /// Constructor.
-    /// @param[in]  inventory - The inventory indicating which
-    ///     Bible verses have been collected.
-    /// @throws std::exception - Thrown if any parameters are null.
-    InventoryBibleVerseListBox::InventoryBibleVerseListBox(const std::shared_ptr<const INVENTORY::Inventory>& inventory) :
-    Inventory(inventory),
-    SelectedVerseIndex(0)
-    {
-        // MAKE SURE REQUIRED PARAMETERS WERE PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
-            Inventory,
-            "Inventory cannot be null for Bible verse list box.");
-    }
-
     /// Renders the text box, showing which Bible verse is selected
     /// along with a few surrounding verses.
     /// @param[in]  bounding_rectangle - The bounding rectangle
     ///     of this text box (in screen coordinates).
     /// @param[in,out]  renderer - The renderer to use for rendering.
     void InventoryBibleVerseListBox::Render(
+        const std::set<BIBLE::BibleVerse>& collected_bible_verses,
         const MATH::FloatRectangle& bounding_rectangle,
         GRAPHICS::Renderer& renderer) const
     {
@@ -89,8 +76,8 @@ namespace INVENTORY
             // the player has collected the vese.
             const BIBLE::BibleVerse& bible_verse = BIBLE::BIBLE_VERSES.at(verse_index);
             std::string bible_verse_display_string;
-            auto verse_from_inventory = Inventory->BibleVerses.find(bible_verse);
-            bool player_collected_verse = (verse_from_inventory != Inventory->BibleVerses.cend());
+            auto verse_from_inventory = collected_bible_verses.find(bible_verse);
+            bool player_collected_verse = (verse_from_inventory != collected_bible_verses.cend());
             if (player_collected_verse)
             {
                 // GET THE CITATION STRING.
@@ -125,16 +112,8 @@ namespace INVENTORY
         // Players need to collect verses before they can be fully viewed
         // via the inventory GUI.
         const BIBLE::BibleVerse& selected_verse = BIBLE::BIBLE_VERSES.at(SelectedVerseIndex);
-        auto verse_from_inventory = Inventory->BibleVerses.find(selected_verse);
-        bool verse_in_inventory = (verse_from_inventory != Inventory->BibleVerses.cend());
-        if (verse_in_inventory)
-        {
-            return &selected_verse;
-        }
-        else
-        {
-            return nullptr;
-        }
+        /// @todo   Revisit this.
+        return &selected_verse;
     }
 
     /// Selects the previous verse in the list, if one exists.

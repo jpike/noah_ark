@@ -60,12 +60,13 @@ namespace STATES
     /// @return The state the game should be in after the update.
     GameState NewGameInstructionSequence::Update(
         const HARDWARE::GamingHardware& gaming_hardware,
+        const MAPS::World& world, 
         STATES::SavedGameData& current_game_data,
         GRAPHICS::GUI::HeadsUpDisplay& hud)
     {
         // UPDATE THE HUD.
         // As of now, only the HUD is capable of altering the gameplay state.
-        GameState next_game_state = hud.Update(gaming_hardware, current_game_data);
+        GameState next_game_state = hud.Update(gaming_hardware, world, current_game_data);
 
         // UPDATE THE TEXT BOX IF IT IS VISIBLE.
         // If the text box is currently being displayed, then it should capture any user input.
@@ -112,7 +113,7 @@ namespace STATES
         renderer.Render(world.NoahPlayer.Sprite.Sprite);
 
         // RENDER THE HUD.
-        hud.Render(current_game_data, renderer);
+        hud.Render(current_game_data, *world.NoahPlayer.Inventory, renderer);
 
         // If the player is beginning a new game with God speaking to Noah, then the pulsing light
         // shader should be used to help communicate that God is speaking to the player.

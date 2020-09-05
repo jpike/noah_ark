@@ -1,23 +1,8 @@
-#include "ErrorHandling/NullChecking.h"
 #include "Graphics/Color.h"
 #include "Inventory/InventoryGui.h"
 
 namespace INVENTORY
 {
-    /// Constructor.
-    /// @param[in]  inventory - The inventory to display in the GUI.
-    /// @throws std::exception - Thrown if a parameter is null.
-    InventoryGui::InventoryGui(const std::shared_ptr<const INVENTORY::Inventory>& inventory) :
-    Inventory(inventory),
-    CurrentTab(TabType::BIBLE),
-    BiblePage(inventory),
-    AnimalsPage(inventory),
-    FoodPage(inventory)
-    {
-        // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to HUD.");
-    }
-
     /// Updates the inventory GUI.
     /// @param[in]  elapsed_time - The elapsed time since the last frame.
     /// @param[in]  input_controller - The controller on which to check user input.
@@ -82,7 +67,7 @@ namespace INVENTORY
 
     /// Renders the inventory GUI to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryGui::Render(GRAPHICS::Renderer& renderer) const
+    void InventoryGui::Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -148,13 +133,13 @@ namespace INVENTORY
         switch (CurrentTab)
         {
             case TabType::BIBLE:
-                BiblePage.Render(renderer);
+                BiblePage.Render(inventory, renderer);
                 break;
             case TabType::ANIMALS:
-                AnimalsPage.Render(renderer);
+                AnimalsPage.Render(inventory, renderer);
                 break;
             case TabType::FOOD:
-                FoodPage.Render(renderer);
+                FoodPage.Render(inventory, renderer);
                 break;
         }
     }

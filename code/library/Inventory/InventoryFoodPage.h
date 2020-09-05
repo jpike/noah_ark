@@ -19,11 +19,8 @@ namespace INVENTORY
         /// The background color of the food page.
         static const GRAPHICS::Color BACKGROUND_COLOR;
 
-        // CONSTRUCTION.
-        explicit InventoryFoodPage(const std::shared_ptr<const Inventory>& inventory);
-
         // RENDERING.
-        void Render(GRAPHICS::Renderer& renderer) const;
+        void Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const;
 
     private:
         // RENDERING.
@@ -32,9 +29,5 @@ namespace INVENTORY
             const unsigned int food_type_collected_count,
             const MATH::FloatRectangle& box_screen_rectangle,
             GRAPHICS::Renderer& renderer) const;
-
-        // MEMBER VARIABLES.
-        /// The inventory displayed on the page.
-        std::shared_ptr<const Inventory> Inventory;
     };
 }

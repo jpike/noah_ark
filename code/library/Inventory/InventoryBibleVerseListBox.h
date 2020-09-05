@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <set>
 #include "Bible/BibleVerses.h"
 #include "Graphics/Renderer.h"
 #include "Inventory/Inventory.h"
@@ -15,11 +16,9 @@ namespace INVENTORY
     class InventoryBibleVerseListBox
     {
     public:
-        // CONSTRUCTION.
-        explicit InventoryBibleVerseListBox(const std::shared_ptr<const Inventory>& inventory);
-
         // RENDERING.
         void Render(
+            const std::set<BIBLE::BibleVerse>& collected_bible_verses,
             const MATH::FloatRectangle& bounding_rectangle,
             GRAPHICS::Renderer& renderer) const;
 
@@ -30,9 +29,7 @@ namespace INVENTORY
 
     private:
         // MEMBER VARIABLES.
-        /// The inventory holding collected Bible verses.
-        std::shared_ptr<const Inventory> Inventory;
         /// The index of the currently selected Bible verse in the global list.
-        unsigned int SelectedVerseIndex;
+        unsigned int SelectedVerseIndex = 0;
     };
 }

@@ -17,18 +17,15 @@ namespace INVENTORY
         /// The background color of the Bible page.
         static const GRAPHICS::Color BACKGROUND_COLOR;
 
-        // CONSTRUCTION.
-        explicit InventoryBiblePage(const std::shared_ptr<const Inventory>& inventory);
-
         // RENDERING.
-        void Render(GRAPHICS::Renderer& renderer) const;
+        void Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The GUI text box for displaying the currently selected Bible verse
         /// in the player's inventory.
-        InventoryBibleVerseTextBox BibleVerseTextBox;
+        InventoryBibleVerseTextBox BibleVerseTextBox = {};
         /// The GUI list box for displaying a list of Bible verses in the
         /// player's inventory.
-        InventoryBibleVerseListBox BibleVerseListBox;
+        InventoryBibleVerseListBox BibleVerseListBox = {};
     };
 }

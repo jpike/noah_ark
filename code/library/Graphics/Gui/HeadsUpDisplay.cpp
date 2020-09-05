@@ -1,4 +1,3 @@
-#include "ErrorHandling/NullChecking.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
@@ -10,29 +9,19 @@ namespace GRAPHICS
 namespace GUI
 {
     /// Constructor.
-    /// @param[in]  world - The world whose information is being diplayed in the HUD.
     /// @param[in]  font - The font to use in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
-    /// @throws std::exception - Thrown if a parameter is null.
     HeadsUpDisplay::HeadsUpDisplay(
-        const std::shared_ptr<MAPS::World>& world,
         const std::shared_ptr<GRAPHICS::GUI::Font>& font,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels) :
     MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, font),
     TextColor(GRAPHICS::Color::BLACK),
-    InventoryOpened(false),
-    InventoryGui(world->NoahPlayer.Inventory),
     PauseMenuVisible(false),
-    World(world)
-    {
-        // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
-        /// @todo   Revisit error handling!
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
-            World,
-            "Null world provided to HUD.");
-    }
+    InventoryOpened(false),
+    InventoryGui()
+    {}
 
     /// Updates the HUD.
     /// @param[in]  elapsed_time - The elapsed time since the last frame.
@@ -40,6 +29,7 @@ namespace GUI
     /// @return The next state the game should be in based on the HUD.
     STATES::GameState HeadsUpDisplay::Update(
         const HARDWARE::GamingHardware& gaming_hardware,
+        const MAPS::World& world,
         STATES::SavedGameData& current_game_data)
     {
         // CHECK IF THE PAUSE MENU IS OPEN.
@@ -51,21 +41,21 @@ namespace GUI
             if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Return))
             {
                 // SAVE THE GAME DATA.
-                current_game_data.PlayerWorldPosition = World->NoahPlayer.GetWorldPosition();
-                current_game_data.WoodCount = World->NoahPlayer.Inventory->WoodCount;
+                current_game_data.PlayerWorldPosition = world.NoahPlayer.GetWorldPosition();
+                current_game_data.WoodCount = world.NoahPlayer.Inventory->WoodCount;
                 current_game_data.FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
-                    World->NoahPlayer.Inventory->BibleVerses.cbegin(),
-                    World->NoahPlayer.Inventory->BibleVerses.cend());
+                    world.NoahPlayer.Inventory->BibleVerses.cbegin(),
+                    world.NoahPlayer.Inventory->BibleVerses.cend());
                 
                 // Built ark piece data from all tile maps needs to be included.
-                unsigned int tile_map_row_count = World->Overworld.TileMaps.GetHeight();
-                unsigned int tile_map_column_count = World->Overworld.TileMaps.GetWidth();
+                unsigned int tile_map_row_count = world.Overworld.TileMaps.GetHeight();
+                unsigned int tile_map_column_count = world.Overworld.TileMaps.GetWidth();
                 for (unsigned int tile_map_y_index = 0; tile_map_y_index < tile_map_row_count; ++tile_map_y_index)
                 {
                     for (unsigned int tile_map_x_index = 0; tile_map_x_index < tile_map_column_count; ++tile_map_x_index)
                     {
                         // GET THE CURRENT TILE MAP.
-                        const MAPS::TileMap* current_tile_map = World->Overworld.GetTileMap(tile_map_y_index, tile_map_x_index);
+                        const MAPS::TileMap* current_tile_map = world.Overworld.GetTileMap(tile_map_y_index, tile_map_x_index);
                         if (!current_tile_map)
                         {
                             // CONTINUE GETTING DATA FROM OTHER TILE MAPS.
@@ -101,8 +91,8 @@ namespace GUI
                     }
                 }
 
-                current_game_data.CollectedAnimals = World->NoahPlayer.Inventory->CollectedAnimalCounts;
-                current_game_data.CollectedFood = World->NoahPlayer.Inventory->CollectedFoodCounts;
+                current_game_data.CollectedAnimals = world.NoahPlayer.Inventory->CollectedAnimalCounts;
+                current_game_data.CollectedFood = world.NoahPlayer.Inventory->CollectedFoodCounts;
 
                 current_game_data.Write(current_game_data.Filepath);
 
@@ -172,6 +162,7 @@ namespace GUI
     /// @param[in,out]  renderer - The renderer to use for rendering.
     void HeadsUpDisplay::Render(
         const STATES::SavedGameData& current_game_data,
+        const INVENTORY::Inventory& inventory,
         GRAPHICS::Renderer& renderer) const
     {
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
@@ -216,7 +207,8 @@ namespace GUI
         // For example, "x10" (no quotes) would be rendered if the player has collected
         // 10 wood logs.
         const std::string TIMES_COUNT_TEXT = "x";
-        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(World->NoahPlayer.Inventory->WoodCount);
+        /// @todo   Update game data to be "live" and automatically updated so that this works!
+        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(current_game_data.WoodCount);
         // This text should be placed just to the right of the wood icon.
         MATH::Vector2f wood_text_top_left_screen_position_in_pixels(
             static_cast<float>(wood_icon_screen_position.X), 
@@ -255,7 +247,7 @@ namespace GUI
         // RENDER THE INVENTORY GUI IF IT IS OPENED.
         if (InventoryOpened)
         {
-            InventoryGui.Render(renderer);
+            InventoryGui.Render(inventory, renderer);
         }
 
         // RENDER THE TEXT BOX IF IT IS VISIBLE.

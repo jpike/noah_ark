@@ -1,5 +1,4 @@
 #include <algorithm>
-#include "ErrorHandling/NullChecking.h"
 #include "Inventory/InventoryAnimalsPage.h"
 #include "Resources/AnimalGraphics.h"
 
@@ -7,18 +6,6 @@ namespace INVENTORY
 {
     // The exact color is currently arbitrary.
     const GRAPHICS::Color InventoryAnimalsPage::BACKGROUND_COLOR = GRAPHICS::Color::RED;
-
-    /// Constructor.
-    /// @param[in]  inventory - The inventory to display in the GUI.
-    /// @throws std::exception - Thrown if a parameter is null.
-    InventoryAnimalsPage::InventoryAnimalsPage(const std::shared_ptr<const INVENTORY::Inventory>& inventory) :
-    Inventory(inventory),
-    SelectedAnimalSpeciesIndex(0),
-    ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals()
-    {
-        // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(Inventory, "Null inventory provided to inventory animals page.");
-    }
 
     /// Updates the animals page.
     /// @param[in]  elapsed_time - The elapsed time since the last frame.
@@ -98,7 +85,7 @@ namespace INVENTORY
 
     /// Renders the inventory GUI animals page to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryAnimalsPage::Render(GRAPHICS::Renderer& renderer) const
+    void InventoryAnimalsPage::Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -225,7 +212,7 @@ namespace INVENTORY
 
             // CHECK IF THE SPECIES HAS BEEN COLLECTED.
             OBJECTS::AnimalSpecies species = static_cast<OBJECTS::AnimalSpecies>(species_id);
-            AnimalCollectionStatistics species_collection_statistics = Inventory->GetAnimalCollectionStatistics(species);
+            AnimalCollectionStatistics species_collection_statistics = inventory.GetAnimalCollectionStatistics(species);
             bool species_collected = species_collection_statistics.Collected();
             if (species_collected)
             {

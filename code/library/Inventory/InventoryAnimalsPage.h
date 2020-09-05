@@ -21,14 +21,11 @@ namespace INVENTORY
         /// The background color of the animals page.
         static const GRAPHICS::Color BACKGROUND_COLOR;
 
-        // CONSTRUCTION.
-        explicit InventoryAnimalsPage(const std::shared_ptr<const Inventory>& inventory);
-
         // UPDATING.
         void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
-        void Render(GRAPHICS::Renderer& renderer) const;
+        void Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const;
 
     private:
         // ANIMAL SELECTION.
@@ -36,12 +33,10 @@ namespace INVENTORY
         void SelectNextAnimalSpecies();
 
         // MEMBER VARIABLES.
-        /// The inventory displayed on the page.
-        std::shared_ptr<const Inventory> Inventory;
         /// The index of the currently selected animal species in the global list.
-        std::size_t SelectedAnimalSpeciesIndex;
+        std::size_t SelectedAnimalSpeciesIndex = 0;
         /// The elapsed time a scroll key has been held down before switching to a different animal.
         /// Used for smoother scrolling through the animals on this page.
-        sf::Time ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals;
+        sf::Time ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingAnimals = sf::Time::Zero;
     };
 }

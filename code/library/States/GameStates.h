@@ -2,12 +2,9 @@
 
 #include <memory>
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include "Audio/Speakers.h"
 #include "Graphics/Camera.h"
 #include "Graphics/Renderer.h"
 #include "Hardware/GamingHardware.h"
-#include "Input/InputController.h"
 #include "Maps/World.h"
 #include "States/CreditsScreen.h"
 #include "States/FloodCutscene.h"
@@ -37,19 +34,19 @@ namespace STATES
         /// The current state the game is in.
         GameState CurrentGameState = GameState::INTRO_SEQUENCE;
         /// The intro sequence for the game.
-        IntroSequence IntroSequence;
+        IntroSequence IntroSequence = {};
         /// The title screen for the game.
-        TitleScreen TitleScreen;
+        TitleScreen TitleScreen = {};
         /// The credits screen for the game.
-        CreditsScreen CreditsScreen;
+        CreditsScreen CreditsScreen = {};
         /// The game selection screen.
-        GameSelectionScreen GameSelectionScreen;
+        GameSelectionScreen GameSelectionScreen = {};
         /// The new game intro sequence.
-        NewGameIntroSequence NewGameIntroSequence;
+        NewGameIntroSequence NewGameIntroSequence = {};
         /// The main gameplay state.
         /// @todo   Split this into pre-flood and during-flood states?
-        GameplayState GameplayState;
+        GameplayState GameplayState = {};
         /// The flood cutscene in-between the first and second halves of gameplay.
-        FloodCutscene FloodCutscene;
+        FloodCutscene FloodCutscene = {};
     };
 }

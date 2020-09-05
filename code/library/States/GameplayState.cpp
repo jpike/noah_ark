@@ -85,20 +85,16 @@ namespace STATES
     }
 
     /// Updates the state of the gameplay based on elapsed time and player input.
-    /// @param[in]  elapsed_time - The amount of time by which to update the game state.
-    /// @param[in,out]  input_controller - The controller supplying player input.
+    /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output for the update.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
-    /// @param[in,out]  speakers - The speakers in which to play out any audio.
     /// @return The next game state after updating.
     GameState GameplayState::Update(
-        const sf::Time& elapsed_time,
-        INPUT_CONTROL::InputController& input_controller,
-        GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers)
+        HARDWARE::GamingHardware& gaming_hardware,
+        GRAPHICS::Camera& camera)
     {
 #ifdef _DEBUG
         // UPDATE THE TILE MAP EDITOR IN RESPONSE TO USER INPUT.
-        TileMapEditorGui->RespondToInput(input_controller);
+        TileMapEditorGui->RespondToInput(gaming_hardware.InputController);
         if (TileMapEditorGui->Visible)
         {
             // MAKE SURE THE TILE MAP EDITOR GUI HAS THE CURRENT TILE MAP.
@@ -176,7 +172,7 @@ namespace STATES
 
         // UPDATE THE HUD.
         // As of now, only the HUD is capable of altering the gameplay state.
-        GameState next_game_state = Hud->Update(elapsed_time, input_controller);
+        GameState next_game_state = Hud->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
 
         // INDICATE THAT THE NEW GAME INSTRUCTIONS HAVE BEEN COMPLETED IF THE USER HAS GONE THROUGH ALL TEXT.
         // This must be done after updating the HUD to prevent an infinite loop from occurring regarding the
@@ -198,14 +194,19 @@ namespace STATES
         }
 
         // UPDATE THE CURRENT MAP GRID.
-        UpdateMapGrid(elapsed_time, input_controller, camera, speakers, *CurrentMapGrid);
+        UpdateMapGrid(
+            gaming_hardware.Clock.ElapsedTimeSinceLastFrame, 
+            gaming_hardware.InputController, 
+            camera, 
+            *gaming_hardware.Speakers,
+            *CurrentMapGrid);
 
         // START PLAYING THE BACKGROUND MUSIC IF THE NEW GAME INSTRUCTIONS HAVE COMPLETED.
         // Silenced is used while God speaks during these instructions for reverence.
         // Might potentially consider switching to something more subtle though.
         if (NewGameInstructionsCompleted)
         {
-            speakers.PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
+            gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
         }
 
         // RETURN THE NEXT GAME STATE.

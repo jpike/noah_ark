@@ -16,42 +16,27 @@ namespace STATES
         switch (CurrentGameState)
         {
             case GameState::INTRO_SEQUENCE:
-            {
-                // UPDATE THE INTRO SEQUENCE.
-                IntroSequence.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
-
-                // MOVE TO THE TITLE SCREEN IF THE INTRO SEQUENCE HAS FINISHED.
-                bool intro_sequence_finished = IntroSequence.Completed();
-                if (intro_sequence_finished)
-                {
-                    // The intro music isn't stopped before going to the next state
-                    // to avoid a hard cutoff.  It is timed such that it should end
-                    // shortly.
-                    next_game_state = GameState::TITLE_SCREEN;
-                }
+                next_game_state = IntroSequence.Update(gaming_hardware);
                 break;
-            }
             case GameState::TITLE_SCREEN:
-                next_game_state = TitleScreen.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
+                next_game_state = TitleScreen.Update(gaming_hardware);
                 break;
             case GameState::CREDITS_SCREEN:
-                next_game_state = CreditsScreen.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
+                next_game_state = CreditsScreen.Update(gaming_hardware);
                 break;
             case GameState::GAME_SELECTION_SCREEN:
-                next_game_state = GameSelectionScreen.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
+                next_game_state = GameSelectionScreen.Update(gaming_hardware);
                 break;
             case GameState::NEW_GAME_INTRO_SEQUENCE:
-                next_game_state = NewGameIntroSequence.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, *gaming_hardware.Speakers);
+                next_game_state = NewGameIntroSequence.Update(gaming_hardware);
                 break;
             case GameState::FLOOD_CUTSCENE:
-                next_game_state = FloodCutscene.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+                next_game_state = FloodCutscene.Update(gaming_hardware);
                 break;
             case GameState::GAMEPLAY:
                 next_game_state = GameplayState.Update(
-                    gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
-                    gaming_hardware.InputController, 
-                    camera, 
-                    *gaming_hardware.Speakers);
+                    gaming_hardware,
+                    camera);
                 break;
         }
 

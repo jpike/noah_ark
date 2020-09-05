@@ -4,6 +4,7 @@
 #include <SFML/System.hpp>
 #include "Graphics/Renderer.h"
 #include "Graphics/Sprite.h"
+#include "Hardware/GamingHardware.h"
 #include "Math/RandomNumberGenerator.h"
 #include "States/GameState.h"
 
@@ -16,7 +17,7 @@ namespace STATES
     {
     public:
         // PUBLIC METHODS.
-        GameState Update(const sf::Time& elapsed_time);
+        GameState Update(const HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(GRAPHICS::Renderer& renderer);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

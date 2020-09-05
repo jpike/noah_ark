@@ -9,6 +9,8 @@
 #include "Bible/BibleVerse.h"
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Renderer.h"
+#include "Hardware/GamingHardware.h"
+#include "States/GameState.h"
 
 /// Holds code related to different states in the game.
 /// A "state" is a distinct set of functionality or part of game that can be experienced.
@@ -30,7 +32,7 @@ namespace STATES
 
         // OTHER METHODS.
         bool Completed() const;
-        void Update(const sf::Time& elapsed_time);
+        GameState Update(const HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(GRAPHICS::Renderer& renderer) const;
 
     private:

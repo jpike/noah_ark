@@ -9,6 +9,7 @@
 #include "Graphics/Camera.h"
 #include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
+#include "Hardware/GamingHardware.h"
 #include "Input/InputController.h"
 #include "Maps/ExitPoint.h"
 #include "Maps/Gui/TileMapEditorGui.h"
@@ -36,10 +37,8 @@ namespace STATES
 
         // UPDATING.
         GameState Update(
-            const sf::Time& elapsed_time,
-            INPUT_CONTROL::InputController& input_controller,
-            GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers);
+            HARDWARE::GamingHardware& gaming_hardware,
+            GRAPHICS::Camera& camera);
 
         // RENDERING.
         sf::Sprite Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer);

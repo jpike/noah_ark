@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Graphics/Renderer.h"
-#include "Input/InputController.h"
+#include "Hardware/GamingHardware.h"
 #include "States/GameState.h"
 
 namespace STATES
@@ -13,9 +13,7 @@ namespace STATES
     {
     public:
         // METHODS.
-        GameState Update(
-            const sf::Time& elapsed_time,
-            const INPUT_CONTROL::InputController& input_controller);
+        GameState Update(const HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(GRAPHICS::Renderer& renderer) const;
 
         // MEMBER VARIABLES.

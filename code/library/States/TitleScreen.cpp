@@ -3,23 +3,16 @@
 
 namespace STATES
 {
-    /// Constructor.
-    TitleScreen::TitleScreen() :
-        SelectedMenuOptionIndex(0),
-        MenuOptions({ GameState::GAME_SELECTION_SCREEN, GameState::CREDITS_SCREEN })
-    {}
-
     /// Updates the title screen based on elapsed time and user input.
-    /// @param[in]  elapsed_time - The elapsed time since the last frame.
-    /// @param[in]  input_controller - The controller supplying user input to respond to.
+    /// @param[in]  gaming_hardware - The hardware supplying input for the update.
     /// @return The state the game after updating the title screen.
-    GameState TitleScreen::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
+    GameState TitleScreen::Update(const HARDWARE::GamingHardware& gaming_hardware)
     {
         // UPDATE THE ELAPSED TIME FOR THE TITLE SCREEN.
-        ElapsedTime += elapsed_time;
+        ElapsedTime += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
 
         // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
-        bool start_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Return);
+        bool start_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Return);
         if (start_button_pressed)
         {
             // GET THE STATE FOR THE CURRENTLY SELECTED MENU OPTION.
@@ -29,8 +22,8 @@ namespace STATES
         else
         {
             // CHECK IF AN ARROW KEY WAS PRESSED TO MOVE TO ANOTHER MENU OPTION.
-            bool up_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Up);
-            bool down_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Down);
+            bool up_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Up);
+            bool down_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Down);
             if (up_button_pressed)
             {
                 // MOVE TO THE PREVIOUS MENU OPTION.

@@ -4,12 +4,12 @@
 namespace STATES
 {
     /// Update the cutscene based on an elapsed amount of time.
-    /// @param[in]  elapsed_time - The amount of elapsed time since the last update of the cutscene.
+    /// @param[in]  gaming_hardware - The hardware supplying input and output for the update.
     /// @return The state that the game should be in after the update.
-    GameState FloodCutscene::Update(const sf::Time& elapsed_time)
+    GameState FloodCutscene::Update(const HARDWARE::GamingHardware& gaming_hardware)
     {
         // UPDATE THE ELAPSED TIME.
-        ElapsedTime += elapsed_time;
+        ElapsedTime += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
 
         // CHECK IF THE CUTSCENE HAS COMPLETED.
         bool cutscene_completed = Completed();

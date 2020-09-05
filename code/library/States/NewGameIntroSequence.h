@@ -3,9 +3,9 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
-#include "Audio/Speakers.h"
 #include "Bible/BibleVerse.h"
 #include "Graphics/Renderer.h"
+#include "Hardware/GamingHardware.h"
 #include "States/GameState.h"
 
 namespace STATES
@@ -17,7 +17,7 @@ namespace STATES
     public:
         // METHODS.
         void ResetToBeginning();
-        GameState Update(const sf::Time& elapsed_time, AUDIO::Speakers& speakers);
+        GameState Update(HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(GRAPHICS::Renderer& renderer) const;
 
     private:

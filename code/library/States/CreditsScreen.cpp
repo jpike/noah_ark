@@ -4,15 +4,12 @@
 namespace STATES
 {
     /// Updates the credits screen based on elapsed time and user input.
-    /// @param[in]  elapsed_time - The elapsed time for which to update the credits screen.
-    /// @param[in]  input_controller - The controller supplying user input to respond to.
+    /// @param[in]  gaming_hardware - The hardware supplying input for the update.
     /// @return The state the game should be in based on the user's input.
-    GameState CreditsScreen::Update(
-        const sf::Time& elapsed_time, 
-        const INPUT_CONTROL::InputController& input_controller)
+    GameState CreditsScreen::Update(const HARDWARE::GamingHardware& gaming_hardware)
     {
         // CHECK IF THE BACK BUTTON WAS PRESSED.
-        bool back_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Escape);
+        bool back_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Escape);
         if (back_button_pressed)
         {
             // RETURN TO THE TITLE SCREEN.
@@ -21,7 +18,7 @@ namespace STATES
         else
         {
             // TRACK THE ELAPSED TIME.
-            ElapsedTime += elapsed_time;
+            ElapsedTime += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
 
             // INDICATE THE GAME SHOULD REMAIN ON THE CREDITS SCREEN.
             return GameState::CREDITS_SCREEN;

@@ -48,13 +48,12 @@ namespace STATES
     }
 
     /// Updates the game selection screen based on elapsed time and user input.
-    /// @param[in]  elapsed_time - The elapsed time since the last frame.
-    /// @param[in]  input_controller - The controller supplying user input to respond to.
+    /// @param[in]  gaming_hardware - The hardware supplying input and output for the upate.
     /// @return The state the game should be after updating the game selection screen.
-    GameState GameSelectionScreen::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
+    GameState GameSelectionScreen::Update(const HARDWARE::GamingHardware& gaming_hardware)
     {
         // TRACK THE ELAPSED TIME.
-        ElapsedTime += elapsed_time;
+        ElapsedTime += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
 
         // RESPOND TO INPUT BASED ON THE CURRENT STATE.
         switch (CurrentSubState)
@@ -62,7 +61,7 @@ namespace STATES
             case SubState::LISTING_GAMES:
             {
                 // CHECK IF THE BACK BUTTON WAS PRESSED.
-                bool back_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Escape);
+                bool back_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Escape);
                 if (back_button_pressed)
                 {
                     // RETURN TO THE TITLE SCREEN.
@@ -74,7 +73,7 @@ namespace STATES
                 // The max valid selected game index is equal to the number of saved games
                 // as the index equal to this size is reserved for creating a new game.
                 std::size_t max_selected_game_index = SavedGames.size();
-                bool up_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Up);
+                bool up_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Up);
                 if (up_button_pressed)
                 {
                     // MOVE UP TO THE NEXT SAVED GAME.
@@ -84,7 +83,7 @@ namespace STATES
                         max_selected_game_index);
                 }
 
-                bool down_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Down);
+                bool down_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Down);
                 if (down_button_pressed)
                 {
                     // MOVE DOWN TO THE NEXT SAVED GAME.
@@ -95,7 +94,7 @@ namespace STATES
                 }
 
                 // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
-                bool start_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Return);
+                bool start_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Return);
                 if (start_button_pressed)
                 {
                     // CHECK IF A NEW GAME IS BEING CHOSEN.
@@ -123,7 +122,7 @@ namespace STATES
             case SubState::ENTERING_NEW_GAME:
             {
                 // CHECK IF THE MAIN 'START' BUTTON WAS PRESSED.
-                bool start_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Return);
+                bool start_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Return);
                 if (start_button_pressed)
                 {
                     // START THE GAME IF AT LEAST ONE CHARACTER EXISTS IN THE FILENAME.
@@ -144,7 +143,7 @@ namespace STATES
                 }
 
                 // CHECK IF THE BACK BUTTON WAS PRESSED.
-                bool back_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Escape);
+                bool back_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Escape);
                 if (back_button_pressed)
                 {
                     // SWITCH BACK TO LISTING OTHER SAVED GAMES.
@@ -153,7 +152,7 @@ namespace STATES
                 }
 
                 // CHECK IF THE BACKSPACE KEY WAS PRESSED.
-                bool backspace_key_pressed = input_controller.ButtonWasPressed(sf::Keyboard::BackSpace);
+                bool backspace_key_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::BackSpace);
                 if (backspace_key_pressed)
                 {
                     // DELETE A CHARACTER FROM THE FILENAME IF ONE EXISTS.
@@ -164,7 +163,7 @@ namespace STATES
                     }
                 }
                 // GET ANY VALID FILENAME CHARACTERS THAT HAVE BEEN PRESSED.
-                std::vector<sf::Keyboard::Key> pressed_keys = input_controller.GetTypedKeys();
+                std::vector<sf::Keyboard::Key> pressed_keys = gaming_hardware.InputController.GetTypedKeys();
                 static const std::vector<sf::Keyboard::Key> valid_filename_keys = 
                 {
                     sf::Keyboard::A,        
@@ -334,8 +333,8 @@ namespace STATES
                 {
                     // GET THE APPROPRIATE VERSION OF THE CURRENT KEY'S CHARACTER.
                     char current_key_character = ' ';
-                    bool left_shift_key_down = input_controller.ButtonDown(sf::Keyboard::LShift);
-                    bool right_shift_key_down = input_controller.ButtonDown(sf::Keyboard::RShift);
+                    bool left_shift_key_down = gaming_hardware.InputController.ButtonDown(sf::Keyboard::LShift);
+                    bool right_shift_key_down = gaming_hardware.InputController.ButtonDown(sf::Keyboard::RShift);
                     bool shift_down = (left_shift_key_down || right_shift_key_down);
                     if (shift_down)
                     {

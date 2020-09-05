@@ -18,16 +18,15 @@ namespace STATES
     }
 
     /// Update the intro sequence based on an elapsed amount of time.
-    /// @param[in]  elapsed_time - The amount of elapsed time since the last update of the intro sequence.
-    /// @param[in,out]  speakers - The speakers in which to output any sound.
+    /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output.
     /// @return The state that the game should be in after the update.
-    GameState NewGameIntroSequence::Update(const sf::Time& elapsed_time, AUDIO::Speakers& speakers)
+    GameState NewGameIntroSequence::Update(HARDWARE::GamingHardware& gaming_hardware)
     {
         // PLAY THE APPROPRIATE MUSIC IF NOT ALREADY PLAYING.
-        speakers.PlayMusicIfNotAlready(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC);
+        gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::NEW_GAME_INTRO_MUSIC);
 
         // UPDATE THE ELAPSED TIME FOR THE CURRENT FRAME.
-        ElapsedTimeForCurrentFrame += elapsed_time;
+        ElapsedTimeForCurrentFrame += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
 
         // CHECK IF THE CURRENT FRAME IS FINISHED BEING DISPLAYED.
         bool current_frame_finished_being_displayed = (ElapsedTimeForCurrentFrame >= MAX_TIME_PER_FRAME);

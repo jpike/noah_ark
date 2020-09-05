@@ -74,12 +74,12 @@ namespace STATES
     }
 
     /// Updates the intro sequence based on the provided amount of time.
-    /// @param[in]  elapsed_time - The amount of time elapsed since the last
-    ///     update of the intro sequence.
-    void IntroSequence::Update(const sf::Time& elapsed_time)
+    /// @param[in,out]  gaming_hardware - The hardware supplying input for the update.
+    /// @return The state the game should be in based on the intro sequence update.
+    GameState IntroSequence::Update(const HARDWARE::GamingHardware& gaming_hardware)
     {
         // UPDATE THE ELAPSED TIME FOR THE CURRENT FRAME.
-        ElapsedTimeForCurrentFrame += elapsed_time;
+        ElapsedTimeForCurrentFrame += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
 
         // CHECK IF THE CURRENT FRAME IS FINISHED BEING DISPLAYED.
         bool current_frame_finished_being_displayed = (ElapsedTimeForCurrentFrame >= MAX_TIME_PER_FRAME);
@@ -88,6 +88,21 @@ namespace STATES
             // MOVE TO THE NEXT FRAME.
             ++CurrentFrameIndex;
             ElapsedTimeForCurrentFrame = sf::Time::Zero;
+        }
+
+        // MOVE TO THE TITLE SCREEN IF THE INTRO SEQUENCE HAS FINISHED.
+        bool intro_sequence_finished = Completed();
+        if (intro_sequence_finished)
+        {
+            // The intro music isn't stopped before going to the next state
+            // to avoid a hard cutoff.  It is timed such that it should end
+            // shortly.
+            return GameState::TITLE_SCREEN;
+        }
+        else
+        {
+            // The game should stay on the intro sequence.
+            return GameState::INTRO_SEQUENCE;
         }
     }
 

@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 #include <SFML/System.hpp>
-#include "Graphics/Screen.h"
+#include "Graphics/Renderer.h"
 #include "Math/RandomNumberGenerator.h"
 #include "Math/Vector2.h"
 #include "Objects/Animal.h"

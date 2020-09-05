@@ -124,7 +124,7 @@ namespace GAMEPLAY
     }
 
     /// Renders the following animal group.
-    /// @param[in,out]  screen - The screen to render to.
+    /// @param[in,out]  renderer - The renderer to use for rendering.
     void FollowingAnimalGroup::Render(GRAPHICS::Screen& screen)
     {
 #if DRAW_FOLLOWING_ANIMAL_GROUP_DEBUG_RECTANGLES

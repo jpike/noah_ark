@@ -221,8 +221,6 @@ namespace STATES
         // RENDER CONTENT SPECIFIC TO THE CURRENT MAP.
         renderer.Render(*CurrentMapGrid);
 
-        /// @todo   Fix rendering after this point to reflect textures no longer being directly stored in sprites!
-
         // CHECK IF THE TILE MAP EDITOR GUI IS VISIBLE.
         if (TileMapEditorGui->Visible)
         {
@@ -236,10 +234,16 @@ namespace STATES
             // RENDER ANY ANIMALS ENTERING INTO THE ARK.
             for (const auto& animal : AnimalsGoingIntoArk)
             {
-                animal->Sprite.Render(*renderer.Screen);
+                renderer.Render(animal->Sprite.Sprite);
             }
 
             // RENDER ANY ANIMALS FOLLOWING NOAH.
+            /// @todo   Figure out better update strategy for these animals.
+            for (const auto& animal : World->NoahPlayer->Inventory->FollowingAnimals.Animals)
+            {
+                MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = renderer.GraphicsDevice->GetTexture(animal->Sprite.Sprite.TextureId);
+                animal->Sprite.Sprite.SpriteResource.setTexture(texture->TextureResource);
+            }
             World->NoahPlayer->Inventory->FollowingAnimals.Render(*renderer.Screen);
 
             // CHECK WHICH DIRECTION NOAH IS FACING.
@@ -253,22 +257,22 @@ namespace STATES
                 // The axe should only be rendered if it is swinging.
                 if (World->NoahPlayer->Inventory->Axe->IsSwinging())
                 {
-                    World->NoahPlayer->Inventory->Axe->Sprite.Render(*renderer.Screen);
+                    renderer.Render(World->NoahPlayer->Inventory->Axe->Sprite);
                 }
 
                 // RENDER THE PLAYER.
-                World->NoahPlayer->Sprite.Render(*renderer.Screen);
+                renderer.Render(World->NoahPlayer->Sprite.Sprite);
             }
             else
             {
                 // RENDER THE PLAYER.
-                World->NoahPlayer->Sprite.Render(*renderer.Screen);
+                renderer.Render(World->NoahPlayer->Sprite.Sprite);
 
                 // RENDER THE AXE.
                 // The axe should only be rendered if it is swinging.
                 if (World->NoahPlayer->Inventory->Axe->IsSwinging())
                 {
-                    World->NoahPlayer->Inventory->Axe->Sprite.Render(*renderer.Screen);
+                    renderer.Render(World->NoahPlayer->Inventory->Axe->Sprite);
                 }
             }
 

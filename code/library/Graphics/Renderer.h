@@ -51,6 +51,7 @@ namespace GRAPHICS
             const MATH::Vector2f& left_top_screen_position_in_pixels);
 
         // TEXT RENDERING.
+        void Render(Sprite& sprite);
         void Render(const GUI::Text& text);
         void RenderText(
             const std::string& text, 

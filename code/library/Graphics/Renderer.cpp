@@ -10,15 +10,15 @@ namespace GRAPHICS
     /// @param[in,out]  screen - The screen to render to.
     /// @throws std::exception - Thrown if a parameter is null.
     Renderer::Renderer(const std::shared_ptr<GRAPHICS::Screen>& screen) :
-    Screen(screen),
-    Camera(MATH::FloatRectangle::FromCenterAndDimensions(
-        Screen->RenderTarget.getView().getCenter().x,
-        Screen->RenderTarget.getView().getCenter().y,
-        Screen->RenderTarget.getView().getSize().x,
-        Screen->RenderTarget.getView().getSize().y)),
-    Fonts(),
-    ColoredTextShader(),
-    TimeOfDayShader()
+        Screen(screen),
+        Camera(MATH::FloatRectangle::FromCenterAndDimensions(
+            Screen->RenderTarget.getView().getCenter().x,
+            Screen->RenderTarget.getView().getCenter().y,
+            Screen->RenderTarget.getView().getSize().x,
+            Screen->RenderTarget.getView().getSize().y)),
+        Fonts(),
+        ColoredTextShader(),
+        TimeOfDayShader()
     {
         // MAKE SURE REQUIRED PARAMETERS EXISTS.
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
@@ -146,7 +146,7 @@ namespace GRAPHICS
         float key_glyph_width_in_pixels = glyph.TextureSubRectangle.Width();
         float space_around_glyph_in_pixels = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS) - key_glyph_width_in_pixels;
         float space_on_left_of_glyph_in_pixels = space_around_glyph_in_pixels / 2.0f;
-        float key_character_sprite_left_screen_position_in_pixels = 
+        float key_character_sprite_left_screen_position_in_pixels =
             static_cast<float>(left_top_screen_position_in_pixels.X) + space_on_left_of_glyph_in_pixels;
 
         // CREATE A SPRITE FOR THE GLYPH.
@@ -223,6 +223,19 @@ namespace GRAPHICS
 
         // RENDER THE GUI ICON.
         Screen->RenderTarget.draw(gui_icon);
+    }
+
+    /// Renders a sprite to the screen.
+    /// @param[in,out]  sprite - The sprite to render.
+    void Renderer::Render(Sprite& sprite)
+    {
+        // ENSURE THE SPRITE'S TEXTURE IS SET.
+        MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = GraphicsDevice->GetTexture(sprite.TextureId);
+        /// @todo   Find a way to make this parameter const?
+        sprite.SpriteResource.setTexture(texture->TextureResource);
+
+        // DRAW THE SPRITE.
+        Screen->RenderTarget.draw(sprite.SpriteResource);
     }
 
     /// Renders text to the screen.

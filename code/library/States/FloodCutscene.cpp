@@ -52,7 +52,7 @@ namespace STATES
         float mountain_screen_y_position = screen_height_in_pixels - mountain_half_height_in_pixels;
         MATH::Vector2f mountain_screen_position(screen_center.X, mountain_screen_y_position);
         Mountain.SetWorldPosition(mountain_screen_position);
-        Mountain.Render(*renderer.Screen);
+        renderer.Render(Mountain);
 
         // DRAW THE ARK IN FRONT OF THE MOUNTAIN.
         // It should be positioned just on top of the flood waters.
@@ -67,7 +67,7 @@ namespace STATES
         float ark_half_height_in_pixels = Ark.GetHeightInPixels() / 2.0f;
         float ark_center_y_position = flood_water_top_screen_position + FLOOD_WATER_WAVE_DIP_HEIGHT_IN_PIXELS - ark_half_height_in_pixels;
         Ark.SetWorldPosition(screen_center.X, ark_center_y_position);
-        Ark.Render(*renderer.Screen);
+        renderer.Render(Ark);
 
         // DRAW THE RISING FLOOD WATERS.
         // Since the flood sprite is technically designed to be the "full" height of the screen, the flood sprite should:
@@ -77,7 +77,7 @@ namespace STATES
         float flood_water_sprite_bottom_screen_position = flood_water_bottom_screen_position + flood_water_sprite_half_height_in_pixels;
         float flood_water_sprite_center_y_screen_position = flood_water_sprite_bottom_screen_position - flood_water_height_in_pixels;
         FloodWaters.SetWorldPosition(screen_center.X, flood_water_sprite_center_y_screen_position);
-        FloodWaters.Render(*renderer.Screen);
+        renderer.Render(FloodWaters);
 
         // DRAW SOME RAIN.
         constexpr std::size_t RAIN_LINE_MAX_COUNT = 50;

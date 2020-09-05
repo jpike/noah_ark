@@ -30,7 +30,7 @@ namespace STATES
     public:
         // INITIALIZATION.
         bool Initialize(
-            const std::shared_ptr<SavedGameData>& saved_game_data,
+            const SavedGameData& saved_game_data,
             MAPS::World& world,
             GRAPHICS::Renderer& renderer);
 
@@ -39,12 +39,14 @@ namespace STATES
             HARDWARE::GamingHardware& gaming_hardware,
             MAPS::World& world,
             GRAPHICS::Camera& camera,
-            GRAPHICS::GUI::HeadsUpDisplay& hud);
+            GRAPHICS::GUI::HeadsUpDisplay& hud,
+            STATES::SavedGameData& current_game_data);
 
         // RENDERING.
         sf::Sprite Render(
             MAPS::World& world, 
             GRAPHICS::GUI::HeadsUpDisplay& hud,
+            const STATES::SavedGameData& current_game_data,
             GRAPHICS::Renderer& renderer);
 
     private:

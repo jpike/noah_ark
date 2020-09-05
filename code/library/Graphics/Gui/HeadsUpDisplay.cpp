@@ -10,14 +10,12 @@ namespace GRAPHICS
 namespace GUI
 {
     /// Constructor.
-    /// @param[in]  saved_game_data - The current player's saved game.
     /// @param[in]  world - The world whose information is being diplayed in the HUD.
     /// @param[in]  font - The font to use in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
     /// @throws std::exception - Thrown if a parameter is null.
     HeadsUpDisplay::HeadsUpDisplay(
-        const std::shared_ptr<STATES::SavedGameData>& saved_game_data,
         const std::shared_ptr<MAPS::World>& world,
         const std::shared_ptr<GRAPHICS::GUI::Font>& font,
         const unsigned int main_text_box_width_in_pixels,
@@ -27,14 +25,10 @@ namespace GUI
     InventoryOpened(false),
     InventoryGui(world->NoahPlayer.Inventory),
     PauseMenuVisible(false),
-    SavedGame(saved_game_data),
     World(world)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
         /// @todo   Revisit error handling!
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
-            SavedGame,
-            "Null saved game provided to HUD.");
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             World,
             "Null world provided to HUD.");
@@ -44,7 +38,9 @@ namespace GUI
     /// @param[in]  elapsed_time - The elapsed time since the last frame.
     /// @param[in]  input_controller - The controller on which to check user input.
     /// @return The next state the game should be in based on the HUD.
-    STATES::GameState HeadsUpDisplay::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
+    STATES::GameState HeadsUpDisplay::Update(
+        const HARDWARE::GamingHardware& gaming_hardware,
+        STATES::SavedGameData& current_game_data)
     {
         // CHECK IF THE PAUSE MENU IS OPEN.
         // If so, it should take precedence over other parts of the HUD.
@@ -52,12 +48,12 @@ namespace GUI
         if (PauseMenuVisible)
         {
             // CHECK IF AN APPLICABLE BUTTON WAS PRESSED.
-            if (input_controller.ButtonWasPressed(sf::Keyboard::Return))
+            if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Return))
             {
                 // SAVE THE GAME DATA.
-                SavedGame->PlayerWorldPosition = World->NoahPlayer.GetWorldPosition();
-                SavedGame->WoodCount = World->NoahPlayer.Inventory->WoodCount;
-                SavedGame->FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
+                current_game_data.PlayerWorldPosition = World->NoahPlayer.GetWorldPosition();
+                current_game_data.WoodCount = World->NoahPlayer.Inventory->WoodCount;
+                current_game_data.FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
                     World->NoahPlayer.Inventory->BibleVerses.cbegin(),
                     World->NoahPlayer.Inventory->BibleVerses.cend());
                 
@@ -100,25 +96,25 @@ namespace GUI
                             tile_map_ark_data.TileMapGridXPosition = tile_map_x_index;
                             tile_map_ark_data.TileMapGridYPosition = tile_map_y_index;
                             tile_map_ark_data.BuiltArkPieceIndices = built_ark_piece_indices;
-                            SavedGame->BuildArkPieces.push_back(tile_map_ark_data);
+                            current_game_data.BuildArkPieces.push_back(tile_map_ark_data);
                         }
                     }
                 }
 
-                SavedGame->CollectedAnimals = World->NoahPlayer.Inventory->CollectedAnimalCounts;
-                SavedGame->CollectedFood = World->NoahPlayer.Inventory->CollectedFoodCounts;
+                current_game_data.CollectedAnimals = World->NoahPlayer.Inventory->CollectedAnimalCounts;
+                current_game_data.CollectedFood = World->NoahPlayer.Inventory->CollectedFoodCounts;
 
-                SavedGame->Write(SavedGame->Filepath);
+                current_game_data.Write(current_game_data.Filepath);
 
                 // CLOSE THE PAUSE MENU.
                 PauseMenuVisible = false;
             }
-            else if (input_controller.ButtonWasPressed(sf::Keyboard::T))
+            else if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::T))
             {
                 // RETURN TO THE TITLE SCREEN.
                 return STATES::GameState::TITLE_SCREEN;
             }
-            else if (input_controller.ButtonWasPressed(sf::Keyboard::Escape))
+            else if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Escape))
             {
                 // CLOSE THE PAUSE MENU.
                 PauseMenuVisible = false;
@@ -127,7 +123,7 @@ namespace GUI
         else if (MainTextBox.IsVisible)
         {
             // HAVE THE MAIN TEXT BOX RESPOND TO USER INPUT.
-            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+            if (gaming_hardware.InputController.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
             {
                 // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
                 // If the current page of text has not yet all been displayed, the next
@@ -146,7 +142,7 @@ namespace GUI
             // CHECK IF THE SECONDARY ACTION BUTTON WAS PRESSED THIS FRAME.
             // To prevent rapid opening/closing of the inventory, the button
             // is checked to determine when it toggles to being pressed.
-            bool inventory_button_pressed = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::SECONDARY_ACTION_KEY);
+            bool inventory_button_pressed = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::SECONDARY_ACTION_KEY);
             if (inventory_button_pressed)
             {
                 // OPEN OR CLOSE THE INVENTORY.
@@ -154,12 +150,12 @@ namespace GUI
             }
             else if (InventoryOpened)
             {
-                InventoryGui.Update(elapsed_time, input_controller);
+                InventoryGui.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
             }
             else
             {
                 // OPEN THE PAUSE MENU IF THE APPROPRIATE BUTTON WAS PRESSED.
-                bool pause_menu_button_pressed = input_controller.ButtonWasPressed(sf::Keyboard::Escape);
+                bool pause_menu_button_pressed = gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Escape);
                 if (pause_menu_button_pressed)
                 {
                     PauseMenuVisible = true;
@@ -174,7 +170,9 @@ namespace GUI
 
     /// Renders the HUD to the provided target.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void HeadsUpDisplay::Render(GRAPHICS::Renderer& renderer) const
+    void HeadsUpDisplay::Render(
+        const STATES::SavedGameData& current_game_data,
+        GRAPHICS::Renderer& renderer) const
     {
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
         // An icon is rendered to help players know which key to press.
@@ -271,7 +269,7 @@ namespace GUI
         {
             // The saved game filename is included in the text to clarify for users
             // what game is being saved.
-            std::string saved_game_filename = SavedGame->Filepath.filename().string();
+            std::string saved_game_filename = current_game_data.Filepath.filename().string();
             std::string pause_menu_text = "[ENTER] - Save " + saved_game_filename + "\n[T] - Title\n\n[ESC] - Cancel";
             renderer.RenderCenteredText(
                 pause_menu_text,

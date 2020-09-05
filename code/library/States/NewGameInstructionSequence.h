@@ -17,10 +17,14 @@ namespace STATES
     {
     public:
         void Initialize(MAPS::World& world, GRAPHICS::GUI::HeadsUpDisplay& hud);
-        GameState Update(const HARDWARE::GamingHardware& gaming_hardware, GRAPHICS::GUI::HeadsUpDisplay& hud);
+        GameState Update(
+            const HARDWARE::GamingHardware& gaming_hardware, 
+            STATES::SavedGameData& current_game_data,
+            GRAPHICS::GUI::HeadsUpDisplay& hud);
         sf::Sprite Render(
             const HARDWARE::GamingHardware& gaming_hardware, 
             MAPS::World& world, 
+            const STATES::SavedGameData& current_game_data,
             GRAPHICS::GUI::HeadsUpDisplay& hud, 
             GRAPHICS::Renderer& renderer);
 

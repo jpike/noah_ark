@@ -172,12 +172,10 @@ int main()
         MEMORY::NonNullSharedPointer<MAPS::World> world = MAPS::World::CreateInitial();
 
         // INITIALIZE THE HUD.
-        auto saved_game_data = std::make_shared<STATES::SavedGameData>(STATES::SavedGameData::DefaultSavedGameData());
         unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
         const unsigned int LINE_COUNT = 2;
         unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
         GRAPHICS::GUI::HeadsUpDisplay hud(
-            saved_game_data,
             world,
             default_sans_serif_font,
             main_text_box_width_in_pixels,

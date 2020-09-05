@@ -19,23 +19,15 @@ namespace STATES
     /// @param[in,out]  renderer - The renderer used fro some initialization.
     /// @return True if initialization succeeded; false otherwise.
     bool GameplayState::Initialize(
-        const std::shared_ptr<SavedGameData>& saved_game_data,
+        const SavedGameData& saved_game_data,
         MAPS::World& world,
         GRAPHICS::Renderer& renderer)
     {
-        // MAKE SURE SAVED GAME DATA WAS PROVIDED.
-        bool saved_game_exists = (nullptr != saved_game_data);
-        if (!saved_game_exists)
-        {
-            // The gameplay state requires saved game data.
-            return false;
-        }
-
         // INITIALIZE THE WORLD.
         CurrentMapGrid = &world.Overworld;
 
         // Built ark pieces need to be initialized.
-        world.InitializeBuiltArkInOverworld(saved_game_data->BuildArkPieces);
+        world.InitializeBuiltArkInOverworld(saved_game_data.BuildArkPieces);
 
         // FOCUS THE CAMERA ON THE PLAYER.
         MATH::Vector2f player_start_world_position = world.NoahPlayer.GetWorldPosition();
@@ -45,8 +37,8 @@ namespace STATES
         std::set_difference(
             BIBLE::BIBLE_VERSES.cbegin(),
             BIBLE::BIBLE_VERSES.cend(),
-            saved_game_data->FoundBibleVerses.cbegin(),
-            saved_game_data->FoundBibleVerses.cend(),
+            saved_game_data.FoundBibleVerses.cbegin(),
+            saved_game_data.FoundBibleVerses.cend(),
             std::inserter(BibleVersesLeftToFind, BibleVersesLeftToFind.begin()));
 
         // INDICATE THAT INITIALIZATION SUCCEEDED.
@@ -62,7 +54,8 @@ namespace STATES
         HARDWARE::GamingHardware& gaming_hardware,
         MAPS::World& world,
         GRAPHICS::Camera& camera,
-        GRAPHICS::GUI::HeadsUpDisplay& hud)
+        GRAPHICS::GUI::HeadsUpDisplay& hud,
+        STATES::SavedGameData& current_game_data)
     {
 #ifdef _DEBUG
         // UPDATE THE TILE MAP EDITOR IN RESPONSE TO USER INPUT.
@@ -90,7 +83,7 @@ namespace STATES
 
         // UPDATE THE HUD.
         // As of now, only the HUD is capable of altering the gameplay state.
-        GameState next_game_state = hud.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
+        GameState next_game_state = hud.Update(gaming_hardware, current_game_data);
 
         // CHECK IF A MODAL HUD COMPONENT IS DISPLAYED.
         // If a modal GUI component is displayed, then the regular controls for the player
@@ -126,6 +119,7 @@ namespace STATES
     sf::Sprite GameplayState::Render(
         MAPS::World& world, 
         GRAPHICS::GUI::HeadsUpDisplay& hud,
+        const STATES::SavedGameData& current_game_data,
         GRAPHICS::Renderer& renderer)
     {
         // RENDER CONTENT SPECIFIC TO THE CURRENT MAP.
@@ -187,7 +181,7 @@ namespace STATES
             }
 
             // RENDER THE HUD.
-            hud.Render(renderer);
+            hud.Render(current_game_data, renderer);
         }
 
         // COMPUTE THE LIGHTING FOR THE CURRENT GAMEPLAY.

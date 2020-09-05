@@ -41,7 +41,7 @@ namespace STATES
             GRAPHICS::GUI::HeadsUpDisplay& hud);
 
         /// The current saved game being used.
-        std::shared_ptr<SavedGameData> CurrentSavedGame = nullptr;
+        SavedGameData CurrentSavedGame = SavedGameData::DefaultSavedGameData();
         /// The current state the game is in.
         GameState CurrentGameState = GameState::INTRO_SEQUENCE;
         /// The intro sequence for the game.

@@ -34,7 +34,7 @@ namespace STATES
                 next_game_state = NewGameIntroSequence.Update(gaming_hardware);
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
-                next_game_state = NewGameInstructionSequence.Update(gaming_hardware, hud);
+                next_game_state = NewGameInstructionSequence.Update(gaming_hardware, CurrentSavedGame, hud);
                 break;
             case GameState::FLOOD_CUTSCENE:
                 next_game_state = FloodCutscene.Update(gaming_hardware);
@@ -44,7 +44,8 @@ namespace STATES
                     gaming_hardware,
                     world,
                     camera,
-                    hud);
+                    hud,
+                    CurrentSavedGame);
                 break;
         }
 
@@ -85,13 +86,13 @@ namespace STATES
                 screen_sprite = NewGameIntroSequence.Render(renderer);
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
-                screen_sprite = NewGameInstructionSequence.Render(gaming_hardware, world, hud, renderer);
+                screen_sprite = NewGameInstructionSequence.Render(gaming_hardware, world, CurrentSavedGame, hud, renderer);
                 break;
             case GameState::FLOOD_CUTSCENE:
                 screen_sprite = FloodCutscene.Render(renderer);
                 break;
             case GameState::GAMEPLAY:
-                screen_sprite = GameplayState.Render(world, hud, renderer);
+                screen_sprite = GameplayState.Render(world, hud, CurrentSavedGame, renderer);
                 break;
         }
         return screen_sprite;
@@ -127,34 +128,24 @@ namespace STATES
             // switching between states in debug mode.
             if (!GameSelectionScreen.SavedGames.empty())
             {
-                CurrentSavedGame = GameSelectionScreen.SavedGames.at(GameSelectionScreen.SelectedGameIndex);
+                CurrentSavedGame = *GameSelectionScreen.SavedGames.at(GameSelectionScreen.SelectedGameIndex);
             }
-            bool saved_game_data_loaded = (nullptr != CurrentSavedGame);
-            if (!saved_game_data_loaded)
-            {
-                // USE THE DEFAULT SAVED GAME DATA FOR A NEW GAME.
-                CurrentSavedGame = std::make_shared<SavedGameData>(SavedGameData::DefaultSavedGameData());
-            }
-
-            // UPDATE THE SAVED GAME USED IN THE HUD.
-            /// @todo   Pass as parameter all the time?
-            hud.SavedGame = CurrentSavedGame;
 
             // UPDATE NOAH PLAYER INFORMATION.
-            world.NoahPlayer.Sprite.SetWorldPosition(CurrentSavedGame->PlayerWorldPosition);
+            world.NoahPlayer.Sprite.SetWorldPosition(CurrentSavedGame.PlayerWorldPosition);
             // The following animals should appear right behind Noah.
             // For simplicity, they're initialized to start at Noah's position,
             // but they'll quickly be updated to be placed behind him by regular
             // updating code.
-            world.NoahPlayer.Inventory->FollowingAnimals.CurrentCenterWorldPosition = CurrentSavedGame->PlayerWorldPosition;
+            world.NoahPlayer.Inventory->FollowingAnimals.CurrentCenterWorldPosition = CurrentSavedGame.PlayerWorldPosition;
 
             // POPULATE THE REST OF NOAH'S INVENTORY.
-            world.NoahPlayer.Inventory->WoodCount = CurrentSavedGame->WoodCount;
+            world.NoahPlayer.Inventory->WoodCount = CurrentSavedGame.WoodCount;
             world.NoahPlayer.Inventory->BibleVerses.insert(
-                CurrentSavedGame->FoundBibleVerses.cbegin(), 
-                CurrentSavedGame->FoundBibleVerses.cend());
-            world.NoahPlayer.Inventory->CollectedAnimalCounts = CurrentSavedGame->CollectedAnimals;
-            world.NoahPlayer.Inventory->CollectedFoodCounts = CurrentSavedGame->CollectedFood;
+                CurrentSavedGame.FoundBibleVerses.cbegin(), 
+                CurrentSavedGame.FoundBibleVerses.cend());
+            world.NoahPlayer.Inventory->CollectedAnimalCounts = CurrentSavedGame.CollectedAnimals;
+            world.NoahPlayer.Inventory->CollectedFoodCounts = CurrentSavedGame.CollectedFood;
         }
 
         // CHANGE THE GAME'S STATE.

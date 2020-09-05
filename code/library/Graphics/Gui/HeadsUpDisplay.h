@@ -5,6 +5,7 @@
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/TextBox.h"
 #include "Graphics/Renderer.h"
+#include "Hardware/GamingHardware.h"
 #include "Input/InputController.h"
 #include "Inventory/InventoryGui.h"
 #include "Maps/World.h"
@@ -25,17 +26,20 @@ namespace GUI
     public:
         // CONSTRUCTION.
         explicit HeadsUpDisplay(
-            const std::shared_ptr<STATES::SavedGameData>& saved_game_data,
             const std::shared_ptr<MAPS::World>& world,
             const std::shared_ptr<GRAPHICS::GUI::Font>& font,
             const unsigned int main_text_box_width_in_pixels,
             const unsigned int main_text_box_height_in_pixels);
 
         // UPDATE.
-        STATES::GameState Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
+        STATES::GameState Update(
+            const HARDWARE::GamingHardware& gaming_hardware,
+            STATES::SavedGameData& current_game_data);
 
         // RENDERING.
-        void Render(GRAPHICS::Renderer& renderer) const;
+        void Render(
+            const STATES::SavedGameData& current_game_data,
+            GRAPHICS::Renderer& renderer) const;
 
         // OTHER METHODS.
         bool ModalComponentDisplayed() const;
@@ -51,8 +55,6 @@ namespace GUI
         bool InventoryOpened;
         /// The GUI for displaying the full inventory.
         INVENTORY::InventoryGui InventoryGui;
-        /// The current player's saved game.
-        std::shared_ptr<STATES::SavedGameData> SavedGame;
 
     private:
         // PRIVATE MEMBER VARIABLES.

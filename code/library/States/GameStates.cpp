@@ -4,11 +4,14 @@ namespace STATES
 {
     /// Updates the current state of the game.
     /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output devices.
+    /// @param[in,out]  world - The world to be updated.
     /// @param[in,out]  camera - The camera defining the viewable region of the game world.
     /// @return The next state that the game should switch to.  The current state as tracked
     ///     in this class is not automatically updated to this new state.
     GameState GameStates::Update(
         HARDWARE::GamingHardware& gaming_hardware,
+        const std::shared_ptr<MAPS::World>& world,
+        GRAPHICS::GUI::HeadsUpDisplay& hud,
         GRAPHICS::Camera& camera)
     {
         // UPDATE THE CURRENT STATE OF THE GAME.
@@ -30,13 +33,18 @@ namespace STATES
             case GameState::NEW_GAME_INTRO_SEQUENCE:
                 next_game_state = NewGameIntroSequence.Update(gaming_hardware);
                 break;
+            case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
+                next_game_state = NewGameInstructionSequence.Update(gaming_hardware, hud);
+                break;
             case GameState::FLOOD_CUTSCENE:
                 next_game_state = FloodCutscene.Update(gaming_hardware);
                 break;
             case GameState::GAMEPLAY:
                 next_game_state = GameplayState.Update(
                     gaming_hardware,
-                    camera);
+                    world,
+                    camera,
+                    hud);
                 break;
         }
 
@@ -48,7 +56,11 @@ namespace STATES
     /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output devices.
     /// @param[in,out]  renderer - The renderer to use for rendering.
     /// @return The rendered state of the game.
-    sf::Sprite GameStates::Render(HARDWARE::GamingHardware& gaming_hardware, GRAPHICS::Renderer& renderer)
+    sf::Sprite GameStates::Render(
+        HARDWARE::GamingHardware& gaming_hardware, 
+        std::shared_ptr<MAPS::World>& world,
+        GRAPHICS::GUI::HeadsUpDisplay& hud,
+        GRAPHICS::Renderer& renderer)
     {
         // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
         renderer.Screen->Clear();
@@ -72,11 +84,14 @@ namespace STATES
             case GameState::NEW_GAME_INTRO_SEQUENCE:
                 screen_sprite = NewGameIntroSequence.Render(renderer);
                 break;
+            case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
+                screen_sprite = NewGameInstructionSequence.Render(gaming_hardware, hud, renderer);
+                break;
             case GameState::FLOOD_CUTSCENE:
                 screen_sprite = FloodCutscene.Render(renderer);
                 break;
             case GameState::GAMEPLAY:
-                screen_sprite = GameplayState.Render(gaming_hardware.Clock.TotalElapsedTime, renderer);
+                screen_sprite = GameplayState.Render(world, hud, renderer);
                 break;
         }
         return screen_sprite;
@@ -90,7 +105,8 @@ namespace STATES
     void GameStates::SwitchStatesIfChanged(
         const GameState& new_state, 
         const std::shared_ptr<MAPS::World>& world,
-        GRAPHICS::Renderer& renderer)
+        GRAPHICS::Renderer& renderer,
+        GRAPHICS::GUI::HeadsUpDisplay& hud)
     {
         // CHECK IF THE GAME STATE HAS CHANGED.
         bool game_state_changed = (new_state != CurrentGameState);
@@ -98,6 +114,31 @@ namespace STATES
         {
             // The game is already in the correct state.
             return;
+        }
+
+        /// @todo   Stop audio?
+
+        // UPDATE THE SAVED GAME DATA BEING USED IF A SAVED GAME IS BEING LOADED.
+        bool saved_game_being_loaded = (GameState::GAME_SELECTION_SCREEN == CurrentGameState);
+        if (saved_game_being_loaded)
+        {
+            // LOAD THE GAME'S SAVE FILE.
+            // The empty check is for handling the case where no saved games exist yet, primarily when
+            // switching between states in debug mode.
+            if (!GameSelectionScreen.SavedGames.empty())
+            {
+                CurrentSavedGame = GameSelectionScreen.SavedGames.at(GameSelectionScreen.SelectedGameIndex);
+            }
+            bool saved_game_data_loaded = (nullptr != CurrentSavedGame);
+            if (!saved_game_data_loaded)
+            {
+                // USE THE DEFAULT SAVED GAME DATA FOR A NEW GAME.
+                CurrentSavedGame = std::make_shared<SavedGameData>(SavedGameData::DefaultSavedGameData());
+            }
+
+            // UPDATE THE SAVED GAME USED IN THE HUD.
+            /// @todo   Pass as parameter all the time?
+            hud.SavedGame = CurrentSavedGame;
         }
 
         // CHANGE THE GAME'S STATE.
@@ -116,29 +157,17 @@ namespace STATES
                 // RESET THE INTRO SEQUENCE TO THE BEGINNING.
                 NewGameIntroSequence.ResetToBeginning();
                 break;
+            case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
+                NewGameInstructionSequence.Initialize(world, hud);
+                break;
             case GameState::FLOOD_CUTSCENE:
                 FloodCutscene.Initialize();
                 break;
             case GameState::GAMEPLAY:
             {
-                // LOAD THE GAME'S SAVE FILE.
-                // The empty check is for handling the case where no saved games exist yet, primarily when
-                // switching between states in debug mode.
-                std::shared_ptr<SavedGameData> saved_game_data;
-                if (!GameSelectionScreen.SavedGames.empty())
-                {
-                    saved_game_data = GameSelectionScreen.SavedGames.at(GameSelectionScreen.SelectedGameIndex);
-                }
-                bool saved_game_data_loaded = (nullptr != saved_game_data);
-                if (!saved_game_data_loaded)
-                {
-                    // USE THE DEFAULT SAVED GAME DATA FOR A NEW GAME.
-                    saved_game_data = std::make_shared<SavedGameData>(SavedGameData::DefaultSavedGameData());
-                }
-
                 // INITIALIZE THE GAMEPLAY STATE.
                 bool gameplay_state_initialized = GameplayState.Initialize(
-                    saved_game_data,
+                    CurrentSavedGame,
                     world,
                     renderer);
                 if (!gameplay_state_initialized)

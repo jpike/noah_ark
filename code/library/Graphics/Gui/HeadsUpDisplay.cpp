@@ -168,6 +168,7 @@ namespace GUI
         }
 
         // STAY ON THE CURRENT GAMEPLAY STATE.
+        /// @todo   This isn't accurate if the game is using the HUD in another state!
         return STATES::GameState::GAMEPLAY;
     }
 

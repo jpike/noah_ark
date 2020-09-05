@@ -168,7 +168,24 @@ int main()
         game_states.IntroSequence.Initialize(*gaming_hardware.Speakers);
 
         // LOAD THE WORLD.
-        std::future<std::shared_ptr<MAPS::World>> world_being_loaded = std::async(LoadWorld);
+        //std::future<std::shared_ptr<MAPS::World>> world_being_loaded = std::async(LoadWorld);
+        std::shared_ptr<MAPS::World> world = LoadWorld();
+
+        /// @todo Need to fix this.  It'll get overridden when the gameplay state starts.
+        auto saved_game_data = std::make_shared<STATES::SavedGameData>(STATES::SavedGameData::DefaultSavedGameData());
+        std::shared_ptr<OBJECTS::Axe> axe = std::make_shared<OBJECTS::Axe>();
+        world->NoahPlayer = std::make_shared<OBJECTS::Noah>(*saved_game_data, axe);
+
+        // INITIALIZE THE HUD.
+        unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
+        const unsigned int LINE_COUNT = 2;
+        unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
+        GRAPHICS::GUI::HeadsUpDisplay hud(
+            saved_game_data,
+            world,
+            default_sans_serif_font,
+            main_text_box_width_in_pixels,
+            main_text_box_height_in_pixels);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         while (window.isOpen())
@@ -216,10 +233,10 @@ int main()
                 gaming_hardware.Clock.UpdateElapsedTime();
 
                 // UPDATE THE GAME'S CURRENT STATE.
-                STATES::GameState next_game_state = game_states.Update(gaming_hardware, renderer.Camera);
+                STATES::GameState next_game_state = game_states.Update(gaming_hardware, world, hud, renderer.Camera);
 
                 // RENDER THE CURRENT STATE OF THE GAME TO THE WINDOW.
-                sf::Sprite screen_sprite = game_states.Render(gaming_hardware, renderer);
+                sf::Sprite screen_sprite = game_states.Render(gaming_hardware, world, hud, renderer);
                 window.draw(screen_sprite);
                 window.display();
 
@@ -251,17 +268,22 @@ int main()
                 }
                 if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num6))
                 {
-                    next_game_state = STATES::GameState::FLOOD_CUTSCENE;
+                    next_game_state = STATES::GameState::NEW_GAME_INSTRUCTION_SEQUENCE;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
                 if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num7))
+                {
+                    next_game_state = STATES::GameState::FLOOD_CUTSCENE;
+                    gaming_hardware.Speakers->StopAllAudio();
+                }
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num8))
                 {
                     next_game_state = STATES::GameState::GAMEPLAY;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
 
                 // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.                
-                std::shared_ptr<MAPS::World> world;
+#if ASYNC_WORLD_LOADING
                 bool world_needed = (STATES::GameState::GAMEPLAY == next_game_state);
                 if (world_needed)
                 {
@@ -282,7 +304,8 @@ int main()
                         return EXIT_FAILURE;
                     }
                 }
-                game_states.SwitchStatesIfChanged(next_game_state, world, renderer);
+#endif
+                game_states.SwitchStatesIfChanged(next_game_state, world, renderer, hud);
             }
         }
 

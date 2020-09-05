@@ -41,8 +41,8 @@ namespace STATES
         bool intro_sequence_completed = Completed();
         if (intro_sequence_completed)
         {
-            // TRANSITION INTO THE START OF A NEW GAME.
-            return GameState::GAMEPLAY;
+            // TRANSITION INTO THE START OF A NEW GAME WHERE INSTRUCTIONS ARE GIVEN.
+            return GameState::NEW_GAME_INSTRUCTION_SEQUENCE;
         }
         else
         {

@@ -51,13 +51,13 @@ namespace GUI
         bool InventoryOpened;
         /// The GUI for displaying the full inventory.
         INVENTORY::InventoryGui InventoryGui;
+        /// The current player's saved game.
+        std::shared_ptr<STATES::SavedGameData> SavedGame;
 
     private:
         // PRIVATE MEMBER VARIABLES.
         /// True if the pause menu box is visible; false otherwise.
         bool PauseMenuVisible;
-        /// The current player's saved game.
-        std::shared_ptr<STATES::SavedGameData> SavedGame;
         /// The world whose information is being displayed in the HUD.
         std::shared_ptr<MAPS::World> World;
     };

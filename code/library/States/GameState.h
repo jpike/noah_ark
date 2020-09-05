@@ -15,6 +15,8 @@ namespace STATES
         GAME_SELECTION_SCREEN,
         /// The introductory sequence when starting a new game (new save file).
         NEW_GAME_INTRO_SEQUENCE,
+        /// The instruction sequence when starting a new game (new save file).
+        NEW_GAME_INSTRUCTION_SEQUENCE,
         /// The cutscene that plays once the ark has been built and the world is flooding;
         /// serves to transition the main gameplay to the "inside ark" substate.
         FLOOD_CUTSCENE,

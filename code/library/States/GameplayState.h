@@ -37,48 +37,61 @@ namespace STATES
         // UPDATING.
         GameState Update(
             HARDWARE::GamingHardware& gaming_hardware,
-            GRAPHICS::Camera& camera);
+            const std::shared_ptr<MAPS::World>& world,
+            GRAPHICS::Camera& camera,
+            GRAPHICS::GUI::HeadsUpDisplay& hud);
 
         // RENDERING.
-        sf::Sprite Render(const sf::Time& total_elapsed_time, GRAPHICS::Renderer& renderer);
-
-        // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
-        /// True if the instructions that are displayed in a text box at the start
-        /// of a new game are completed; false otherwise.
-        bool NewGameInstructionsCompleted = false;
-        /// The main game world.
-        std::shared_ptr<MAPS::World> World = nullptr;
+        sf::Sprite Render(
+            const std::shared_ptr<MAPS::World>& world, 
+            GRAPHICS::GUI::HeadsUpDisplay& hud,
+            GRAPHICS::Renderer& renderer);
 
     private:
         // WORLD UPDATING.
         void UpdateMapGrid(
             const sf::Time& elapsed_time,
+            const std::shared_ptr<MAPS::World>& world,
             INPUT_CONTROL::InputController& input_controller,
             GRAPHICS::Camera& camera,
             AUDIO::Speakers& speakers,
-            MAPS::MultiTileMapGrid& map_grid);
+            MAPS::MultiTileMapGrid& map_grid,
+            GRAPHICS::GUI::HeadsUpDisplay& hud);
         MAPS::ExitPoint* UpdatePlayerBasedOnInput(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
+            const std::shared_ptr<MAPS::World>& world,
             MAPS::TileMap& current_tile_map,
             MAPS::MultiTileMapGrid& map_grid,
             GRAPHICS::Camera& camera,
             AUDIO::Speakers& speakers);
-        void MoveAnimals(const sf::Time& elapsed_time, MAPS::TileMap& tile_map, MAPS::MultiTileMapGrid& map_grid);
+        void MoveAnimals(
+            const sf::Time& elapsed_time, 
+            MAPS::TileMap& tile_map, 
+            MAPS::MultiTileMapGrid& map_grid,
+            const std::shared_ptr<MAPS::World>& world);
         void UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
 
         // COLLISION DETECTION.
         void CollectWoodAndBibleVersesCollidingWithPlayer(
             MAPS::TileMap& tile_map,
             MAPS::MultiTileMapGrid& map_grid,
+            const std::shared_ptr<MAPS::World>& world,
             AUDIO::Speakers& speakers,
             std::string& message_for_text_box);
-        void CollectFoodCollidingWithPlayer(MAPS::TileMap& tile_map, AUDIO::Speakers& speakers);
-        void CollectAnimalsCollidingWithPlayer(MAPS::TileMap& tile_map, AUDIO::Speakers& speakers);
+        void CollectFoodCollidingWithPlayer(
+            const std::shared_ptr<MAPS::World>& world, 
+            MAPS::TileMap& tile_map, 
+            AUDIO::Speakers& speakers);
+        void CollectAnimalsCollidingWithPlayer(
+            const std::shared_ptr<MAPS::World>& world, 
+            MAPS::TileMap& tile_map, 
+            AUDIO::Speakers& speakers);
 
         // CAMERA UPDATING.
         void UpdateCameraWorldView(
             const sf::Time& elapsed_time,
+            const std::shared_ptr<MAPS::World>& world,
             GRAPHICS::Camera& camera,
             AUDIO::Speakers& speakers,
             INPUT_CONTROL::InputController& input_controller,
@@ -87,8 +100,6 @@ namespace STATES
         // PRIVATE MEMBER VARIABLES.
         /// The current map being displayed within the world.
         MAPS::MultiTileMapGrid* CurrentMapGrid = nullptr;
-        /// The heads-up display.
-        std::unique_ptr<GRAPHICS::GUI::HeadsUpDisplay> Hud = nullptr;
         /// Bible verses that still need to be found by the player.
         std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind = {};
         /// The tile map editor GUI.

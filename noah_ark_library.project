@@ -75,6 +75,7 @@
 #include "States/GameplayState.cpp"
 #include "States/GameStates.cpp"
 #include "States/IntroSequence.cpp"
+#include "States/NewGameInstructionSequence.cpp"
 #include "States/NewGameIntroSequence.cpp"
 #include "States/SavedGameData.cpp"
 #include "States/TitleScreen.cpp"

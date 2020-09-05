@@ -30,7 +30,6 @@ namespace STATES
     public:
         // INITIALIZATION.
         bool Initialize(
-            const unsigned int screen_width_in_pixels,
             const std::shared_ptr<SavedGameData>& saved_game_data,
             const std::shared_ptr<MAPS::World>& world,
             GRAPHICS::Renderer& renderer);
@@ -93,7 +92,7 @@ namespace STATES
         /// Bible verses that still need to be found by the player.
         std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind = {};
         /// The tile map editor GUI.
-        std::unique_ptr<MAPS::GUI::TileMapEditorGui> TileMapEditorGui = nullptr;
+        MAPS::GUI::TileMapEditorGui TileMapEditorGui = {};
         /// Animals being transferred from following Noah into the ark.
         /// @todo   Probably best to not have this in the game state and instead just
         /// have animals have different "modes" of behavior.

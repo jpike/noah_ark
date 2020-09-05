@@ -14,13 +14,11 @@
 namespace STATES
 {
     /// Initializes the gameplay state.
-    /// @param[in]  screen_width_in_pixels - The width of the screen, in pixels.
     /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
     /// @param[in,out]  world - The world for the gameplay state.
     /// @param[in,out]  renderer - The renderer used fro some initialization.
     /// @return True if initialization succeeded; false otherwise.
     bool GameplayState::Initialize(
-        const unsigned int screen_width_in_pixels,
         const std::shared_ptr<SavedGameData>& saved_game_data,
         const std::shared_ptr<MAPS::World>& world,
         GRAPHICS::Renderer& renderer)
@@ -52,16 +50,18 @@ namespace STATES
         std::shared_ptr<OBJECTS::Axe> axe = std::make_shared<OBJECTS::Axe>();
         World->NoahPlayer = std::make_shared<OBJECTS::Noah>(*saved_game_data, axe);
 
+        // FOCUS THE CAMERA ON THE PLAYER.
+        MATH::Vector2f player_start_world_position = World->NoahPlayer->GetWorldPosition();
+        renderer.Camera.SetCenter(player_start_world_position);
+
         // INITIALIZE THE HUD.
-        unsigned int text_box_width_in_pixels = screen_width_in_pixels;
+        unsigned int text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
         const unsigned int LINE_COUNT = 2;
         unsigned int text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
 
-        // CREATE THE HUD.
         Hud = std::make_unique<GRAPHICS::GUI::HeadsUpDisplay>(
             saved_game_data,
-            world,
-            World->NoahPlayer,
+            World,
             renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE],
             text_box_width_in_pixels,
             text_box_height_in_pixels);
@@ -77,9 +77,6 @@ namespace STATES
         // CHECK IF THE NEW GAME INTRO TEXT HAS ALREADY BEEN COMPLETED.
         NewGameInstructionsCompleted = saved_game_data->NewGameInstructionsCompleted;
 
-        // INITIALIZE THE TILE MAP EDITOR GUI.
-        TileMapEditorGui = std::make_unique<MAPS::GUI::TileMapEditorGui>();
-
         // INDICATE THAT INITIALIZATION SUCCEEDED.
         return true;
     }
@@ -94,14 +91,14 @@ namespace STATES
     {
 #ifdef _DEBUG
         // UPDATE THE TILE MAP EDITOR IN RESPONSE TO USER INPUT.
-        TileMapEditorGui->RespondToInput(gaming_hardware.InputController);
-        if (TileMapEditorGui->Visible)
+        TileMapEditorGui.RespondToInput(gaming_hardware.InputController);
+        if (TileMapEditorGui.Visible)
         {
             // MAKE SURE THE TILE MAP EDITOR GUI HAS THE CURRENT TILE MAP.
             MATH::FloatRectangle camera_bounds = camera.ViewBounds;
             MATH::Vector2f camera_view_center = camera_bounds.Center();
             MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(camera_view_center.X, camera_view_center.Y);
-            TileMapEditorGui->CurrentTileMap = current_tile_map;
+            TileMapEditorGui.CurrentTileMap = current_tile_map;
 
             // FINISH UPDATING.
             // If the tile map editor is displayed, it should have
@@ -112,7 +109,7 @@ namespace STATES
         else
         {
             // CLEAR THE TILE MAP EDITOR GUI'S CURRENT TILE MAP.
-            TileMapEditorGui->CurrentTileMap = nullptr;
+            TileMapEditorGui.CurrentTileMap = nullptr;
         }
 #endif
 
@@ -223,12 +220,12 @@ namespace STATES
         renderer.Render(*CurrentMapGrid);
 
         // CHECK IF THE TILE MAP EDITOR GUI IS VISIBLE.
-        if (TileMapEditorGui->Visible)
+        if (TileMapEditorGui.Visible)
         {
             // RENDER THE TILE MAP EDITOR GUI.
             // Other components like the player and HUD aren't rendered
             // because they would distract from the editor.
-            TileMapEditorGui->Render(renderer);
+            TileMapEditorGui.Render(renderer);
         }
         else
         {

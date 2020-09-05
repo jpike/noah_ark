@@ -12,7 +12,6 @@ namespace GUI
     /// Constructor.
     /// @param[in]  saved_game_data - The current player's saved game.
     /// @param[in]  world - The world whose information is being diplayed in the HUD.
-    /// @param[in]  noah_player - The player whose information is being displayed in the HUD.
     /// @param[in]  font - The font to use in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
@@ -20,29 +19,25 @@ namespace GUI
     HeadsUpDisplay::HeadsUpDisplay(
         const std::shared_ptr<STATES::SavedGameData>& saved_game_data,
         const std::shared_ptr<MAPS::World>& world,
-        const std::shared_ptr<OBJECTS::Noah>& noah_player,
         const std::shared_ptr<GRAPHICS::GUI::Font>& font,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels) :
     MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, font),
     TextColor(GRAPHICS::Color::BLACK),
     InventoryOpened(false),
-    InventoryGui(noah_player->Inventory),
+    InventoryGui(world->NoahPlayer->Inventory),
     PauseMenuVisible(false),
     SavedGame(saved_game_data),
-    World(world),
-    NoahPlayer(noah_player)
+    World(world)
     {
         // MAKE SURE THE REQUIRED RESOURCES WERE PROVIDED.
+        /// @todo   Revisit error handling!
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             SavedGame,
             "Null saved game provided to HUD.");
         ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
             World,
             "Null world provided to HUD.");
-        ERROR_HANDLING::ThrowInvalidArgumentExceptionIfNull(
-            NoahPlayer,
-            "Null Noah player provided to HUD.");
     }
 
     /// Updates the HUD.
@@ -60,11 +55,11 @@ namespace GUI
             if (input_controller.ButtonWasPressed(sf::Keyboard::Return))
             {
                 // SAVE THE GAME DATA.
-                SavedGame->PlayerWorldPosition = NoahPlayer->GetWorldPosition();
-                SavedGame->WoodCount = NoahPlayer->Inventory->WoodCount;
+                SavedGame->PlayerWorldPosition = World->NoahPlayer->GetWorldPosition();
+                SavedGame->WoodCount = World->NoahPlayer->Inventory->WoodCount;
                 SavedGame->FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
-                    NoahPlayer->Inventory->BibleVerses.cbegin(),
-                    NoahPlayer->Inventory->BibleVerses.cend());
+                    World->NoahPlayer->Inventory->BibleVerses.cbegin(),
+                    World->NoahPlayer->Inventory->BibleVerses.cend());
                 
                 // Built ark piece data from all tile maps needs to be included.
                 unsigned int tile_map_row_count = World->Overworld.TileMaps.GetHeight();
@@ -110,8 +105,8 @@ namespace GUI
                     }
                 }
 
-                SavedGame->CollectedAnimals = NoahPlayer->Inventory->CollectedAnimalCounts;
-                SavedGame->CollectedFood = NoahPlayer->Inventory->CollectedFoodCounts;
+                SavedGame->CollectedAnimals = World->NoahPlayer->Inventory->CollectedAnimalCounts;
+                SavedGame->CollectedFood = World->NoahPlayer->Inventory->CollectedFoodCounts;
 
                 SavedGame->Write(SavedGame->Filepath);
 
@@ -222,7 +217,7 @@ namespace GUI
         // For example, "x10" (no quotes) would be rendered if the player has collected
         // 10 wood logs.
         const std::string TIMES_COUNT_TEXT = "x";
-        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(NoahPlayer->Inventory->WoodCount);
+        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(World->NoahPlayer->Inventory->WoodCount);
         // This text should be placed just to the right of the wood icon.
         MATH::Vector2f wood_text_top_left_screen_position_in_pixels(
             static_cast<float>(wood_icon_screen_position.X), 

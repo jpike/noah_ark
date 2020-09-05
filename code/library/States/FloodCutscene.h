@@ -17,6 +17,7 @@ namespace STATES
     {
     public:
         // PUBLIC METHODS.
+        void Initialize();
         GameState Update(const HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(GRAPHICS::Renderer& renderer);
 

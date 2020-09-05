@@ -7,15 +7,6 @@ namespace MAPS
 {
 namespace GUI
 {
-    /// Creates an invisible instance of the tile map editor GUI.
-    TileMapEditorGui::TileMapEditorGui() :
-    Visible(false),
-    CurrentTileMap(nullptr),
-    TilePalette(),
-    SelectedTile(),
-    MouseScreenPosition()
-    {}
-
     /// Updates the tile map editor GUI in response to user input.
     /// @param[in,out]  input_controller - The input controller supplying user input.
     void TileMapEditorGui::RespondToInput(const INPUT_CONTROL::InputController& input_controller)

@@ -18,9 +18,6 @@ namespace GUI
     class TileMapEditorGui
     {
     public:
-        // CONSTRUCTION.
-        explicit TileMapEditorGui();
-
         // INPUT METHODS.
         void RespondToInput(const INPUT_CONTROL::InputController& input_controller);
 
@@ -29,20 +26,20 @@ namespace GUI
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// True if the GUI is currently visible; false otherwise.
-        bool Visible;
+        bool Visible = false;
         /// The current tile map being edited by the GUI.
-        MAPS::TileMap* CurrentTileMap;
+        MAPS::TileMap* CurrentTileMap = nullptr;
     private:
         // PRIVATE HELPER METHODS.
         static void WriteTileMapFile(const MAPS::TileMap& tile_map);
 
         // MEMBER VARIABLES.
         /// The palette of tiles from which a user can select tiles in the editor.
-        MAPS::GUI::TilePalette TilePalette;
+        MAPS::GUI::TilePalette TilePalette = MAPS::GUI::TilePalette();
         /// The currently selected tile (if one is selected).
-        std::shared_ptr<Tile> SelectedTile;
+        std::shared_ptr<Tile> SelectedTile = nullptr;
         /// The most recent screen position of the mouse.
-        MATH::Vector2f MouseScreenPosition;
+        MATH::Vector2f MouseScreenPosition = MATH::Vector2f();
     };
 }
 }

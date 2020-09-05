@@ -124,12 +124,12 @@ int main()
     {
         // CREATE THE WINDOW.
         const std::string GAME_TITLE = "Bible Games - Noah's Ark";
-        std::shared_ptr<sf::RenderWindow> window = std::make_shared<sf::RenderWindow>(
+        sf::RenderWindow window(
             sf::VideoMode(GRAPHICS::Screen::DEFAULT_WIDTH_IN_PIXELS, GRAPHICS::Screen::DEFAULT_HEIGHT_IN_PIXELS),
             GAME_TITLE);
 
         // Ensure that only one key event is generated for each key press.
-        window->setKeyRepeatEnabled(false);
+        window.setKeyRepeatEnabled(false);
 
         // LOAD THE INITIAL ASSETS.
         std::unordered_map<RESOURCES::AssetId, RESOURCES::Asset> intro_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME);
@@ -171,11 +171,11 @@ int main()
         std::future<std::shared_ptr<MAPS::World>> world_being_loaded = std::async(LoadWorld);
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
-        while (window->isOpen())
+        while (window.isOpen())
         {
             // PROCESS WINDOW EVENTS.
             sf::Event event;
-            while (window->pollEvent(event))
+            while (window.pollEvent(event))
             {
                 // HANDLE THE CURRENT EVENT BASED ON ITS TYPE.
                 switch (event.type)
@@ -183,7 +183,7 @@ int main()
                     case sf::Event::Closed:
                         // CLOSE THE WINDOW.
                         // The game will end later.
-                        window->close();
+                        window.close();
                         break;
                     case sf::Event::LostFocus:
                         // DISABLE INPUT.
@@ -203,10 +203,10 @@ int main()
             }
 
             // UPDATE AND DISPLAY THE GAME IN THE WINDOW.
-            if (window->isOpen())
+            if (window.isOpen())
             {
                 // READ USER INPUT.
-                sf::Vector2i mouse_screen_position = sf::Mouse::getPosition(*window);
+                sf::Vector2i mouse_screen_position = sf::Mouse::getPosition(window);
                 gaming_hardware.InputController.Mouse.ScreenPosition = MATH::Vector2f(
                     static_cast<float>(mouse_screen_position.x),
                     static_cast<float>(mouse_screen_position.y));
@@ -220,8 +220,8 @@ int main()
 
                 // RENDER THE CURRENT STATE OF THE GAME TO THE WINDOW.
                 sf::Sprite screen_sprite = game_states.Render(gaming_hardware, renderer);
-                window->draw(screen_sprite);
-                window->display();
+                window.draw(screen_sprite);
+                window.display();
 
                 // OVERRIDE GAME STATE SWITCHES WITH DEBUG KEY PRESSES.
                 if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num1))

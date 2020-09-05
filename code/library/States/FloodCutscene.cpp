@@ -3,6 +3,26 @@
 
 namespace STATES
 {
+    /// Sets the flood cutscene to its initial state.
+    void FloodCutscene::Initialize()
+    {
+        // RESET THE ELAPSED TIME FOR THE CUTSCENE.
+        ElapsedTime = sf::Time::Zero;
+
+        // INITIALIZE THE CUTSCENE SPRITES.
+        // The sizes of the sprites are hardcoded for simplicity and avoiding needing to access the underlying textures.
+        const MATH::FloatRectangle MOUNTAIN_SPRITE_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 256, 256);
+        Mountain = GRAPHICS::Sprite(RESOURCES::AssetId::FLOOD_CUTSCENE_MOUNTAIN, MOUNTAIN_SPRITE_RECTANGLE);
+
+        const MATH::FloatRectangle ARK_SPRITE_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 100, 50);
+        Ark = GRAPHICS::Sprite(RESOURCES::AssetId::FLOOD_CUTSCENE_ARK, ARK_SPRITE_RECTANGLE);
+
+        // The flood sprite is slightly larger than the screen height to account for the "waves" at the top and allowing
+        // the sprite to rise up while still having the bottom of the screen appear blue.
+        const MATH::FloatRectangle FLOOD_WATER_SPRITE_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 512, 416);
+        FloodWaters = GRAPHICS::Sprite(RESOURCES::AssetId::FLOOD_CUTSCENE_WATERS, FLOOD_WATER_SPRITE_RECTANGLE);
+    }
+
     /// Update the cutscene based on an elapsed amount of time.
     /// @param[in]  gaming_hardware - The hardware supplying input and output for the update.
     /// @return The state that the game should be in after the update.

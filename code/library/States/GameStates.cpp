@@ -113,30 +113,12 @@ namespace STATES
                 GameSelectionScreen.CurrentSubState = GameSelectionScreen::SubState::LISTING_GAMES;
                 break;
             case GameState::NEW_GAME_INTRO_SEQUENCE:
-            {
                 // RESET THE INTRO SEQUENCE TO THE BEGINNING.
                 NewGameIntroSequence.ResetToBeginning();
                 break;
-            }
             case GameState::FLOOD_CUTSCENE:
-            {
-                // RESET THE ELAPSED TIME FOR THE CUTSCENE.
-                FloodCutscene.ElapsedTime = sf::Time::Zero;
-
-                // INITIALIZE THE CUTSCENE SPRITES.
-                /// @todo   Cleaner way to do this!
-                MATH::FloatRectangle mountain_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 256, 256);
-                FloodCutscene.Mountain = GRAPHICS::Sprite(RESOURCES::AssetId::FLOOD_CUTSCENE_MOUNTAIN, mountain_sprite_rectangle);
-
-                MATH::FloatRectangle ark_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 100, 50);
-                FloodCutscene.Ark = GRAPHICS::Sprite(RESOURCES::AssetId::FLOOD_CUTSCENE_ARK, ark_sprite_rectangle);
-
-                // The flood sprite is slightly larger than the screen height to account for the "waves" at the top and allowing
-                // the sprite to rise up while still having the bottom of the screen appear blue.
-                MATH::FloatRectangle flood_water_sprite_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 512, 416);
-                FloodCutscene.FloodWaters = GRAPHICS::Sprite(RESOURCES::AssetId::FLOOD_CUTSCENE_WATERS, flood_water_sprite_rectangle);
+                FloodCutscene.Initialize();
                 break;
-            }
             case GameState::GAMEPLAY:
             {
                 // LOAD THE GAME'S SAVE FILE.
@@ -156,7 +138,6 @@ namespace STATES
 
                 // INITIALIZE THE GAMEPLAY STATE.
                 bool gameplay_state_initialized = GameplayState.Initialize(
-                    renderer.Screen->WidthInPixels<unsigned int>(),
                     saved_game_data,
                     world,
                     renderer);
@@ -166,9 +147,6 @@ namespace STATES
                     return;
                 }
 
-                // FOCUS THE CAMERA ON THE PLAYER.
-                MATH::Vector2f player_start_world_position = GameplayState.World->NoahPlayer->GetWorldPosition();
-                renderer.Camera.SetCenter(player_start_world_position);
                 break;
             }
         }

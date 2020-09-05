@@ -132,20 +132,7 @@ namespace STATES
             }
 
             // UPDATE NOAH PLAYER INFORMATION.
-            world.NoahPlayer.Sprite.SetWorldPosition(CurrentSavedGame.PlayerWorldPosition);
-            // The following animals should appear right behind Noah.
-            // For simplicity, they're initialized to start at Noah's position,
-            // but they'll quickly be updated to be placed behind him by regular
-            // updating code.
-            world.NoahPlayer.Inventory->FollowingAnimals.CurrentCenterWorldPosition = CurrentSavedGame.PlayerWorldPosition;
-
-            // POPULATE THE REST OF NOAH'S INVENTORY.
-            world.NoahPlayer.Inventory->WoodCount = CurrentSavedGame.WoodCount;
-            world.NoahPlayer.Inventory->BibleVerses.insert(
-                CurrentSavedGame.FoundBibleVerses.cbegin(), 
-                CurrentSavedGame.FoundBibleVerses.cend());
-            world.NoahPlayer.Inventory->CollectedAnimalCounts = CurrentSavedGame.CollectedAnimals;
-            world.NoahPlayer.Inventory->CollectedFoodCounts = CurrentSavedGame.CollectedFood;
+            world.NoahPlayer = CurrentSavedGame.Player;
         }
 
         // CHANGE THE GAME'S STATE.

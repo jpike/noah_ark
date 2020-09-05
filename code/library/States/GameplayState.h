@@ -46,7 +46,7 @@ namespace STATES
         sf::Sprite Render(
             MAPS::World& world, 
             GRAPHICS::GUI::HeadsUpDisplay& hud,
-            const STATES::SavedGameData& current_game_data,
+            STATES::SavedGameData& current_game_data,
             GRAPHICS::Renderer& renderer);
 
     private:
@@ -58,7 +58,8 @@ namespace STATES
             GRAPHICS::Camera& camera,
             AUDIO::Speakers& speakers,
             MAPS::MultiTileMapGrid& map_grid,
-            GRAPHICS::GUI::HeadsUpDisplay& hud);
+            GRAPHICS::GUI::HeadsUpDisplay& hud,
+            STATES::SavedGameData& current_game_data);
         MAPS::ExitPoint* UpdatePlayerBasedOnInput(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
@@ -97,7 +98,8 @@ namespace STATES
             GRAPHICS::Camera& camera,
             AUDIO::Speakers& speakers,
             INPUT_CONTROL::InputController& input_controller,
-            MAPS::TileMap& current_tile_map);
+            MAPS::TileMap& current_tile_map,
+            STATES::SavedGameData& current_game_data);
 
         // PRIVATE MEMBER VARIABLES.
         /// The current map being displayed within the world.

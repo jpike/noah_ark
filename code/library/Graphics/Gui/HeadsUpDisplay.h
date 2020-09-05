@@ -39,7 +39,6 @@ namespace GUI
         // RENDERING.
         void Render(
             const STATES::SavedGameData& current_game_data,
-            const INVENTORY::Inventory& inventory,
             GRAPHICS::Renderer& renderer) const;
 
         // OTHER METHODS.

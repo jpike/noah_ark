@@ -14,6 +14,7 @@ namespace GAMEPLAY
     ///     for the algorithm.
     /// @return An animal, if one was successfully generated; null otherwise.
     std::shared_ptr<OBJECTS::Animal> RandomAnimalGenerationAlgorithm::GenerateAnimal(
+        const STATES::SavedGameData& current_game_data,
         const OBJECTS::Noah& noah_player,
         const MAPS::TileMap& tile_map,
         MATH::RandomNumberGenerator& random_number_generator)
@@ -28,7 +29,7 @@ namespace GAMEPLAY
 
         // CHECK IF THE ANIMAL TYPE HAS BEEN FULLY COLLECTED.
         OBJECTS::AnimalType animal_type(random_species, random_gender);
-        bool animal_type_fully_collected = noah_player.Inventory->AnimalTypeFullyCollected(animal_type);
+        bool animal_type_fully_collected = current_game_data.AnimalTypeFullyCollected(animal_type);
         if (animal_type_fully_collected)
         {
             DEBUGGING::DebugConsole::WriteLine("Animal type fully collected.");

@@ -18,12 +18,14 @@ namespace STATES
         default_saved_game_data.Filepath = DEFAULT_FILEPATH;
 
         // INITIALIZE THE DEFAULT PLAYER POSITION.
-        default_saved_game_data.PlayerWorldPosition.X = 256.0f;
-        default_saved_game_data.PlayerWorldPosition.Y = 192.0f;
+        default_saved_game_data.Player->SetWorldPosition(MATH::Vector2f(256.0f, 192.0f));
 
         // INITIALIZE THE DEFAULT FOUND BIBLE VERSES.
         // Verses from the intro sequence are found by default.
-        default_saved_game_data.FoundBibleVerses = IntroSequence::IntroBibleVerses();
+        const auto& intro_bible_verses = IntroSequence::IntroBibleVerses();
+        default_saved_game_data.Player->Inventory.BibleVerses = std::set<BIBLE::BibleVerse>(
+            intro_bible_verses.cbegin(),
+            intro_bible_verses.cend());
 
         return default_saved_game_data;
     }
@@ -58,16 +60,18 @@ namespace STATES
             saved_game_data->NewGameInstructionsCompleted = true;
 
             // READ IN THE PLAYER'S POSITION.
-            saved_game_data_file >> saved_game_data->PlayerWorldPosition.X;
-            saved_game_data_file >> saved_game_data->PlayerWorldPosition.Y;
+            MATH::Vector2f player_world_position;
+            saved_game_data_file >> player_world_position.X;
+            saved_game_data_file >> player_world_position.Y;
+            saved_game_data->Player->SetWorldPosition(player_world_position);
 
             // READ IN THE PLAYER'S WOORD COUNT.
-            saved_game_data_file >> saved_game_data->WoodCount;
+            saved_game_data_file >> saved_game_data->Player->Inventory.WoodCount;
 
             // READ IN THE FOUND BIBLE VERSES.
             unsigned int expected_bible_verse_count;
             saved_game_data_file >> expected_bible_verse_count;
-            while (saved_game_data->FoundBibleVerses.size() < expected_bible_verse_count)
+            while (saved_game_data->Player->Inventory.BibleVerses.size() < expected_bible_verse_count)
             {
                 // READ IN THE CURRENT BIBLE VERSE'S DATA.
                 unsigned int book;
@@ -103,7 +107,7 @@ namespace STATES
                     text);
 
                 // ADD THE VERSE TO THE IN-MEMORY DATA.
-                saved_game_data->FoundBibleVerses.push_back(current_verse);
+                saved_game_data->Player->Inventory.BibleVerses.insert(current_verse);
             }
 
             // READ IN THE BUILT ARK PIECE DATA.
@@ -190,7 +194,7 @@ namespace STATES
             unsigned int expected_collected_food_data_count;
             saved_game_data_file >> expected_collected_food_data_count;
 
-            while (saved_game_data->CollectedFood.size() < expected_collected_food_data_count)
+            while (saved_game_data->Player->Inventory.CollectedFoodCounts.size() < expected_collected_food_data_count)
             {
                 // READ IN THE CURRENT FOOD DATA.
                 int food_id;
@@ -207,7 +211,7 @@ namespace STATES
 
                 // ADD THE FOOD COUNT TO THE IN-MEMORY DATA.
                 OBJECTS::FoodType food_type = static_cast<OBJECTS::FoodType>(food_id);
-                saved_game_data->CollectedFood[food_type] = collected_count;
+                saved_game_data->Player->Inventory.CollectedFoodCounts[food_type] = collected_count;
             }
 
             // RETURN THE LOADED SAVED GAME DATA.
@@ -239,19 +243,20 @@ namespace STATES
 
         // WRITE THE PLAYER'S POSITION.
         const char SEPARATOR_BETWEEN_RELATED_DATA = ' ';
+        MATH::Vector2f player_world_position = Player->GetWorldPosition();
         saved_game_data_file
-            << PlayerWorldPosition.X
+            << player_world_position.X
             << SEPARATOR_BETWEEN_RELATED_DATA
-            << PlayerWorldPosition.Y
+            << player_world_position.Y
             << std::endl;
 
         // WRITE PLAYER'S WOOD COUNT.
-        saved_game_data_file << WoodCount << std::endl;
+        saved_game_data_file << Player->Inventory.WoodCount << std::endl;
 
         // WRITE THE FOUND BIBLE VERSES.
         // The count of verses is written first.
-        saved_game_data_file << FoundBibleVerses.size() << std::endl;
-        for (const auto& current_verse : FoundBibleVerses)
+        saved_game_data_file << Player->Inventory.BibleVerses.size() << std::endl;
+        for (const auto& current_verse : Player->Inventory.BibleVerses)
         {
             // WRITE THE CURRENT VERSE.
             saved_game_data_file
@@ -308,8 +313,8 @@ namespace STATES
 
         // WRITE OUT THE COLLECTED FOOD.
         // The count of the collected food is written out first.
-        saved_game_data_file << CollectedFood.size() << std::endl;
-        for (const auto& collected_food_type_and_count : CollectedFood)
+        saved_game_data_file << Player->Inventory.CollectedFoodCounts.size() << std::endl;
+        for (const auto& collected_food_type_and_count : Player->Inventory.CollectedFoodCounts)
         {
             // WRITE OUT THE FOOD TYPE AND COLLECTED COUNT.
             saved_game_data_file
@@ -320,5 +325,43 @@ namespace STATES
             // WRITE A LINE SEPARATOR BEFORE THE NEXT SET OF DATA.
             saved_game_data_file << std::endl;
         }
+    }
+
+    /// Determines all animals of the specified type have been collected.
+    /// @param[in]  animal_type - The type of animals to check.
+    /// @return True if all animals of the specified type have been collected;
+    ///     false otherwise.
+    bool SavedGameData::AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const
+    {
+        // DETERMINE HOW MANY ANIMALS ARE EXPECTED BASED ON IF THE ANIMAL IS CLEAN OR NOT.
+        unsigned int expected_animal_count = 0;
+        bool animal_type_is_clean = animal_type.Clean();
+        if (animal_type_is_clean)
+        {
+            // 7 pairs of each clean animal are required (1 male + 1 female per pair).
+            // See Genesis 7:2.
+            const unsigned int CLEAN_ANIMAL_COUNT_PER_GENDER = 7;
+            expected_animal_count = CLEAN_ANIMAL_COUNT_PER_GENDER;
+        }
+        else
+        {
+            // 1 pair of each unclean animal are required (1 male + 1 female per pair).
+            // See Genesis 7:2.
+            const unsigned int UNCLEAN_ANIMAL_COUNT_PER_GENDER = 1;
+            expected_animal_count = UNCLEAN_ANIMAL_COUNT_PER_GENDER;
+        }
+
+        // CHECK IF THE TYPE OF ANIMAL HAS BEEN COLLECTED AT ALL.
+        const auto collected_animal_type_and_count = CollectedAnimals.find(animal_type);
+        bool animal_collected = (CollectedAnimals.cend() != collected_animal_type_and_count);
+        if (!animal_collected)
+        {
+            return false;
+        }
+
+        // DETERMINE IF THE APPROPRIATE NUMBER OF ANIMALS HAVE BEEN COLLECTED.
+        unsigned int actual_animal_count = collected_animal_type_and_count->second;
+        bool animal_type_fully_collected = (actual_animal_count >= expected_animal_count);
+        return animal_type_fully_collected;
     }
 }

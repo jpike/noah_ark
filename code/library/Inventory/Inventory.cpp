@@ -47,49 +47,8 @@ namespace INVENTORY
             return;
         }
 
-        // COUNT THE COLLECTED ANIMAL.
-        ++CollectedAnimalCounts[animal->Type];
-
         // ADD THE ANIMAL TO THE GROUP.
         FollowingAnimals.Add(animal);
-    }
-
-    /// Determines all animals of the specified type have been collected.
-    /// @param[in]  animal_type - The type of animals to check.
-    /// @return True if all animals of the specified type have been collected;
-    ///     false otherwise.
-    bool Inventory::AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const
-    {
-        // DETERMINE HOW MANY ANIMALS ARE EXPECTED BASED ON IF THE ANIMAL IS CLEAN OR NOT.
-        unsigned int expected_animal_count = 0;
-        bool animal_type_is_clean = animal_type.Clean();
-        if (animal_type_is_clean)
-        {
-            // 7 pairs of each clean animal are required (1 male + 1 female per pair).
-            // See Genesis 7:2.
-            const unsigned int CLEAN_ANIMAL_COUNT_PER_GENDER = 7;
-            expected_animal_count = CLEAN_ANIMAL_COUNT_PER_GENDER;
-        }
-        else
-        {
-            // 1 pair of each unclean animal are required (1 male + 1 female per pair).
-            // See Genesis 7:2.
-            const unsigned int UNCLEAN_ANIMAL_COUNT_PER_GENDER = 1;
-            expected_animal_count = UNCLEAN_ANIMAL_COUNT_PER_GENDER;
-        }
-
-        // CHECK IF THE TYPE OF ANIMAL HAS BEEN COLLECTED AT ALL.
-        const auto collected_animal_type_and_count = CollectedAnimalCounts.find(animal_type);
-        bool animal_collected = (CollectedAnimalCounts.cend() != collected_animal_type_and_count);
-        if (!animal_collected)
-        {
-            return false;
-        }
-
-        // DETERMINE IF THE APPROPRIATE NUMBER OF ANIMALS HAVE BEEN COLLECTED.
-        unsigned int actual_animal_count = collected_animal_type_and_count->second;
-        bool animal_type_fully_collected = (actual_animal_count >= expected_animal_count);
-        return animal_type_fully_collected;
     }
 
     /// Gets the number of collected animals, per gender, for a given species.
@@ -108,6 +67,8 @@ namespace INVENTORY
         species_female_animal_collected_count = 0;
 
         // GET THE COLLECTION COUNT FOR MALE ANIMALS OF THE SPECIES.
+        species;
+#if TODO
         OBJECTS::AnimalType male_animal_type(species, OBJECTS::AnimalGender::MALE);
         const auto male_animal_collected_count = CollectedAnimalCounts.find(male_animal_type);
         bool male_animals_collected = (CollectedAnimalCounts.cend() != male_animal_collected_count);
@@ -124,6 +85,7 @@ namespace INVENTORY
         {
             species_female_animal_collected_count = female_animal_collected_count->second;
         }
+#endif
     }
 
     /// Gets the collection statistics for the specified animal species.

@@ -5,6 +5,7 @@
 #include "Math/RandomNumberGenerator.h"
 #include "Objects/Animal.h"
 #include "Objects/Noah.h"
+#include "States/SavedGameData.h"
 
 namespace GAMEPLAY
 {
@@ -22,6 +23,7 @@ namespace GAMEPLAY
     {
     public:
         static std::shared_ptr<OBJECTS::Animal> GenerateAnimal(
+            const STATES::SavedGameData& current_game_data,
             const OBJECTS::Noah& noah,
             const MAPS::TileMap& tile_map,
             MATH::RandomNumberGenerator& random_number_generator);

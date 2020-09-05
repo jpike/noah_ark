@@ -48,7 +48,7 @@ namespace STATES
 
             // ADD THE VERSE TO THE PLAYER'S INVENTORY.
             // That way, it will already be collected once the player is done.
-            world.NoahPlayer.Inventory->BibleVerses.insert(*current_verse);
+            world.NoahPlayer->Inventory.BibleVerses.insert(*current_verse);
         }
 
         // START DISPLAYING THE TEXT IN THE TEXT BOX.
@@ -110,10 +110,10 @@ namespace STATES
         renderer.Render(world.Overworld);
 
         // RENDER NOAH.
-        renderer.Render(world.NoahPlayer.Sprite.Sprite);
+        renderer.Render(world.NoahPlayer->Sprite.Sprite);
 
         // RENDER THE HUD.
-        hud.Render(current_game_data, *world.NoahPlayer.Inventory, renderer);
+        hud.Render(current_game_data, renderer);
 
         // If the player is beginning a new game with God speaking to Noah, then the pulsing light
         // shader should be used to help communicate that God is speaking to the player.

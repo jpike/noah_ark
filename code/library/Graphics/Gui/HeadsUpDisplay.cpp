@@ -41,11 +41,6 @@ namespace GUI
             if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Return))
             {
                 // SAVE THE GAME DATA.
-                current_game_data.PlayerWorldPosition = world.NoahPlayer.GetWorldPosition();
-                current_game_data.WoodCount = world.NoahPlayer.Inventory->WoodCount;
-                current_game_data.FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
-                    world.NoahPlayer.Inventory->BibleVerses.cbegin(),
-                    world.NoahPlayer.Inventory->BibleVerses.cend());
                 
                 // Built ark piece data from all tile maps needs to be included.
                 unsigned int tile_map_row_count = world.Overworld.TileMaps.GetHeight();
@@ -90,9 +85,6 @@ namespace GUI
                         }
                     }
                 }
-
-                current_game_data.CollectedAnimals = world.NoahPlayer.Inventory->CollectedAnimalCounts;
-                current_game_data.CollectedFood = world.NoahPlayer.Inventory->CollectedFoodCounts;
 
                 current_game_data.Write(current_game_data.Filepath);
 
@@ -162,7 +154,6 @@ namespace GUI
     /// @param[in,out]  renderer - The renderer to use for rendering.
     void HeadsUpDisplay::Render(
         const STATES::SavedGameData& current_game_data,
-        const INVENTORY::Inventory& inventory,
         GRAPHICS::Renderer& renderer) const
     {
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
@@ -207,8 +198,7 @@ namespace GUI
         // For example, "x10" (no quotes) would be rendered if the player has collected
         // 10 wood logs.
         const std::string TIMES_COUNT_TEXT = "x";
-        /// @todo   Update game data to be "live" and automatically updated so that this works!
-        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(current_game_data.WoodCount);
+        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(current_game_data.Player->Inventory.WoodCount);
         // This text should be placed just to the right of the wood icon.
         MATH::Vector2f wood_text_top_left_screen_position_in_pixels(
             static_cast<float>(wood_icon_screen_position.X), 
@@ -247,7 +237,7 @@ namespace GUI
         // RENDER THE INVENTORY GUI IF IT IS OPENED.
         if (InventoryOpened)
         {
-            InventoryGui.Render(inventory, renderer);
+            InventoryGui.Render(current_game_data.Player->Inventory, renderer);
         }
 
         // RENDER THE TEXT BOX IF IT IS VISIBLE.

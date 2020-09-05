@@ -11,8 +11,8 @@
 #include "Graphics/Texture.h"
 #include "Inventory/Inventory.h"
 #include "Math/Vector2.h"
+#include "Memory/Pointers.h"
 #include "Objects/Axe.h"
-#include "States/SavedGameData.h"
 
 /// Holds codes for specific objects in the game.
 namespace OBJECTS
@@ -55,7 +55,7 @@ namespace OBJECTS
         GAMEPLAY::Direction FacingDirection = GAMEPLAY::Direction::INVALID;
         /// The sprite used for rendering Noah.
         GRAPHICS::AnimatedSprite Sprite = GRAPHICS::AnimatedSprite();
-        /// The inventory of items held by Noah.
-        std::shared_ptr<INVENTORY::Inventory> Inventory = nullptr;
+        /// The inventory.
+        INVENTORY::Inventory Inventory = {};
     };
 }

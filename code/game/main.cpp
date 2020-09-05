@@ -170,6 +170,7 @@ int main()
         // LOAD THE WORLD.
         //std::future<std::shared_ptr<MAPS::World>> world_being_loaded = std::async(LoadWorld);
         MEMORY::NonNullSharedPointer<MAPS::World> world = MAPS::World::CreateInitial();
+        game_states.CurrentSavedGame.Player = world->NoahPlayer;
 
         // INITIALIZE THE HUD.
         unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();

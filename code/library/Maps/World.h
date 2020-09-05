@@ -29,7 +29,8 @@ namespace MAPS
         /// The ark.
         Ark Ark = {};
         /// Noah (the player) character within the game.
-        OBJECTS::Noah NoahPlayer = OBJECTS::Noah();
+        /// Stored as a shared pointer because it needs to be shared with the saved game data.
+        MEMORY::NonNullSharedPointer<OBJECTS::Noah> NoahPlayer = MEMORY::NonNullSharedPointer<OBJECTS::Noah>(std::make_shared<OBJECTS::Noah>());
 
     private:
         // HELPER METHODS.

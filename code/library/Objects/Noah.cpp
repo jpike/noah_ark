@@ -13,8 +13,7 @@ namespace OBJECTS
     /// Constructor.
     Noah::Noah() :
     FacingDirection(GAMEPLAY::Direction::INVALID),
-    Sprite(),
-    Inventory(std::make_shared<INVENTORY::Inventory>())
+    Sprite()
     {
         // CREATE THE SPRITE FOR NOAH.
         const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 16, 16);
@@ -80,9 +79,6 @@ namespace OBJECTS
         // SET NOAH TO FACE DOWN BY DEFAULT.
         Sprite.UseAnimationSequence(NOAH_WALK_FRONT_ANIMATION->AnimationName);
         FacingDirection = GAMEPLAY::Direction::DOWN;
-
-        // INITIALIZE THE INVENTORY.
-        Inventory->Axe = std::make_shared<OBJECTS::Axe>();
     }
 
     /// Gets the world position of Noah.
@@ -126,19 +122,11 @@ namespace OBJECTS
     /// @return The event describing the axe swing, if an axe swing is started.
     std::shared_ptr<GAMEPLAY::AxeSwingEvent> Noah::SwingAxe() const
     {
-        // CHECK IF NOAH HAS AN AXE.
-        bool axe_exists = (nullptr != Inventory->Axe);
-        if (!axe_exists)
-        {
-            // An axe can't be swung since it isn't equipped.
-            return nullptr;
-        }
-
         // CHECK IF THE AXE IS ALREADY BEING SWUNG.
         // The prevent the axe from being swung too quickly,
         // it should not be possible to swing it again
         // if it is already being swung.
-        bool axe_already_swinging = Inventory->Axe->IsSwinging();
+        bool axe_already_swinging = Inventory.Axe->IsSwinging();
         if (axe_already_swinging)
         {
             // The axe is already being swung,
@@ -159,13 +147,13 @@ namespace OBJECTS
                 axe_position.X += noah_half_width;
                 axe_position.X -= 1.5f;
                 axe_position.Y += 3;
-                Inventory->Axe->SetWorldPosition(axe_position);
+                Inventory.Axe->SetWorldPosition(axe_position);
 
                 // START SWINGING THE AXE.
-                Inventory->Axe->SwingUp();
+                Inventory.Axe->SwingUp();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory->Axe);
+                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory.Axe);
                 return axe_swing;
             }
             case GAMEPLAY::Direction::DOWN:
@@ -179,13 +167,13 @@ namespace OBJECTS
                 axe_position.X -= noah_half_width;
                 axe_position.X += 2;
                 axe_position.Y += 2;
-                Inventory->Axe->SetWorldPosition(axe_position);
+                Inventory.Axe->SetWorldPosition(axe_position);
 
                 // START SWINGING THE AXE.
-                Inventory->Axe->SwingDown();
+                Inventory.Axe->SwingDown();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory->Axe);
+                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory.Axe);
                 return axe_swing;
             }
             case GAMEPLAY::Direction::LEFT:
@@ -196,13 +184,13 @@ namespace OBJECTS
                 // The position is slightly tweaked solely based on what looks best.
                 axe_position.X += 1;
                 axe_position.Y += 6;
-                Inventory->Axe->SetWorldPosition(axe_position);
+                Inventory.Axe->SetWorldPosition(axe_position);
 
                 // START SWINGING THE AXE.
-                Inventory->Axe->SwingLeft();
+                Inventory.Axe->SwingLeft();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory->Axe);
+                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory.Axe);
                 return axe_swing;
             }
             case GAMEPLAY::Direction::RIGHT:
@@ -213,13 +201,13 @@ namespace OBJECTS
                 // The position is slightly tweaked solely based on what looks best.
                 axe_position.X -= 1;
                 axe_position.Y += 6;
-                Inventory->Axe->SetWorldPosition(axe_position);
+                Inventory.Axe->SetWorldPosition(axe_position);
 
                 // START SWINGING THE AXE.
-                Inventory->Axe->SwingRight();
+                Inventory.Axe->SwingRight();
 
                 // CREATE THE AXE SWING EVENT.
-                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory->Axe);
+                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = std::make_shared<GAMEPLAY::AxeSwingEvent>(Inventory.Axe);
                 return axe_swing;
             }
             default:

@@ -16,9 +16,13 @@ namespace STATES
     class NewGameInstructionSequence
     {
     public:
-        void Initialize(const std::shared_ptr<MAPS::World>& world, GRAPHICS::GUI::HeadsUpDisplay& hud);
+        void Initialize(MAPS::World& world, GRAPHICS::GUI::HeadsUpDisplay& hud);
         GameState Update(const HARDWARE::GamingHardware& gaming_hardware, GRAPHICS::GUI::HeadsUpDisplay& hud);
-        sf::Sprite Render(const HARDWARE::GamingHardware& gaming_hardware, GRAPHICS::GUI::HeadsUpDisplay& hud, GRAPHICS::Renderer& renderer);
+        sf::Sprite Render(
+            const HARDWARE::GamingHardware& gaming_hardware, 
+            MAPS::World& world, 
+            GRAPHICS::GUI::HeadsUpDisplay& hud, 
+            GRAPHICS::Renderer& renderer);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// True if the instructions that are displayed in a text box at the start

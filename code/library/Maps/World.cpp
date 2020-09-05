@@ -7,12 +7,15 @@
 
 namespace MAPS
 {
-    /// Populates the world using the provided assets.
-    /// @return The world, if successfully populated; null otherwise.
-    std::shared_ptr<World> World::Populate()
+    /// Creates the world in its initial state.
+    /// @return The world in its initial state.
+    ///     The world is dynamically allocated to ensure that pointers between
+    ///     parts of the world remain consistent, which would be harder to do
+    ///     if a regular constructor were used due to the potential for copies.
+    MEMORY::NonNullSharedPointer<World> World::CreateInitial()
     {
         // POPULATE THE WORLD.
-        std::shared_ptr<MAPS::World> world = std::make_shared<MAPS::World>();
+        MEMORY::NonNullSharedPointer<World> world = MEMORY::NonNullSharedPointer<World>(std::make_shared<World>());
         world->PopulateOverworld();
         world->Ark.Populate();
 
@@ -108,7 +111,7 @@ namespace MAPS
         }
     }
 
-    /// Populates the overworld based on data read from in-memory assets.
+    /// Populates the overworld.
     void World::PopulateOverworld()
     {
         // CREATE THE TILESET.

@@ -25,7 +25,7 @@ namespace GUI
     MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, font),
     TextColor(GRAPHICS::Color::BLACK),
     InventoryOpened(false),
-    InventoryGui(world->NoahPlayer->Inventory),
+    InventoryGui(world->NoahPlayer.Inventory),
     PauseMenuVisible(false),
     SavedGame(saved_game_data),
     World(world)
@@ -55,11 +55,11 @@ namespace GUI
             if (input_controller.ButtonWasPressed(sf::Keyboard::Return))
             {
                 // SAVE THE GAME DATA.
-                SavedGame->PlayerWorldPosition = World->NoahPlayer->GetWorldPosition();
-                SavedGame->WoodCount = World->NoahPlayer->Inventory->WoodCount;
+                SavedGame->PlayerWorldPosition = World->NoahPlayer.GetWorldPosition();
+                SavedGame->WoodCount = World->NoahPlayer.Inventory->WoodCount;
                 SavedGame->FoundBibleVerses = std::vector<BIBLE::BibleVerse>(
-                    World->NoahPlayer->Inventory->BibleVerses.cbegin(),
-                    World->NoahPlayer->Inventory->BibleVerses.cend());
+                    World->NoahPlayer.Inventory->BibleVerses.cbegin(),
+                    World->NoahPlayer.Inventory->BibleVerses.cend());
                 
                 // Built ark piece data from all tile maps needs to be included.
                 unsigned int tile_map_row_count = World->Overworld.TileMaps.GetHeight();
@@ -105,8 +105,8 @@ namespace GUI
                     }
                 }
 
-                SavedGame->CollectedAnimals = World->NoahPlayer->Inventory->CollectedAnimalCounts;
-                SavedGame->CollectedFood = World->NoahPlayer->Inventory->CollectedFoodCounts;
+                SavedGame->CollectedAnimals = World->NoahPlayer.Inventory->CollectedAnimalCounts;
+                SavedGame->CollectedFood = World->NoahPlayer.Inventory->CollectedFoodCounts;
 
                 SavedGame->Write(SavedGame->Filepath);
 
@@ -218,7 +218,7 @@ namespace GUI
         // For example, "x10" (no quotes) would be rendered if the player has collected
         // 10 wood logs.
         const std::string TIMES_COUNT_TEXT = "x";
-        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(World->NoahPlayer->Inventory->WoodCount);
+        std::string wood_count_string = TIMES_COUNT_TEXT + std::to_string(World->NoahPlayer.Inventory->WoodCount);
         // This text should be placed just to the right of the wood icon.
         MATH::Vector2f wood_text_top_left_screen_position_in_pixels(
             static_cast<float>(wood_icon_screen_position.X), 

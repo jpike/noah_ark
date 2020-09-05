@@ -5,7 +5,7 @@
 namespace STATES
 {
     /// Sets the new game instruction sequence to its initial state.
-    void NewGameInstructionSequence::Initialize(const std::shared_ptr<MAPS::World>& world, GRAPHICS::GUI::HeadsUpDisplay& hud)
+    void NewGameInstructionSequence::Initialize(MAPS::World& world, GRAPHICS::GUI::HeadsUpDisplay& hud)
     {
         // INDICATE THAT THE INSTRUCTIONS HAVEN'T BEEN COMPLETED.
         NewGameInstructionsCompleted = false;
@@ -48,7 +48,7 @@ namespace STATES
 
             // ADD THE VERSE TO THE PLAYER'S INVENTORY.
             // That way, it will already be collected once the player is done.
-            world->NoahPlayer->Inventory->BibleVerses.insert(*current_verse);
+            world.NoahPlayer.Inventory->BibleVerses.insert(*current_verse);
         }
 
         // START DISPLAYING THE TEXT IN THE TEXT BOX.
@@ -65,6 +65,15 @@ namespace STATES
         // UPDATE THE HUD.
         // As of now, only the HUD is capable of altering the gameplay state.
         GameState next_game_state = hud.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
+
+        // UPDATE THE TEXT BOX IF IT IS VISIBLE.
+        // If the text box is currently being displayed, then it should capture any user input.
+        /// @todo   Why isn't this encapsulated in the HUD update?
+        if (hud.MainTextBox.IsVisible)
+        {
+            // UPDATE THE TEXT IN THE TEXT BOX.
+            hud.MainTextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+        }
 
         // INDICATE THAT THE NEW GAME INSTRUCTIONS HAVE BEEN COMPLETED IF THE USER HAS GONE THROUGH ALL TEXT.
         // This must be done after updating the HUD to prevent an infinite loop from occurring regarding the
@@ -90,9 +99,16 @@ namespace STATES
     /// @param[in,out]  renderer - The renderer to use for rendering.
     sf::Sprite NewGameInstructionSequence::Render(
         const HARDWARE::GamingHardware& gaming_hardware, 
+        MAPS::World& world,
         GRAPHICS::GUI::HeadsUpDisplay& hud,
         GRAPHICS::Renderer& renderer)
     {
+        // RENDER THE STARTING POINT OF THE OVERWORLD.
+        renderer.Render(world.Overworld);
+
+        // RENDER NOAH.
+        renderer.Render(world.NoahPlayer.Sprite.Sprite);
+
         // RENDER THE HUD.
         hud.Render(renderer);
 

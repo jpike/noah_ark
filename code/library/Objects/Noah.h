@@ -35,9 +35,7 @@ namespace OBJECTS
         static const std::string WALK_RIGHT_ANIMATION_NAME;
 
         // CONSTRUCTION.
-        explicit Noah(
-            const STATES::SavedGameData& saved_game_data,
-            const std::shared_ptr<OBJECTS::Axe>& axe);
+        explicit Noah();
 
         // POSITIONING.
         MATH::Vector2f GetWorldPosition() const;

@@ -26,17 +26,17 @@ namespace STATES
     public:
         GameState Update(
             HARDWARE::GamingHardware& gaming_hardware,
-            const std::shared_ptr<MAPS::World>& world,
+            MAPS::World& world,
             GRAPHICS::GUI::HeadsUpDisplay& hud,
             GRAPHICS::Camera& camera);
         sf::Sprite Render(
             HARDWARE::GamingHardware& gaming_hardware, 
-            std::shared_ptr<MAPS::World>& world,
+            MAPS::World& world,
             GRAPHICS::GUI::HeadsUpDisplay& hud,
             GRAPHICS::Renderer& renderer);
         void SwitchStatesIfChanged(
             const GameState& new_state, 
-            const std::shared_ptr<MAPS::World>& world,
+            MAPS::World& world,
             GRAPHICS::Renderer& renderer,
             GRAPHICS::GUI::HeadsUpDisplay& hud);
 

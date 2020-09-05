@@ -10,7 +10,7 @@ namespace STATES
     ///     in this class is not automatically updated to this new state.
     GameState GameStates::Update(
         HARDWARE::GamingHardware& gaming_hardware,
-        const std::shared_ptr<MAPS::World>& world,
+        MAPS::World& world,
         GRAPHICS::GUI::HeadsUpDisplay& hud,
         GRAPHICS::Camera& camera)
     {
@@ -58,7 +58,7 @@ namespace STATES
     /// @return The rendered state of the game.
     sf::Sprite GameStates::Render(
         HARDWARE::GamingHardware& gaming_hardware, 
-        std::shared_ptr<MAPS::World>& world,
+        MAPS::World& world,
         GRAPHICS::GUI::HeadsUpDisplay& hud,
         GRAPHICS::Renderer& renderer)
     {
@@ -85,7 +85,7 @@ namespace STATES
                 screen_sprite = NewGameIntroSequence.Render(renderer);
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
-                screen_sprite = NewGameInstructionSequence.Render(gaming_hardware, hud, renderer);
+                screen_sprite = NewGameInstructionSequence.Render(gaming_hardware, world, hud, renderer);
                 break;
             case GameState::FLOOD_CUTSCENE:
                 screen_sprite = FloodCutscene.Render(renderer);
@@ -104,7 +104,7 @@ namespace STATES
     /// @todo   Clean-up parameters!
     void GameStates::SwitchStatesIfChanged(
         const GameState& new_state, 
-        const std::shared_ptr<MAPS::World>& world,
+        MAPS::World& world,
         GRAPHICS::Renderer& renderer,
         GRAPHICS::GUI::HeadsUpDisplay& hud)
     {
@@ -139,6 +139,22 @@ namespace STATES
             // UPDATE THE SAVED GAME USED IN THE HUD.
             /// @todo   Pass as parameter all the time?
             hud.SavedGame = CurrentSavedGame;
+
+            // UPDATE NOAH PLAYER INFORMATION.
+            world.NoahPlayer.Sprite.SetWorldPosition(CurrentSavedGame->PlayerWorldPosition);
+            // The following animals should appear right behind Noah.
+            // For simplicity, they're initialized to start at Noah's position,
+            // but they'll quickly be updated to be placed behind him by regular
+            // updating code.
+            world.NoahPlayer.Inventory->FollowingAnimals.CurrentCenterWorldPosition = CurrentSavedGame->PlayerWorldPosition;
+
+            // POPULATE THE REST OF NOAH'S INVENTORY.
+            world.NoahPlayer.Inventory->WoodCount = CurrentSavedGame->WoodCount;
+            world.NoahPlayer.Inventory->BibleVerses.insert(
+                CurrentSavedGame->FoundBibleVerses.cbegin(), 
+                CurrentSavedGame->FoundBibleVerses.cend());
+            world.NoahPlayer.Inventory->CollectedAnimalCounts = CurrentSavedGame->CollectedAnimals;
+            world.NoahPlayer.Inventory->CollectedFoodCounts = CurrentSavedGame->CollectedFood;
         }
 
         // CHANGE THE GAME'S STATE.

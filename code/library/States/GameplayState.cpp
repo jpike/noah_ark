@@ -139,17 +139,14 @@ namespace STATES
             // RENDER ANY ANIMALS ENTERING INTO THE ARK.
             for (const auto& animal : AnimalsGoingIntoArk)
             {
-                renderer.Render(animal->Sprite.Sprite);
+                renderer.Render(animal->Sprite.CurrentFrameSprite);
             }
 
             // RENDER ANY ANIMALS FOLLOWING NOAH.
-            /// @todo   Figure out better update strategy for these animals.
-            for (const auto& animal : world.NoahPlayer->Inventory.FollowingAnimals.Animals)
+            for (const std::shared_ptr<OBJECTS::Animal>& animal : world.NoahPlayer->Inventory.FollowingAnimals.Animals)
             {
-                MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = renderer.GraphicsDevice->GetTexture(animal->Sprite.Sprite.TextureId);
-                animal->Sprite.Sprite.SpriteResource.setTexture(texture->TextureResource);
+                renderer.Render(animal->Sprite.CurrentFrameSprite);
             }
-            world.NoahPlayer->Inventory.FollowingAnimals.Render(*renderer.Screen);
 
             // CHECK WHICH DIRECTION NOAH IS FACING.
             // If he's facing up, the axe needs to be rendered first
@@ -166,12 +163,12 @@ namespace STATES
                 }
 
                 // RENDER THE PLAYER.
-                renderer.Render(world.NoahPlayer->Sprite.Sprite);
+                renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
             }
             else
             {
                 // RENDER THE PLAYER.
-                renderer.Render(world.NoahPlayer->Sprite.Sprite);
+                renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
                 // RENDER THE AXE.
                 // The axe should only be rendered if it is swinging.
@@ -843,7 +840,7 @@ namespace STATES
                 OBJECTS::DustCloud dust_cloud(RESOURCES::AssetId::DUST_CLOUD_TEXTURE);
 
                 // The dust cloud should be positioned over the ark piece.
-                MATH::Vector2f dust_cloud_center_world_position = ark_piece->Sprite.GetWorldPosition();
+                MATH::Vector2f dust_cloud_center_world_position = ark_piece->Sprite.WorldPosition;
                 dust_cloud.Sprite.SetWorldPosition(dust_cloud_center_world_position);
 
                 // The dust cloud should start animating immediately.
@@ -947,7 +944,7 @@ namespace STATES
 
             // MOVE THE ANIMALS GOING INTO THE ARK CLOSER INTO THE ARK.
             MATH::FloatRectangle ark_doorway_bounding_box = doorway_into_ark->Sprite.GetWorldBoundingBox();
-            MATH::Vector2f ark_doorway_world_position = doorway_into_ark->Sprite.GetWorldPosition();
+            MATH::Vector2f ark_doorway_world_position = doorway_into_ark->Sprite.WorldPosition;
             MAPS::ExitPoint* entry_point_into_ark = tile_map.GetExitPointAtWorldPosition(ark_doorway_world_position);
             for (auto animal = AnimalsGoingIntoArk.begin(); animal != AnimalsGoingIntoArk.end(); )
             {

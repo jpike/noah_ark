@@ -242,7 +242,7 @@ namespace INVENTORY
                     std::shared_ptr<GRAPHICS::AnimatedSprite> male_animal_sprite = RESOURCES::AnimalGraphics::GetSprite(male_animal_type);
                     if (male_animal_sprite)
                     {
-                        renderer.RenderGuiIcon(male_animal_sprite->Sprite, male_animal_icon_left_top_screen_position);
+                        renderer.RenderGuiIcon(male_animal_sprite->CurrentFrameSprite, male_animal_icon_left_top_screen_position);
                     }
                 }
 
@@ -259,7 +259,7 @@ namespace INVENTORY
                         constexpr float SPACING_IN_PIXELS_BETWEEN_ANIMAL_ICONS = 8.0f;
                         MATH::Vector2f female_animal_icon_left_top_screen_position = male_animal_icon_left_top_screen_position;
                         female_animal_icon_left_top_screen_position.X += RESOURCES::AnimalGraphics::SPRITE_WIDTH_IN_PIXELS + SPACING_IN_PIXELS_BETWEEN_ANIMAL_ICONS;
-                        renderer.RenderGuiIcon(female_animal_sprite->Sprite, female_animal_icon_left_top_screen_position);
+                        renderer.RenderGuiIcon(female_animal_sprite->CurrentFrameSprite, female_animal_icon_left_top_screen_position);
                     }
                 }
 

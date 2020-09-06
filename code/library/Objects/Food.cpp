@@ -12,9 +12,9 @@ namespace OBJECTS
         float fall_distance_in_pixels = FALL_SPEED_IN_PIXELS_PER_SECOND * time_in_seconds;
 
         // UPDATE THE FOOD'S POSITION.
-        MATH::Vector2f food_world_position = FoodItem.Sprite.GetWorldPosition();
+        MATH::Vector2f food_world_position = FoodItem.Sprite.WorldPosition;
         food_world_position.Y += fall_distance_in_pixels;
-        FoodItem.Sprite.SetWorldPosition(food_world_position);
+        FoodItem.Sprite.WorldPosition = food_world_position;
     }
 
     /// Checks if the food has finished falling.
@@ -23,7 +23,7 @@ namespace OBJECTS
     {
         // The food has finished falling if its y position has at least
         // reached the destination position.
-        MATH::Vector2f food_world_position = FoodItem.Sprite.GetWorldPosition();
+        MATH::Vector2f food_world_position = FoodItem.Sprite.WorldPosition;
         bool finished_falling = (food_world_position.Y >= DestinationWorldPosition.Y);
         return finished_falling;
     }

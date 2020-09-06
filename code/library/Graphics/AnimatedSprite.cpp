@@ -7,7 +7,7 @@ namespace GRAPHICS
     /// Constructor to create an uninitialized animated sprite.
     /// Exact properties are expected to be set later.
     AnimatedSprite::AnimatedSprite() :
-        Sprite(),
+        CurrentFrameSprite(),
         AnimationSequences(),
         CurrentAnimationSequenceName()
     {}
@@ -15,7 +15,7 @@ namespace GRAPHICS
     /// Constructor to wrap the provided sprite.
     /// @param[in]  sprite - The sprite being animated.
     AnimatedSprite::AnimatedSprite(const GRAPHICS::Sprite& sprite) :
-        Sprite(sprite),
+        CurrentFrameSprite(sprite),
         AnimationSequences(),
         CurrentAnimationSequenceName()
     {}
@@ -29,7 +29,7 @@ namespace GRAPHICS
     AnimatedSprite::AnimatedSprite(
         const RESOURCES::AssetId texture_id,
         const std::shared_ptr<GRAPHICS::AnimationSequence>& animation_sequence) :
-        Sprite(),
+        CurrentFrameSprite(),
         AnimationSequences(),
         CurrentAnimationSequenceName()
     {
@@ -50,19 +50,11 @@ namespace GRAPHICS
             static_cast<float>(first_frame_rectangle.CenterY()),
             static_cast<float>(first_frame_rectangle.Width()),
             static_cast<float>(first_frame_rectangle.Height()));
-        Sprite = GRAPHICS::Sprite(texture_id, texture_subrectangle);
+        CurrentFrameSprite = GRAPHICS::Sprite(texture_id, texture_subrectangle);
 
         // ADD THE INITIAL ANIMATION SEQUENCE TO THIS SPRITE.
         AddAnimationSequence(animation_sequence);
         UseAnimationSequence(animation_sequence->AnimationName);
-    }
-
-    /// Renders the sprite to the provided screen.
-    /// @param[in,out]  screen - The screen to render to.
-    void AnimatedSprite::Render(Screen& screen) const
-    {
-        // RENDER THE SPRITE.
-        Sprite.Render(screen);
     }
 
     /// Updates the animation based on the elapsed time.
@@ -87,7 +79,11 @@ namespace GRAPHICS
             // Make sure the correct portion of the sprite's texture for the
             // current frame of animation gets displayed.
             MATH::IntRectangle animation_rectangle = current_animation->GetCurrentFrame();
-            Sprite.SetTextureRectangle(animation_rectangle);
+            CurrentFrameSprite.TextureSubRectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+                (float)animation_rectangle.LeftTop.X,
+                (float)animation_rectangle.LeftTop.Y,
+                (float)animation_rectangle.Width(),
+                (float)animation_rectangle.Height());
         }
     }
 
@@ -95,7 +91,7 @@ namespace GRAPHICS
     /// @return The world position of the sprite, in pixels.
     MATH::Vector2f AnimatedSprite::GetWorldPosition() const
     {
-        MATH::Vector2f world_position = Sprite.GetWorldPosition();
+        MATH::Vector2f world_position = CurrentFrameSprite.WorldPosition;
         return world_position;
     }
 
@@ -103,7 +99,7 @@ namespace GRAPHICS
     /// @param[in]  world_position - The position of the sprite in the world.
     void AnimatedSprite::SetWorldPosition(const MATH::Vector2f& world_position)
     {
-        Sprite.SetWorldPosition(world_position);
+        CurrentFrameSprite.WorldPosition = world_position;
     }
 
     /// Sets the world position of the sprite.
@@ -111,14 +107,15 @@ namespace GRAPHICS
     /// @param[in]  y_position_in_pixels - The y-coordinate of the sprite in the world.
     void AnimatedSprite::SetWorldPosition(const float x_position_in_pixels, const float y_position_in_pixels)
     {
-        Sprite.SetWorldPosition(x_position_in_pixels, y_position_in_pixels);
+        CurrentFrameSprite.WorldPosition.X = x_position_in_pixels;
+        CurrentFrameSprite.WorldPosition.Y = y_position_in_pixels;
     }
 
     /// Gets the bounding box of the sprite in the world.
     /// @return The bounding box of the sprite.
     MATH::FloatRectangle AnimatedSprite::GetWorldBoundingBox() const
     {
-        MATH::FloatRectangle boundingBox = Sprite.GetWorldBoundingBox();
+        MATH::FloatRectangle boundingBox = CurrentFrameSprite.GetWorldBoundingBox();
         return boundingBox;
     }
 
@@ -188,7 +185,11 @@ namespace GRAPHICS
                 // This is necessary so that the sprite isn't left with a frame in the middle of the animation sequence.
                 current_animation_sequence->Reset();
                 MATH::IntRectangle first_frame = current_animation_sequence->GetCurrentFrame();
-                Sprite.SetTextureRectangle(first_frame);
+                CurrentFrameSprite.TextureSubRectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
+                    (float)first_frame.LeftTop.X,
+                    (float)first_frame.LeftTop.Y,
+                    (float)first_frame.Width(),
+                    (float)first_frame.Height());
             }
         }
     }
@@ -236,7 +237,7 @@ namespace GRAPHICS
     /// @param[in]  angle_in_degrees - The angle for the rotation.
     void AnimatedSprite::SetRotation(const float angle_in_degrees)
     {
-        Sprite.SetRotation(angle_in_degrees);
+        CurrentFrameSprite.RotationAngleInDegrees = angle_in_degrees;
     }
 
     /// Sets the scaling of the sprite (in both X and Y dimensions).
@@ -244,14 +245,14 @@ namespace GRAPHICS
     /// @param[in]  scale - The scaling amount for the sprite.
     void AnimatedSprite::SetScale(const float scale)
     {
-        Sprite.SetScale(scale);
+        CurrentFrameSprite.Scale = MATH::Vector2f(scale, scale);
     }
 
     /// Gets the color of the sprite.
     /// @return The color of the sprite.
     GRAPHICS::Color AnimatedSprite::GetColor() const
     {
-        return Sprite.GetColor();
+        return CurrentFrameSprite.Color;
     }
 
     /// Sets the color of the sprite.  This color modulates the
@@ -260,6 +261,6 @@ namespace GRAPHICS
     /// @param[in]  color - The color to set for the sprite.
     void AnimatedSprite::SetColor(const GRAPHICS::Color& color)
     {
-        Sprite.SetColor(color);
+        CurrentFrameSprite.Color = color;
     }
 }

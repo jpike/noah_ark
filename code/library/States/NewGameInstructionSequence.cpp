@@ -110,7 +110,7 @@ namespace STATES
         renderer.Render(world.Overworld);
 
         // RENDER NOAH.
-        renderer.Render(world.NoahPlayer->Sprite.Sprite);
+        renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
         // RENDER THE HUD.
         hud.Render(current_game_data, renderer);

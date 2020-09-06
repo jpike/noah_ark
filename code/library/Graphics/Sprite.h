@@ -16,44 +16,33 @@ namespace GRAPHICS
     {
     public:
         // CONSTRUCTION/DESTRUCTION.
-        explicit Sprite();
+        explicit Sprite() = default;
         explicit Sprite(
             const RESOURCES::AssetId texture_id,
             const MATH::FloatRectangle& texture_sub_rectangle);
-
-        // OTHER METHODS.
-        void SetTextureRectangle(const MATH::IntRectangle& texture_rectangle);
-        void Render(Screen& screen) const;
-
-        // POSITIONING.
-        MATH::Vector2f GetWorldPosition() const;
-        void SetWorldPosition(const MATH::Vector2f& world_position);
-        void SetWorldPosition(const float x_position_in_pixels, const float y_position_in_pixels);
 
         // DIMENSIONS.
         MATH::FloatRectangle GetWorldBoundingBox() const;
         float GetWidthInPixels() const;
         float GetHeightInPixels() const;
 
-        // ROTATION.
-        MATH::Vector2f GetOrigin() const;
-        void SetOrigin(const MATH::Vector2f& origin);
-        void SetRotation(const float angle_in_degrees);
-
-        // SCALING.
-        void SetScale(const float scale);
-        void SetScale(const MATH::Vector2f& scale);
-
-        // COLOR.
-        GRAPHICS::Color GetColor() const;
-        void SetColor(const GRAPHICS::Color& color);
-
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// Whether or not the sprite is visible.
+        bool IsVisible = false;
+        /// The world position of the sprite.
+        MATH::Vector2f WorldPosition = MATH::Vector2f();
+        /// The origin the of the sprite within its texture sub-rectangle
+        /// (relative to the top-left corner).
+        MATH::Vector2f Origin = MATH::Vector2f();
+        /// The angle of rotation of the sprite (relative to its origin), in degrees.
+        float RotationAngleInDegrees = 0.0f;
+        /// The scale of the sprite.
+        MATH::Vector2f Scale = MATH::Vector2f(1.0f, 1.0f);
+        /// The color of the sprite (can be used for tinting).
+        Color Color = Color::WHITE;
         /// The ID of the texture providing graphics for this sprite.
         RESOURCES::AssetId TextureId = RESOURCES::AssetId::INVALID;
-        /// The underlying SFML sprite resource.
-        sf::Sprite SpriteResource;
-        /// Whether or not the sprite is visible.
-        bool IsVisible;
+        /// The sub-rectangle of the texture for the sprite's graphics.
+        MATH::FloatRectangle TextureSubRectangle = MATH::FloatRectangle();
     };
 }

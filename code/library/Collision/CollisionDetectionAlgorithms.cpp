@@ -890,7 +890,7 @@ namespace COLLISION
                     float tree_bottom_y_position = tree->Sprite.GetWorldBoundingBox().RightBottom.Y;
                     float food_height_in_pixels = tree->Food->Sprite.GetHeightInPixels();
                     float food_half_height_in_pixels = food_height_in_pixels / 2.0f;
-                    MATH::Vector2f food_destination_world_position = tree->Food->Sprite.GetWorldPosition();
+                    MATH::Vector2f food_destination_world_position = tree->Food->Sprite.WorldPosition;
                     food_destination_world_position.Y = tree_bottom_y_position + food_half_height_in_pixels;
 
                     // START MAKING THE FOOD FALL OFF THE TREE.
@@ -918,7 +918,7 @@ namespace COLLISION
                         32.0f, 32.0f, 16.0f, 16.0f);
                     wood_logs.Sprite = GRAPHICS::Sprite(RESOURCES::AssetId::WOOD_LOG_TEXTURE, WOOD_LOG_TEXTURE_SUB_RECTANGLE);
                     MATH::Vector2f wood_log_center_world_position = tree->GetTrunkCenterWorldPosition();
-                    wood_logs.Sprite.SetWorldPosition(wood_log_center_world_position);
+                    wood_logs.Sprite.WorldPosition = wood_log_center_world_position;
                     tile_map->WoodLogs.push_back(wood_logs);
 
                     // PLACE A DUST CLOUD WHERE THE TREE WAS.

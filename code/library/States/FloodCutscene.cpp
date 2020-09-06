@@ -71,7 +71,7 @@ namespace STATES
         float screen_height_in_pixels = full_screen_rectangle.Height();
         float mountain_screen_y_position = screen_height_in_pixels - mountain_half_height_in_pixels;
         MATH::Vector2f mountain_screen_position(screen_center.X, mountain_screen_y_position);
-        Mountain.SetWorldPosition(mountain_screen_position);
+        Mountain.WorldPosition = mountain_screen_position;
         renderer.Render(Mountain);
 
         // DRAW THE ARK IN FRONT OF THE MOUNTAIN.
@@ -86,7 +86,7 @@ namespace STATES
         constexpr float FLOOD_WATER_WAVE_DIP_HEIGHT_IN_PIXELS = 8.0f;
         float ark_half_height_in_pixels = Ark.GetHeightInPixels() / 2.0f;
         float ark_center_y_position = flood_water_top_screen_position + FLOOD_WATER_WAVE_DIP_HEIGHT_IN_PIXELS - ark_half_height_in_pixels;
-        Ark.SetWorldPosition(screen_center.X, ark_center_y_position);
+        Ark.WorldPosition = MATH::Vector2f(screen_center.X, ark_center_y_position);
         renderer.Render(Ark);
 
         // DRAW THE RISING FLOOD WATERS.
@@ -96,7 +96,7 @@ namespace STATES
         float flood_water_sprite_half_height_in_pixels = FloodWaters.GetHeightInPixels() / 2.0f;
         float flood_water_sprite_bottom_screen_position = flood_water_bottom_screen_position + flood_water_sprite_half_height_in_pixels;
         float flood_water_sprite_center_y_screen_position = flood_water_sprite_bottom_screen_position - flood_water_height_in_pixels;
-        FloodWaters.SetWorldPosition(screen_center.X, flood_water_sprite_center_y_screen_position);
+        FloodWaters.WorldPosition = MATH::Vector2f(screen_center.X, flood_water_sprite_center_y_screen_position);
         renderer.Render(FloodWaters);
 
         // DRAW SOME RAIN.

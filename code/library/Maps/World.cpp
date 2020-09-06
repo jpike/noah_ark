@@ -203,12 +203,13 @@ namespace MAPS
 
                             // CREATE THE ARK PIECE.
                             OBJECTS::ArkPiece ark_piece(tile_id);
-                            MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.GetOrigin();
+                            MATH::Vector2f ark_piece_local_center = ark_piece.Sprite.Origin;
                             float tile_left_x_position = static_cast<float>(current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
                             float ark_piece_world_x_position = map_left_world_position + tile_left_x_position + ark_piece_local_center.X;
                             float tile_top_y_position = static_cast<float>(current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>);
                             float ark_piece_world_y_position = map_top_world_position + tile_top_y_position + ark_piece_local_center.Y;
-                            ark_piece.Sprite.SetWorldPosition(ark_piece_world_x_position, ark_piece_world_y_position);
+                            ark_piece.Sprite.WorldPosition.X = ark_piece_world_x_position;
+                            ark_piece.Sprite.WorldPosition.Y = ark_piece_world_y_position;
 
                             // ADD THE ARK PIECE TO THE TILE MAP.
                             tile_map.ArkPieces.push_back(ark_piece);
@@ -242,7 +243,7 @@ namespace MAPS
 
                                 // CREATE THE TREE'S SPRITE.
                                 GRAPHICS::AnimatedSprite tree_sprite(GRAPHICS::Sprite(RESOURCES::AssetId::TREE_TEXTURE, tree_texture_sub_rectangle));
-                                MATH::Vector2f tree_local_center = tree_sprite.Sprite.GetOrigin();
+                                MATH::Vector2f tree_local_center = tree_sprite.CurrentFrameSprite.Origin;
                                 auto tree_left_x = current_tile_x * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>;
                                 auto tree_top_y = current_tile_y * MAPS::Tile::DIMENSION_IN_PIXELS<unsigned int>;
                                 float tree_left_world_x_position = map_left_world_position + static_cast<float>(tree_left_x);
@@ -296,7 +297,7 @@ namespace MAPS
                                         food->Sprite = GRAPHICS::Sprite(*food_sprite);
 
                                         // The food should be positioned on the tree.
-                                        food->Sprite.SetWorldPosition(tree_sprite.GetWorldPosition());
+                                        food->Sprite.WorldPosition = tree_sprite.GetWorldPosition();
                                     }
                                 }
 

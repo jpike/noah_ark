@@ -101,7 +101,7 @@ namespace GUI
             const MATH::FloatRectangle& tile_screen_bounds = TileScreenBoundsById.at(tile_id);
 
             // RENDER THE TILE.
-            renderer.RenderGuiIcon(tile->Sprite.Sprite, tile_screen_bounds.LeftTop);
+            renderer.RenderGuiIcon(tile->Sprite.CurrentFrameSprite, tile_screen_bounds.LeftTop);
         }
     }
 

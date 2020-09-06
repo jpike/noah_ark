@@ -30,8 +30,7 @@ namespace GRAPHICS
             const RESOURCES::AssetId texture_id,
             const std::shared_ptr<GRAPHICS::AnimationSequence>& animation_sequence);
 
-        // RENDERING/UPDATING.
-        void Render(Screen& screen) const;
+        // UPDATING.
         void Update(const sf::Time& elapsed_time);
 
         // POSITIONING.
@@ -61,7 +60,8 @@ namespace GRAPHICS
         void SetColor(const GRAPHICS::Color& color);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
-        GRAPHICS::Sprite Sprite;   ///< The underlying sprite being animated.
+        /// The underlying sprite being animated (set to the current frame).
+        GRAPHICS::Sprite CurrentFrameSprite;
 
     private:
         // MEMBER VARIABLES.

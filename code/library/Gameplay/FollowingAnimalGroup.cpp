@@ -122,40 +122,4 @@ namespace GAMEPLAY
             animal->Sprite.Update(elapsed_time);
         }
     }
-
-    /// Renders the following animal group.
-    /// @param[in,out]  renderer - The renderer to use for rendering.
-    void FollowingAnimalGroup::Render(GRAPHICS::Screen& screen)
-    {
-#if DRAW_FOLLOWING_ANIMAL_GROUP_DEBUG_RECTANGLES
-        sf::RectangleShape entire_group_debug_rectangle;
-        entire_group_debug_rectangle.setOrigin(16.0f, 16.0f);
-        entire_group_debug_rectangle.setPosition(CurrentCenterWorldPosition.X, CurrentCenterWorldPosition.Y);
-        entire_group_debug_rectangle.setSize(sf::Vector2f(DIMENSION_IN_PIXELS, DIMENSION_IN_PIXELS));
-        entire_group_debug_rectangle.setFillColor(sf::Color::Green);
-        screen.RenderTarget.draw(entire_group_debug_rectangle);
-
-        sf::RectangleShape target_rectangle;
-        target_rectangle.setOrigin(4.0f, 4.0f);
-        target_rectangle.setPosition(CurrentDestinationCenterWorldPosition.X, CurrentDestinationCenterWorldPosition.Y);
-        target_rectangle.setSize(sf::Vector2f(8.0f, 8.0f));
-        target_rectangle.setFillColor(sf::Color::Red);
-        screen.RenderTarget.draw(target_rectangle);
-#endif
-
-        // RENDER EACH ANIMAL.
-        for (const std::shared_ptr<OBJECTS::Animal>& animal : Animals)
-        {
-#if DRAW_FOLLOWING_ANIMAL_GROUP_DEBUG_RECTANGLES
-            sf::RectangleShape animal_rectangle;
-            animal_rectangle.setOrigin(8.0f, 8.0f);
-            animal_rectangle.setPosition(animal->Sprite.GetWorldPosition().X, animal->Sprite.GetWorldPosition().Y);
-            animal_rectangle.setSize(sf::Vector2f(16.0f, 16.0f));
-            animal_rectangle.setFillColor(sf::Color::Blue);
-            screen.RenderTarget.draw(animal_rectangle);
-#endif
-
-            animal->Sprite.Render(screen);
-        }
-    }
 }

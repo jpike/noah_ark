@@ -19,8 +19,8 @@ namespace OBJECTS
         const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 16, 16);
         GRAPHICS::Sprite sprite(RESOURCES::AssetId::NOAH_TEXTURE, TEXTURE_SUB_RECT);
         // The sprite origin should be the graphical center of its sub-rectangle.
-        sprite.SetOrigin(TEXTURE_SUB_RECT.Center());
-        Sprite.Sprite = sprite;
+        sprite.Origin = TEXTURE_SUB_RECT.Center();
+        Sprite.CurrentFrameSprite = sprite;
 
         // ADD NOAH'S ANIMATION SEQUENCES.
         const bool IS_LOOPING = true;

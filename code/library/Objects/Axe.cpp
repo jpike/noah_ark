@@ -81,9 +81,9 @@ namespace OBJECTS
         Sprite.IsVisible = true;
 
         // SET THE SPRITE'S TRANSFORMATIONS.
-        Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
-        Sprite.SetRotation(CurrentRotationAngleInDegrees);
-        Sprite.SetScale(CurrentSwingParameters.SpriteScale);
+        Sprite.Origin = CurrentSwingParameters.SpriteOriginInPixels;
+        Sprite.RotationAngleInDegrees = CurrentRotationAngleInDegrees;
+        Sprite.Scale = CurrentSwingParameters.SpriteScale;
     }
     
     /// Swings the axe down.
@@ -122,9 +122,9 @@ namespace OBJECTS
         Sprite.IsVisible = true;
 
         // SET THE SPRITE'S TRANSFORMATIONS.
-        Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
-        Sprite.SetRotation(CurrentRotationAngleInDegrees);
-        Sprite.SetScale(CurrentSwingParameters.SpriteScale);
+        Sprite.Origin = CurrentSwingParameters.SpriteOriginInPixels;
+        Sprite.RotationAngleInDegrees = CurrentRotationAngleInDegrees;
+        Sprite.Scale = CurrentSwingParameters.SpriteScale;
     }
     
     /// Swings the axe left.
@@ -162,9 +162,9 @@ namespace OBJECTS
         Sprite.IsVisible = true;
 
         // SET THE SPRITE'S TRANSFORMATIONS.
-        Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
-        Sprite.SetRotation(CurrentRotationAngleInDegrees);
-        Sprite.SetScale(CurrentSwingParameters.SpriteScale);
+        Sprite.Origin = CurrentSwingParameters.SpriteOriginInPixels;
+        Sprite.RotationAngleInDegrees = CurrentRotationAngleInDegrees;
+        Sprite.Scale = CurrentSwingParameters.SpriteScale;
     }
 
     /// Swings the axe up.
@@ -202,9 +202,9 @@ namespace OBJECTS
         Sprite.IsVisible = true;
 
         // SET THE SPRITE'S TRANSFORMATIONS.
-        Sprite.SetOrigin(CurrentSwingParameters.SpriteOriginInPixels);
-        Sprite.SetRotation(CurrentRotationAngleInDegrees);
-        Sprite.SetScale(CurrentSwingParameters.SpriteScale);
+        Sprite.Origin = CurrentSwingParameters.SpriteOriginInPixels;
+        Sprite.RotationAngleInDegrees = CurrentRotationAngleInDegrees;
+        Sprite.Scale = CurrentSwingParameters.SpriteScale;
     }
 
     /// Determines if the axe is currently being swung.
@@ -324,7 +324,7 @@ namespace OBJECTS
             }
             
             // UPDATE THE ROTATION OF THE AXE SPRITE>
-            Sprite.SetRotation(CurrentRotationAngleInDegrees);
+            Sprite.RotationAngleInDegrees = CurrentRotationAngleInDegrees;
         }
         else
         {
@@ -351,6 +351,6 @@ namespace OBJECTS
     /// @param[in]  world_position - The world position to set.
     void Axe::SetWorldPosition(const MATH::Vector2f& world_position)
     {
-        Sprite.SetWorldPosition(world_position.X, world_position.Y);
+        Sprite.WorldPosition = world_position;
     }
 }

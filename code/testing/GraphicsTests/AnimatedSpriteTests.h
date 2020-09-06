@@ -13,7 +13,8 @@ namespace TEST_ANIMATED_SPRITE
         const float INITIAL_WORLD_X_POSITION = 40.0f;
         const float INITIAL_WORLD_Y_POSITION = 64.0f;
         GRAPHICS::Sprite sprite;
-        sprite.SetWorldPosition(INITIAL_WORLD_X_POSITION, INITIAL_WORLD_Y_POSITION);
+        sprite.WorldPosition.X = INITIAL_WORLD_X_POSITION;
+        sprite.WorldPosition.Y = INITIAL_WORLD_Y_POSITION;
 
         // CONSTRUCT AN ANIMATED SPRITE FROM THE SPRITE.
         GRAPHICS::AnimatedSprite animatedSprite(sprite);
@@ -35,17 +36,18 @@ namespace TEST_ANIMATED_SPRITE
         // The initial position is arbitrary.
         const float INITIAL_WORLD_X_POSITION = 40.0f;
         const float INITIAL_WORLD_Y_POSITION = 64.0f;
-        sprite.SetWorldPosition(INITIAL_WORLD_X_POSITION, INITIAL_WORLD_Y_POSITION);
+        sprite.WorldPosition.X = INITIAL_WORLD_X_POSITION;
+        sprite.WorldPosition.Y = INITIAL_WORLD_Y_POSITION;
 
         // The initial size is chosen arbitrary.
         const int SPRITE_WIDTH = 10;
         const int SPRITE_HEIGHT = 35;
-        MATH::IntRectangle spriteTextureRectangle = MATH::IntRectangle::FromLeftTopAndDimensions(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-        sprite.SetTextureRectangle(spriteTextureRectangle);
+        MATH::FloatRectangle spriteTextureRectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
+        sprite.TextureSubRectangle = spriteTextureRectangle;
 
         const float SPRITE_CENTER_X = static_cast<float>(SPRITE_WIDTH) / 2.0f;
         const float SPRITE_CENTER_Y = static_cast<float>(SPRITE_HEIGHT) / 2.0f;
-        sprite.SetOrigin(MATH::Vector2f(SPRITE_CENTER_X, SPRITE_CENTER_Y));
+        sprite.Origin = MATH::Vector2f(SPRITE_CENTER_X, SPRITE_CENTER_Y);
 
         // CONSTRUCT AN ANIMATED SPRITE FROM THE SPRITE.
         GRAPHICS::AnimatedSprite animatedSprite(sprite);

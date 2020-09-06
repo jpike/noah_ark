@@ -21,7 +21,6 @@ namespace GAMEPLAY
         void Add(const std::shared_ptr<OBJECTS::Animal>& animal);
 
         void Update(const sf::Time& elapsed_time, const MATH::Vector2f& new_center_world_position);
-        void Render(GRAPHICS::Screen& screen);
 
         /// The current center position of the group within the world.
         MATH::Vector2f CurrentCenterWorldPosition = MATH::Vector2f();

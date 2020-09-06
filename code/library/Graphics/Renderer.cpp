@@ -192,7 +192,11 @@ namespace GRAPHICS
     {
         // CREATE A SPRITE FOR THE ICON USING THE TEXTURE INFORMATION.
         // This allow repositioning of the icon to be in screen coordinates.
-        sf::IntRect texture_rectangle = sprite.SpriteResource.getTextureRect();
+        sf::IntRect texture_rectangle;
+        texture_rectangle.left = (int)sprite.TextureSubRectangle.LeftTop.X;
+        texture_rectangle.top = (int)sprite.TextureSubRectangle.LeftTop.Y;
+        texture_rectangle.width = (int)sprite.TextureSubRectangle.Width();
+        texture_rectangle.height = (int)sprite.TextureSubRectangle.Height();
         MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = GraphicsDevice->GetTexture(sprite.TextureId);
         sf::Sprite gui_icon(texture->TextureResource, texture_rectangle);
 
@@ -210,16 +214,29 @@ namespace GRAPHICS
     }
 
     /// Renders a sprite to the screen.
-    /// @param[in,out]  sprite - The sprite to render.
-    void Renderer::Render(Sprite& sprite)
+    /// @param[in]  sprite - The sprite to render.
+    void Renderer::Render(const Sprite& sprite)
     {
-        // ENSURE THE SPRITE'S TEXTURE IS SET.
+        // CONVERT THE SPRITE TO SFML FORMAT.
+        sf::Sprite sfml_sprite;
+        sfml_sprite.setColor(sf::Color(sprite.Color.Red, sprite.Color.Green, sprite.Color.Blue, sprite.Color.Alpha));
+        sfml_sprite.setOrigin(sprite.Origin.X, sprite.Origin.Y);
+        sfml_sprite.setPosition(sprite.WorldPosition.X, sprite.WorldPosition.Y);
+        sfml_sprite.setRotation(sprite.RotationAngleInDegrees);
+        sfml_sprite.setScale(sprite.Scale.X, sprite.Scale.Y);
+
+        sf::IntRect texture_rectangle;
+        texture_rectangle.left = (int)sprite.TextureSubRectangle.LeftTop.X;
+        texture_rectangle.top = (int)sprite.TextureSubRectangle.LeftTop.Y;
+        texture_rectangle.width = (int)sprite.TextureSubRectangle.Width();
+        texture_rectangle.height = (int)sprite.TextureSubRectangle.Height();
+        sfml_sprite.setTextureRect(texture_rectangle);
+
         MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = GraphicsDevice->GetTexture(sprite.TextureId);
-        /// @todo   Find a way to make this parameter const?
-        sprite.SpriteResource.setTexture(texture->TextureResource);
+        sfml_sprite.setTexture(texture->TextureResource);
 
         // DRAW THE SPRITE.
-        Screen->RenderTarget.draw(sprite.SpriteResource);
+        Screen->RenderTarget.draw(sfml_sprite);
     }
 
     /// Renders text to the screen.
@@ -739,9 +756,7 @@ namespace GRAPHICS
             for (unsigned int tile_column = 0; tile_column < ground_dimensions_in_tiles.X; ++tile_column)
             {
                 const std::shared_ptr<MAPS::Tile>& tile = tile_map.Ground.Tiles(tile_column, tile_row);
-                MEMORY::NonNullSharedPointer<GRAPHICS::Texture> tile_texture = GraphicsDevice->GetTexture(tile->Sprite.Sprite.TextureId);
-                tile->Sprite.Sprite.SpriteResource.setTexture(tile_texture->TextureResource);
-                tile->Sprite.Render(*Screen);
+                Render(tile->Sprite.CurrentFrameSprite);
             }
         }
         
@@ -751,10 +766,7 @@ namespace GRAPHICS
             // Only ark pieces that have been built should be visible.
             if (ark_piece.Built)
             {
-                MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = GraphicsDevice->GetTexture(ark_piece.Sprite.TextureId);
-                sf::Sprite sprite(ark_piece.Sprite.SpriteResource);
-                sprite.setTexture(texture->TextureResource);
-                Screen->RenderTarget.draw(sprite);
+                Render(ark_piece.Sprite);
             }
 
         }
@@ -762,65 +774,44 @@ namespace GRAPHICS
         // RENDER THE CURRENT TILE MAP'S WOOD LOGS.
         for (const auto& wood_log : tile_map.WoodLogs)
         {
-            MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = GraphicsDevice->GetTexture(wood_log.Sprite.TextureId);
-            sf::Sprite sprite(wood_log.Sprite.SpriteResource);
-            sprite.setTexture(texture->TextureResource);
-            Screen->RenderTarget.draw(sprite);
+            Render(wood_log.Sprite);
         }
 
         // RENDER THE CURRENT TILE MAP'S TREES.
         for (const auto& tree : tile_map.Trees)
         {
             // RENDER THE TREE.
-            MEMORY::NonNullSharedPointer<GRAPHICS::Texture> tree_texture = GraphicsDevice->GetTexture(tree.Sprite.Sprite.TextureId);
-            sf::Sprite tree_sprite(tree.Sprite.Sprite.SpriteResource);
-            tree_sprite.setTexture(tree_texture->TextureResource);
-            Screen->RenderTarget.draw(tree_sprite);
+            Render(tree.Sprite.CurrentFrameSprite);
 
             // RENDER ANY FOOD ON THE TREE.
             if (tree.Food)
             {
-                MEMORY::NonNullSharedPointer<GRAPHICS::Texture> food_texture = GraphicsDevice->GetTexture(tree.Food->Sprite.TextureId);
-                sf::Sprite food_sprite(tree.Food->Sprite.SpriteResource);
-                food_sprite.setTexture(food_texture->TextureResource);
-                Screen->RenderTarget.draw(food_sprite);
+                Render(tree.Food->Sprite);
             }
         }
 
         // RENDER THE CURRENT TILE MAP'S FALLING FOOD.
         for (const auto& food : tile_map.FallingFood)
         {
-            MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = GraphicsDevice->GetTexture(food.FoodItem.Sprite.TextureId);
-            sf::Sprite sprite(food.FoodItem.Sprite.SpriteResource);
-            sprite.setTexture(texture->TextureResource);
-            Screen->RenderTarget.draw(sprite);
+            Render(food.FoodItem.Sprite);
         }
 
         // RENDER THE CURRENT TILE MAP'S FOOD ON THE GROUND.
         for (const auto& food : tile_map.FoodOnGround)
         {
-            MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = GraphicsDevice->GetTexture(food.Sprite.TextureId);
-            sf::Sprite sprite(food.Sprite.SpriteResource);
-            sprite.setTexture(texture->TextureResource);
-            Screen->RenderTarget.draw(sprite);
+            Render(food.Sprite);
         }
 
         // RENDER THE CURRENT TILE MAP'S ANIMALS.
         for (const auto& animal : tile_map.Animals)
         {
-            MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = GraphicsDevice->GetTexture(animal->Sprite.Sprite.TextureId);
-            sf::Sprite sprite(animal->Sprite.Sprite.SpriteResource);
-            sprite.setTexture(texture->TextureResource);
-            Screen->RenderTarget.draw(sprite);
+            Render(animal->Sprite.CurrentFrameSprite);
         }
 
         // RENDER THE CURRENT TILE MAP'S DUST CLOUDS.
         for (const auto& dust_cloud : tile_map.DustClouds)
         {
-            MEMORY::NonNullSharedPointer<GRAPHICS::Texture> texture = GraphicsDevice->GetTexture(dust_cloud.Sprite.Sprite.TextureId);
-            sf::Sprite sprite(dust_cloud.Sprite.Sprite.SpriteResource);
-            sprite.setTexture(texture->TextureResource);
-            Screen->RenderTarget.draw(sprite);
+            Render(dust_cloud.Sprite.CurrentFrameSprite);
         }
     }
 

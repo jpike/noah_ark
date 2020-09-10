@@ -67,7 +67,7 @@ namespace INVENTORY
 
     /// Renders the inventory GUI to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryGui::Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const
+    void InventoryGui::Render(const STATES::SavedGameData& saved_game_data, GRAPHICS::Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -133,13 +133,13 @@ namespace INVENTORY
         switch (CurrentTab)
         {
             case TabType::BIBLE:
-                BiblePage.Render(inventory, renderer);
+                BiblePage.Render(saved_game_data.Player->Inventory, renderer);
                 break;
             case TabType::ANIMALS:
-                AnimalsPage.Render(inventory, renderer);
+                AnimalsPage.Render(saved_game_data, renderer);
                 break;
             case TabType::FOOD:
-                FoodPage.Render(inventory, renderer);
+                FoodPage.Render(saved_game_data.Player->Inventory, renderer);
                 break;
         }
     }

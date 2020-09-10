@@ -11,6 +11,7 @@
 #include "Inventory/InventoryBiblePage.h"
 #include "Inventory/InventoryFoodPage.h"
 #include "Math/Vector2.h"
+#include "States/SavedGameData.h"
 
 namespace INVENTORY
 {
@@ -65,7 +66,7 @@ namespace INVENTORY
         void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
-        void Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const;
+        void Render(const STATES::SavedGameData& saved_game_data, GRAPHICS::Renderer& renderer) const;
 
     private:
         // RENDERING.

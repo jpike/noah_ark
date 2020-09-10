@@ -85,7 +85,7 @@ namespace INVENTORY
 
     /// Renders the inventory GUI animals page to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryAnimalsPage::Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const
+    void InventoryAnimalsPage::Render(const STATES::SavedGameData& current_game_data, GRAPHICS::Renderer& renderer) const
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -212,7 +212,7 @@ namespace INVENTORY
 
             // CHECK IF THE SPECIES HAS BEEN COLLECTED.
             OBJECTS::AnimalSpecies species = static_cast<OBJECTS::AnimalSpecies>(species_id);
-            AnimalCollectionStatistics species_collection_statistics = inventory.GetAnimalCollectionStatistics(species);
+            AnimalCollectionStatistics species_collection_statistics = current_game_data.GetAnimalCollectionStatistics(species);
             bool species_collected = species_collection_statistics.Collected();
             if (species_collected)
             {

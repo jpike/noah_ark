@@ -6,9 +6,11 @@
 #include <unordered_map>
 #include <vector>
 #include "Bible/BibleVerse.h"
+#include "Inventory/AnimalCollectionStatistics.h"
 #include "Inventory/Inventory.h"
 #include "Math/Vector2.h"
 #include "Memory/Pointers.h"
+#include "Objects/Animal.h"
 #include "Objects/Noah.h"
 #include "States/BuiltArkPieceTileMapData.h"
 
@@ -31,6 +33,7 @@ namespace STATES
 
         // OTHER PUBLIC METHODS.
         bool AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const;
+        INVENTORY::AnimalCollectionStatistics GetAnimalCollectionStatistics(const OBJECTS::AnimalSpecies& species) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The path to the file for this saved game.
@@ -42,7 +45,13 @@ namespace STATES
         MEMORY::NonNullSharedPointer<OBJECTS::Noah> Player = MEMORY::NonNullSharedPointer<OBJECTS::Noah>(std::make_shared<OBJECTS::Noah>());
         /// Ark pieces built by the player.
         std::vector<BuiltArkPieceTileMapData> BuildArkPieces = {};
-        /// Animals collected by the player, with types mapping to collected counts.
-        std::unordered_map<OBJECTS::AnimalType, unsigned int> CollectedAnimals = {};
+        /// All animals collected by the player, with types mapping to collected counts.
+        std::unordered_map<OBJECTS::AnimalType, unsigned int> AllCollectedAnimals = {};
+        /// Animals collected by the player that are currently following the player,
+        /// with types mapping to collected counts.
+        std::unordered_map<OBJECTS::AnimalType, unsigned int> FollowingAnimals = {};
+        /// Animals collected by the player that are currently in the ark,
+        /// with types mapping to collected counts.
+        std::unordered_map<OBJECTS::AnimalType, unsigned int> AnimalsInArk = {};
     };
 }

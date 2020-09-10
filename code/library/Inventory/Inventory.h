@@ -22,11 +22,6 @@ namespace INVENTORY
         void AddFood(const OBJECTS::Food& food);
         unsigned int GetCollectedFoodCount(const OBJECTS::FoodType food_type) const;
         void AddAnimal(const std::shared_ptr<OBJECTS::Animal>& animal);
-        void GetAnimalCollectedCount(
-            const OBJECTS::AnimalSpecies species, 
-            unsigned int& species_male_animal_collected_count, 
-            unsigned int& species_female_animal_collected_count) const;
-        AnimalCollectionStatistics GetAnimalCollectionStatistics(const OBJECTS::AnimalSpecies species) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The axe.

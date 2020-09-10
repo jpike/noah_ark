@@ -72,7 +72,8 @@ namespace STATES
             const sf::Time& elapsed_time, 
             MAPS::TileMap& tile_map, 
             MAPS::MultiTileMapGrid& map_grid,
-            MAPS::World& world);
+            MAPS::World& world,
+            STATES::SavedGameData& current_game_data);
         void UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
 
         // COLLISION DETECTION.
@@ -89,7 +90,8 @@ namespace STATES
         void CollectAnimalsCollidingWithPlayer(
             MAPS::World& world, 
             MAPS::TileMap& tile_map, 
-            AUDIO::Speakers& speakers);
+            AUDIO::Speakers& speakers,
+            STATES::SavedGameData& current_game_data);
 
         // CAMERA UPDATING.
         void UpdateCameraWorldView(

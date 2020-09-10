@@ -237,7 +237,7 @@ namespace GUI
         // RENDER THE INVENTORY GUI IF IT IS OPENED.
         if (InventoryOpened)
         {
-            InventoryGui.Render(current_game_data.Player->Inventory, renderer);
+            InventoryGui.Render(current_game_data, renderer);
         }
 
         // RENDER THE TEXT BOX IF IT IS VISIBLE.

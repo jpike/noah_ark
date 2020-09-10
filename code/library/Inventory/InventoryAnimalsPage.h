@@ -8,6 +8,7 @@
 #include "Inventory/Inventory.h"
 #include "Math/Rectangle.h"
 #include "Objects/Animal.h"
+#include "States/SavedGameData.h"
 
 namespace INVENTORY
 {
@@ -25,7 +26,7 @@ namespace INVENTORY
         void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
-        void Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const;
+        void Render(const STATES::SavedGameData& current_game_data, GRAPHICS::Renderer& renderer) const;
 
     private:
         // ANIMAL SELECTION.

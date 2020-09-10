@@ -386,7 +386,7 @@ namespace STATES
             }
 
             // MOVE ANIMALS IN THE WORLD.
-            MoveAnimals(elapsed_time, *current_tile_map, map_grid, world);
+            MoveAnimals(elapsed_time, *current_tile_map, map_grid, world, current_game_data);
 
             // UPDATE FOOD FALLING IN THE WORLD.
             UpdateFallingFood(elapsed_time, *current_tile_map);
@@ -399,7 +399,7 @@ namespace STATES
                 std::string message_for_text_box;
                 CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, world, speakers, message_for_text_box);
                 CollectFoodCollidingWithPlayer(world, *current_tile_map, speakers);
-                CollectAnimalsCollidingWithPlayer(world, *current_tile_map, speakers);
+                CollectAnimalsCollidingWithPlayer(world, *current_tile_map, speakers, current_game_data);
 
                 // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
                 bool text_box_message_exists = !message_for_text_box.empty();
@@ -891,7 +891,8 @@ namespace STATES
         const sf::Time& elapsed_time, 
         MAPS::TileMap& tile_map, 
         MAPS::MultiTileMapGrid& map_grid,
-        MAPS::World& world)
+        MAPS::World& world,
+        STATES::SavedGameData& current_game_data)
     {
         // UPDATE ANIMALS FOLLOWING NOAH.
         // They should appear right behind Noah.
@@ -971,6 +972,10 @@ namespace STATES
                 bool animal_reached_doorway = ark_doorway_bounding_box.Intersects(animal_bounding_box);
                 if (animal_reached_doorway)
                 {
+                    // UPDATE THE ANIMAL STATISTICS.
+                    --current_game_data.FollowingAnimals[(*animal)->Type];
+                    ++current_game_data.AnimalsInArk[(*animal)->Type];
+
                     // ADD THE ANIMAL INTO THE APPROPRIATE TILE MAP OF THE ARK.
                     // This check is a precaution.  There should always be an entry point into the ark for the doorway.
                     assert(entry_point_into_ark);
@@ -1230,7 +1235,8 @@ namespace STATES
     void GameplayState::CollectAnimalsCollidingWithPlayer(
         MAPS::World& world, 
         MAPS::TileMap& tile_map, 
-        AUDIO::Speakers& speakers)
+        AUDIO::Speakers& speakers,
+        STATES::SavedGameData& current_game_data)
     {
         // HANDLE PLAYER COLLISIONS WITH ANIMALS.
         for (auto animal = tile_map.Animals.cbegin();
@@ -1248,6 +1254,8 @@ namespace STATES
                 // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
                 DEBUGGING::DebugConsole::WriteLine("Collected animal.");
                 world.NoahPlayer->Inventory.AddAnimal(*animal);
+                ++current_game_data.FollowingAnimals[(*animal)->Type];
+                ++current_game_data.AllCollectedAnimals[(*animal)->Type];
 
                 // REMOVE THE ANIMAL FROM THOSE IN THE CURRENT TILE MAP.
                 // This should move to the next animal.

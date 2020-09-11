@@ -33,8 +33,8 @@ namespace GUI
         // UPDATE.
         STATES::GameState Update(
             const HARDWARE::GamingHardware& gaming_hardware,
-            const MAPS::World& world,
-            STATES::SavedGameData& current_game_data);
+            STATES::SavedGameData& current_game_data,
+            const MAPS::World& world);
 
         // RENDERING.
         void Render(

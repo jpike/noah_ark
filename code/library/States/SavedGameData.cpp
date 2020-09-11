@@ -118,7 +118,7 @@ namespace STATES
             std::string newline_before_ark_piece_data;
             std::getline(saved_game_data_file, newline_before_ark_piece_data);
 
-            while (saved_game_data->BuildArkPieces.size() < expected_ark_data_count)
+            while (saved_game_data->BuiltArkPieces.size() < expected_ark_data_count)
             {
                 // READ THE NEXT LINE OF DATA.
                 std::string current_line_of_data;
@@ -157,7 +157,7 @@ namespace STATES
                 }
 
                 // ADD THE ARK DATA TO THE IN-MEMORY DATA.
-                saved_game_data->BuildArkPieces.push_back(built_ark_piece_data);
+                saved_game_data->BuiltArkPieces.push_back(built_ark_piece_data);
             }
 
             // READ IN THE COLLECTED ANIMAL DATA.
@@ -272,8 +272,8 @@ namespace STATES
 
         // WRITE THE BUILT ARK PIECES.
         // The count of ark piece data is written out first.
-        saved_game_data_file << BuildArkPieces.size() << std::endl;
-        for (const auto& built_ark_piece_tile_map_data : BuildArkPieces)
+        saved_game_data_file << BuiltArkPieces.size() << std::endl;
+        for (const auto& built_ark_piece_tile_map_data : BuiltArkPieces)
         {
             // WRITE THE TILE MAP INDICES.
             saved_game_data_file

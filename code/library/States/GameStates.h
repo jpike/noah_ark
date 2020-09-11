@@ -42,8 +42,6 @@ namespace STATES
 
         /// The current saved game being used.
         SavedGameData CurrentSavedGame = SavedGameData::DefaultSavedGameData();
-        /// The current state the game is in.
-        GameState CurrentGameState = GameState::INTRO_SEQUENCE;
         /// The intro sequence for the game.
         IntroSequence IntroSequence = {};
         /// The title screen for the game.

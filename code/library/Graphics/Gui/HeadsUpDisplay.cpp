@@ -24,13 +24,14 @@ namespace GUI
     {}
 
     /// Updates the HUD.
-    /// @param[in]  elapsed_time - The elapsed time since the last frame.
-    /// @param[in]  input_controller - The controller on which to check user input.
-    /// @return The next state the game should be in based on the HUD.
+    /// @param[in]  gaming_hardware - The gaming hardware supplying input.
+    /// @param[in]  current_game_data - The game data to display in the HUD.
+    /// @param[in]  world - The world for which the HUD is being displayed.
+    /// @return The state the game should be in after updating the HUD.
     STATES::GameState HeadsUpDisplay::Update(
         const HARDWARE::GamingHardware& gaming_hardware,
-        const MAPS::World& world,
-        STATES::SavedGameData& current_game_data)
+        STATES::SavedGameData& current_game_data,
+        const MAPS::World& world)
     {
         // CHECK IF THE PAUSE MENU IS OPEN.
         // If so, it should take precedence over other parts of the HUD.
@@ -41,7 +42,7 @@ namespace GUI
             if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Return))
             {
                 // SAVE THE GAME DATA.
-                
+                /// @todo   Update this function to not require non-const game data.
                 // Built ark piece data from all tile maps needs to be included.
                 unsigned int tile_map_row_count = world.Overworld.TileMaps.GetHeight();
                 unsigned int tile_map_column_count = world.Overworld.TileMaps.GetWidth();
@@ -81,7 +82,7 @@ namespace GUI
                             tile_map_ark_data.TileMapGridXPosition = tile_map_x_index;
                             tile_map_ark_data.TileMapGridYPosition = tile_map_y_index;
                             tile_map_ark_data.BuiltArkPieceIndices = built_ark_piece_indices;
-                            current_game_data.BuildArkPieces.push_back(tile_map_ark_data);
+                            current_game_data.BuiltArkPieces.push_back(tile_map_ark_data);
                         }
                     }
                 }
@@ -145,9 +146,8 @@ namespace GUI
             }
         }
 
-        // STAY ON THE CURRENT GAMEPLAY STATE.
-        /// @todo   This isn't accurate if the game is using the HUD in another state!
-        return STATES::GameState::GAMEPLAY;
+        // STAY ON THE CURRENT STATE.
+        return current_game_data.CurrentGameState;
     }
 
     /// Renders the HUD to the provided target.

@@ -52,14 +52,12 @@ namespace STATES
     private:
         // WORLD UPDATING.
         void UpdateMapGrid(
-            const sf::Time& elapsed_time,
+            HARDWARE::GamingHardware& gaming_hardware,
             MAPS::World& world,
-            INPUT_CONTROL::InputController& input_controller,
-            GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers,
             MAPS::MultiTileMapGrid& map_grid,
-            GRAPHICS::GUI::HeadsUpDisplay& hud,
-            STATES::SavedGameData& current_game_data);
+            GRAPHICS::Camera& camera,
+            STATES::SavedGameData& current_game_data,
+            GRAPHICS::GUI::HeadsUpDisplay& hud);
         MAPS::ExitPoint* UpdatePlayerBasedOnInput(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,

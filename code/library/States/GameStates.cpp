@@ -15,8 +15,8 @@ namespace STATES
         GRAPHICS::Camera& camera)
     {
         // UPDATE THE CURRENT STATE OF THE GAME.
-        GameState next_game_state = CurrentGameState;
-        switch (CurrentGameState)
+        GameState next_game_state = CurrentSavedGame.CurrentGameState;
+        switch (CurrentSavedGame.CurrentGameState)
         {
             case GameState::INTRO_SEQUENCE:
                 next_game_state = IntroSequence.Update(gaming_hardware);
@@ -68,7 +68,7 @@ namespace STATES
 
         // RENDER THE CURRENT GAME STATE.
         sf::Sprite screen_sprite;
-        switch (CurrentGameState)
+        switch (CurrentSavedGame.CurrentGameState)
         {
             case GameState::INTRO_SEQUENCE:
                 screen_sprite = IntroSequence.Render(renderer);
@@ -110,7 +110,7 @@ namespace STATES
         GRAPHICS::GUI::HeadsUpDisplay& hud)
     {
         // CHECK IF THE GAME STATE HAS CHANGED.
-        bool game_state_changed = (new_state != CurrentGameState);
+        bool game_state_changed = (new_state != CurrentSavedGame.CurrentGameState);
         if (!game_state_changed)
         {
             // The game is already in the correct state.
@@ -120,7 +120,7 @@ namespace STATES
         /// @todo   Stop audio?
 
         // UPDATE THE SAVED GAME DATA BEING USED IF A SAVED GAME IS BEING LOADED.
-        bool saved_game_being_loaded = (GameState::GAME_SELECTION_SCREEN == CurrentGameState);
+        bool saved_game_being_loaded = (GameState::GAME_SELECTION_SCREEN == CurrentSavedGame.CurrentGameState);
         if (saved_game_being_loaded)
         {
             // LOAD THE GAME'S SAVE FILE.
@@ -136,8 +136,8 @@ namespace STATES
         }
 
         // CHANGE THE GAME'S STATE.
-        CurrentGameState = new_state;
-        switch (CurrentGameState)
+        CurrentSavedGame.CurrentGameState = new_state;
+        switch (CurrentSavedGame.CurrentGameState)
         {
             case GameState::CREDITS_SCREEN:
                 // RESET THE ELAPSED TIME FOR THE CREDITS SCREEN.

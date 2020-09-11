@@ -65,8 +65,8 @@ namespace STATES
         GRAPHICS::GUI::HeadsUpDisplay& hud)
     {
         // UPDATE THE HUD.
-        // As of now, only the HUD is capable of altering the gameplay state.
-        GameState next_game_state = hud.Update(gaming_hardware, world, current_game_data);
+        // As of now, the HUD is capable of altering the gameplay state.
+        GameState next_game_state = hud.Update(gaming_hardware, current_game_data, world);
 
         // UPDATE THE TEXT BOX IF IT IS VISIBLE.
         // If the text box is currently being displayed, then it should capture any user input.

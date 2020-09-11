@@ -27,7 +27,7 @@ namespace STATES
         CurrentMapGrid = &world.Overworld;
 
         // Built ark pieces need to be initialized.
-        world.InitializeBuiltArkInOverworld(saved_game_data.BuildArkPieces);
+        world.InitializeBuiltArkInOverworld(saved_game_data.BuiltArkPieces);
 
         // FOCUS THE CAMERA ON THE PLAYER.
         MATH::Vector2f player_start_world_position = world.NoahPlayer->GetWorldPosition();
@@ -82,8 +82,8 @@ namespace STATES
 #endif
 
         // UPDATE THE HUD.
-        // As of now, only the HUD is capable of altering the gameplay state.
-        GameState next_game_state = hud.Update(gaming_hardware, world, current_game_data);
+        // As of now, the HUD is capable of altering the gameplay state.
+        GameState next_game_state = hud.Update(gaming_hardware, current_game_data, world);
 
         // CHECK IF A MODAL HUD COMPONENT IS DISPLAYED.
         // If a modal GUI component is displayed, then the regular controls for the player
@@ -97,14 +97,12 @@ namespace STATES
 
         // UPDATE THE CURRENT MAP GRID.
         UpdateMapGrid(
-            gaming_hardware.Clock.ElapsedTimeSinceLastFrame, 
+            gaming_hardware, 
             world,
-            gaming_hardware.InputController, 
-            camera, 
-            *gaming_hardware.Speakers,
             *CurrentMapGrid,
-            hud,
-            current_game_data);
+            camera, 
+            current_game_data,
+            hud);
 
         // START PLAYING THE BACKGROUND MUSIC IF ITS NOT ALREADY PLAYING.
         gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
@@ -249,21 +247,19 @@ namespace STATES
     }
 
     /// Updates a map grid based on elapsed time and player input.
-    /// @param[in]  elapsed_time - The amount of time by which to update the game state.
+    /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output.
     /// @param[in,out]  world - The world being updated.
-    /// @param[in,out]  input_controller - The controller supplying player input.
-    /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
-    /// @param[in,out]  speakers - The speakers in which to play audio.
     /// @param[in,out]  map_grid - The map grid to update.
+    /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
+    /// @param[in,out]  current_game_data - The current game data to use and update.
+    /// @param[in,out]  hud - The HUD to update.
     void GameplayState::UpdateMapGrid(
-        const sf::Time& elapsed_time,
+        HARDWARE::GamingHardware& gaming_hardware,
         MAPS::World& world,
-        INPUT_CONTROL::InputController& input_controller,
-        GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers,
         MAPS::MultiTileMapGrid& map_grid,
-        GRAPHICS::GUI::HeadsUpDisplay& hud,
-        STATES::SavedGameData& current_game_data)
+        GRAPHICS::Camera& camera,
+        STATES::SavedGameData& current_game_data,
+        GRAPHICS::GUI::HeadsUpDisplay& hud)
     {
         // GET THE CURRENT TILE MAP.
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
@@ -280,19 +276,19 @@ namespace STATES
         if (hud.MainTextBox.IsVisible)
         {
             // UPDATE THE TEXT IN THE TEXT BOX.
-            hud.MainTextBox.Update(elapsed_time);
+            hud.MainTextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
         }
         else
         {
             // UPDATE THE PLAYER BASED ON INPUT.
             MAPS::ExitPoint* map_exit_point = UpdatePlayerBasedOnInput(
-                elapsed_time, 
-                input_controller, 
+                gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
+                gaming_hardware.InputController,
                 world,
                 *current_tile_map, 
                 map_grid, 
                 camera,
-                speakers);
+                *gaming_hardware.Speakers);
             if (map_exit_point)
             {
                 // SWITCH OVER TO THE NEW MAP GRID.
@@ -329,7 +325,7 @@ namespace STATES
                 /// @todo   Add non-debug logic for this.
                 bool player_collected_all_items = false;
 #ifdef _DEBUG
-                player_collected_all_items = input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_CLOSE_ARK_DOORS_KEY);
+                player_collected_all_items = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_CLOSE_ARK_DOORS_KEY);
 #endif
                 if (player_collected_all_items)
                 {
@@ -386,10 +382,10 @@ namespace STATES
             }
 
             // MOVE ANIMALS IN THE WORLD.
-            MoveAnimals(elapsed_time, *current_tile_map, map_grid, world, current_game_data);
+            MoveAnimals(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, *current_tile_map, map_grid, world, current_game_data);
 
             // UPDATE FOOD FALLING IN THE WORLD.
-            UpdateFallingFood(elapsed_time, *current_tile_map);
+            UpdateFallingFood(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, *current_tile_map);
 
             // HANDLE PLAYER COLLISIONS WITH OUTSIDE OBJECTS.
             // These collisions aren't applicable for inside the ark and should be prohibited to prevent
@@ -397,9 +393,9 @@ namespace STATES
             if (!inside_ark)
             {
                 std::string message_for_text_box;
-                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, world, speakers, message_for_text_box);
-                CollectFoodCollidingWithPlayer(world, *current_tile_map, speakers);
-                CollectAnimalsCollidingWithPlayer(world, *current_tile_map, speakers, current_game_data);
+                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, world, *gaming_hardware.Speakers, message_for_text_box);
+                CollectFoodCollidingWithPlayer(world, *current_tile_map, *gaming_hardware.Speakers);
+                CollectAnimalsCollidingWithPlayer(world, *current_tile_map, *gaming_hardware.Speakers, current_game_data);
 
                 // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
                 bool text_box_message_exists = !message_for_text_box.empty();
@@ -423,7 +419,7 @@ namespace STATES
                 if (current_tile)
                 {
                     current_tile->Sprite.Play();
-                    current_tile->Sprite.Update(elapsed_time);
+                    current_tile->Sprite.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
                 }
             }
         }
@@ -431,14 +427,14 @@ namespace STATES
         // UPDATE THE CURRENT TILE MAP'S ANIMALS.
         for (auto& animal : current_tile_map->Animals)
         {
-            animal->Sprite.Update(elapsed_time);
+            animal->Sprite.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
         }
 
         // UPDATE THE CURRENT TILE MAP'S TREES.
         for (auto tree = current_tile_map->Trees.begin(); tree != current_tile_map->Trees.end(); ++tree)
         {
             // UPDATE THE TREE.
-            tree->Update(elapsed_time);
+            tree->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
             // START PLAYING THE TREE SHAKING SOUND EFFECT IF APPROPRIATE.
             bool is_shaking = tree->IsShaking();
@@ -446,10 +442,10 @@ namespace STATES
             {
                 // ONLY START PLAYING THE SOUND IF IT ISN'T ALREADY PLAYING.
                 // This results in a smoother sound experience.
-                bool tree_shake_sound_playing = speakers.SoundIsPlaying(RESOURCES::AssetId::TREE_SHAKE_SOUND);
+                bool tree_shake_sound_playing = gaming_hardware.Speakers->SoundIsPlaying(RESOURCES::AssetId::TREE_SHAKE_SOUND);
                 if (!tree_shake_sound_playing)
                 {
-                    speakers.PlaySoundEffect(RESOURCES::AssetId::TREE_SHAKE_SOUND);
+                    gaming_hardware.Speakers->PlaySoundEffect(RESOURCES::AssetId::TREE_SHAKE_SOUND);
                 }
             }
         }
@@ -458,7 +454,7 @@ namespace STATES
         for (auto dust_cloud = current_tile_map->DustClouds.begin(); dust_cloud != current_tile_map->DustClouds.end();)
         {
             // UPDATE THE CURRENT DUST CLOUD.
-            dust_cloud->Update(elapsed_time);
+            dust_cloud->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
             // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
             bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
@@ -475,15 +471,15 @@ namespace STATES
         }
 
         // UPDATE NOAH'S AXE AND SPRITE.
-        world.NoahPlayer->Inventory.Axe->Update(elapsed_time);
+        world.NoahPlayer->Inventory.Axe->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
         // UPDATE THE CAMERA'S WORLD VIEW.
         UpdateCameraWorldView(
-            elapsed_time,
+            gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
             world,
             camera,
-            speakers,
-            input_controller,
+            *gaming_hardware.Speakers,
+            gaming_hardware.InputController,
             *current_tile_map,
             current_game_data);
     }

@@ -87,7 +87,7 @@ namespace STATES
         }
         if (NewGameInstructionsCompleted)
         {
-            next_game_state = GameState::GAMEPLAY;
+            next_game_state = GameState::PRE_FLOOD_GAMEPLAY;
         }
         else
         {
@@ -113,7 +113,9 @@ namespace STATES
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
         // RENDER THE HUD.
-        hud.Render(current_game_data, renderer);
+        // Black text is most visible in the overworld.
+        const GRAPHICS::Color HUD_TEXT_COLOR = GRAPHICS::Color::BLACK;
+        hud.Render(current_game_data, HUD_TEXT_COLOR, renderer);
 
         // If the player is beginning a new game with God speaking to Noah, then the pulsing light
         // shader should be used to help communicate that God is speaking to the player.

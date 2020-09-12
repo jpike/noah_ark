@@ -272,13 +272,13 @@ int main()
                 }
                 if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num8))
                 {
-                    next_game_state = STATES::GameState::GAMEPLAY;
+                    next_game_state = STATES::GameState::PRE_FLOOD_GAMEPLAY;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
 
                 // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.                
 #if ASYNC_WORLD_LOADING
-                bool world_needed = (STATES::GameState::GAMEPLAY == next_game_state);
+                bool world_needed = (STATES::GameState::PRE_FLOOD_GAMEPLAY == next_game_state);
                 if (world_needed)
                 {
                     // This protection against the world being invalid is primarily to handle

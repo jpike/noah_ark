@@ -9,12 +9,12 @@
 #include "Maps/World.h"
 #include "States/CreditsScreen.h"
 #include "States/FloodCutscene.h"
-#include "States/GameplayState.h"
 #include "States/GameSelectionScreen.h"
 #include "States/GameState.h"
 #include "States/IntroSequence.h"
 #include "States/NewGameInstructionSequence.h"
 #include "States/NewGameIntroSequence.h"
+#include "States/PreFloodGameplayState.h"
 #include "States/TitleScreen.h"
 
 namespace STATES
@@ -55,8 +55,7 @@ namespace STATES
         /// The new game instruction sequence.
         NewGameInstructionSequence NewGameInstructionSequence = {};
         /// The main gameplay state.
-        /// @todo   Split this into pre-flood and during-flood states?
-        GameplayState GameplayState = {};
+        PreFloodGameplayState PreFloodGameplayState = {};
         /// The flood cutscene in-between the first and second halves of gameplay.
         FloodCutscene FloodCutscene = {};
     };

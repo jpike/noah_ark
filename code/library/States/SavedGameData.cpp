@@ -27,6 +27,14 @@ namespace STATES
             intro_bible_verses.cbegin(),
             intro_bible_verses.cend());
 
+        // INITIALIZE THE BIBLE VERSES LEFT TO FIND.
+        std::set_difference(
+            BIBLE::BIBLE_VERSES.cbegin(),
+            BIBLE::BIBLE_VERSES.cend(),
+            default_saved_game_data.Player->Inventory.BibleVerses.cbegin(),
+            default_saved_game_data.Player->Inventory.BibleVerses.cend(),
+            std::inserter(default_saved_game_data.BibleVersesLeftToFind, default_saved_game_data.BibleVersesLeftToFind.begin()));
+
         return default_saved_game_data;
     }
 
@@ -110,6 +118,14 @@ namespace STATES
                 saved_game_data->Player->Inventory.BibleVerses.insert(current_verse);
             }
 
+            // INITIALIZE THE BIBLE VERSES LEFT TO FIND.
+            std::set_difference(
+                BIBLE::BIBLE_VERSES.cbegin(),
+                BIBLE::BIBLE_VERSES.cend(),
+                saved_game_data->Player->Inventory.BibleVerses.cbegin(),
+                saved_game_data->Player->Inventory.BibleVerses.cend(),
+                std::inserter(saved_game_data->BibleVersesLeftToFind, saved_game_data->BibleVersesLeftToFind.begin()));
+                              
             // READ IN THE BUILT ARK PIECE DATA.
             unsigned int expected_ark_data_count;
             saved_game_data_file >> expected_ark_data_count;

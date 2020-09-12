@@ -28,6 +28,7 @@ namespace GRAPHICS
     public:
         // FINAL RENDER RETRIEVAL.
         sf::Sprite RenderFinalScreen(const sf::RenderStates& render_settings = sf::RenderStates::Default);
+        sf::Sprite RenderFinalScreenWithTimeOfDayShading();
 
         // LINE RENDERING.
         void RenderLine(const MATH::Vector2f& start_position, const MATH::Vector2f& end_position, const GRAPHICS::Color& color);

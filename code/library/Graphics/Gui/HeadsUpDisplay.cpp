@@ -17,7 +17,6 @@ namespace GUI
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels) :
     MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, font),
-    TextColor(GRAPHICS::Color::BLACK),
     PauseMenuVisible(false),
     InventoryOpened(false),
     InventoryGui()
@@ -119,6 +118,10 @@ namespace GUI
                     MainTextBox.MoveToNextPage();
                 }
             }
+
+            // UPDATE THE TEXT BOX IF IT IS VISIBLE.
+            // If the text box is currently being displayed, then it should capture any user input.
+            MainTextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
         }
         else
         {
@@ -151,9 +154,14 @@ namespace GUI
     }
 
     /// Renders the HUD to the provided target.
+    /// @param[in]  current_game_data - The game data being visualized in the HUD.
+    /// @param[in]  main_text_color - The color for text in the main HUD.  This doesn't affect
+    ///     text displayed in the main text box or the inventory GUI but only other text
+    ///     displayed directly by this HUD.
     /// @param[in,out]  renderer - The renderer to use for rendering.
     void HeadsUpDisplay::Render(
         const STATES::SavedGameData& current_game_data,
+        const GRAPHICS::Color& main_text_color,
         GRAPHICS::Renderer& renderer) const
     {
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
@@ -204,7 +212,7 @@ namespace GUI
             static_cast<float>(wood_icon_screen_position.X), 
             static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
         wood_text_top_left_screen_position_in_pixels.X += WOOD_LOG_TEXTURE_SUB_RECTANGLE.Width();
-        renderer.RenderText(wood_count_string, RESOURCES::AssetId::FONT_TEXTURE, wood_text_top_left_screen_position_in_pixels, TextColor);
+        renderer.RenderText(wood_count_string, RESOURCES::AssetId::FONT_TEXTURE, wood_text_top_left_screen_position_in_pixels, main_text_color);
 
         // RENDER COMPONENTS INDICATING HOW TO OPEN THE INVENTORY.
         // This text is rendered to the far-right of the screen so that its position isn't changed
@@ -222,7 +230,7 @@ namespace GUI
             OPEN_INVENTORY_TEXT, 
             RESOURCES::AssetId::FONT_TEXTURE, 
             open_inventory_text_top_left_screen_position_in_pixels, 
-            TextColor);
+            main_text_color);
 
         // An icon is rendered to help players know which key to press.  It is rendered after
         // the above text for the inventory since it is easier to correctly position here

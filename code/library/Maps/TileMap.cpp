@@ -138,4 +138,74 @@ namespace MAPS
         // INDICATE THAT NO EXIT POINT COULD BE FOUND.
         return nullptr;
     }
+
+    /// Updates the tile map based on elapsed time, simulating interactions within the map.
+    /// @param[in]  elapsed_time - The elapsed time for which to update the tile map.
+    /// @param[in,out]  speakers - The speakers out of which to play any audio.
+    void TileMap::Update(const sf::Time& elapsed_time, AUDIO::Speakers& speakers)
+    {
+        // UPDATE THE CURRENT TILE MAP'S TILES.
+        unsigned int map_height_in_tiles = Ground.Tiles.GetHeight();
+        unsigned int map_width_in_tiles = Ground.Tiles.GetWidth();
+        for (unsigned int tile_y = 0; tile_y < map_height_in_tiles; ++tile_y)
+        {
+            // UPDATE TILES ACROSS THE CURRENT ROW.
+            for (unsigned int tile_x = 0; tile_x < map_width_in_tiles; ++tile_x)
+            {
+                // UPDATE THE CURRENT TILE.
+                auto current_tile = Ground.Tiles(tile_x, tile_y);
+                if (current_tile)
+                {
+                    current_tile->Sprite.Play();
+                    current_tile->Sprite.Update(elapsed_time);
+                }
+            }
+        }
+
+        // UPDATE THE CURRENT TILE MAP'S ANIMALS.
+        for (auto& animal : Animals)
+        {
+            animal->Sprite.Update(elapsed_time);
+        }
+
+        // UPDATE THE CURRENT TILE MAP'S TREES.
+        for (auto tree = Trees.begin(); tree != Trees.end(); ++tree)
+        {
+            // UPDATE THE TREE.
+            tree->Update(elapsed_time);
+
+            // START PLAYING THE TREE SHAKING SOUND EFFECT IF APPROPRIATE.
+            bool is_shaking = tree->IsShaking();
+            if (is_shaking)
+            {
+                // ONLY START PLAYING THE SOUND IF IT ISN'T ALREADY PLAYING.
+                // This results in a smoother sound experience.
+                bool tree_shake_sound_playing = speakers.SoundIsPlaying(RESOURCES::AssetId::TREE_SHAKE_SOUND);
+                if (!tree_shake_sound_playing)
+                {
+                    speakers.PlaySoundEffect(RESOURCES::AssetId::TREE_SHAKE_SOUND);
+                }
+            }
+        }
+
+        // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
+        for (auto dust_cloud = DustClouds.begin(); dust_cloud != DustClouds.end();)
+        {
+            // UPDATE THE CURRENT DUST CLOUD.
+            dust_cloud->Update(elapsed_time);
+
+            // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
+            bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
+            if (dust_cloud_disappeared)
+            {
+                // REMOVE THE DUST CLOUD.
+                dust_cloud = DustClouds.erase(dust_cloud);
+            }
+            else
+            {
+                // MOVE TO UPDATING THE NEXT DUST CLOUD.
+                ++dust_cloud;
+            }
+        }
+    }
 }

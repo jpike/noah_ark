@@ -1,6 +1,7 @@
 #include <array>
 #include "Debugging/DebugConsole.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/TimeOfDayLighting.h"
 #include "String/String.h"
 
 namespace GRAPHICS
@@ -19,6 +20,26 @@ namespace GRAPHICS
         Screen->RenderTarget.display();
         screen.setTexture(Screen->RenderTarget.getTexture());
 
+        return screen;
+    }
+
+    /// Renders the final screen with time-of-day-shading.
+    /// @return The rendered screen.
+    sf::Sprite Renderer::RenderFinalScreenWithTimeOfDayShading()
+    {
+        // COMPUTE THE LIGHTING FOR THE CURRENT GAMEPLAY.
+        // For main gameplay, the world should be tinted based on the time of day most of the time.
+        sf::RenderStates lighting = sf::RenderStates::Default;
+        std::shared_ptr<sf::Shader> time_of_day_shader = GraphicsDevice->GetShader(RESOURCES::AssetId::TIME_OF_DAY_SHADER);
+        if (time_of_day_shader)
+        {
+            // COMPUTE THE LIGHTING FOR THE SHADER.
+            TimeOfDayLighting::Compute(*time_of_day_shader);
+            lighting.shader = time_of_day_shader.get();
+        }
+
+        // RENDER THE FINAL SCREEN.
+        sf::Sprite screen = RenderFinalScreen(lighting);
         return screen;
     }
 

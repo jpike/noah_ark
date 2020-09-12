@@ -39,8 +39,8 @@ namespace STATES
             case GameState::FLOOD_CUTSCENE:
                 next_game_state = FloodCutscene.Update(gaming_hardware);
                 break;
-            case GameState::GAMEPLAY:
-                next_game_state = GameplayState.Update(
+            case GameState::PRE_FLOOD_GAMEPLAY:
+                next_game_state = PreFloodGameplayState.Update(
                     gaming_hardware,
                     world,
                     camera,
@@ -91,8 +91,8 @@ namespace STATES
             case GameState::FLOOD_CUTSCENE:
                 screen_sprite = FloodCutscene.Render(renderer);
                 break;
-            case GameState::GAMEPLAY:
-                screen_sprite = GameplayState.Render(world, hud, CurrentSavedGame, renderer);
+            case GameState::PRE_FLOOD_GAMEPLAY:
+                screen_sprite = PreFloodGameplayState.Render(world, hud, CurrentSavedGame, renderer);
                 break;
         }
         return screen_sprite;
@@ -157,10 +157,10 @@ namespace STATES
             case GameState::FLOOD_CUTSCENE:
                 FloodCutscene.Initialize();
                 break;
-            case GameState::GAMEPLAY:
+            case GameState::PRE_FLOOD_GAMEPLAY:
             {
                 // INITIALIZE THE GAMEPLAY STATE.
-                bool gameplay_state_initialized = GameplayState.Initialize(
+                bool gameplay_state_initialized = PreFloodGameplayState.Initialize(
                     CurrentSavedGame,
                     world,
                     renderer);

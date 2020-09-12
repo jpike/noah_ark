@@ -56,5 +56,7 @@ namespace STATES
         /// Animals collected by the player that are currently in the ark,
         /// with types mapping to collected counts.
         std::unordered_map<OBJECTS::AnimalType, unsigned int> AnimalsInArk = {};
+        /// Bible verses that still need to be found by the player.
+        std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind = {};
     };
 }

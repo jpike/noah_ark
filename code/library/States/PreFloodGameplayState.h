@@ -23,9 +23,8 @@
 namespace STATES
 {
     /// The state of the game featuring the main gameplay of the player moving Noah
-    /// throughout the overworld and inside the ark (before, during, and after
-    /// the flood).
-    class GameplayState
+    /// throughout the overworld and inside the ark (before the flood).
+    class PreFloodGameplayState
     {
     public:
         // INITIALIZATION.
@@ -80,6 +79,7 @@ namespace STATES
             MAPS::MultiTileMapGrid& map_grid,
             MAPS::World& world,
             AUDIO::Speakers& speakers,
+            STATES::SavedGameData& current_game_data,
             std::string& message_for_text_box);
         void CollectFoodCollidingWithPlayer(
             MAPS::World& world, 
@@ -104,8 +104,6 @@ namespace STATES
         // PRIVATE MEMBER VARIABLES.
         /// The current map being displayed within the world.
         MAPS::MultiTileMapGrid* CurrentMapGrid = nullptr;
-        /// Bible verses that still need to be found by the player.
-        std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind = {};
         /// The tile map editor GUI.
         MAPS::GUI::TileMapEditorGui TileMapEditorGui = {};
         /// Animals being transferred from following Noah into the ark.

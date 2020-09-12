@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <SFML/System.hpp>
+#include "Audio/Speakers.h"
 #include "Maps/ExitPoint.h"
 #include "Maps/GroundLayer.h"
 #include "Math/Vector2.h"
@@ -32,19 +34,18 @@ namespace MAPS
             const MATH::Vector2ui& dimensions_in_tiles = MATH::Vector2ui(),
             const unsigned int tile_dimension_in_pixels = 0);
 
-        // POSITIONING.
+        // POSITIONING/BOUNDARIES.
         MATH::Vector2f GetCenterWorldPosition() const;
-
-        // DIMENSIONS.
         MATH::Vector2ui GetDimensionsInTiles() const;
-
-        // BOUNDARIES.
         MATH::FloatRectangle GetWorldBoundingBox() const;
 
         // RETRIEVAL.
         std::shared_ptr<MAPS::Tile> GetTileAtWorldPosition(const float world_x_position, const float world_y_position) const;
         OBJECTS::ArkPiece* GetArkPieceAtWorldPosition(const MATH::Vector2f& world_position);
         MAPS::ExitPoint* GetExitPointAtWorldPosition(const MATH::Vector2f& world_position);
+
+        // UPDATING.
+        void Update(const sf::Time& elapsed_time, AUDIO::Speakers& speakers);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The 0-based index (from the top) of the tile map as located in a larger grid.

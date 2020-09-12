@@ -1,4 +1,3 @@
-#include "ErrorHandling/NullChecking.h"
 #include "Objects/Noah.h"
 
 namespace OBJECTS

@@ -109,7 +109,7 @@ namespace STATES
                     }
                     else
                     {
-                        return GameState::GAMEPLAY;
+                        return GameState::PRE_FLOOD_GAMEPLAY;
                     }
                 }
                 else

@@ -9,7 +9,7 @@
 #include "Debugging/DebugConsole.h"
 #include "ErrorHandling/NullChecking.h"
 #include "Gameplay/RandomAnimalGenerationAlgorithm.h"
-#include "States/GameplayState.h"
+#include "States/PreFloodGameplayState.h"
 
 namespace STATES
 {
@@ -18,7 +18,7 @@ namespace STATES
     /// @param[in,out]  world - The world for the gameplay state.
     /// @param[in,out]  renderer - The renderer used fro some initialization.
     /// @return True if initialization succeeded; false otherwise.
-    bool GameplayState::Initialize(
+    bool PreFloodGameplayState::Initialize(
         const SavedGameData& saved_game_data,
         MAPS::World& world,
         GRAPHICS::Renderer& renderer)
@@ -33,14 +33,6 @@ namespace STATES
         MATH::Vector2f player_start_world_position = world.NoahPlayer->GetWorldPosition();
         renderer.Camera.SetCenter(player_start_world_position);
 
-        // INITIALIZE THE BIBLE VERSES LEFT TO FIND.
-        std::set_difference(
-            BIBLE::BIBLE_VERSES.cbegin(),
-            BIBLE::BIBLE_VERSES.cend(),
-            saved_game_data.Player->Inventory.BibleVerses.cbegin(),
-            saved_game_data.Player->Inventory.BibleVerses.cend(),
-            std::inserter(BibleVersesLeftToFind, BibleVersesLeftToFind.begin()));
-
         // INDICATE THAT INITIALIZATION SUCCEEDED.
         return true;
     }
@@ -50,7 +42,7 @@ namespace STATES
     /// @param[in,out]  world - The world to update based on gameplay.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
     /// @return The next game state after updating.
-    GameState GameplayState::Update(
+    GameState PreFloodGameplayState::Update(
         HARDWARE::GamingHardware& gaming_hardware,
         MAPS::World& world,
         GRAPHICS::Camera& camera,
@@ -72,7 +64,7 @@ namespace STATES
             // If the tile map editor is displayed, it should have
             // full control over updating to avoid interference
             // by other components.
-            return GameState::GAMEPLAY;
+            return GameState::PRE_FLOOD_GAMEPLAY;
         }
         else
         {
@@ -115,7 +107,7 @@ namespace STATES
     /// @param[in]  world - The world to render.
     /// @param[in,out]  renderer - The renderer to use for rendering.
     /// @return The rendered gameplay state.
-    sf::Sprite GameplayState::Render(
+    sf::Sprite PreFloodGameplayState::Render(
         MAPS::World& world, 
         GRAPHICS::GUI::HeadsUpDisplay& hud,
         STATES::SavedGameData& current_game_data,
@@ -146,7 +138,7 @@ namespace STATES
                 renderer.Render(animal->Sprite.CurrentFrameSprite);
             }
 
-            // CHECK WHICH DIRECTION NOAH IS FACING.
+            // RENDER THE PLAYER.
             // If he's facing up, the axe needs to be rendered first
             // so that it appears in-front of him (behind him from
             // the player's view).
@@ -177,72 +169,20 @@ namespace STATES
             }
 
             // RENDER THE HUD.
-            hud.Render(current_game_data, renderer);
-        }
-
-        // COMPUTE THE LIGHTING FOR THE CURRENT GAMEPLAY.
-        // For main gameplay, the world should be tinted based on the time of day most of the time.
-        sf::RenderStates lighting = sf::RenderStates::Default;
-        std::shared_ptr<sf::Shader> time_of_day_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::TIME_OF_DAY_SHADER);
-        if (time_of_day_shader)
-        {
-            // GET THE CURRENT COLOR SCALE BASED ON TIME-OF-DAY.
-            // If an error occurs getting the current time of day,
-            // the normal (maximum) color values will be used
-            // (the time-of-day shading feature just won't exist for those users).
-            float time_of_day_color_scale = 1.0f;
-            std::time_t* const JUST_GET_RETURNED_TIME = nullptr;
-            std::time_t current_posix_time = std::time(JUST_GET_RETURNED_TIME);
-            std::tm current_time;
-            errno_t get_local_time_return_code = localtime_s(&current_time, &current_posix_time);
-            const errno_t GET_LOCAL_TIME_SUCCESS_RETURN_CODE = 0;
-            bool current_time_retrieved_successfully = (GET_LOCAL_TIME_SUCCESS_RETURN_CODE == get_local_time_return_code);
-            if (current_time_retrieved_successfully)
+            // The text color should differ based on where the player is located.
+            // The default color of black is more readable in the overworld.
+            GRAPHICS::Color hud_text_color = GRAPHICS::Color::BLACK;
+            bool in_ark = world.Ark.Interior.Contains(CurrentMapGrid);
+            if (in_ark)
             {
-                // 0.4f is the darkest we can go and still have the screen
-                // remain reasonably visible.
-                const std::size_t HOUR_COUNT_PER_DAY = 24;
-                std::array<float, HOUR_COUNT_PER_DAY> HOUR_TO_COLOR_SCALE_LOOKUP =
-                {
-                    0.45f, // 12am
-                    0.4f, // 1am (darkest time)
-                    0.45f, // 2am
-                    0.50f, // 3am
-                    0.55f, // 4am
-                    0.60f, // 5am
-                    0.65f, // 6am
-                    0.70f, // 7am
-                    0.75f, // 8am
-                    0.80f, // 9am
-                    0.85f, // 10am
-                    0.90f, // 11am
-                    0.95f, // 12pm
-                    1.0f, // 1pm (brightest time)
-                    0.95f, // 2pm
-                    0.90f, // 3pm
-                    0.85f, // 4pm
-                    0.80f, // 5pm
-                    0.75f, // 6pm
-                    0.70f, // 7pm
-                    0.65f, // 8pm
-                    0.60f, // 9pm
-                    0.55f, // 10pm
-                    0.50f, // 11pm
-                };
-
-                time_of_day_color_scale = HOUR_TO_COLOR_SCALE_LOOKUP[current_time.tm_hour];
+                // White is more readable on-top of the black borders around the ark interior.
+                hud_text_color = GRAPHICS::Color::WHITE;
             }
-
-            // CONFIGURE THE SHADER.
-            time_of_day_shader->setUniform("color_scale", time_of_day_color_scale);
-            time_of_day_shader->setUniform("texture", sf::Shader::CurrentTexture);
-
-            // RENDER USING THE SHADER.
-            lighting.shader = time_of_day_shader.get();
+            hud.Render(current_game_data, hud_text_color, renderer);
         }
 
-        // RETURN THE FINAL RENDERED SCREEN.
-        sf::Sprite screen = renderer.RenderFinalScreen(lighting);
+        // RENDER THE FINAL SCREEN WITH TIME-OF-DAY LIGHTING.
+        sf::Sprite screen = renderer.RenderFinalScreenWithTimeOfDayShading(); 
         return screen;
     }
 
@@ -253,7 +193,7 @@ namespace STATES
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
     /// @param[in,out]  current_game_data - The current game data to use and update.
     /// @param[in,out]  hud - The HUD to update.
-    void GameplayState::UpdateMapGrid(
+    void PreFloodGameplayState::UpdateMapGrid(
         HARDWARE::GamingHardware& gaming_hardware,
         MAPS::World& world,
         MAPS::MultiTileMapGrid& map_grid,
@@ -271,14 +211,11 @@ namespace STATES
             return;
         }
 
-        // UPDATE THE TEXT BOX IF IT IS VISIBLE.
-        // If the text box is currently being displayed, then it should capture any user input.
-        if (hud.MainTextBox.IsVisible)
-        {
-            // UPDATE THE TEXT IN THE TEXT BOX.
-            hud.MainTextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
-        }
-        else
+        // MOVE OBJECTS IF POSSIBLE.
+        // If the main text box is displaying text, then no objects should move
+        // to avoid having the player's gameplay hindered.
+        bool objects_can_move = !hud.MainTextBox.IsVisible;
+        if (objects_can_move)
         {
             // UPDATE THE PLAYER BASED ON INPUT.
             MAPS::ExitPoint* map_exit_point = UpdatePlayerBasedOnInput(
@@ -300,19 +237,6 @@ namespace STATES
 
                 // MOVE THE PLAYER TO THE START POINT OF THE NEW TILE MAP.
                 world.NoahPlayer->SetWorldPosition(map_exit_point->NewPlayerWorldPosition);
-
-                // UPDATE THE HUD'S TEXT COLOR BASED THE MAP.
-                bool entered_ark = world.Ark.Interior.Contains(CurrentMapGrid);
-                if (entered_ark)
-                {
-                    // White is more readable on-top of the black borders around the ark interior.
-                    hud.TextColor = GRAPHICS::Color::WHITE;
-                }
-                else
-                {
-                    // The default color of black is more readable in the overworld.
-                    hud.TextColor = GRAPHICS::Color::BLACK;
-                }
 
                 // EXIT THIS UPDATE IF THE PLAYER HAS CHANGED MAPS.
                 return;
@@ -393,7 +317,7 @@ namespace STATES
             if (!inside_ark)
             {
                 std::string message_for_text_box;
-                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, world, *gaming_hardware.Speakers, message_for_text_box);
+                CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, world, *gaming_hardware.Speakers, current_game_data, message_for_text_box);
                 CollectFoodCollidingWithPlayer(world, *current_tile_map, *gaming_hardware.Speakers);
                 CollectAnimalsCollidingWithPlayer(world, *current_tile_map, *gaming_hardware.Speakers, current_game_data);
 
@@ -406,69 +330,8 @@ namespace STATES
             }
         }
 
-        // UPDATE THE CURRENT TILE MAP'S TILES.
-        unsigned int map_height_in_tiles = current_tile_map->Ground.Tiles.GetHeight();
-        unsigned int map_width_in_tiles = current_tile_map->Ground.Tiles.GetWidth();
-        for (unsigned int tile_y = 0; tile_y < map_height_in_tiles; ++tile_y)
-        {
-            // UPDATE TILES ACROSS THE CURRENT ROW.
-            for (unsigned int tile_x = 0; tile_x < map_width_in_tiles; ++tile_x)
-            {
-                // UPDATE THE CURRENT TILE.
-                auto current_tile = current_tile_map->Ground.Tiles(tile_x, tile_y);
-                if (current_tile)
-                {
-                    current_tile->Sprite.Play();
-                    current_tile->Sprite.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
-                }
-            }
-        }
-
-        // UPDATE THE CURRENT TILE MAP'S ANIMALS.
-        for (auto& animal : current_tile_map->Animals)
-        {
-            animal->Sprite.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
-        }
-
-        // UPDATE THE CURRENT TILE MAP'S TREES.
-        for (auto tree = current_tile_map->Trees.begin(); tree != current_tile_map->Trees.end(); ++tree)
-        {
-            // UPDATE THE TREE.
-            tree->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
-
-            // START PLAYING THE TREE SHAKING SOUND EFFECT IF APPROPRIATE.
-            bool is_shaking = tree->IsShaking();
-            if (is_shaking)
-            {
-                // ONLY START PLAYING THE SOUND IF IT ISN'T ALREADY PLAYING.
-                // This results in a smoother sound experience.
-                bool tree_shake_sound_playing = gaming_hardware.Speakers->SoundIsPlaying(RESOURCES::AssetId::TREE_SHAKE_SOUND);
-                if (!tree_shake_sound_playing)
-                {
-                    gaming_hardware.Speakers->PlaySoundEffect(RESOURCES::AssetId::TREE_SHAKE_SOUND);
-                }
-            }
-        }
-
-        // UPDATE THE CURRENT TILE MAP'S DUST CLOUDS.
-        for (auto dust_cloud = current_tile_map->DustClouds.begin(); dust_cloud != current_tile_map->DustClouds.end();)
-        {
-            // UPDATE THE CURRENT DUST CLOUD.
-            dust_cloud->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
-
-            // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
-            bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
-            if (dust_cloud_disappeared)
-            {
-                // REMOVE THE DUST CLOUD.
-                dust_cloud = current_tile_map->DustClouds.erase(dust_cloud);
-            }
-            else
-            {
-                // MOVE TO UPDATING THE NEXT DUST CLOUD.
-                ++dust_cloud;
-            }
-        }
+        // UPDATE THE WORLD WITHIN CURRENT TILE MAP.
+        current_tile_map->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, *gaming_hardware.Speakers);
 
         // UPDATE NOAH'S AXE AND SPRITE.
         world.NoahPlayer->Inventory.Axe->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
@@ -493,7 +356,7 @@ namespace STATES
     /// @param[in,out]  camera - The camera defining the viewable region of the map grid.
     /// @param[in,out]  speakers - The speakers from which to play any audio.
     /// @return The map exit point, if the player stepped on such a point.
-    MAPS::ExitPoint* GameplayState::UpdatePlayerBasedOnInput(
+    MAPS::ExitPoint* PreFloodGameplayState::UpdatePlayerBasedOnInput(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         MAPS::World& world,
@@ -883,7 +746,7 @@ namespace STATES
     /// @param[in,out]  tile_map - The tile map in which to move animals.
     /// @param[in,out]  map_grid - The map grid containing the tile map.
     /// @param[in,out]  world - The world containing the map.
-    void GameplayState::MoveAnimals(
+    void PreFloodGameplayState::MoveAnimals(
         const sf::Time& elapsed_time, 
         MAPS::TileMap& tile_map, 
         MAPS::MultiTileMapGrid& map_grid,
@@ -1080,7 +943,7 @@ namespace STATES
     /// Updates any falling food in the tile map.
     /// @param[in]  elapsed_time - The elapsed time for which to update the food.
     /// @param[in,out]  tile_map - The tile map whose falling food to update.
-    void GameplayState::UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
+    void PreFloodGameplayState::UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
     {
         // UPDATE ANY FALLING FOOD.
         for (auto food = tile_map.FallingFood.begin();
@@ -1112,11 +975,12 @@ namespace STATES
     /// @param[in,out]  speakers - The speakers from which to play any audio.
     /// @param[out] message_for_text_box - A message for the HUD's main text box, if
     ///     a Bible verse was collected.
-    void GameplayState::CollectWoodAndBibleVersesCollidingWithPlayer(
+    void PreFloodGameplayState::CollectWoodAndBibleVersesCollidingWithPlayer(
         MAPS::TileMap& tile_map,
         MAPS::MultiTileMapGrid& map_grid,
         MAPS::World& world,
         AUDIO::Speakers& speakers,
+        STATES::SavedGameData& current_game_data,
         std::string& message_for_text_box)
     {
         // INDICATE THAT NO MESSAGE EXISTS FOR THE TEXT BOX YET.
@@ -1154,16 +1018,16 @@ namespace STATES
                 {
                     // CHECK IF ANY BIBLE VERSES REMAIN.
                     // This check helps protect against a mod by 0 below.
-                    bool bible_verses_remain_to_be_found = !BibleVersesLeftToFind.empty();
+                    bool bible_verses_remain_to_be_found = !current_game_data.BibleVersesLeftToFind.empty();
                     if (bible_verses_remain_to_be_found)
                     {
                         // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
                         speakers.PlaySoundEffect(RESOURCES::AssetId::COLLECT_BIBLE_VERSE_SOUND);
 
                         // SELECT A RANDOM BIBLE VERSE.
-                        size_t remaining_bible_verse_count = BibleVersesLeftToFind.size();
+                        size_t remaining_bible_verse_count = current_game_data.BibleVersesLeftToFind.size();
                         size_t random_bible_verse_index = RandomNumberGenerator.RandomNumberLessThan(remaining_bible_verse_count);
-                        auto bible_verse = BibleVersesLeftToFind.begin() + random_bible_verse_index;
+                        auto bible_verse = current_game_data.BibleVersesLeftToFind.begin() + random_bible_verse_index;
 
                         // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
                         world.NoahPlayer->Inventory.BibleVerses.insert(*bible_verse);
@@ -1172,7 +1036,7 @@ namespace STATES
                         message_for_text_box = "You got a Bible verse!\n" + bible_verse->ToString();
 
                         // REMOVE THE VERSE SINCE IT HAS BEEN FOUND.
-                        BibleVersesLeftToFind.erase(bible_verse);
+                        current_game_data.BibleVersesLeftToFind.erase(bible_verse);
                     }
                 }
             }
@@ -1189,7 +1053,7 @@ namespace STATES
     /// @param[in,out]  world - The world containing the tile map.
     /// @param[in,out]  tile_map - The tile map to examine food in.
     /// @param[in,out]  speakers - The speakers from which to play any audio.
-    void GameplayState::CollectFoodCollidingWithPlayer(
+    void PreFloodGameplayState::CollectFoodCollidingWithPlayer(
         MAPS::World& world,
         MAPS::TileMap& tile_map, 
         AUDIO::Speakers& speakers)
@@ -1228,7 +1092,7 @@ namespace STATES
     /// @param[in,out]  world - The world containing the tile map.
     /// @param[in,out]  tile_map - The tile map to examine animals in.
     /// @param[in,out]  speakers - The speakers from which to play any audio.
-    void GameplayState::CollectAnimalsCollidingWithPlayer(
+    void PreFloodGameplayState::CollectAnimalsCollidingWithPlayer(
         MAPS::World& world, 
         MAPS::TileMap& tile_map, 
         AUDIO::Speakers& speakers,
@@ -1274,7 +1138,7 @@ namespace STATES
     /// @param[in,out]  input_controller - The input controller that might
     ///     be tweaked based on camera movement.
     /// @param[in,out]  current_tile_map - The current tile map in view by the camera.
-    void GameplayState::UpdateCameraWorldView(
+    void PreFloodGameplayState::UpdateCameraWorldView(
         const sf::Time& elapsed_time,
         MAPS::World& world,
         GRAPHICS::Camera& camera,

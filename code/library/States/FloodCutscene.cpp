@@ -35,8 +35,8 @@ namespace STATES
         bool cutscene_completed = Completed();
         if (cutscene_completed)
         {
-            // RETURN TO THE MAIN GAMEPLAY STATE.
-            return GameState::GAMEPLAY;
+            // RETURN TO THE MAIN PRE-FLOOD GAMEPLAY STATE.
+            return GameState::PRE_FLOOD_GAMEPLAY;
         }
         else
         {

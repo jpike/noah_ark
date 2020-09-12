@@ -39,6 +39,7 @@ namespace GUI
         // RENDERING.
         void Render(
             const STATES::SavedGameData& current_game_data,
+            const GRAPHICS::Color& main_text_color,
             GRAPHICS::Renderer& renderer) const;
 
         // OTHER METHODS.
@@ -47,10 +48,6 @@ namespace GUI
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main text box for displaying messages to the player.
         GRAPHICS::GUI::TextBox MainTextBox;
-        /// The color for text in the main HUD.  This doesn't affect
-        /// text displayed in the main text box or the inventory GUI
-        /// but only other text displayed directly by this HUD.
-        GRAPHICS::Color TextColor;
         /// True if the pause menu box is visible; false otherwise.
         bool PauseMenuVisible;
         /// True if the full inventory GUI is displayed; false otherwise.

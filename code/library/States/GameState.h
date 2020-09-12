@@ -20,7 +20,7 @@ namespace STATES
         /// The cutscene that plays once the ark has been built and the world is flooding;
         /// serves to transition the main gameplay to the "inside ark" substate.
         FLOOD_CUTSCENE,
-        /// The main gameplay state for the game.
-        GAMEPLAY
+        /// The main gameplay state for the game (prior to the flood).
+        PRE_FLOOD_GAMEPLAY
     };
 }

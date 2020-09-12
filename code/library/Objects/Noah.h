@@ -37,17 +37,13 @@ namespace OBJECTS
         // CONSTRUCTION.
         explicit Noah();
 
-        // POSITIONING.
+        // POSITIONING/BOUNDARIES.
         MATH::Vector2f GetWorldPosition() const;
         void SetWorldPosition(const MATH::Vector2f& world_position);
-
-        // BOUNDING BOX.
         MATH::FloatRectangle GetWorldBoundingBox() const;
         
-        // MOVEMENT.
+        // ACTIONS.
         void BeginWalking(const GAMEPLAY::Direction direction, const std::string& walking_animation_name);
-
-        // AXE SWINGING.
         std::shared_ptr<GAMEPLAY::AxeSwingEvent> SwingAxe() const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

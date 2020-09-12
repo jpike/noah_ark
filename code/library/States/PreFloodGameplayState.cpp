@@ -87,7 +87,16 @@ namespace STATES
             return next_game_state;
         }
 
-        // UPDATE THE CURRENT MAP GRID.
+        // UPDATE THE WORLD.
+        bool objects_can_move = !hud.MainTextBox.IsVisible;
+        if (objects_can_move)
+        {
+            world.NoahPlayer->Inventory.FollowingAnimals.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+        }
+
+        world.NoahPlayer->Inventory.Axe->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+
+#if 1
         UpdateMapGrid(
             gaming_hardware, 
             world,
@@ -95,6 +104,7 @@ namespace STATES
             camera, 
             current_game_data,
             hud);
+#endif
 
         // START PLAYING THE BACKGROUND MUSIC IF ITS NOT ALREADY PLAYING.
         gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
@@ -326,9 +336,6 @@ namespace STATES
 
         // UPDATE THE REST OF THE WORLD WITHIN CURRENT TILE MAP.
         current_tile_map->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, objects_can_move, current_game_data, *gaming_hardware.Speakers);
-
-        // UPDATE NOAH'S AXE.
-        world.NoahPlayer->Inventory.Axe->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
         // UPDATE THE CAMERA'S WORLD VIEW.
         UpdateCameraWorldView(

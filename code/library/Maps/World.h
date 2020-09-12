@@ -5,6 +5,7 @@
 #include "Maps/Ark.h"
 #include "Maps/MultiTileMapGrid.h"
 #include "Maps/Overworld.h"
+#include "Math/Vector2.h"
 #include "Memory/Pointers.h"
 #include "Objects/Animal.h"
 #include "Objects/Noah.h"

@@ -267,9 +267,6 @@ namespace MAPS
             return;
         }
 
-        // UPDATE ANIMALS FOLLOWING NOAH.
-        MapGrid->World->NoahPlayer->Inventory.FollowingAnimals.Update(elapsed_time);
-
         // CHECK IF THE CURRENT TILE MAP HAS A VISIBLE EXTERNAL ARK DOORWAY.
         // This is how animals following Noah get transferred into the ark.
         bool inside_ark = (TileMapType::ARK_INTERIOR == Type);

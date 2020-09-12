@@ -41,26 +41,6 @@
 #include "States/GameStates.h"
 #include "States/GameState.h"
 
-/// Loads the world.
-/// @return The world, if successfully loaded; null otherwise.
-MEMORY::NonNullSharedPointer<MAPS::World> LoadWorld()
-{
-    // CREATE THE EMPTY WORLD.
-    auto load_start_time = std::chrono::system_clock::now();
-    MEMORY::NonNullSharedPointer<MAPS::World> world = MAPS::World::CreateInitial();
-    auto load_end_time = std::chrono::system_clock::now();
-
-    // Overworld load time: 82,263,372 (file-based)
-    // Overworld load time: 17,972,479 (array-based)
-    // World load time (with ark interior): 31,132,753
-    auto load_time_diff = load_end_time - load_start_time;
-    DEBUGGING::DebugConsole::WriteLine("World load time: ", load_time_diff.count());
-    DEBUGGING::DebugConsole::WriteLine("World load time (ms): ", std::chrono::duration_cast<std::chrono::milliseconds>(load_time_diff).count());
-    DEBUGGING::DebugConsole::WriteLine("World load time (s): ", std::chrono::duration_cast<std::chrono::seconds>(load_time_diff).count());
-
-    return world;
-}
-
 void LoadRemainingAssets(HARDWARE::GamingHardware& gaming_hardware)
 {
     auto load_start_time = std::chrono::system_clock::now();
@@ -167,10 +147,9 @@ int main()
         STATES::GameStates game_states;
         game_states.IntroSequence.Initialize(*gaming_hardware.Speakers);
 
-        // LOAD THE WORLD.
-        //std::future<std::shared_ptr<MAPS::World>> world_being_loaded = std::async(LoadWorld);
-        MEMORY::NonNullSharedPointer<MAPS::World> world = MAPS::World::CreateInitial();
-        game_states.CurrentSavedGame.Player = world->NoahPlayer;
+        // CREATE THE WORLD.
+        MAPS::World world;
+        game_states.CurrentSavedGame.Player = world.NoahPlayer;
 
         // INITIALIZE THE HUD.
         unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
@@ -227,10 +206,10 @@ int main()
                 gaming_hardware.Clock.UpdateElapsedTime();
 
                 // UPDATE THE GAME'S CURRENT STATE.
-                STATES::GameState next_game_state = game_states.Update(gaming_hardware, *world, hud, renderer.Camera);
+                STATES::GameState next_game_state = game_states.Update(gaming_hardware, world, hud, renderer.Camera);
 
                 // RENDER THE CURRENT STATE OF THE GAME TO THE WINDOW.
-                sf::Sprite screen_sprite = game_states.Render(gaming_hardware, *world, hud, renderer);
+                sf::Sprite screen_sprite = game_states.Render(gaming_hardware, world, hud, renderer);
                 window.draw(screen_sprite);
                 window.display();
 
@@ -276,30 +255,8 @@ int main()
                     gaming_hardware.Speakers->StopAllAudio();
                 }
 
-                // PERFORM ADDITIONAL STEPS NEEDED TO TRANSITION TO CERTAIN NEW GAME STATES.                
-#if ASYNC_WORLD_LOADING
-                bool world_needed = (STATES::GameState::PRE_FLOOD_GAMEPLAY == next_game_state);
-                if (world_needed)
-                {
-                    // This protection against the world being invalid is primarily to handle
-                    // debug code for quickly switching between states.
-                    bool world_loading_valid = world_being_loaded.valid();
-                    if (world_loading_valid)
-                    {
-                        world = world_being_loaded.get();
-                    }
-                    else
-                    {
-                        world = game_states.GameplayState.World;
-                    }
-                    if (!world)
-                    {
-                        DEBUGGING::DebugConsole::WriteErrorLine("Failed to load world");
-                        return EXIT_FAILURE;
-                    }
-                }
-#endif
-                game_states.SwitchStatesIfChanged(next_game_state, *world, renderer, hud);
+                // SWITCH THE GAME STATE IF NEEDED.
+                game_states.SwitchStatesIfChanged(next_game_state, world, renderer, hud);
             }
         }
 

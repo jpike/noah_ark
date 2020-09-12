@@ -24,7 +24,7 @@ namespace STATES
         GRAPHICS::Renderer& renderer)
     {
         // INITIALIZE THE WORLD.
-        CurrentMapGrid = &world.Overworld;
+        CurrentMapGrid = &world.Overworld.MapGrid;
 
         // Built ark pieces need to be initialized.
         world.InitializeBuiltArkInOverworld(saved_game_data.BuiltArkPieces);
@@ -127,7 +127,7 @@ namespace STATES
         else
         {
             // RENDER ANY ANIMALS ENTERING INTO THE ARK.
-            for (const auto& animal : AnimalsGoingIntoArk)
+            for (const auto& animal : world.AnimalsGoingIntoArk)
             {
                 renderer.Render(animal->Sprite.CurrentFrameSprite);
             }
@@ -305,12 +305,6 @@ namespace STATES
                 }
             }
 
-            // MOVE ANIMALS IN THE WORLD.
-            MoveAnimals(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, *current_tile_map, map_grid, world, current_game_data);
-
-            // UPDATE FOOD FALLING IN THE WORLD.
-            UpdateFallingFood(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, *current_tile_map);
-
             // HANDLE PLAYER COLLISIONS WITH OUTSIDE OBJECTS.
             // These collisions aren't applicable for inside the ark and should be prohibited to prevent
             // things like recollecting of animals that have just entered into the ark.
@@ -330,10 +324,10 @@ namespace STATES
             }
         }
 
-        // UPDATE THE WORLD WITHIN CURRENT TILE MAP.
-        current_tile_map->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, *gaming_hardware.Speakers);
+        // UPDATE THE REST OF THE WORLD WITHIN CURRENT TILE MAP.
+        current_tile_map->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, objects_can_move, current_game_data, *gaming_hardware.Speakers);
 
-        // UPDATE NOAH'S AXE AND SPRITE.
+        // UPDATE NOAH'S AXE.
         world.NoahPlayer->Inventory.Axe->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
         // UPDATE THE CAMERA'S WORLD VIEW.
@@ -739,232 +733,6 @@ namespace STATES
 
         // INDICATE THAT THE PLAYER DIDN'T STEP ON AN EXIT POINT.
         return nullptr;
-    }
-
-    /// Moves animals in the provided tile map based on the elapsed time.
-    /// @param[in]  elapsed_time - The elapsed time for which to move the animals.
-    /// @param[in,out]  tile_map - The tile map in which to move animals.
-    /// @param[in,out]  map_grid - The map grid containing the tile map.
-    /// @param[in,out]  world - The world containing the map.
-    void PreFloodGameplayState::MoveAnimals(
-        const sf::Time& elapsed_time, 
-        MAPS::TileMap& tile_map, 
-        MAPS::MultiTileMapGrid& map_grid,
-        MAPS::World& world,
-        STATES::SavedGameData& current_game_data)
-    {
-        // UPDATE ANIMALS FOLLOWING NOAH.
-        // They should appear right behind Noah.
-        MATH::FloatRectangle noah_world_bounding_box = world.NoahPlayer->GetWorldBoundingBox();
-        // Defaults to appearing in the same location as Noah for easier visibility into problems.
-        MATH::Vector2f noah_center_world_position = noah_world_bounding_box.Center();
-        MATH::Vector2f following_animal_group_world_position = noah_center_world_position;
-        switch (world.NoahPlayer->FacingDirection)
-        {
-            case GAMEPLAY::Direction::UP:
-                // The animals should appear below Noah.
-                following_animal_group_world_position.Y = noah_world_bounding_box.RightBottom.Y + GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
-                break;
-            case GAMEPLAY::Direction::DOWN:
-                // The animals should appear above Noah.
-                following_animal_group_world_position.Y = noah_world_bounding_box.LeftTop.Y - GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
-                break;
-            case GAMEPLAY::Direction::LEFT:
-                // The animals should appear to the right of Noah.
-                following_animal_group_world_position.X = noah_world_bounding_box.RightBottom.X + GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
-                break;
-            case GAMEPLAY::Direction::RIGHT:
-                // The animals should appear to the left of Noah.
-                following_animal_group_world_position.X = noah_world_bounding_box.LeftTop.X - GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
-                break;
-        }
-        world.NoahPlayer->Inventory.FollowingAnimals.Update(elapsed_time, following_animal_group_world_position);
-
-        // CHECK IF THE CURRENT TILE MAP HAS A VISIBLE EXTERNAL ARK DOORWAY.
-        // This is how animals following Noah get transferred into the ark.
-        bool inside_ark = world.Ark.Interior.Contains(&map_grid);
-        const OBJECTS::ArkPiece* doorway_into_ark = nullptr;
-        for (const OBJECTS::ArkPiece& ark_piece : tile_map.ArkPieces)
-        {
-            bool is_doorway_into_ark = !inside_ark && ark_piece.Built && ark_piece.IsExternalDoorway;
-            if (is_doorway_into_ark)
-            {
-                doorway_into_ark = &ark_piece;
-                break;
-            }
-        }
-        if (doorway_into_ark)
-        {
-            // TRANSFER THE ANIMALS CURRENTLY FOLLOWING NOAH OVER TO MOVING INTO THE ARK.
-            AnimalsGoingIntoArk.insert(
-                AnimalsGoingIntoArk.cend(),
-                world.NoahPlayer->Inventory.FollowingAnimals.Animals.cbegin(),
-                world.NoahPlayer->Inventory.FollowingAnimals.Animals.cend());
-            world.NoahPlayer->Inventory.FollowingAnimals.Animals.clear();
-
-            // MOVE THE ANIMALS GOING INTO THE ARK CLOSER INTO THE ARK.
-            MATH::FloatRectangle ark_doorway_bounding_box = doorway_into_ark->Sprite.GetWorldBoundingBox();
-            MATH::Vector2f ark_doorway_world_position = doorway_into_ark->Sprite.WorldPosition;
-            MAPS::ExitPoint* entry_point_into_ark = tile_map.GetExitPointAtWorldPosition(ark_doorway_world_position);
-            for (auto animal = AnimalsGoingIntoArk.begin(); animal != AnimalsGoingIntoArk.end(); )
-            {
-                // UPDATE THE ANIMAL'S ANIMATION.
-                (*animal)->Sprite.Update(elapsed_time);
-
-                // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE DOORWAY.
-                MATH::Vector2f animal_world_position = (*animal)->Sprite.GetWorldPosition();
-                MATH::Vector2f animal_to_ark_doorway_vector = ark_doorway_world_position - animal_world_position;
-                MATH::Vector2f animal_to_ark_doorway_direction = MATH::Vector2f::Normalize(animal_to_ark_doorway_vector);
-
-                // CALCULATE THE DISTANCE THE ANIMAL NEEDS TO MOVE.
-                float elapsed_time_in_seconds = elapsed_time.asSeconds();
-                float animal_move_distance_in_pixels = (*animal)->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
-                MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_ark_doorway_direction);
-
-                // MOVE THE ANIMAL.
-                /// @todo   Should we take tile types into account?
-                MATH::Vector2f new_animal_world_position = animal_world_position + animal_move_vector;
-                (*animal)->Sprite.SetWorldPosition(new_animal_world_position);
-
-                // TRANSFER THE ANIMAL INTO THE ARK IF IT HAS REACHED THE DOORWAY.
-                MATH::FloatRectangle animal_bounding_box = (*animal)->Sprite.GetWorldBoundingBox();
-                bool animal_reached_doorway = ark_doorway_bounding_box.Intersects(animal_bounding_box);
-                if (animal_reached_doorway)
-                {
-                    // UPDATE THE ANIMAL STATISTICS.
-                    --current_game_data.FollowingAnimals[(*animal)->Type];
-                    ++current_game_data.AnimalsInArk[(*animal)->Type];
-
-                    // ADD THE ANIMAL INTO THE APPROPRIATE TILE MAP OF THE ARK.
-                    // This check is a precaution.  There should always be an entry point into the ark for the doorway.
-                    assert(entry_point_into_ark);
-                    if (entry_point_into_ark)
-                    {
-                        MAPS::TileMap* entry_room_inside_ark = entry_point_into_ark->NewTileMap;
-                        assert(entry_room_inside_ark);
-                        if (entry_room_inside_ark)
-                        {
-                            (*animal)->Sprite.SetWorldPosition(entry_point_into_ark->NewPlayerWorldPosition);
-                            entry_room_inside_ark->Animals.push_back(*animal);
-                        }
-                    }
-
-                    // REMOVE THE ANIMAL FROM ITS STATE OF TRYING TO ENTER THE ARK.
-                    animal = AnimalsGoingIntoArk.erase(animal);
-                }
-                else
-                {
-                    // MOVE TO UPDATING THE NEXT ANIMAL.
-                    ++animal;
-                }
-            }
-        }
-
-        // MOVE EACH ANIMAL IN THE TILE MAP CLOSER TO NOAH IF THEY'RE OUTSIDE.
-        if (!inside_ark)
-        {
-            for (auto& animal : tile_map.Animals)
-            {
-                // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE PLAYER.
-                // The animal should move closer to Noah based on Genesis 6:20.
-                MATH::Vector2f noah_world_position = world.NoahPlayer->GetWorldPosition();
-                MATH::Vector2f animal_world_position = animal->Sprite.GetWorldPosition();
-                MATH::Vector2f animal_to_noah_vector = noah_world_position - animal_world_position;
-                MATH::Vector2f animal_to_noah_direction = MATH::Vector2f::Normalize(animal_to_noah_vector);
-
-                // CALCULATE THE DISTANCE THE ANIMAL NEEDS TO MOVE.
-                float elapsed_time_in_seconds = elapsed_time.asSeconds();
-                float animal_move_distance_in_pixels = animal->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
-                MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_noah_direction);
-
-                // DETERMINE THE TYPES OF TILES THE ANIMAL IS ALLOWED TO MOVE OVER.
-                std::unordered_set<MAPS::TileType::Id> tile_types_allowed_to_move_over =
-                {
-                    MAPS::TileType::SAND,
-                    MAPS::TileType::GRASS,
-                    MAPS::TileType::BROWN_DIRT,
-                    MAPS::TileType::GRAY_STONE
-                };
-                bool animal_can_fly = animal->Type.CanFly();
-                bool animal_can_swim = animal->Type.CanSwim();
-                bool animal_move_move_over_water = (animal_can_fly || animal_can_swim);
-                if (animal_move_move_over_water)
-                {
-                    // LET THE ANIMAL MOVE OVER WATER.
-                    tile_types_allowed_to_move_over.insert(MAPS::TileType::WATER_TYPES.cbegin(), MAPS::TileType::WATER_TYPES.cend());
-                }
-
-                // MOVE THE ANIMAL.
-                MATH::FloatRectangle animal_world_bounding_box = animal->Sprite.GetWorldBoundingBox();
-                bool allow_movement_over_solid_objects = animal_can_fly;
-                MATH::Vector2f new_animal_world_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
-                    animal_world_bounding_box,
-                    animal_move_vector,
-                    tile_types_allowed_to_move_over,
-                    allow_movement_over_solid_objects,
-                    map_grid);
-                animal->Sprite.SetWorldPosition(new_animal_world_position);
-            }
-        }
-
-        // MOVE ANIMALS INSIDE THE ARK.
-        /// @todo   Come up with better movement!
-        if (inside_ark)
-        {
-            for (auto& animal : tile_map.Animals)
-            {
-                // ADD A BIT OF A DYNAMIC OFFSET TO THE ANIMAL TO MAKE IT APPEAR TO JUMP AROUND A BIT.
-                // Jumping is based on the position of the animal is used to give a bit more dynamism
-                // for animals by avoiding having all animals jump at the same frequency.
-                MATH::Vector2f old_animal_world_position = animal->Sprite.GetWorldPosition();
-                MATH::Vector2f new_animal_world_position = old_animal_world_position;
-
-                // A sine wave is used to control vertical jumping.
-                constexpr float MAX_VERTICAL_JUMP_AMOUNT_IN_PIXELS = 3.0f;
-                float sine_of_y_position = std::sinf(old_animal_world_position.Y);
-                float vertical_jump_amount_in_pixels = MAX_VERTICAL_JUMP_AMOUNT_IN_PIXELS * sine_of_y_position;
-                new_animal_world_position.Y += vertical_jump_amount_in_pixels;
-
-                // A cosine wave is used to control horizontal jumping.
-                constexpr float MAX_HORIZONTAL_JUMP_AMOUNT_IN_PIXELS = 3.0f;
-                float cosine_of_x_position = std::cosf(old_animal_world_position.X);
-                float horizontal_jump_amount_in_pixels = MAX_HORIZONTAL_JUMP_AMOUNT_IN_PIXELS * cosine_of_x_position;
-                new_animal_world_position.X += horizontal_jump_amount_in_pixels;
-
-                // UPDATE THE ANIMAL'S WORLD POSITION.
-                animal->Sprite.SetWorldPosition(new_animal_world_position);
-
-                // UPDATE THE ANIMAL'S ANIMATION.
-                animal->Sprite.Update(elapsed_time);
-            }
-        }
-    }
-
-    /// Updates any falling food in the tile map.
-    /// @param[in]  elapsed_time - The elapsed time for which to update the food.
-    /// @param[in,out]  tile_map - The tile map whose falling food to update.
-    void PreFloodGameplayState::UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map)
-    {
-        // UPDATE ANY FALLING FOOD.
-        for (auto food = tile_map.FallingFood.begin();
-            food != tile_map.FallingFood.end();)
-        {
-            // UPDATE THE CURRENT FOOD ITEM.
-            food->Fall(elapsed_time);
-
-            // TRANSFER THE FOOD OVER IF IT HAS FINISHED FALLING.
-            bool food_finished_falling = food->FinishedFalling();
-            if (food_finished_falling)
-            {
-                tile_map.FoodOnGround.push_back(food->FoodItem);
-                food = tile_map.FallingFood.erase(food);
-            }
-            else
-            {
-                // MOVE TO THE NEXT FALLING FOOD ITEM.
-                ++food;
-            }
-        }
     }
 
     /// Determines if the player is colliding with any wood logs in the tile map.

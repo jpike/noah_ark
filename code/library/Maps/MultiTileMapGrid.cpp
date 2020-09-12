@@ -5,9 +5,14 @@ namespace MAPS
     /// Constructs the grid with the specified width/height.
     /// @param[in]  width_in_tile_maps - The width of the grid in tile maps.
     /// @param[in]  height_in_tile_maps - The height of the grid in tile maps.
-    MultiTileMapGrid::MultiTileMapGrid(const unsigned int width_in_tile_maps, const unsigned int height_in_tile_maps) :
+    /// @param[in]  world - The world this map grid is part of.
+    MultiTileMapGrid::MultiTileMapGrid(
+        const unsigned int width_in_tile_maps, 
+        const unsigned int height_in_tile_maps,
+        MEMORY::NonNullRawPointer<MAPS::World> world) :
         TileMaps(width_in_tile_maps, height_in_tile_maps),
-        AxeSwings()
+        AxeSwings(),
+        World(world)
     {}
 
     /// Gets the tile map at the specified row and column indices.
@@ -26,8 +31,8 @@ namespace MAPS
         }
 
         // GET THE TILE MAP AT THE SPECIFIED LOCATION.
-        const MAPS::TileMap& tile_map = TileMaps(column, row);
-        return &tile_map;
+        const auto& tile_map = TileMaps(column, row);
+        return tile_map.get();
     }
 
     /// Gets the tile map at the specified row and column indices.
@@ -46,8 +51,8 @@ namespace MAPS
         }
 
         // GET THE TILE MAP AT THE SPECIFIED LOCATION.
-        MAPS::TileMap& tile_map = TileMaps(column, row);
-        return &tile_map;
+        const auto& tile_map = TileMaps(column, row);
+        return tile_map.get();
     }
     
     /// Gets the tile map that includes the specified world coordinates.

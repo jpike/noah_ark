@@ -107,7 +107,7 @@ namespace STATES
         GRAPHICS::Renderer& renderer)
     {
         // RENDER THE STARTING POINT OF THE OVERWORLD.
-        renderer.Render(world.Overworld);
+        renderer.Render(world.Overworld.MapGrid);
 
         // RENDER NOAH.
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);

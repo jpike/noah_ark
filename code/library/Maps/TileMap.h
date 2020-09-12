@@ -5,16 +5,23 @@
 #include "Audio/Speakers.h"
 #include "Maps/ExitPoint.h"
 #include "Maps/GroundLayer.h"
+#include "Maps/TileMapType.h"
 #include "Math/Vector2.h"
+#include "Memory/Pointers.h"
 #include "Objects/Animal.h"
 #include "Objects/ArkPiece.h"
 #include "Objects/DustCloud.h"
 #include "Objects/Food.h"
 #include "Objects/Tree.h"
 #include "Objects/WoodLogs.h"
+#include "States/SavedGameData.h"
 
 namespace MAPS
 {    
+    // Forward declarations.
+    class World;
+    class MultiTileMapGrid;
+
     /// A single 2D map composed of individual tiles and any objects
     /// that may located on the map.
     class TileMap
@@ -28,11 +35,12 @@ namespace MAPS
 
         // CONSTRUCTION.
         explicit TileMap(
-            const unsigned int grid_row_index = 0,
-            const unsigned int grid_column_index = 0,
-            const MATH::Vector2f& center_world_position = MATH::Vector2f(),
-            const MATH::Vector2ui& dimensions_in_tiles = MATH::Vector2ui(),
-            const unsigned int tile_dimension_in_pixels = 0);
+            const TileMapType type,
+            MEMORY::NonNullRawPointer<MultiTileMapGrid> map_grid,
+            const unsigned int grid_row_index,
+            const unsigned int grid_column_index,
+            const MATH::Vector2f& center_world_position,
+            const MATH::Vector2ui& dimensions_in_tiles);
 
         // POSITIONING/BOUNDARIES.
         MATH::Vector2f GetCenterWorldPosition() const;
@@ -45,9 +53,17 @@ namespace MAPS
         MAPS::ExitPoint* GetExitPointAtWorldPosition(const MATH::Vector2f& world_position);
 
         // UPDATING.
-        void Update(const sf::Time& elapsed_time, AUDIO::Speakers& speakers);
+        void Update(
+            const sf::Time& elapsed_time,
+            const bool objects_can_move_across_space,
+            STATES::SavedGameData& current_game_data,
+            AUDIO::Speakers& speakers);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The type of tile map.
+        TileMapType Type;
+        /// The map grid this tile map belongs to.
+        MEMORY::NonNullRawPointer<MultiTileMapGrid> MapGrid;
         /// The 0-based index (from the top) of the tile map as located in a larger grid.
         unsigned int GridRowIndex;
         /// The 0-based index (from the left) of the tile map as located in a larger grid.
@@ -72,8 +88,12 @@ namespace MAPS
         std::vector<OBJECTS::ArkPiece> ArkPieces;
         /// Animals freely roaming in the tile map that haven't yet been
         /// collected by the player.
-        std::vector< std::shared_ptr<OBJECTS::Animal> > Animals;
+        std::vector<std::shared_ptr<OBJECTS::Animal>> Animals;
         /// Exit points within the tile map.
         std::vector<MAPS::ExitPoint> ExitPoints;
+
+    private:
+        // UPDATING HELPER METHODS.
+        void MoveAnimals(const sf::Time& elapsed_time, STATES::SavedGameData& current_game_data);
     };
 }

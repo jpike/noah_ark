@@ -8,6 +8,12 @@
 #include "Math/Vector2.h"
 #include "Objects/Animal.h"
 
+// Forward declarations.
+namespace OBJECTS
+{
+    class Noah;
+}
+
 namespace GAMEPLAY
 {
     /// A group of animals that are currently following Noah
@@ -20,8 +26,10 @@ namespace GAMEPLAY
 
         void Add(const std::shared_ptr<OBJECTS::Animal>& animal);
 
-        void Update(const sf::Time& elapsed_time, const MATH::Vector2f& new_center_world_position);
+        void Update(const sf::Time& elapsed_time);
 
+        /// The instance of Noah the animals are following.
+        OBJECTS::Noah* Noah = nullptr;
         /// The current center position of the group within the world.
         MATH::Vector2f CurrentCenterWorldPosition = MATH::Vector2f();
         /// The animals currently in the group.

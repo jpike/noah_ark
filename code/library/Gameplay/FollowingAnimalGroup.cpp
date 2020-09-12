@@ -1,5 +1,6 @@
 #include <cmath>
 #include "Gameplay/FollowingAnimalGroup.h"
+#include "Objects/Noah.h"
 
 namespace GAMEPLAY
 {
@@ -33,9 +34,41 @@ namespace GAMEPLAY
 
     /// Updates the following animal group.
     /// @param[in]  elapsed_time - The elapsed time since the last frame.
-    /// @param[in]  new_center_world_position - The new center world position for the group.
-    void FollowingAnimalGroup::Update(const sf::Time& elapsed_time, const MATH::Vector2f& new_center_world_position)
+    void FollowingAnimalGroup::Update(const sf::Time& elapsed_time)
     {
+        // MAKE SURE THE ANIMAL'S HAVE SOMEONE TO FOLLOW.
+        bool animals_have_someone_to_follow = (nullptr != Noah);
+        if (!animals_have_someone_to_follow)
+        {
+            return;
+        }
+
+        // COMPUTE THE NEW CENTER POSITION FOR THE ANIMALS.
+        // They should appear right behind Noah.
+        MATH::FloatRectangle noah_world_bounding_box = Noah->GetWorldBoundingBox();
+        // Defaults to appearing in the same location as Noah for easier visibility into problems.
+        MATH::Vector2f noah_center_world_position = noah_world_bounding_box.Center();
+        MATH::Vector2f new_center_world_position = noah_center_world_position;
+        switch (Noah->FacingDirection)
+        {
+            case GAMEPLAY::Direction::UP:
+                // The animals should appear below Noah.
+                new_center_world_position.Y = noah_world_bounding_box.RightBottom.Y + GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                break;
+            case GAMEPLAY::Direction::DOWN:
+                // The animals should appear above Noah.
+                new_center_world_position.Y = noah_world_bounding_box.LeftTop.Y - GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                break;
+            case GAMEPLAY::Direction::LEFT:
+                // The animals should appear to the right of Noah.
+                new_center_world_position.X = noah_world_bounding_box.RightBottom.X + GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                break;
+            case GAMEPLAY::Direction::RIGHT:
+                // The animals should appear to the left of Noah.
+                new_center_world_position.X = noah_world_bounding_box.LeftTop.X - GAMEPLAY::FollowingAnimalGroup::DIMENSION_IN_PIXELS;
+                break;
+        }
+
         // UPDATE THE TRACKED ELAPSED TIME FOR THIS GROUP.
         ElapsedTime += elapsed_time;
 

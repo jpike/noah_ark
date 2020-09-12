@@ -49,6 +49,7 @@
 #include "Maps/GroundLayer.cpp"
 #include "Maps/LayeredMultiTileMapGrids.cpp"
 #include "Maps/MultiTileMapGrid.cpp"
+#include "Maps/Overworld.cpp"
 #include "Maps/Tile.cpp"
 #include "Maps/TileMap.cpp"
 #include "Maps/Tileset.cpp"

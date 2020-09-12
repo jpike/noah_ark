@@ -78,6 +78,9 @@ namespace OBJECTS
         // SET NOAH TO FACE DOWN BY DEFAULT.
         Sprite.UseAnimationSequence(NOAH_WALK_FRONT_ANIMATION->AnimationName);
         FacingDirection = GAMEPLAY::Direction::DOWN;
+
+        // ALLOW THE FOLLOWING ANIMAL GROUP TO TRACK NOAH.
+        Inventory.FollowingAnimals.Noah = this;
     }
 
     /// Gets the world position of Noah.

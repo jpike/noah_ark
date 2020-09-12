@@ -43,14 +43,14 @@ namespace GUI
                 // SAVE THE GAME DATA.
                 /// @todo   Update this function to not require non-const game data.
                 // Built ark piece data from all tile maps needs to be included.
-                unsigned int tile_map_row_count = world.Overworld.TileMaps.GetHeight();
-                unsigned int tile_map_column_count = world.Overworld.TileMaps.GetWidth();
+                unsigned int tile_map_row_count = world.Overworld.MapGrid.TileMaps.GetHeight();
+                unsigned int tile_map_column_count = world.Overworld.MapGrid.TileMaps.GetWidth();
                 for (unsigned int tile_map_y_index = 0; tile_map_y_index < tile_map_row_count; ++tile_map_y_index)
                 {
                     for (unsigned int tile_map_x_index = 0; tile_map_x_index < tile_map_column_count; ++tile_map_x_index)
                     {
                         // GET THE CURRENT TILE MAP.
-                        const MAPS::TileMap* current_tile_map = world.Overworld.GetTileMap(tile_map_y_index, tile_map_x_index);
+                        const MAPS::TileMap* current_tile_map = world.Overworld.MapGrid.GetTileMap(tile_map_y_index, tile_map_x_index);
                         if (!current_tile_map)
                         {
                             // CONTINUE GETTING DATA FROM OTHER TILE MAPS.

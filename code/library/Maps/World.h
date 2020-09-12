@@ -1,9 +1,12 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 #include "Maps/Ark.h"
 #include "Maps/MultiTileMapGrid.h"
+#include "Maps/Overworld.h"
 #include "Memory/Pointers.h"
+#include "Objects/Animal.h"
 #include "Objects/Noah.h"
 #include "States/BuiltArkPieceTileMapData.h"
 
@@ -13,27 +16,22 @@ namespace MAPS
     class World
     {
     public:
-        // STATIC CONSTANTS.
-        /// The width of the overworld in tile maps.
-        static constexpr unsigned int OVERWORLD_WIDTH_IN_TILE_MAPS = 7;
-        /// The height of the overworld in tile maps.
-        static constexpr unsigned int OVERWORLD_HEIGHT_IN_TILE_MAPS = 7;
-
         // CONSTRUCTION/INITIALIZATION.
         static MEMORY::NonNullSharedPointer<World> CreateInitial();
+        explicit World();
         void InitializeBuiltArkInOverworld(const std::vector<STATES::BuiltArkPieceTileMapData>& built_ark_pieces);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The overworld of the game.
-        MultiTileMapGrid Overworld = MultiTileMapGrid(OVERWORLD_WIDTH_IN_TILE_MAPS, OVERWORLD_HEIGHT_IN_TILE_MAPS);
+        Overworld Overworld;
         /// The ark.
-        Ark Ark = {};
+        Ark Ark;
         /// Noah (the player) character within the game.
         /// Stored as a shared pointer because it needs to be shared with the saved game data.
-        MEMORY::NonNullSharedPointer<OBJECTS::Noah> NoahPlayer = MEMORY::NonNullSharedPointer<OBJECTS::Noah>(std::make_shared<OBJECTS::Noah>());
-
-    private:
-        // HELPER METHODS.
-        void PopulateOverworld();
+        MEMORY::NonNullSharedPointer<OBJECTS::Noah> NoahPlayer;
+        /// Animals being transferred from following Noah into the ark.
+        /// @todo   Probably best to not have this in the game state and instead just
+        /// have animals have different "modes" of behavior.
+        std::vector<std::shared_ptr<OBJECTS::Animal>> AnimalsGoingIntoArk;
     };
 }

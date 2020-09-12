@@ -65,13 +65,6 @@ namespace STATES
             MAPS::MultiTileMapGrid& map_grid,
             GRAPHICS::Camera& camera,
             AUDIO::Speakers& speakers);
-        void MoveAnimals(
-            const sf::Time& elapsed_time, 
-            MAPS::TileMap& tile_map, 
-            MAPS::MultiTileMapGrid& map_grid,
-            MAPS::World& world,
-            STATES::SavedGameData& current_game_data);
-        void UpdateFallingFood(const sf::Time& elapsed_time, MAPS::TileMap& tile_map);
 
         // COLLISION DETECTION.
         void CollectWoodAndBibleVersesCollidingWithPlayer(
@@ -106,10 +99,6 @@ namespace STATES
         MAPS::MultiTileMapGrid* CurrentMapGrid = nullptr;
         /// The tile map editor GUI.
         MAPS::GUI::TileMapEditorGui TileMapEditorGui = {};
-        /// Animals being transferred from following Noah into the ark.
-        /// @todo   Probably best to not have this in the game state and instead just
-        /// have animals have different "modes" of behavior.
-        std::vector<std::shared_ptr<OBJECTS::Animal>> AnimalsGoingIntoArk = {};
         /// The random number generator.
         MATH::RandomNumberGenerator RandomNumberGenerator = {};
     };

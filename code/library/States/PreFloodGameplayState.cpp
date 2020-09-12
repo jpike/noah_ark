@@ -243,7 +243,7 @@ namespace STATES
             }
 
             // CLOSE THE ARK DOOR'S IF THE PLAYER IS IN THE ARK AFTER COLLECTION ALL ITEMS.
-            bool inside_ark = world.Ark.Interior.Contains(&map_grid);
+            bool inside_ark = (MAPS::TileMapType::ARK_INTERIOR == current_tile_map->Type);
             if (inside_ark)
             {
                 /// @todo   Add non-debug logic for this.

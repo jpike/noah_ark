@@ -272,7 +272,7 @@ namespace MAPS
 
         // CHECK IF THE CURRENT TILE MAP HAS A VISIBLE EXTERNAL ARK DOORWAY.
         // This is how animals following Noah get transferred into the ark.
-        bool inside_ark = MapGrid->World->Ark.Interior.Contains(MapGrid);
+        bool inside_ark = (TileMapType::ARK_INTERIOR == Type);
         const OBJECTS::ArkPiece* doorway_into_ark = nullptr;
         for (const OBJECTS::ArkPiece& ark_piece : ArkPieces)
         {

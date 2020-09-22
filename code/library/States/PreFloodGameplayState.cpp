@@ -96,7 +96,6 @@ namespace STATES
 
         world.NoahPlayer->Inventory.Axe->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
-#if 1
         UpdateMapGrid(
             gaming_hardware, 
             world,
@@ -104,7 +103,6 @@ namespace STATES
             camera, 
             current_game_data,
             hud);
-#endif
 
         // START PLAYING THE BACKGROUND MUSIC IF ITS NOT ALREADY PLAYING.
         gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);

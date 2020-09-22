@@ -23,11 +23,9 @@ namespace INVENTORY
             GRAPHICS::Renderer& renderer) const;
 
         // VERSE METHODS.
-        const BIBLE::BibleVerse* GetSelectedVerse() const;
         void SelectPreviousVerse();
         void SelectNextVerse();
 
-    private:
         // MEMBER VARIABLES.
         /// The index of the currently selected Bible verse in the global list.
         unsigned int SelectedVerseIndex = 0;

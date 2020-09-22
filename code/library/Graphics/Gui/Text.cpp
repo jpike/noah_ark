@@ -8,7 +8,6 @@ namespace GRAPHICS::GUI
     /// @return The right position of the text's bounding box.
     float Text::RightPosition() const
     {
-        /// @todo   Hack.
         float width = ScaleFactor * static_cast<float>(Glyph::DEFAULT_WIDTH_IN_PIXELS) * static_cast<float>(String.length());
         float right_position = LeftTopPosition.X + width;
         return right_position;

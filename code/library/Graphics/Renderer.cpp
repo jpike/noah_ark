@@ -409,7 +409,6 @@ namespace GRAPHICS
         // lines (assuming that each word can fit on a single line).
         std::vector<std::string> new_lines_of_text;
         float line_width_in_pixels = bounding_screen_rectangle.Width();
-        /// @todo   A bit of a hacked assumption.
         float glyph_width_in_pixels = text_scale_ratio * static_cast<float>(GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS) / 2.0f;
         unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / glyph_width_in_pixels);
         for (const auto& line : original_lines_from_text)
@@ -507,7 +506,6 @@ namespace GRAPHICS
             RenderText(line, font_id, current_line_left_top_screen_position, text_color, text_scale_ratio);
 
             // MOVE TO THE NEXT LINE.
-            /// @todo   A bit of a hacked assumption.
             float glyph_height_in_pixels = text_scale_ratio * static_cast<float>(GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
             current_line_left_top_screen_position.Y += glyph_height_in_pixels;
         }
@@ -540,7 +538,6 @@ namespace GRAPHICS
         // lines (assuming that each word can fit on a single line).
         std::vector<std::string> new_lines_of_text;
         float line_width_in_pixels = bounding_screen_rectangle.Width();
-        /// @todo   A bit of a hacked assumption.
         float glyph_width_in_pixels = text_scale_ratio * (static_cast<float>(GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS) / 2.0f + GUI::Text::HORIZONTAL_SPACING_IN_PIXELS_BETWEEN_EACH_CHARACTER);
         unsigned int max_characters_per_line = static_cast<unsigned int>(line_width_in_pixels / glyph_width_in_pixels);
         for (const auto& line : original_lines_from_text)
@@ -615,7 +612,6 @@ namespace GRAPHICS
         // top y-position such that half of the unused space appears before and after the text.
         unsigned int bounding_rectangle_height_in_pixels = static_cast<unsigned int>(bounding_screen_rectangle.Height());
         size_t new_line_count = new_lines_of_text.size();
-        /// @todo   A bit of a hacked assumption.
         unsigned int glyph_height_in_pixels = static_cast<unsigned int>(text_scale_ratio * GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
         size_t total_text_height_in_pixels = new_line_count * glyph_height_in_pixels;
         size_t unused_vertical_space_in_pixels = bounding_rectangle_height_in_pixels - total_text_height_in_pixels;
@@ -628,7 +624,6 @@ namespace GRAPHICS
             first_line_top_y_screen_position);
 
         // RENDER EACH LINE OF TEXT.
-        /// @todo   Error-handling!
         std::shared_ptr<GUI::Font>& font = Fonts[font_id];
         for (const auto& line : new_lines_of_text)
         {

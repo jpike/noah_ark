@@ -37,6 +37,7 @@ namespace STATES
         void SwitchStatesIfChanged(
             const GameState& new_state, 
             MAPS::World& world,
+            HARDWARE::GamingHardware& gaming_hardware,
             GRAPHICS::Renderer& renderer,
             GRAPHICS::GUI::HeadsUpDisplay& hud);
 

@@ -101,11 +101,13 @@ namespace STATES
     /// Switches to the new state, if the state has changed.
     /// @param[in]  new_state - The potentially new state the game should be in.
     /// @param[in]  world - The game world needed for some states.
+    /// @param[in,out]  gaming_hardware - The hardware the game is being played on.
     /// @param[in,out]  renderer - The renderer used for the game.
-    /// @todo   Clean-up parameters!
+    /// @param[in,out]  hud - The HUD for the game.
     void GameStates::SwitchStatesIfChanged(
         const GameState& new_state, 
         MAPS::World& world,
+        HARDWARE::GamingHardware& gaming_hardware,
         GRAPHICS::Renderer& renderer,
         GRAPHICS::GUI::HeadsUpDisplay& hud)
     {
@@ -117,7 +119,8 @@ namespace STATES
             return;
         }
 
-        /// @todo   Stop audio?
+        // STOP ALL AUDIO TO PREVENT IT FROM BLEEDING BETWEEN STATES.
+        gaming_hardware.Speakers->StopAllAudio();
 
         // UPDATE THE SAVED GAME DATA BEING USED IF A SAVED GAME IS BEING LOADED.
         bool saved_game_being_loaded = (GameState::GAME_SELECTION_SCREEN == CurrentSavedGame.CurrentGameState);

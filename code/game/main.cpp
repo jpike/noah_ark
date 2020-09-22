@@ -12,11 +12,6 @@
 // - Cutscene/text boxes for transition into ark
 // - Polish (custom fancy graphics) for inventory GUI
 // - Sword guarding garden of Eden
-//
-// Areas for code cleanup:
-// - Graphics
-// - Inventory
-// - States
 
 // To avoid annoyances with Windows min/max #defines.
 #define NOMINMAX
@@ -256,7 +251,7 @@ int main()
                 }
 
                 // SWITCH THE GAME STATE IF NEEDED.
-                game_states.SwitchStatesIfChanged(next_game_state, world, renderer, hud);
+                game_states.SwitchStatesIfChanged(next_game_state, world, gaming_hardware, renderer, hud);
             }
         }
 

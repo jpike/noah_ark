@@ -102,19 +102,6 @@ namespace INVENTORY
             current_verse_screen_top_left_position_in_pixels.Y += GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS;
         }
     }
-    
-    /// Gets the currently selected verse, if available in the inventory.
-    /// @return The currently selected verse, if available in the inventory;
-    ///     null otherwise.
-    const BIBLE::BibleVerse* InventoryBibleVerseListBox::GetSelectedVerse() const
-    {
-        // MAKE SURE THE SELECTED VERSE IS IN THE PLAYER'S INVENTORY.
-        // Players need to collect verses before they can be fully viewed
-        // via the inventory GUI.
-        const BIBLE::BibleVerse& selected_verse = BIBLE::BIBLE_VERSES.at(SelectedVerseIndex);
-        /// @todo   Revisit this.
-        return &selected_verse;
-    }
 
     /// Selects the previous verse in the list, if one exists.
     /// If a previous verse does not exist, the currently selected verse remains.

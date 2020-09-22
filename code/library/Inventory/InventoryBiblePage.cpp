@@ -27,7 +27,7 @@ namespace INVENTORY
             BACKGROUND_COLOR);
 
         // RENDER THE BOX FOR THE MAIN BIBLE VERSE DISPLAY.
-        const BIBLE::BibleVerse* selected_bible_verse = BibleVerseListBox.GetSelectedVerse();
+        const BIBLE::BibleVerse* selected_bible_verse = &BIBLE::BIBLE_VERSES.at(BibleVerseListBox.SelectedVerseIndex);
         auto verse_from_inventory = inventory.BibleVerses.find(*selected_bible_verse);
         bool verse_in_inventory = (verse_from_inventory != inventory.BibleVerses.cend());
         if (!verse_in_inventory)

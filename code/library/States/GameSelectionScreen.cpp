@@ -504,7 +504,6 @@ namespace STATES
             {
                 // RENDER AN UNDERSCORE FOR THE NEXT CHARACTER.
                 // The x position of the placeholder should be after the currently typed text within the box.
-                /// @todo   Hack
                 float current_new_game_filename_text_width_in_pixels = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS * CurrentNewGameFilenameText.length());
                 float next_character_placeholder_left_x_position = (
                     game_selection_option_bounding_screen_rectangle.LeftTop.X +

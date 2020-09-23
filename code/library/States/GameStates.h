@@ -8,12 +8,15 @@
 #include "Hardware/GamingHardware.h"
 #include "Maps/World.h"
 #include "States/CreditsScreen.h"
+#include "States/DuringFloodGameplayState.h"
+#include "States/EndingCreditsScreen.h"
 #include "States/FloodCutscene.h"
 #include "States/GameSelectionScreen.h"
 #include "States/GameState.h"
 #include "States/IntroSequence.h"
 #include "States/NewGameInstructionSequence.h"
 #include "States/NewGameIntroSequence.h"
+#include "States/PostFloodGameplayState.h"
 #include "States/PreFloodGameplayState.h"
 #include "States/TitleScreen.h"
 
@@ -59,5 +62,11 @@ namespace STATES
         PreFloodGameplayState PreFloodGameplayState = {};
         /// The flood cutscene in-between the first and second halves of gameplay.
         FloodCutscene FloodCutscene = {};
+        /// The gameplay state during the flood.
+        DuringFloodGameplayState DuringFloodGameplayState = {};
+        /// The gameplay state after the flood.
+        PostFloodGameplayState PostFloodGameplayState = {};
+        /// The ending credits screen.
+        EndingCreditsScreen EndingCreditsScreen = {};
     };
 }

@@ -241,12 +241,27 @@ int main()
                 }
                 if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num7))
                 {
-                    next_game_state = STATES::GameState::FLOOD_CUTSCENE;
+                    next_game_state = STATES::GameState::PRE_FLOOD_GAMEPLAY;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
                 if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num8))
                 {
-                    next_game_state = STATES::GameState::PRE_FLOOD_GAMEPLAY;
+                    next_game_state = STATES::GameState::FLOOD_CUTSCENE;
+                    gaming_hardware.Speakers->StopAllAudio();
+                }
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num9))
+                {
+                    next_game_state = STATES::GameState::DURING_FLOOD_GAMEPLAY;
+                    gaming_hardware.Speakers->StopAllAudio();
+                }
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num0))
+                {
+                    next_game_state = STATES::GameState::POST_FLOOD_GAMEPLAY;
+                    gaming_hardware.Speakers->StopAllAudio();
+                }
+                if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Dash))
+                {
+                    next_game_state = STATES::GameState::ENDING_CREDITS_SCREEN;
                     gaming_hardware.Speakers->StopAllAudio();
                 }
 

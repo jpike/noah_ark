@@ -6,6 +6,7 @@
 #include "Graphics/Screen.h"
 #include "Hardware/Clock.h"
 #include "Input/InputController.h"
+#include "Math/RandomNumberGenerator.h"
 
 /// Holds code related to generic computing hardware.
 /// Computing hardware specific to another subsystem may exist in a separate namespace.
@@ -21,10 +22,11 @@ namespace HARDWARE
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The clock keeping track of time.
         Clock Clock = {};
+        /// The random number generator.
+        MATH::RandomNumberGenerator RandomNumberGenerator = {};
         /// The controller supplying user input for the game.
         INPUT_CONTROL::InputController InputController = {};
         /// The screen to which the game is rendered.
-        /// @todo   See about not making this a shared pointer!
         std::shared_ptr<GRAPHICS::Screen> Screen = nullptr;
         /// The device for rendering graphics on the system.
         /// Dynamically allocated since the device has a mutex that prevents copying/moving.

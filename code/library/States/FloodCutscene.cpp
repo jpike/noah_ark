@@ -4,7 +4,7 @@
 namespace STATES
 {
     /// Sets the flood cutscene to its initial state.
-    void FloodCutscene::Initialize()
+    FloodCutscene::FloodCutscene()
     {
         // RESET THE ELAPSED TIME FOR THE CUTSCENE.
         ElapsedTime = sf::Time::Zero;
@@ -47,8 +47,9 @@ namespace STATES
 
     /// Renders the current frame of the cutscene.
     /// @param[in,out]  renderer - The renderer to use.
+    /// @param[in,out]  gaming_hardware - The gaming hardware.
     /// @return The rendered flood cutscene.
-    sf::Sprite FloodCutscene::Render(GRAPHICS::Renderer& renderer)
+    sf::Sprite FloodCutscene::Render(GRAPHICS::Renderer& renderer, HARDWARE::GamingHardware& gaming_hardware)
     {
         // DON'T RENDER ANYTHING IF THE CUTSCENE IS COMPLETE.
         bool cutscene_completed = Completed();
@@ -109,8 +110,8 @@ namespace STATES
         {
             // COMPUTE A RANDOM OFFSET FOR THE CURRENT RAIN LINE.
             float screen_width_in_pixels = full_screen_rectangle.Width();
-            float current_rain_line_x_offset = RandomNumberGenerator.RandomNumberLessThan<float>(screen_width_in_pixels);
-            float current_rain_line_y_offset = RandomNumberGenerator.RandomNumberLessThan<float>(screen_height_in_pixels);
+            float current_rain_line_x_offset = gaming_hardware.RandomNumberGenerator.RandomNumberLessThan<float>(screen_width_in_pixels);
+            float current_rain_line_y_offset = gaming_hardware.RandomNumberGenerator.RandomNumberLessThan<float>(screen_height_in_pixels);
 
             // ADD VERTICES FOR THE CURRENT LINE.
             sf::Vertex current_rain_line_top_vertex = base_rain_line_top_vertex;

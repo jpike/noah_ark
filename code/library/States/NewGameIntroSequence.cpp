@@ -10,13 +10,6 @@ namespace STATES
     const sf::Time NewGameIntroSequence::MAX_TIME_PER_FRAME = sf::seconds(9);
 #endif
 
-    /// Resets the intro sequence so that it can start playing from the beginning.
-    void NewGameIntroSequence::ResetToBeginning()
-    {
-        CurrentFrameIndex = 0;
-        ElapsedTimeForCurrentFrame = sf::Time::Zero;
-    }
-
     /// Update the intro sequence based on an elapsed amount of time.
     /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output.
     /// @return The state that the game should be in after the update.

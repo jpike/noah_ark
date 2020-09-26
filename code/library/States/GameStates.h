@@ -27,18 +27,18 @@ namespace STATES
     {
     public:
         GameState Update(
-            HARDWARE::GamingHardware& gaming_hardware,
             MAPS::World& world,
-            GRAPHICS::Camera& camera);
+            GRAPHICS::Camera& camera,
+            HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(
-            HARDWARE::GamingHardware& gaming_hardware, 
             MAPS::World& world,
-            GRAPHICS::Renderer& renderer);
+            GRAPHICS::Renderer& renderer,
+            HARDWARE::GamingHardware& gaming_hardware);
         void SwitchStatesIfChanged(
             const GameState& new_state, 
             MAPS::World& world,
-            HARDWARE::GamingHardware& gaming_hardware,
-            GRAPHICS::Renderer& renderer);
+            GRAPHICS::Renderer& renderer,
+            HARDWARE::GamingHardware& gaming_hardware);
 
         /// The current saved game being used.
         SavedGameData CurrentSavedGame = SavedGameData::DefaultSavedGameData();
@@ -57,7 +57,7 @@ namespace STATES
         /// The main gameplay state.
         PreFloodGameplayState PreFloodGameplayState = {};
         /// The flood cutscene in-between the first and second halves of gameplay.
-        FloodCutscene FloodCutscene = {};
+        FloodCutscene FloodCutscene = STATES::FloodCutscene();
         /// The gameplay state during the flood.
         DuringFloodGameplayState DuringFloodGameplayState = {};
         /// The gameplay state after the flood.

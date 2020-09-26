@@ -16,7 +16,6 @@ namespace STATES
     {
     public:
         // METHODS.
-        void ResetToBeginning();
         GameState Update(HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(GRAPHICS::Renderer& renderer) const;
 

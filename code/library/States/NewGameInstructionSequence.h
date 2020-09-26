@@ -19,9 +19,9 @@ namespace STATES
         void Initialize(MAPS::World& world);
         GameState Update(const HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(
-            const HARDWARE::GamingHardware& gaming_hardware, 
             MAPS::World& world,
-            GRAPHICS::Renderer& renderer);
+            GRAPHICS::Renderer& renderer,
+            HARDWARE::GamingHardware& gaming_hardware);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The instructional text to be displayed for a new game.

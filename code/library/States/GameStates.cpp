@@ -3,15 +3,15 @@
 namespace STATES
 {
     /// Updates the current state of the game.
-    /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output devices.
     /// @param[in,out]  world - The world to be updated.
     /// @param[in,out]  camera - The camera defining the viewable region of the game world.
+    /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output devices.
     /// @return The next state that the game should switch to.  The current state as tracked
     ///     in this class is not automatically updated to this new state.
     GameState GameStates::Update(
-        HARDWARE::GamingHardware& gaming_hardware,
         MAPS::World& world,
-        GRAPHICS::Camera& camera)
+        GRAPHICS::Camera& camera,
+        HARDWARE::GamingHardware& gaming_hardware)
     {
         // UPDATE THE CURRENT STATE OF THE GAME.
         GameState next_game_state = CurrentSavedGame.CurrentGameState;
@@ -52,13 +52,14 @@ namespace STATES
     }
 
     /// Renders the current state of the game.
-    /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output devices.
+    /// @param[in,out]  world - The game world to potentially render.
     /// @param[in,out]  renderer - The renderer to use for rendering.
+    /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output devices.
     /// @return The rendered state of the game.
     sf::Sprite GameStates::Render(
-        HARDWARE::GamingHardware& gaming_hardware, 
         MAPS::World& world,
-        GRAPHICS::Renderer& renderer)
+        GRAPHICS::Renderer& renderer,
+        HARDWARE::GamingHardware& gaming_hardware)
     {
         // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
         renderer.Screen->Clear();
@@ -83,10 +84,10 @@ namespace STATES
                 screen_sprite = NewGameIntroSequence.Render(renderer);
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
-                screen_sprite = NewGameInstructionSequence.Render(gaming_hardware, world, renderer);
+                screen_sprite = NewGameInstructionSequence.Render(world, renderer, gaming_hardware);
                 break;
             case GameState::FLOOD_CUTSCENE:
-                screen_sprite = FloodCutscene.Render(renderer);
+                screen_sprite = FloodCutscene.Render(renderer, gaming_hardware);
                 break;
             case GameState::PRE_FLOOD_GAMEPLAY:
                 screen_sprite = PreFloodGameplayState.Render(world, CurrentSavedGame, renderer);
@@ -98,13 +99,13 @@ namespace STATES
     /// Switches to the new state, if the state has changed.
     /// @param[in]  new_state - The potentially new state the game should be in.
     /// @param[in]  world - The game world needed for some states.
-    /// @param[in,out]  gaming_hardware - The hardware the game is being played on.
     /// @param[in,out]  renderer - The renderer used for the game.
+    /// @param[in,out]  gaming_hardware - The hardware the game is being played on.
     void GameStates::SwitchStatesIfChanged(
         const GameState& new_state, 
         MAPS::World& world,
-        HARDWARE::GamingHardware& gaming_hardware,
-        GRAPHICS::Renderer& renderer)
+        GRAPHICS::Renderer& renderer,
+        HARDWARE::GamingHardware& gaming_hardware)
     {
         // CHECK IF THE GAME STATE HAS CHANGED.
         bool game_state_changed = (new_state != CurrentSavedGame.CurrentGameState);
@@ -147,7 +148,7 @@ namespace STATES
                 break;
             case GameState::NEW_GAME_INTRO_SEQUENCE:
                 // RESET THE INTRO SEQUENCE TO THE BEGINNING.
-                NewGameIntroSequence.ResetToBeginning();
+                NewGameIntroSequence = {};
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
             {
@@ -160,10 +161,11 @@ namespace STATES
                     main_text_box_height_in_pixels,
                     renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE]);
                 NewGameInstructionSequence.Initialize(world);
+                /// @todo   Reset camera!
                 break;
             }
             case GameState::FLOOD_CUTSCENE:
-                FloodCutscene.Initialize();
+                FloodCutscene = STATES::FloodCutscene();
                 break;
             case GameState::PRE_FLOOD_GAMEPLAY:
             {

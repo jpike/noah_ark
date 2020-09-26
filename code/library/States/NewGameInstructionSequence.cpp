@@ -95,12 +95,13 @@ namespace STATES
     }
 
     /// Renders a frame of the new game instruction sequence.
-    /// @param[in]  gaming_hardware - The hardware supplying input and output.
+    /// @param[in,out]  world - The world to render.
     /// @param[in,out]  renderer - The renderer to use for rendering.
+    /// @param[in,out]  gaming_hardware - The hardware supplying input and output.
     sf::Sprite NewGameInstructionSequence::Render(
-        const HARDWARE::GamingHardware& gaming_hardware, 
         MAPS::World& world,
-        GRAPHICS::Renderer& renderer)
+        GRAPHICS::Renderer& renderer,
+        HARDWARE::GamingHardware& gaming_hardware)
     {
         // RENDER THE STARTING POINT OF THE OVERWORLD.
         renderer.Render(world.Overworld.MapGrid);

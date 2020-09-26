@@ -5,7 +5,6 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/Sprite.h"
 #include "Hardware/GamingHardware.h"
-#include "Math/RandomNumberGenerator.h"
 #include "States/GameState.h"
 
 namespace STATES
@@ -16,10 +15,12 @@ namespace STATES
     class FloodCutscene
     {
     public:
+        // CONSTRUCTION.
+        explicit FloodCutscene();
+
         // PUBLIC METHODS.
-        void Initialize();
         GameState Update(const HARDWARE::GamingHardware& gaming_hardware);
-        sf::Sprite Render(GRAPHICS::Renderer& renderer);
+        sf::Sprite Render(GRAPHICS::Renderer& renderer, HARDWARE::GamingHardware& gaming_hardware);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The total time that the credits screen has been shown.
@@ -34,9 +35,5 @@ namespace STATES
     private:
         // HELPER METHODS.
         bool Completed() const;
-
-        // PRIVATE MEMBER VARIABLES.
-        /// A random number generator.
-        MATH::RandomNumberGenerator RandomNumberGenerator = {};
     };
 }

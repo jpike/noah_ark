@@ -140,7 +140,7 @@ int main()
 
         // INITIALIZE THE INTRO SEQUENCE.
         STATES::GameStates game_states;
-        game_states.IntroSequence.Initialize(*gaming_hardware.Speakers);
+        game_states.IntroSequence.Start(*gaming_hardware.Speakers);
 
         // CREATE THE WORLD.
         MAPS::World world;
@@ -192,10 +192,10 @@ int main()
                 gaming_hardware.Clock.UpdateElapsedTime();
 
                 // UPDATE THE GAME'S CURRENT STATE.
-                STATES::GameState next_game_state = game_states.Update(gaming_hardware, world, renderer.Camera);
+                STATES::GameState next_game_state = game_states.Update(world, renderer.Camera, gaming_hardware);
 
                 // RENDER THE CURRENT STATE OF THE GAME TO THE WINDOW.
-                sf::Sprite screen_sprite = game_states.Render(gaming_hardware, world, renderer);
+                sf::Sprite screen_sprite = game_states.Render(world, renderer, gaming_hardware);
                 window.draw(screen_sprite);
                 window.display();
 
@@ -257,7 +257,7 @@ int main()
                 }
 
                 // SWITCH THE GAME STATE IF NEEDED.
-                game_states.SwitchStatesIfChanged(next_game_state, world, gaming_hardware, renderer);
+                game_states.SwitchStatesIfChanged(next_game_state, world, renderer, gaming_hardware);
             }
         }
 

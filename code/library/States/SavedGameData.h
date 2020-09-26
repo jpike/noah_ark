@@ -41,9 +41,6 @@ namespace STATES
         std::filesystem::path Filepath = "";
         /// The state the game is currently in.
         GameState CurrentGameState = GameState::INTRO_SEQUENCE;
-        /// True if the instructions that are displayed in a text box at the start
-        /// of a new game are completed; false otherwise.
-        bool NewGameInstructionsCompleted = false;
         /// The player.  Stored as a shared pointer since the player needs to be shared with the world.
         MEMORY::NonNullSharedPointer<OBJECTS::Noah> Player = MEMORY::NonNullSharedPointer<OBJECTS::Noah>(std::make_shared<OBJECTS::Noah>());
         /// Ark pieces built by the player.

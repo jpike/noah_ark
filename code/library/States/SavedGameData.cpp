@@ -62,11 +62,6 @@ namespace STATES
             auto saved_game_data = std::make_unique<SavedGameData>();
             saved_game_data->Filepath = filepath;
 
-            // DETERMINE IF THE NEW GAME INSTRUCTIONS HAVE ALREADY BEEN COMPLETED.
-            /// @todo   This needs to be properly saved/loaded!  For now, we're assuming,
-            /// if loading from file, these have already been completed.
-            saved_game_data->NewGameInstructionsCompleted = true;
-
             // READ IN THE PLAYER'S POSITION.
             MATH::Vector2f player_world_position;
             saved_game_data_file >> player_world_position.X;

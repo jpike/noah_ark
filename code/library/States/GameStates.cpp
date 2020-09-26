@@ -11,7 +11,6 @@ namespace STATES
     GameState GameStates::Update(
         HARDWARE::GamingHardware& gaming_hardware,
         MAPS::World& world,
-        GRAPHICS::GUI::HeadsUpDisplay& hud,
         GRAPHICS::Camera& camera)
     {
         // UPDATE THE CURRENT STATE OF THE GAME.
@@ -34,7 +33,7 @@ namespace STATES
                 next_game_state = NewGameIntroSequence.Update(gaming_hardware);
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
-                next_game_state = NewGameInstructionSequence.Update(gaming_hardware, world, CurrentSavedGame, hud);
+                next_game_state = NewGameInstructionSequence.Update(gaming_hardware);
                 break;
             case GameState::FLOOD_CUTSCENE:
                 next_game_state = FloodCutscene.Update(gaming_hardware);
@@ -44,7 +43,6 @@ namespace STATES
                     gaming_hardware,
                     world,
                     camera,
-                    hud,
                     CurrentSavedGame);
                 break;
         }
@@ -60,7 +58,6 @@ namespace STATES
     sf::Sprite GameStates::Render(
         HARDWARE::GamingHardware& gaming_hardware, 
         MAPS::World& world,
-        GRAPHICS::GUI::HeadsUpDisplay& hud,
         GRAPHICS::Renderer& renderer)
     {
         // CLEAR THE SCREEN OF THE PREVIOUSLY RENDERED FRAME.
@@ -86,13 +83,13 @@ namespace STATES
                 screen_sprite = NewGameIntroSequence.Render(renderer);
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
-                screen_sprite = NewGameInstructionSequence.Render(gaming_hardware, world, CurrentSavedGame, hud, renderer);
+                screen_sprite = NewGameInstructionSequence.Render(gaming_hardware, world, renderer);
                 break;
             case GameState::FLOOD_CUTSCENE:
                 screen_sprite = FloodCutscene.Render(renderer);
                 break;
             case GameState::PRE_FLOOD_GAMEPLAY:
-                screen_sprite = PreFloodGameplayState.Render(world, hud, CurrentSavedGame, renderer);
+                screen_sprite = PreFloodGameplayState.Render(world, CurrentSavedGame, renderer);
                 break;
         }
         return screen_sprite;
@@ -103,13 +100,11 @@ namespace STATES
     /// @param[in]  world - The game world needed for some states.
     /// @param[in,out]  gaming_hardware - The hardware the game is being played on.
     /// @param[in,out]  renderer - The renderer used for the game.
-    /// @param[in,out]  hud - The HUD for the game.
     void GameStates::SwitchStatesIfChanged(
         const GameState& new_state, 
         MAPS::World& world,
         HARDWARE::GamingHardware& gaming_hardware,
-        GRAPHICS::Renderer& renderer,
-        GRAPHICS::GUI::HeadsUpDisplay& hud)
+        GRAPHICS::Renderer& renderer)
     {
         // CHECK IF THE GAME STATE HAS CHANGED.
         bool game_state_changed = (new_state != CurrentSavedGame.CurrentGameState);
@@ -155,8 +150,18 @@ namespace STATES
                 NewGameIntroSequence.ResetToBeginning();
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
-                NewGameInstructionSequence.Initialize(world, hud);
+            {
+                unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
+                const unsigned int LINE_COUNT = 2;
+                unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
+                /// @todo   Rethink this text box initialization...It has to be done before the rest of initialization.
+                NewGameInstructionSequence.InstructionTextBox = GRAPHICS::GUI::TextBox(
+                    main_text_box_width_in_pixels,
+                    main_text_box_height_in_pixels,
+                    renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE]);
+                NewGameInstructionSequence.Initialize(world);
                 break;
+            }
             case GameState::FLOOD_CUTSCENE:
                 FloodCutscene.Initialize();
                 break;

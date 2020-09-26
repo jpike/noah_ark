@@ -25,6 +25,7 @@ namespace GUI
     {
     public:
         // CONSTRUCTION.
+        explicit HeadsUpDisplay() = default;
         explicit HeadsUpDisplay(
             const std::shared_ptr<GRAPHICS::GUI::Font>& font,
             const unsigned int main_text_box_width_in_pixels,
@@ -47,13 +48,13 @@ namespace GUI
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main text box for displaying messages to the player.
-        GRAPHICS::GUI::TextBox MainTextBox;
+        GRAPHICS::GUI::TextBox MainTextBox = TextBox();
         /// True if the pause menu box is visible; false otherwise.
-        bool PauseMenuVisible;
+        bool PauseMenuVisible = false;
         /// True if the full inventory GUI is displayed; false otherwise.
-        bool InventoryOpened;
+        bool InventoryOpened = false;
         /// The GUI for displaying the full inventory.
-        INVENTORY::InventoryGui InventoryGui;
+        INVENTORY::InventoryGui InventoryGui = {};
     };
 }
 }

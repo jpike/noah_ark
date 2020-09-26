@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
-#include "Graphics/Gui/HeadsUpDisplay.h"
+#include "Graphics/Gui/TextBox.h"
 #include "Graphics/Renderer.h"
 #include "Hardware/GamingHardware.h"
 #include "Maps/World.h"
@@ -16,24 +16,17 @@ namespace STATES
     class NewGameInstructionSequence
     {
     public:
-        void Initialize(MAPS::World& world, GRAPHICS::GUI::HeadsUpDisplay& hud);
-        GameState Update(
-            const HARDWARE::GamingHardware& gaming_hardware, 
-            const MAPS::World& world,
-            STATES::SavedGameData& current_game_data,
-            GRAPHICS::GUI::HeadsUpDisplay& hud);
+        void Initialize(MAPS::World& world);
+        GameState Update(const HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(
             const HARDWARE::GamingHardware& gaming_hardware, 
-            MAPS::World& world, 
-            const STATES::SavedGameData& current_game_data,
-            GRAPHICS::GUI::HeadsUpDisplay& hud, 
+            MAPS::World& world,
             GRAPHICS::Renderer& renderer);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
-        /// True if the instructions that are displayed in a text box at the start
-        /// of a new game are completed; false otherwise.
-        bool NewGameInstructionsCompleted = false;
         /// The instructional text to be displayed for a new game.
         std::string NewGameInstructionText = "";
+        /// The text box displaying the instructions.
+        GRAPHICS::GUI::TextBox InstructionTextBox;
     };
 }

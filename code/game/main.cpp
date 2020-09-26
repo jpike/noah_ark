@@ -146,15 +146,6 @@ int main()
         MAPS::World world;
         game_states.CurrentSavedGame.Player = world.NoahPlayer;
 
-        // INITIALIZE THE HUD.
-        unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
-        const unsigned int LINE_COUNT = 2;
-        unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
-        GRAPHICS::GUI::HeadsUpDisplay hud(
-            default_sans_serif_font,
-            main_text_box_width_in_pixels,
-            main_text_box_height_in_pixels);
-
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
         while (window.isOpen())
         {
@@ -201,10 +192,10 @@ int main()
                 gaming_hardware.Clock.UpdateElapsedTime();
 
                 // UPDATE THE GAME'S CURRENT STATE.
-                STATES::GameState next_game_state = game_states.Update(gaming_hardware, world, hud, renderer.Camera);
+                STATES::GameState next_game_state = game_states.Update(gaming_hardware, world, renderer.Camera);
 
                 // RENDER THE CURRENT STATE OF THE GAME TO THE WINDOW.
-                sf::Sprite screen_sprite = game_states.Render(gaming_hardware, world, hud, renderer);
+                sf::Sprite screen_sprite = game_states.Render(gaming_hardware, world, renderer);
                 window.draw(screen_sprite);
                 window.display();
 
@@ -266,7 +257,7 @@ int main()
                 }
 
                 // SWITCH THE GAME STATE IF NEEDED.
-                game_states.SwitchStatesIfChanged(next_game_state, world, gaming_hardware, renderer, hud);
+                game_states.SwitchStatesIfChanged(next_game_state, world, gaming_hardware, renderer);
             }
         }
 

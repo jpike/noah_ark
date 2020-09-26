@@ -3,7 +3,6 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 #include "Graphics/Camera.h"
-#include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
 #include "Hardware/GamingHardware.h"
 #include "Maps/World.h"
@@ -30,19 +29,16 @@ namespace STATES
         GameState Update(
             HARDWARE::GamingHardware& gaming_hardware,
             MAPS::World& world,
-            GRAPHICS::GUI::HeadsUpDisplay& hud,
             GRAPHICS::Camera& camera);
         sf::Sprite Render(
             HARDWARE::GamingHardware& gaming_hardware, 
             MAPS::World& world,
-            GRAPHICS::GUI::HeadsUpDisplay& hud,
             GRAPHICS::Renderer& renderer);
         void SwitchStatesIfChanged(
             const GameState& new_state, 
             MAPS::World& world,
             HARDWARE::GamingHardware& gaming_hardware,
-            GRAPHICS::Renderer& renderer,
-            GRAPHICS::GUI::HeadsUpDisplay& hud);
+            GRAPHICS::Renderer& renderer);
 
         /// The current saved game being used.
         SavedGameData CurrentSavedGame = SavedGameData::DefaultSavedGameData();
@@ -57,7 +53,7 @@ namespace STATES
         /// The new game intro sequence.
         NewGameIntroSequence NewGameIntroSequence = {};
         /// The new game instruction sequence.
-        NewGameInstructionSequence NewGameInstructionSequence = {};
+        NewGameInstructionSequence NewGameInstructionSequence = STATES::NewGameInstructionSequence();
         /// The main gameplay state.
         PreFloodGameplayState PreFloodGameplayState = {};
         /// The flood cutscene in-between the first and second halves of gameplay.

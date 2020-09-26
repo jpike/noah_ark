@@ -33,6 +33,15 @@ namespace STATES
         MATH::Vector2f player_start_world_position = world.NoahPlayer->GetWorldPosition();
         renderer.Camera.SetCenter(player_start_world_position);
 
+        // INITIALIZE THE HUD.
+        unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
+        const unsigned int LINE_COUNT = 2;
+        unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
+        Hud = GRAPHICS::GUI::HeadsUpDisplay(
+            renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE],
+            main_text_box_width_in_pixels,
+            main_text_box_height_in_pixels);
+
         // INDICATE THAT INITIALIZATION SUCCEEDED.
         return true;
     }
@@ -46,7 +55,6 @@ namespace STATES
         HARDWARE::GamingHardware& gaming_hardware,
         MAPS::World& world,
         GRAPHICS::Camera& camera,
-        GRAPHICS::GUI::HeadsUpDisplay& hud,
         STATES::SavedGameData& current_game_data)
     {
 #ifdef _DEBUG
@@ -75,12 +83,12 @@ namespace STATES
 
         // UPDATE THE HUD.
         // As of now, the HUD is capable of altering the gameplay state.
-        GameState next_game_state = hud.Update(gaming_hardware, current_game_data, world);
+        GameState next_game_state = Hud.Update(gaming_hardware, current_game_data, world);
 
         // CHECK IF A MODAL HUD COMPONENT IS DISPLAYED.
         // If a modal GUI component is displayed, then the regular controls for the player
         // in the world shouldn't work.
-        bool modal_hud_components_displayed = hud.ModalComponentDisplayed();
+        bool modal_hud_components_displayed = Hud.ModalComponentDisplayed();
         if (modal_hud_components_displayed)
         {
             // No further updating is needed.
@@ -88,7 +96,7 @@ namespace STATES
         }
 
         // UPDATE THE WORLD.
-        bool objects_can_move = !hud.MainTextBox.IsVisible;
+        bool objects_can_move = !Hud.MainTextBox.IsVisible;
         if (objects_can_move)
         {
             world.NoahPlayer->Inventory.FollowingAnimals.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
@@ -101,8 +109,7 @@ namespace STATES
             world,
             *CurrentMapGrid,
             camera, 
-            current_game_data,
-            hud);
+            current_game_data);
 
         // START PLAYING THE BACKGROUND MUSIC IF ITS NOT ALREADY PLAYING.
         gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
@@ -117,7 +124,6 @@ namespace STATES
     /// @return The rendered gameplay state.
     sf::Sprite PreFloodGameplayState::Render(
         MAPS::World& world, 
-        GRAPHICS::GUI::HeadsUpDisplay& hud,
         STATES::SavedGameData& current_game_data,
         GRAPHICS::Renderer& renderer)
     {
@@ -186,7 +192,7 @@ namespace STATES
                 // White is more readable on-top of the black borders around the ark interior.
                 hud_text_color = GRAPHICS::Color::WHITE;
             }
-            hud.Render(current_game_data, hud_text_color, renderer);
+            Hud.Render(current_game_data, hud_text_color, renderer);
         }
 
         // RENDER THE FINAL SCREEN WITH TIME-OF-DAY LIGHTING.
@@ -200,14 +206,12 @@ namespace STATES
     /// @param[in,out]  map_grid - The map grid to update.
     /// @param[in,out]  camera - The camera to be updated based on player actions during this frame.
     /// @param[in,out]  current_game_data - The current game data to use and update.
-    /// @param[in,out]  hud - The HUD to update.
     void PreFloodGameplayState::UpdateMapGrid(
         HARDWARE::GamingHardware& gaming_hardware,
         MAPS::World& world,
         MAPS::MultiTileMapGrid& map_grid,
         GRAPHICS::Camera& camera,
-        STATES::SavedGameData& current_game_data,
-        GRAPHICS::GUI::HeadsUpDisplay& hud)
+        STATES::SavedGameData& current_game_data)
     {
         // GET THE CURRENT TILE MAP.
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
@@ -222,7 +226,7 @@ namespace STATES
         // MOVE OBJECTS IF POSSIBLE.
         // If the main text box is displaying text, then no objects should move
         // to avoid having the player's gameplay hindered.
-        bool objects_can_move = !hud.MainTextBox.IsVisible;
+        bool objects_can_move = !Hud.MainTextBox.IsVisible;
         if (objects_can_move)
         {
             // UPDATE THE PLAYER BASED ON INPUT.
@@ -327,7 +331,7 @@ namespace STATES
                 bool text_box_message_exists = !message_for_text_box.empty();
                 if (text_box_message_exists)
                 {
-                    hud.MainTextBox.StartDisplayingText(message_for_text_box);
+                    Hud.MainTextBox.StartDisplayingText(message_for_text_box);
                 }
             }
         }

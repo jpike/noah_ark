@@ -5,11 +5,8 @@
 namespace STATES
 {
     /// Sets the new game instruction sequence to its initial state.
-    void NewGameInstructionSequence::Initialize(MAPS::World& world, GRAPHICS::GUI::HeadsUpDisplay& hud)
+    void NewGameInstructionSequence::Initialize(MAPS::World& world)
     {
-        // INDICATE THAT THE INSTRUCTIONS HAVEN'T BEEN COMPLETED.
-        NewGameInstructionsCompleted = false;
-
         // INITIALIZE THE NEW GAME INSTRUCTION TEXT.
         NewGameInstructionText = "";
         constexpr unsigned int MIN_GENESIS_6_VERSE_NUMBER = 13;
@@ -52,47 +49,48 @@ namespace STATES
         }
 
         // START DISPLAYING THE TEXT IN THE TEXT BOX.
-        hud.MainTextBox.StartDisplayingText(NewGameInstructionText);
+        InstructionTextBox.StartDisplayingText(NewGameInstructionText);
     }
 
     /// Updates the instruction sequence for a frame.
     /// @param[in]  gaming_hardware - The gaming hardware supplying input.
     /// @return The state the game should be in after the update.
-    GameState NewGameInstructionSequence::Update(
-        const HARDWARE::GamingHardware& gaming_hardware,
-        const MAPS::World& world, 
-        STATES::SavedGameData& current_game_data,
-        GRAPHICS::GUI::HeadsUpDisplay& hud)
+    GameState NewGameInstructionSequence::Update(const HARDWARE::GamingHardware& gaming_hardware)
     {
-        // UPDATE THE HUD.
-        // As of now, the HUD is capable of altering the gameplay state.
-        GameState next_game_state = hud.Update(gaming_hardware, current_game_data, world);
-
-        // UPDATE THE TEXT BOX IF IT IS VISIBLE.
-        // If the text box is currently being displayed, then it should capture any user input.
-        /// @todo   Why isn't this encapsulated in the HUD update?
-        if (hud.MainTextBox.IsVisible)
+        // UPDATE THE INSTRUCTION TEXT BOX.
+        if (InstructionTextBox.IsVisible)
         {
-            // UPDATE THE TEXT IN THE TEXT BOX.
-            hud.MainTextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+            // HAVE THE MAIN TEXT BOX RESPOND TO USER INPUT.
+            if (gaming_hardware.InputController.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+            {
+                // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
+                // If the current page of text has not yet all been displayed, the next
+                // page of text should not be moved to so that the user can finish
+                // seeing the complete message.
+                bool current_text_finished_being_displayed = InstructionTextBox.CurrentPageOfTextFinishedBeingDisplayed();
+                if (current_text_finished_being_displayed)
+                {
+                    // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
+                    InstructionTextBox.MoveToNextPage();
+                }
+            }
+
+            // UPDATE THE TEXT BOX IF IT IS VISIBLE.
+            // If the text box is currently being displayed, then it should capture any user input.
+            InstructionTextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
         }
 
-        // INDICATE THAT THE NEW GAME INSTRUCTIONS HAVE BEEN COMPLETED IF THE USER HAS GONE THROUGH ALL TEXT.
-        // This must be done after updating the HUD to prevent an infinite loop from occurring regarding the
-        // displaying of the new game instruction text.
-        /// @todo   Maybe this would be simpler as a separate game state?
-        if (!NewGameInstructionsCompleted)
-        {
-            NewGameInstructionsCompleted = !hud.MainTextBox.IsVisible;
-        }
-        if (NewGameInstructionsCompleted)
+        // DETERMINE THE NEXT GAME STATE.
+        // This must be done after updating the text box above to prevent an infinite loop from occurring
+        // regarding the displaying of the new game instruction text.
+        // The game should remain on the current state unless the instructions have been completed.
+        GameState next_game_state = GameState::NEW_GAME_INSTRUCTION_SEQUENCE;
+        bool new_game_instructions_completed = !InstructionTextBox.IsVisible;
+        if (new_game_instructions_completed)
         {
             next_game_state = GameState::PRE_FLOOD_GAMEPLAY;
         }
-        else
-        {
-            next_game_state = GameState::NEW_GAME_INSTRUCTION_SEQUENCE;
-        }
+        
         return next_game_state;
     }
 
@@ -102,8 +100,6 @@ namespace STATES
     sf::Sprite NewGameInstructionSequence::Render(
         const HARDWARE::GamingHardware& gaming_hardware, 
         MAPS::World& world,
-        const STATES::SavedGameData& current_game_data,
-        GRAPHICS::GUI::HeadsUpDisplay& hud,
         GRAPHICS::Renderer& renderer)
     {
         // RENDER THE STARTING POINT OF THE OVERWORLD.
@@ -112,50 +108,47 @@ namespace STATES
         // RENDER NOAH.
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
-        // RENDER THE HUD.
-        // Black text is most visible in the overworld.
-        const GRAPHICS::Color HUD_TEXT_COLOR = GRAPHICS::Color::BLACK;
-        hud.Render(current_game_data, HUD_TEXT_COLOR, renderer);
+        // RENDER THE TEXT BOX IF IT IS VISIBLE.      
+        if (InstructionTextBox.IsVisible)
+        {
+            InstructionTextBox.Render(renderer);
+        }
 
+        // RENDER A PULSING LIGHT EFFECT.
         // If the player is beginning a new game with God speaking to Noah, then the pulsing light
         // shader should be used to help communicate that God is speaking to the player.
         /// @todo   Might be better to have a fancier "spinning light" style-effect.
         sf::RenderStates lighting = sf::RenderStates::Default;
-        bool pulse_light_for_new_game_text = !NewGameInstructionsCompleted;
-        if (pulse_light_for_new_game_text)
+
+        // It should pulse based on elapsed time.
+        float elapsed_time_in_seconds = gaming_hardware.Clock.TotalElapsedTime.asSeconds();
+        // The range of sin() is [-1, 1].  Since we want to compute an additional lighting factor
+        // to add to the base lighting amount, without making it too dark/too bright, the scale
+        // of this additional lighting is adjusted to be [-0.4, 0.6].
+        // The initial multiplication brings the range to [-0.5, 0.5].
+        constexpr float ADDITIONAL_LIGHTING_FACTOR_RANGE = 0.5f;
+        float additional_lighting_factor = ADDITIONAL_LIGHTING_FACTOR_RANGE * std::sinf(elapsed_time_in_seconds);
+        // An addition shifts it into the appropriate range.
+        constexpr float ADDITIONAL_LIGHTING_FACTOR_SHIFT_AMOUNT = 0.1f;
+        additional_lighting_factor += ADDITIONAL_LIGHTING_FACTOR_SHIFT_AMOUNT;
+
+        // To ensure that the lighting stays bright enough even as the pulsing occurs and also
+        // tends toward brighter (more indicative of God) than darker, the additional factor
+        // above is added to a base lighting amount.
+        // is added in.
+        constexpr float BASE_LIGHTING_AMOUNT = 1.0f;
+        float lighting_scale_factor = BASE_LIGHTING_AMOUNT + additional_lighting_factor;
+
+        // Parameters need to be passed to the shader.
+        constexpr float ALPHA_FOR_FULLY_OPAQUE = 1.0f;
+        std::shared_ptr<sf::Shader> colored_texture_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
+        if (colored_texture_shader)
         {
-            // COMPUTE THE TINT TO APPLY TO THE SCREEN.
-            // It should pulse based on elapsed time.
-            float elapsed_time_in_seconds = gaming_hardware.Clock.TotalElapsedTime.asSeconds();
-            // The range of sin() is [-1, 1].  Since we want to compute an additional lighting factor
-            // to add to the base lighting amount, without making it too dark/too bright, the scale
-            // of this additional lighting is adjusted to be [-0.4, 0.6].
-            // The initial multiplication brings the range to [-0.5, 0.5].
-            constexpr float ADDITIONAL_LIGHTING_FACTOR_RANGE = 0.5f;
-            float additional_lighting_factor = ADDITIONAL_LIGHTING_FACTOR_RANGE * std::sinf(elapsed_time_in_seconds);
-            // An addition shifts it into the appropriate range.
-            constexpr float ADDITIONAL_LIGHTING_FACTOR_SHIFT_AMOUNT = 0.1f;
-            additional_lighting_factor += ADDITIONAL_LIGHTING_FACTOR_SHIFT_AMOUNT;
-
-            // To ensure that the lighting stays bright enough even as the pulsing occurs and also
-            // tends toward brighter (more indicative of God) than darker, the additional factor
-            // above is added to a base lighting amount.
-            // is added in.
-            constexpr float BASE_LIGHTING_AMOUNT = 1.0f;
-            float lighting_scale_factor = BASE_LIGHTING_AMOUNT + additional_lighting_factor;
-
-            // RENDER THE SCREEN WITH THE CURRENT LIGHTING.
-            constexpr float ALPHA_FOR_FULLY_OPAQUE = 1.0f;
-            std::shared_ptr<sf::Shader> colored_text_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
-            if (colored_text_shader)
-            {
-                colored_text_shader->setUniform("color", sf::Glsl::Vec4(lighting_scale_factor, lighting_scale_factor, lighting_scale_factor, ALPHA_FOR_FULLY_OPAQUE));
-                colored_text_shader->setUniform("texture", sf::Shader::CurrentTexture);
-                lighting.shader = colored_text_shader.get();
-            }
+            colored_texture_shader->setUniform("color", sf::Glsl::Vec4(lighting_scale_factor, lighting_scale_factor, lighting_scale_factor, ALPHA_FOR_FULLY_OPAQUE));
+            colored_texture_shader->setUniform("texture", sf::Shader::CurrentTexture);
+            lighting.shader = colored_texture_shader.get();
         }
 
-        // RETURN THE FINAL RENDERED SCREEN.
         sf::Sprite screen = renderer.RenderFinalScreen(lighting);
         return screen;
     }

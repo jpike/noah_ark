@@ -38,13 +38,11 @@ namespace STATES
             HARDWARE::GamingHardware& gaming_hardware,
             MAPS::World& world,
             GRAPHICS::Camera& camera,
-            GRAPHICS::GUI::HeadsUpDisplay& hud,
             STATES::SavedGameData& current_game_data);
 
         // RENDERING.
         sf::Sprite Render(
             MAPS::World& world, 
-            GRAPHICS::GUI::HeadsUpDisplay& hud,
             STATES::SavedGameData& current_game_data,
             GRAPHICS::Renderer& renderer);
 
@@ -55,8 +53,7 @@ namespace STATES
             MAPS::World& world,
             MAPS::MultiTileMapGrid& map_grid,
             GRAPHICS::Camera& camera,
-            STATES::SavedGameData& current_game_data,
-            GRAPHICS::GUI::HeadsUpDisplay& hud);
+            STATES::SavedGameData& current_game_data);
         MAPS::ExitPoint* UpdatePlayerBasedOnInput(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
@@ -97,6 +94,8 @@ namespace STATES
         // PRIVATE MEMBER VARIABLES.
         /// The current map being displayed within the world.
         MAPS::MultiTileMapGrid* CurrentMapGrid = nullptr;
+        /// The HUD.
+        GRAPHICS::GUI::HeadsUpDisplay Hud = GRAPHICS::GUI::HeadsUpDisplay();
         /// The tile map editor GUI.
         MAPS::GUI::TileMapEditorGui TileMapEditorGui = {};
         /// The random number generator.

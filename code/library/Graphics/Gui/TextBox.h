@@ -8,6 +8,7 @@
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/TextPage.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/Screen.h"
 
 namespace GRAPHICS::GUI
 {
@@ -20,6 +21,7 @@ namespace GRAPHICS::GUI
     {
     public:
         // CONSTRUCTION.
+        explicit TextBox() = default;
         explicit TextBox(
             const unsigned int width_in_pixels, 
             const unsigned int height_in_pixels,
@@ -48,15 +50,15 @@ namespace GRAPHICS::GUI
     private:
         // PRIVATE MEMBER VARIABLES.
         /// The width of the text box (excluding borders) in pixels.
-        unsigned int WidthInPixels;
+        unsigned int WidthInPixels = GRAPHICS::Screen::DEFAULT_WIDTH_IN_PIXELS;
         /// The height of the text box (excluding borders) in pixels.
-        unsigned int HeightInPixels;
+        unsigned int HeightInPixels = GRAPHICS::Screen::DEFAULT_HEIGHT_IN_PIXELS;
         /// The index of the current page of text displayed in the text box.
-        unsigned int CurrentPageIndex;
+        unsigned int CurrentPageIndex = 0;
         /// True if the arrow indicating that the user can progress the text box is visible; false otherwise.
-        bool ContinueArrowVisible;
+        bool ContinueArrowVisible = false;
         /// The total elapsed time (in seconds) since the last time the arrow
         /// in the text box was shown or hidden.  Used to make the arrow blink.
-        float TotalElapsedTimeInSecondsSinceLastArrowBlink;
+        float TotalElapsedTimeInSecondsSinceLastArrowBlink = 0;
     };
 }

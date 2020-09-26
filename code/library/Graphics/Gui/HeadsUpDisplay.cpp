@@ -23,14 +23,12 @@ namespace GUI
     {}
 
     /// Updates the HUD.
-    /// @param[in]  gaming_hardware - The gaming hardware supplying input.
     /// @param[in]  current_game_data - The game data to display in the HUD.
-    /// @param[in]  world - The world for which the HUD is being displayed.
+    /// @param[in]  gaming_hardware - The gaming hardware supplying input.
     /// @return The state the game should be in after updating the HUD.
     STATES::GameState HeadsUpDisplay::Update(
-        const HARDWARE::GamingHardware& gaming_hardware,
-        STATES::SavedGameData& current_game_data,
-        const MAPS::World& world)
+        const STATES::SavedGameData& current_game_data,
+        const HARDWARE::GamingHardware& gaming_hardware)
     {
         // CHECK IF THE PAUSE MENU IS OPEN.
         // If so, it should take precedence over other parts of the HUD.
@@ -41,51 +39,6 @@ namespace GUI
             if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Return))
             {
                 // SAVE THE GAME DATA.
-                /// @todo   Update this function to not require non-const game data.
-                // Built ark piece data from all tile maps needs to be included.
-                unsigned int tile_map_row_count = world.Overworld.MapGrid.TileMaps.GetHeight();
-                unsigned int tile_map_column_count = world.Overworld.MapGrid.TileMaps.GetWidth();
-                for (unsigned int tile_map_y_index = 0; tile_map_y_index < tile_map_row_count; ++tile_map_y_index)
-                {
-                    for (unsigned int tile_map_x_index = 0; tile_map_x_index < tile_map_column_count; ++tile_map_x_index)
-                    {
-                        // GET THE CURRENT TILE MAP.
-                        const MAPS::TileMap* current_tile_map = world.Overworld.MapGrid.GetTileMap(tile_map_y_index, tile_map_x_index);
-                        if (!current_tile_map)
-                        {
-                            // CONTINUE GETTING DATA FROM OTHER TILE MAPS.
-                            continue;
-                        }
-
-                        // GATHER ANY ARK PIECES BUILT IN THE CURRENT TILE MAP.
-                        std::vector<size_t> built_ark_piece_indices;
-                        size_t ark_piece_count = current_tile_map->ArkPieces.size();
-                        for (size_t ark_piece_index = 0; ark_piece_index < ark_piece_count; ++ark_piece_index)
-                        {
-                            // CHECK IF THE CURRENT ARK PIECE IS BUILT.
-                            const auto& ark_piece = current_tile_map->ArkPieces.at(ark_piece_index);
-                            if (ark_piece.Built)
-                            {
-                                // STORE THE BUILT ARK PIECE INDEX.
-                                built_ark_piece_indices.push_back(ark_piece_index);
-                            }
-                        }
-
-                        // CHECK IF THE CURRENT TILE MAP HAS ANY BUILT ARK PIECES.
-                        // This prevents unnecessary data from being stored in the file.
-                        bool ark_pieces_built_in_map = !built_ark_piece_indices.empty();
-                        if (ark_pieces_built_in_map)
-                        {
-                            // ADD THE CURRENT TILE MAP'S BUILT ARK PIECES.
-                            STATES::BuiltArkPieceTileMapData tile_map_ark_data;
-                            tile_map_ark_data.TileMapGridXPosition = tile_map_x_index;
-                            tile_map_ark_data.TileMapGridYPosition = tile_map_y_index;
-                            tile_map_ark_data.BuiltArkPieceIndices = built_ark_piece_indices;
-                            current_game_data.BuiltArkPieces.push_back(tile_map_ark_data);
-                        }
-                    }
-                }
-
                 current_game_data.Write(current_game_data.Filepath);
 
                 // CLOSE THE PAUSE MENU.

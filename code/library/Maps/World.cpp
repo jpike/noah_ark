@@ -93,12 +93,12 @@ namespace MAPS
 
     /// Initializes the built ark within the overworld.
     /// @param[in]  built_ark_pieces - The built pieces of the ark.
-    void World::InitializeBuiltArkInOverworld(const std::vector<STATES::BuiltArkPieceTileMapData>& built_ark_pieces)
+    void World::InitializeBuiltArkInOverworld(const std::vector<OBJECTS::ArkPiece>& built_ark_pieces)
     {
-        for (const auto& built_ark_piece_data : built_ark_pieces)
+        for (const auto& built_ark_piece : built_ark_pieces)
         {
             // GET THE TILE MAP FOR THE BUILT ARK PIECES.
-            TileMap* current_tile_map = Overworld.MapGrid.GetTileMap(built_ark_piece_data.TileMapGridYPosition, built_ark_piece_data.TileMapGridXPosition);
+            TileMap* current_tile_map = Overworld.MapGrid.GetTileMap(built_ark_piece.Sprite.WorldPosition.X, built_ark_piece.Sprite.WorldPosition.Y);
             if (!current_tile_map)
             {
                 // Continue trying to initialize other ark pieces.
@@ -106,12 +106,11 @@ namespace MAPS
                 continue;
             }
 
-            // UPDATE THE BUILT ARK PIECES IN THE CURRENT TILE MAP.
-            for (std::size_t ark_piece_index : built_ark_piece_data.BuiltArkPieceIndices)
+            // UPDATE THE BUILT ARK PIECE IN THE CURRENT TILE MAP.
+            OBJECTS::ArkPiece* map_ark_piece = current_tile_map->GetArkPieceAtWorldPosition(built_ark_piece.Sprite.WorldPosition);
+            if (map_ark_piece)
             {
-                // SET THE CURRENT ARK PIECE AS BUILT.
-                auto& ark_piece = current_tile_map->ArkPieces.at(ark_piece_index);
-                ark_piece.Built = true;
+                *map_ark_piece = built_ark_piece;
             }
         }
     }

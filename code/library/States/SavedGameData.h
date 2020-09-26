@@ -11,8 +11,8 @@
 #include "Math/Vector2.h"
 #include "Memory/Pointers.h"
 #include "Objects/Animal.h"
+#include "Objects/ArkPiece.h"
 #include "Objects/Noah.h"
-#include "States/BuiltArkPieceTileMapData.h"
 #include "States/GameState.h"
 
 namespace STATES
@@ -44,7 +44,7 @@ namespace STATES
         /// The player.  Stored as a shared pointer since the player needs to be shared with the world.
         MEMORY::NonNullSharedPointer<OBJECTS::Noah> Player = MEMORY::NonNullSharedPointer<OBJECTS::Noah>(std::make_shared<OBJECTS::Noah>());
         /// Ark pieces built by the player.
-        std::vector<BuiltArkPieceTileMapData> BuiltArkPieces = {};
+        std::vector<OBJECTS::ArkPiece> BuiltArkPieces = {};
         /// All animals collected by the player, with types mapping to collected counts.
         std::unordered_map<OBJECTS::AnimalType, unsigned int> AllCollectedAnimals = {};
         /// Animals collected by the player that are currently following the player,

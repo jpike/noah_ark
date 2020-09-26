@@ -83,7 +83,7 @@ namespace STATES
 
         // UPDATE THE HUD.
         // As of now, the HUD is capable of altering the gameplay state.
-        GameState next_game_state = Hud.Update(gaming_hardware, current_game_data, world);
+        GameState next_game_state = Hud.Update(current_game_data, gaming_hardware);
 
         // CHECK IF A MODAL HUD COMPONENT IS DISPLAYED.
         // If a modal GUI component is displayed, then the regular controls for the player

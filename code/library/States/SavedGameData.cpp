@@ -137,38 +137,26 @@ namespace STATES
 
                 // READ IN THE CURRENT LINE OF ARK PIECE DATA.
                 std::stringstream current_ark_data_line(current_line_of_data);
-                BuiltArkPieceTileMapData built_ark_piece_data;
-                current_ark_data_line >> built_ark_piece_data.TileMapGridXPosition;
-                current_ark_data_line >> built_ark_piece_data.TileMapGridYPosition;
+                unsigned int ark_piece_id = 0;
+                MATH::Vector2f ark_piece_world_position;
+                current_ark_data_line >> ark_piece_id;
+                current_ark_data_line >> ark_piece_world_position.X;
+                current_ark_data_line >> ark_piece_world_position.Y;
 
-                // READ IN ALL BUILT ARK PIECE INDICES.
+                // READ IN ALL BUILT ARK PIECE ID.
                 while (!current_ark_data_line.eof())
                 {
-                    // READ IN THE CURRENT ARK PIECE INDEX.
-                    unsigned int ark_piece_index;
-                    current_ark_data_line >> ark_piece_index;
+                    // ADD THE PREVIOUSLY READ ARK PIECE.
+                    OBJECTS::ArkPiece ark_piece(ark_piece_id);
+                    ark_piece.Built = true;
+                    ark_piece.Sprite.WorldPosition = ark_piece_world_position;
+                    saved_game_data->BuiltArkPieces.emplace_back(ark_piece);
 
-                    // Make sure the ark piece index is valid.
-                    bool ark_piece_index_valid = !current_ark_data_line.eof() && !current_ark_data_line.bad();
-                    if (ark_piece_index_valid)
-                    {
-                        built_ark_piece_data.BuiltArkPieceIndices.push_back(ark_piece_index);
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    // READ IN THE NEXT ARK PIECE DATA.
+                    current_ark_data_line >> ark_piece_id;
+                    current_ark_data_line >> ark_piece_world_position.X;
+                    current_ark_data_line >> ark_piece_world_position.Y;
                 }
-
-                // MAKE SURE THE READ ARK DATA IS VALID.
-                bool ark_data_valid = !saved_game_data_file.eof();
-                if (!ark_data_valid)
-                {
-                    break;
-                }
-
-                // ADD THE ARK DATA TO THE IN-MEMORY DATA.
-                saved_game_data->BuiltArkPieces.push_back(built_ark_piece_data);
             }
 
             // READ IN THE COLLECTED ANIMAL DATA.
@@ -284,20 +272,16 @@ namespace STATES
         // WRITE THE BUILT ARK PIECES.
         // The count of ark piece data is written out first.
         saved_game_data_file << BuiltArkPieces.size() << std::endl;
-        for (const auto& built_ark_piece_tile_map_data : BuiltArkPieces)
+        for (const auto& built_ark_piece : BuiltArkPieces)
         {
-            // WRITE THE TILE MAP INDICES.
+            // WRITE THE ARK PIECE DATA.
             saved_game_data_file
-                << built_ark_piece_tile_map_data.TileMapGridXPosition
+                << built_ark_piece.Id
                 << SEPARATOR_BETWEEN_RELATED_DATA
-                << built_ark_piece_tile_map_data.TileMapGridYPosition
+                << built_ark_piece.Sprite.WorldPosition.X
+                << SEPARATOR_BETWEEN_RELATED_DATA
+                << built_ark_piece.Sprite.WorldPosition.Y
                 << SEPARATOR_BETWEEN_RELATED_DATA;
-
-            // WRITE THE BUILT ARK PIECE INDICES.
-            for (const auto built_ark_piece_index : built_ark_piece_tile_map_data.BuiltArkPieceIndices)
-            {
-                saved_game_data_file << built_ark_piece_index << SEPARATOR_BETWEEN_RELATED_DATA;
-            }
 
             // WRITE A LINE SEPARATOR BEFORE THE NEXT SET OF DATA.
             saved_game_data_file << std::endl;

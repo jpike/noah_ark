@@ -8,8 +8,8 @@
 #include "Math/Vector2.h"
 #include "Memory/Pointers.h"
 #include "Objects/Animal.h"
+#include "Objects/ArkPiece.h"
 #include "Objects/Noah.h"
-#include "States/BuiltArkPieceTileMapData.h"
 
 namespace MAPS
 {
@@ -20,7 +20,7 @@ namespace MAPS
         // CONSTRUCTION/INITIALIZATION.
         static MEMORY::NonNullSharedPointer<World> CreateInitial();
         explicit World();
-        void InitializeBuiltArkInOverworld(const std::vector<STATES::BuiltArkPieceTileMapData>& built_ark_pieces);
+        void InitializeBuiltArkInOverworld(const std::vector<OBJECTS::ArkPiece>& built_ark_pieces);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The overworld of the game.

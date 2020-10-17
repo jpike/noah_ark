@@ -39,7 +39,10 @@ namespace MAPS
             ARK_INTERIOR_DOWN_STAIRS == tile_type_id ||
             ARK_INTERIOR_LEFT_EXIT_CLOSED == tile_type_id ||
             ARK_INTERIOR_CENTER_EXIT_CLOSED == tile_type_id ||
-            ARK_INTERIOR_RIGHT_EXIT_CLOSED == tile_type_id);
+            ARK_INTERIOR_RIGHT_EXIT_CLOSED == tile_type_id ||
+            ANIMAL_PEN_FENCE == tile_type_id ||
+            ANIMAL_PEN_GROUND == tile_type_id ||
+            ANIMAL_PEN_ENTRANCE == tile_type_id);
         return is_for_ark;
     }
 
@@ -127,6 +130,9 @@ namespace MAPS
         tile_is_walkable[TileType::ARK_INTERIOR_RIGHT_EXIT_CLOSED] = false;
         tile_is_walkable[TileType::WATER_ANIMATED_1] = false;
         tile_is_walkable[TileType::WATER_ANIMATED_2] = false;
+        tile_is_walkable[TileType::ANIMAL_PEN_FENCE] = false;
+        tile_is_walkable[TileType::ANIMAL_PEN_GROUND] = true;
+        tile_is_walkable[TileType::ANIMAL_PEN_ENTRANCE] = true;
 
         // CHECK IF THIS TILE'S ID IS VALID.
         bool tile_id_valid = (Id < TileType::COUNT);

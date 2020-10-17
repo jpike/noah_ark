@@ -876,8 +876,8 @@ namespace STATES
         STATES::SavedGameData& current_game_data)
     {
         // HANDLE PLAYER COLLISIONS WITH ANIMALS.
-        for (auto animal = tile_map.Animals.cbegin();
-            animal != tile_map.Animals.cend();)
+        for (auto animal = tile_map.RoamingAnimals.cbegin();
+            animal != tile_map.RoamingAnimals.cend();)
         {
             // CHECK IF THE CURRENT ANIMAL INTERSECTS WITH THE PLAYER.
             MATH::FloatRectangle animal_bounding_box = (*animal)->Sprite.GetWorldBoundingBox();
@@ -896,7 +896,7 @@ namespace STATES
 
                 // REMOVE THE ANIMAL FROM THOSE IN THE CURRENT TILE MAP.
                 // This should move to the next animal.
-                animal = tile_map.Animals.erase(animal);
+                animal = tile_map.RoamingAnimals.erase(animal);
             }
             else
             {
@@ -971,7 +971,7 @@ namespace STATES
                         animal->Sprite.Play();
 
                         // STORE THE ANIMAL IN THE CURRENT TILE MAP.
-                        current_tile_map.Animals.push_back(animal);
+                        current_tile_map.RoamingAnimals.push_back(animal);
                     }
                 }
             }

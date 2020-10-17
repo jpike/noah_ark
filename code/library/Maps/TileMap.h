@@ -86,9 +86,8 @@ namespace MAPS
         /// Stored in a vector currently for simplicitly at the moment,
         /// but a different data structure may be needed later for performance.
         std::vector<OBJECTS::ArkPiece> ArkPieces;
-        /// Animals freely roaming in the tile map that haven't yet been
-        /// collected by the player.
-        std::vector<std::shared_ptr<OBJECTS::Animal>> Animals;
+        /// Animals freely roaming in the tile map that haven't yet been collected by the player.
+        std::vector<std::shared_ptr<OBJECTS::Animal>> RoamingAnimals;
         /// Exit points within the tile map.
         std::vector<MAPS::ExitPoint> ExitPoints;
 

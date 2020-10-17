@@ -818,8 +818,8 @@ namespace GRAPHICS
             Render(food.Sprite);
         }
 
-        // RENDER THE CURRENT TILE MAP'S ANIMALS.
-        for (const auto& animal : tile_map.Animals)
+        // RENDER THE CURRENT TILE MAP'S ROAMING ANIMALS.
+        for (const auto& animal : tile_map.RoamingAnimals)
         {
             Render(animal->Sprite.CurrentFrameSprite);
         }

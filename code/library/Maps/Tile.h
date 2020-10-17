@@ -59,6 +59,12 @@ namespace MAPS
             WATER_ANIMATED_1 = 18,
             /// Another frame of animation for a water tile.
             WATER_ANIMATED_2 = 19,
+            /// The fence around an animal pen in the ark.
+            ANIMAL_PEN_FENCE = 20,
+            /// The ground for an animal pen in the ark.
+            ANIMAL_PEN_GROUND = 21,
+            /// The entryway for an animal pen in the ark.
+            ANIMAL_PEN_ENTRANCE = 22,
             /// An extra enum value to define count of different tile types.
             COUNT
         };

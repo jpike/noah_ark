@@ -180,8 +180,8 @@ namespace MAPS
             }
         }
 
-        // UPDATE THE CURRENT TILE MAP'S ANIMALS.
-        for (auto& animal : Animals)
+        // UPDATE THE CURRENT TILE MAP'S ROAMING ANIMALS.
+        for (auto& animal : RoamingAnimals)
         {
             animal->Sprite.Update(elapsed_time);
         }
@@ -332,7 +332,8 @@ namespace MAPS
                         if (entry_room_inside_ark)
                         {
                             (*animal)->Sprite.SetWorldPosition(entry_point_into_ark->NewPlayerWorldPosition);
-                            entry_room_inside_ark->Animals.push_back(*animal);
+                            /// @todo   This should be replaced with inserting into the appropriate animal pen!
+                            entry_room_inside_ark->RoamingAnimals.push_back(*animal);
                         }
                     }
 
@@ -350,7 +351,7 @@ namespace MAPS
         // MOVE EACH ANIMAL IN THE TILE MAP CLOSER TO NOAH IF THEY'RE OUTSIDE.
         if (!inside_ark)
         {
-            for (auto& animal : Animals)
+            for (auto& animal : RoamingAnimals)
             {
                 // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE PLAYER.
                 // The animal should move closer to Noah based on Genesis 6:20.
@@ -398,32 +399,7 @@ namespace MAPS
         /// @todo   Come up with better movement!
         if (inside_ark)
         {
-            for (auto& animal : Animals)
-            {
-                // ADD A BIT OF A DYNAMIC OFFSET TO THE ANIMAL TO MAKE IT APPEAR TO JUMP AROUND A BIT.
-                // Jumping is based on the position of the animal is used to give a bit more dynamism
-                // for animals by avoiding having all animals jump at the same frequency.
-                MATH::Vector2f old_animal_world_position = animal->Sprite.GetWorldPosition();
-                MATH::Vector2f new_animal_world_position = old_animal_world_position;
-
-                // A sine wave is used to control vertical jumping.
-                constexpr float MAX_VERTICAL_JUMP_AMOUNT_IN_PIXELS = 3.0f;
-                float sine_of_y_position = std::sinf(old_animal_world_position.Y);
-                float vertical_jump_amount_in_pixels = MAX_VERTICAL_JUMP_AMOUNT_IN_PIXELS * sine_of_y_position;
-                new_animal_world_position.Y += vertical_jump_amount_in_pixels;
-
-                // A cosine wave is used to control horizontal jumping.
-                constexpr float MAX_HORIZONTAL_JUMP_AMOUNT_IN_PIXELS = 3.0f;
-                float cosine_of_x_position = std::cosf(old_animal_world_position.X);
-                float horizontal_jump_amount_in_pixels = MAX_HORIZONTAL_JUMP_AMOUNT_IN_PIXELS * cosine_of_x_position;
-                new_animal_world_position.X += horizontal_jump_amount_in_pixels;
-
-                // UPDATE THE ANIMAL'S WORLD POSITION.
-                animal->Sprite.SetWorldPosition(new_animal_world_position);
-
-                // UPDATE THE ANIMAL'S ANIMATION.
-                animal->Sprite.Update(elapsed_time);
-            }
+            
         }
     }
 }

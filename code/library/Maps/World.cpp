@@ -25,8 +25,7 @@ namespace MAPS
     World::World() :
         Overworld(MEMORY::NonNullRawPointer<World>(this)),
         Ark(MEMORY::NonNullRawPointer<World>(this)),
-        NoahPlayer(std::make_shared<OBJECTS::Noah>()),
-        AnimalsGoingIntoArk()
+        NoahPlayer(std::make_shared<OBJECTS::Noah>())
     {
         // CREATE THE EXIT POINTS BETWEEN MAP GRIDS.
         // The ark interior data used for exit points is currently hard-coded to simplify
@@ -102,7 +101,6 @@ namespace MAPS
             if (!current_tile_map)
             {
                 // Continue trying to initialize other ark pieces.
-                /// @todo   Different error handling?
                 continue;
             }
 

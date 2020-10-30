@@ -141,7 +141,7 @@ namespace STATES
         else
         {
             // RENDER ANY ANIMALS ENTERING INTO THE ARK.
-            for (const auto& animal : world.AnimalsGoingIntoArk)
+            for (const auto& animal : world.Overworld.AnimalsGoingIntoArk)
             {
                 renderer.Render(animal->Sprite.CurrentFrameSprite);
             }
@@ -661,9 +661,6 @@ namespace STATES
         if (noah_moved_this_frame)
         {
             // MOVE ANY FOLLOWING ANIMALS ALONG WITH NOAH.
-            /// @todo   Clean this up...I don't like how non-encapsulated this is, but this might be easier
-            /// to clean-up after some more changes later.  Maybe we should have a simpler "just stay this
-            /// close to Noah" logic, which could add more dynamism?
             MATH::Vector2f new_noah_position = world.NoahPlayer->GetWorldPosition();
             MATH::Vector2f noah_movement = new_noah_position - old_noah_position;
             world.NoahPlayer->Inventory.FollowingAnimals.CurrentCenterWorldPosition += noah_movement;

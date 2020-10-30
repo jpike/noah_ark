@@ -10,7 +10,8 @@ namespace MAPS
     /// Constructor.  Creates the the overworld in its initial state.
     /// @param[in]  world - The larger world this overworld is part of.
     Overworld::Overworld(MEMORY::NonNullRawPointer<World> world) :
-        MapGrid(WIDTH_IN_TILE_MAPS, HEIGHT_IN_TILE_MAPS, world)
+        MapGrid(WIDTH_IN_TILE_MAPS, HEIGHT_IN_TILE_MAPS, world),
+        AnimalsGoingIntoArk()
     {
         // CREATE THE TILESET.
         Tileset tileset;

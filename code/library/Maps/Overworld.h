@@ -1,7 +1,9 @@
 #pragma once
 
+#include <vector>
 #include "Maps/MultiTileMapGrid.h"
 #include "Memory/Pointers.h"
+#include "Objects/Animal.h"
 
 namespace MAPS
 {
@@ -24,5 +26,7 @@ namespace MAPS
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The tile map grid for the overworld.
         MultiTileMapGrid MapGrid;
+        /// Animals being transferred from following Noah into the ark.
+        std::vector<MEMORY::NonNullSharedPointer<OBJECTS::Animal>> AnimalsGoingIntoArk;
     };
 }

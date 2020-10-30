@@ -6,7 +6,6 @@
 #include "Maps/Overworld.h"
 #include "Math/Vector2.h"
 #include "Memory/Pointers.h"
-#include "Objects/Animal.h"
 #include "Objects/ArkPiece.h"
 #include "Objects/Noah.h"
 
@@ -29,9 +28,5 @@ namespace MAPS
         /// Noah (the player) character within the game.
         /// Stored as a shared pointer because it needs to be shared with the saved game data.
         MEMORY::NonNullSharedPointer<OBJECTS::Noah> NoahPlayer;
-        /// Animals being transferred from following Noah into the ark.
-        /// @todo   Probably best to not have this in the game state and instead just
-        /// have animals have different "modes" of behavior.
-        std::vector<MEMORY::NonNullSharedPointer<OBJECTS::Animal>> AnimalsGoingIntoArk;
     };
 }

@@ -294,8 +294,8 @@ namespace MAPS
         if (doorway_into_ark)
         {
             // TRANSFER THE ANIMALS CURRENTLY FOLLOWING NOAH OVER TO MOVING INTO THE ARK.
-            MapGrid->World->AnimalsGoingIntoArk.insert(
-                MapGrid->World->AnimalsGoingIntoArk.cend(),
+            MapGrid->World->Overworld.AnimalsGoingIntoArk.insert(
+                MapGrid->World->Overworld.AnimalsGoingIntoArk.cend(),
                 MapGrid->World->NoahPlayer->Inventory.FollowingAnimals.Animals.cbegin(),
                 MapGrid->World->NoahPlayer->Inventory.FollowingAnimals.Animals.cend());
             MapGrid->World->NoahPlayer->Inventory.FollowingAnimals.Animals.clear();
@@ -304,7 +304,7 @@ namespace MAPS
             MATH::FloatRectangle ark_doorway_bounding_box = doorway_into_ark->Sprite.GetWorldBoundingBox();
             MATH::Vector2f ark_doorway_world_position = doorway_into_ark->Sprite.WorldPosition;
             MAPS::ExitPoint* entry_point_into_ark = GetExitPointAtWorldPosition(ark_doorway_world_position);
-            for (auto animal = MapGrid->World->AnimalsGoingIntoArk.begin(); animal != MapGrid->World->AnimalsGoingIntoArk.end(); )
+            for (auto animal = MapGrid->World->Overworld.AnimalsGoingIntoArk.begin(); animal != MapGrid->World->Overworld.AnimalsGoingIntoArk.end(); )
             {
                 // UPDATE THE ANIMAL'S ANIMATION.
                 (*animal)->Sprite.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
@@ -320,7 +320,6 @@ namespace MAPS
                 MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_ark_doorway_direction);
 
                 // MOVE THE ANIMAL.
-                /// @todo   Should we take tile types into account?
                 MATH::Vector2f new_animal_world_position = animal_world_position + animal_move_vector;
                 (*animal)->Sprite.SetWorldPosition(new_animal_world_position);
 
@@ -347,7 +346,7 @@ namespace MAPS
                     }
 
                     // REMOVE THE ANIMAL FROM ITS STATE OF TRYING TO ENTER THE ARK.
-                    animal = MapGrid->World->AnimalsGoingIntoArk.erase(animal);
+                    animal = MapGrid->World->Overworld.AnimalsGoingIntoArk.erase(animal);
                 }
                 else
                 {

@@ -337,7 +337,7 @@ namespace STATES
         }
 
         // UPDATE THE REST OF THE WORLD WITHIN CURRENT TILE MAP.
-        current_tile_map->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, objects_can_move, current_game_data, *gaming_hardware.Speakers);
+        current_tile_map->Update(objects_can_move, current_game_data, gaming_hardware);
 
         // UPDATE THE CAMERA'S WORLD VIEW.
         UpdateCameraWorldView(

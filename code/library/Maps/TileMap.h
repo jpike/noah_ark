@@ -3,6 +3,7 @@
 #include <vector>
 #include <SFML/System.hpp>
 #include "Audio/Speakers.h"
+#include "Hardware/GamingHardware.h"
 #include "Maps/AnimalPen.h"
 #include "Maps/ExitPoint.h"
 #include "Maps/GroundLayer.h"
@@ -55,10 +56,9 @@ namespace MAPS
 
         // UPDATING.
         void Update(
-            const sf::Time& elapsed_time,
             const bool objects_can_move_across_space,
             STATES::SavedGameData& current_game_data,
-            AUDIO::Speakers& speakers);
+            HARDWARE::GamingHardware& gaming_hardware);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The type of tile map.
@@ -96,6 +96,6 @@ namespace MAPS
 
     private:
         // UPDATING HELPER METHODS.
-        void MoveAnimals(const sf::Time& elapsed_time, STATES::SavedGameData& current_game_data);
+        void MoveAnimals(STATES::SavedGameData& current_game_data, HARDWARE::GamingHardware& gaming_hardware);
     };
 }

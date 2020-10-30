@@ -152,18 +152,16 @@ namespace MAPS
     }
 
     /// Updates the tile map based on elapsed time, simulating interactions within the map.
-    /// @param[in]  elapsed_time - The elapsed time for which to update the tile map.
     /// @param[in]  objects_can_move_across_space - True if objects are allowed to move across space;
     ///     false if not.  There are some situations where it can be useful to still have "stationary"
     ///     objects still animate but have other objects that would move across space in the tile map
     ///     not be updated.
     /// @param[in,out]  current_game_data - The game data to potentially update.
-    /// @param[in,out]  speakers - The speakers out of which to play any audio.
+    /// @param[in,out]  gaming_hardware - The hardware for input and output.
     void TileMap::Update(
-        const sf::Time& elapsed_time, 
         const bool objects_can_move_across_space,
         STATES::SavedGameData& current_game_data,
-        AUDIO::Speakers& speakers)
+        HARDWARE::GamingHardware& gaming_hardware)
     {
         // UPDATE THE CURRENT TILE MAP'S TILES.
         unsigned int map_height_in_tiles = Ground.Tiles.GetHeight();
@@ -178,7 +176,7 @@ namespace MAPS
                 if (current_tile)
                 {
                     current_tile->Sprite.Play();
-                    current_tile->Sprite.Update(elapsed_time);
+                    current_tile->Sprite.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
                 }
             }
         }
@@ -186,7 +184,7 @@ namespace MAPS
         // UPDATE THE CURRENT TILE MAP'S ROAMING ANIMALS.
         for (auto& animal : RoamingAnimals)
         {
-            animal->Sprite.Update(elapsed_time);
+            animal->Sprite.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
         }
 
         // ANIMATE ANIMALS IN PENS.
@@ -194,7 +192,7 @@ namespace MAPS
         {
             for (auto& animal : animal_pen.Animals)
             {
-                animal->Sprite.Update(elapsed_time);
+                animal->Sprite.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
             }
         }
 
@@ -202,7 +200,7 @@ namespace MAPS
         for (auto tree = Trees.begin(); tree != Trees.end(); ++tree)
         {
             // UPDATE THE TREE.
-            tree->Update(elapsed_time);
+            tree->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
             // START PLAYING THE TREE SHAKING SOUND EFFECT IF APPROPRIATE.
             bool is_shaking = tree->IsShaking();
@@ -210,10 +208,10 @@ namespace MAPS
             {
                 // ONLY START PLAYING THE SOUND IF IT ISN'T ALREADY PLAYING.
                 // This results in a smoother sound experience.
-                bool tree_shake_sound_playing = speakers.SoundIsPlaying(RESOURCES::AssetId::TREE_SHAKE_SOUND);
+                bool tree_shake_sound_playing = gaming_hardware.Speakers->SoundIsPlaying(RESOURCES::AssetId::TREE_SHAKE_SOUND);
                 if (!tree_shake_sound_playing)
                 {
-                    speakers.PlaySoundEffect(RESOURCES::AssetId::TREE_SHAKE_SOUND);
+                    gaming_hardware.Speakers->PlaySoundEffect(RESOURCES::AssetId::TREE_SHAKE_SOUND);
                 }
             }
         }
@@ -222,7 +220,7 @@ namespace MAPS
         for (auto dust_cloud = DustClouds.begin(); dust_cloud != DustClouds.end();)
         {
             // UPDATE THE CURRENT DUST CLOUD.
-            dust_cloud->Update(elapsed_time);
+            dust_cloud->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
             // REMOVE THE DUST CLOUD IF IT HAS DISAPPEARED.
             bool dust_cloud_disappeared = dust_cloud->HasDisappeared();
@@ -249,7 +247,7 @@ namespace MAPS
         for (auto food = FallingFood.begin(); food != FallingFood.end();)
         {
             // UPDATE THE CURRENT FOOD ITEM.
-            food->Fall(elapsed_time);
+            food->Fall(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
             // TRANSFER THE FOOD OVER IF IT HAS FINISHED FALLING.
             bool food_finished_falling = food->FinishedFalling();
@@ -266,12 +264,13 @@ namespace MAPS
         }
 
         // MOVE ANIMALS.
-        MoveAnimals(elapsed_time, current_game_data);
+        MoveAnimals(current_game_data, gaming_hardware);
     }
 
-    /// Moves animals in the tile map based on the elapsed time.
-    /// @param[in]  elapsed_time - The elapsed time for which to move the animals.
-    void TileMap::MoveAnimals(const sf::Time& elapsed_time, STATES::SavedGameData& current_game_data)
+    /// Moves animals in the tile map.
+    /// @param[in,out]  current_game_data - The current game's save data.
+    /// @param[in,out]  gaming_hardware - The gaming hardware for input and output.
+    void TileMap::MoveAnimals(STATES::SavedGameData& current_game_data, HARDWARE::GamingHardware& gaming_hardware)
     {
         // MAKE SURE THIS TILE MAP IS PART OF A LARGER AREA.
         if (!MapGrid)
@@ -308,7 +307,7 @@ namespace MAPS
             for (auto animal = MapGrid->World->AnimalsGoingIntoArk.begin(); animal != MapGrid->World->AnimalsGoingIntoArk.end(); )
             {
                 // UPDATE THE ANIMAL'S ANIMATION.
-                (*animal)->Sprite.Update(elapsed_time);
+                (*animal)->Sprite.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
 
                 // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE DOORWAY.
                 MATH::Vector2f animal_world_position = (*animal)->Sprite.GetWorldPosition();
@@ -316,7 +315,7 @@ namespace MAPS
                 MATH::Vector2f animal_to_ark_doorway_direction = MATH::Vector2f::Normalize(animal_to_ark_doorway_vector);
 
                 // CALCULATE THE DISTANCE THE ANIMAL NEEDS TO MOVE.
-                float elapsed_time_in_seconds = elapsed_time.asSeconds();
+                float elapsed_time_in_seconds = gaming_hardware.Clock.ElapsedTimeSinceLastFrame.asSeconds();
                 float animal_move_distance_in_pixels = (*animal)->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
                 MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_ark_doorway_direction);
 
@@ -369,7 +368,7 @@ namespace MAPS
             MATH::Vector2f animal_to_noah_direction = MATH::Vector2f::Normalize(animal_to_noah_vector);
 
             // CALCULATE THE DISTANCE THE ANIMAL NEEDS TO MOVE.
-            float elapsed_time_in_seconds = elapsed_time.asSeconds();
+            float elapsed_time_in_seconds = gaming_hardware.Clock.ElapsedTimeSinceLastFrame.asSeconds();
             float animal_move_distance_in_pixels = animal->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
             MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_noah_direction);
 
@@ -403,14 +402,42 @@ namespace MAPS
         }
 
         // MOVE ANIMALS INSIDE PENS IN THE ARK.
-#if TODO
         for (auto& animal_pen : AnimalPens)
         {
             for (auto& animal : animal_pen.Animals)
             {
-                /// @todo   Add animal movement.
+                // RANDOMLY DETERMINE HOW MUCH THE ANIMAL SHOULD MOVE.
+                // In general, movement this way is small enough to work well and not be a major problem.
+                // However, it is a bit jittery, so we might want to tweak it a bit (possibly reduce amount
+                // or reduce the randomness).
+                float elapsed_time_in_seconds = gaming_hardware.Clock.ElapsedTimeSinceLastFrame.asSeconds();
+                float animal_move_distance_in_pixels = animal->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
+                constexpr int MIN_DIRECTION_VECTOR_COMPONENT = -1;
+                constexpr int MAX_DIRECTION_VECTOR_COMPONENT = 1;
+                MATH::Vector2f animal_direction_vector;
+                animal_direction_vector.X = static_cast<float>(gaming_hardware.RandomNumberGenerator.RandomInRange<int>(
+                    MIN_DIRECTION_VECTOR_COMPONENT,
+                    MAX_DIRECTION_VECTOR_COMPONENT));
+                animal_direction_vector.Y = static_cast<float>(gaming_hardware.RandomNumberGenerator.RandomInRange<int>(
+                    MIN_DIRECTION_VECTOR_COMPONENT,
+                    MAX_DIRECTION_VECTOR_COMPONENT));
+                MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_direction_vector);
+
+                // MOVE THE ANIMAL.
+                std::unordered_set<MAPS::TileType::Id> tile_types_allowed_to_move_over =
+                {
+                    MAPS::TileType::ANIMAL_PEN_GROUND
+                };
+                MATH::FloatRectangle animal_world_bounding_box = animal->Sprite.GetWorldBoundingBox();
+                constexpr bool NO_MOVEMENT_OVER_SOLID_OBJECTS = false;
+                MATH::Vector2f new_animal_world_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
+                    animal_world_bounding_box,
+                    animal_move_vector,
+                    tile_types_allowed_to_move_over,
+                    NO_MOVEMENT_OVER_SOLID_OBJECTS,
+                    *MapGrid);
+                animal->Sprite.SetWorldPosition(new_animal_world_position);
             }
         }
-#endif
     }
 }

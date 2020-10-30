@@ -1,6 +1,8 @@
 #pragma once
 
 #include <limits>
+#include "Math/Rectangle.h"
+#include "Memory/Pointers.h"
 #include "Objects/Animal.h"
 
 namespace MAPS
@@ -9,9 +11,13 @@ namespace MAPS
     class AnimalPen
     {
     public:
+        /// The bounding box of the interior of the animal pen.
+        /// This is stored over the exterior bounds because only the interior bounds
+        /// are needed for bounding animal movement.
+        MATH::FloatRectangle InteriorBoundingBox = MATH::FloatRectangle();
         /// The species of animal in the pen.
         OBJECTS::AnimalSpecies Species = static_cast<OBJECTS::AnimalSpecies>(std::numeric_limits<int>::max());
         /// The animals currently in the pen.
-        std::vector<std::shared_ptr<OBJECTS::Animal>> Animals = {};
+        std::vector<MEMORY::NonNullSharedPointer<OBJECTS::Animal>> Animals = {};
     };
 }

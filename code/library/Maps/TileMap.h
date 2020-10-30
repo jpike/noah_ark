@@ -3,6 +3,7 @@
 #include <vector>
 #include <SFML/System.hpp>
 #include "Audio/Speakers.h"
+#include "Maps/AnimalPen.h"
 #include "Maps/ExitPoint.h"
 #include "Maps/GroundLayer.h"
 #include "Maps/TileMapType.h"
@@ -88,6 +89,8 @@ namespace MAPS
         std::vector<OBJECTS::ArkPiece> ArkPieces;
         /// Animals freely roaming in the tile map that haven't yet been collected by the player.
         std::vector<std::shared_ptr<OBJECTS::Animal>> RoamingAnimals;
+        /// Animal pens (only in the ark).
+        std::vector<MAPS::AnimalPen> AnimalPens;
         /// Exit points within the tile map.
         std::vector<MAPS::ExitPoint> ExitPoints;
 

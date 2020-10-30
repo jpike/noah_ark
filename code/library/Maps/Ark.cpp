@@ -1,3 +1,4 @@
+#include <cassert>
 #include "Maps/Ark.h"
 #include "Maps/Tileset.h"
 #include "Maps/Data/ArkInteriorTileMapData.h"
@@ -82,6 +83,34 @@ namespace MAPS
 
                             // SET THE TILE IN THE GROUND LAYER.
                             tile_map->Ground.SetTile(current_tile_x, current_tile_y, tile);
+
+                            // CHECK IF THE TILE IS FOR AN ANIMAL PEN ENTRANCE.
+                            bool is_animal_pen_entrance = (TileType::ANIMAL_PEN_ENTRANCE == tile->Type);
+                            if (is_animal_pen_entrance)
+                            {
+                                // ADD AN ANIMAL PEN TO THE MAP.
+                                // For simplicity, all animal pens have the same structure, with the
+                                // entrance (marked by E below) and then an set of walls (W).
+                                // That means the interior bounds can be computed given the entrance.
+                                // W W W W W
+                                // W       W
+                                // W       W
+                                // W       W
+                                // W W E W W
+                                AnimalPen animal_pen;
+                                constexpr float ANIMAL_PEN_INTERIOR_DIMENSION_IN_TILES = 3;
+                                constexpr float ANIMAL_PEN_INTERIOR_DIMENSION_IN_PIXELS = ANIMAL_PEN_INTERIOR_DIMENSION_IN_TILES * Tile::DIMENSION_IN_PIXELS<float>;
+                                constexpr float ANIMAL_PEN_HALF_INTERIOR_DIMENSION_IN_TILES = ANIMAL_PEN_INTERIOR_DIMENSION_IN_TILES / 2.0f;
+                                constexpr float ANIMAL_PEN_HALF_INTERIOR_DIMENSION_IN_PIXELS = ANIMAL_PEN_HALF_INTERIOR_DIMENSION_IN_TILES * Tile::DIMENSION_IN_PIXELS<float>;
+                                MATH::Vector2f entrance_center_world_position = tile->Sprite.GetWorldPosition();
+                                float animal_pen_interior_center_y_position = entrance_center_world_position.Y - ANIMAL_PEN_HALF_INTERIOR_DIMENSION_IN_PIXELS;
+                                animal_pen.InteriorBoundingBox = MATH::FloatRectangle::FromCenterAndDimensions(
+                                    entrance_center_world_position.X,
+                                    animal_pen_interior_center_y_position,
+                                    ANIMAL_PEN_INTERIOR_DIMENSION_IN_PIXELS,
+                                    ANIMAL_PEN_INTERIOR_DIMENSION_IN_PIXELS);
+                                tile_map->AnimalPens.emplace_back(animal_pen);
+                            }
                         }
                     }
 
@@ -185,5 +214,84 @@ namespace MAPS
                 }
             }
         }
+    }
+
+    /// Adds an animal to an appropriate pen in the ark.
+    /// @param[in,out]  animal - The animal to add.  It's position will be updated for the animal pen.
+    void Ark::AddAnimalToPen(const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal)
+    {
+        // SEARCH FOR AN APPROPRIATE PEN.
+        // If a pen already exists for the animal species, the animal should be placed in it.
+        // Otherwise, the animal should go into first empty pen.
+        MAPS::AnimalPen* animal_pen_for_species = nullptr;
+        MAPS::AnimalPen* first_empty_animal_pen = nullptr;
+        for (auto& ark_interior_layer : Interior.LayersFromBottomToTop)
+        {
+            // CHECK EACH TILE MAP IN THE LAYER.
+            unsigned int height_in_tile_maps = ark_interior_layer.TileMaps.GetHeight();
+            unsigned int width_in_tile_maps = ark_interior_layer.TileMaps.GetWidth();
+            for (unsigned int tile_map_row_index = 0; tile_map_row_index < height_in_tile_maps; ++tile_map_row_index)
+            {
+                for (unsigned int tile_map_column_index = 0; tile_map_column_index < width_in_tile_maps; ++tile_map_column_index)
+                {
+                    // MAKE SURE THE CURRENT TILE MAP EXISTS.
+                    std::shared_ptr<MAPS::TileMap>& current_tile_map = ark_interior_layer.TileMaps(
+                        tile_map_column_index, 
+                        tile_map_row_index);
+                    if (!current_tile_map)
+                    {
+                        continue;
+                    }
+
+                    // CHECK THE ANIMAL PENS IN THE CURRENT MAP.
+                    for (auto& animal_pen : current_tile_map->AnimalPens)
+                    {
+                        // CHECK IF AN ANIMAL PEN FOR THE SPECIES NEEDS TO BE FOUND.
+                        if (!animal_pen_for_species)
+                        {
+                            // GET THE ANIMAL PEN IF IT'S FOR THE CORRECT SPECIES.
+                            bool animal_pen_matches_species = (animal_pen.Species == animal->Type.Species);
+                            if (animal_pen_matches_species)
+                            {
+                                animal_pen_for_species = &animal_pen;
+                            }
+                        }
+
+                        // CHECK IF AN EMPTY ANIMAL PEN NEEDS TO BE FOUND.
+                        if (!first_empty_animal_pen)
+                        {
+                            // GET THE ANIMAL PEN IF IT'S EMPTY.
+                            bool animal_pen_empty = animal_pen.Animals.empty();
+                            if (animal_pen_empty)
+                            {
+                                first_empty_animal_pen = &animal_pen;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // STORE THE ANIMAL IN THE PEN FOR THE APPROPRIATE SPECIES IF APPLICABLE.
+        if (animal_pen_for_species)
+        {
+            MATH::Vector2f animal_pen_center = animal_pen_for_species->InteriorBoundingBox.Center();
+            animal->Sprite.SetWorldPosition(animal_pen_center);
+            animal_pen_for_species->Animals.emplace_back(animal);
+            return;
+        }
+
+        // STORE THE ANIMAL IN THE EMPTY PEN.
+        if (first_empty_animal_pen)
+        {
+            MATH::Vector2f animal_pen_center = first_empty_animal_pen->InteriorBoundingBox.Center();
+            animal->Sprite.SetWorldPosition(animal_pen_center);
+            first_empty_animal_pen->Animals.emplace_back(animal);
+            first_empty_animal_pen->Species = animal->Type.Species;
+            return;
+        }
+
+        // VERIFY THAT THE ANIMAL WAS PLACED.
+        assert(false && "Failed to place animal in pen.");
     }
 }

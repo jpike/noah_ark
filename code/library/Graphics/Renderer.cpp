@@ -824,6 +824,15 @@ namespace GRAPHICS
             Render(animal->Sprite.CurrentFrameSprite);
         }
 
+        // RENDER THE CURRENT TILE MAP'S ANIMALS IN PENS.
+        for (const auto& animal_pen : tile_map.AnimalPens)
+        {
+            for (const auto& animal : animal_pen.Animals)
+            {
+                Render(animal->Sprite.CurrentFrameSprite);
+            }
+        }
+
         // RENDER THE CURRENT TILE MAP'S DUST CLOUDS.
         for (const auto& dust_cloud : tile_map.DustClouds)
         {

@@ -36,7 +36,10 @@ namespace MAPS
     FoodOnGround(),
     DustClouds(),
     WoodLogs(),
-    ArkPieces()
+    ArkPieces(),
+    RoamingAnimals(),
+    AnimalPens(),
+    ExitPoints()
     {}
 
     /// Gets the center world position of the tile map.
@@ -186,6 +189,15 @@ namespace MAPS
             animal->Sprite.Update(elapsed_time);
         }
 
+        // ANIMATE ANIMALS IN PENS.
+        for (auto& animal_pen : AnimalPens)
+        {
+            for (auto& animal : animal_pen.Animals)
+            {
+                animal->Sprite.Update(elapsed_time);
+            }
+        }
+
         // UPDATE THE CURRENT TILE MAP'S TREES.
         for (auto tree = Trees.begin(); tree != Trees.end(); ++tree)
         {
@@ -331,9 +343,7 @@ namespace MAPS
                         assert(entry_room_inside_ark);
                         if (entry_room_inside_ark)
                         {
-                            (*animal)->Sprite.SetWorldPosition(entry_point_into_ark->NewPlayerWorldPosition);
-                            /// @todo   This should be replaced with inserting into the appropriate animal pen!
-                            entry_room_inside_ark->RoamingAnimals.push_back(*animal);
+                            entry_room_inside_ark->MapGrid->World->Ark.AddAnimalToPen(*animal);
                         }
                     }
 
@@ -349,57 +359,58 @@ namespace MAPS
         }
 
         // MOVE EACH ANIMAL IN THE TILE MAP CLOSER TO NOAH IF THEY'RE OUTSIDE.
-        if (!inside_ark)
+        for (auto& animal : RoamingAnimals)
         {
-            for (auto& animal : RoamingAnimals)
+            // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE PLAYER.
+            // The animal should move closer to Noah based on Genesis 6:20.
+            MATH::Vector2f noah_world_position = MapGrid->World->NoahPlayer->GetWorldPosition();
+            MATH::Vector2f animal_world_position = animal->Sprite.GetWorldPosition();
+            MATH::Vector2f animal_to_noah_vector = noah_world_position - animal_world_position;
+            MATH::Vector2f animal_to_noah_direction = MATH::Vector2f::Normalize(animal_to_noah_vector);
+
+            // CALCULATE THE DISTANCE THE ANIMAL NEEDS TO MOVE.
+            float elapsed_time_in_seconds = elapsed_time.asSeconds();
+            float animal_move_distance_in_pixels = animal->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
+            MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_noah_direction);
+
+            // DETERMINE THE TYPES OF TILES THE ANIMAL IS ALLOWED TO MOVE OVER.
+            std::unordered_set<MAPS::TileType::Id> tile_types_allowed_to_move_over =
             {
-                // DETERMINE THE DIRECTION FROM THE ANIMAL TO THE PLAYER.
-                // The animal should move closer to Noah based on Genesis 6:20.
-                MATH::Vector2f noah_world_position = MapGrid->World->NoahPlayer->GetWorldPosition();
-                MATH::Vector2f animal_world_position = animal->Sprite.GetWorldPosition();
-                MATH::Vector2f animal_to_noah_vector = noah_world_position - animal_world_position;
-                MATH::Vector2f animal_to_noah_direction = MATH::Vector2f::Normalize(animal_to_noah_vector);
+                MAPS::TileType::SAND,
+                MAPS::TileType::GRASS,
+                MAPS::TileType::BROWN_DIRT,
+                MAPS::TileType::GRAY_STONE
+            };
+            bool animal_can_fly = animal->Type.CanFly();
+            bool animal_can_swim = animal->Type.CanSwim();
+            bool animal_move_move_over_water = (animal_can_fly || animal_can_swim);
+            if (animal_move_move_over_water)
+            {
+                // LET THE ANIMAL MOVE OVER WATER.
+                tile_types_allowed_to_move_over.insert(MAPS::TileType::WATER_TYPES.cbegin(), MAPS::TileType::WATER_TYPES.cend());
+            }
 
-                // CALCULATE THE DISTANCE THE ANIMAL NEEDS TO MOVE.
-                float elapsed_time_in_seconds = elapsed_time.asSeconds();
-                float animal_move_distance_in_pixels = animal->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
-                MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_noah_direction);
+            // MOVE THE ANIMAL.
+            MATH::FloatRectangle animal_world_bounding_box = animal->Sprite.GetWorldBoundingBox();
+            bool allow_movement_over_solid_objects = animal_can_fly;
+            MATH::Vector2f new_animal_world_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
+                animal_world_bounding_box,
+                animal_move_vector,
+                tile_types_allowed_to_move_over,
+                allow_movement_over_solid_objects,
+                *MapGrid);
+            animal->Sprite.SetWorldPosition(new_animal_world_position);
+        }
 
-                // DETERMINE THE TYPES OF TILES THE ANIMAL IS ALLOWED TO MOVE OVER.
-                std::unordered_set<MAPS::TileType::Id> tile_types_allowed_to_move_over =
-                {
-                    MAPS::TileType::SAND,
-                    MAPS::TileType::GRASS,
-                    MAPS::TileType::BROWN_DIRT,
-                    MAPS::TileType::GRAY_STONE
-                };
-                bool animal_can_fly = animal->Type.CanFly();
-                bool animal_can_swim = animal->Type.CanSwim();
-                bool animal_move_move_over_water = (animal_can_fly || animal_can_swim);
-                if (animal_move_move_over_water)
-                {
-                    // LET THE ANIMAL MOVE OVER WATER.
-                    tile_types_allowed_to_move_over.insert(MAPS::TileType::WATER_TYPES.cbegin(), MAPS::TileType::WATER_TYPES.cend());
-                }
-
-                // MOVE THE ANIMAL.
-                MATH::FloatRectangle animal_world_bounding_box = animal->Sprite.GetWorldBoundingBox();
-                bool allow_movement_over_solid_objects = animal_can_fly;
-                MATH::Vector2f new_animal_world_position = COLLISION::CollisionDetectionAlgorithms::MoveObject(
-                    animal_world_bounding_box,
-                    animal_move_vector,
-                    tile_types_allowed_to_move_over,
-                    allow_movement_over_solid_objects,
-                    *MapGrid);
-                animal->Sprite.SetWorldPosition(new_animal_world_position);
+        // MOVE ANIMALS INSIDE PENS IN THE ARK.
+#if TODO
+        for (auto& animal_pen : AnimalPens)
+        {
+            for (auto& animal : animal_pen.Animals)
+            {
+                /// @todo   Add animal movement.
             }
         }
-
-        // MOVE ANIMALS INSIDE THE ARK.
-        /// @todo   Come up with better movement!
-        if (inside_ark)
-        {
-            
-        }
+#endif
     }
 }

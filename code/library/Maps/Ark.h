@@ -22,6 +22,9 @@ namespace MAPS
         // CONSTRUCTION.
         explicit Ark(MEMORY::NonNullRawPointer<World> world);
 
+        // PUBLIC METHODS.
+        void AddAnimalToPen(const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal);
+
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The interior of the ark.
         LayeredMultiTileMapGrids Interior;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 #include "Maps/Ark.h"
 #include "Maps/MultiTileMapGrid.h"
@@ -33,6 +32,6 @@ namespace MAPS
         /// Animals being transferred from following Noah into the ark.
         /// @todo   Probably best to not have this in the game state and instead just
         /// have animals have different "modes" of behavior.
-        std::vector<std::shared_ptr<OBJECTS::Animal>> AnimalsGoingIntoArk;
+        std::vector<MEMORY::NonNullSharedPointer<OBJECTS::Animal>> AnimalsGoingIntoArk;
     };
 }

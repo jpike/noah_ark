@@ -60,6 +60,7 @@ jobs:
     #    uses a compiled language
 
     - run: |
+       dir
        cmd.exe /c full_build.bat
 
     - name: Perform CodeQL Analysis

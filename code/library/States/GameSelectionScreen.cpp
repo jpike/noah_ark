@@ -522,22 +522,72 @@ namespace STATES
         }
 
         // RENDER SOME HELP TEXT AT THE BOTTOM OF THE SCREEN.
+#define TODO_FIGURE_OUT_HOW_I_WANT_TO_HANDLE_TEXT_OF_DIFFERENT_WIDTHS 1
+#if TODO_FIGURE_OUT_HOW_I_WANT_TO_HANDLE_TEXT_OF_DIFFERENT_WIDTHS
         constexpr float HELP_TEXT_LINE_COUNT = 2.0f;
         constexpr float HELP_TEXT_HEIGHT_IN_PIXELS = HELP_TEXT_LINE_COUNT * static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
-        float help_text_top_y_position = screen_height_in_pixels - HELP_TEXT_HEIGHT_IN_PIXELS;
+        constexpr float ADDITIONAL_SPACING_FOR_DESCENDERS = 8.0f;
+        float help_text_top_y_position = screen_height_in_pixels - HELP_TEXT_HEIGHT_IN_PIXELS - ADDITIONAL_SPACING_FOR_DESCENDERS;
         MATH::FloatRectangle help_text_screen_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
             0.0f,
             help_text_top_y_position,
             screen_width_in_pixels,
-            HELP_TEXT_HEIGHT_IN_PIXELS);
+            HELP_TEXT_HEIGHT_IN_PIXELS + ADDITIONAL_SPACING_FOR_DESCENDERS);
         // A black rectangle is rendered behind the text to avoid having the text overlap
         // with other text from the screen and make things hard to read.
         renderer.RenderScreenRectangle(help_text_screen_rectangle, GRAPHICS::Color::BLACK);
         renderer.RenderText(
-            "[ESC] to title | Up/down arrow keys to select game\nEnter to select slot | Type filename for new game",
+            "ESC to title | Up/down arrows to change game\nEnter to select | Type filename for new game",
             RESOURCES::AssetId::FONT_TEXTURE,
             help_text_screen_rectangle,
             GRAPHICS::Color::WHITE);
+#else
+        auto& font = renderer.Fonts.at(RESOURCES::AssetId::FONT_TEXTURE);
+        if (font)
+        {
+            // RENDER THE FIRST LINE OF HELP TEXT.
+            // It may need to be scaled down to fit within the width of the screen.
+            // This is done to handle different default fonts on different platforms.
+            constexpr float HELP_TEXT_LINE_COUNT = 2.0f;
+            constexpr float HELP_TEXT_HEIGHT_IN_PIXELS = HELP_TEXT_LINE_COUNT * static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
+            float help_text_top_y_position = screen_height_in_pixels - HELP_TEXT_HEIGHT_IN_PIXELS;
+            GRAPHICS::GUI::Text first_help_line_text =
+            {
+                .String = "[ESC] to title | Up/down arrow keys to select game",
+                .FontId = RESOURCES::AssetId::FONT_TEXTURE,
+                .LeftTopPosition = MATH::Vector2f(0.0f, help_text_top_y_position),
+                .ScaleFactor = 1.0f,
+                .Color = GRAPHICS::Color::WHITE
+            };
+            float first_help_line_text_width_in_pixels = first_help_line_text.Width<float>(*font);
+            bool first_help_line_text_too_wide = (first_help_line_text_width_in_pixels > screen_width_in_pixels);
+            if (first_help_line_text_too_wide)
+            {
+                first_help_line_text.ScaleFactor = screen_width_in_pixels / first_help_line_text_width_in_pixels;
+            }
+            renderer.Render(first_help_line_text);
+
+            // RENDER THE SECOND LINE OF HELP TEXT.
+            // It may need to be scaled down to fit within the width of the screen.
+            // This is done to handle different default fonts on different platforms.
+            float help_text_second_line_top_y_position = screen_height_in_pixels - static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS);
+            GRAPHICS::GUI::Text second_help_line_text =
+            {
+                .String = "Enter to select slot | Type filename for new game",
+                .FontId = RESOURCES::AssetId::FONT_TEXTURE,
+                .LeftTopPosition = MATH::Vector2f(0.0f, help_text_second_line_top_y_position),
+                .ScaleFactor = 1.0f,
+                .Color = GRAPHICS::Color::WHITE
+            };
+            float second_help_line_text_width_in_pixels = second_help_line_text.Width<float>(*font);
+            bool second_help_line_text_too_wide = (second_help_line_text_width_in_pixels > screen_width_in_pixels);
+            if (second_help_line_text_too_wide)
+            {
+                second_help_line_text.ScaleFactor = screen_width_in_pixels / second_help_line_text_width_in_pixels;
+            }
+            renderer.Render(second_help_line_text);
+        }
+#endif
 
         // RETURN THE FINAL RENDERED SCREEN.
         sf::Sprite screen = renderer.RenderFinalScreen();

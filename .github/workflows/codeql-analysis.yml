@@ -60,7 +60,7 @@ jobs:
     #    uses a compiled language
 
     - run: |
-       full_build.bat
+       cmd.exe /c full_build.bat
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1

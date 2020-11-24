@@ -219,6 +219,8 @@ namespace STATES
                 world.NoahPlayer->SetWorldPosition(entrance_map_center_position);
                 renderer.Camera.SetCenter(entrance_map_center_position);
 
+                /// @todo CLOSE THE EXITWAY FROM THE ARK.
+
                 // INITIALIZE THE HUD.
                 unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
                 const unsigned int LINE_COUNT = 2;

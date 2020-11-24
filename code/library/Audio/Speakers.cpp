@@ -1,3 +1,4 @@
+#include <al.h>
 #include <alc.h>
 #include "Audio/Speakers.h"
 
@@ -14,6 +15,10 @@ namespace AUDIO
         constexpr ALCchar* DEFAULT_DEVICE = nullptr;
         ALCdevice* audio_device = alcOpenDevice(DEFAULT_DEVICE);
         Enabled = (nullptr != audio_device);
+
+        // Other errors could occur beyond just trying to open an audio device.
+        ALenum errorCode = alGetError();
+        Enabled = Enabled && (errorCode == AL_NO_ERROR);
 
         // CLOSE ANY AUDIO DEVICE THAT WAS OPENED.
         // SFML will open up its own copy of the default device.

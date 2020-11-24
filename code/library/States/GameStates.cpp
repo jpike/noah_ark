@@ -45,6 +45,23 @@ namespace STATES
                     camera,
                     CurrentSavedGame);
                 break;
+            case GameState::DURING_FLOOD_GAMEPLAY:
+                next_game_state = DuringFloodGameplayState.Update(
+                    gaming_hardware,
+                    world,
+                    camera,
+                    CurrentSavedGame);
+                break;
+            case GameState::POST_FLOOD_GAMEPLAY:
+                next_game_state = PostFloodGameplayState.Update(
+                    gaming_hardware,
+                    world,
+                    camera,
+                    CurrentSavedGame);
+                break;
+            case GameState::ENDING_CREDITS_SCREEN:
+                next_game_state = EndingCreditsScreen.Update(gaming_hardware);
+                break;
         }
 
         // RETURN THE NEXT STATE THE GAME SHOULD BE IN.
@@ -91,6 +108,15 @@ namespace STATES
                 break;
             case GameState::PRE_FLOOD_GAMEPLAY:
                 screen_sprite = PreFloodGameplayState.Render(world, CurrentSavedGame, renderer);
+                break;
+            case GameState::DURING_FLOOD_GAMEPLAY:
+                screen_sprite = DuringFloodGameplayState.Render(world, CurrentSavedGame, renderer);
+                break;
+            case GameState::POST_FLOOD_GAMEPLAY:
+                screen_sprite = PostFloodGameplayState.Render(world, CurrentSavedGame, renderer);
+                break;
+            case GameState::ENDING_CREDITS_SCREEN:
+                screen_sprite = EndingCreditsScreen.Render(renderer);
                 break;
         }
         return screen_sprite;
@@ -180,6 +206,44 @@ namespace STATES
                     return;
                 }
 
+                break;
+            }
+            case GameState::DURING_FLOOD_GAMEPLAY:
+            {
+                // INITIALIZE THE WORLD.
+                DuringFloodGameplayState.CurrentMapGrid = &world.Ark.Interior.LayersFromBottomToTop[MAPS::Ark::LOWEST_LAYER_INDEX];
+
+                // MOVE THE PLAYER INTO THE ENTRANCE.
+                std::shared_ptr<MAPS::TileMap> entrance_map = world.Ark.GetEntranceMap();
+                MATH::Vector2f entrance_map_center_position = entrance_map->GetCenterWorldPosition();
+                world.NoahPlayer->SetWorldPosition(entrance_map_center_position);
+                renderer.Camera.SetCenter(entrance_map_center_position);
+
+                // INITIALIZE THE HUD.
+                unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
+                const unsigned int LINE_COUNT = 2;
+                unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
+                DuringFloodGameplayState.Hud = GRAPHICS::GUI::HeadsUpDisplay(
+                    renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE],
+                    main_text_box_width_in_pixels,
+                    main_text_box_height_in_pixels);
+                break;
+            }
+            case GameState::POST_FLOOD_GAMEPLAY:
+            {
+                // INITIALIZE THE WORLD.
+                /// @todo   Set to a new map?
+                PostFloodGameplayState.CurrentMapGrid = &world.Overworld.MapGrid;
+
+                // FOCUS THE CAMERA ON THE PLAYER.
+                /// @todo   Set to exit point of map?
+                MATH::Vector2f player_start_world_position = world.NoahPlayer->GetWorldPosition();
+                renderer.Camera.SetCenter(player_start_world_position);
+                break;
+            }
+            case GameState::ENDING_CREDITS_SCREEN:
+            {
+                EndingCreditsScreen = {};
                 break;
             }
         }

@@ -118,6 +118,8 @@ namespace RESOURCES
         NEW_GAME_INTRO_MUSIC,
         /// The overworld background music.
         OVERWORLD_BACKGROUND_MUSIC,
+        /// The music for the final credits.
+        FINAL_CREDITS_MUSIC
     };
 
     /// A mapping of asset IDs to filepaths.

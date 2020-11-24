@@ -69,6 +69,12 @@ void LoadRemainingAssets(HARDWARE::GamingHardware& gaming_hardware)
                     overworld_music->Sfml.setLoop(true);
                 }
 
+                auto final_credits_music = gaming_hardware.Speakers->GetMusic(RESOURCES::AssetId::FINAL_CREDITS_MUSIC);
+                if (final_credits_music)
+                {
+                    final_credits_music->Sfml.setLoop(true);
+                }
+
                 break;
             }
             case RESOURCES::AssetType::SHADER:

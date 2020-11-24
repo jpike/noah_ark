@@ -86,6 +86,7 @@ namespace RESOURCES
         // MUSIC.
         AssetDefinition(AssetType::MUSIC, AssetId::NEW_GAME_INTRO_MUSIC, "res/sounds/Intro1.wav"),
         AssetDefinition(AssetType::MUSIC, AssetId::OVERWORLD_BACKGROUND_MUSIC, "res/sounds/overworld_music.wav"),
+        AssetDefinition(AssetType::MUSIC, AssetId::FINAL_CREDITS_MUSIC, "res/sounds/NoahsArkIntro1_PaulstretchPlusMore.wav"),
 
         // SHADERS.
         AssetDefinition(AssetType::SHADER, AssetId::TIME_OF_DAY_SHADER, "res/shaders/TimeOfDay.frag"),

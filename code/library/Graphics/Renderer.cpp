@@ -565,13 +565,31 @@ namespace GRAPHICS
                 else
                 {
                     // CHECK IF THE CURRENT LINE CAN HANDLE THE NEXT WORD.
-                    size_t current_line_length_in_characters = current_new_line.length();
-                    const size_t SPACE_CHARACTER_BETWEEN_WORDS_COUNT = 1;
-                    size_t line_length_with_next_word_in_characters =
-                        current_line_length_in_characters +
-                        SPACE_CHARACTER_BETWEEN_WORDS_COUNT +
-                        next_word.length();
-                    bool current_line_can_handle_next_word = (line_length_with_next_word_in_characters <= max_characters_per_line);
+                    std::shared_ptr<GUI::Font>& font = Fonts[font_id];
+                    GUI::Text current_line_text =
+                    {
+                        .String = current_new_line,
+                        .FontId = font_id,
+                        .LeftTopPosition = MATH::Vector2f(0.0f, 0.0f),
+                        .ScaleFactor = text_scale_ratio,
+                        .Color = text_color
+                    };
+                    size_t current_line_width_in_pixels = current_line_text.Width<size_t>(*font);
+                    size_t space_character_width_in_pixels = GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS / 2;
+                    GUI::Text next_word_text =
+                    {
+                        .String = next_word,
+                        .FontId = font_id,
+                        .LeftTopPosition = MATH::Vector2f(0.0f, 0.0f),
+                        .ScaleFactor = text_scale_ratio,
+                        .Color = text_color
+                    };
+                    size_t next_word_width_in_pixels = next_word_text.Width<size_t>(*font);
+                    size_t line_width_with_next_word_in_characters = 
+                        current_line_width_in_pixels + 
+                        space_character_width_in_pixels + 
+                        next_word_width_in_pixels;
+                    bool current_line_can_handle_next_word = (line_width_with_next_word_in_characters <= line_width_in_pixels);
                     if (current_line_can_handle_next_word)
                     {
                         // ADD A SPACE BEFORE ADDING THE NEW WORD.

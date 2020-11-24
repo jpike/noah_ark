@@ -216,6 +216,17 @@ namespace MAPS
         }
     }
 
+    /// Gets the entrance map into the ark.
+    /// @return The entrance map to the ark.
+    std::shared_ptr<TileMap> Ark::GetEntranceMap() const
+    {
+        const MultiTileMapGrid& lowest_layer = Interior.LayersFromBottomToTop[LOWEST_LAYER_INDEX];
+        constexpr unsigned int ENTRANCE_MAP_COLUMN_POSITION = 1;
+        constexpr unsigned int ENTRANCE_MAP_ROW_POSITION = 0;
+        const std::shared_ptr<TileMap>& entrance_map = lowest_layer.TileMaps(ENTRANCE_MAP_COLUMN_POSITION, ENTRANCE_MAP_ROW_POSITION);
+        return entrance_map;
+    }
+
     /// Adds an animal to an appropriate pen in the ark.
     /// @param[in,out]  animal - The animal to add.  It's position will be updated for the animal pen.
     void Ark::AddAnimalToPen(const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal)

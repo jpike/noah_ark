@@ -21,65 +21,68 @@ namespace OBJECTS
     };
 
     /// Enumerates the different species of animals in the game.
-    /// Species are listed in alphabetical order to make them easier
-    /// to find.
-    enum class AnimalSpecies
+    /// Species are listed in alphabetical order to make them easier to find.
+    /// Wrapped in a struct to allow implicit conversion to integers.
+    struct AnimalSpecies
     {
-        ALLIGATOR,
-        BABOON,
-        BAT,
-        BEAR,
-        BEE,
-        BOBCAT,
-        BUTTERFLY,
-        CAMEL,
-        CAT,
-        CATTLE,
-        CHEETAH,
-        CHICKEN,
-        CHIPMUNK,
-        CRICKET,
-        DEER,
-        DOG,
-        DOVE,
-        DUCK,
-        EAGLE,
-        ELEPHANT,
-        FOX,
-        FROG,
-        GOAT,
-        GOOSE,
-        GORILLA,
-        GUINEA_PIG,
-        HAWK,
-        HIPPO,
-        HORSE,
-        HYENA,
-        KOALA,
-        LEOPARD,
-        LION,
-        LOCUST,
-        MONKEY,
-        OSPREY,
-        OWL, 
-        PEACOCK,
-        PELICAN,
-        PIG,
-        POLAR_BEAR,
-        RACCOON,
-        RAVEN,
-        SHEEP,
-        SNAKE,
-        SQUIRREL,
-        TURKEY,
-        WOLF,
-        /// A non-species value that supports determining the number of species
-        /// for algorithms that need this information.
-        COUNT
-    };
+        enum Value
+        {
+            ALLIGATOR,
+            BABOON,
+            BAT,
+            BEAR,
+            BEE,
+            BOBCAT,
+            BUTTERFLY,
+            CAMEL,
+            CAT,
+            CATTLE,
+            CHEETAH,
+            CHICKEN,
+            CHIPMUNK,
+            CRICKET,
+            DEER,
+            DOG,
+            DOVE,
+            DUCK,
+            EAGLE,
+            ELEPHANT,
+            FOX,
+            FROG,
+            GOAT,
+            GOOSE,
+            GORILLA,
+            GUINEA_PIG,
+            HAWK,
+            HIPPO,
+            HORSE,
+            HYENA,
+            KOALA,
+            LEOPARD,
+            LION,
+            LOCUST,
+            MONKEY,
+            OSPREY,
+            OWL,
+            PEACOCK,
+            PELICAN,
+            PIG,
+            POLAR_BEAR,
+            RACCOON,
+            RAVEN,
+            SHEEP,
+            SNAKE,
+            SQUIRREL,
+            TURKEY,
+            WOLF,
+            /// A non-species value that supports determining the number of species
+            /// for algorithms that need this information.
+            COUNT
+        };
 
-    /// A lookup for string names of the animal species.
-    extern std::array<std::string, static_cast<std::size_t>(AnimalSpecies::COUNT)> ANIMAL_SPECIES_NAMES;
+        /// A lookup for string names of the animal species.
+        static std::array<std::string, AnimalSpecies::COUNT> NAMES;
+    };
 
     /// A single description that describes the "type" of an animal in the game.
     /// Encapsulating both the species and gender of an animal in a single
@@ -91,7 +94,7 @@ namespace OBJECTS
     public:
         /// CONSTRUCTION.
         explicit AnimalType(
-            const AnimalSpecies species, 
+            const AnimalSpecies::Value species, 
             const AnimalGender gender);
 
         // OPERATORS.
@@ -104,7 +107,7 @@ namespace OBJECTS
 
         /// PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The species of the animal.
-        AnimalSpecies Species;
+        AnimalSpecies::Value Species;
         /// The gender of the animal.
         AnimalGender Gender;
         /// How fast the animal moves in the world (in pixels per second).
@@ -112,7 +115,7 @@ namespace OBJECTS
 
     private:
         /// HELPER METHODS.
-        static float GetMoveSpeedInPixelsPerSecond(const AnimalSpecies species);
+        static float GetMoveSpeedInPixelsPerSecond(const AnimalSpecies::Value species);
     };
 
     /// An animal in the game.  A single animal class exists that is parameterized

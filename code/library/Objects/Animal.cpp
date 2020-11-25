@@ -2,7 +2,7 @@
 
 namespace OBJECTS
 {
-    std::array<std::string, static_cast<std::size_t>(AnimalSpecies::COUNT)> ANIMAL_SPECIES_NAMES
+    std::array<std::string, AnimalSpecies::COUNT> AnimalSpecies::NAMES
     {
         "Alligator",
         "Baboon",
@@ -57,7 +57,7 @@ namespace OBJECTS
     /// Constructor.
     /// @param[in]  species - The species of the animal.
     /// @param[in]  gender - The gender of the animal.
-    AnimalType::AnimalType(const AnimalSpecies species, const AnimalGender gender) :
+    AnimalType::AnimalType(const AnimalSpecies::Value species, const AnimalGender gender) :
         Species(species),
         Gender(gender),
         MoveSpeedInPixelsPerSecond(GetMoveSpeedInPixelsPerSecond(species))
@@ -255,7 +255,7 @@ namespace OBJECTS
     /// For now, this speed is only intended to vary per species.
     /// @param[in]  species - The species of animal to get the movement speed for.
     /// @return The movement speed to the animal species (in pixels per second).
-    float AnimalType::GetMoveSpeedInPixelsPerSecond(const AnimalSpecies species)
+    float AnimalType::GetMoveSpeedInPixelsPerSecond(const AnimalSpecies::Value species)
     {
         // The movement speeds are somewhat arbitrarily chosen based on
         // what feels best, but the speeds are also somewhat intended

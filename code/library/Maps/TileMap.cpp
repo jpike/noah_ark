@@ -329,8 +329,18 @@ namespace MAPS
                 if (animal_reached_doorway)
                 {
                     // UPDATE THE ANIMAL STATISTICS.
-                    --current_game_data.FollowingAnimals[(*animal)->Type];
-                    ++current_game_data.AnimalsInArk[(*animal)->Type];
+                    INVENTORY::AnimalCollectionStatistics& current_animal_collection_statistics = current_game_data.CollectedAnimals[(*animal)->Type.Species];
+                    switch ((*animal)->Type.Gender)
+                    {
+                        case OBJECTS::AnimalGender::MALE:
+                            --current_animal_collection_statistics.MaleFollowingPlayerCount;
+                            ++current_animal_collection_statistics.MaleInArkCount;
+                            break;
+                        case OBJECTS::AnimalGender::FEMALE:
+                            --current_animal_collection_statistics.FemaleFollowingPlayerCount;
+                            ++current_animal_collection_statistics.FemaleInArkCount;
+                            break;
+                    }
 
                     // ADD THE ANIMAL INTO THE APPROPRIATE TILE MAP OF THE ARK.
                     // This check is a precaution.  There should always be an entry point into the ark for the doorway.

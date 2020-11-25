@@ -16,7 +16,7 @@ namespace MAPS
         /// are needed for bounding animal movement.
         MATH::FloatRectangle InteriorBoundingBox = MATH::FloatRectangle();
         /// The species of animal in the pen.
-        OBJECTS::AnimalSpecies Species = static_cast<OBJECTS::AnimalSpecies>(std::numeric_limits<int>::max());
+        OBJECTS::AnimalSpecies::Value Species = static_cast<OBJECTS::AnimalSpecies::Value>(std::numeric_limits<int>::max());
         /// The animals currently in the pen.
         std::vector<MEMORY::NonNullSharedPointer<OBJECTS::Animal>> Animals = {};
     };

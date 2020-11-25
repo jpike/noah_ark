@@ -20,7 +20,7 @@ namespace GAMEPLAY
         MATH::RandomNumberGenerator& random_number_generator)
     {
         // DETERMINE THE SPECIES OF ANIMAL TO GENERATE.
-        OBJECTS::AnimalSpecies random_species = random_number_generator.RandomEnum<OBJECTS::AnimalSpecies>();
+        OBJECTS::AnimalSpecies::Value random_species = random_number_generator.RandomEnum<OBJECTS::AnimalSpecies::Value>();
         DEBUGGING::DebugConsole::WriteLine("Random species: ", static_cast<unsigned int>(random_species));
 
         // DETERMINE THE GENDER OF ANIMAL TO GENERATE.

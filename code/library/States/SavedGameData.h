@@ -36,7 +36,7 @@ namespace STATES
 
         // OTHER PUBLIC METHODS.
         bool AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const;
-        INVENTORY::AnimalCollectionStatistics GetAnimalCollectionStatistics(const OBJECTS::AnimalSpecies& species) const;
+        INVENTORY::AnimalCollectionStatistics GetAnimalCollectionStatistics(const OBJECTS::AnimalSpecies::Value species) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The path to the file for this saved game.
@@ -47,14 +47,9 @@ namespace STATES
         MEMORY::NonNullSharedPointer<OBJECTS::Noah> Player = MEMORY::NonNullSharedPointer<OBJECTS::Noah>(std::make_shared<OBJECTS::Noah>());
         /// Ark pieces built by the player.
         std::vector<OBJECTS::ArkPiece> BuiltArkPieces = {};
-        /// All animals collected by the player, with types mapping to collected counts.
-        std::unordered_map<OBJECTS::AnimalType, unsigned int> AllCollectedAnimals = {};
-        /// Animals collected by the player that are currently following the player,
-        /// with types mapping to collected counts.
-        std::unordered_map<OBJECTS::AnimalType, unsigned int> FollowingAnimals = {};
-        /// Animals collected by the player that are currently in the ark,
-        /// with types mapping to collected counts.
-        std::unordered_map<OBJECTS::AnimalType, unsigned int> AnimalsInArk = {};
+        /// Statistics for animals collected by the player.
+        /// Animal species act as indices.
+        std::array<INVENTORY::AnimalCollectionStatistics, OBJECTS::AnimalSpecies::COUNT> CollectedAnimals = {};
         /// Bible verses that still need to be found by the player.
         std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind = {};
         /// Whether or not certain family members have been gathered so far.

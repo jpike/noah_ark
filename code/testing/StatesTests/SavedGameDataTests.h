@@ -29,11 +29,7 @@ namespace SAVED_GAME_DATA_TESTS
 
         };
 
-        original_saved_game_data.AllCollectedAnimals =
-        {
-
-        };
-        original_saved_game_data.AnimalsInArk =
+        original_saved_game_data.CollectedAnimals =
         {
 
         };
@@ -42,10 +38,6 @@ namespace SAVED_GAME_DATA_TESTS
 
         };
         original_saved_game_data.BuiltArkPieces =
-        {
-
-        };
-        original_saved_game_data.FollowingAnimals =
         {
 
         };
@@ -72,11 +64,9 @@ namespace SAVED_GAME_DATA_TESTS
         REQUIRE(original_saved_game_data.Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.X == reread_saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.X);
         REQUIRE(original_saved_game_data.Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y == reread_saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y);
         REQUIRE(original_saved_game_data.Player->Inventory.FollowingAnimals.Animals == reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals);
-        REQUIRE(original_saved_game_data.AllCollectedAnimals == reread_saved_game_data->AllCollectedAnimals);
-        REQUIRE(original_saved_game_data.AnimalsInArk == reread_saved_game_data->AnimalsInArk);
+        //REQUIRE(original_saved_game_data.CollectedAnimals == reread_saved_game_data->CollectedAnimals);
         //REQUIRE(original_saved_game_data.BibleVersesLeftToFind == reread_saved_game_data->BibleVersesLeftToFind);
         //REQUIRE(original_saved_game_data.BuiltArkPieces == reread_saved_game_data->BuiltArkPieces);
-        REQUIRE(original_saved_game_data.FollowingAnimals == reread_saved_game_data->FollowingAnimals);
         REQUIRE(original_saved_game_data.FamilyMembersGathered == reread_saved_game_data->FamilyMembersGathered);
         REQUIRE(original_saved_game_data.FloodDayCount == reread_saved_game_data->FloodDayCount);
     }

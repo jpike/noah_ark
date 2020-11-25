@@ -5,7 +5,7 @@ namespace RESOURCES
     /// Gets the sound effect ID for the animal species, if one exists.
     /// @param[in]  animal_species - The species for which to get the sound effect.
     /// @return The sound ID for the animal, if one exists (invalid otherwise).
-    RESOURCES::AssetId AnimalSounds::GetSound(const OBJECTS::AnimalSpecies animal_species)
+    RESOURCES::AssetId AnimalSounds::GetSound(const OBJECTS::AnimalSpecies::Value animal_species)
     {
         // GET THE SOUND EFFECT FOR THE SPECIES.
         switch (animal_species)

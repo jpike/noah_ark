@@ -211,7 +211,7 @@ namespace INVENTORY
             }
 
             // CHECK IF THE SPECIES HAS BEEN COLLECTED.
-            OBJECTS::AnimalSpecies species = static_cast<OBJECTS::AnimalSpecies>(species_id);
+            OBJECTS::AnimalSpecies::Value species = static_cast<OBJECTS::AnimalSpecies::Value>(species_id);
             AnimalCollectionStatistics species_collection_statistics = current_game_data.GetAnimalCollectionStatistics(species);
             bool species_collected = species_collection_statistics.Collected();
             if (species_collected)
@@ -219,7 +219,7 @@ namespace INVENTORY
                 // RENDER THE NAME OF THE CURRENT SPECIES.
                 GRAPHICS::GUI::Text collected_species_text
                 {
-                    .String = OBJECTS::ANIMAL_SPECIES_NAMES[species_id],
+                    .String = OBJECTS::AnimalSpecies::NAMES[species_id],
                     .LeftTopPosition = MATH::Vector2f(species_column_header_text.LeftTopPosition.X, current_animal_species_row_top_y_position)
                 };
                 renderer.Render(collected_species_text);

@@ -10,6 +10,6 @@ namespace RESOURCES
     class AnimalSounds
     {
     public:
-        static RESOURCES::AssetId GetSound(const OBJECTS::AnimalSpecies animal_species);
+        static RESOURCES::AssetId GetSound(const OBJECTS::AnimalSpecies::Value animal_species);
     };
 }

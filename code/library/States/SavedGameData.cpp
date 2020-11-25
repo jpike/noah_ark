@@ -163,32 +163,6 @@ namespace STATES
             unsigned int expected_collected_animal_data_count;
             saved_game_data_file >> expected_collected_animal_data_count;
 
-            while (saved_game_data->AllCollectedAnimals.size() < expected_collected_animal_data_count)
-            {
-                // READ IN THE CURRENT ANIMAL DATA.
-                int species;
-                saved_game_data_file >> species;
-                int gender;
-                saved_game_data_file >> gender;
-                unsigned int collected_count;
-                saved_game_data_file >> collected_count;
-
-                // MAKE SURE CURRENT ANIMAL DATA WAS PROPERLY READ.
-                bool animal_data_valid = !saved_game_data_file.eof();
-                if (!animal_data_valid)
-                {
-                    break;
-                }
-
-                // CREATE THE ANIMAL TYPE.
-                OBJECTS::AnimalType animal_type(
-                    static_cast<OBJECTS::AnimalSpecies>(species),
-                    static_cast<OBJECTS::AnimalGender>(gender));
-
-                // ADD THE ANIMAL COUNT TO THE IN-MEMORY DATA.
-                saved_game_data->AllCollectedAnimals[animal_type] = collected_count;
-            }
-
             // READ IN THE COLLECTED FOOD DATA.
             unsigned int expected_collected_food_data_count;
             saved_game_data_file >> expected_collected_food_data_count;
@@ -287,25 +261,6 @@ namespace STATES
             saved_game_data_file << std::endl;
         }
 
-        // WRITE OUT THE COLLECTED ANIMALS.
-        // The count of collected animals is written out first.
-        saved_game_data_file << AllCollectedAnimals.size() << std::endl;
-        for (const auto& collected_animal_type_and_count : AllCollectedAnimals)
-        {
-            // WRITE OUT THE ANIMAL TYPE.
-            saved_game_data_file
-                << static_cast<int>(collected_animal_type_and_count.first.Species)
-                << SEPARATOR_BETWEEN_RELATED_DATA
-                << static_cast<int>(collected_animal_type_and_count.first.Gender)
-                << SEPARATOR_BETWEEN_RELATED_DATA;
-
-            // WRITE OUT THE COLLECTED COUNT.
-            saved_game_data_file << collected_animal_type_and_count.second;
-
-            // WRITE A LINE SEPARATOR BEFORE THE NEXT SET OF DATA.
-            saved_game_data_file << std::endl;
-        }
-
         // WRITE OUT THE COLLECTED FOOD.
         // The count of the collected food is written out first.
         saved_game_data_file << Player->Inventory.FoodCounts.size() << std::endl;
@@ -347,16 +302,15 @@ namespace STATES
             expected_animal_count = UNCLEAN_ANIMAL_COUNT_PER_GENDER;
         }
 
-        // CHECK IF THE TYPE OF ANIMAL HAS BEEN COLLECTED AT ALL.
-        const auto collected_animal_type_and_count = AllCollectedAnimals.find(animal_type);
-        bool animal_collected = (AllCollectedAnimals.cend() != collected_animal_type_and_count);
-        if (!animal_collected)
-        {
-            return false;
-        }
-
         // DETERMINE IF THE APPROPRIATE NUMBER OF ANIMALS HAVE BEEN COLLECTED.
-        unsigned int actual_animal_count = collected_animal_type_and_count->second;
+        /// @todo   Have multidimensional array for species -> gender?
+        const INVENTORY::AnimalCollectionStatistics& animal_collection_statistics = CollectedAnimals[animal_type.Species];
+        /// @todo   Encapsulate this computation in a method?
+        unsigned int actual_animal_count = (
+            animal_collection_statistics.MaleFollowingPlayerCount +
+            animal_collection_statistics.FemaleFollowingPlayerCount +
+            animal_collection_statistics.MaleInArkCount +
+            animal_collection_statistics.FemaleInArkCount);
         bool animal_type_fully_collected = (actual_animal_count >= expected_animal_count);
         return animal_type_fully_collected;
     }
@@ -364,42 +318,9 @@ namespace STATES
     /// Gets the animal collection statistics for the species.
     /// @param[in]  species - The species for which to get statistics.
     /// @return The animal collection statistics for the species.
-    INVENTORY::AnimalCollectionStatistics SavedGameData::GetAnimalCollectionStatistics(const OBJECTS::AnimalSpecies& species) const
+    INVENTORY::AnimalCollectionStatistics SavedGameData::GetAnimalCollectionStatistics(const OBJECTS::AnimalSpecies::Value species) const
     {
-        INVENTORY::AnimalCollectionStatistics animal_collection_statistics;
-
-        // GET THE MALE ANIMAL STATISTICS.
-        OBJECTS::AnimalType male_animal_type(species, OBJECTS::AnimalGender::MALE);
-        auto male_animal_type_and_count_following_player = FollowingAnimals.find(male_animal_type);
-        bool male_animals_of_type_following_player = (male_animal_type_and_count_following_player != FollowingAnimals.cend());
-        if (male_animals_of_type_following_player)
-        {
-            animal_collection_statistics.MaleFollowingPlayerCount = male_animal_type_and_count_following_player->second;
-        }
-
-        auto male_animal_type_and_count_in_ark = AnimalsInArk.find(male_animal_type);
-        bool male_animals_of_type_in_ark = (male_animal_type_and_count_in_ark != AnimalsInArk.cend());
-        if (male_animals_of_type_in_ark)
-        {
-            animal_collection_statistics.MaleInArkCount = male_animal_type_and_count_in_ark->second;
-        }
-
-        // GET THE FEMALE ANIMAL STATISTICS.
-        OBJECTS::AnimalType female_animal_type(species, OBJECTS::AnimalGender::FEMALE);
-        auto female_animal_type_and_count_following_player = FollowingAnimals.find(female_animal_type);
-        bool female_animals_of_type_following_player = (female_animal_type_and_count_following_player != FollowingAnimals.cend());
-        if (female_animals_of_type_following_player)
-        {
-            animal_collection_statistics.FemaleFollowingPlayerCount = female_animal_type_and_count_following_player->second;
-        }
-
-        auto female_animal_type_and_count_in_ark = AnimalsInArk.find(female_animal_type);
-        bool female_animals_of_type_in_ark = (female_animal_type_and_count_in_ark != AnimalsInArk.cend());
-        if (female_animals_of_type_in_ark)
-        {
-            animal_collection_statistics.FemaleInArkCount = female_animal_type_and_count_in_ark->second;
-        }
-
+        const INVENTORY::AnimalCollectionStatistics& animal_collection_statistics = CollectedAnimals[species];
         return animal_collection_statistics;
     }
 }

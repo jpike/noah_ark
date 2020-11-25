@@ -6,15 +6,8 @@ namespace GAMEPLAY
 {
     /// Adds the specified animal to the group.
     /// @param[in]  animal - The animal to add.
-    void FollowingAnimalGroup::Add(const std::shared_ptr<OBJECTS::Animal>& animal)
+    void FollowingAnimalGroup::Add(const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal)
     {
-        // MAKE SURE THE ANIMAL EXISTS.
-        bool animal_exists = (nullptr != animal);
-        if (!animal_exists)
-        {
-            return;
-        }
-
         // GIVE THE ANIMAL A RANDOM POSITION WITHIN THIS GROUP.
         constexpr float GROUP_HALF_DIMENSION_IN_PIXELS = DIMENSION_IN_PIXELS / 2.0f;
 
@@ -29,7 +22,7 @@ namespace GAMEPLAY
         animal->Sprite.SetWorldPosition(animal_x_position, animal_y_position);
 
         // STORE THE ANIMAL IN THIS GROUP.
-        Animals.push_back(animal);
+        Animals.emplace_back(animal);
     }
 
     /// Updates the following animal group.

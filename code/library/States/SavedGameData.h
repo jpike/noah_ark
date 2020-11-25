@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -12,6 +13,7 @@
 #include "Memory/Pointers.h"
 #include "Objects/Animal.h"
 #include "Objects/ArkPiece.h"
+#include "Objects/FamilyMember.h"
 #include "Objects/Noah.h"
 #include "States/GameState.h"
 
@@ -27,7 +29,7 @@ namespace STATES
 
         // CONSTRUCTION.
         static SavedGameData DefaultSavedGameData();
-        static std::unique_ptr<SavedGameData> Load(const std::string& filepath);
+        static std::unique_ptr<SavedGameData> Load(const std::filesystem::path& filepath);
 
         // WRITING.
         void Write(const std::filesystem::path& filepath) const;
@@ -55,5 +57,11 @@ namespace STATES
         std::unordered_map<OBJECTS::AnimalType, unsigned int> AnimalsInArk = {};
         /// Bible verses that still need to be found by the player.
         std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind = {};
+        /// Whether or not certain family members have been gathered so far.
+        /// Index matches enum values for family member types.
+        std::array<bool, OBJECTS::FamilyMember::Type::COUNT> FamilyMembersGathered = {};
+        /// The number of days of the flood elapsed so far.
+        /// 150 days (Genesis 8:3) are required for the flood to subside.
+        unsigned int FloodDayCount = 0;
     };
 }

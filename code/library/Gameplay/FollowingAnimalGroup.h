@@ -1,11 +1,11 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 #include <SFML/System.hpp>
 #include "Graphics/Renderer.h"
 #include "Math/RandomNumberGenerator.h"
 #include "Math/Vector2.h"
+#include "Memory/Pointers.h"
 #include "Objects/Animal.h"
 
 // Forward declarations.
@@ -24,7 +24,7 @@ namespace GAMEPLAY
         /// The dimension (width and height) of the group, in pixels.
         static constexpr float DIMENSION_IN_PIXELS = 32.0f;
 
-        void Add(const std::shared_ptr<OBJECTS::Animal>& animal);
+        void Add(const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal);
 
         void Update(const sf::Time& elapsed_time);
 
@@ -35,7 +35,7 @@ namespace GAMEPLAY
         /// The animals currently in the group.
         /// Stored as shared pointers to allow for updating the animals
         /// while also sharing ownership with other code.
-        std::vector< std::shared_ptr<OBJECTS::Animal> > Animals = {};
+        std::vector<MEMORY::NonNullSharedPointer<OBJECTS::Animal>> Animals = {};
 
     private:
         /// A random number generator used for giving animals random positions in the group.

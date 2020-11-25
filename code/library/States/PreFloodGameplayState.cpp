@@ -968,7 +968,7 @@ namespace STATES
                         animal->Sprite.Play();
 
                         // STORE THE ANIMAL IN THE CURRENT TILE MAP.
-                        current_tile_map.RoamingAnimals.push_back(animal);
+                        current_tile_map.RoamingAnimals.emplace_back(animal);
                     }
                 }
             }

@@ -6,6 +6,7 @@
 #include "Bible/BibleVerses.h"
 #include "Gameplay/FollowingAnimalGroup.h"
 #include "Inventory/AnimalCollectionStatistics.h"
+#include "Memory/Pointers.h"
 #include "Objects/Animal.h"
 #include "Objects/Axe.h"
 #include "Objects/Food.h"
@@ -21,7 +22,7 @@ namespace INVENTORY
         void AddWood(const unsigned int wood_count);
         void AddFood(const OBJECTS::Food& food);
         unsigned int GetCollectedFoodCount(const OBJECTS::FoodType food_type) const;
-        void AddAnimal(const std::shared_ptr<OBJECTS::Animal>& animal);
+        void AddAnimal(const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The axe.

@@ -41,12 +41,12 @@ namespace STATES
     /// Attempts to load saved game data from the specified file.
     /// @param[in]  filepath - The path to the file with saved game data to load.
     /// @return The saved game data loaded from the file, if successful; null otherwise.
-    std::unique_ptr<SavedGameData> SavedGameData::Load(const std::string& filepath)
+    std::unique_ptr<SavedGameData> SavedGameData::Load(const std::filesystem::path& filepath)
     {
         try
         {
             // ENSURE APPROPRIATE DIRECTORIES EXIST.
-            std::filesystem::path parent_directory_path = std::filesystem::path(filepath).parent_path();
+            std::filesystem::path parent_directory_path = filepath.parent_path();
             std::filesystem::create_directories(parent_directory_path);
 
             // OPEN THE FILE.

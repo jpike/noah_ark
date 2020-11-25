@@ -38,15 +38,8 @@ namespace INVENTORY
 
     /// Adds an animal to the inventory.
     /// @param[in]  animal - The animal to add.
-    void Inventory::AddAnimal(const std::shared_ptr<OBJECTS::Animal>& animal)
+    void Inventory::AddAnimal(const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal)
     {
-        // MAKE SURE THE ANIMAL EXISTS.
-        bool animal_exists = (nullptr != animal);
-        if (!animal_exists)
-        {
-            return;
-        }
-
         // ADD THE ANIMAL TO THE GROUP.
         FollowingAnimals.Add(animal);
     }

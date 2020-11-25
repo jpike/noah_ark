@@ -5,286 +5,286 @@ namespace RESOURCES
     /// Gets a sprite for the specified food type.
     /// @param[in]  food_type - The type of food to get a sprite for.
     /// @return The food sprite, if successfully retrieved; null otherwise.
-    std::shared_ptr<GRAPHICS::Sprite> FoodGraphics::GetSprite(const OBJECTS::FoodType food_type)
+    std::shared_ptr<GRAPHICS::Sprite> FoodGraphics::GetSprite(const OBJECTS::Food::TypeId food_type)
     {
         // GET THE TEXTURE RECTANGLE FOR THE SPRITE.
         MATH::FloatRectangle texture_sub_rectangle;
         switch (food_type)
         {
-            case OBJECTS::FoodType::ALMOND:
+            case OBJECTS::Food::TypeId::ALMOND:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     80.0f,
                     0.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::APPLE:
+            case OBJECTS::Food::TypeId::APPLE:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     0.0f,
                     0.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::APRICOT:
+            case OBJECTS::Food::TypeId::APRICOT:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     96.0f,
                     0.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::AVOCADO:
+            case OBJECTS::Food::TypeId::AVOCADO:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     112.0f,
                     0.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::BANANA:
+            case OBJECTS::Food::TypeId::BANANA:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     0.0f,
                     16.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::BLACKBERRY:
+            case OBJECTS::Food::TypeId::BLACKBERRY:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     16.0f,
                     64.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::BLUEBERRY:
+            case OBJECTS::Food::TypeId::BLUEBERRY:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     32.0f,
                     64.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::CANTELOUPE:
+            case OBJECTS::Food::TypeId::CANTELOUPE:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     64.0f,
                     64.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::CASHEW:
+            case OBJECTS::Food::TypeId::CASHEW:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     16.0f,
                     16.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::CHERRY:
+            case OBJECTS::Food::TypeId::CHERRY:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     32.0f,
                     16.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::CHESTNUT:
+            case OBJECTS::Food::TypeId::CHESTNUT:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     48.0f,
                     16.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::CLEMENTINE:
+            case OBJECTS::Food::TypeId::CLEMENTINE:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     80.0f,
                     64.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::CLOUDBERRY:
+            case OBJECTS::Food::TypeId::CLOUDBERRY:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     96.0f,
                     64.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::COCONUT:
+            case OBJECTS::Food::TypeId::COCONUT:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     64.0f,
                     16.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::CRANBERRY:
+            case OBJECTS::Food::TypeId::CRANBERRY:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     112.0f,
                     64.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::DURIAN:
+            case OBJECTS::Food::TypeId::DURIAN:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     80.0f,
                     16.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::ELDERBERRY:
+            case OBJECTS::Food::TypeId::ELDERBERRY:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     96.0f,
                     48.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::FIG:
+            case OBJECTS::Food::TypeId::FIG:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     64.0f,
                     0.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::GOURD:
+            case OBJECTS::Food::TypeId::GOURD:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     48.0f,
                     64.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::GRAPE:
+            case OBJECTS::Food::TypeId::GRAPE:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     16.0f,
                     0.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::GRAPEFRUIT:
+            case OBJECTS::Food::TypeId::GRAPEFRUIT:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     96.0f,
                     16.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::GUAVA:
+            case OBJECTS::Food::TypeId::GUAVA:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     112.0f,
                     16.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::HAZELNUT:
+            case OBJECTS::Food::TypeId::HAZELNUT:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     64.0f,
                     48.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::LEMON:
+            case OBJECTS::Food::TypeId::LEMON:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     0.0f,
                     32.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::LIME:
+            case OBJECTS::Food::TypeId::LIME:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     16.0f,
                     32.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::LYCHEE:
+            case OBJECTS::Food::TypeId::LYCHEE:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     32.0f,
                     32.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::MANGO:
+            case OBJECTS::Food::TypeId::MANGO:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     48.0f,
                     32.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::MELON:
+            case OBJECTS::Food::TypeId::MELON:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     32.0f,
                     0.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::MULBERRY:
+            case OBJECTS::Food::TypeId::MULBERRY:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     64.0f,
                     32.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::OLIVE:
+            case OBJECTS::Food::TypeId::OLIVE:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     48.0f,
                     0.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::ORANGE:
+            case OBJECTS::Food::TypeId::ORANGE:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     80.0f,
                     32.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::PAWPAW:
+            case OBJECTS::Food::TypeId::PAWPAW:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     80.0f,
                     48.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::PEACH:
+            case OBJECTS::Food::TypeId::PEACH:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     96.0f,
                     32.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::PEAR:
+            case OBJECTS::Food::TypeId::PEAR:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     112.0f,
                     32.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::PECAN:
+            case OBJECTS::Food::TypeId::PECAN:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     0.0f,
                     48.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::PERSIMMON:
+            case OBJECTS::Food::TypeId::PERSIMMON:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     16.0f,
                     48.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::PLUM:
+            case OBJECTS::Food::TypeId::PLUM:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     32.0f,
                     48.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::POMEGRANATE:
+            case OBJECTS::Food::TypeId::POMEGRANATE:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     48.0f,
                     48.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::RASPBERRY:
+            case OBJECTS::Food::TypeId::RASPBERRY:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     0.0f,
                     64.0f,
                     16.0f,
                     16.0f);
                 break;
-            case OBJECTS::FoodType::WALNUT:
+            case OBJECTS::Food::TypeId::WALNUT:
                 texture_sub_rectangle = MATH::FloatRectangle::FromLeftTopAndDimensions(
                     48.0f,
                     48.0f,

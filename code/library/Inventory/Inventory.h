@@ -1,8 +1,8 @@
 #pragma once
 
+#include <array>
 #include <memory>
 #include <set>
-#include <unordered_map>
 #include "Bible/BibleVerses.h"
 #include "Gameplay/FollowingAnimalGroup.h"
 #include "Inventory/AnimalCollectionStatistics.h"
@@ -21,7 +21,6 @@ namespace INVENTORY
         // PUBLIC METHODS.
         void AddWood(const unsigned int wood_count);
         void AddFood(const OBJECTS::Food& food);
-        unsigned int GetCollectedFoodCount(const OBJECTS::FoodType food_type) const;
         void AddAnimal(const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
@@ -34,8 +33,8 @@ namespace INVENTORY
         /// A set is used to allow easily determining
         /// if a verse is already in the inventory.
         std::set<BIBLE::BibleVerse> BibleVerses = std::set<BIBLE::BibleVerse>();
-        /// Counts of collected food by type.
-        std::unordered_map<OBJECTS::FoodType, unsigned int> CollectedFoodCounts = {};
+        /// Counts of collected food (currently in the inventory) indexed by type.
+        std::array<unsigned int, OBJECTS::Food::TypeId::COUNT> FoodCounts = {};
         /// The group of animals currently following being Noah (as opposed to those in the ark).
         GAMEPLAY::FollowingAnimalGroup FollowingAnimals = {};
     };

@@ -25,7 +25,7 @@ namespace INVENTORY
     private:
         // RENDERING.
         void RenderFoodBox(
-            const OBJECTS::FoodType food_type,
+            const OBJECTS::Food::TypeId food_type,
             const unsigned int food_type_collected_count,
             const MATH::FloatRectangle& box_screen_rectangle,
             GRAPHICS::Renderer& renderer) const;

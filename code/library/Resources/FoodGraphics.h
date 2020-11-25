@@ -11,6 +11,6 @@ namespace RESOURCES
     class FoodGraphics
     {
     public:
-        static std::shared_ptr<GRAPHICS::Sprite> GetSprite(const OBJECTS::FoodType food_type);
+        static std::shared_ptr<GRAPHICS::Sprite> GetSprite(const OBJECTS::Food::TypeId food_type);
     };
 }

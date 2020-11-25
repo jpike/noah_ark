@@ -42,12 +42,12 @@ namespace INVENTORY
         constexpr float INITIAL_TOP_OFFSET_IN_PIXELS = 16.0f;
         float starting_box_center_x_position = background_rectangle.LeftTop.X + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS + INITIAL_LEFT_OFFSET_IN_PIXELS;
         float starting_box_center_y_position = background_rectangle.LeftTop.Y + PADDING_BETWEEN_BOXES_IN_PIXELS + BOX_HALF_DIMENSION_IN_PIXELS + INITIAL_TOP_OFFSET_IN_PIXELS;
-        const unsigned int FIRST_VALID_FOOD_ID = static_cast<unsigned int>(OBJECTS::FoodType::NONE) + 1;
-        for (unsigned int food_id = FIRST_VALID_FOOD_ID; food_id < static_cast<unsigned int>(OBJECTS::FoodType::COUNT); ++food_id)
+        const unsigned int FIRST_VALID_FOOD_ID = OBJECTS::Food::TypeId::NONE + 1;
+        for (unsigned int food_id = FIRST_VALID_FOOD_ID; food_id < OBJECTS::Food::TypeId::COUNT; ++food_id)
         {
             // GET THE COLLECTED COUNT FOR THE FOOD TYPE.
-            OBJECTS::FoodType food_type = static_cast<OBJECTS::FoodType>(food_id);
-            unsigned int food_collected_count = inventory.GetCollectedFoodCount(food_type);
+            OBJECTS::Food::TypeId food_type = static_cast<OBJECTS::Food::TypeId>(food_id);
+            unsigned int food_collected_count = inventory.FoodCounts[food_type];
 
             // CALCULATE THE BOX FOR THIS FOOD TYPE.
             // Since the first food enum isn't valid, the ID must be adjusted to
@@ -83,7 +83,7 @@ namespace INVENTORY
     /// @param[in]  box_screen_rectangle - The placement/dimensions of the box to render, in screen coordinates.
     /// @param[in,out]  renderer - The renderer to use.
     void InventoryFoodPage::RenderFoodBox(
-        const OBJECTS::FoodType food_type,
+        const OBJECTS::Food::TypeId food_type,
         const unsigned int food_type_collected_count,
         const MATH::FloatRectangle& box_screen_rectangle,
         GRAPHICS::Renderer& renderer) const

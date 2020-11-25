@@ -170,7 +170,7 @@ namespace MAPS
                                 {
                                     // DETERMINE THE TYPE OF FOOD.
                                     // It will be randomly determined.
-                                    OBJECTS::FoodType food_type = random_number_generator.RandomEnum<OBJECTS::FoodType>();
+                                    OBJECTS::Food::TypeId food_type = random_number_generator.RandomEnum<OBJECTS::Food::TypeId>();
 
                                     // GET THE SPRITE FOR THE FOOD.
                                     // The food can only be created if the sprite was retrieved.

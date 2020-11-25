@@ -19,12 +19,9 @@ namespace SAVED_GAME_DATA_TESTS
             BIBLE::BIBLE_VERSES[50],
             BIBLE::BIBLE_VERSES[100],
         };
-        original_saved_game_data.Player->Inventory.CollectedFoodCounts =
-        {
-            { OBJECTS::FoodType::ALMOND, 4 },
-            { OBJECTS::FoodType::BANANA, 5 },
-            { OBJECTS::FoodType::WALNUT, 6 },
-        };
+        original_saved_game_data.Player->Inventory.FoodCounts[OBJECTS::Food::TypeId::ALMOND] = 4;
+        original_saved_game_data.Player->Inventory.FoodCounts[OBJECTS::Food::TypeId::BANANA] = 5;
+        original_saved_game_data.Player->Inventory.FoodCounts[OBJECTS::Food::TypeId::WALNUT] = 6;
         original_saved_game_data.Player->Inventory.FollowingAnimals.Noah = &*original_saved_game_data.Player;
         original_saved_game_data.Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition = MATH::Vector2f(7.0f, 8.0f);
         original_saved_game_data.Player->Inventory.FollowingAnimals.Animals =
@@ -70,7 +67,7 @@ namespace SAVED_GAME_DATA_TESTS
         REQUIRE(original_saved_game_data.Player->GetWorldPosition().X == reread_saved_game_data->Player->GetWorldPosition().X);
         REQUIRE(original_saved_game_data.Player->GetWorldPosition().Y == reread_saved_game_data->Player->GetWorldPosition().Y);
         REQUIRE(original_saved_game_data.Player->Inventory.WoodCount == reread_saved_game_data->Player->Inventory.WoodCount);
-        REQUIRE(original_saved_game_data.Player->Inventory.CollectedFoodCounts == reread_saved_game_data->Player->Inventory.CollectedFoodCounts);
+        REQUIRE(original_saved_game_data.Player->Inventory.FoodCounts == reread_saved_game_data->Player->Inventory.FoodCounts);
         REQUIRE(original_saved_game_data.Player->Inventory.FollowingAnimals.Noah == &*original_saved_game_data.Player);
         REQUIRE(original_saved_game_data.Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.X == reread_saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.X);
         REQUIRE(original_saved_game_data.Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y == reread_saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y);

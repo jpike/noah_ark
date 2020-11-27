@@ -97,6 +97,7 @@ namespace OBJECTS
     {
     public:
         /// CONSTRUCTION.
+        explicit AnimalType() = default;
         explicit AnimalType(
             const AnimalSpecies::Value species, 
             const AnimalGender::Value gender);
@@ -111,11 +112,11 @@ namespace OBJECTS
 
         /// PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The species of the animal.
-        AnimalSpecies::Value Species;
+        AnimalSpecies::Value Species = AnimalSpecies::COUNT;
         /// The gender of the animal.
-        AnimalGender::Value Gender;
+        AnimalGender::Value Gender = AnimalGender::COUNT;
         /// How fast the animal moves in the world (in pixels per second).
-        float MoveSpeedInPixelsPerSecond;
+        float MoveSpeedInPixelsPerSecond = 0.0f;
 
     private:
         /// HELPER METHODS.

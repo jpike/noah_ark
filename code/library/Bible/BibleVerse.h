@@ -1,5 +1,6 @@
 #pragma once
 
+#include <compare>
 #include <string>
 #include "Bible/BibleBook.h"
 
@@ -11,6 +12,7 @@ namespace BIBLE
     {
     public:
         // CONSTRUCTION.
+        explicit BibleVerse() = default;
         explicit BibleVerse(
             const BibleBook book,
             const unsigned int chapter,
@@ -18,7 +20,8 @@ namespace BIBLE
             const std::string& text);
 
         // OPERATORS.
-        bool operator< (const BibleVerse& rhs) const;
+        auto operator<=>(const BibleVerse&) const = default;
+        bool operator<(const BibleVerse& rhs) const;
 
         // STRING RETRIEVAL.
         std::string GetCitationString() const;
@@ -26,12 +29,12 @@ namespace BIBLE
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The book the verse comes from.
-        BibleBook Book;
+        BibleBook Book = BibleBook::INVALID;
         /// The chapter the verse comes from.
-        unsigned int Chapter;
+        unsigned int Chapter = 0;
         /// The number of the verse within the chapter.
-        unsigned int Verse;
+        unsigned int Verse = 0;
         /// The textual content of the verse.
-        std::string Text;
+        std::string Text = "";
     };
 }

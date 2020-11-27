@@ -1,5 +1,8 @@
+#include <cassert>
 #include <fstream>
 #include <sstream>
+#include "Resources/AnimalGraphics.h"
+#include "Resources/AnimalSounds.h"
 #include "States/IntroSequence.h"
 #include "States/SavedGameData.h"
 
@@ -74,27 +77,95 @@ namespace STATES
             // READ IN PLAYER'S WOOD COUNT.
             saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->Player->Inventory.WoodCount), sizeof(saved_game_data->Player->Inventory.WoodCount));
 
+            // READ IN OUT THE COLLECTED BIBLE VERSES.
+            std::size_t collected_bible_verse_count = 0;
+            saved_game_data_file.read(reinterpret_cast<char*>(&collected_bible_verse_count), sizeof(collected_bible_verse_count));
+            for (std::size_t bible_verse_index = 0; bible_verse_index < collected_bible_verse_count; ++bible_verse_index)
+            {
+                // READ IN THE CURRENT BIBLE VERSE.
+                BIBLE::BibleVerse bible_verse;
+                saved_game_data_file.read(reinterpret_cast<char*>(&bible_verse.Book), sizeof(bible_verse.Book));
+                saved_game_data_file.read(reinterpret_cast<char*>(&bible_verse.Chapter), sizeof(bible_verse.Chapter));
+                saved_game_data_file.read(reinterpret_cast<char*>(&bible_verse.Verse), sizeof(bible_verse.Verse));
+
+                // The length of the verse text needs to be read first to know how big the verse text is.
+                std::size_t verse_text_length_in_bytes = 0;
+                saved_game_data_file.read(reinterpret_cast<char*>(&verse_text_length_in_bytes), sizeof(verse_text_length_in_bytes));
+                bible_verse.Text.resize(verse_text_length_in_bytes);
+                saved_game_data_file.read(bible_verse.Text.data(), verse_text_length_in_bytes);
+
+                saved_game_data->Player->Inventory.BibleVerses.insert(bible_verse);
+            }
+
             // READ IN THE FOOD COUNTS.
             std::size_t food_counts_total_size_in_bytes = sizeof(unsigned int) * static_cast<std::size_t>(OBJECTS::Food::TypeId::COUNT);
             saved_game_data_file.read(reinterpret_cast<char*>(saved_game_data->Player->Inventory.FoodCounts.data()), food_counts_total_size_in_bytes);
 
-            /// @todo   Rest of inventory.
+            // READ IN THE FOLLOWING ANIMAL INFORMATION.
+            saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.X), sizeof(saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.X));
+            saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y), sizeof(saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y));
 
-            /// @todo   Built ark pieces.
+            std::size_t following_animal_count = 0;
+            saved_game_data_file.read(reinterpret_cast<char*>(&following_animal_count), sizeof(following_animal_count));
+            saved_game_data->Player->Inventory.FollowingAnimals.Animals.reserve(following_animal_count);
 
-            // READ IN  THE COLLECTED ANIMAL STATISTICS.
+            for (std::size_t animal_index = 0; animal_index < following_animal_count; ++animal_index)
+            {
+                OBJECTS::AnimalType animal_type;
+                saved_game_data_file.read(reinterpret_cast<char*>(&animal_type.Species), sizeof(animal_type.Species));
+                saved_game_data_file.read(reinterpret_cast<char*>(&animal_type.Gender), sizeof(animal_type.Gender));
+                
+                RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(animal_type.Species);
+
+                std::shared_ptr<GRAPHICS::AnimatedSprite> animal_sprite = RESOURCES::AnimalGraphics::GetSprite(animal_type);
+                assert(animal_sprite);
+                if (animal_sprite)
+                {
+                    auto animal = MEMORY::NonNullSharedPointer<OBJECTS::Animal>(std::make_shared<OBJECTS::Animal>(
+                        animal_type,
+                        *animal_sprite,
+                        animal_sound_id));
+                    saved_game_data->Player->Inventory.FollowingAnimals.Add(animal);
+                }
+            }
+
+            // READ IN THE BUILT ARK PIECES.
+            std::size_t built_ark_piece_count = 0;
+            saved_game_data_file.read(reinterpret_cast<char*>(&built_ark_piece_count), sizeof(built_ark_piece_count));
+            saved_game_data->BuiltArkPieces.reserve(built_ark_piece_count);
+            for (std::size_t ark_piece_index = 0; ark_piece_index < built_ark_piece_count; ++ark_piece_index)
+            {
+                unsigned int ark_piece_id = 0;
+                saved_game_data_file.read(reinterpret_cast<char*>(&ark_piece_id), sizeof(ark_piece_id));
+
+                OBJECTS::ArkPiece ark_piece(ark_piece_id);
+                saved_game_data_file.read(reinterpret_cast<char*>(&ark_piece.Sprite.WorldPosition.X), sizeof(ark_piece.Sprite.WorldPosition.X));
+                saved_game_data_file.read(reinterpret_cast<char*>(&ark_piece.Sprite.WorldPosition.Y), sizeof(ark_piece.Sprite.WorldPosition.Y));
+                saved_game_data_file.read(reinterpret_cast<char*>(&ark_piece.Built), sizeof(ark_piece.Built));
+                saved_game_data_file.read(reinterpret_cast<char*>(&ark_piece.IsExternalDoorway), sizeof(ark_piece.IsExternalDoorway));
+
+                saved_game_data->BuiltArkPieces.emplace_back(ark_piece);
+            }
+
+            // READ IN THE COLLECTED ANIMAL STATISTICS.
             std::size_t animal_statistics_total_count = static_cast<std::size_t>(OBJECTS::AnimalSpecies::COUNT) * static_cast<std::size_t>(OBJECTS::AnimalGender::COUNT);
             std::size_t collected_animal_statistics_total_size_in_bytes = sizeof(INVENTORY::AnimalCollectionStatistics) * animal_statistics_total_count;
             saved_game_data_file.read(reinterpret_cast<char*>(saved_game_data->CollectedAnimalsBySpeciesThenGender.data()), collected_animal_statistics_total_size_in_bytes);
 
-            /// @todo   Bible verses.
+            // INITIALIZE THE BIBLE VERSES LEFT TO FIND.
+            std::set_difference(
+                BIBLE::BIBLE_VERSES.cbegin(),
+                BIBLE::BIBLE_VERSES.cend(),
+                saved_game_data->Player->Inventory.BibleVerses.cbegin(),
+                saved_game_data->Player->Inventory.BibleVerses.cend(),
+                std::inserter(saved_game_data->BibleVersesLeftToFind, saved_game_data->BibleVersesLeftToFind.begin()));
 
             // READ IN FAMILY COLLECTION STATISTICS.
             std::size_t family_member_statistics_total_size_in_bytes = sizeof(bool) * saved_game_data->FamilyMembersGathered.size();
             saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->FamilyMembersGathered), family_member_statistics_total_size_in_bytes);
 
             // READ IN THE FLOOD DAY COUNT.
-            saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->FloodDayCount), saved_game_data->FloodDayCount);
+            saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->FloodDayCount), sizeof(saved_game_data->FloodDayCount));
 
             /// @todo   More error handling?
 
@@ -134,30 +205,64 @@ namespace STATES
         saved_game_data_file.write(reinterpret_cast<const char*>(&player_world_position.X), sizeof(player_world_position.X));
         saved_game_data_file.write(reinterpret_cast<const char*>(&player_world_position.Y), sizeof(player_world_position.Y));
 
-        // WRITE PLAYER'S WOOD COUNT.
+        // WRITE THE PLAYER'S WOOD COUNT.
         saved_game_data_file.write(reinterpret_cast<const char*>(&Player->Inventory.WoodCount), sizeof(Player->Inventory.WoodCount));
+
+        // WRITE OUT THE COLLECTED BIBLE VERSES.
+        std::size_t collected_bible_verse_count = Player->Inventory.BibleVerses.size();
+        saved_game_data_file.write(reinterpret_cast<const char*>(&collected_bible_verse_count), sizeof(collected_bible_verse_count));
+        for (const auto& bible_verse : Player->Inventory.BibleVerses)
+        {
+            // WRITE OUT THE CURRENT BIBLE VERSE.
+            saved_game_data_file.write(reinterpret_cast<const char*>(&bible_verse.Book), sizeof(bible_verse.Book));
+            saved_game_data_file.write(reinterpret_cast<const char*>(&bible_verse.Chapter), sizeof(bible_verse.Chapter));
+            saved_game_data_file.write(reinterpret_cast<const char*>(&bible_verse.Verse), sizeof(bible_verse.Verse));
+
+            // The length of the verse text needs to be written out to know where the verse text ends.
+            std::size_t verse_text_length_in_bytes = bible_verse.Text.length();
+            saved_game_data_file.write(reinterpret_cast<const char*>(&verse_text_length_in_bytes), sizeof(verse_text_length_in_bytes));
+            saved_game_data_file.write(bible_verse.Text.data(), verse_text_length_in_bytes);
+        }
 
         // WRITE OUT THE FOOD COUNTS.
         std::size_t food_counts_total_size_in_bytes = sizeof(unsigned int) * static_cast<std::size_t>(OBJECTS::Food::TypeId::COUNT);
         saved_game_data_file.write(reinterpret_cast<const char*>(Player->Inventory.FoodCounts.data()), food_counts_total_size_in_bytes);
 
-        /// @todo   Rest of inventory.
+        // WRITE OUT THE FOLLOWING ANIMAL INFORMATION.
+        saved_game_data_file.write(reinterpret_cast<const char*>(&Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.X), sizeof(Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.X));
+        saved_game_data_file.write(reinterpret_cast<const char*>(&Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y), sizeof(Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y));
 
-        /// @todo   Built ark pieces.
+        std::size_t following_animal_count = Player->Inventory.FollowingAnimals.Animals.size();
+        saved_game_data_file.write(reinterpret_cast<const char*>(&following_animal_count), sizeof(following_animal_count));
+        for (const auto& animal : Player->Inventory.FollowingAnimals.Animals)
+        {
+            saved_game_data_file.write(reinterpret_cast<const char*>(&animal->Type.Species), sizeof(animal->Type.Species));
+            saved_game_data_file.write(reinterpret_cast<const char*>(&animal->Type.Gender), sizeof(animal->Type.Gender));
+        }
+
+        // WRITE OUT THE BUILT ARK PIECES.
+        std::size_t built_ark_piece_count = BuiltArkPieces.size();
+        saved_game_data_file.write(reinterpret_cast<const char*>(&built_ark_piece_count), sizeof(built_ark_piece_count));
+        for (const auto& ark_piece : BuiltArkPieces)
+        {
+            saved_game_data_file.write(reinterpret_cast<const char*>(&ark_piece.Id), sizeof(ark_piece.Id));
+            saved_game_data_file.write(reinterpret_cast<const char*>(&ark_piece.Sprite.WorldPosition.X), sizeof(ark_piece.Sprite.WorldPosition.X));
+            saved_game_data_file.write(reinterpret_cast<const char*>(&ark_piece.Sprite.WorldPosition.Y), sizeof(ark_piece.Sprite.WorldPosition.Y));
+            saved_game_data_file.write(reinterpret_cast<const char*>(&ark_piece.Built), sizeof(ark_piece.Built));
+            saved_game_data_file.write(reinterpret_cast<const char*>(&ark_piece.IsExternalDoorway), sizeof(ark_piece.IsExternalDoorway));
+        }
 
         // WRITE OUT THE COLLECTED ANIMAL STATISTICS.
         std::size_t animal_statistics_total_count = static_cast<std::size_t>(OBJECTS::AnimalSpecies::COUNT) * static_cast<std::size_t>(OBJECTS::AnimalGender::COUNT);
         std::size_t collected_animal_statistics_total_size_in_bytes = sizeof(INVENTORY::AnimalCollectionStatistics) * animal_statistics_total_count;
         saved_game_data_file.write(reinterpret_cast<const char*>(CollectedAnimalsBySpeciesThenGender.data()), collected_animal_statistics_total_size_in_bytes);
 
-        /// @todo   Bible verses.
-
         // WRITE OUT FAMILY COLLECTION STATISTICS.
         std::size_t family_member_statistics_total_size_in_bytes = sizeof(bool) * FamilyMembersGathered.size();
         saved_game_data_file.write(reinterpret_cast<const char*>(&FamilyMembersGathered), family_member_statistics_total_size_in_bytes);
 
         // WRITE OUT THE FLOOD DAY COUNT.
-        saved_game_data_file.write(reinterpret_cast<const char*>(&FloodDayCount), FloodDayCount);
+        saved_game_data_file.write(reinterpret_cast<const char*>(&FloodDayCount), sizeof(FloodDayCount));
 
         /// @todo   More error handling?
     }

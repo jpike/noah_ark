@@ -212,8 +212,7 @@ namespace INVENTORY
 
             // CHECK IF THE SPECIES HAS BEEN COLLECTED.
             OBJECTS::AnimalSpecies::Value species = static_cast<OBJECTS::AnimalSpecies::Value>(species_id);
-            AnimalCollectionStatistics species_collection_statistics = current_game_data.GetAnimalCollectionStatistics(species);
-            bool species_collected = species_collection_statistics.Collected();
+            bool species_collected = current_game_data.AnimalSpeciesCollectedAtAll(species);
             if (species_collected)
             {
                 // RENDER THE NAME OF THE CURRENT SPECIES.
@@ -235,7 +234,8 @@ namespace INVENTORY
                 MATH::Vector2f male_animal_icon_left_top_screen_position = MATH::Vector2f(
                     male_animal_icon_left_screen_position,
                     collected_species_text.LeftTopPosition.Y);
-                bool male_of_species_collected = species_collection_statistics.MaleCollected();
+                INVENTORY::AnimalCollectionStatistics male_collection_statistics = current_game_data.CollectedAnimalsBySpeciesThenGender[species][OBJECTS::AnimalGender::MALE];
+                bool male_of_species_collected = male_collection_statistics.Collected();
                 if (male_of_species_collected)
                 {
                     OBJECTS::AnimalType male_animal_type(species, OBJECTS::AnimalGender::MALE);
@@ -247,7 +247,8 @@ namespace INVENTORY
                 }
 
                 // RENDER AN ICON FOR THE FEMALE ANIMAL (IF COLLECTED).
-                bool female_of_species_collected = species_collection_statistics.FemaleCollected();
+                INVENTORY::AnimalCollectionStatistics female_collection_statistics = current_game_data.CollectedAnimalsBySpeciesThenGender[species][OBJECTS::AnimalGender::FEMALE];
+                bool female_of_species_collected = female_collection_statistics.Collected();
                 if (female_of_species_collected)
                 {
                     OBJECTS::AnimalType female_animal_type(species, OBJECTS::AnimalGender::FEMALE);
@@ -266,7 +267,7 @@ namespace INVENTORY
                 // RENDER TEXT INDICATING HOW MANY OF THE SPECIES ARE FOLLOWING THE PLAYER.
                 GRAPHICS::GUI::Text species_following_player_text
                 {
-                    .String = "M: " + std::to_string(species_collection_statistics.MaleFollowingPlayerCount) + " F: " + std::to_string(species_collection_statistics.FemaleFollowingPlayerCount),
+                    .String = "M: " + std::to_string(male_collection_statistics.FollowingPlayerCount) + " F: " + std::to_string(female_collection_statistics.FollowingPlayerCount),
                     .LeftTopPosition = MATH::Vector2f(count_following_column_header_text.LeftTopPosition.X, current_animal_species_row_top_y_position)
                 };
                 renderer.Render(species_following_player_text);
@@ -274,7 +275,7 @@ namespace INVENTORY
                 // RENDER TEXT INDICATING HOW MANY OF THE SPECIES ARE IN THE ARK.
                 GRAPHICS::GUI::Text species_in_ark_text
                 {
-                    .String = "M: " + std::to_string(species_collection_statistics.MaleInArkCount) + " F: " + std::to_string(species_collection_statistics.FemaleInArkCount),
+                    .String = "M: " + std::to_string(male_collection_statistics.InArkCount) + " F: " + std::to_string(female_collection_statistics.InArkCount),
                     .LeftTopPosition = MATH::Vector2f(count_in_ark_column_header_text.LeftTopPosition.X, current_animal_species_row_top_y_position)
                 };
                 renderer.Render(species_in_ark_text);

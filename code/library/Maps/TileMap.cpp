@@ -315,8 +315,9 @@ namespace MAPS
                 MATH::Vector2f animal_to_ark_doorway_direction = MATH::Vector2f::Normalize(animal_to_ark_doorway_vector);
 
                 // CALCULATE THE DISTANCE THE ANIMAL NEEDS TO MOVE.
+                const OBJECTS::AnimalType& current_animal_type = (*animal)->Type;
                 float elapsed_time_in_seconds = gaming_hardware.Clock.ElapsedTimeSinceLastFrame.asSeconds();
-                float animal_move_distance_in_pixels = (*animal)->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
+                float animal_move_distance_in_pixels = current_animal_type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
                 MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_to_ark_doorway_direction);
 
                 // MOVE THE ANIMAL.
@@ -329,18 +330,9 @@ namespace MAPS
                 if (animal_reached_doorway)
                 {
                     // UPDATE THE ANIMAL STATISTICS.
-                    INVENTORY::AnimalCollectionStatistics& current_animal_collection_statistics = current_game_data.CollectedAnimals[(*animal)->Type.Species];
-                    switch ((*animal)->Type.Gender)
-                    {
-                        case OBJECTS::AnimalGender::MALE:
-                            --current_animal_collection_statistics.MaleFollowingPlayerCount;
-                            ++current_animal_collection_statistics.MaleInArkCount;
-                            break;
-                        case OBJECTS::AnimalGender::FEMALE:
-                            --current_animal_collection_statistics.FemaleFollowingPlayerCount;
-                            ++current_animal_collection_statistics.FemaleInArkCount;
-                            break;
-                    }
+                    INVENTORY::AnimalCollectionStatistics& current_animal_collection_statistics = current_game_data.CollectedAnimalsBySpeciesThenGender[current_animal_type.Species][current_animal_type.Gender];
+                    --current_animal_collection_statistics.FollowingPlayerCount;
+                    ++current_animal_collection_statistics.InArkCount;
 
                     // ADD THE ANIMAL INTO THE APPROPRIATE TILE MAP OF THE ARK.
                     // This check is a precaution.  There should always be an entry point into the ark for the doorway.

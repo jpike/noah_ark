@@ -57,7 +57,7 @@ namespace OBJECTS
     /// Constructor.
     /// @param[in]  species - The species of the animal.
     /// @param[in]  gender - The gender of the animal.
-    AnimalType::AnimalType(const AnimalSpecies::Value species, const AnimalGender gender) :
+    AnimalType::AnimalType(const AnimalSpecies::Value species, const AnimalGender::Value gender) :
         Species(species),
         Gender(gender),
         MoveSpeedInPixelsPerSecond(GetMoveSpeedInPixelsPerSecond(species))

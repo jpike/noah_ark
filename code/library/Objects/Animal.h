@@ -9,15 +9,19 @@
 namespace OBJECTS
 {
     /// Enumerates the different genders that animals may have.
-    enum class AnimalGender
+    /// Wrapped in a struct to allow implicit conversion to integers.
+    struct AnimalGender
     {
-        /// Indicates a male animal.
-        MALE,
-        /// Indicates a female animal.
-        FEMALE,
-        /// A non-gender value that supports determining the number of genders
-        /// for algorithms that need this information.
-        COUNT
+        enum Value
+        {
+            /// Indicates a male animal.
+            MALE,
+            /// Indicates a female animal.
+            FEMALE,
+            /// A non-gender value that supports determining the number of genders
+            /// for algorithms that need this information.
+            COUNT
+        };
     };
 
     /// Enumerates the different species of animals in the game.
@@ -95,7 +99,7 @@ namespace OBJECTS
         /// CONSTRUCTION.
         explicit AnimalType(
             const AnimalSpecies::Value species, 
-            const AnimalGender gender);
+            const AnimalGender::Value gender);
 
         // OPERATORS.
         bool operator==(const AnimalType& other) const;
@@ -109,7 +113,7 @@ namespace OBJECTS
         /// The species of the animal.
         AnimalSpecies::Value Species;
         /// The gender of the animal.
-        AnimalGender Gender;
+        AnimalGender::Value Gender;
         /// How fast the animal moves in the world (in pixels per second).
         float MoveSpeedInPixelsPerSecond;
 

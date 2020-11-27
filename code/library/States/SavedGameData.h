@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <vector>
 #include "Bible/BibleVerse.h"
+#include "Containers/NestedArray.h"
 #include "Inventory/AnimalCollectionStatistics.h"
 #include "Inventory/Inventory.h"
 #include "Math/Vector2.h"
@@ -35,8 +36,9 @@ namespace STATES
         void Write(const std::filesystem::path& filepath) const;
 
         // OTHER PUBLIC METHODS.
+        unsigned int GetCollectedAnimalCount(const OBJECTS::AnimalSpecies::Value species) const;
+        bool AnimalSpeciesCollectedAtAll(const OBJECTS::AnimalSpecies::Value species) const;
         bool AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const;
-        INVENTORY::AnimalCollectionStatistics GetAnimalCollectionStatistics(const OBJECTS::AnimalSpecies::Value species) const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The path to the file for this saved game.
@@ -48,8 +50,9 @@ namespace STATES
         /// Ark pieces built by the player.
         std::vector<OBJECTS::ArkPiece> BuiltArkPieces = {};
         /// Statistics for animals collected by the player.
-        /// Animal species act as indices.
-        std::array<INVENTORY::AnimalCollectionStatistics, OBJECTS::AnimalSpecies::COUNT> CollectedAnimals = {};
+        /// Animal species act as outer indices, followed by gender for inner indices.
+        CONTAINERS::NestedEnumArray<INVENTORY::AnimalCollectionStatistics, OBJECTS::AnimalSpecies, OBJECTS::AnimalGender>
+            CollectedAnimalsBySpeciesThenGender = {};
         /// Bible verses that still need to be found by the player.
         std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind = {};
         /// Whether or not certain family members have been gathered so far.

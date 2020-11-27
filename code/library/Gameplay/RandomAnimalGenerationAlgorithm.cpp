@@ -21,11 +21,11 @@ namespace GAMEPLAY
     {
         // DETERMINE THE SPECIES OF ANIMAL TO GENERATE.
         OBJECTS::AnimalSpecies::Value random_species = random_number_generator.RandomEnum<OBJECTS::AnimalSpecies::Value>();
-        DEBUGGING::DebugConsole::WriteLine("Random species: ", static_cast<unsigned int>(random_species));
+        DEBUGGING::DebugConsole::WriteLine("Random species: ", random_species);
 
         // DETERMINE THE GENDER OF ANIMAL TO GENERATE.
-        OBJECTS::AnimalGender random_gender = random_number_generator.RandomEnum<OBJECTS::AnimalGender>();
-        DEBUGGING::DebugConsole::WriteLine("Random gender: ", static_cast<unsigned int>(random_gender));
+        OBJECTS::AnimalGender::Value random_gender = random_number_generator.RandomEnum<OBJECTS::AnimalGender::Value>();
+        DEBUGGING::DebugConsole::WriteLine("Random gender: ", random_gender);
 
         // CHECK IF THE ANIMAL TYPE HAS BEEN FULLY COLLECTED.
         OBJECTS::AnimalType animal_type(random_species, random_gender);

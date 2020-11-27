@@ -888,17 +888,10 @@ namespace STATES
                 // ADD THE ANIMAL TO THE PLAYER'S INVENTORY.
                 DEBUGGING::DebugConsole::WriteLine("Collected animal.");
                 world.NoahPlayer->Inventory.AddAnimal(*animal);
-                /// @todo   Have a mapping from gender?
-                INVENTORY::AnimalCollectionStatistics& current_animal_collection_statistics = current_game_data.CollectedAnimals[(*animal)->Type.Species];
-                switch ((*animal)->Type.Gender)
-                {
-                    case OBJECTS::AnimalGender::MALE:
-                        ++current_animal_collection_statistics.MaleFollowingPlayerCount;
-                        break;
-                    case OBJECTS::AnimalGender::FEMALE:
-                        ++current_animal_collection_statistics.FemaleFollowingPlayerCount;
-                        break;
-                }
+                
+                const OBJECTS::AnimalType& current_animal_type = (*animal)->Type;
+                INVENTORY::AnimalCollectionStatistics& current_animal_collection_statistics = current_game_data.CollectedAnimalsBySpeciesThenGender[current_animal_type.Species][current_animal_type.Gender];
+                ++current_animal_collection_statistics.FollowingPlayerCount;
 
                 // REMOVE THE ANIMAL FROM THOSE IN THE CURRENT TILE MAP.
                 // This should move to the next animal.

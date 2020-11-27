@@ -50,7 +50,7 @@ namespace STATES
             std::filesystem::create_directories(parent_directory_path);
 
             // OPEN THE FILE.
-            std::ifstream saved_game_data_file(filepath);
+            std::ifstream saved_game_data_file(filepath, std::ios::binary | std::ios::in);
             bool file_opened = saved_game_data_file.is_open();
             if (!file_opened)
             {
@@ -62,130 +62,41 @@ namespace STATES
             auto saved_game_data = std::make_unique<SavedGameData>();
             saved_game_data->Filepath = filepath;
 
-            // READ IN THE PLAYER'S POSITION.
+            // READ IN  THE CURRENT GAME STATE.
+            saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->CurrentGameState), sizeof(saved_game_data->CurrentGameState));
+
+            // READ IN  THE PLAYER'S POSITION.
             MATH::Vector2f player_world_position;
-            saved_game_data_file >> player_world_position.X;
-            saved_game_data_file >> player_world_position.Y;
+            saved_game_data_file.read(reinterpret_cast<char*>(&player_world_position.X), sizeof(player_world_position.X));
+            saved_game_data_file.read(reinterpret_cast<char*>(&player_world_position.Y), sizeof(player_world_position.Y));
             saved_game_data->Player->SetWorldPosition(player_world_position);
 
-            // READ IN THE PLAYER'S WOORD COUNT.
-            saved_game_data_file >> saved_game_data->Player->Inventory.WoodCount;
+            // READ IN PLAYER'S WOOD COUNT.
+            saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->Player->Inventory.WoodCount), sizeof(saved_game_data->Player->Inventory.WoodCount));
 
-            // READ IN THE FOUND BIBLE VERSES.
-            unsigned int expected_bible_verse_count;
-            saved_game_data_file >> expected_bible_verse_count;
-            while (saved_game_data->Player->Inventory.BibleVerses.size() < expected_bible_verse_count)
-            {
-                // READ IN THE CURRENT BIBLE VERSE'S DATA.
-                unsigned int book;
-                saved_game_data_file >> book;
-                unsigned int chapter;
-                saved_game_data_file >> chapter;
-                unsigned int verse;
-                saved_game_data_file >> verse;
+            // READ IN THE FOOD COUNTS.
+            std::size_t food_counts_total_size_in_bytes = sizeof(unsigned int) * static_cast<std::size_t>(OBJECTS::Food::TypeId::COUNT);
+            saved_game_data_file.read(reinterpret_cast<char*>(saved_game_data->Player->Inventory.FoodCounts.data()), food_counts_total_size_in_bytes);
 
-                // A single space exists after the verse number before the verse text,
-                // so that needs to be read in order to avoid having an extra space
-                // at the beginning of the verse text.
-                char space_before_verse_text;
-                saved_game_data_file.get(space_before_verse_text);
+            /// @todo   Rest of inventory.
 
-                // The text may contain spaces, so the remainder of the entire
-                // line needs to be read in order to get the full verse text.
-                std::string text;
-                std::getline(saved_game_data_file, text);
+            /// @todo   Built ark pieces.
 
-                // MAKE SURE CURRENT VERSE DATA WAS PROPERLY READ.
-                bool verse_data_valid = !saved_game_data_file.eof();
-                if (!verse_data_valid)
-                {
-                    break;
-                }
+            // READ IN  THE COLLECTED ANIMAL STATISTICS.
+            std::size_t animal_statistics_total_count = static_cast<std::size_t>(OBJECTS::AnimalSpecies::COUNT) * static_cast<std::size_t>(OBJECTS::AnimalGender::COUNT);
+            std::size_t collected_animal_statistics_total_size_in_bytes = sizeof(INVENTORY::AnimalCollectionStatistics) * animal_statistics_total_count;
+            saved_game_data_file.read(reinterpret_cast<char*>(saved_game_data->CollectedAnimalsBySpeciesThenGender.data()), collected_animal_statistics_total_size_in_bytes);
 
-                // CREATE THE VERSE.
-                BIBLE::BibleVerse current_verse(
-                    static_cast<BIBLE::BibleBook>(book),
-                    chapter,
-                    verse,
-                    text);
+            /// @todo   Bible verses.
 
-                // ADD THE VERSE TO THE IN-MEMORY DATA.
-                saved_game_data->Player->Inventory.BibleVerses.insert(current_verse);
-            }
+            // READ IN FAMILY COLLECTION STATISTICS.
+            std::size_t family_member_statistics_total_size_in_bytes = sizeof(bool) * saved_game_data->FamilyMembersGathered.size();
+            saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->FamilyMembersGathered), family_member_statistics_total_size_in_bytes);
 
-            // INITIALIZE THE BIBLE VERSES LEFT TO FIND.
-            std::set_difference(
-                BIBLE::BIBLE_VERSES.cbegin(),
-                BIBLE::BIBLE_VERSES.cend(),
-                saved_game_data->Player->Inventory.BibleVerses.cbegin(),
-                saved_game_data->Player->Inventory.BibleVerses.cend(),
-                std::inserter(saved_game_data->BibleVersesLeftToFind, saved_game_data->BibleVersesLeftToFind.begin()));
-                              
-            // READ IN THE BUILT ARK PIECE DATA.
-            unsigned int expected_ark_data_count;
-            saved_game_data_file >> expected_ark_data_count;
+            // READ IN THE FLOOD DAY COUNT.
+            saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->FloodDayCount), saved_game_data->FloodDayCount);
 
-            // Before reading in the ark piece data, a newline needs to be consumed.
-            std::string newline_before_ark_piece_data;
-            std::getline(saved_game_data_file, newline_before_ark_piece_data);
-
-            while (saved_game_data->BuiltArkPieces.size() < expected_ark_data_count)
-            {
-                // READ THE NEXT LINE OF DATA.
-                std::string current_line_of_data;
-                std::getline(saved_game_data_file, current_line_of_data);
-
-                // READ IN THE CURRENT LINE OF ARK PIECE DATA.
-                std::stringstream current_ark_data_line(current_line_of_data);
-                unsigned int ark_piece_id = 0;
-                MATH::Vector2f ark_piece_world_position;
-                current_ark_data_line >> ark_piece_id;
-                current_ark_data_line >> ark_piece_world_position.X;
-                current_ark_data_line >> ark_piece_world_position.Y;
-
-                // READ IN ALL BUILT ARK PIECE ID.
-                while (!current_ark_data_line.eof())
-                {
-                    // ADD THE PREVIOUSLY READ ARK PIECE.
-                    OBJECTS::ArkPiece ark_piece(ark_piece_id);
-                    ark_piece.Built = true;
-                    ark_piece.Sprite.WorldPosition = ark_piece_world_position;
-                    saved_game_data->BuiltArkPieces.emplace_back(ark_piece);
-
-                    // READ IN THE NEXT ARK PIECE DATA.
-                    current_ark_data_line >> ark_piece_id;
-                    current_ark_data_line >> ark_piece_world_position.X;
-                    current_ark_data_line >> ark_piece_world_position.Y;
-                }
-            }
-
-            // READ IN THE COLLECTED ANIMAL DATA.
-            unsigned int expected_collected_animal_data_count;
-            saved_game_data_file >> expected_collected_animal_data_count;
-
-            // READ IN THE COLLECTED FOOD DATA.
-            unsigned int expected_collected_food_data_count;
-            saved_game_data_file >> expected_collected_food_data_count;
-
-            while (saved_game_data->Player->Inventory.FoodCounts.size() < expected_collected_food_data_count)
-            {
-                // READ IN THE CURRENT FOOD DATA.
-                int food_id;
-                saved_game_data_file >> food_id;
-                unsigned int collected_count;
-                saved_game_data_file >> collected_count;
-
-                // MAKE SURE CURRENT FOOD DATA WAS PROPERLY READ.
-                bool food_data_valid = !saved_game_data_file.eof();
-                if (!food_data_valid)
-                {
-                    break;
-                }
-
-                // ADD THE FOOD COUNT TO THE IN-MEMORY DATA.
-                OBJECTS::Food::TypeId food_type = static_cast<OBJECTS::Food::TypeId>(food_id);
-                saved_game_data->Player->Inventory.FoodCounts[food_type] = collected_count;
-            }
+            /// @todo   More error handling?
 
             // RETURN THE LOADED SAVED GAME DATA.
             return saved_game_data;
@@ -206,7 +117,8 @@ namespace STATES
         std::filesystem::create_directories(parent_directory_path);
 
         // OPEN THE FILE.
-        std::ofstream saved_game_data_file(filepath);
+        // See https://en.cppreference.com/w/cpp/io/basic_filebuf/open for flags.
+        std::ofstream saved_game_data_file(filepath, std::ios::binary | std::ios::out);
         bool file_opened = saved_game_data_file.is_open();
         if (!file_opened)
         {
@@ -214,74 +126,70 @@ namespace STATES
             return;
         }
 
+        // WRITE THE CURRENT GAME STATE.
+        saved_game_data_file.write(reinterpret_cast<const char*>(&CurrentGameState), sizeof(CurrentGameState));
+
         // WRITE THE PLAYER'S POSITION.
-        const char SEPARATOR_BETWEEN_RELATED_DATA = ' ';
         MATH::Vector2f player_world_position = Player->GetWorldPosition();
-        saved_game_data_file
-            << player_world_position.X
-            << SEPARATOR_BETWEEN_RELATED_DATA
-            << player_world_position.Y
-            << std::endl;
+        saved_game_data_file.write(reinterpret_cast<const char*>(&player_world_position.X), sizeof(player_world_position.X));
+        saved_game_data_file.write(reinterpret_cast<const char*>(&player_world_position.Y), sizeof(player_world_position.Y));
 
         // WRITE PLAYER'S WOOD COUNT.
-        saved_game_data_file << Player->Inventory.WoodCount << std::endl;
+        saved_game_data_file.write(reinterpret_cast<const char*>(&Player->Inventory.WoodCount), sizeof(Player->Inventory.WoodCount));
 
-        // WRITE THE FOUND BIBLE VERSES.
-        // The count of verses is written first.
-        saved_game_data_file << Player->Inventory.BibleVerses.size() << std::endl;
-        for (const auto& current_verse : Player->Inventory.BibleVerses)
-        {
-            // WRITE THE CURRENT VERSE.
-            saved_game_data_file
-                << static_cast<unsigned int>(current_verse.Book)
-                << SEPARATOR_BETWEEN_RELATED_DATA
-                << current_verse.Chapter
-                << SEPARATOR_BETWEEN_RELATED_DATA
-                << current_verse.Verse
-                << SEPARATOR_BETWEEN_RELATED_DATA
-                << current_verse.Text
-                << std::endl;
-        }
+        // WRITE OUT THE FOOD COUNTS.
+        std::size_t food_counts_total_size_in_bytes = sizeof(unsigned int) * static_cast<std::size_t>(OBJECTS::Food::TypeId::COUNT);
+        saved_game_data_file.write(reinterpret_cast<const char*>(Player->Inventory.FoodCounts.data()), food_counts_total_size_in_bytes);
 
-        // WRITE THE BUILT ARK PIECES.
-        // The count of ark piece data is written out first.
-        saved_game_data_file << BuiltArkPieces.size() << std::endl;
-        for (const auto& built_ark_piece : BuiltArkPieces)
-        {
-            // WRITE THE ARK PIECE DATA.
-            saved_game_data_file
-                << built_ark_piece.Id
-                << SEPARATOR_BETWEEN_RELATED_DATA
-                << built_ark_piece.Sprite.WorldPosition.X
-                << SEPARATOR_BETWEEN_RELATED_DATA
-                << built_ark_piece.Sprite.WorldPosition.Y
-                << SEPARATOR_BETWEEN_RELATED_DATA;
+        /// @todo   Rest of inventory.
 
-            // WRITE A LINE SEPARATOR BEFORE THE NEXT SET OF DATA.
-            saved_game_data_file << std::endl;
-        }
+        /// @todo   Built ark pieces.
 
-        // WRITE OUT THE COLLECTED FOOD.
-        // The count of the collected food is written out first.
-        saved_game_data_file << Player->Inventory.FoodCounts.size() << std::endl;
-        for (unsigned int food_id = OBJECTS::Food::TypeId::NONE; food_id < OBJECTS::Food::TypeId::COUNT; ++food_id)
-        {
-            // WRITE OUT THE FOOD TYPE AND COLLECTED COUNT.
-            unsigned int food_collected_count = Player->Inventory.FoodCounts[food_id];
-            saved_game_data_file
-                << food_id
-                << SEPARATOR_BETWEEN_RELATED_DATA
-                << food_collected_count;
+        // WRITE OUT THE COLLECTED ANIMAL STATISTICS.
+        std::size_t animal_statistics_total_count = static_cast<std::size_t>(OBJECTS::AnimalSpecies::COUNT) * static_cast<std::size_t>(OBJECTS::AnimalGender::COUNT);
+        std::size_t collected_animal_statistics_total_size_in_bytes = sizeof(INVENTORY::AnimalCollectionStatistics) * animal_statistics_total_count;
+        saved_game_data_file.write(reinterpret_cast<const char*>(CollectedAnimalsBySpeciesThenGender.data()), collected_animal_statistics_total_size_in_bytes);
 
-            // WRITE A LINE SEPARATOR BEFORE THE NEXT SET OF DATA.
-            saved_game_data_file << std::endl;
-        }
+        /// @todo   Bible verses.
+
+        // WRITE OUT FAMILY COLLECTION STATISTICS.
+        std::size_t family_member_statistics_total_size_in_bytes = sizeof(bool) * FamilyMembersGathered.size();
+        saved_game_data_file.write(reinterpret_cast<const char*>(&FamilyMembersGathered), family_member_statistics_total_size_in_bytes);
+
+        // WRITE OUT THE FLOOD DAY COUNT.
+        saved_game_data_file.write(reinterpret_cast<const char*>(&FloodDayCount), FloodDayCount);
+
+        /// @todo   More error handling?
+    }
+
+    /// Gets the total number of animals collected for the given species.
+    /// @param[in]  species - The animal species for which to get statistics.
+    /// @return The number of animals collected for the species.
+    unsigned int SavedGameData::GetCollectedAnimalCount(const OBJECTS::AnimalSpecies::Value species) const
+    {
+        const INVENTORY::AnimalCollectionStatistics& male_collection_statistics = CollectedAnimalsBySpeciesThenGender[species][OBJECTS::AnimalGender::MALE];
+        unsigned int male_collected_animal_count = male_collection_statistics.CollectedTotalCount();
+
+        const INVENTORY::AnimalCollectionStatistics& female_collection_statistics = CollectedAnimalsBySpeciesThenGender[species][OBJECTS::AnimalGender::FEMALE];
+        unsigned int female_collected_animal_count = female_collection_statistics.CollectedTotalCount();
+        
+        unsigned int collected_animal_count = male_collected_animal_count + female_collected_animal_count;
+        return collected_animal_count;
+    }
+
+    /// Determines if a given animal species has been collected at all.
+    /// @param[in]  species - The animal species to check.
+    /// @return True if the animal species has been collected at all; false otherwise.
+    bool SavedGameData::AnimalSpeciesCollectedAtAll(const OBJECTS::AnimalSpecies::Value species) const
+    {
+        unsigned int collected_animal_count = GetCollectedAnimalCount(species);
+        bool animal_species_collected = (collected_animal_count > 0);
+        return animal_species_collected;
     }
 
     /// Determines all animals of the specified type have been collected.
     /// @param[in]  animal_type - The type of animals to check.
-    /// @return True if all animals of the specified type have been collected;
-    ///     false otherwise.
+    /// @return True if all animals of the specified type have been collected; false otherwise.
     bool SavedGameData::AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const
     {
         // DETERMINE HOW MANY ANIMALS ARE EXPECTED BASED ON IF THE ANIMAL IS CLEAN OR NOT.
@@ -303,24 +211,8 @@ namespace STATES
         }
 
         // DETERMINE IF THE APPROPRIATE NUMBER OF ANIMALS HAVE BEEN COLLECTED.
-        /// @todo   Have multidimensional array for species -> gender?
-        const INVENTORY::AnimalCollectionStatistics& animal_collection_statistics = CollectedAnimals[animal_type.Species];
-        /// @todo   Encapsulate this computation in a method?
-        unsigned int actual_animal_count = (
-            animal_collection_statistics.MaleFollowingPlayerCount +
-            animal_collection_statistics.FemaleFollowingPlayerCount +
-            animal_collection_statistics.MaleInArkCount +
-            animal_collection_statistics.FemaleInArkCount);
+        unsigned int actual_animal_count = GetCollectedAnimalCount(animal_type.Species);
         bool animal_type_fully_collected = (actual_animal_count >= expected_animal_count);
         return animal_type_fully_collected;
-    }
-
-    /// Gets the animal collection statistics for the species.
-    /// @param[in]  species - The species for which to get statistics.
-    /// @return The animal collection statistics for the species.
-    INVENTORY::AnimalCollectionStatistics SavedGameData::GetAnimalCollectionStatistics(const OBJECTS::AnimalSpecies::Value species) const
-    {
-        const INVENTORY::AnimalCollectionStatistics& animal_collection_statistics = CollectedAnimals[species];
-        return animal_collection_statistics;
     }
 }

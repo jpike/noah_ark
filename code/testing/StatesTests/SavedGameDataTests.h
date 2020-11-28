@@ -16,7 +16,7 @@ namespace SAVED_GAME_DATA_TESTS
         STATES::SavedGameData original_saved_game_data;
 
         original_saved_game_data.CurrentGameState = STATES::GameState::PRE_FLOOD_GAMEPLAY;
-        original_saved_game_data.Player->SetWorldPosition(MATH::Vector2f(1.0f, 2.0f));
+        original_saved_game_data.Player->SetWorldPosition(MATH::Vector2f(300.0f, 100.0f));
         original_saved_game_data.Player->Inventory.WoodCount = 3;
         original_saved_game_data.Player->Inventory.BibleVerses =
         {
@@ -28,7 +28,7 @@ namespace SAVED_GAME_DATA_TESTS
         original_saved_game_data.Player->Inventory.FoodCounts[OBJECTS::Food::TypeId::BANANA] = 5;
         original_saved_game_data.Player->Inventory.FoodCounts[OBJECTS::Food::TypeId::WALNUT] = 6;
         original_saved_game_data.Player->Inventory.FollowingAnimals.Noah = &*original_saved_game_data.Player;
-        original_saved_game_data.Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition = MATH::Vector2f(7.0f, 8.0f);
+        original_saved_game_data.Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition = MATH::Vector2f(300.0f, 64.0f);
 
         OBJECTS::AnimalType first_following_animal_type(OBJECTS::AnimalSpecies::ALLIGATOR, OBJECTS::AnimalGender::MALE);
         auto first_following_animal = MEMORY::NonNullSharedPointer<OBJECTS::Animal>(std::make_shared<OBJECTS::Animal>(

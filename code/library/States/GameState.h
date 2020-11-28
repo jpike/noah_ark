@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace STATES
 {
     /// Enumerates the different states the game could be in.
@@ -29,4 +31,9 @@ namespace STATES
         /// The ending credits screen (plays special background music).
         ENDING_CREDITS_SCREEN
     };
+}
+
+namespace std
+{
+    string to_string(const STATES::GameState game_state);
 }

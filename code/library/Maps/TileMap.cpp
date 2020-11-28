@@ -411,10 +411,13 @@ namespace MAPS
                 // In general, movement this way is small enough to work well and not be a major problem.
                 // However, it is a bit jittery, so we might want to tweak it a bit (possibly reduce amount
                 // or reduce the randomness).  The random number generation is done to help reduce the amount
-                // of overall movement by not moving sometimes.
+                // of overall movement by not moving sometimes.  The upper threshold for this movement is
+                // largely arbitrary but has been tuned to have relatively frequent movement without too
+                // much jitter.
                 constexpr unsigned int MAX_PERCENTAGE = 100;
+                constexpr unsigned int MOVEMENT_THRESHOLD = 8;
                 unsigned int random_number_for_animal_movement = gaming_hardware.RandomNumberGenerator.RandomNumberLessThan(MAX_PERCENTAGE);
-                bool move_animal = (random_number_for_animal_movement < 20);
+                bool move_animal = (random_number_for_animal_movement < MOVEMENT_THRESHOLD);
                 if (!move_animal)
                 {
                     continue;
@@ -432,6 +435,7 @@ namespace MAPS
                 animal_direction_vector.Y = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(
                     MIN_DIRECTION_VECTOR_COMPONENT,
                     MAX_DIRECTION_VECTOR_COMPONENT);
+
                 MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_direction_vector);
 
                 // MOVE THE ANIMAL.

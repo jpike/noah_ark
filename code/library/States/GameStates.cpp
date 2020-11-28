@@ -1,3 +1,4 @@
+#include "Debugging/DebugConsole.h"
 #include "States/GameStates.h"
 
 namespace STATES
@@ -161,9 +162,13 @@ namespace STATES
         }
 
         // CHANGE THE GAME'S STATE.
+        DEBUGGING::DebugConsole::WriteLine("Changing state to ", new_state);
         CurrentSavedGame.CurrentGameState = new_state;
         switch (CurrentSavedGame.CurrentGameState)
         {
+            case GameState::INTRO_SEQUENCE:
+                IntroSequence.Start(*gaming_hardware.Speakers);
+                break;
             case GameState::CREDITS_SCREEN:
                 // RESET THE ELAPSED TIME FOR THE CREDITS SCREEN.
                 CreditsScreen.ElapsedTime = sf::Time::Zero;

@@ -1,12 +1,12 @@
 #pragma once
 
 #include <filesystem>
-#include <memory>
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include "Graphics/Renderer.h"
 #include "Hardware/GamingHardware.h"
+#include "Memory/Pointers.h"
 #include "States/GameState.h"
 #include "States/SavedGameData.h"
 
@@ -50,6 +50,6 @@ namespace STATES
         /// The index of the saved game that is currently selected.
         std::size_t SelectedGameIndex = 0;
         /// The saved games available for the player to select.
-        std::vector< std::shared_ptr<SavedGameData> > SavedGames = {};
+        std::vector<MEMORY::NonNullSharedPointer<SavedGameData>> SavedGames = {};
     };
 }

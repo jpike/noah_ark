@@ -2,6 +2,8 @@
 #include "Maps/Ark.h"
 #include "Maps/Tileset.h"
 #include "Maps/Data/ArkInteriorTileMapData.h"
+#include "Resources/AnimalGraphics.h"
+#include "Resources/AnimalSounds.h"
 
 namespace MAPS
 {
@@ -98,6 +100,10 @@ namespace MAPS
                                 // W       W
                                 // W W E W W
                                 AnimalPen animal_pen;
+                                animal_pen.TileMapLayerIndex = static_cast<unsigned int>(layer_index);
+                                animal_pen.TileMapColumnIndex = column;
+                                animal_pen.TileMapRowIndex = row;
+                                animal_pen.AnimalPenIndex = static_cast<unsigned int>(tile_map->AnimalPens.size());
                                 constexpr float ANIMAL_PEN_INTERIOR_DIMENSION_IN_TILES = 3;
                                 constexpr float ANIMAL_PEN_INTERIOR_DIMENSION_IN_PIXELS = ANIMAL_PEN_INTERIOR_DIMENSION_IN_TILES * Tile::DIMENSION_IN_PIXELS<float>;
                                 constexpr float ANIMAL_PEN_HALF_INTERIOR_DIMENSION_IN_TILES = ANIMAL_PEN_INTERIOR_DIMENSION_IN_TILES / 2.0f;
@@ -216,6 +222,58 @@ namespace MAPS
         }
     }
 
+    /// Initializes animal pens with appropriate animals based on the provided data.
+    /// @param[in]  collected_animals_by_species_then_gender - The collected animal statistics.
+    void Ark::InitializeAnimalPens(
+        const CONTAINERS::NestedEnumArray<INVENTORY::AnimalCollectionStatistics, OBJECTS::AnimalSpecies, OBJECTS::AnimalGender>& collected_animals_by_species_then_gender)
+    {
+        // ADD ANIMALS FOR EACH SPECIES.
+        for (unsigned int animal_species_id = 0; animal_species_id < OBJECTS::AnimalSpecies::COUNT; ++animal_species_id)
+        {
+            // ADD APPROPRIATE ANIMALS FOR EACH GENDER.
+            for (unsigned int animal_gender_id = 0; animal_gender_id < OBJECTS::AnimalGender::COUNT; ++animal_gender_id)
+            {
+                // CHECK IF THE ANIMAL HAS BEEN COLLECTED AT ALL IN THE ARK.
+                const INVENTORY::AnimalCollectionStatistics& animal_collection_statistics = collected_animals_by_species_then_gender[animal_species_id][animal_gender_id];
+                bool animal_collected_in_ark = (animal_collection_statistics.InArkCount > 0);
+                if (!animal_collected_in_ark)
+                {
+                    // No animals for this species/gender need to be placed in the ark.
+                    continue;
+                }
+                
+                // GET THE APPROPRIATE ANIMAL PEN.
+                MAPS::MultiTileMapGrid& map_layer = Interior.LayersFromBottomToTop[animal_collection_statistics.AnimalPenTileMapLayerIndex];
+                MAPS::TileMap* tile_map = map_layer.GetTileMap(animal_collection_statistics.AnimalPenTileMapRowIndex, animal_collection_statistics.AnimalPenTileMapColumnIndex);
+                assert(tile_map);
+                MAPS::AnimalPen& animal_pen = tile_map->AnimalPens.at(animal_collection_statistics.AnimalPenTileMapPenIndex);
+
+                OBJECTS::AnimalSpecies::Value animal_species = static_cast<OBJECTS::AnimalSpecies::Value>(animal_species_id);
+                animal_pen.Species = animal_species;
+
+                // ADD THE APPROPRIATE NUMBER OF ANIMALS.
+                OBJECTS::AnimalGender::Value animal_gender = static_cast<OBJECTS::AnimalGender::Value>(animal_gender_id);
+                OBJECTS::AnimalType animal_type(animal_species, animal_gender);
+                std::shared_ptr<GRAPHICS::AnimatedSprite> animal_sprite = RESOURCES::AnimalGraphics::GetSprite(animal_type);
+                assert(animal_sprite);
+                RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(animal_type.Species);
+                for (unsigned int animal_index = 0; animal_index < animal_collection_statistics.InArkCount; ++animal_index)
+                {
+                    // CREATE THE APPROPRIATE ANIMAL.
+                    auto animal = MEMORY::NonNullSharedPointer<OBJECTS::Animal>(std::make_shared<OBJECTS::Animal>(
+                        animal_type,
+                        *animal_sprite,
+                        animal_sound_id));
+
+                    // ADD THE ANIMAL TO THE ANIMAL PEN.
+                    MATH::Vector2f animal_pen_center = animal_pen.InteriorBoundingBox.Center();
+                    animal->Sprite.SetWorldPosition(animal_pen_center);
+                    animal_pen.Animals.emplace_back(animal);
+                }
+            }
+        }
+    }
+
     /// Gets the entrance map into the ark.
     /// @return The entrance map to the ark.
     std::shared_ptr<TileMap> Ark::GetEntranceMap() const
@@ -229,7 +287,10 @@ namespace MAPS
 
     /// Adds an animal to an appropriate pen in the ark.
     /// @param[in,out]  animal - The animal to add.  It's position will be updated for the animal pen.
-    void Ark::AddAnimalToPen(const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal)
+    /// @param[in,out]  game_data - The game data in which to track where the animal has been added.
+    void Ark::AddAnimalToPen(
+        const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal,
+        STATES::SavedGameData& game_data)
     {
         // SEARCH FOR AN APPROPRIATE PEN.
         // If a pen already exists for the animal species, the animal should be placed in it.
@@ -286,19 +347,37 @@ namespace MAPS
         // STORE THE ANIMAL IN THE PEN FOR THE APPROPRIATE SPECIES IF APPLICABLE.
         if (animal_pen_for_species)
         {
+            // MOVE THE ANIMAL INTO THE PEN.
             MATH::Vector2f animal_pen_center = animal_pen_for_species->InteriorBoundingBox.Center();
             animal->Sprite.SetWorldPosition(animal_pen_center);
             animal_pen_for_species->Animals.emplace_back(animal);
+
+            // UPDATE THE COLLECTION STATISTICS FOR THE ANIMAL.
+            INVENTORY::AnimalCollectionStatistics& animal_collection_statistics = game_data.CollectedAnimalsBySpeciesThenGender[animal->Type.Species][animal->Type.Gender];
+            animal_collection_statistics.AnimalPenTileMapLayerIndex = animal_pen_for_species->TileMapLayerIndex;
+            animal_collection_statistics.AnimalPenTileMapColumnIndex = animal_pen_for_species->TileMapColumnIndex;
+            animal_collection_statistics.AnimalPenTileMapRowIndex = animal_pen_for_species->TileMapRowIndex;
+            animal_collection_statistics.AnimalPenTileMapPenIndex = animal_pen_for_species->AnimalPenIndex;
+
             return;
         }
 
         // STORE THE ANIMAL IN THE EMPTY PEN.
         if (first_empty_animal_pen)
         {
+            // MOVE THE ANIMAL INTO THE PEN.
             MATH::Vector2f animal_pen_center = first_empty_animal_pen->InteriorBoundingBox.Center();
             animal->Sprite.SetWorldPosition(animal_pen_center);
             first_empty_animal_pen->Animals.emplace_back(animal);
             first_empty_animal_pen->Species = animal->Type.Species;
+
+            // UPDATE THE COLLECTION STATISTICS FOR THE ANIMAL.
+            INVENTORY::AnimalCollectionStatistics& animal_collection_statistics = game_data.CollectedAnimalsBySpeciesThenGender[animal->Type.Species][animal->Type.Gender];
+            animal_collection_statistics.AnimalPenTileMapLayerIndex = first_empty_animal_pen->TileMapLayerIndex;
+            animal_collection_statistics.AnimalPenTileMapColumnIndex = first_empty_animal_pen->TileMapColumnIndex;
+            animal_collection_statistics.AnimalPenTileMapRowIndex = first_empty_animal_pen->TileMapRowIndex;
+            animal_collection_statistics.AnimalPenTileMapPenIndex = first_empty_animal_pen->AnimalPenIndex;
+
             return;
         }
 

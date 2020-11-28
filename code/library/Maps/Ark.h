@@ -1,9 +1,12 @@
 #pragma once
 
 #include <optional>
+#include "Containers/NestedArray.h"
 #include "Maps/LayeredMultiTileMapGrids.h"
 #include "Maps/TileMap.h"
 #include "Memory/Pointers.h"
+#include "Objects/Animal.h"
+#include "States/SavedGameData.h"
 
 namespace MAPS
 {
@@ -25,9 +28,15 @@ namespace MAPS
         // CONSTRUCTION.
         explicit Ark(MEMORY::NonNullRawPointer<World> world);
 
-        // PUBLIC METHODS.
+        // INITIALIZATION.
+        void InitializeAnimalPens(
+            const CONTAINERS::NestedEnumArray<INVENTORY::AnimalCollectionStatistics, OBJECTS::AnimalSpecies, OBJECTS::AnimalGender>& collected_animals_by_species_then_gender);
+
+        // OTHER PUBLIC METHODS.
         std::shared_ptr<TileMap> GetEntranceMap() const;
-        void AddAnimalToPen(const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal);
+        void AddAnimalToPen(
+            const MEMORY::NonNullSharedPointer<OBJECTS::Animal>& animal,
+            STATES::SavedGameData& game_data);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The interior of the ark.

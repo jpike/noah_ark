@@ -29,6 +29,9 @@ namespace STATES
         // Built ark pieces need to be initialized.
         world.InitializeBuiltArkInOverworld(saved_game_data.BuiltArkPieces);
 
+        // Animal pens need to be initialized.
+        world.Ark.InitializeAnimalPens(saved_game_data.CollectedAnimalsBySpeciesThenGender);
+
         // FOCUS THE CAMERA ON THE PLAYER.
         MATH::Vector2f player_start_world_position = world.NoahPlayer->GetWorldPosition();
         renderer.Camera.SetCenter(player_start_world_position);

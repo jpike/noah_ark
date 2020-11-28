@@ -42,7 +42,7 @@ namespace STATES
             std::shared_ptr<SavedGameData> saved_game = SavedGameData::Load(file.path().string());
             if (saved_game)
             {
-                SavedGames.push_back(saved_game);
+                SavedGames.emplace_back(MEMORY::NonNullSharedPointer<SavedGameData>(saved_game));
             }
         }
     }
@@ -109,7 +109,9 @@ namespace STATES
                     }
                     else
                     {
-                        return GameState::PRE_FLOOD_GAMEPLAY;
+                        // TRANSITION TO THE APPROPRIATE STATE FOR THE GAME.
+                        MEMORY::NonNullSharedPointer<SavedGameData>& selected_game = SavedGames[SelectedGameIndex];
+                        return selected_game->CurrentGameState;
                     }
                 }
                 else
@@ -133,7 +135,7 @@ namespace STATES
                     else
                     {
                         // CREATE THE NEW SAVED GAME DATA.
-                        std::shared_ptr<SavedGameData> new_saved_game = std::make_shared<SavedGameData>(SavedGameData::DefaultSavedGameData());
+                        auto new_saved_game = MEMORY::NonNullSharedPointer<SavedGameData>(std::make_shared<SavedGameData>(SavedGameData::DefaultSavedGameData()));
                         new_saved_game->Filepath = SAVED_GAMES_FOLDER_PATH / CurrentNewGameFilenameText;
                         SavedGames.push_back(new_saved_game);
 

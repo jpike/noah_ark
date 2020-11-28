@@ -11,6 +11,14 @@ namespace MAPS
     class AnimalPen
     {
     public:
+        /// The layer index of the tile map containing the pen.
+        unsigned int TileMapLayerIndex = 0;
+        /// The column index of the tile map containing the pen.
+        unsigned int TileMapColumnIndex = 0;
+        /// The row index of the tile map containing the pen.
+        unsigned int TileMapRowIndex = 0;
+        /// The index of the animal pen within the tile map.
+        unsigned int AnimalPenIndex = 0;
         /// The bounding box of the interior of the animal pen.
         /// This is stored over the exterior bounds because only the interior bounds
         /// are needed for bounding animal movement.

@@ -343,7 +343,7 @@ namespace MAPS
                         assert(entry_room_inside_ark);
                         if (entry_room_inside_ark)
                         {
-                            entry_room_inside_ark->MapGrid->World->Ark.AddAnimalToPen(*animal);
+                            entry_room_inside_ark->MapGrid->World->Ark.AddAnimalToPen(*animal, current_game_data);
                         }
                     }
 

@@ -21,5 +21,13 @@ namespace INVENTORY
         unsigned int FollowingPlayerCount = 0;
         /// The number of animals (of the species + gender) collected and in the ark.
         unsigned int InArkCount = 0;
+        /// The layer index of the tile map for the animal pen for this species.
+        unsigned int AnimalPenTileMapLayerIndex = 0;
+        /// The column index of the tile map for the animal pen for this species.
+        unsigned int AnimalPenTileMapColumnIndex = 0;
+        /// The row index of the tile map for the animal pen for this species.
+        unsigned int AnimalPenTileMapRowIndex = 0;
+        /// The index of animal pen within the tile map for the animal pen for this species.
+        unsigned int AnimalPenTileMapPenIndex = 0;
     };
 }

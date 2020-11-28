@@ -16,9 +16,11 @@ namespace AUDIO
         ALCdevice* audio_device = alcOpenDevice(DEFAULT_DEVICE);
         Enabled = (nullptr != audio_device);
 
+#if TODO_THIS_SEEMS_TO_ALWAYS_DISABLE_AUDIO_ON_SOME_SYSTEMS
         // Other errors could occur beyond just trying to open an audio device.
         ALenum errorCode = alGetError();
         Enabled = Enabled && (errorCode == AL_NO_ERROR);
+#endif
 
         // CLOSE ANY AUDIO DEVICE THAT WAS OPENED.
         // SFML will open up its own copy of the default device.

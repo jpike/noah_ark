@@ -410,18 +410,28 @@ namespace MAPS
                 // RANDOMLY DETERMINE HOW MUCH THE ANIMAL SHOULD MOVE.
                 // In general, movement this way is small enough to work well and not be a major problem.
                 // However, it is a bit jittery, so we might want to tweak it a bit (possibly reduce amount
-                // or reduce the randomness).
+                // or reduce the randomness).  The random number generation is done to help reduce the amount
+                // of overall movement by not moving sometimes.
+                constexpr unsigned int MAX_PERCENTAGE = 100;
+                unsigned int random_number_for_animal_movement = gaming_hardware.RandomNumberGenerator.RandomNumberLessThan(MAX_PERCENTAGE);
+                bool move_animal = (random_number_for_animal_movement < 20);
+                if (!move_animal)
+                {
+                    continue;
+                }
+
                 float elapsed_time_in_seconds = gaming_hardware.Clock.ElapsedTimeSinceLastFrame.asSeconds();
-                float animal_move_distance_in_pixels = animal->Type.MoveSpeedInPixelsPerSecond * elapsed_time_in_seconds;
-                constexpr int MIN_DIRECTION_VECTOR_COMPONENT = -1;
-                constexpr int MAX_DIRECTION_VECTOR_COMPONENT = 1;
+                float normal_animal_move_speed_in_pixels_per_second = animal->Type.MoveSpeedInPixelsPerSecond;
+                float animal_move_distance_in_pixels = normal_animal_move_speed_in_pixels_per_second * elapsed_time_in_seconds;
+                constexpr float MIN_DIRECTION_VECTOR_COMPONENT = -1.0f;
+                constexpr float MAX_DIRECTION_VECTOR_COMPONENT = 1.0f;
                 MATH::Vector2f animal_direction_vector;
-                animal_direction_vector.X = static_cast<float>(gaming_hardware.RandomNumberGenerator.RandomInRange<int>(
+                animal_direction_vector.X = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(
                     MIN_DIRECTION_VECTOR_COMPONENT,
-                    MAX_DIRECTION_VECTOR_COMPONENT));
-                animal_direction_vector.Y = static_cast<float>(gaming_hardware.RandomNumberGenerator.RandomInRange<int>(
+                    MAX_DIRECTION_VECTOR_COMPONENT);
+                animal_direction_vector.Y = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(
                     MIN_DIRECTION_VECTOR_COMPONENT,
-                    MAX_DIRECTION_VECTOR_COMPONENT));
+                    MAX_DIRECTION_VECTOR_COMPONENT);
                 MATH::Vector2f animal_move_vector = MATH::Vector2f::Scale(animal_move_distance_in_pixels, animal_direction_vector);
 
                 // MOVE THE ANIMAL.

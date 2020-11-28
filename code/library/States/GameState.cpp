@@ -23,7 +23,7 @@ namespace std
             case STATES::GameState::PRE_FLOOD_GAMEPLAY:
                 return "PRE_FLOOD_GAMEPLAY";
             case STATES::GameState::FLOOD_CUTSCENE:
-                return "PRE_FLOOD_GAMEPLAY";
+                return "FLOOD_CUTSCENE";
             case STATES::GameState::DURING_FLOOD_GAMEPLAY:
                 return "DURING_FLOOD_GAMEPLAY";
             case STATES::GameState::POST_FLOOD_GAMEPLAY:

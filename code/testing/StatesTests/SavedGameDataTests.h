@@ -120,7 +120,8 @@ namespace SAVED_GAME_DATA_TESTS
         REQUIRE(original_saved_game_data.Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y == reread_saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y);
 
         // The animal types are the most important data in the following animal groups and the only data that can be easily verified.
-        std::vector<OBJECTS::AnimalType> actual_following_animal_types(reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.size());
+        const OBJECTS::AnimalType INVALID_ANIMAL_TYPE(OBJECTS::AnimalSpecies::COUNT, OBJECTS::AnimalGender::COUNT);
+        std::vector<OBJECTS::AnimalType> actual_following_animal_types(reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.size(), INVALID_ANIMAL_TYPE);
         std::transform(
             reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.cbegin(),
             reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.cend(),
@@ -129,7 +130,7 @@ namespace SAVED_GAME_DATA_TESTS
             {
                 return animal->Type;
             });
-        std::vector<OBJECTS::AnimalType> expected_following_animal_types(original_saved_game_data.Player->Inventory.FollowingAnimals.Animals.size());
+        std::vector<OBJECTS::AnimalType> expected_following_animal_types(original_saved_game_data.Player->Inventory.FollowingAnimals.Animals.size(), INVALID_ANIMAL_TYPE);
         std::transform(
             original_saved_game_data.Player->Inventory.FollowingAnimals.Animals.cbegin(),
             original_saved_game_data.Player->Inventory.FollowingAnimals.Animals.cend(),
@@ -273,7 +274,8 @@ namespace SAVED_GAME_DATA_TESTS
         REQUIRE(original_saved_game_data.Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y == reread_saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y);
 
         // The animal types are the most important data in the following animal groups and the only data that can be easily verified.
-        std::vector<OBJECTS::AnimalType> actual_following_animal_types(reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.size());
+        const OBJECTS::AnimalType INVALID_ANIMAL_TYPE(OBJECTS::AnimalSpecies::COUNT, OBJECTS::AnimalGender::COUNT);
+        std::vector<OBJECTS::AnimalType> actual_following_animal_types(reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.size(), INVALID_ANIMAL_TYPE);
         std::transform(
             reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.cbegin(),
             reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.cend(),
@@ -282,7 +284,7 @@ namespace SAVED_GAME_DATA_TESTS
             {
                 return animal->Type;
             });
-        std::vector<OBJECTS::AnimalType> expected_following_animal_types(original_saved_game_data.Player->Inventory.FollowingAnimals.Animals.size());
+        std::vector<OBJECTS::AnimalType> expected_following_animal_types(original_saved_game_data.Player->Inventory.FollowingAnimals.Animals.size(), INVALID_ANIMAL_TYPE);
         std::transform(
             original_saved_game_data.Player->Inventory.FollowingAnimals.Animals.cbegin(),
             original_saved_game_data.Player->Inventory.FollowingAnimals.Animals.cend(),
@@ -334,7 +336,7 @@ namespace SAVED_GAME_DATA_TESTS
         unsigned int animal_pen_tile_map_column_index = 0;
         unsigned int animal_pen_tile_map_row_index = 0;
         unsigned int animal_pen_tile_map_pen_index = 0;
-        for (unsigned int animal_species_id = 0; animal_species_id < OBJECTS::AnimalSpecies::COUNT; ++animal_species_id, ++animal_pen_tile_map_pen_index)
+        for (unsigned int animal_species_id = 0; animal_species_id < OBJECTS::AnimalSpecies::COUNT; ++animal_species_id)
         {
             for (unsigned int animal_gender_id = 0; animal_gender_id < OBJECTS::AnimalGender::COUNT; ++animal_gender_id)
             {
@@ -419,7 +421,8 @@ namespace SAVED_GAME_DATA_TESTS
         REQUIRE(original_saved_game_data.Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y == reread_saved_game_data->Player->Inventory.FollowingAnimals.CurrentCenterWorldPosition.Y);
 
         // The animal types are the most important data in the following animal groups and the only data that can be easily verified.
-        std::vector<OBJECTS::AnimalType> actual_following_animal_types(reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.size());
+        const OBJECTS::AnimalType INVALID_ANIMAL_TYPE(OBJECTS::AnimalSpecies::COUNT, OBJECTS::AnimalGender::COUNT);
+        std::vector<OBJECTS::AnimalType> actual_following_animal_types(reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.size(), INVALID_ANIMAL_TYPE);
         std::transform(
             reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.cbegin(),
             reread_saved_game_data->Player->Inventory.FollowingAnimals.Animals.cend(),

@@ -21,7 +21,7 @@ namespace STATES
         default_saved_game_data.Filepath = DEFAULT_FILEPATH;
 
         // INITIALIZE THE DEFAULT PLAYER POSITION.
-        default_saved_game_data.Player->SetWorldPosition(MATH::Vector2f(256.0f, 192.0f));
+        default_saved_game_data.Player->SetWorldPosition(OBJECTS::Noah::DEFAULT_START_WORLD_POSITION);
 
         // INITIALIZE THE DEFAULT FOUND BIBLE VERSES.
         // Verses from the intro sequence are found by default.
@@ -111,9 +111,11 @@ namespace STATES
 
             for (std::size_t animal_index = 0; animal_index < following_animal_count; ++animal_index)
             {
-                OBJECTS::AnimalType animal_type;
-                saved_game_data_file.read(reinterpret_cast<char*>(&animal_type.Species), sizeof(animal_type.Species));
-                saved_game_data_file.read(reinterpret_cast<char*>(&animal_type.Gender), sizeof(animal_type.Gender));
+                OBJECTS::AnimalSpecies::Value animal_species;
+                OBJECTS::AnimalGender::Value animal_gender;
+                saved_game_data_file.read(reinterpret_cast<char*>(&animal_species), sizeof(animal_species));
+                saved_game_data_file.read(reinterpret_cast<char*>(&animal_gender), sizeof(animal_gender));
+                OBJECTS::AnimalType animal_type(animal_species, animal_gender);
                 
                 RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(animal_type.Species);
 

@@ -97,7 +97,6 @@ namespace OBJECTS
     {
     public:
         /// CONSTRUCTION.
-        explicit AnimalType() = default;
         explicit AnimalType(
             const AnimalSpecies::Value species, 
             const AnimalGender::Value gender);

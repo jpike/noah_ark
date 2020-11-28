@@ -8,6 +8,7 @@
 #include "Gameplay/AxeSwingEvent.h"
 #include "Gameplay/Direction.h"
 #include "Graphics/AnimatedSprite.h"
+#include "Graphics/Screen.h"
 #include "Graphics/Texture.h"
 #include "Inventory/Inventory.h"
 #include "Math/Vector2.h"
@@ -33,6 +34,11 @@ namespace OBJECTS
         static const std::string WALK_LEFT_ANIMATION_NAME;
         /// The name of the animation for walking walking right.
         static const std::string WALK_RIGHT_ANIMATION_NAME;
+        /// The default starting world position for Noah.
+        /// The center of the screen has been designed to be a good default start position.
+        static inline const MATH::Vector2f DEFAULT_START_WORLD_POSITION = MATH::Vector2f(
+            static_cast<float>(GRAPHICS::Screen::DEFAULT_WIDTH_IN_PIXELS) / 2.0f,
+            static_cast<float>(GRAPHICS::Screen::DEFAULT_HEIGHT_IN_PIXELS) / 2.0f);
 
         // CONSTRUCTION.
         explicit Noah();

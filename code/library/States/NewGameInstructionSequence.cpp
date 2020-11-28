@@ -50,6 +50,9 @@ namespace STATES
 
         // START DISPLAYING THE TEXT IN THE TEXT BOX.
         InstructionTextBox.StartDisplayingText(NewGameInstructionText);
+
+        // RESET THE PLAYER'S POSITION.
+        world.NoahPlayer->SetWorldPosition(OBJECTS::Noah::DEFAULT_START_WORLD_POSITION);
     }
 
     /// Updates the instruction sequence for a frame.

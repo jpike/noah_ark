@@ -180,6 +180,7 @@ namespace STATES
             case GameState::NEW_GAME_INTRO_SEQUENCE:
                 // RESET THE INTRO SEQUENCE TO THE BEGINNING.
                 NewGameIntroSequence = {};
+                world.NoahPlayer->SetWorldPosition(OBJECTS::Noah::DEFAULT_START_WORLD_POSITION);
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
             {
@@ -192,7 +193,7 @@ namespace STATES
                     main_text_box_height_in_pixels,
                     renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE]);
                 NewGameInstructionSequence.Initialize(world);
-                /// @todo   Reset camera!
+                renderer.Camera.SetCenter(world.NoahPlayer->GetWorldPosition());
                 break;
             }
             case GameState::FLOOD_CUTSCENE:

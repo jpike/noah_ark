@@ -246,7 +246,7 @@ namespace MAPS
                 MAPS::MultiTileMapGrid& map_layer = Interior.LayersFromBottomToTop[animal_collection_statistics.AnimalPenTileMapLayerIndex];
                 MAPS::TileMap* tile_map = map_layer.GetTileMap(animal_collection_statistics.AnimalPenTileMapRowIndex, animal_collection_statistics.AnimalPenTileMapColumnIndex);
                 assert(tile_map);
-                MAPS::AnimalPen& animal_pen = tile_map->AnimalPens.at(animal_collection_statistics.AnimalPenTileMapPenIndex);
+                MAPS::AnimalPen& animal_pen = tile_map->AnimalPens[animal_collection_statistics.AnimalPenTileMapPenIndex];
 
                 OBJECTS::AnimalSpecies::Value animal_species = static_cast<OBJECTS::AnimalSpecies::Value>(animal_species_id);
                 animal_pen.Species = animal_species;

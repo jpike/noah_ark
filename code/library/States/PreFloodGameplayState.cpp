@@ -253,6 +253,29 @@ namespace STATES
                 // MOVE THE PLAYER TO THE START POINT OF THE NEW TILE MAP.
                 world.NoahPlayer->SetWorldPosition(map_exit_point->NewPlayerWorldPosition);
 
+                // MOVE ANY FOLLOWING ANIMALS INTO THE ARK.
+                // This helps prevents them getting into odd states (being stuck outside or showing up as
+                // following animals within the ark).
+                bool entering_into_ark = (MAPS::TileMapType::ARK_INTERIOR == map_exit_point->NewTileMap->Type);
+                if (entering_into_ark)
+                {
+                    for (auto animal = world.NoahPlayer->Inventory.FollowingAnimals.Animals.begin();
+                        animal != world.NoahPlayer->Inventory.FollowingAnimals.Animals.end();)
+                    {
+                        // UPDATE THE ANIMAL STATISTICS.
+                        const OBJECTS::AnimalType& current_animal_type = (*animal)->Type;
+                        INVENTORY::AnimalCollectionStatistics& current_animal_collection_statistics = current_game_data.CollectedAnimalsBySpeciesThenGender[current_animal_type.Species][current_animal_type.Gender];
+                        --current_animal_collection_statistics.FollowingPlayerCount;
+                        ++current_animal_collection_statistics.InArkCount;
+
+                        // ADD THE ANIMAL INTO THE APPROPRIATE TILE MAP OF THE ARK.
+                        map_exit_point->NewTileMap->MapGrid->World->Ark.AddAnimalToPen(*animal, current_game_data);
+
+                        // REMOVE THE ANIMAL FROM ITS STATE OF TRYING TO ENTER THE ARK.
+                        animal = world.NoahPlayer->Inventory.FollowingAnimals.Animals.erase(animal);
+                    }
+                }
+
                 // EXIT THIS UPDATE IF THE PLAYER HAS CHANGED MAPS.
                 return;
             }

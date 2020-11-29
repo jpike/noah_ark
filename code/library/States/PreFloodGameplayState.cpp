@@ -240,7 +240,8 @@ namespace STATES
                 *current_tile_map, 
                 map_grid, 
                 camera,
-                *gaming_hardware.Speakers);
+                *gaming_hardware.Speakers,
+                current_game_data);
             if (map_exit_point)
             {
                 // SWITCH OVER TO THE NEW MAP GRID.
@@ -384,6 +385,7 @@ namespace STATES
     /// @param[in,out]  map_grid - The map grid containing the current tile map.
     /// @param[in,out]  camera - The camera defining the viewable region of the map grid.
     /// @param[in,out]  speakers - The speakers from which to play any audio.
+    /// @param[in,out]  game_data - The current game data to update.
     /// @return The map exit point, if the player stepped on such a point.
     MAPS::ExitPoint* PreFloodGameplayState::UpdatePlayerBasedOnInput(
         const sf::Time& elapsed_time,
@@ -392,7 +394,8 @@ namespace STATES
         MAPS::TileMap& current_tile_map,
         MAPS::MultiTileMapGrid& map_grid,
         GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers)
+        AUDIO::Speakers& speakers,
+        STATES::SavedGameData& game_data)
     {
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
 
@@ -720,6 +723,9 @@ namespace STATES
 
                 // BUILD THE ARK PIECE.
                 ark_piece->Built = true;
+
+                // The ark piece needs to be tracked in the saved game data.
+                game_data.BuiltArkPieces.emplace_back(*ark_piece);
 
                 // When building an ark piece, a dust cloud should appear.
                 OBJECTS::DustCloud dust_cloud(RESOURCES::AssetId::DUST_CLOUD_TEXTURE);

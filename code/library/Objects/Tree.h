@@ -17,7 +17,12 @@ namespace OBJECTS
     public:
         // STATIC CONSTANTS.
         /// The initial number of hit points a tree has.
+        /// Lower in debug builds to speed up playtesting.
+#if _DEBUG
+        static const unsigned int INITIAL_HIT_POINTS = 1;
+#else
         static const unsigned int INITIAL_HIT_POINTS = 3;
+#endif
 
         // POSITIONING/BOUNDARIES.
         MATH::FloatRectangle GetWorldBoundingBox() const;

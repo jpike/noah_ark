@@ -61,7 +61,8 @@ namespace STATES
             MAPS::TileMap& current_tile_map,
             MAPS::MultiTileMapGrid& map_grid,
             GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers);
+            AUDIO::Speakers& speakers,
+            STATES::SavedGameData& game_data);
 
         // COLLISION DETECTION.
         void CollectWoodAndBibleVersesCollidingWithPlayer(

@@ -31,7 +31,8 @@ namespace STATES
         bool Initialize(
             const SavedGameData& saved_game_data,
             MAPS::World& world,
-            GRAPHICS::Renderer& renderer);
+            GRAPHICS::Renderer& renderer,
+            MATH::RandomNumberGenerator& random_number_generator);
 
         // UPDATING.
         GameState Update(

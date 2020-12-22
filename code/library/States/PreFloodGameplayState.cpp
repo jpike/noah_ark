@@ -17,11 +17,13 @@ namespace STATES
     /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
     /// @param[in,out]  world - The world for the gameplay state.
     /// @param[in,out]  renderer - The renderer used fro some initialization.
+    /// @param[in,out]  random_number_generator - The random number generator to use for random initialization.
     /// @return True if initialization succeeded; false otherwise.
     bool PreFloodGameplayState::Initialize(
         const SavedGameData& saved_game_data,
         MAPS::World& world,
-        GRAPHICS::Renderer& renderer)
+        GRAPHICS::Renderer& renderer,
+        MATH::RandomNumberGenerator& random_number_generator)
     {
         // INITIALIZE THE WORLD.
         CurrentMapGrid = &world.Overworld.MapGrid;
@@ -31,6 +33,61 @@ namespace STATES
 
         // Animal pens need to be initialized.
         world.Ark.InitializeAnimalPens(saved_game_data.CollectedAnimalsBySpeciesThenGender);
+
+        // Family members that haven't been gathered should be placed at random locations
+        // in the overworld.  For now, after a family member has been gathered, they
+        // just disappear from the map in this game state, but that might be changed later.
+        world.FamilyMembers.clear();
+        for (std::size_t family_member_index = 0; family_member_index < OBJECTS::FamilyMember::COUNT; ++family_member_index)
+        {
+            // SKIP OVER FAMILY MEMBERS THAT HAVE ALREADY BEEN GATHERED.
+            bool family_member_gathered = saved_game_data.FamilyMembersGathered[family_member_index];
+            if (family_member_gathered)
+            {
+                continue;
+            }
+
+            // RANDOMLY PLACE THE FAMILY MEMBER IN THE WORLD.
+            // The dimensions of the family members are taken into account to ensure they'll be completely on-screen.
+            float min_family_member_world_x_position = OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+            float max_family_member_world_x_position = (
+                MAPS::Overworld::WIDTH_IN_TILE_MAPS * MAPS::TileMap::WIDTH_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<float>)
+                - OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+            float min_family_member_world_y_position = OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+            float max_family_member_world_y_position = (
+                MAPS::Overworld::HEIGHT_IN_TILE_MAPS * MAPS::TileMap::HEIGHT_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<float>)
+                - OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+            // This may have to be repeated multiple times in case the first picked tile isn't walkable.
+            // But this isn't expected to result in an infinite or even long-running loop.
+            bool family_member_placed_in_world = false;
+            while (!family_member_placed_in_world)
+            {
+                // COMPUTE A RANDOM POSITION FOR THE FAMILY MEMBER.
+                float family_member_x_position = random_number_generator.RandomInRange<float>(
+                    min_family_member_world_x_position,
+                    max_family_member_world_x_position);
+                float family_member_y_position = random_number_generator.RandomInRange<float>(
+                    min_family_member_world_y_position,
+                    max_family_member_world_y_position);
+                
+                // CHECK IF A WALKABLE TILE EXISTS AT THAT RANDOM LOCATION.
+                // If a walkable tile doesn't exist, we'll just continue trying a different location.
+                std::shared_ptr<MAPS::Tile> tile = world.Overworld.MapGrid.GetTileAtWorldPosition(
+                    family_member_x_position,
+                    family_member_y_position);
+                bool tile_is_walkable = (tile && tile->IsWalkable());
+                if (tile_is_walkable)
+                {
+                    // PLACE THE FAMILY MEMBER AT THAT WORLD POSITION.
+                    family_member_placed_in_world = true;
+                    MATH::Vector2f family_member_world_position(family_member_x_position, family_member_y_position);
+                    DEBUGGING::DebugConsole::WriteLine("Placing family member at: ", family_member_world_position);
+                    world.FamilyMembers.emplace_back(
+                        static_cast<OBJECTS::FamilyMember::Type>(family_member_index),
+                        family_member_world_position);
+                }
+            }
+        }
 
         // FOCUS THE CAMERA ON THE PLAYER.
         MATH::Vector2f player_start_world_position = world.NoahPlayer->GetWorldPosition();
@@ -155,6 +212,25 @@ namespace STATES
                 renderer.Render(animal->Sprite.CurrentFrameSprite);
             }
 
+            // RENDER ANY FAMILY MEMBERS IN VIEW IF OUTSIDE THE ARK.
+            bool in_ark = world.Ark.Interior.Contains(CurrentMapGrid);
+            if (!in_ark)
+            {
+                // RENDER EACH FAMILY MEMBER IF IN VIEW.
+                for (const OBJECTS::FamilyMember& family_member : world.FamilyMembers)
+                {
+                    // ONLY RENDER THE FAMILY MEMBER IF THEY'RE IN VIEW.
+                    MATH::Vector2f family_member_world_position = family_member.Sprite.GetWorldPosition();
+                    bool family_member_in_view = renderer.Camera.ViewBounds.Contains(
+                        family_member_world_position.X, 
+                        family_member_world_position.Y);
+                    if (family_member_in_view)
+                    {
+                        renderer.Render(family_member.Sprite.CurrentFrameSprite);
+                    }
+                }
+            }
+
             // RENDER THE PLAYER.
             // If he's facing up, the axe needs to be rendered first
             // so that it appears in-front of him (behind him from
@@ -189,7 +265,6 @@ namespace STATES
             // The text color should differ based on where the player is located.
             // The default color of black is more readable in the overworld.
             GRAPHICS::Color hud_text_color = GRAPHICS::Color::BLACK;
-            bool in_ark = world.Ark.Interior.Contains(CurrentMapGrid);
             if (in_ark)
             {
                 // White is more readable on-top of the black borders around the ark interior.
@@ -353,6 +428,46 @@ namespace STATES
                 CollectWoodAndBibleVersesCollidingWithPlayer(*current_tile_map, map_grid, world, *gaming_hardware.Speakers, current_game_data, message_for_text_box);
                 CollectFoodCollidingWithPlayer(world, *current_tile_map, *gaming_hardware.Speakers);
                 CollectAnimalsCollidingWithPlayer(world, *current_tile_map, *gaming_hardware.Speakers, current_game_data);
+
+                // Family members exist outside of a map grid and need to be updated separately.
+                // Noah's bounding box is retrieved before the loop below to avoid repeated calculations.
+                MATH::FloatRectangle noah_world_bounding_box = world.NoahPlayer->GetWorldBoundingBox();
+                for (auto family_member = world.FamilyMembers.begin();
+                    family_member != world.FamilyMembers.end();)
+                {
+                    // DON'T SPEND TIME UPDATING FAMILY MEMBERS NOT IN VIEW.
+                    MATH::Vector2f family_member_world_position = family_member->Sprite.GetWorldPosition();
+                    bool family_member_in_view = camera.ViewBounds.Contains(
+                        family_member_world_position.X, 
+                        family_member_world_position.Y);
+                    if (!family_member_in_view)
+                    {
+                        // CONTINUE ONTO THE NEXT FAMILY MEMBER.
+                        ++family_member;
+                        continue;
+                    }
+
+                    // MOVE THE FAMILY MEMBER.
+                    family_member->MoveWithin(*current_tile_map, gaming_hardware);
+
+                    // GATHER THE FAMILY MEMBER IF THE NOAH AND THE FAMILY MEMBER INTERSECT.
+                    /// @todo   Add some talking requirement first?
+                    MATH::FloatRectangle family_member_world_bounding_box = family_member->Sprite.GetWorldBoundingBox();
+                    bool family_member_intersected_noah = family_member_world_bounding_box.Intersects(noah_world_bounding_box);
+                    if (family_member_intersected_noah)
+                    {
+                        // COUNT THE FAMILY MEMBER AS GATHERED.
+                        current_game_data.FamilyMembersGathered[family_member->Identity] = true;
+                        
+                        // REMOVE THE FAMILY MEMBER FROM THE MAP.
+                        family_member = world.FamilyMembers.erase(family_member);
+                    }
+                    else
+                    {
+                        // MOVE TO THE NEXT FAMILY MEMBERS.
+                        ++family_member;
+                    }    
+                }
 
                 // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
                 bool text_box_message_exists = !message_for_text_box.empty();

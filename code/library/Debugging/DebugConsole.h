@@ -34,6 +34,10 @@ namespace DEBUGGING
     {
 #ifdef _DEBUG
         WriteLine(prefix_text + std::to_string(value));
+#else
+        // Reference to avoid compiler warnings.
+        prefix_text;
+        value;
 #endif
     }
 
@@ -53,6 +57,10 @@ namespace DEBUGGING
             ")";
 
         WriteLine(prefix_text + vector_text);
+#else
+        // Reference to avoid compiler warnings.
+        prefix_text;
+        vector;
 #endif
     }
 
@@ -71,6 +79,10 @@ namespace DEBUGGING
             std::to_string(rectangle.RightBottom.Y);
 
         WriteLine(prefix_text + rectangle_text);
+#else
+        // Reference to avoid compiler warnings.
+        prefix_text;
+        rectangle;
 #endif
     }
 }

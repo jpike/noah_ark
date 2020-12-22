@@ -9,6 +9,9 @@ namespace DEBUGGING
     {
 #ifdef _DEBUG
         std::cout << text << std::endl;
+#else
+        // Reference to avoid compiler warnings.
+        text;
 #endif
     }
 
@@ -18,6 +21,9 @@ namespace DEBUGGING
     {
 #ifdef _DEBUG
         std::cerr << text << std::endl;
+#else
+        // Reference to avoid compiler warnings.
+        text;
 #endif
     }
 }

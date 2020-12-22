@@ -1,0 +1,45 @@
+version(1);
+project_name = "Noah Ark";
+
+patterns = {
+"*.c",
+"*.cpp",
+"*.h",
+"*.m",
+"*.mm",
+"*.bat",
+"*.sh",
+"*.4coder",
+"*.txt",
+};
+blacklist_patterns = {
+".*",
+};
+load_paths_custom = {
+ {"."},
+};
+load_paths = {
+ { load_paths_custom, .os = "win"  },
+};
+
+command_list = {
+ { .name = "build",
+   .out = "*compilation*", .footer_panel = true, .save_dirty_files = true,
+   .cmd = { {"full_build.bat", .os ="win"  },
+            }, },
+ 
+ { .name = "debug",
+   .out = "*debug*", .footer_panel = true, .save_dirty_files = true,
+   .cmd = { {"pushd build/debug & C:\\Programs\\RemedyBG\\remedybg.exe C:/Projects/noah_ark/build/debug/noah_ark_game.exe", .os ="win" },
+            }, },
+ 
+ { .name = "run",
+   .out = "*run*", .footer_panel = true, .save_dirty_files = true,
+   .cmd = { {"pushd build/debug & C:/Projects/noah_ark/build/debug/noah_ark_game.exe", .os ="win" },
+           }, },
+ 
+};
+
+fkey_command[1] = "build";
+fkey_command[2] = "debug";
+fkey_command[3] = "run";

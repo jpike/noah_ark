@@ -7,6 +7,7 @@
 #include "Math/Vector2.h"
 #include "Memory/Pointers.h"
 #include "Objects/ArkPiece.h"
+#include "Objects/FamilyMember.h"
 #include "Objects/Noah.h"
 
 namespace MAPS
@@ -28,5 +29,9 @@ namespace MAPS
         /// Noah (the player) character within the game.
         /// Stored as a shared pointer because it needs to be shared with the saved game data.
         MEMORY::NonNullSharedPointer<OBJECTS::Noah> NoahPlayer;
+        /// The family members.
+        /// They are stored in the world, rather than separately in the overworld or ark,
+        /// to make them easier to access regardless of game state.
+        std::vector<OBJECTS::FamilyMember> FamilyMembers;
     };
 }

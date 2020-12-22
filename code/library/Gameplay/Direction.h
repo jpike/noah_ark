@@ -17,6 +17,8 @@ namespace GAMEPLAY
         /// The left direction.
         LEFT, 
         /// The right direction.
-        RIGHT 
+        RIGHT,
+        /// The total number of directions. 
+        COUNT
     };
 }

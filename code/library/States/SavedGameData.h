@@ -57,7 +57,7 @@ namespace STATES
         std::vector<BIBLE::BibleVerse> BibleVersesLeftToFind = {};
         /// Whether or not certain family members have been gathered so far.
         /// Index matches enum values for family member types.
-        std::array<bool, OBJECTS::FamilyMember::Type::COUNT> FamilyMembersGathered = {};
+        std::array<bool, OBJECTS::FamilyMember::COUNT> FamilyMembersGathered = {};
         /// The number of days of the flood elapsed so far.
         /// 150 days (Genesis 8:3) are required for the flood to subside.
         unsigned int FloodDayCount = 0;

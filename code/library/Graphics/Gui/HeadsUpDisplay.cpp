@@ -167,6 +167,32 @@ namespace GUI
         wood_text_top_left_screen_position_in_pixels.X += WOOD_LOG_TEXTURE_SUB_RECTANGLE.Width();
         renderer.RenderText(wood_count_string, RESOURCES::AssetId::FONT_TEXTURE, wood_text_top_left_screen_position_in_pixels, main_text_color);
 
+        // RENDER SOME TEXT INDICATING COUNT OF FAMILY MEMBERS GATHERED.
+        unsigned int family_member_gathered_count = 0;
+        for (const bool family_member_gathered : current_game_data.FamilyMembersGathered)
+        {
+            if (family_member_gathered)
+            {
+                ++family_member_gathered_count;
+            }
+        }
+        std::string family_count_string = "Family: " + std::to_string(family_member_gathered_count);
+
+        // In order to keep this text from shifting around, it is placed a fixed amount to the right of the
+        // wood count text above.  This has the potential to result in the wood count overlapping, but that
+        // is an unlikely scenario (and the position would conflict with other items in the HUD anyway).
+        constexpr float AXE_ICON_APPROXIMATE_WIDTH_IN_PIXELS = 2 * Glyph::DEFAULT_WIDTH_IN_PIXELS;
+        constexpr float WOOD_COUNT_APPROXIMATE_WIDTH_IN_PIXELS = 6 * Glyph::DEFAULT_WIDTH_IN_PIXELS;
+        constexpr float FAMILY_TEXT_TOP_LEFT_SCREEN_POSITION_IN_PIXELS = (
+            AXE_ICON_APPROXIMATE_WIDTH_IN_PIXELS +
+            WOOD_COUNT_APPROXIMATE_WIDTH_IN_PIXELS);
+        
+        MATH::Vector2f family_text_top_left_screen_position_in_pixels(
+            FAMILY_TEXT_TOP_LEFT_SCREEN_POSITION_IN_PIXELS,
+            static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
+
+        renderer.RenderText(family_count_string, RESOURCES::AssetId::FONT_TEXTURE, family_text_top_left_screen_position_in_pixels, main_text_color);
+
         // RENDER COMPONENTS INDICATING HOW TO OPEN THE INVENTORY.
         // This text is rendered to the far-right of the screen so that its position isn't changed
         // if the space for other GUI elements (like the count of collected wood) changes such

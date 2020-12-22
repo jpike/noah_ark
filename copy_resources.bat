@@ -3,7 +3,7 @@
 REM READ THE BUILD MODE COMMAND LINE ARGUMENT.
 REM Either "debug" or "release" (no quotes).
 REM If not specified, will default to debug.
-IF EXIST "%1" (
+IF NOT "%1" == "" (
     SET build_mode=%1
 ) ELSE (
     SET build_mode=debug

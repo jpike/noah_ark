@@ -205,7 +205,8 @@ namespace STATES
                 bool gameplay_state_initialized = PreFloodGameplayState.Initialize(
                     CurrentSavedGame,
                     world,
-                    renderer);
+                    renderer,
+                    gaming_hardware.RandomNumberGenerator);
                 if (!gameplay_state_initialized)
                 {
                     /// @todo   Error-handling!

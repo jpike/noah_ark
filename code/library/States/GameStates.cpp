@@ -220,6 +220,55 @@ namespace STATES
                 // INITIALIZE THE WORLD.
                 DuringFloodGameplayState.CurrentMapGrid = &world.Ark.Interior.LayersFromBottomToTop[MAPS::Ark::LOWEST_LAYER_INDEX];
 
+                // During the flood, all family members should appear randomly in the ark.
+                world.FamilyMembers.clear();
+                for (std::size_t family_member_index = 0; family_member_index < OBJECTS::FamilyMember::COUNT; ++family_member_index)
+                {
+                    // RANDOMLY PLACE THE FAMILY MEMBER IN THE ARK.
+                    // The dimensions of the family members are taken into account to ensure they'll be completely on-screen.
+                    float min_family_member_world_x_position = OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+                    float max_family_member_world_x_position = (
+                        MAPS::Ark::INTERIOR_WIDTH_IN_TILE_MAPS * MAPS::TileMap::WIDTH_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<float>)
+                        - OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+                    float min_family_member_world_y_position = OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+                    float max_family_member_world_y_position = (
+                        MAPS::Ark::INTERIOR_HEIGHT_IN_TILE_MAPS * MAPS::TileMap::HEIGHT_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<float>)
+                        - OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+                    // This may have to be repeated multiple times in case the first picked tile isn't walkable.
+                    // But this isn't expected to result in an infinite or even long-running loop.
+                    bool family_member_placed_in_world = false;
+                    while (!family_member_placed_in_world)
+                    {
+                        // COMPUTE A RANDOM POSITION FOR THE FAMILY MEMBER.
+                        unsigned int ark_layer_index = gaming_hardware.RandomNumberGenerator.RandomNumberLessThan<unsigned int>(
+                            MAPS::Ark::LAYER_COUNT);
+                        float family_member_x_position = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(
+                            min_family_member_world_x_position,
+                            max_family_member_world_x_position);
+                        float family_member_y_position = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(
+                            min_family_member_world_y_position,
+                            max_family_member_world_y_position);
+                        
+                        // CHECK IF A WALKABLE TILE EXISTS AT THAT RANDOM LOCATION.
+                        // If a walkable tile doesn't exist, we'll just continue trying a different location.
+                        MAPS::MultiTileMapGrid& ark_layer = world.Ark.Interior.LayersFromBottomToTop[ark_layer_index];
+                        std::shared_ptr<MAPS::Tile> tile = ark_layer.GetTileAtWorldPosition(
+                            family_member_x_position,
+                            family_member_y_position);
+                        bool tile_is_walkable = (tile && tile->IsWalkable());
+                        if (tile_is_walkable)
+                        {
+                            // PLACE THE FAMILY MEMBER AT THAT WORLD POSITION.
+                            family_member_placed_in_world = true;
+                            MATH::Vector2f family_member_world_position(family_member_x_position, family_member_y_position);
+                            DEBUGGING::DebugConsole::WriteLine("Placing family member at: ", family_member_world_position);
+                            world.FamilyMembers.emplace_back(
+                                static_cast<OBJECTS::FamilyMember::Type>(family_member_index),
+                                family_member_world_position);
+                        }
+                    }
+                }
+
                 // MOVE THE PLAYER INTO THE ENTRANCE.
                 std::shared_ptr<MAPS::TileMap> entrance_map = world.Ark.GetEntranceMap();
                 MATH::Vector2f entrance_map_center_position = entrance_map->GetCenterWorldPosition();

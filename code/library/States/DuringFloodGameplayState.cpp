@@ -55,6 +55,20 @@ namespace STATES
         // RENDER CONTENT SPECIFIC TO THE CURRENT MAP.
         renderer.Render(*CurrentMapGrid);
 
+        // RENDER EACH FAMILY MEMBER IF IN VIEW.
+        for (const OBJECTS::FamilyMember& family_member : world.FamilyMembers)
+        {
+            // ONLY RENDER THE FAMILY MEMBER IF THEY'RE IN VIEW.
+            MATH::Vector2f family_member_world_position = family_member.Sprite.GetWorldPosition();
+            bool family_member_in_view = renderer.Camera.ViewBounds.Contains(
+                family_member_world_position.X, 
+                family_member_world_position.Y);
+            if (family_member_in_view)
+            {
+                renderer.Render(family_member.Sprite.CurrentFrameSprite);
+            }
+        }
+
         // RENDER THE PLAYER.
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
@@ -123,6 +137,20 @@ namespace STATES
 
                 // EXIT THIS UPDATE IF THE PLAYER HAS CHANGED MAPS.
                 return;
+            }
+
+            // MOVE EACH FAMILY MEMBER IN VIEW.
+            for (OBJECTS::FamilyMember& family_member : world.FamilyMembers)
+            {
+                // MOVE THE FAMILY MEMBER IF IN VIEW.
+                MATH::Vector2f family_member_world_position = family_member.Sprite.GetWorldPosition();
+                bool family_member_in_view = camera.ViewBounds.Contains(
+                    family_member_world_position.X, 
+                    family_member_world_position.Y);
+                if (family_member_in_view)
+                {
+                    family_member.MoveWithin(*current_tile_map, gaming_hardware);
+                }
             }
         }
 

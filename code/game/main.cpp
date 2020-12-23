@@ -113,6 +113,7 @@ int main()
         window.setKeyRepeatEnabled(false);
 
         // LOAD THE INITIAL ASSETS.
+        DEBUGGING::DebugConsole::WriteLine("About to load intro assets...");
         std::unordered_map<RESOURCES::AssetId, RESOURCES::Asset> intro_assets = RESOURCES::AssetPackage::ReadFile(RESOURCES::INTRO_SEQUENCE_ASSET_PACKAGE_FILENAME);
 
         // INITIALIZE THE GAMING HARDWARE.
@@ -124,7 +125,9 @@ int main()
         const auto& colored_texture_shader = intro_assets[RESOURCES::AssetId::COLORED_TEXTURE_SHADER];
         gaming_hardware.GraphicsDevice->LoadShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER, sf::Shader::Fragment, colored_texture_shader.BinaryData);
 
+        DEBUGGING::DebugConsole::WriteLine("About to load remaining assets...");
         std::shared_future<void> assets_being_loaded = std::async(LoadRemainingAssets, std::ref(gaming_hardware));
+        DEBUGGING::DebugConsole::WriteLine("After kicking off loading remaining assets...");
 
         // INITIALIZE THE RENDERER.
         GRAPHICS::Renderer renderer;
@@ -153,6 +156,7 @@ int main()
         game_states.CurrentSavedGame.Player = world.NoahPlayer;
 
         // RUN THE GAME LOOP AS LONG AS THE WINDOW IS OPEN.
+        DEBUGGING::DebugConsole::WriteLine("About to start main game loop...");
         while (window.isOpen())
         {
             // PROCESS WINDOW EVENTS.

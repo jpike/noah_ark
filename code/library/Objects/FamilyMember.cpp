@@ -12,28 +12,35 @@ namespace OBJECTS
     Sprite()
     {
         /// @todo CREATE THE SPRITE BASED ON THE TYPE OF FAMILY MEMBER.
+        RESOURCES::AssetId texture_id = RESOURCES::AssetId::NOAH_TEXTURE;
         switch (Identity)
         {
             case NOAH_WIFE:
+                texture_id = RESOURCES::AssetId::NOAH_WIFE_TEXTURE;
                 break;
             case SHEM:
+                texture_id = RESOURCES::AssetId::SHEM_TEXTURE;
                 break;
             case SHEM_WIFE:
+                texture_id = RESOURCES::AssetId::SHEM_WIFE_TEXTURE;
                 break;
             case HAM:
+                texture_id = RESOURCES::AssetId::HAM_TEXTURE;
                 break;
             case HAM_WIFE:
+                texture_id = RESOURCES::AssetId::HAM_WIFE_TEXTURE;
                 break;
             case JAPHETH:
+                texture_id = RESOURCES::AssetId::JAPHETH_TEXTURE;
                 break;
             case JAPHETH_WIFE:
+                texture_id = RESOURCES::AssetId::JAPHETH_WIFE_TEXTURE;
                 break;
         }
 
         // CREATE THE SPRITE FOR THE FAMILY MEMBER.
-        /// @todo   Replace this with actual different sprites for different family members.
         const MATH::FloatRectangle TEXTURE_SUB_RECT = MATH::FloatRectangle::FromLeftTopAndDimensions(0, 0, 16, 16);
-        GRAPHICS::Sprite sprite(RESOURCES::AssetId::NOAH_TEXTURE, TEXTURE_SUB_RECT);
+        GRAPHICS::Sprite sprite(texture_id, TEXTURE_SUB_RECT);
         // The sprite origin should be the graphical center of its sub-rectangle.
         sprite.Origin = TEXTURE_SUB_RECT.Center();
         Sprite.CurrentFrameSprite = sprite;
@@ -111,7 +118,7 @@ namespace OBJECTS
         bool movement_should_occur = (random_number_for_movement <= MAX_PERCENTAGE_FOR_MOVEMENT);
         if (!movement_should_occur)
         {
-            Sprite.ResetAnimation();
+            /// @todo Sprite.ResetAnimation();
             return;
         }
 
@@ -130,7 +137,7 @@ namespace OBJECTS
         // This is okay and not handled explicitly as it results in simpler code and also reduces the overall changes
         // in direction.  However, even this isn't quite low enough, so we use another random number to determine
         // if the facing direction could possibly change at all.
-        constexpr unsigned int MAX_PERCENTAGE_FOR_CHANGING_FACING_DIRECTION = 25;
+        constexpr unsigned int MAX_PERCENTAGE_FOR_CHANGING_FACING_DIRECTION = 20;
         unsigned int random_number_for_changing_direction = gaming_hardware.RandomNumberGenerator.RandomNumberLessThan(MAX_PERCENTAGE);
         bool change_facing_direction = (random_number_for_changing_direction <= MAX_PERCENTAGE_FOR_CHANGING_FACING_DIRECTION);
         if (change_facing_direction)

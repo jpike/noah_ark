@@ -32,6 +32,20 @@ namespace RESOURCES
         MAIN_TILESET_TEXTURE,
         /// The texture with Noah sprites.
         NOAH_TEXTURE,
+        /// The texture with Noah's wife sprites.
+        NOAH_WIFE_TEXTURE,
+        /// The texture with Shem sprites.
+        SHEM_TEXTURE,
+        /// The texture with Shem's wife sprites.
+        SHEM_WIFE_TEXTURE,
+        /// The texture with Ham sprites.
+        HAM_TEXTURE,
+        /// The texture with Ham's wife sprites.
+        HAM_WIFE_TEXTURE,
+        /// The texture with Japheth sprites.
+        JAPHETH_TEXTURE,
+        /// The texture with Japheth's wife sprites.
+        JAPHETH_WIFE_TEXTURE,
         /// The texture with tree sprites.
         TREE_TEXTURE,
         /// The texture with wood logs.

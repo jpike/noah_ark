@@ -62,6 +62,8 @@ namespace RESOURCES
         COLORED_TEXTURE_SHADER,
         /// A shader that tints an image based on the time of day.
         TIME_OF_DAY_SHADER,
+        /// A shader that creates a pulsing ball effect.
+        SHINY_BALL_SHADER,
 
         // GENERAL SOUND EFFECTS.
         /// The sound that plays when building a piece of the ark.

@@ -8,7 +8,6 @@
 // - Add in ark raven/dove actions
 // - Track time spent on ark
 // - Add scene after flood
-// - Improve flashing when God speaks during new game instruction sequence
 // - Add in any missing music
 // - Have some Bible verses only obtainable during certain sections of game
 // - Add "disclaimer" (KJV translation, trying to stay true to the word)

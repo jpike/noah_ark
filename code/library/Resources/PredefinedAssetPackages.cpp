@@ -97,5 +97,6 @@ namespace RESOURCES
 
         // SHADERS.
         AssetDefinition(AssetType::SHADER, AssetId::TIME_OF_DAY_SHADER, "res/shaders/TimeOfDay.frag"),
+        AssetDefinition(AssetType::SHADER, AssetId::SHINY_BALL_SHADER, "res/shaders/ShinyBall.frag"),
     });
 }

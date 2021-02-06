@@ -145,10 +145,10 @@ namespace STATES
 
         // Parameters need to be passed to the shader.
         constexpr float ALPHA_FOR_FULLY_OPAQUE = 1.0f;
-        std::shared_ptr<sf::Shader> colored_texture_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
+        std::shared_ptr<sf::Shader> colored_texture_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::SHINY_BALL_SHADER);
         if (colored_texture_shader)
         {
-            colored_texture_shader->setUniform("color", sf::Glsl::Vec4(lighting_scale_factor, lighting_scale_factor, lighting_scale_factor, ALPHA_FOR_FULLY_OPAQUE));
+            colored_texture_shader->setUniform("scale", lighting_scale_factor);
             colored_texture_shader->setUniform("texture", sf::Shader::CurrentTexture);
             lighting.shader = colored_texture_shader.get();
         }

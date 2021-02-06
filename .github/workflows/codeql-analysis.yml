@@ -61,7 +61,7 @@ jobs:
 
     - run: |
        dir
-       cmd.exe /c full_build.bat
+       cmd.exe /c github_actions_build.bat
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1

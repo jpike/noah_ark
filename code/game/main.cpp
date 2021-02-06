@@ -3,7 +3,6 @@
 // - Fix transition between states (changing saved games in particular)
 // - Change HUD in ark during flood state
 // - Make sure family members are only visible on specific tile map layer
-// - Add in enough trees to make ark
 // - Add in feeding of animals/presents
 // - Add transition scene into ark
 // - Add in ark raven/dove actions
@@ -14,6 +13,7 @@
 // - Have some Bible verses only obtainable during certain sections of game
 // - Add "disclaimer" (KJV translation, trying to stay true to the word)
 // - Have verse scrolling work like animal scrolling
+// - Handle pausing better when game window moved, etc.
 
 // To avoid annoyances with Windows min/max #defines.
 #define NOMINMAX

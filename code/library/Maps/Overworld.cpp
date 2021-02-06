@@ -1,3 +1,4 @@
+#include "Debugging/DebugConsole.h"
 #include "Maps/Data/OverworldMapData.h"
 #include "Maps/Overworld.h"
 #include "Maps/Tileset.h"
@@ -18,6 +19,9 @@ namespace MAPS
 
         // CREATE A RANDOM NUMBER GENERATOR FOR CREATING FOOD.
         MATH::RandomNumberGenerator random_number_generator;
+
+        unsigned int tree_count = 0;
+        unsigned int ark_piece_count = 0;
 
         // LOAD TILE MAPS FOR EACH ROW.
         for (unsigned int row = 0; row < HEIGHT_IN_TILE_MAPS; ++row)
@@ -103,6 +107,8 @@ namespace MAPS
 
                             // ADD THE ARK PIECE TO THE TILE MAP.
                             tile_map->ArkPieces.push_back(ark_piece);
+
+                            ++ark_piece_count;
                         }
                     }
                 }
@@ -123,6 +129,8 @@ namespace MAPS
                             bool is_tree = (TREE_OBJECT_ID == object_id);
                             if (is_tree)
                             {
+                                ++tree_count;
+
                                 // DETERMINE THE SUB-RECTANGLE OF THE TEXTURE TO USE FOR THE TREE.
                                 MATH::FloatRectangle TALL_TREE_TEXTURE_SUB_RECTANGLE = MATH::FloatRectangle::FromLeftTopAndDimensions(32.0f, 0.0f, 16.0f, 32.0f);
                                 MATH::FloatRectangle tree_texture_sub_rectangle = TALL_TREE_TEXTURE_SUB_RECTANGLE;
@@ -201,5 +209,8 @@ namespace MAPS
                 MapGrid.TileMaps(column, row) = tile_map;
             }
         }
+
+        DEBUGGING::DebugConsole::WriteLine("Created tree count: ", tree_count);
+        DEBUGGING::DebugConsole::WriteLine("Ark piece count: ", ark_piece_count);
     }
 }

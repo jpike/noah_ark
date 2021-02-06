@@ -9,8 +9,10 @@ WHERE cl.exe
 
 REM SET TOOL_DIRECTORY_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.28.29333\bin\Hostx64\x64"
 SET TOOL_DIRECTORY_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.25.28610\bin\Hostx64\x64"
-SET COMPILER_PATH="%TOOL_DIRECTORY_PATH%\cl.exe"
-SET LIB_TOOL_PATH="%TOOL_DIRECTORY_PATH%\lib.exe"
+REM SET COMPILER_PATH="%TOOL_DIRECTORY_PATH%\cl.exe"
+REM SET LIB_TOOL_PATH="%TOOL_DIRECTORY_PATH%\lib.exe"
+SET COMPILER_PATH="cl.exe"
+SET LIB_TOOL_PATH="lib.exe"
 
 REM READ THE BUILD MODE COMMAND LINE ARGUMENT.
 REM Either "debug" or "release" (no quotes).

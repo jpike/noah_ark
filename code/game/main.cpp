@@ -1,17 +1,19 @@
-// BIG TODO LIST:
-// - Move animals more properly in ark
-// - Add underground caves
-// - Add special stuff for specific Bible verses
-// - Allow planting of trees
-// - Raft creation for crossing waterways
-// - People...specifically Noah's family
-// - Add gathering of family
-// - Ark gameplay
-// - Post-ark gameplay/cutscenes
-// - Completed game credits
-// - Cutscene/text boxes for transition into ark
-// - Polish (custom fancy graphics) for inventory GUI
-// - Sword guarding garden of Eden
+// TODO LIST BEFORE BETA 1:
+// - Fix speaker initialization
+// - Fix transition between states (changing saved games in particular)
+// - Change HUD in ark during flood state
+// - Make sure family members are only visible on specific tile map layer
+// - Add in enough trees to make ark
+// - Add in feeding of animals/presents
+// - Add transition scene into ark
+// - Add in ark raven/dove actions
+// - Track time spent on ark
+// - Add scene after flood
+// - Improve flashing when God speaks during new game instruction sequence
+// - Add in any missing music
+// - Have some Bible verses only obtainable during certain sections of game
+// - Add "disclaimer" (KJV translation, trying to stay true to the word)
+// - Have verse scrolling work like animal scrolling
 
 // To avoid annoyances with Windows min/max #defines.
 #define NOMINMAX

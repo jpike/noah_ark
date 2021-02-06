@@ -16,6 +16,7 @@ namespace AUDIO
         ALCdevice* audio_device = alcOpenDevice(DEFAULT_DEVICE);
         Enabled = (nullptr != audio_device);
 
+#define TODO_THIS_SEEMS_TO_ALWAYS_DISABLE_AUDIO_ON_SOME_SYSTEMS 1
 #if TODO_THIS_SEEMS_TO_ALWAYS_DISABLE_AUDIO_ON_SOME_SYSTEMS
         // Other errors could occur beyond just trying to open an audio device.
         ALenum errorCode = alGetError();

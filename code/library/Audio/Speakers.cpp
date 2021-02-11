@@ -19,8 +19,9 @@ namespace AUDIO
 #define TODO_THIS_SEEMS_TO_ALWAYS_DISABLE_AUDIO_ON_SOME_SYSTEMS 1
 #if TODO_THIS_SEEMS_TO_ALWAYS_DISABLE_AUDIO_ON_SOME_SYSTEMS
         // Other errors could occur beyond just trying to open an audio device.
-        ALenum errorCode = alGetError();
-        Enabled = Enabled && (errorCode == AL_NO_ERROR);
+        ALenum error_code = alGetError();
+        /// @todo   See what happens with alGetError() on other computer here.  Is AL_INVALID_OPERATION returned or something else?
+        Enabled = Enabled && ((error_code == AL_NO_ERROR) || (error_code == AL_INVALID_OPERATION));
 #endif
 
         // CLOSE ANY AUDIO DEVICE THAT WAS OPENED.

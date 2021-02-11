@@ -71,7 +71,10 @@ namespace CONTAINERS
     Array2D<T>::Array2D(const unsigned int width, const unsigned int height) :
     Width(width),
     Height(height),
-    Data(Width * Height)
+    // Casting is done to avoid overflow issues during multiplication,
+    // although this is unlikely to be an issue given the number of
+    // items that could really fit in-memory in one of these arrays.
+    Data(static_cast<std::size_t>(Width) * static_cast<std::size_t>(Height))
     {}
 
     /// Constructor to fill the array with the provided data.

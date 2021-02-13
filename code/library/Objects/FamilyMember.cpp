@@ -6,10 +6,12 @@ namespace OBJECTS
     /// Constructor to initialize a family member of the corresponding type at the given position.
     /// @param[in]  type - The type of the family member.
     /// @param[in]  world_position - The world position of the family member.
-    FamilyMember::FamilyMember(const Type type, const MATH::Vector2f& world_position) :
+    /// @param[in]  map_grid - The map grid the family member is in.
+    FamilyMember::FamilyMember(const Type type, const MATH::Vector2f& world_position, const MAPS::MultiTileMapGrid* const map_grid) :
     Identity(type),
     FacingDirection(GAMEPLAY::Direction::DOWN),
-    Sprite()
+    Sprite(),
+    MapGrid(map_grid)
     {
         /// @todo CREATE THE SPRITE BASED ON THE TYPE OF FAMILY MEMBER.
         RESOURCES::AssetId texture_id = RESOURCES::AssetId::NOAH_TEXTURE;

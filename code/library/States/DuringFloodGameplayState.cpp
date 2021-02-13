@@ -59,10 +59,14 @@ namespace STATES
         for (const OBJECTS::FamilyMember& family_member : world.FamilyMembers)
         {
             // ONLY RENDER THE FAMILY MEMBER IF THEY'RE IN VIEW.
+            bool family_member_in_current_map_grid = (CurrentMapGrid == family_member.MapGrid);
+
             MATH::Vector2f family_member_world_position = family_member.Sprite.GetWorldPosition();
-            bool family_member_in_view = renderer.Camera.ViewBounds.Contains(
+            bool family_member_in_view_of_camera = renderer.Camera.ViewBounds.Contains(
                 family_member_world_position.X, 
                 family_member_world_position.Y);
+
+            bool family_member_in_view = (family_member_in_current_map_grid && family_member_in_view_of_camera);
             if (family_member_in_view)
             {
                 renderer.Render(family_member.Sprite.CurrentFrameSprite);
@@ -143,10 +147,14 @@ namespace STATES
             for (OBJECTS::FamilyMember& family_member : world.FamilyMembers)
             {
                 // MOVE THE FAMILY MEMBER IF IN VIEW.
+                bool family_member_in_current_map_grid = (CurrentMapGrid == family_member.MapGrid);
+
                 MATH::Vector2f family_member_world_position = family_member.Sprite.GetWorldPosition();
-                bool family_member_in_view = camera.ViewBounds.Contains(
+                bool family_member_in_view_of_camera = camera.ViewBounds.Contains(
                     family_member_world_position.X, 
                     family_member_world_position.Y);
+
+                bool family_member_in_view = (family_member_in_current_map_grid && family_member_in_view_of_camera);
                 if (family_member_in_view)
                 {
                     family_member.MoveWithin(*current_tile_map, gaming_hardware);

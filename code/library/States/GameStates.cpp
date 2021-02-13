@@ -265,7 +265,8 @@ namespace STATES
                             DEBUGGING::DebugConsole::WriteLine("Placing family member at: ", family_member_world_position);
                             world.FamilyMembers.emplace_back(
                                 static_cast<OBJECTS::FamilyMember::Type>(family_member_index),
-                                family_member_world_position);
+                                family_member_world_position,
+                                &ark_layer);
                         }
                     }
                 }

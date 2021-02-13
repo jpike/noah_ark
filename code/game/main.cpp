@@ -2,7 +2,6 @@
 // - Fix speaker initialization
 // - Fix transition between states (changing saved games in particular)
 // - Change HUD in ark during flood state
-// - Make sure family members are only visible on specific tile map layer
 // - Add in feeding of animals/presents
 // - Add transition scene into ark
 // - Add in ark raven/dove actions

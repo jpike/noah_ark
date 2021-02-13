@@ -84,7 +84,8 @@ namespace STATES
                     DEBUGGING::DebugConsole::WriteLine("Placing family member at: ", family_member_world_position);
                     world.FamilyMembers.emplace_back(
                         static_cast<OBJECTS::FamilyMember::Type>(family_member_index),
-                        family_member_world_position);
+                        family_member_world_position,
+                        &world.Overworld.MapGrid);
                 }
             }
         }
@@ -220,10 +221,14 @@ namespace STATES
                 for (const OBJECTS::FamilyMember& family_member : world.FamilyMembers)
                 {
                     // ONLY RENDER THE FAMILY MEMBER IF THEY'RE IN VIEW.
+                    bool family_member_in_current_map_grid = (CurrentMapGrid == family_member.MapGrid);
+
                     MATH::Vector2f family_member_world_position = family_member.Sprite.GetWorldPosition();
-                    bool family_member_in_view = renderer.Camera.ViewBounds.Contains(
+                    bool family_member_in_view_of_camera = renderer.Camera.ViewBounds.Contains(
                         family_member_world_position.X, 
                         family_member_world_position.Y);
+
+                    bool family_member_in_view = (family_member_in_current_map_grid && family_member_in_view_of_camera);
                     if (family_member_in_view)
                     {
                         renderer.Render(family_member.Sprite.CurrentFrameSprite);
@@ -436,10 +441,14 @@ namespace STATES
                     family_member != world.FamilyMembers.end();)
                 {
                     // DON'T SPEND TIME UPDATING FAMILY MEMBERS NOT IN VIEW.
+                    bool family_member_in_current_map_grid = (CurrentMapGrid == family_member->MapGrid);
+
                     MATH::Vector2f family_member_world_position = family_member->Sprite.GetWorldPosition();
-                    bool family_member_in_view = camera.ViewBounds.Contains(
+                    bool family_member_in_view_of_camera = camera.ViewBounds.Contains(
                         family_member_world_position.X, 
                         family_member_world_position.Y);
+
+                    bool family_member_in_view = (family_member_in_current_map_grid && family_member_in_view_of_camera);
                     if (!family_member_in_view)
                     {
                         // CONTINUE ONTO THE NEXT FAMILY MEMBER.
@@ -456,6 +465,11 @@ namespace STATES
                     bool family_member_intersected_noah = family_member_world_bounding_box.Intersects(noah_world_bounding_box);
                     if (family_member_intersected_noah)
                     {
+                        // REMOVE THE FAMILY MEMBER FROM THE MAP GRID.
+                        // This will cause the family member to disappear for the time being.
+                        // They'll re-appear in the ark later once the "during flood" gameplay state starts.
+                        family_member->MapGrid = nullptr;
+
                         // COUNT THE FAMILY MEMBER AS GATHERED.
                         current_game_data.FamilyMembersGathered[family_member->Identity] = true;
                         

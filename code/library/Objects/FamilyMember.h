@@ -3,6 +3,7 @@
 #include "Gameplay/Direction.h"
 #include "Graphics/AnimatedSprite.h"
 #include "Hardware/GamingHardware.h"
+#include "Maps/MultiTileMapGrid.h"
 #include "Maps/TileMap.h"
 #include "Math/Vector2.h"
 
@@ -46,7 +47,7 @@ namespace OBJECTS
         };
 
         // CONSTRUCTION.
-        explicit FamilyMember(const Type type, const MATH::Vector2f& world_position);
+        explicit FamilyMember(const Type type, const MATH::Vector2f& world_position, const MAPS::MultiTileMapGrid* const map_grid);
 
         // OTHER METHODS.
         void MoveWithin(const MAPS::TileMap& tile_map, HARDWARE::GamingHardware& gaming_hardware);
@@ -58,5 +59,8 @@ namespace OBJECTS
         GAMEPLAY::Direction FacingDirection = GAMEPLAY::Direction::INVALID;
         /// The sprite used for rendering the family member.
         GRAPHICS::AnimatedSprite Sprite = GRAPHICS::AnimatedSprite();
+        /// The map grid the family member is currently in.
+        /// Important for avoiding rendering family members on different map grids (i.e. layers of the ark).
+        const MAPS::MultiTileMapGrid* MapGrid = nullptr;
     };
 }

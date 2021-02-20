@@ -27,5 +27,8 @@ namespace INVENTORY
         /// The GUI list box for displaying a list of Bible verses in the
         /// player's inventory.
         InventoryBibleVerseListBox BibleVerseListBox = {};
+        /// The elapsed time a scroll key has been held down before switching to a different verse.
+        /// Used for smoother scrolling through the verse on this page.
+        sf::Time ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses = sf::Time::Zero;
     };
 }

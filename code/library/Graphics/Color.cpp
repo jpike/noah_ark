@@ -1,4 +1,5 @@
 #include "Graphics/Color.h"
+#include "Math/Number.h"
 
 namespace GRAPHICS
 {
@@ -34,9 +35,17 @@ namespace GRAPHICS
     ///     the red, green, and blue components.
     void Color::ScaleRgb(const float scale_factor)
     {
-        Red = static_cast<uint8_t>(Red * scale_factor);
-        Green = static_cast<uint8_t>(Green * scale_factor);
-        Blue = static_cast<uint8_t>(Blue * scale_factor);
+        float scaled_red = static_cast<float>(Red) * scale_factor;
+        float scaled_green = static_cast<float>(Green) * scale_factor;
+        float scaled_blue = static_cast<float>(Blue) * scale_factor;
+
+        float scaled_clamped_red = MATH::Number::Clamp(scaled_red, static_cast<float>(MIN_COLOR_COMPONENT), static_cast<float>(MAX_COLOR_COMPONENT));
+        float scaled_clamped_green = MATH::Number::Clamp(scaled_green, static_cast<float>(MIN_COLOR_COMPONENT), static_cast<float>(MAX_COLOR_COMPONENT));
+        float scaled_clamped_blue = MATH::Number::Clamp(scaled_blue, static_cast<float>(MIN_COLOR_COMPONENT), static_cast<float>(MAX_COLOR_COMPONENT));
+
+        Red = static_cast<uint8_t>(scaled_clamped_red);
+        Green = static_cast<uint8_t>(scaled_clamped_green);
+        Blue = static_cast<uint8_t>(scaled_clamped_blue);
     }
 
     /// Scales the red, green, and blue color components down

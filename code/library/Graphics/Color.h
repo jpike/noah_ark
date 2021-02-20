@@ -13,6 +13,8 @@ namespace GRAPHICS
     {
     public:
         // STATIC CONSTANTS.
+        /// The min value for a single color component value.
+        static const uint8_t MIN_COLOR_COMPONENT = 0;
         /// The max value for a single color component value.
         static const uint8_t MAX_COLOR_COMPONENT = 255;
         /// The color black.

@@ -14,20 +14,95 @@ namespace INVENTORY
             case TabType::BIBLE:
             {
                 // CHECK WHICH BUTTON WAS PRESSED.
+                // Scrolling between verses is done via 3 scenarios:
+                // 1. A complete arrow key press + release.  This ensures that even if the press/release occurs
+                //      really quickly, the user will still see the list scroll to the next row.
+                // 2. Holding down a button after a sufficient amount of time.  Having the user press and release a key
+                //      for scrolling through verses can take too long.  Therefore, to allow easier scrolling, scrolling
+                //      is allowed if the user holds an appropriate key down long enough.  We can't just always check if
+                //      the keys are down since that would result in scrolling too fast - potentially preventing the player
+                //      from being able to land on selecting a particular verse.  The exact time used here is slightly
+                //      longer than that for the animals page since more reading is expected on this page.
+                // 3. Using the page up/down arrow keys for quicker scrolling.
+                const sf::Time ELAPSED_TIME_FOR_KEY_DOWN_BEFORE_MOVING_TO_ADJACENT_VERSE = sf::seconds(0.15f);
+                constexpr unsigned int VERSE_JUMP_COUNT_PER_PAGE_UP_OR_DOWN = 10;
                 if (input_controller.ButtonWasPressed(sf::Keyboard::Up))
                 {
-                    // SELECT THE PREVIOUS BIBLE VERSE.
+                    // MOVE TO THE PREVIOUS VERSE SINCE A COMPLETE BUTTON PRESS WAS DETECTED.
                     BiblePage.BibleVerseListBox.SelectPreviousVerse();
+
+                    // Since the previous verse has been switched to, the timer needs to be reset.
+                    BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses = sf::Time::Zero;
+                }
+                else if (input_controller.ButtonDown(sf::Keyboard::Up))
+                {
+                    // UPDATE THE ELAPSED TIME FOR A SCROLLING KEY BEING PRESSED.
+                    BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses += elapsed_time;
+
+                    // SELECT THE PREVIOUS BIBLE VERSE IF ENOUGH TIME HAS PASSED.
+                    bool scroll_key_held_down_long_enough = (BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses >= ELAPSED_TIME_FOR_KEY_DOWN_BEFORE_MOVING_TO_ADJACENT_VERSE);
+                    if (scroll_key_held_down_long_enough)
+                    {
+                        BiblePage.BibleVerseListBox.SelectPreviousVerse();
+
+                        // Since the previous verse has been switched to, the timer needs to be reset.
+                        BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses = sf::Time::Zero;
+                    }
+                }
+                else if (input_controller.ButtonWasPressed(sf::Keyboard::PageUp))
+                {
+                    // SELECT THE PREVIOUS VERSE UP TO THE MAX NUMBER OF TIMES.
+                    for (unsigned int verse_count = 0; verse_count < VERSE_JUMP_COUNT_PER_PAGE_UP_OR_DOWN; ++verse_count)
+                    {
+                        BiblePage.BibleVerseListBox.SelectPreviousVerse();
+                    }
+
+                    // Since a previous verse has been switched to, the timer needs to be reset.
+                    BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses = sf::Time::Zero;
                 }
                 else if (input_controller.ButtonWasPressed(sf::Keyboard::Down))
                 {
-                    // SELECT THE NEXT BIBLE VERSE.
+                    // MOVE TO THE NEXT VERSE SINCE A COMPLETE BUTTON PRESS WAS DETECTED.
                     BiblePage.BibleVerseListBox.SelectNextVerse();
+
+                    // Since the previous verse has been switched to, the timer needs to be reset.
+                    BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses = sf::Time::Zero;
+                }
+                else if (input_controller.ButtonDown(sf::Keyboard::Down))
+                {
+                    // UPDATE THE ELAPSED TIME FOR A SCROLLING KEY BEING PRESSED.
+                    BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses += elapsed_time;
+
+                    // SELECT THE NEXT BIBLE VERSE IF ENOUGH TIME HAS PASSED.
+                    bool scroll_key_held_down_long_enough = (BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses >= ELAPSED_TIME_FOR_KEY_DOWN_BEFORE_MOVING_TO_ADJACENT_VERSE);
+                    if (scroll_key_held_down_long_enough)
+                    {
+                        BiblePage.BibleVerseListBox.SelectNextVerse();
+
+                        // Since the next verse has been switched to, the timer needs to be reset.
+                        BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses = sf::Time::Zero;
+                    }
+                }
+                else if (input_controller.ButtonWasPressed(sf::Keyboard::PageDown))
+                {
+                    // SELECT THE NEXT VERSE UP TO THE MAX NUMBER OF TIMES.
+                    for (unsigned int verse_count = 0; verse_count < VERSE_JUMP_COUNT_PER_PAGE_UP_OR_DOWN; ++verse_count)
+                    {
+                        BiblePage.BibleVerseListBox.SelectNextVerse();
+                    }
+
+                    // Since a next verse has been switched to, the timer needs to be reset.
+                    BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses = sf::Time::Zero;
                 }
                 else if (input_controller.ButtonWasPressed(sf::Keyboard::Right))
                 {
                     // SWITCH TO THE ANIMALS TAB ON THE RIGHT.
                     CurrentTab = TabType::ANIMALS;
+                }
+                else
+                {
+                    // RESET THE TIMER TRACKING HOW LONG A SCROLL KEY HAS BEEN DOWN SINCE NO KEY WAS DOWN THIS FRAME.
+                    BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses = sf::Time::Zero;
                 }
                 break;
             }
@@ -41,6 +116,9 @@ namespace INVENTORY
                 {
                     // SWITCH TO THE BIBLE TAB ON THE LEFT.
                     CurrentTab = TabType::BIBLE;
+
+                    // RESET THE TIMER TRACKING HOW LONG A SCROLL KEY HAS BEEN DOWN ON THE BIBLE PAGE SINCE WE'RE NEWLY SWITCHING TO IT.
+                    BiblePage.ElapsedTimeWithScrollKeyHeldDownBeforeSwitchingVerses = sf::Time::Zero;
                 }
                 else if (input_controller.ButtonWasPressed(sf::Keyboard::Right))
                 {

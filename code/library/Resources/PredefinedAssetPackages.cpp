@@ -29,6 +29,7 @@ namespace RESOURCES
         AssetDefinition(AssetType::TEXTURE, AssetId::JAPHETH_WIFE_TEXTURE, "res/images/japheth_wife_sprite1.png"),
         AssetDefinition(AssetType::TEXTURE, AssetId::TREE_TEXTURE, "res/images/tree_sprite1.png"),
         AssetDefinition(AssetType::TEXTURE, AssetId::WOOD_LOG_TEXTURE, "res/images/tree_sprite1.png"),
+        AssetDefinition(AssetType::TEXTURE, AssetId::FLAMING_SWORD_TEXTURE, "res/images/flaming_sword_sprite.png"),
         AssetDefinition(AssetType::TEXTURE, AssetId::FLOOD_CUTSCENE_MOUNTAIN, "res/images/mountain.png"),
         AssetDefinition(AssetType::TEXTURE, AssetId::FLOOD_CUTSCENE_WATERS, "res/images/flood_waters.png"),
         AssetDefinition(AssetType::TEXTURE, AssetId::FLOOD_CUTSCENE_ARK, "res/images/flood_scene_ark.png"),

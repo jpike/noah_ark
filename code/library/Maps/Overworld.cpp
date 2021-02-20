@@ -14,6 +14,25 @@ namespace MAPS
         MapGrid(WIDTH_IN_TILE_MAPS, HEIGHT_IN_TILE_MAPS, world),
         AnimalsGoingIntoArk()
     {
+        ResetToInitialState();
+    }
+
+    /// Resets the overworld to its initial state.  Useful for switching between different saved games.
+    void Overworld::ResetToInitialState()
+    {
+        // CLEAR ANY ANIMALS GOING INTO THE ARK.
+        // If a saved game is being reloaded, the animals should re-appear behind Noah since
+        // they don't officially "transfer state" until they enter the ark.
+        AnimalsGoingIntoArk.clear();
+
+        // CLEAR ANY PREVIOUSLY BUILT ARK PIECES.
+        // This prevents ark pieces left over from different saved games from still appearing as built
+        // when playing a different saved game.
+        SetArkPiecesToUnbuilt();
+
+        // The rest of the code below effectively re-creates the game world, ensuring that
+        // leftover entities in each tile map aren't preserved between saved games.
+
         // CREATE THE TILESET.
         Tileset tileset;
 
@@ -170,28 +189,48 @@ namespace MAPS
                                 tree_sprite.AddAnimationSequence(tree_shake_animation);
 
                                 // CREATE ANY FOOD ON THE TREE.
-                                // Food will be randomly generated.
+                                // Food will be randomly generated unless food already exists on the tree from a previous state.
+                                // This is to preserve the food that might exist from the new game intro sequence.
                                 std::optional<OBJECTS::Food> food = std::nullopt;
-                                unsigned int random_number_for_food_existing = random_number_generator.RandomNumber<unsigned int>();
-                                bool food_on_tree = MATH::Number::IsEven(random_number_for_food_existing);
-                                if (food_on_tree)
+
+                                bool previous_tree_exists = false;
+                                TileMap* previous_tile_map_at_current_location = MapGrid.GetTileMap(row, column);
+                                if (previous_tile_map_at_current_location)
                                 {
-                                    // DETERMINE THE TYPE OF FOOD.
-                                    // It will be randomly determined.
-                                    OBJECTS::Food::TypeId food_type = random_number_generator.RandomEnum<OBJECTS::Food::TypeId>();
-
-                                    // GET THE SPRITE FOR THE FOOD.
-                                    // The food can only be created if the sprite was retrieved.
-                                    std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(food_type);
-                                    if (food_sprite)
+                                    unsigned int previous_tile_map_tree_count = static_cast<unsigned int>(previous_tile_map_at_current_location->Trees.size());
+                                    previous_tree_exists = (previous_tile_map_tree_count >= tree_count);
+                                    if (previous_tree_exists)
                                     {
-                                        // CREATE THE FOOD.
-                                        food = OBJECTS::Food();
-                                        food->Type = food_type;
-                                        food->Sprite = GRAPHICS::Sprite(*food_sprite);
+                                        unsigned int tree_index = tree_count - 1;
+                                        OBJECTS::Tree& previous_tree = previous_tile_map_at_current_location->Trees[tree_index];
+                                        food = previous_tree.Food;
+                                    }
+                                }
 
-                                        // The food should be positioned on the tree.
-                                        food->Sprite.WorldPosition = tree_sprite.GetWorldPosition();
+                                // If a previous tree didn't exist, then randomly put some food on the tree.
+                                if (!previous_tree_exists)
+                                {
+                                    unsigned int random_number_for_food_existing = random_number_generator.RandomNumber<unsigned int>();
+                                    bool food_on_tree = MATH::Number::IsEven(random_number_for_food_existing);
+                                    if (food_on_tree)
+                                    {
+                                        // DETERMINE THE TYPE OF FOOD.
+                                        // It will be randomly determined.
+                                        OBJECTS::Food::TypeId food_type = random_number_generator.RandomEnum<OBJECTS::Food::TypeId>();
+
+                                        // GET THE SPRITE FOR THE FOOD.
+                                        // The food can only be created if the sprite was retrieved.
+                                        std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(food_type);
+                                        if (food_sprite)
+                                        {
+                                            // CREATE THE FOOD.
+                                            food = OBJECTS::Food();
+                                            food->Type = food_type;
+                                            food->Sprite = GRAPHICS::Sprite(*food_sprite);
+
+                                            // The food should be positioned on the tree.
+                                            food->Sprite.WorldPosition = tree_sprite.GetWorldPosition();
+                                        }
                                     }
                                 }
 
@@ -212,5 +251,31 @@ namespace MAPS
 
         DEBUGGING::DebugConsole::WriteLine("Created tree count: ", tree_count);
         DEBUGGING::DebugConsole::WriteLine("Ark piece count: ", ark_piece_count);
+    }
+
+    /// Sets all ark pieces in the world to be unbuilt.
+    void Overworld::SetArkPiecesToUnbuilt()
+    {
+        // UNBUILD ARK PIECES IN EACH TILE MAP.
+        unsigned int tile_map_row_count = MapGrid.TileMaps.GetHeight();
+        unsigned int tile_map_column_count = MapGrid.TileMaps.GetWidth();
+        for (unsigned int tile_map_row_index = 0; tile_map_row_index < tile_map_row_count; ++tile_map_row_index)
+        {
+            for (unsigned int tile_map_column_index = 0; tile_map_column_index < tile_map_column_count; ++tile_map_column_index)
+            {
+                // GET THE CURRENT TILE MAP.
+                TileMap* current_tile_map = MapGrid.GetTileMap(tile_map_row_index, tile_map_column_index);
+                if (!current_tile_map)
+                {
+                    continue;
+                }
+
+                // UNBUILD EACH ARK PIECE IN THE CURRENT TILE MAP.
+                for (OBJECTS::ArkPiece& ark_piece : current_tile_map->ArkPieces)
+                {
+                    ark_piece.Built = false;
+                }
+            }
+        }
     }
 }

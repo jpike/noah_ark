@@ -59,6 +59,7 @@
 #include "Objects/Axe.cpp"
 #include "Objects/DustCloud.cpp"
 #include "Objects/FamilyMember.cpp"
+#include "Objects/FlamingSword.cpp"
 #include "Objects/Food.cpp"
 #include "Objects/Noah.cpp"
 #include "Objects/Tree.cpp"

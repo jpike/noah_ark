@@ -28,6 +28,9 @@ namespace STATES
         // INITIALIZE THE WORLD.
         CurrentMapGrid = &world.Overworld.MapGrid;
 
+        // Many items in the overworld need to be reset.
+        world.Overworld.ResetToInitialState();
+
         // Built ark pieces need to be initialized.
         world.InitializeBuiltArkInOverworld(saved_game_data.BuiltArkPieces);
 
@@ -1134,6 +1137,13 @@ namespace STATES
                         current_tile_map.RoamingAnimals.emplace_back(animal);
                     }
                 }
+
+                // RANDOMLY ADD A FLAMING SWORD.
+                /// @todo   Add randomness!
+                MATH::FloatRectangle new_map_bounding_box = current_tile_map.GetWorldBoundingBox();
+                float flaming_sword_x_position = RandomNumberGenerator.RandomInRange(new_map_bounding_box.LeftTop.X, new_map_bounding_box.RightBottom.X);
+                float flaming_sword_y_position = RandomNumberGenerator.RandomInRange(new_map_bounding_box.LeftTop.Y, new_map_bounding_box.RightBottom.Y);
+                current_tile_map.FlamingSword = OBJECTS::FlamingSword(flaming_sword_x_position, flaming_sword_y_position);
             }
         }
         else

@@ -36,6 +36,7 @@ namespace MAPS
     FoodOnGround(),
     DustClouds(),
     WoodLogs(),
+    FlamingSword(),
     ArkPieces(),
     RoamingAnimals(),
     AnimalPens(),
@@ -233,6 +234,18 @@ namespace MAPS
             {
                 // MOVE TO UPDATING THE NEXT DUST CLOUD.
                 ++dust_cloud;
+            }
+        }
+
+        // UPDATE ANY FLAMING SWORD.
+        if (FlamingSword)
+        {
+            FlamingSword->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+
+            // If the flaming sword has finished being updated, then it should be removed from this map.
+            if (!FlamingSword->Sprite.IsVisible)
+            {
+                FlamingSword.reset();
             }
         }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Graphics/Color.h"
 #include "Math/Rectangle.h"
 #include "Math/Vector2.h"
 
@@ -20,6 +21,7 @@ namespace DEBUGGING
         static void WriteLine(const std::string& prefix_text, const MATH::Vector2<ComponentType>& vector);
         template <typename ComponentType>
         static void WriteLine(const std::string& prefix_text, const MATH::Rectangle<ComponentType>& rectangle);
+        static void WriteLine(const std::string& prefix_text, const GRAPHICS::Color& color);
 
         // STANDARD ERROR WRITING.
         static void WriteErrorLine(const std::string& text);

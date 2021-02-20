@@ -23,6 +23,10 @@ namespace MAPS
         // CONSTRUCTION.
         explicit Overworld(MEMORY::NonNullRawPointer<World> world);
 
+        // OTHER PUBLIC METHODS.
+        void ResetToInitialState();
+        void SetArkPiecesToUnbuilt();
+
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The tile map grid for the overworld.
         MultiTileMapGrid MapGrid;

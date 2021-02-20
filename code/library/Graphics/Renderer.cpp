@@ -856,6 +856,12 @@ namespace GRAPHICS
         {
             Render(dust_cloud.Sprite.CurrentFrameSprite);
         }
+
+        // RENDER ANY FLAMING SWORD.
+        if (tile_map.FlamingSword)
+        {
+            Render(tile_map.FlamingSword->Sprite);
+        }
     }
 
     /// Configures the colored text shader to render text using the specified color,

@@ -50,6 +50,8 @@ namespace RESOURCES
         TREE_TEXTURE,
         /// The texture with wood logs.
         WOOD_LOG_TEXTURE,
+        /// The texture for the flaming sword.
+        FLAMING_SWORD_TEXTURE,
         /// The mountain for the flood cutscene.
         FLOOD_CUTSCENE_MOUNTAIN,
         /// The waters for the flood cutscene.

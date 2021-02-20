@@ -90,11 +90,11 @@ namespace MAPS
         }
     }
 
-
     /// Initializes the built ark within the overworld.
     /// @param[in]  built_ark_pieces - The built pieces of the ark.
     void World::InitializeBuiltArkInOverworld(const std::vector<OBJECTS::ArkPiece>& built_ark_pieces)
     {
+        // INITIALIZE ANY BUILT ARK PIECES.
         for (const auto& built_ark_piece : built_ark_pieces)
         {
             // GET THE TILE MAP FOR THE BUILT ARK PIECES.

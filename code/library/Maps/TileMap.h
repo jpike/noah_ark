@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <vector>
 #include <SFML/System.hpp>
 #include "Audio/Speakers.h"
@@ -13,6 +14,7 @@
 #include "Objects/Animal.h"
 #include "Objects/ArkPiece.h"
 #include "Objects/DustCloud.h"
+#include "Objects/FlamingSword.h"
 #include "Objects/Food.h"
 #include "Objects/Tree.h"
 #include "Objects/WoodLogs.h"
@@ -83,6 +85,8 @@ namespace MAPS
         std::vector<OBJECTS::DustCloud> DustClouds;
         /// Wooden logs that have appeared in the map from chopped down trees.
         std::vector<OBJECTS::WoodLogs> WoodLogs;
+        /// Any flaming sword in the map.  Randomly appears/disappears.
+        std::optional<OBJECTS::FlamingSword> FlamingSword;
         /// Pieces of the ark that may exist on this tile map.
         /// Stored in a vector currently for simplicitly at the moment,
         /// but a different data structure may be needed later for performance.

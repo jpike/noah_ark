@@ -1,6 +1,4 @@
 // TODO LIST BEFORE BETA 1:
-// - Fix speaker initialization
-// - Fix transition between states (changing saved games in particular)
 // - Change HUD in ark during flood state
 // - Add in feeding of animals/presents
 // - Add transition scene into ark
@@ -10,8 +8,6 @@
 // - Add in any missing music
 // - Have some Bible verses only obtainable during certain sections of game
 // - Add "disclaimer" (KJV translation, trying to stay true to the word)
-// - Have verse scrolling work like animal scrolling
-// - Handle pausing better when game window moved, etc.
 
 // To avoid annoyances with Windows min/max #defines.
 #define NOMINMAX
@@ -164,6 +160,8 @@ int main()
             while (window.pollEvent(event))
             {
                 // HANDLE THE CURRENT EVENT BASED ON ITS TYPE.
+                // Note - "pausing" of the window during dragging, holding title bar, etc.
+                // probably can't be resolved (see https://en.sfml-dev.org/forums/index.php?topic=19388.0).
                 switch (event.type)
                 {
                     case sf::Event::Closed:
@@ -184,6 +182,10 @@ int main()
                         // now that the window has focus.
                         DEBUGGING::DebugConsole::WriteLine("Enabling input.");
                         gaming_hardware.InputController.EnableInput();
+                        break;
+                    default:
+                        // PROVIDE DEBUG VISIBILITY INTO THE EVENT.
+                        DEBUGGING::DebugConsole::WriteLine("Window event: " + std::to_string(event.type));
                         break;
                 }
             }

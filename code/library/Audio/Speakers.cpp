@@ -16,14 +16,6 @@ namespace AUDIO
         ALCdevice* audio_device = alcOpenDevice(DEFAULT_DEVICE);
         Enabled = (nullptr != audio_device);
 
-#define TODO_THIS_SEEMS_TO_ALWAYS_DISABLE_AUDIO_ON_SOME_SYSTEMS 1
-#if TODO_THIS_SEEMS_TO_ALWAYS_DISABLE_AUDIO_ON_SOME_SYSTEMS
-        // Other errors could occur beyond just trying to open an audio device.
-        ALenum error_code = alGetError();
-        /// @todo   See what happens with alGetError() on other computer here.  Is AL_INVALID_OPERATION returned or something else?
-        Enabled = Enabled && ((error_code == AL_NO_ERROR) || (error_code == AL_INVALID_OPERATION));
-#endif
-
         // CLOSE ANY AUDIO DEVICE THAT WAS OPENED.
         // SFML will open up its own copy of the default device.
         if (audio_device)
@@ -40,6 +32,15 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DOUBLE-CHECK TO MAKE SURE AUDIO IS STILL USABLE.
+        // Checking for if any OpenAL errors occur via this error code during initialization doesn't work,
+        // so it must be repeated in effectively every method in this class.  While checking OpenAL error codes,
+        // works during initialization on some computers, on others it still return AL_INVALID_OPERATION
+        // regardless, which is the same kind of error code that would be returned later if audio isn't
+        // usable (so there isn't a way to distinguish between things earlier).
+        ALenum error_code = alGetError();
+        Enabled = Enabled && (error_code == AL_NO_ERROR);
 
         // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
         // It's not worth spending time on anything if the speakers are disabled.
@@ -64,6 +65,15 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DOUBLE-CHECK TO MAKE SURE AUDIO IS STILL USABLE.
+        // Checking for if any OpenAL errors occur via this error code during initialization doesn't work,
+        // so it must be repeated in effectively every method in this class.  While checking OpenAL error codes,
+        // works during initialization on some computers, on others it still return AL_INVALID_OPERATION
+        // regardless, which is the same kind of error code that would be returned later if audio isn't
+        // usable (so there isn't a way to distinguish between things earlier).
+        ALenum error_code = alGetError();
+        Enabled = Enabled && (error_code == AL_NO_ERROR);
 
         // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
         // It's not worth spending time on anything if the speakers are disabled.
@@ -90,6 +100,15 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DOUBLE-CHECK TO MAKE SURE AUDIO IS STILL USABLE.
+        // Checking for if any OpenAL errors occur via this error code during initialization doesn't work,
+        // so it must be repeated in effectively every method in this class.  While checking OpenAL error codes,
+        // works during initialization on some computers, on others it still return AL_INVALID_OPERATION
+        // regardless, which is the same kind of error code that would be returned later if audio isn't
+        // usable (so there isn't a way to distinguish between things earlier).
+        ALenum error_code = alGetError();
+        Enabled = Enabled && (error_code == AL_NO_ERROR);
 
         // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
         // It's not worth spending time on anything if the speakers are disabled.
@@ -120,6 +139,15 @@ namespace AUDIO
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
 
+        // DOUBLE-CHECK TO MAKE SURE AUDIO IS STILL USABLE.
+        // Checking for if any OpenAL errors occur via this error code during initialization doesn't work,
+        // so it must be repeated in effectively every method in this class.  While checking OpenAL error codes,
+        // works during initialization on some computers, on others it still return AL_INVALID_OPERATION
+        // regardless, which is the same kind of error code that would be returned later if audio isn't
+        // usable (so there isn't a way to distinguish between things earlier).
+        ALenum error_code = alGetError();
+        Enabled = Enabled && (error_code == AL_NO_ERROR);
+
         // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
         // It's not worth spending time on anything if the speakers are disabled.
         if (!Enabled)
@@ -145,6 +173,15 @@ namespace AUDIO
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
 
+        // DOUBLE-CHECK TO MAKE SURE AUDIO IS STILL USABLE.
+        // Checking for if any OpenAL errors occur via this error code during initialization doesn't work,
+        // so it must be repeated in effectively every method in this class.  While checking OpenAL error codes,
+        // works during initialization on some computers, on others it still return AL_INVALID_OPERATION
+        // regardless, which is the same kind of error code that would be returned later if audio isn't
+        // usable (so there isn't a way to distinguish between things earlier).
+        ALenum error_code = alGetError();
+        Enabled = Enabled && (error_code == AL_NO_ERROR);
+
         // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
         // It's not worth spending time on anything if the speakers are disabled.
         if (!Enabled)
@@ -168,6 +205,15 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DOUBLE-CHECK TO MAKE SURE AUDIO IS STILL USABLE.
+        // Checking for if any OpenAL errors occur via this error code during initialization doesn't work,
+        // so it must be repeated in effectively every method in this class.  While checking OpenAL error codes,
+        // works during initialization on some computers, on others it still return AL_INVALID_OPERATION
+        // regardless, which is the same kind of error code that would be returned later if audio isn't
+        // usable (so there isn't a way to distinguish between things earlier).
+        ALenum error_code = alGetError();
+        Enabled = Enabled && (error_code == AL_NO_ERROR);
 
         // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
         // It's not worth spending time on anything if the speakers are disabled.
@@ -193,6 +239,15 @@ namespace AUDIO
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
 
+        // DOUBLE-CHECK TO MAKE SURE AUDIO IS STILL USABLE.
+        // Checking for if any OpenAL errors occur via this error code during initialization doesn't work,
+        // so it must be repeated in effectively every method in this class.  While checking OpenAL error codes,
+        // works during initialization on some computers, on others it still return AL_INVALID_OPERATION
+        // regardless, which is the same kind of error code that would be returned later if audio isn't
+        // usable (so there isn't a way to distinguish between things earlier).
+        ALenum error_code = alGetError();
+        Enabled = Enabled && (error_code == AL_NO_ERROR);
+
         // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
         // It's not worth spending time on anything if the speakers are disabled.
         if (!Enabled)
@@ -216,6 +271,15 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DOUBLE-CHECK TO MAKE SURE AUDIO IS STILL USABLE.
+        // Checking for if any OpenAL errors occur via this error code during initialization doesn't work,
+        // so it must be repeated in effectively every method in this class.  While checking OpenAL error codes,
+        // works during initialization on some computers, on others it still return AL_INVALID_OPERATION
+        // regardless, which is the same kind of error code that would be returned later if audio isn't
+        // usable (so there isn't a way to distinguish between things earlier).
+        ALenum error_code = alGetError();
+        Enabled = Enabled && (error_code == AL_NO_ERROR);
 
         // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
         // It's not worth spending time on anything if the speakers are disabled.
@@ -246,6 +310,15 @@ namespace AUDIO
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
 
+        // DOUBLE-CHECK TO MAKE SURE AUDIO IS STILL USABLE.
+        // Checking for if any OpenAL errors occur via this error code during initialization doesn't work,
+        // so it must be repeated in effectively every method in this class.  While checking OpenAL error codes,
+        // works during initialization on some computers, on others it still return AL_INVALID_OPERATION
+        // regardless, which is the same kind of error code that would be returned later if audio isn't
+        // usable (so there isn't a way to distinguish between things earlier).
+        ALenum error_code = alGetError();
+        Enabled = Enabled && (error_code == AL_NO_ERROR);
+
         // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
         // It's not worth spending time on anything if the speakers are disabled.
         if (!Enabled)
@@ -267,6 +340,15 @@ namespace AUDIO
     {
         // PROTECT AGAINST THIS CLASS BEING USED BY MULTIPLE THREADS.
         std::lock_guard<std::recursive_mutex> lock(SpeakerMutex);
+
+        // DOUBLE-CHECK TO MAKE SURE AUDIO IS STILL USABLE.
+        // Checking for if any OpenAL errors occur via this error code during initialization doesn't work,
+        // so it must be repeated in effectively every method in this class.  While checking OpenAL error codes,
+        // works during initialization on some computers, on others it still return AL_INVALID_OPERATION
+        // regardless, which is the same kind of error code that would be returned later if audio isn't
+        // usable (so there isn't a way to distinguish between things earlier).
+        ALenum error_code = alGetError();
+        Enabled = Enabled && (error_code == AL_NO_ERROR);
 
         // DON'T DO ANYTHING IF THE SPEAKERS ARE DISABLED.
         // It's not worth spending time on anything if the speakers are disabled.

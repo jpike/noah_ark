@@ -7,7 +7,7 @@
 #include "Audio/Speakers.h"
 #include "Bible/BibleVerse.h"
 #include "Graphics/Camera.h"
-#include "Graphics/Gui/HeadsUpDisplay.h"
+#include "Graphics/Gui/PreFloodHeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
 #include "Hardware/GamingHardware.h"
 #include "Input/InputController.h"
@@ -97,7 +97,7 @@ namespace STATES
         /// The current map being displayed within the world.
         MAPS::MultiTileMapGrid* CurrentMapGrid = nullptr;
         /// The HUD.
-        GRAPHICS::GUI::HeadsUpDisplay Hud = GRAPHICS::GUI::HeadsUpDisplay();
+        GRAPHICS::GUI::PreFloodHeadsUpDisplay Hud = GRAPHICS::GUI::PreFloodHeadsUpDisplay();
         /// The tile map editor GUI.
         MAPS::GUI::TileMapEditorGui TileMapEditorGui = {};
         /// The random number generator.

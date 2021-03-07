@@ -13,20 +13,17 @@
 #include "States/GameState.h"
 #include "States/SavedGameData.h"
 
-namespace GRAPHICS
+namespace GRAPHICS::GUI
 {
-namespace GUI
-{
-    /// The main heads-up-display (HUD) of the game.
-    /// Responsible for displaying helpful information
-    /// to the player, including information about the
-    /// player's inventory.
-    class HeadsUpDisplay
+    /// The main heads-up-display (HUD) of the game prior to the flood.
+    /// Responsible for displaying helpful information to the player,
+    /// including information about the player's inventory.
+    class PreFloodHeadsUpDisplay
     {
     public:
         // CONSTRUCTION.
-        explicit HeadsUpDisplay() = default;
-        explicit HeadsUpDisplay(
+        explicit PreFloodHeadsUpDisplay() = default;
+        explicit PreFloodHeadsUpDisplay(
             const std::shared_ptr<GRAPHICS::GUI::Font>& font,
             const unsigned int main_text_box_width_in_pixels,
             const unsigned int main_text_box_height_in_pixels);
@@ -55,5 +52,4 @@ namespace GUI
         /// The GUI for displaying the full inventory.
         INVENTORY::InventoryGui InventoryGui = {};
     };
-}
 }

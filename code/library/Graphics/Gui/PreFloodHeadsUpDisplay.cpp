@@ -1,18 +1,16 @@
-#include "Graphics/Gui/HeadsUpDisplay.h"
+#include "Graphics/Gui/PreFloodHeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Screen.h"
 #include "Graphics/Sprite.h"
 #include "States/SavedGameData.h"
 
-namespace GRAPHICS
-{
-namespace GUI
+namespace GRAPHICS::GUI
 {
     /// Constructor.
     /// @param[in]  font - The font to use in the HUD.
     /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
     /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
-    HeadsUpDisplay::HeadsUpDisplay(
+    PreFloodHeadsUpDisplay::PreFloodHeadsUpDisplay(
         const std::shared_ptr<GRAPHICS::GUI::Font>& font,
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels) :
@@ -26,7 +24,7 @@ namespace GUI
     /// @param[in]  current_game_data - The game data to display in the HUD.
     /// @param[in]  gaming_hardware - The gaming hardware supplying input.
     /// @return The state the game should be in after updating the HUD.
-    STATES::GameState HeadsUpDisplay::Update(
+    STATES::GameState PreFloodHeadsUpDisplay::Update(
         const STATES::SavedGameData& current_game_data,
         const HARDWARE::GamingHardware& gaming_hardware)
     {
@@ -112,7 +110,7 @@ namespace GUI
     ///     text displayed in the main text box or the inventory GUI but only other text
     ///     displayed directly by this HUD.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void HeadsUpDisplay::Render(
+    void PreFloodHeadsUpDisplay::Render(
         const STATES::SavedGameData& current_game_data,
         const GRAPHICS::Color& main_text_color,
         GRAPHICS::Renderer& renderer) const
@@ -249,10 +247,9 @@ namespace GUI
 
     /// Checks if any modal GUI components of the HUD are currently displayed.
     /// @return True if a modal component of the HUD is displayed; false otherwise.
-    bool HeadsUpDisplay::ModalComponentDisplayed() const
+    bool PreFloodHeadsUpDisplay::ModalComponentDisplayed() const
     {
         bool modal_component_displayed = InventoryOpened || PauseMenuVisible;
         return modal_component_displayed;
     }
-}
 }

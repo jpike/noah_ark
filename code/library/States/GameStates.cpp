@@ -280,6 +280,7 @@ namespace STATES
                 /// @todo CLOSE THE EXITWAY FROM THE ARK.
 
                 // INITIALIZE THE HUD.
+#if TODO_NEW_HUD
                 unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
                 const unsigned int LINE_COUNT = 2;
                 unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
@@ -287,6 +288,7 @@ namespace STATES
                     renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE],
                     main_text_box_width_in_pixels,
                     main_text_box_height_in_pixels);
+#endif
                 break;
             }
             case GameState::POST_FLOOD_GAMEPLAY:

@@ -8,6 +8,7 @@
 // - Add in any missing music
 // - Have some Bible verses only obtainable during certain sections of game
 // - Add "disclaimer" (KJV translation, trying to stay true to the word)
+// - Take a pass at TODOs
 
 // To avoid annoyances with Windows min/max #defines.
 #define NOMINMAX

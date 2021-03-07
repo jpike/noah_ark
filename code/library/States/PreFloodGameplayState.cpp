@@ -101,7 +101,7 @@ namespace STATES
         unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
         const unsigned int LINE_COUNT = 2;
         unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
-        Hud = GRAPHICS::GUI::HeadsUpDisplay(
+        Hud = GRAPHICS::GUI::PreFloodHeadsUpDisplay(
             renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE],
             main_text_box_width_in_pixels,
             main_text_box_height_in_pixels);

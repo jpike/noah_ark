@@ -62,6 +62,7 @@ namespace MAPS
                 for (const auto& ark_piece : overworld_tile_map->ArkPieces)
                 {
                     // CREATE EXIT POINTS FOR ANY DOORWAYS.
+                    /// @todo   This needs to be replicated when resetting overworld map state!
                     if (ark_piece.IsExternalDoorway)
                     {
                         // CREATE AN EXIT POINT FROM THE OVERWORLD INTO THE ARK.

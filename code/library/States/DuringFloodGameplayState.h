@@ -2,7 +2,6 @@
 
 #include <SFML/Graphics.hpp>
 #include "Graphics/Camera.h"
-#include "Graphics/Gui/HeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
 #include "Hardware/GamingHardware.h"
 #include "Maps/MultiTileMapGrid.h"
@@ -32,8 +31,6 @@ namespace STATES
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The current map being displayed within the world.
         MAPS::MultiTileMapGrid* CurrentMapGrid = nullptr;
-        /// The HUD.
-        GRAPHICS::GUI::HeadsUpDisplay Hud = GRAPHICS::GUI::HeadsUpDisplay();
 
     private:
         // UPDATING HELPER FUNCTIONS.

@@ -269,6 +269,12 @@ int main()
                     gaming_hardware.Speakers->StopAllAudio();
                 }
 
+                // ALLOW OTHER DEBUG FEATURES.
+                if (gaming_hardware.InputController.ButtonDown(sf::Keyboard::W))
+                {
+                    game_states.CurrentSavedGame.Player->Inventory.WoodCount += 1;
+                }
+
                 // SWITCH THE GAME STATE IF NEEDED.
                 game_states.SwitchStatesIfChanged(next_game_state, world, renderer, gaming_hardware);
             }

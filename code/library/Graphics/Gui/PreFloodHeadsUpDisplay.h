@@ -45,6 +45,8 @@ namespace GRAPHICS::GUI
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The main text box for displaying messages to the player.
         GRAPHICS::GUI::TextBox MainTextBox = TextBox();
+        /// True if the axe icon is displayed (only usable outside the ark); false otherwise.
+        bool AxeIconVisible = true;
         /// True if the pause menu box is visible; false otherwise.
         bool PauseMenuVisible = false;
         /// True if the full inventory GUI is displayed; false otherwise.

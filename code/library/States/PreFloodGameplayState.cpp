@@ -270,6 +270,8 @@ namespace STATES
             }
 
             // RENDER THE HUD.
+            // The axe icon should only be visible if the player is still outside the ark and can use the axe.
+            Hud.AxeIconVisible = !in_ark;
             // The text color should differ based on where the player is located.
             // The default color of black is more readable in the overworld.
             GRAPHICS::Color hud_text_color = GRAPHICS::Color::BLACK;
@@ -531,18 +533,24 @@ namespace STATES
     {
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
 
-        // CHECK IF THE PRIMARY ACTION BUTTON WAS PRESSED.
-        if (input_controller.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+        // CHECK FOR AXE SWINGS IF THE PLAYER IS STILL OUTSIDE THE ARK.
+        // It doesn't make sense to use the axe inside the ark.
+        bool player_is_outside = (MAPS::TileMapType::OVERWORLD == current_tile_map.Type);
+        if (player_is_outside)
         {
-            // SWING THE PLAYER'S AXE.
-            // A new axe swing may not be created if the player's
-            // axe is already being swung.
-            std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = world.NoahPlayer->SwingAxe();
-            bool axe_swing_occurred = (nullptr != axe_swing);
-            if (axe_swing_occurred)
+            // CHECK IF THE PRIMARY ACTION BUTTON WAS PRESSED.
+            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
             {
-                // Allow the axe to collide with other objects.
-                map_grid.AxeSwings.push_back(axe_swing);
+                // SWING THE PLAYER'S AXE.
+                // A new axe swing may not be created if the player's
+                // axe is already being swung.
+                std::shared_ptr<GAMEPLAY::AxeSwingEvent> axe_swing = world.NoahPlayer->SwingAxe();
+                bool axe_swing_occurred = (nullptr != axe_swing);
+                if (axe_swing_occurred)
+                {
+                    // Allow the axe to collide with other objects.
+                    map_grid.AxeSwings.push_back(axe_swing);
+                }
             }
         }
 

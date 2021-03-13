@@ -15,6 +15,7 @@ namespace GRAPHICS::GUI
         const unsigned int main_text_box_width_in_pixels,
         const unsigned int main_text_box_height_in_pixels) :
     MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, font),
+    AxeIconVisible(true),
     PauseMenuVisible(false),
     InventoryOpened(false),
     InventoryGui()
@@ -119,7 +120,12 @@ namespace GRAPHICS::GUI
         // An icon is rendered to help players know which key to press.
         const char SWING_AXE_KEY = INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY_TEXT;
         MATH::Vector2ui TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0, 0);
-        renderer.RenderKeyIcon(SWING_AXE_KEY, TOP_LEFT_SCREEN_POSITION_IN_PIXELS);
+        // The axe icon should only be visible in some circumstances since the axe can only be used in some circumstances.
+        // However, various computations above are still needed for positioning of other HUD components.
+        if (AxeIconVisible)
+        {
+            renderer.RenderKeyIcon(SWING_AXE_KEY, TOP_LEFT_SCREEN_POSITION_IN_PIXELS);
+        }
 
         // An axe icon is rendered to help players know what the previously rendered key icon is for.
         const float AXE_SPRITE_X_OFFSET_IN_PIXELS = 52.0f;
@@ -138,7 +144,12 @@ namespace GRAPHICS::GUI
         MATH::Vector2ui axe_icon_screen_position = TOP_LEFT_SCREEN_POSITION_IN_PIXELS;
         axe_icon_screen_position.X += KEY_ICON_WIDTH_IN_PIXELS;
 
-        renderer.RenderGuiIcon(RESOURCES::AssetId::AXE_TEXTURE, AXE_TEXTURE_SUB_RECTANGLE, axe_icon_screen_position);
+        // The axe icon should only be visible in some circumstances since the axe can only be used in some circumstances.
+        // However, various computations above are still needed for positioning of other HUD components.
+        if (AxeIconVisible)
+        {
+            renderer.RenderGuiIcon(RESOURCES::AssetId::AXE_TEXTURE, AXE_TEXTURE_SUB_RECTANGLE, axe_icon_screen_position);
+        }
 
         // RENDER COMPONENTS INDICATING HOW MUCH WOOD HAS BEEN COLLECTED.
         // A wood icon is rendered to help players know what the text next to it corresponds to.

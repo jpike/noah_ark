@@ -11,6 +11,7 @@
 #include "Gameplay/AxeSwingEvent.cpp"
 #include "Gameplay/FollowingAnimalGroup.cpp"
 #include "Gameplay/RandomAnimalGenerationAlgorithm.cpp"
+#include "Graphics/Gui/DuringFloodHeadsUpDisplay.cpp"
 #include "Graphics/Gui/Font.cpp"
 #include "Graphics/Gui/Glyph.cpp"
 #include "Graphics/Gui/PreFloodHeadsUpDisplay.cpp"

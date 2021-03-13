@@ -119,7 +119,7 @@ namespace GRAPHICS::GUI
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
         // An icon is rendered to help players know which key to press.
         const char SWING_AXE_KEY = INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY_TEXT;
-        MATH::Vector2ui TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0, 0);
+        const MATH::Vector2ui TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0, 0);
         // The axe icon should only be visible in some circumstances since the axe can only be used in some circumstances.
         // However, various computations above are still needed for positioning of other HUD components.
         if (AxeIconVisible)

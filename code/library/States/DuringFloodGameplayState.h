@@ -2,6 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "Graphics/Camera.h"
+#include "Graphics/Gui/DuringFloodHeadsUpDisplay.h"
 #include "Graphics/Renderer.h"
 #include "Hardware/GamingHardware.h"
 #include "Maps/MultiTileMapGrid.h"
@@ -56,5 +57,9 @@ namespace STATES
             INPUT_CONTROL::InputController& input_controller,
             MAPS::TileMap& current_tile_map,
             STATES::SavedGameData& current_game_data);
+
+        // PRIVATE MEMBER VARIABLES.
+        /// The HUD for this game state.
+        GRAPHICS::GUI::DuringFloodHeadsUpDisplay Hud = {};
     };
 }

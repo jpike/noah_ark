@@ -14,7 +14,6 @@ namespace STATES
         GRAPHICS::Camera& camera,
         STATES::SavedGameData& current_game_data)
     {
-#if TODO_NEW_HUD
         // UPDATE THE HUD.
         // As of now, the HUD is capable of altering the gameplay state.
         GameState next_game_state = Hud.Update(current_game_data, gaming_hardware);
@@ -28,7 +27,6 @@ namespace STATES
             // No further updating is needed.
             return next_game_state;
         }
-#endif
 
         // UPDATE THE CURRENT MAP GRID.
         UpdateMapGrid(
@@ -42,7 +40,7 @@ namespace STATES
         /// @todo   Background music?
 
         // RETURN THE NEXT GAME STATE.
-        return GameState::DURING_FLOOD_GAMEPLAY;
+        return next_game_state;
     }
 
     /// Renders the current frame of the gameplay state.
@@ -79,15 +77,7 @@ namespace STATES
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
         // RENDER THE HUD.
-#if TODO_NEW_HUD
-        // The text color should differ based on where the player is located.
-        // White is more readable on-top of the black borders around the ark interior.
-        const GRAPHICS::Color HUD_TEXT_COLOR = GRAPHICS::Color::WHITE;
-        /// @todo   Remove axe from HUD?
-        Hud.Render(current_game_data, HUD_TEXT_COLOR, renderer);
-#else
-        current_game_data;
-#endif
+        Hud.Render(current_game_data, renderer);
 
         // RENDER THE FINAL SCREEN WITH TIME-OF-DAY LIGHTING.
         /// @todo   Darker due to flood?
@@ -119,13 +109,8 @@ namespace STATES
         }
 
         // MOVE OBJECTS IF POSSIBLE.
-        // If the main text box is displaying text, then no objects should move
-        // to avoid having the player's gameplay hindered.
-#if TODO_NEW_HUD
-        bool objects_can_move = !Hud.MainTextBox.IsVisible;
-#else
-        bool objects_can_move = true;
-#endif
+        // If the HUD is displaying a modal component, then objects shouldn't move.
+        bool objects_can_move = !Hud.ModalComponentDisplayed();
         if (objects_can_move)
         {
             // UPDATE THE PLAYER BASED ON INPUT.

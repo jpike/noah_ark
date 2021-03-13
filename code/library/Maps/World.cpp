@@ -28,6 +28,18 @@ namespace MAPS
         NoahPlayer(std::make_shared<OBJECTS::Noah>()),
         FamilyMembers()
     {
+        ResetToInitialState();
+    }
+
+    /// Resets the world to its initial state.  Useful for switching between different saved games.
+    void World::ResetToInitialState()
+    {
+        // RESET THE OVERWORLD.
+        Overworld.ResetToInitialState();
+
+        // RESET THE ARK.
+        Ark.ResetToInitialState(MEMORY::NonNullRawPointer<World>(this));
+
         // CREATE THE EXIT POINTS BETWEEN MAP GRIDS.
         // The ark interior data used for exit points is currently hard-coded to simplify
         // things since I'm not sure yet exactly how we want to structure this.
@@ -62,7 +74,6 @@ namespace MAPS
                 for (const auto& ark_piece : overworld_tile_map->ArkPieces)
                 {
                     // CREATE EXIT POINTS FOR ANY DOORWAYS.
-                    /// @todo   This needs to be replicated when resetting overworld map state!
                     if (ark_piece.IsExternalDoorway)
                     {
                         // CREATE AN EXIT POINT FROM THE OVERWORLD INTO THE ARK.

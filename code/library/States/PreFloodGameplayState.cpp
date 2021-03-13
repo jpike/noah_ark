@@ -16,7 +16,7 @@ namespace STATES
     /// Initializes the gameplay state.
     /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
     /// @param[in,out]  world - The world for the gameplay state.
-    /// @param[in,out]  renderer - The renderer used fro some initialization.
+    /// @param[in,out]  renderer - The renderer used for some initialization.
     /// @param[in,out]  random_number_generator - The random number generator to use for random initialization.
     /// @return True if initialization succeeded; false otherwise.
     bool PreFloodGameplayState::Initialize(
@@ -28,8 +28,8 @@ namespace STATES
         // INITIALIZE THE WORLD.
         CurrentMapGrid = &world.Overworld.MapGrid;
 
-        // Many items in the overworld need to be reset.
-        world.Overworld.ResetToInitialState();
+        // Many items in the world need to be reset.
+        world.ResetToInitialState();
 
         // Built ark pieces need to be initialized.
         world.InitializeBuiltArkInOverworld(saved_game_data.BuiltArkPieces);

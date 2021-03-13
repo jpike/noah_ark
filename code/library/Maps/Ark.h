@@ -31,6 +31,7 @@ namespace MAPS
         explicit Ark(MEMORY::NonNullRawPointer<World> world);
 
         // INITIALIZATION.
+        void ResetToInitialState(MEMORY::NonNullRawPointer<World> world);
         void InitializeAnimalPens(
             const CONTAINERS::NestedEnumArray<INVENTORY::AnimalCollectionStatistics, OBJECTS::AnimalSpecies, OBJECTS::AnimalGender>& collected_animals_by_species_then_gender);
 

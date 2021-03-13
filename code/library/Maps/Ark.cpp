@@ -7,10 +7,17 @@
 
 namespace MAPS
 {
-    /// constructor.  Populates the ark interior based on data read from in-memory assets.
+    /// Constructor.  Populates the ark interior based on data read from in-memory assets.
     /// @param[in]  world - The world this ark exists in.
     Ark::Ark(MEMORY::NonNullRawPointer<World> world) :
         Interior()
+    {
+        ResetToInitialState(world);
+    }
+
+    /// Resets the ark to its initial state.  Useful for switching between different saved games.
+    /// @param[in]  world - The world this ark exists in.
+    void Ark::ResetToInitialState(MEMORY::NonNullRawPointer<World> world)
     {
         // CLEAR ANY PREVIOUS INFORMATION IN THE INTERIOR.
         Interior.LayersFromBottomToTop.clear();

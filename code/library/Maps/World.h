@@ -19,6 +19,7 @@ namespace MAPS
         // CONSTRUCTION/INITIALIZATION.
         static MEMORY::NonNullSharedPointer<World> CreateInitial();
         explicit World();
+        void ResetToInitialState();
         void InitializeBuiltArkInOverworld(const std::vector<OBJECTS::ArkPiece>& built_ark_pieces);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

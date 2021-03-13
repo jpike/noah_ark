@@ -1,9 +1,7 @@
 // TODO LIST BEFORE BETA 1:
-// - Change HUD in ark during flood state
 // - Add in feeding of animals/presents
 // - Add transition scene into ark
 // - Add in ark raven/dove actions
-// - Track time spent on ark
 // - Add scene after flood
 // - Add in any missing music
 // - Have some Bible verses only obtainable during certain sections of game

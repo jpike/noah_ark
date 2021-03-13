@@ -1,4 +1,6 @@
 #include "Collision/CollisionDetectionAlgorithms.h"
+#include "Gameplay/FloodElapsedTime.h"
+#include "Graphics/TimeOfDayLighting.h"
 #include "States/DuringFloodGameplayState.h"
 
 namespace STATES
@@ -14,6 +16,11 @@ namespace STATES
         GRAPHICS::Camera& camera,
         STATES::SavedGameData& current_game_data)
     {
+        // UPDATE THE ELAPSED TIME FOR THE FLOOD.
+        // This is done even if the game is paused since it can take a while to go through the full flood day count anyway,
+        // so it's fine if this is sped up a bit.
+        current_game_data.FloodElapsedGameplayTime += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
+
         // UPDATE THE HUD.
         // As of now, the HUD is capable of altering the gameplay state.
         GameState next_game_state = Hud.Update(current_game_data, gaming_hardware);
@@ -80,8 +87,20 @@ namespace STATES
         Hud.Render(current_game_data, renderer);
 
         // RENDER THE FINAL SCREEN WITH TIME-OF-DAY LIGHTING.
-        /// @todo   Darker due to flood?
-        sf::Sprite screen = renderer.RenderFinalScreenWithTimeOfDayShading(); 
+        // It is tinted based on the current hour.
+        sf::RenderStates lighting = sf::RenderStates::Default;
+        std::shared_ptr<sf::Shader> time_of_day_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::TIME_OF_DAY_SHADER);
+        if (time_of_day_shader)
+        {
+            // COMPUTE THE LIGHTING FOR THE SHADER.
+            unsigned int flood_day_count = 0;
+            unsigned int current_day_hour = 0;
+            GAMEPLAY::FloodElapsedTime::GetCurrentDayAndHour(current_game_data.FloodElapsedGameplayTime, flood_day_count, current_day_hour);
+            GRAPHICS::TimeOfDayLighting::Compute(current_day_hour, *time_of_day_shader);
+            lighting.shader = time_of_day_shader.get();
+        }
+
+        sf::Sprite screen = renderer.RenderFinalScreen(lighting);
         return screen;
     }
 

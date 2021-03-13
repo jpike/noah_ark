@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <SFML/System.hpp>
 #include "Bible/BibleVerse.h"
 #include "Containers/NestedArray.h"
 #include "Inventory/AnimalCollectionStatistics.h"
@@ -58,8 +59,9 @@ namespace STATES
         /// Whether or not certain family members have been gathered so far.
         /// Index matches enum values for family member types.
         std::array<bool, OBJECTS::FamilyMember::COUNT> FamilyMembersGathered = {};
-        /// The number of days of the flood elapsed so far.
-        /// 150 days (Genesis 8:3) are required for the flood to subside.
-        unsigned int FloodDayCount = 0;
+        /// The amount of time that's elapsed during the flood, in terms of gameplay time.
+        /// 150 days (Genesis 8:3) are required for the flood to subside,
+        /// though gameplay time is "sped up".
+        sf::Time FloodElapsedGameplayTime = sf::Time::Zero;
     };
 }

@@ -98,7 +98,7 @@ namespace SAVED_GAME_DATA_TESTS
         original_saved_game_data.FamilyMembersGathered[OBJECTS::FamilyMember::HAM] = true;
         original_saved_game_data.FamilyMembersGathered[OBJECTS::FamilyMember::SHEM_WIFE] = false;
         
-        original_saved_game_data.FloodDayCount = 23;
+        original_saved_game_data.FloodElapsedGameplayTime = sf::seconds(23.0f);
 
         // WRITE AND READ THE SAVED GAME DATA TO FILE.
         // The file is written to the same default "saved games" folder to better support re-using this data for actual playthoughs.
@@ -159,7 +159,7 @@ namespace SAVED_GAME_DATA_TESTS
         }
         
         REQUIRE(original_saved_game_data.FamilyMembersGathered == reread_saved_game_data->FamilyMembersGathered);
-        REQUIRE(original_saved_game_data.FloodDayCount == reread_saved_game_data->FloodDayCount);
+        REQUIRE(original_saved_game_data.FloodElapsedGameplayTime == reread_saved_game_data->FloodElapsedGameplayTime);
     }
 
     TEST_CASE("Can properly save and restore nearly full saved game data pre-flood.", "[SavedGameData]")
@@ -252,7 +252,7 @@ namespace SAVED_GAME_DATA_TESTS
             original_saved_game_data.FamilyMembersGathered[family_member_id] = true;
         }
         
-        original_saved_game_data.FloodDayCount = 150;
+        original_saved_game_data.FloodElapsedGameplayTime = sf::seconds(150.0f);
 
         // WRITE AND READ THE SAVED GAME DATA TO FILE.
         // The file is written to the same default "saved games" folder to better support re-using this data for actual playthoughs.
@@ -313,7 +313,7 @@ namespace SAVED_GAME_DATA_TESTS
         }
         
         REQUIRE(original_saved_game_data.FamilyMembersGathered == reread_saved_game_data->FamilyMembersGathered);
-        REQUIRE(original_saved_game_data.FloodDayCount == reread_saved_game_data->FloodDayCount);
+        REQUIRE(original_saved_game_data.FloodElapsedGameplayTime == reread_saved_game_data->FloodElapsedGameplayTime);
     }
 
     TEST_CASE("Can properly save and restore nearly full saved game data during flood.", "[SavedGameData]")
@@ -399,7 +399,8 @@ namespace SAVED_GAME_DATA_TESTS
         }
         
         // Set to 1 less than the maximum to easily be close to the end.
-        original_saved_game_data.FloodDayCount = 149;
+        /// @todo   This needs to actually be multipled!!!!
+        original_saved_game_data.FloodElapsedGameplayTime = sf::seconds(149.0f);
 
         // WRITE AND READ THE SAVED GAME DATA TO FILE.
         // The file is written to the same default "saved games" folder to better support re-using this data for actual playthoughs.
@@ -452,6 +453,6 @@ namespace SAVED_GAME_DATA_TESTS
         }
         
         REQUIRE(original_saved_game_data.FamilyMembersGathered == reread_saved_game_data->FamilyMembersGathered);
-        REQUIRE(original_saved_game_data.FloodDayCount == reread_saved_game_data->FloodDayCount);
+        REQUIRE(original_saved_game_data.FloodElapsedGameplayTime == reread_saved_game_data->FloodElapsedGameplayTime);
     }
 }

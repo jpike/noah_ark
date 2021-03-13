@@ -166,8 +166,10 @@ namespace STATES
             std::size_t family_member_statistics_total_size_in_bytes = sizeof(bool) * saved_game_data->FamilyMembersGathered.size();
             saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->FamilyMembersGathered), family_member_statistics_total_size_in_bytes);
 
-            // READ IN THE FLOOD DAY COUNT.
-            saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->FloodDayCount), sizeof(saved_game_data->FloodDayCount));
+            // READ IN THE FLOOD DAY/TIME INFORMATION.
+            float flood_elapsed_time_in_seconds = 0.0f;
+            saved_game_data_file.read(reinterpret_cast<char*>(&flood_elapsed_time_in_seconds), sizeof(flood_elapsed_time_in_seconds));
+            saved_game_data->FloodElapsedGameplayTime = sf::seconds(flood_elapsed_time_in_seconds);
 
             /// @todo   More error handling?
 
@@ -263,8 +265,9 @@ namespace STATES
         std::size_t family_member_statistics_total_size_in_bytes = sizeof(bool) * FamilyMembersGathered.size();
         saved_game_data_file.write(reinterpret_cast<const char*>(&FamilyMembersGathered), family_member_statistics_total_size_in_bytes);
 
-        // WRITE OUT THE FLOOD DAY COUNT.
-        saved_game_data_file.write(reinterpret_cast<const char*>(&FloodDayCount), sizeof(FloodDayCount));
+        // WRITE OUT THE FLOOD DAY/TIME INFORMATION.
+        float flood_elapsed_time_in_seconds = FloodElapsedGameplayTime.asSeconds();
+        saved_game_data_file.write(reinterpret_cast<const char*>(&flood_elapsed_time_in_seconds), sizeof(flood_elapsed_time_in_seconds));
 
         /// @todo   More error handling?
     }

@@ -277,18 +277,54 @@ namespace STATES
                 world.NoahPlayer->SetWorldPosition(entrance_map_center_position);
                 renderer.Camera.SetCenter(entrance_map_center_position);
 
-                /// @todo CLOSE THE EXITWAY FROM THE ARK.
+                // CLOSE THE EXITWAY FROM THE ARK.                        
+                // The tileset is needed for switching tiles.
+                MAPS::Tileset tileset;
+                for (unsigned int tile_row = 0; tile_row < MAPS::TileMap::HEIGHT_IN_TILES; ++tile_row)
+                {
+                    for (unsigned int tile_column = 0; tile_column < MAPS::TileMap::WIDTH_IN_TILES; ++tile_column)
+                    {
+                        // GET THE CURRENT TILE.
+                        std::shared_ptr<MAPS::Tile> current_tile = entrance_map->Ground.Tiles(tile_column, tile_row);
+                        if (!current_tile)
+                        {
+                            continue;
+                        }
 
-                // INITIALIZE THE HUD.
-#if TODO_NEW_HUD
-                unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
-                const unsigned int LINE_COUNT = 2;
-                unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
-                DuringFloodGameplayState.Hud = GRAPHICS::GUI::HeadsUpDisplay(
-                    renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE],
-                    main_text_box_width_in_pixels,
-                    main_text_box_height_in_pixels);
-#endif
+                        // CHANGE THE TILE IF IT IS FOR AN ARK EXIT DOOR.
+                        switch (current_tile->Type)
+                        {
+                            case MAPS::TileType::ARK_INTERIOR_CENTER_EXIT:
+                            {
+                                std::shared_ptr<MAPS::Tile> center_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_CENTER_EXIT_CLOSED);
+                                if (center_closed_tile)
+                                {
+                                    entrance_map->Ground.SetTile(tile_column, tile_row, center_closed_tile);
+                                }
+                                break;
+                            }
+                            case MAPS::TileType::ARK_INTERIOR_LEFT_EXIT:
+                            {
+                                std::shared_ptr<MAPS::Tile> left_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_LEFT_EXIT_CLOSED);
+                                if (left_closed_tile)
+                                {
+                                    entrance_map->Ground.SetTile(tile_column, tile_row, left_closed_tile);
+                                }
+                                break;
+                            }
+                            case MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT:
+                            {
+                                std::shared_ptr<MAPS::Tile> right_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT_CLOSED);
+                                if (right_closed_tile)
+                                {
+                                    entrance_map->Ground.SetTile(tile_column, tile_row, right_closed_tile);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 break;
             }
             case GameState::POST_FLOOD_GAMEPLAY:

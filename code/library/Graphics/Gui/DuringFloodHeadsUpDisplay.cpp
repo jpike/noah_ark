@@ -1,3 +1,5 @@
+#include <cmath>
+#include "Gameplay/FloodElapsedTime.h"
 #include "Graphics/Gui/DuringFloodHeadsUpDisplay.h"
 
 namespace GRAPHICS::GUI
@@ -72,21 +74,35 @@ namespace GRAPHICS::GUI
         const STATES::SavedGameData& current_game_data,
         GRAPHICS::Renderer& renderer) const
     {
+        // RENDER TEXT INDICATING THE CURRENT DAY/TIME.
+        unsigned int flood_day_count = 0;
+        unsigned int current_day_hour = 0;
+        GAMEPLAY::FloodElapsedTime::GetCurrentDayAndHour(current_game_data.FloodElapsedGameplayTime, flood_day_count, current_day_hour);
+        std::string flood_day_and_time_text = 
+            "Day: " + std::to_string(flood_day_count) +
+            " Hour: " + std::to_string(current_day_hour);
+
+        const MATH::Vector2f TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0.0f, 0.0f);
+        // The main HUD text is rendered white to make it stand out against the black border inside the ark.
+        const GRAPHICS::Color MAIN_TEXT_COLOR = GRAPHICS::Color::WHITE;
+        renderer.RenderText(
+            flood_day_and_time_text,
+            RESOURCES::AssetId::FONT_TEXTURE,
+            TOP_LEFT_SCREEN_POSITION_IN_PIXELS,
+            MAIN_TEXT_COLOR);
+
         // RENDER COMPONENTS INDICATING HOW TO OPEN THE INVENTORY.
         // This text is rendered to the far-right of the screen so that its position isn't changed
         // if the space for other GUI elements (like the count of collected wood) changes such
         // that they could distractingly shift the position of this text.
-        const MATH::Vector2ui TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0, 0);
         MATH::Vector2f TOP_RIGHT_SCREEN_POSITION_IN_PIXELS(
             renderer.Screen->WidthInPixels<float>(),
-            static_cast<float>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
+            TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y);
         const std::string OPEN_INVENTORY_TEXT = "Inventory";
         // One glyph is rendered per character.
         const size_t OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS = (Glyph::DEFAULT_WIDTH_IN_PIXELS * OPEN_INVENTORY_TEXT.size());
         MATH::Vector2f open_inventory_text_top_left_screen_position_in_pixels = TOP_RIGHT_SCREEN_POSITION_IN_PIXELS;
         open_inventory_text_top_left_screen_position_in_pixels.X -= OPEN_INVENTORY_TEXT_WIDTH_IN_PIXELS;
-        // The main HUD text is rendered white to make it stand out against the black border inside the ark.
-        const GRAPHICS::Color MAIN_TEXT_COLOR = GRAPHICS::Color::WHITE;
         renderer.RenderText(
             OPEN_INVENTORY_TEXT, 
             RESOURCES::AssetId::FONT_TEXTURE, 

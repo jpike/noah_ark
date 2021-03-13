@@ -9,6 +9,7 @@
 #include "Debugging/DebugConsole.cpp"
 #include "Filesystem/File.cpp"
 #include "Gameplay/AxeSwingEvent.cpp"
+#include "Gameplay/FloodElapsedTime.cpp"
 #include "Gameplay/FollowingAnimalGroup.cpp"
 #include "Gameplay/RandomAnimalGenerationAlgorithm.cpp"
 #include "Graphics/Gui/DuringFloodHeadsUpDisplay.cpp"

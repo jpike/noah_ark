@@ -14,6 +14,8 @@ namespace std
                 return "TITLE_SCREEN";
             case STATES::GameState::CREDITS_SCREEN:
                 return "CREDITS_SCREEN";
+            case STATES::GameState::NOTICE_SCREEN:
+                return "NOTICE_SCREEN";
             case STATES::GameState::GAME_SELECTION_SCREEN:
                 return "GAME_SELECTION_SCREEN";
             case STATES::GameState::NEW_GAME_INTRO_SEQUENCE:

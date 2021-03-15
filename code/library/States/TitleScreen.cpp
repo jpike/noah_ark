@@ -178,6 +178,9 @@ namespace STATES
                 case GameState::CREDITS_SCREEN:
                     menu_option_text += "CREDITS";
                     break;
+                case GameState::NOTICE_SCREEN:
+                    menu_option_text += "NOTICE";
+                    break;
             }
 
             // DRAW TEXT FOR THE CURRENT MENU OPTION.

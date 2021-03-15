@@ -25,6 +25,6 @@ namespace STATES
         /// The index to the currently selected menu option.
         unsigned int SelectedMenuOptionIndex = 0;
         /// The game states corresponding to menu options displayed on the title screen.
-        std::vector<GameState> MenuOptions = { GameState::GAME_SELECTION_SCREEN, GameState::CREDITS_SCREEN };
+        std::vector<GameState> MenuOptions = { GameState::GAME_SELECTION_SCREEN, GameState::CREDITS_SCREEN, GameState::NOTICE_SCREEN };
     };
 }

@@ -15,6 +15,7 @@
 #include "States/IntroSequence.h"
 #include "States/NewGameInstructionSequence.h"
 #include "States/NewGameIntroSequence.h"
+#include "States/NoticeScreen.h"
 #include "States/PostFloodGameplayState.h"
 #include "States/PreFloodGameplayState.h"
 #include "States/TitleScreen.h"
@@ -48,6 +49,8 @@ namespace STATES
         TitleScreen TitleScreen = {};
         /// The credits screen for the game.
         CreditsScreen CreditsScreen = {};
+        /// The notice screen for the game.
+        NoticeScreen NoticeScreen = {};
         /// The game selection screen.
         GameSelectionScreen GameSelectionScreen = {};
         /// The new game intro sequence.

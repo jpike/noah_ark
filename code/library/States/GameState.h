@@ -13,6 +13,8 @@ namespace STATES
         TITLE_SCREEN,
         /// The credits screen.
         CREDITS_SCREEN,
+        /// The notice screen.
+        NOTICE_SCREEN,
         /// The screen for selecting the game (saved or new) to play.
         GAME_SELECTION_SCREEN,
         /// The introductory sequence when starting a new game (new save file).

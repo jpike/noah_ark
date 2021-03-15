@@ -28,6 +28,9 @@ namespace STATES
             case GameState::CREDITS_SCREEN:
                 next_game_state = CreditsScreen.Update(gaming_hardware);
                 break;
+            case GameState::NOTICE_SCREEN:
+                next_game_state = NoticeScreen.Update(gaming_hardware);
+                break;
             case GameState::GAME_SELECTION_SCREEN:
                 next_game_state = GameSelectionScreen.Update(gaming_hardware);
                 break;
@@ -95,6 +98,9 @@ namespace STATES
                 break;
             case GameState::CREDITS_SCREEN:
                 screen_sprite = CreditsScreen.Render(renderer);
+                break;
+            case GameState::NOTICE_SCREEN:
+                screen_sprite = NoticeScreen.Render(renderer);
                 break;
             case GameState::GAME_SELECTION_SCREEN:
                 screen_sprite = GameSelectionScreen.Render(renderer);
@@ -173,6 +179,9 @@ namespace STATES
             case GameState::CREDITS_SCREEN:
                 // RESET THE ELAPSED TIME FOR THE CREDITS SCREEN.
                 CreditsScreen.ElapsedTime = sf::Time::Zero;
+                break;
+            case GameState::NOTICE_SCREEN:
+                // Nothing needs to be done when switching to this state.
                 break;
             case GameState::GAME_SELECTION_SCREEN:
                 GameSelectionScreen.LoadSavedGames();

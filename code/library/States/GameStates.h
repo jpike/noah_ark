@@ -9,6 +9,7 @@
 #include "States/CreditsScreen.h"
 #include "States/DuringFloodGameplayState.h"
 #include "States/EndingCreditsScreen.h"
+#include "States/EnteringArkCutscene.h"
 #include "States/FloodCutscene.h"
 #include "States/GameSelectionScreen.h"
 #include "States/GameState.h"
@@ -59,6 +60,8 @@ namespace STATES
         NewGameInstructionSequence NewGameInstructionSequence = STATES::NewGameInstructionSequence();
         /// The main gameplay state.
         PreFloodGameplayState PreFloodGameplayState = {};
+        /// A short cutscene showing Noah and family entering the ark.
+        EnteringArkCutscene EnteringArkCutscene = {};
         /// The flood cutscene in-between the first and second halves of gameplay.
         FloodCutscene FloodCutscene = STATES::FloodCutscene();
         /// The gameplay state during the flood.

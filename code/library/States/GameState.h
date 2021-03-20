@@ -23,6 +23,8 @@ namespace STATES
         NEW_GAME_INSTRUCTION_SEQUENCE,
         /// The main gameplay state for the game (prior to the flood).
         PRE_FLOOD_GAMEPLAY,
+        /// The cutscene where the player is to enter the ark right before the flood, at God's direction.
+        ENTER_ARK_CUTSCENE,
         /// The cutscene that plays once the ark has been built and the world is flooding;
         /// serves to transition the main gameplay to the "inside ark" substate.
         FLOOD_CUTSCENE,

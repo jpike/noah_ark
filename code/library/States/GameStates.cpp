@@ -40,6 +40,9 @@ namespace STATES
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
                 next_game_state = NewGameInstructionSequence.Update(gaming_hardware);
                 break;
+            case GameState::ENTER_ARK_CUTSCENE:
+                /// @todo
+                break;
             case GameState::FLOOD_CUTSCENE:
                 next_game_state = FloodCutscene.Update(gaming_hardware);
                 break;
@@ -110,6 +113,9 @@ namespace STATES
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
                 screen_sprite = NewGameInstructionSequence.Render(world, renderer, gaming_hardware);
+                break;
+            case GameState::ENTER_ARK_CUTSCENE:
+                /// @todo
                 break;
             case GameState::FLOOD_CUTSCENE:
                 screen_sprite = FloodCutscene.Render(renderer, gaming_hardware);
@@ -206,6 +212,9 @@ namespace STATES
                 renderer.Camera.SetCenter(world.NoahPlayer->GetWorldPosition());
                 break;
             }
+            case GameState::ENTER_ARK_CUTSCENE:
+                /// @todo
+                break;
             case GameState::FLOOD_CUTSCENE:
                 FloodCutscene = STATES::FloodCutscene();
                 break;

@@ -24,6 +24,8 @@ namespace std
                 return "NEW_GAME_INSTRUCTION_SEQUENCE";
             case STATES::GameState::PRE_FLOOD_GAMEPLAY:
                 return "PRE_FLOOD_GAMEPLAY";
+            case STATES::GameState::ENTER_ARK_CUTSCENE:
+                return "ENTER_ARK_CUTSCENE";
             case STATES::GameState::FLOOD_CUTSCENE:
                 return "FLOOD_CUTSCENE";
             case STATES::GameState::DURING_FLOOD_GAMEPLAY:

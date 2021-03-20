@@ -41,6 +41,12 @@ namespace STATES
         bool AnimalSpeciesCollectedAtAll(const OBJECTS::AnimalSpecies::Value species) const;
         bool AnimalTypeFullyCollected(const OBJECTS::AnimalType& animal_type) const;
 
+        bool AnimalsFullyCollected() const;
+        bool FoodsFullyCollected() const;
+        bool FamilyMembersFullyCollected() const;
+        bool ArkFullyBuilt() const;
+        bool CollectedAllItemsRequiredBeforeFlood() const;
+
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The path to the file for this saved game.
         std::filesystem::path Filepath = "";

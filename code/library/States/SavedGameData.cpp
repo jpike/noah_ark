@@ -325,4 +325,101 @@ namespace STATES
         bool animal_type_fully_collected = (actual_animal_count >= expected_animal_count);
         return animal_type_fully_collected;
     }
+
+    /// Determines if all animals have been fully collected.
+    /// @return True if all animals have been fully collected; false otherwise.
+    bool SavedGameData::AnimalsFullyCollected() const
+    {
+        // CHECK IF EACH ANIMAL SPECIES HAS BEEN COLLECTED.
+        for (unsigned int animal_species_id = 0; animal_species_id < OBJECTS::AnimalSpecies::COUNT; ++animal_species_id)
+        {
+            // CHECK IF MALES OF THE CURRENT SPECIES HAVE BEEN FULLY COLLECTED.
+            OBJECTS::AnimalType male_animal_type(static_cast<OBJECTS::AnimalSpecies::Value>(animal_species_id), OBJECTS::AnimalGender::MALE);
+            bool males_of_species_fully_collected = AnimalTypeFullyCollected(male_animal_type);
+            if (!males_of_species_fully_collected)
+            {
+                // Return early to avoid wasting time for future animal types.
+                return false;
+            }
+
+            // CHECK IF FEMALES OF THE CURRENT SPECIES HAVE BEEN FULLY COLLECTED.
+            OBJECTS::AnimalType female_animal_type(static_cast<OBJECTS::AnimalSpecies::Value>(animal_species_id), OBJECTS::AnimalGender::FEMALE);
+            bool females_of_species_fully_collected = AnimalTypeFullyCollected(female_animal_type);
+            if (!females_of_species_fully_collected)
+            {
+                // Return early to avoid wasting time for future animal types.
+                return false;
+            }
+        }
+
+        // INDICATE THAT ALL ANIMALS HAVE BEEN FULLY COLLECTED.
+        // If we didn't return early above, then all animals must have been fully collected.
+        return true;
+    }
+
+    /// Determines if all foods have been fully collected.
+    /// @return True if all foods have been fully collected; false otherwise.
+    bool SavedGameData::FoodsFullyCollected() const
+    {
+        // CHECK IF EACH TYPE OF FOOD HAS BEEN COLLECTED.
+        for (unsigned int food_id = 0; food_id < OBJECTS::Food::COUNT; ++food_id)
+        {
+            // As long as a good has been collected at least once, that should be sufficient.
+            unsigned int current_food_type_collected_count = Player->Inventory.FoodCounts[food_id];
+            bool current_food_type_collected = (current_food_type_collected_count > 0);
+            if (!current_food_type_collected)
+            {
+                // Return early to avoid wasting time for future food types.
+                return false;
+            }
+        }
+
+        // INDICATE THAT ALL FOODS HAVE BEEN FULLY COLLECTED.
+        // If we didn't return early above, then all types of foods must have been fully collected.
+        return true;
+    }
+
+    /// Determines if all family members have been fully collected.
+    /// @return True if all family members have been fully collected; false otherwise.
+    bool SavedGameData::FamilyMembersFullyCollected() const
+    {
+        // CHECK IF EACH FAMILY MEMBER HAS BEEN GATHERED.
+        for (unsigned int family_member_id = 0; family_member_id < OBJECTS::FamilyMember::COUNT; ++family_member_id)
+        {
+            bool current_family_member_collected = FamilyMembersGathered[family_member_id];
+            if (!current_family_member_collected)
+            {
+                // Return early to avoid wasting fime for future family members.
+                return false;
+            }
+        }
+
+        // INDICATE THAT ALL FAMILY MEMBERS HAVE BEEN FULLY COLLECTED.
+        // If we didn't return early above, then all family members must have been fully collected.
+        return true;
+    }
+
+    /// Determines if the ark has been fully built.
+    /// @return True if the ark has been fully built; false otherwise.
+    bool SavedGameData::ArkFullyBuilt() const
+    {
+        // CHECK IF ALL ARK PIECES HAVE BEEN BUILT.
+        // The total ark piece count is hardcoded here for simplicity since it isn't expected to change.
+        constexpr std::size_t TOTAL_ARK_PIECE_COUNT = 1326;
+        std::size_t actual_built_ark_piece_count = BuiltArkPieces.size();
+        bool ark_fully_built = (actual_built_ark_piece_count >= TOTAL_ARK_PIECE_COUNT);
+        return ark_fully_built;
+    }
+
+    /// Determines if all items required prior to entering into the ark for the flood have been collected.
+    /// @return True if all items required from the flood have been collected; false otherwise.
+    bool SavedGameData::CollectedAllItemsRequiredBeforeFlood() const
+    {
+        bool animals_fully_collected = AnimalsFullyCollected();
+        bool food_fully_collected = FoodsFullyCollected();
+        bool family_members_fully_collected = FamilyMembersFullyCollected();
+        bool ark_fully_built = ArkFullyBuilt();
+        bool all_required_items_collected = (animals_fully_collected && food_fully_collected && family_members_fully_collected && ark_fully_built);
+        return all_required_items_collected;
+    }
 }

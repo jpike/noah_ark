@@ -175,6 +175,17 @@ namespace STATES
             camera, 
             current_game_data);
 
+        // TRANSITION TO THE ARK ENTRY SCENE IF THE PLAYER HAS COLLECTED ALL ITEMS.
+#ifdef _DEBUG
+        bool player_collected_all_items = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_CLOSE_ARK_DOORS_KEY);
+#else
+        bool player_collected_all_items = current_game_data.CollectedAllItemsRequiredBeforeFlood();
+#endif
+        if (player_collected_all_items)
+        {
+            next_game_state = GameState::ENTER_ARK_CUTSCENE;
+        }
+
         // START PLAYING THE BACKGROUND MUSIC IF ITS NOT ALREADY PLAYING.
         gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
         
@@ -366,72 +377,11 @@ namespace STATES
                 return;
             }
 
-            // CLOSE THE ARK DOOR'S IF THE PLAYER IS IN THE ARK AFTER COLLECTION ALL ITEMS.
-            bool inside_ark = (MAPS::TileMapType::ARK_INTERIOR == current_tile_map->Type);
-            if (inside_ark)
-            {
-                /// @todo   Add non-debug logic for this.
-                bool player_collected_all_items = false;
-#ifdef _DEBUG
-                player_collected_all_items = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_CLOSE_ARK_DOORS_KEY);
-#endif
-                if (player_collected_all_items)
-                {
-                    // GET THE TILESET.
-                    // It's needed for switching tiles.
-                    MAPS::Tileset tileset;
-                        
-                    // CHANGE ANY ARK EXIT DOORS TO BE CLOSED.
-                    for (unsigned int tile_row = 0; tile_row < MAPS::TileMap::HEIGHT_IN_TILES; ++tile_row)
-                    {
-                        for (unsigned int tile_column = 0; tile_column < MAPS::TileMap::WIDTH_IN_TILES; ++tile_column)
-                        {
-                            // GET THE CURRENT TILE.
-                            std::shared_ptr<MAPS::Tile> current_tile = current_tile_map->Ground.Tiles(tile_column, tile_row);
-                            if (!current_tile)
-                            {
-                                continue;
-                            }
-
-                            // CHANGE THE TILE IF IT IS FOR AN ARK EXIT DOOR.
-                            switch (current_tile->Type)
-                            {
-                                case MAPS::TileType::ARK_INTERIOR_CENTER_EXIT:
-                                {
-                                    std::shared_ptr<MAPS::Tile> center_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_CENTER_EXIT_CLOSED);
-                                    if (center_closed_tile)
-                                    {
-                                        current_tile_map->Ground.SetTile(tile_column, tile_row, center_closed_tile);
-                                    }
-                                    break;
-                                }
-                                case MAPS::TileType::ARK_INTERIOR_LEFT_EXIT:
-                                {
-                                    std::shared_ptr<MAPS::Tile> left_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_LEFT_EXIT_CLOSED);
-                                    if (left_closed_tile)
-                                    {
-                                        current_tile_map->Ground.SetTile(tile_column, tile_row, left_closed_tile);
-                                    }
-                                    break;
-                                }
-                                case MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT:
-                                {
-                                    std::shared_ptr<MAPS::Tile> right_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT_CLOSED);
-                                    if (right_closed_tile)
-                                    {
-                                        current_tile_map->Ground.SetTile(tile_column, tile_row, right_closed_tile);
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
 
             // HANDLE PLAYER COLLISIONS WITH OUTSIDE OBJECTS.
             // These collisions aren't applicable for inside the ark and should be prohibited to prevent
             // things like recollecting of animals that have just entered into the ark.
+            bool inside_ark = (MAPS::TileMapType::ARK_INTERIOR == current_tile_map->Type);
             if (!inside_ark)
             {
                 std::string message_for_text_box;

@@ -60,8 +60,7 @@ namespace STATES
         /// Index matches enum values for family member types.
         std::array<bool, OBJECTS::FamilyMember::COUNT> FamilyMembersGathered = {};
         /// The amount of time that's elapsed during the flood, in terms of gameplay time.
-        /// 150 days (Genesis 8:3) are required for the flood to subside,
-        /// though gameplay time is "sped up".
+        /// 1 year + 10 days are required for the flood to subside, though gameplay time is "sped up".
         sf::Time FloodElapsedGameplayTime = sf::Time::Zero;
     };
 }

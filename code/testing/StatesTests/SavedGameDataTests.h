@@ -252,7 +252,7 @@ namespace SAVED_GAME_DATA_TESTS
             original_saved_game_data.FamilyMembersGathered[family_member_id] = true;
         }
         
-        original_saved_game_data.FloodElapsedGameplayTime = sf::seconds(150.0f);
+        original_saved_game_data.FloodElapsedGameplayTime = sf::seconds(375.0f);
 
         // WRITE AND READ THE SAVED GAME DATA TO FILE.
         // The file is written to the same default "saved games" folder to better support re-using this data for actual playthoughs.
@@ -400,7 +400,7 @@ namespace SAVED_GAME_DATA_TESTS
         
         // Set to 1 less than the maximum to easily be close to the end.
         /// @todo   This needs to actually be multipled!!!!
-        original_saved_game_data.FloodElapsedGameplayTime = sf::seconds(149.0f);
+        original_saved_game_data.FloodElapsedGameplayTime = sf::seconds(374.0f);
 
         // WRITE AND READ THE SAVED GAME DATA TO FILE.
         // The file is written to the same default "saved games" folder to better support re-using this data for actual playthoughs.

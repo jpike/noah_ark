@@ -19,6 +19,10 @@ namespace MAPS
         static constexpr unsigned int WIDTH_IN_TILE_MAPS = 7;
         /// The height of the overworld in tile maps.
         static constexpr unsigned int HEIGHT_IN_TILE_MAPS = 7;
+        /// The row of the map with the ark entrance.
+        static constexpr unsigned int ARK_ENTRANCE_TILE_MAP_ROW = 0;
+        /// The column of the map with the ark entrance.
+        static constexpr unsigned int ARK_ENTRANCE_TILE_MAP_COLUMN = 2;
 
         // CONSTRUCTION.
         explicit Overworld(MEMORY::NonNullRawPointer<World> world);

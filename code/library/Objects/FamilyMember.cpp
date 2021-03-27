@@ -106,6 +106,20 @@ namespace OBJECTS
         Sprite.UseAnimationSequence(WALK_FRONT_ANIMATION->AnimationName);
     }
 
+    /// Begins the walking process for the family member.  This doesn't actually move the family member
+    /// but instead just updates his direction and animation.
+    /// @param[in]  direction - The direction the family member should begin walking.
+    /// @param[in]  walking_animation_name - The name of the walking animation to start playing for the direction.
+    void FamilyMember::BeginWalking(const GAMEPLAY::Direction direction, const std::string& walking_animation_name)
+    {
+        // HAVE NOAH FACE IN THE APPROPRIATE DIRECTION.
+        FacingDirection = direction;
+
+        // PLAY THE WALKING ANIMATION.
+        Sprite.UseAnimationSequence(walking_animation_name);
+        Sprite.Play();
+    }
+
     /// Moves the family member within the specified tile map.
     /// The family member is assumed to already be within the tile map.
     /// @param[in]  tile_map - The tile map within which to move the family member.

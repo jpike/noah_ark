@@ -1,6 +1,5 @@
 // TODO LIST BEFORE BETA 1:
 // - Add in feeding of animals/presents
-// - Add transition scene into ark
 // - Add in ark raven/dove actions
 // - Add scene after flood
 // - Add in any missing music

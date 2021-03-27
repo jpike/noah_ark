@@ -50,6 +50,7 @@ namespace OBJECTS
         explicit FamilyMember(const Type type, const MATH::Vector2f& world_position, const MAPS::MultiTileMapGrid* const map_grid);
 
         // OTHER METHODS.
+        void BeginWalking(const GAMEPLAY::Direction direction, const std::string& walking_animation_name);
         void MoveWithin(const MAPS::TileMap& tile_map, HARDWARE::GamingHardware& gaming_hardware);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.

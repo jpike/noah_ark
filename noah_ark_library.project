@@ -78,6 +78,7 @@
 #include "States/CreditsScreen.cpp"
 #include "States/DuringFloodGameplayState.cpp"
 #include "States/EndingCreditsScreen.cpp"
+#include "States/EnteringArkCutscene.cpp"
 #include "States/FloodCutscene.cpp"
 #include "States/GameSelectionScreen.cpp"
 #include "States/GameState.cpp"

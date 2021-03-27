@@ -80,6 +80,7 @@ namespace GRAPHICS
 
         // OTHER RENDERING.
         void Render(const MAPS::MultiTileMapGrid& tile_map_grid);
+        void Render(const MAPS::TileMap& tile_map);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The graphics device to use for rendering.
@@ -92,9 +93,6 @@ namespace GRAPHICS
         std::unordered_map<RESOURCES::AssetId, std::shared_ptr<GRAPHICS::GUI::Font>> Fonts = {};
 
     private:
-        // RENDERING.
-        void Render(const MAPS::TileMap& tile_map);
-
         // SHADERS.
         sf::RenderStates ConfigureColoredTextShader(const Color& color, sf::Shader& colored_text_shader);
     };

@@ -11,6 +11,11 @@ namespace GRAPHICS
     /// @return The rendered screen.
     sf::Sprite Renderer::RenderFinalScreen(const sf::RenderStates& render_settings)
     {
+        // RESET THE VIEW TO THE DEFAULT VIEW.
+        // This is necessary for full-screen effects to take effect.
+        sf::View screen_space_view = Screen->RenderTarget.getDefaultView();
+        Screen->RenderTarget.setView(screen_space_view);
+
         // RENDER THE DEFAULT STATE OF THE SCREEN.
         Screen->RenderTarget.display();
         sf::Sprite screen(Screen->RenderTarget.getTexture());
@@ -727,17 +732,9 @@ namespace GRAPHICS
     /// @param[in]  tile_map_grid - The tile map grid to render.
     void Renderer::Render(const MAPS::MultiTileMapGrid& tile_map_grid)
     {
+        // GET THE CURRENT TILE MAP.
         MATH::FloatRectangle camera_bounds = Camera.ViewBounds;
         MATH::Vector2f camera_view_center = camera_bounds.Center();
-
-        /// @note   This view only needs to be set here.
-        /// Private methods assume it has already been set.
-        sf::View camera_view;
-        camera_view.setCenter(camera_view_center.X, camera_view_center.Y);
-        camera_view.setSize(camera_bounds.Width(), camera_bounds.Height());
-        Screen->RenderTarget.setView(camera_view);
-
-        // GET THE CURRENT TILE MAP.
         const MAPS::TileMap* current_tile_map = tile_map_grid.GetTileMap(camera_view_center.X, camera_view_center.Y);
         if (!current_tile_map)
         {
@@ -783,6 +780,14 @@ namespace GRAPHICS
     /// @param[in]  tile_map - The tile map to render.
     void Renderer::Render(const MAPS::TileMap& tile_map)
     {
+        // SET THE PROPER CAMERA VIEW.
+        MATH::FloatRectangle camera_bounds = Camera.ViewBounds;
+        MATH::Vector2f camera_view_center = camera_bounds.Center();
+        sf::View camera_view;
+        camera_view.setCenter(camera_view_center.X, camera_view_center.Y);
+        camera_view.setSize(camera_bounds.Width(), camera_bounds.Height());
+        Screen->RenderTarget.setView(camera_view);
+
         // RENDER THE CURRENT TILE MAP'S GROUND LAYER.
         MATH::Vector2ui ground_dimensions_in_tiles = tile_map.GetDimensionsInTiles();
         for (unsigned int tile_row = 0; tile_row < ground_dimensions_in_tiles.Y; ++tile_row)

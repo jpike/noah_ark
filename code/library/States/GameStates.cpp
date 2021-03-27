@@ -41,7 +41,7 @@ namespace STATES
                 next_game_state = NewGameInstructionSequence.Update(gaming_hardware);
                 break;
             case GameState::ENTER_ARK_CUTSCENE:
-                /// @todo
+                next_game_state = EnteringArkCutscene.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, world);
                 break;
             case GameState::FLOOD_CUTSCENE:
                 next_game_state = FloodCutscene.Update(gaming_hardware);
@@ -115,7 +115,7 @@ namespace STATES
                 screen_sprite = NewGameInstructionSequence.Render(world, renderer, gaming_hardware);
                 break;
             case GameState::ENTER_ARK_CUTSCENE:
-                /// @todo
+                screen_sprite = EnteringArkCutscene.Render(world, renderer, gaming_hardware);
                 break;
             case GameState::FLOOD_CUTSCENE:
                 screen_sprite = FloodCutscene.Render(renderer, gaming_hardware);
@@ -213,7 +213,7 @@ namespace STATES
                 break;
             }
             case GameState::ENTER_ARK_CUTSCENE:
-                /// @todo
+                EnteringArkCutscene.Load(world, renderer, gaming_hardware);
                 break;
             case GameState::FLOOD_CUTSCENE:
                 FloodCutscene = STATES::FloodCutscene();

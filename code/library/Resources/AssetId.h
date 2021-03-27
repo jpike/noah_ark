@@ -66,6 +66,8 @@ namespace RESOURCES
         TIME_OF_DAY_SHADER,
         /// A shader that creates a pulsing ball effect.
         SHINY_BALL_SHADER,
+        /// A shader that creates a rainbow effect.
+        RAINBOW_SHADER,
 
         // GENERAL SOUND EFFECTS.
         /// The sound that plays when building a piece of the ark.

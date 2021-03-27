@@ -1,4 +1,5 @@
 #include "Collision/CollisionDetectionAlgorithms.h"
+#include "ErrorHandling/Asserts.h"
 #include "States/PostFloodGameplayState.h"
 
 namespace STATES
@@ -49,8 +50,19 @@ namespace STATES
         // RENDER THE PLAYER.
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
-        // RENDER THE FINAL SCREEN WITH TIME-OF-DAY LIGHTING.
-        sf::Sprite screen = renderer.RenderFinalScreenWithTimeOfDayShading(); 
+        // RENDER THE SCREEN WITH A RAINBOW EFFECT.
+        /// @todo   Only have this rainbow effect during some specific times.
+        sf::RenderStates rainbow_effect = sf::RenderStates::Default;
+        std::shared_ptr<sf::Shader> rainbow_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::RAINBOW_SHADER);
+        ASSERT_THEN_IF(rainbow_shader)
+        {
+            // COMPUTE THE LIGHTING FOR THE SHADER.
+            rainbow_shader->setUniform("texture", sf::Shader::CurrentTexture);
+            rainbow_effect.shader = rainbow_shader.get();
+        }
+
+        // RENDER THE FINAL SCREEN.
+        sf::Sprite screen = renderer.RenderFinalScreen(rainbow_effect);
         return screen;
     }
 

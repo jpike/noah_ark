@@ -61,13 +61,13 @@ namespace STATES
             // COMPUTE THE LIGHTING FOR THE SHADER.
             // The rainbow's intensity should pulse based on elapsed time.
             float elapsed_time_in_seconds = gaming_hardware.Clock.TotalElapsedTime.asSeconds();
-            // The range of sin() is [-1, 1].  We want the alpha to be in the range of [0.4, 0.6]
+            // The range of sin() is [-1, 1].  We want the alpha to be in the range of [0.4, 0.8]
             // (a very subtle pulse).
-            // The initial multiplication brings the range to [-0.1, 0.1].
-            constexpr float ADDITIONAL_ALPHA_RANGE = 0.1f;
+            // The initial multiplication brings the range to [-0.2, 0.2].
+            constexpr float ADDITIONAL_ALPHA_RANGE = 0.2f;
             float alpha_for_rainbow = ADDITIONAL_ALPHA_RANGE * std::sinf(elapsed_time_in_seconds);
             // An addition shifts it into the appropriate range.
-            constexpr float ADDITIONAL_ALPHA_SHIFT_AMOUNT = 0.5f;
+            constexpr float ADDITIONAL_ALPHA_SHIFT_AMOUNT = 0.6f;
             alpha_for_rainbow += ADDITIONAL_ALPHA_SHIFT_AMOUNT;
 
             rainbow_shader->setUniform("alpha_for_rainbow", alpha_for_rainbow);

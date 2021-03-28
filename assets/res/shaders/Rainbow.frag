@@ -35,6 +35,8 @@ void main()
     const vec4 YELLOW = vec4(1.0, 1.0, 0.0, alpha_for_rainbow);
     const vec4 ORANGE = vec4(1.0, 0.5, 0.0, alpha_for_rainbow);
     const vec4 RED = vec4(1.0, 0.0, 0.0, alpha_for_rainbow);
+    // Additional red needed for last interpolation.
+    const vec4 DARK_RED = vec4(0.5, 0.0, 0.0, alpha_for_rainbow);
 
     // Boundaries for each band.
     const float VIOLET_MIN_DISTANCE = MIN_RADIUS_BEFORE_RAINBOW;
@@ -53,41 +55,46 @@ void main()
     {
         current_rainbow_band_color = WHITE_NO_ALPHA;
     }
-    else if (normalized_radius_to_fragment_coordinate <= VIOLET_MAX_DISTANCE_BLUE_MIN_DISTANCE)
+    else  if (normalized_radius_to_fragment_coordinate <= VIOLET_MAX_DISTANCE_BLUE_MIN_DISTANCE)
     {
-        current_rainbow_band_color = VIOLET;
+        float normalized_distance_within_rainbow = (normalized_radius_to_fragment_coordinate - VIOLET_MIN_DISTANCE) / RELATIVE_WIDTH_PER_COLOR_BAND;
+        current_rainbow_band_color = mix(VIOLET, BLUE, normalized_distance_within_rainbow);
     }
     else if (normalized_radius_to_fragment_coordinate <= BLUE_MAX_DISTANCE_CYAN_MIN_DISTANCE)
     {
-        current_rainbow_band_color = BLUE;
+        float normalized_distance_within_rainbow = (normalized_radius_to_fragment_coordinate - VIOLET_MAX_DISTANCE_BLUE_MIN_DISTANCE) / RELATIVE_WIDTH_PER_COLOR_BAND;
+        current_rainbow_band_color = mix(BLUE, CYAN, normalized_distance_within_rainbow);
     }
     else if (normalized_radius_to_fragment_coordinate <= CYAN_MAX_DISTANCE_GREEN_MIN_DISTANCE)
     {
-        current_rainbow_band_color = CYAN;
+        float normalized_distance_within_rainbow = (normalized_radius_to_fragment_coordinate - BLUE_MAX_DISTANCE_CYAN_MIN_DISTANCE) / RELATIVE_WIDTH_PER_COLOR_BAND;
+        current_rainbow_band_color = mix(CYAN, GREEN, normalized_distance_within_rainbow);
     }
     else if (normalized_radius_to_fragment_coordinate <= GREEN_MAX_DISTANCE_YELLOW_MIN_DISTANCE)
     {
-        current_rainbow_band_color = GREEN;
+        float normalized_distance_within_rainbow = (normalized_radius_to_fragment_coordinate - CYAN_MAX_DISTANCE_GREEN_MIN_DISTANCE) / RELATIVE_WIDTH_PER_COLOR_BAND;
+        current_rainbow_band_color = mix(GREEN, YELLOW, normalized_distance_within_rainbow);
     }
     else if (normalized_radius_to_fragment_coordinate <= YELLOW_MAX_DISTANCE_ORANGE_MIN_DISTANCE)
     {
-        current_rainbow_band_color = YELLOW;
+        float normalized_distance_within_rainbow = (normalized_radius_to_fragment_coordinate - GREEN_MAX_DISTANCE_YELLOW_MIN_DISTANCE) / RELATIVE_WIDTH_PER_COLOR_BAND;
+        current_rainbow_band_color = mix(YELLOW, ORANGE, normalized_distance_within_rainbow);
     }
     else if (normalized_radius_to_fragment_coordinate <= ORANGE_MAX_DISTANCE_RED_MIN_DISTANCE)
     {
-        current_rainbow_band_color = ORANGE;
+        float normalized_distance_within_rainbow = (normalized_radius_to_fragment_coordinate - YELLOW_MAX_DISTANCE_ORANGE_MIN_DISTANCE) / RELATIVE_WIDTH_PER_COLOR_BAND;
+        current_rainbow_band_color = mix(ORANGE, RED, normalized_distance_within_rainbow);
     }
     else if (normalized_radius_to_fragment_coordinate <= RED_MAX_DISTANCE)
     {
-        current_rainbow_band_color = RED;
+        float normalized_distance_within_rainbow = (normalized_radius_to_fragment_coordinate - ORANGE_MAX_DISTANCE_RED_MIN_DISTANCE) / RELATIVE_WIDTH_PER_COLOR_BAND;
+        current_rainbow_band_color = mix(RED, DARK_RED, normalized_distance_within_rainbow);
     }
 
     // SHADE THE CURRENT PIXEL BASED ON THE RAINBOW BAND IF ON THE TOP HALF OF THE SCREEN.
     vec4 current_pixel_color = texture2D(texture, gl_TexCoord[0].xy);
     if (normalized_fragment_y_coordinate > 0.0)
     {
-        //gl_FragColor = current_rainbow_band_color * current_pixel_color;
-        //gl_FragColor = vec4((0.9 * current_rainbow_band_color.rgb) * (0.1 * current_pixel_color.rgb), 1.0);
         gl_FragColor = current_rainbow_band_color;
     }
     else

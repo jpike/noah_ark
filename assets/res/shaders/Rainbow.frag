@@ -1,3 +1,4 @@
+uniform float alpha_for_rainbow; // Alpha is set for the rainbow to provide a blending type of effect.
 uniform sampler2D texture;  // Current texture being rendered.
 
 void main()
@@ -19,42 +20,65 @@ void main()
     float normalized_radius_to_fragment_coordinate = radius_to_fragment_coordinate / MAX_RADIUS;
 
     // COMPUTE SHADING BASED ON DISTANCE FROM THE CENTER.
-    const float RAINBOW_COLOR_BAND_COUNT = 7.0;
-    const float RELATIVE_WIDTH_PER_COLOR_BAND = 1.0 / RAINBOW_COLOR_BAND_COUNT;
-    vec4 current_rainbow_band_color = vec4(1.0, 1.0, 1.0, 1.0);
-    if (normalized_radius_to_fragment_coordinate <= RELATIVE_WIDTH_PER_COLOR_BAND)
+    // To ensure the rainbow is more of an "ark" rather than just a half-circle, it doesn't start until
+    // it's at least a decent amount out of the center.
+    const float MIN_RADIUS_BEFORE_RAINBOW = 1.0 / 7.0;
+    
+    // This width has been chosen to have all bands fit on screen at once.
+    const float RELATIVE_WIDTH_PER_COLOR_BAND = 1.0 / 21.0;
+
+    // Main colors of the rainbow.
+    const vec4 VIOLET = vec4(0.5, 0.0, 1.0, alpha_for_rainbow);
+    const vec4 BLUE = vec4(0.0, 0.0, 1.0, alpha_for_rainbow);
+    const vec4 CYAN = vec4(0.0, 1.0, 1.0, alpha_for_rainbow);
+    const vec4 GREEN = vec4(0.0, 1.0, 0.0, alpha_for_rainbow);
+    const vec4 YELLOW = vec4(1.0, 1.0, 0.0, alpha_for_rainbow);
+    const vec4 ORANGE = vec4(1.0, 0.5, 0.0, alpha_for_rainbow);
+    const vec4 RED = vec4(1.0, 0.0, 0.0, alpha_for_rainbow);
+
+    // Boundaries for each band.
+    const float VIOLET_MIN_DISTANCE = MIN_RADIUS_BEFORE_RAINBOW;
+    const float VIOLET_MAX_DISTANCE_BLUE_MIN_DISTANCE = VIOLET_MIN_DISTANCE + RELATIVE_WIDTH_PER_COLOR_BAND;
+    const float BLUE_MAX_DISTANCE_CYAN_MIN_DISTANCE = VIOLET_MAX_DISTANCE_BLUE_MIN_DISTANCE + RELATIVE_WIDTH_PER_COLOR_BAND;
+    const float CYAN_MAX_DISTANCE_GREEN_MIN_DISTANCE = BLUE_MAX_DISTANCE_CYAN_MIN_DISTANCE + RELATIVE_WIDTH_PER_COLOR_BAND;
+    const float GREEN_MAX_DISTANCE_YELLOW_MIN_DISTANCE = CYAN_MAX_DISTANCE_GREEN_MIN_DISTANCE + RELATIVE_WIDTH_PER_COLOR_BAND;
+    const float YELLOW_MAX_DISTANCE_ORANGE_MIN_DISTANCE = GREEN_MAX_DISTANCE_YELLOW_MIN_DISTANCE + RELATIVE_WIDTH_PER_COLOR_BAND;
+    const float ORANGE_MAX_DISTANCE_RED_MIN_DISTANCE = YELLOW_MAX_DISTANCE_ORANGE_MIN_DISTANCE + RELATIVE_WIDTH_PER_COLOR_BAND;
+    const float RED_MAX_DISTANCE = ORANGE_MAX_DISTANCE_RED_MIN_DISTANCE + RELATIVE_WIDTH_PER_COLOR_BAND;
+
+    // Use white with no alpha to preserve the current color by default.
+    const vec4 WHITE_NO_ALPHA = vec4(1.0, 1.0, 1.0, 0.0);
+    vec4 current_rainbow_band_color = WHITE_NO_ALPHA;
+    if (normalized_radius_to_fragment_coordinate <= MIN_RADIUS_BEFORE_RAINBOW)
     {
-        const vec4 VIOLET = vec4(0.5, 0.0, 1.0, 1.0);
+        current_rainbow_band_color = WHITE_NO_ALPHA;
+    }
+    else if (normalized_radius_to_fragment_coordinate <= VIOLET_MAX_DISTANCE_BLUE_MIN_DISTANCE)
+    {
         current_rainbow_band_color = VIOLET;
     }
-    else if (normalized_radius_to_fragment_coordinate <= 2.0 * RELATIVE_WIDTH_PER_COLOR_BAND)
+    else if (normalized_radius_to_fragment_coordinate <= BLUE_MAX_DISTANCE_CYAN_MIN_DISTANCE)
     {
-        const vec4 BLUE = vec4(0.0, 0.0, 1.0, 1.0);
         current_rainbow_band_color = BLUE;
     }
-    else if (normalized_radius_to_fragment_coordinate <= 3.0 * RELATIVE_WIDTH_PER_COLOR_BAND)
+    else if (normalized_radius_to_fragment_coordinate <= CYAN_MAX_DISTANCE_GREEN_MIN_DISTANCE)
     {
-        const vec4 CYAN = vec4(0.0, 1.0, 1.0, 1.0);
         current_rainbow_band_color = CYAN;
     }
-    else if (normalized_radius_to_fragment_coordinate <= 4.0 * RELATIVE_WIDTH_PER_COLOR_BAND)
+    else if (normalized_radius_to_fragment_coordinate <= GREEN_MAX_DISTANCE_YELLOW_MIN_DISTANCE)
     {
-        const vec4 GREEN = vec4(0.0, 1.0, 0.0, 1.0);
         current_rainbow_band_color = GREEN;
     }
-    else if (normalized_radius_to_fragment_coordinate <= 5.0 * RELATIVE_WIDTH_PER_COLOR_BAND)
+    else if (normalized_radius_to_fragment_coordinate <= YELLOW_MAX_DISTANCE_ORANGE_MIN_DISTANCE)
     {
-        const vec4 YELLOW = vec4(1.0, 1.0, 0.0, 1.0);
         current_rainbow_band_color = YELLOW;
     }
-    else if (normalized_radius_to_fragment_coordinate <= 6.0 * RELATIVE_WIDTH_PER_COLOR_BAND)
+    else if (normalized_radius_to_fragment_coordinate <= ORANGE_MAX_DISTANCE_RED_MIN_DISTANCE)
     {
-        const vec4 ORANGE = vec4(1.0, 0.5, 0.0, 1.0);
         current_rainbow_band_color = ORANGE;
     }
-    else if (normalized_radius_to_fragment_coordinate <= 7.0 * RELATIVE_WIDTH_PER_COLOR_BAND)
+    else if (normalized_radius_to_fragment_coordinate <= RED_MAX_DISTANCE)
     {
-        const vec4 RED = vec4(1.0, 0.0, 0.0, 1.0);
         current_rainbow_band_color = RED;
     }
 
@@ -63,6 +87,7 @@ void main()
     if (normalized_fragment_y_coordinate > 0.0)
     {
         //gl_FragColor = current_rainbow_band_color * current_pixel_color;
+        //gl_FragColor = vec4((0.9 * current_rainbow_band_color.rgb) * (0.1 * current_pixel_color.rgb), 1.0);
         gl_FragColor = current_rainbow_band_color;
     }
     else

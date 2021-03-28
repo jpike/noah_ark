@@ -26,7 +26,8 @@ namespace STATES
         sf::Sprite Render(
             MAPS::World& world, 
             STATES::SavedGameData& current_game_data,
-            GRAPHICS::Renderer& renderer);
+            GRAPHICS::Renderer& renderer,
+            HARDWARE::GamingHardware& gaming_hardware);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The current map being displayed within the world.

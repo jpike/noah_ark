@@ -4,6 +4,65 @@
 
 namespace STATES
 {
+    /// Loads the cutscene into its initial state.
+    /// @param[in,out]  world - The world to configure for this state.
+    /// @param[in,out]  renderer - The renderer from which to load some initial data.
+    /// @param[in,out]  gaming_hardware - The gaming hardware to use for loading the cutscene.
+    void PostFloodGameplayState::Load(MAPS::World& world, GRAPHICS::Renderer& renderer, HARDWARE::GamingHardware& gaming_hardware)
+    {
+        /// @todo
+        gaming_hardware;
+
+        // RESET BASIC MEMBER VARIABLES TO THE BEGINNING OF THE CUTSCENE.
+        CurrentSubstate = Substate::FADING_IN;
+        ElapsedTimeForCurrentSubstate = sf::Time::Zero;
+
+        // INITIALIZE THE TEXT BOX IF POSSIBLE.
+        std::shared_ptr<GRAPHICS::GUI::Font> text_box_font = renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE];
+        ASSERT_THEN_IF(text_box_font)
+        {
+            unsigned int text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
+            // The text displayed in this text box is slightly longer than normal, so 3 lines are used instead of the normal 2.
+            const unsigned int LINE_COUNT = 3;
+            unsigned int text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
+            TextBox = GRAPHICS::GUI::TextBox(
+                text_box_width_in_pixels,
+                text_box_height_in_pixels,
+                text_box_font);
+        }
+
+        // TRACK THE CURRENT MAP GRID.
+        CurrentMapGrid = &world.Overworld.MapGrid;
+
+        // SET THE GAME TO FOCUS ON THE ARK ENTRANCE.
+        MAPS::TileMap* ark_entrace_tile_map = world.Overworld.MapGrid.GetTileMap(MAPS::Overworld::ARK_ENTRANCE_TILE_MAP_ROW, MAPS::Overworld::ARK_ENTRANCE_TILE_MAP_COLUMN);
+        ASSERT_THEN_IF(ark_entrace_tile_map)
+        {
+            // SET THE CAMERA TO FOCUS ON THIS TILE MAP.
+            MATH::Vector2f ark_entrance_tile_map_center = ark_entrace_tile_map->GetCenterWorldPosition();
+            renderer.Camera.SetCenter(ark_entrance_tile_map_center);
+
+            // MOVE NOAH TO RIGHT OUTSIDE THE ARK.
+            // They're positioned slightly below the entrance.
+            MATH::Vector2f noah_world_position = ark_entrance_tile_map_center + MATH::Vector2f(0.0f, 64.0f);
+            world.NoahPlayer->SetWorldPosition(noah_world_position);
+            world.NoahPlayer->Sprite.CurrentFrameSprite.IsVisible = true;
+
+            // ENSURE ALL ARK PIECES ARE BUILT.
+            // Only the entrace map has ark pieces built since it's the only map in view.
+            /// @todo   Need to do this for all appropriate tile maps for this state!
+            for (OBJECTS::ArkPiece& ark_piece : ark_entrace_tile_map->ArkPieces)
+            {
+                ark_piece.Built = true;
+            }
+        }
+
+        /// @todo   Randomly position family & animals!
+        /// @todo   Destroy all trees?
+        /// @todo   Randomly position altar materials?
+        /// @todo   Alter tile maps to be different from pre-flood?  Or smaller world?
+    }
+
     /// Updates the state of the gameplay based on elapsed time and player input.
     /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output for the update.
     /// @param[in,out]  world - The world to update based on gameplay.
@@ -15,21 +74,115 @@ namespace STATES
         GRAPHICS::Camera& camera,
         STATES::SavedGameData& current_game_data)
     {
-        // UPDATE THE MAP GRID.
-        UpdateMapGrid(
-            gaming_hardware,
-            world,
-            *CurrentMapGrid,
-            camera,
-            current_game_data);
-
         // START PLAYING THE BACKGROUND MUSIC IF ITS NOT ALREADY PLAYING.
         /// @todo   Different background music?
         gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
 
+        // UPDATE THE CURRENT SUBSTATE.
+        // By default, we should remain on the current state unless specific conditions are met.
+        GameState next_game_state = GameState::POST_FLOOD_GAMEPLAY;
+        switch (CurrentSubstate)
+        {
+            case Substate::FADING_IN:
+            {
+                // FADE IN UNTIL WE'VE COMPLETELY FADED IN.
+                ElapsedTimeForCurrentSubstate += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
+                float elapsed_time_for_current_substate_in_seconds = ElapsedTimeForCurrentSubstate.asSeconds();
+                bool fading_in_complete = (elapsed_time_for_current_substate_in_seconds >= FADING_MAX_TIME_IN_SECONDS);
+                if (fading_in_complete)
+                {
+                    // MOVE TO THE NEXT SUBSTATE.
+                    ElapsedTimeForCurrentSubstate = sf::Time::Zero;
+                    CurrentSubstate = Substate::JUST_EXITED_ARK;
+                }
+                break;
+            }
+            case Substate::JUST_EXITED_ARK:
+            {
+                // UPDATE THE MAP GRID.
+                UpdateMapGrid(
+                    gaming_hardware,
+                    world,
+                    *CurrentMapGrid,
+                    camera,
+                    current_game_data);
+                break;
+            }
+            case Substate::GOD_SPEAKING_BEFORE_RAINBOW:
+            {
+                // DISPLAY GOD'S WORDS, ALLOWING THE USER TO MOVE TO DIFFERENT PAGES OF TEXT.
+                TextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+                bool current_page_of_text_finished = TextBox.CurrentPageOfTextFinishedBeingDisplayed();
+                if (current_page_of_text_finished)
+                {
+                    // MOVE TO THE NEXT PAGE IF THE USER HAS PRESSED THE APPROPRIATE BUTTON.
+                    bool user_finished_reading_text_and_pressed_button = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY);
+                    if (user_finished_reading_text_and_pressed_button)
+                    {
+                        TextBox.MoveToNextPage();
+                    }
+                }
+
+                // MOVE TO THE NEXT SUBSTATE IF ALL OF THE TEXT FOR THE CURRENT STATE HAS FINISHED.
+                if (!TextBox.IsVisible)
+                {
+                    // MOVE TO THE NEXT SUBSTATE.
+                    ElapsedTimeForCurrentSubstate = sf::Time::Zero;
+                    CurrentSubstate = Substate::GOD_SPEAKING_DURING_RAINBOW;
+
+                    // The text below is based on Genesis 9:12-17 but hardcoded here for simplicity.
+                    // The multiple lines of text are automatically joined.
+                    TextBox.StartDisplayingText(
+                        "This is the token of the covenant which I make between me and you and every living creature that is with you, for perpetual generations: "
+                        "I do set my bow in the cloud, and it shall be for a token of a covenant between me and the earth.  "
+                        "And it shall come to pass, when I bring a cloud over the earth, that the bow shall be seen in the cloud: "
+                        "And I will remember my covenant, which is between me and you and every living creature of all flesh; and the waters shall no more become a flood to destroy all flesh.  "
+                        "And the bow shall be in the cloud; and I will look upon it, that I may remember the everlasting covenant between God and every living creature of all flesh that is upon the earth.  "
+                        "This is the token of the covenant, which I have established between me and all flesh that is upon the earth.");
+                }
+                break;
+            }
+            case Substate::GOD_SPEAKING_DURING_RAINBOW:
+            {
+                // DISPLAY GOD'S WORDS, ALLOWING THE USER TO MOVE TO DIFFERENT PAGES OF TEXT.
+                TextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+                bool current_page_of_text_finished = TextBox.CurrentPageOfTextFinishedBeingDisplayed();
+                if (current_page_of_text_finished)
+                {
+                    // MOVE TO THE NEXT PAGE IF THE USER HAS PRESSED THE APPROPRIATE BUTTON.
+                    bool user_finished_reading_text_and_pressed_button = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY);
+                    if (user_finished_reading_text_and_pressed_button)
+                    {
+                        TextBox.MoveToNextPage();
+                    }
+                }
+
+                // MOVE TO THE NEXT SUBSTATE IF ALL OF THE TEXT FOR THE CURRENT STATE HAS FINISHED.
+                if (!TextBox.IsVisible)
+                {
+                    // MOVE TO THE NEXT SUBSTATE.
+                    ElapsedTimeForCurrentSubstate = sf::Time::Zero;
+                    CurrentSubstate = Substate::FADING_OUT;
+                }
+                break;
+            }
+            case Substate::FADING_OUT:
+            {
+                // FADE OUT UNTIL WE'VE COMPLETELY FADED IN.
+                ElapsedTimeForCurrentSubstate += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
+                float elapsed_time_for_current_substate_in_seconds = ElapsedTimeForCurrentSubstate.asSeconds();
+                bool fading_out_complete = (elapsed_time_for_current_substate_in_seconds >= FADING_MAX_TIME_IN_SECONDS);
+                if (fading_out_complete)
+                {
+                    // MOVE TO THE NEXT REAL GAME STATE.
+                    next_game_state = GameState::ENDING_CREDITS_SCREEN;
+                }
+                break;
+            }
+        }
+
         // RETURN THE NEXT GAME STATE.
-        /// @todo   Handle transition to final credits state?
-        return GameState::POST_FLOOD_GAMEPLAY;
+        return next_game_state;
     }
 
     /// Renders the current frame of the gameplay state.
@@ -52,31 +205,76 @@ namespace STATES
         // RENDER THE PLAYER.
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
-        // RENDER THE SCREEN WITH A RAINBOW EFFECT.
-        /// @todo   Only have this rainbow effect during some specific times.
-        sf::RenderStates rainbow_effect = sf::RenderStates::Default;
-        std::shared_ptr<sf::Shader> rainbow_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::RAINBOW_SHADER);
-        ASSERT_THEN_IF(rainbow_shader)
+        // RENDER THE TEXT BOX IF IT'S VISIBLE.
+        /// @todo   Have this appear on top of rainbow?
+        if (TextBox.IsVisible)
         {
-            // COMPUTE THE LIGHTING FOR THE SHADER.
-            // The rainbow's intensity should pulse based on elapsed time.
-            float elapsed_time_in_seconds = gaming_hardware.Clock.TotalElapsedTime.asSeconds();
-            // The range of sin() is [-1, 1].  We want the alpha to be in the range of [0.4, 0.8]
-            // (a very subtle pulse).
-            // The initial multiplication brings the range to [-0.2, 0.2].
-            constexpr float ADDITIONAL_ALPHA_RANGE = 0.2f;
-            float alpha_for_rainbow = ADDITIONAL_ALPHA_RANGE * std::sinf(elapsed_time_in_seconds);
-            // An addition shifts it into the appropriate range.
-            constexpr float ADDITIONAL_ALPHA_SHIFT_AMOUNT = 0.6f;
-            alpha_for_rainbow += ADDITIONAL_ALPHA_SHIFT_AMOUNT;
+            TextBox.Render(renderer);
+        }
 
-            rainbow_shader->setUniform("alpha_for_rainbow", alpha_for_rainbow);
-            rainbow_shader->setUniform("texture", sf::Shader::CurrentTexture);
-            rainbow_effect.shader = rainbow_shader.get();
+        // RENDER APPROPRIATE SHADING EFFECTS FOR CERTAIN SUBSTATES.
+        sf::RenderStates shading_effect = sf::RenderStates::Default;
+
+        float elapsed_time_for_fading_in_seconds = ElapsedTimeForCurrentSubstate.asSeconds();
+        float current_ratio_through_current_fade = elapsed_time_for_fading_in_seconds / FADING_MAX_TIME_IN_SECONDS;
+        switch (CurrentSubstate)
+        {
+            case Substate::FADING_IN:
+            {
+                GRAPHICS::Color current_tint_for_fading = GRAPHICS::Color::WHITE;
+                current_tint_for_fading.ScaleRgb(current_ratio_through_current_fade);
+                std::shared_ptr<sf::Shader> colored_texture_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
+                ASSERT_THEN_IF(colored_texture_shader)
+                {
+                    colored_texture_shader->setUniform("color", sf::Glsl::Vec4(sf::Color(current_tint_for_fading.Red, current_tint_for_fading.Green, current_tint_for_fading.Blue, current_tint_for_fading.Alpha)));
+                    colored_texture_shader->setUniform("texture", sf::Shader::CurrentTexture);
+                    shading_effect.shader = colored_texture_shader.get();
+                }
+                break;
+            }
+            case Substate::GOD_SPEAKING_DURING_RAINBOW:
+            {
+                // ADD A RAINBOW EFFECT.
+                std::shared_ptr<sf::Shader> rainbow_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::RAINBOW_SHADER);
+                ASSERT_THEN_IF(rainbow_shader)
+                {
+                    // COMPUTE THE LIGHTING FOR THE SHADER.
+                    // The rainbow's intensity should pulse based on elapsed time.
+                    float elapsed_time_in_seconds = gaming_hardware.Clock.TotalElapsedTime.asSeconds();
+                    // The range of sin() is [-1, 1].  We want the alpha to be in the range of [0.4, 0.8]
+                    // (a very subtle pulse).
+                    // The initial multiplication brings the range to [-0.2, 0.2].
+                    constexpr float ADDITIONAL_ALPHA_RANGE = 0.2f;
+                    float alpha_for_rainbow = ADDITIONAL_ALPHA_RANGE * std::sinf(elapsed_time_in_seconds);
+                    // An addition shifts it into the appropriate range.
+                    constexpr float ADDITIONAL_ALPHA_SHIFT_AMOUNT = 0.6f;
+                    alpha_for_rainbow += ADDITIONAL_ALPHA_SHIFT_AMOUNT;
+
+                    rainbow_shader->setUniform("alpha_for_rainbow", alpha_for_rainbow);
+                    rainbow_shader->setUniform("texture", sf::Shader::CurrentTexture);
+                    shading_effect.shader = rainbow_shader.get();
+                }
+                break;
+            }
+            case Substate::FADING_OUT:
+            {
+                constexpr float MAX_RATIO = 1.0f;
+                float current_ratio_remaining_for_fade = MAX_RATIO - current_ratio_through_current_fade;
+                GRAPHICS::Color current_tint_for_fading = GRAPHICS::Color::WHITE;
+                current_tint_for_fading.ScaleRgb(current_ratio_remaining_for_fade);
+                std::shared_ptr<sf::Shader> colored_texture_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
+                ASSERT_THEN_IF(colored_texture_shader)
+                {
+                    colored_texture_shader->setUniform("color", sf::Glsl::Vec4(sf::Color(current_tint_for_fading.Red, current_tint_for_fading.Green, current_tint_for_fading.Blue, current_tint_for_fading.Alpha)));
+                    colored_texture_shader->setUniform("texture", sf::Shader::CurrentTexture);
+                    shading_effect.shader = colored_texture_shader.get();
+                }
+                break;
+            }
         }
 
         // RENDER THE FINAL SCREEN.
-        sf::Sprite screen = renderer.RenderFinalScreen(rainbow_effect);
+        sf::Sprite screen = renderer.RenderFinalScreen(shading_effect);
         return screen;
     }
 
@@ -104,7 +302,7 @@ namespace STATES
         }
 
         // UPDATE THE PLAYER BASED ON INPUT.
-        MAPS::ExitPoint* map_exit_point = UpdatePlayerBasedOnInput(
+        UpdatePlayerBasedOnInput(
             gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
             gaming_hardware.InputController,
             world,
@@ -112,21 +310,6 @@ namespace STATES
             map_grid,
             camera,
             *gaming_hardware.Speakers);
-        if (map_exit_point)
-        {
-            // SWITCH OVER TO THE NEW MAP GRID.
-            CurrentMapGrid = map_exit_point->NewMapGrid;
-
-            // UPDATE THE CAMERA TO FOCUS ON THE NEW TILE MAP.
-            MATH::Vector2f center_world_position = map_exit_point->NewTileMap->GetCenterWorldPosition();
-            camera.SetCenter(center_world_position);
-
-            // MOVE THE PLAYER TO THE START POINT OF THE NEW TILE MAP.
-            world.NoahPlayer->SetWorldPosition(map_exit_point->NewPlayerWorldPosition);
-
-            // EXIT THIS UPDATE IF THE PLAYER HAS CHANGED MAPS.
-            return;
-        }
 
         // UPDATE THE REST OF THE WORLD WITHIN CURRENT TILE MAP.
         /// @todo   Handle text box!
@@ -152,8 +335,7 @@ namespace STATES
     /// @param[in,out]  map_grid - The map grid containing the current tile map.
     /// @param[in,out]  camera - The camera defining the viewable region of the map grid.
     /// @param[in,out]  speakers - The speakers from which to play any audio.
-    /// @return The map exit point, if the player stepped on such a point.
-    MAPS::ExitPoint* PostFloodGameplayState::UpdatePlayerBasedOnInput(
+    void PostFloodGameplayState::UpdatePlayerBasedOnInput(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
         MAPS::World& world,
@@ -164,6 +346,9 @@ namespace STATES
     {
         /// @todo
         speakers;
+
+        /// @todo   Check for building the altar!
+        /// @todo   Check for offering sacrifices!
 
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
 
@@ -431,33 +616,12 @@ namespace STATES
         {
             // UPDATE NOAH'S ANIMATION.
             world.NoahPlayer->Sprite.Update(elapsed_time);
-
-            // CHECK IF THE PLAYER STEPPED ON AN EXIT POINT.
-            // This should only occur if the player has changed to a different tile.
-            // Otherwise, the game might quickly flip back and forth between maps.
-            MATH::Vector2f noah_world_position = world.NoahPlayer->GetWorldPosition();
-            MAPS::TileMap* tile_map_underneath_noah = map_grid.GetTileMap(noah_world_position.X, noah_world_position.Y);
-            std::shared_ptr<MAPS::Tile> tile_under_noah = tile_map_underneath_noah->GetTileAtWorldPosition(
-                noah_world_position.X,
-                noah_world_position.Y);
-            bool ground_tile_changed = (
-                (original_tile_under_noah && tile_under_noah) &&
-                (original_tile_under_noah->Id != tile_under_noah->Id));
-            bool noah_stepped_onto_new_tile = ground_tile_changed;
-            if (noah_stepped_onto_new_tile)
-            {
-                MAPS::ExitPoint* exit_point = tile_map_underneath_noah->GetExitPointAtWorldPosition(noah_world_position);
-                return exit_point;
-            }
         }
         else
         {
             // STOP NOAH'S ANIMATION FROM PLAYING SINCE THE PLAYER DIDN'T MOVE THIS FRAME.
             world.NoahPlayer->Sprite.ResetAnimation();
         }
-
-        // INDICATE THAT THE PLAYER DIDN'T STEP ON AN EXIT POINT.
-        return nullptr;
     }
 
     /// Updates the camera, along with the world based on any major changes

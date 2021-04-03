@@ -5,6 +5,8 @@
 
 namespace STATES
 {
+    /// @todo   Add load function that positions food on 3rd floor!
+
     /// Updates the state of the gameplay based on elapsed time and player input.
     /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output for the update.
     /// @param[in,out]  world - The world to update based on gameplay.
@@ -42,6 +44,17 @@ namespace STATES
             *CurrentMapGrid,
             camera,
             current_game_data);
+
+        /// @todo   Check for days when sending out raven/dove!
+        /// - +40 days - Noah sends raven + dove out (Genesis 8:6-7)
+        /// - +7 days - Noah sends dove out again (Genesis 8:10)
+        /// - +7 days - Noah sends dove out again; it doesn't return (Genesis 8:12)
+        ///
+        /// 375 total days - 27 days for 2nd month - 30 days for 1st month? = 318 for final dove sending
+        /// 318 - 7 = 311 for first dove-only sending
+        /// 311 - 40 = 271 for raven/dove sending
+        /// Could possibly be as early as about day 223 (assuming 30 day months)...so maybe we should provide a range?
+        /// Also should probably look at Hebrew calendar.
 
         // START PLAYING THE BACKGROUND MUSIC IF ITS NOT ALREADY PLAYING.
         /// @todo   Background music?
@@ -210,6 +223,10 @@ namespace STATES
     {
         /// @todo
         speakers;
+
+        /// @todo   Check for picking up food!
+        /// @todo   Check for feeding animals!
+        /// @todo   Check for picking up presents!
 
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
 

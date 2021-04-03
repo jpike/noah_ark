@@ -347,36 +347,7 @@ namespace STATES
             }
             case GameState::POST_FLOOD_GAMEPLAY:
             {
-                // INITIALIZE THE WORLD.
-                PostFloodGameplayState.CurrentMapGrid = &world.Overworld.MapGrid;
-
-                // The ark should be completely built at this point.
-                unsigned int tile_map_row_count = PostFloodGameplayState.CurrentMapGrid->TileMaps.GetHeight();
-                unsigned int tile_map_column_count = PostFloodGameplayState.CurrentMapGrid->TileMaps.GetWidth();
-                for (unsigned int tile_map_row_index = 0; tile_map_row_index < tile_map_row_count; ++tile_map_row_index)
-                {
-                    for (unsigned int tile_map_column_index = 0; tile_map_column_index < tile_map_column_count; ++tile_map_column_index)
-                    {
-                        // BUILD ALL ARK PIECES IN THE CURRENT TILE MAP.
-                        MAPS::TileMap* tile_map = PostFloodGameplayState.CurrentMapGrid->GetTileMap(tile_map_row_index, tile_map_column_index);
-                        assert(tile_map);
-                        for (OBJECTS::ArkPiece& ark_piece : tile_map->ArkPieces)
-                        {
-                            ark_piece.Built = true;
-                        }
-                    }
-                }
-
-                // FOCUS THE CAMERA ON THE PLAYER.
-                // The player is positioned at the exit of the ark
-                constexpr unsigned int ARK_EXIT_TILE_MAP_ROW_INDEX = 0;
-                constexpr unsigned int ARK_EXIT_TILE_MAP_COLUMN_INDEX = 2;
-                MAPS::TileMap* ark_exit_tile_map = PostFloodGameplayState.CurrentMapGrid->GetTileMap(ARK_EXIT_TILE_MAP_ROW_INDEX, ARK_EXIT_TILE_MAP_COLUMN_INDEX);
-                assert(ark_exit_tile_map);
-                MATH::Vector2f ark_exit_map_center_world_position = ark_exit_tile_map->GetCenterWorldPosition();
-                world.NoahPlayer->SetWorldPosition(ark_exit_map_center_world_position);
-                MATH::Vector2f player_start_world_position = world.NoahPlayer->GetWorldPosition();
-                renderer.Camera.SetCenter(player_start_world_position);
+                PostFloodGameplayState.Load(world, renderer, gaming_hardware);
                 break;
             }
             case GameState::ENDING_CREDITS_SCREEN:

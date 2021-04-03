@@ -62,13 +62,13 @@ namespace STATES
                     ArkEntranceTileMap->MapGrid);
                 added_family_member.Sprite.CurrentFrameSprite.IsVisible = true;
             }
-        }
 
-        // ENSURE ALL ARK PIECES ARE BUILT.
-        // Only the entrace map has ark pieces built since it's the only map in view.
-        for (OBJECTS::ArkPiece& ark_piece : ArkEntranceTileMap->ArkPieces)
-        {
-            ark_piece.Built = true;
+            // ENSURE ALL ARK PIECES ARE BUILT.
+            // Only the entrace map has ark pieces built since it's the only map in view.
+            for (OBJECTS::ArkPiece& ark_piece : ArkEntranceTileMap->ArkPieces)
+            {
+                ark_piece.Built = true;
+            }
         }
     }
 

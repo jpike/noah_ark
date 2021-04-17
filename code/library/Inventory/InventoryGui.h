@@ -63,7 +63,7 @@ namespace INVENTORY
         };
 
         // UPDATING.
-        void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
+        OBJECTS::Food::TypeId Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
         void Render(const STATES::SavedGameData& saved_game_data, GRAPHICS::Renderer& renderer);

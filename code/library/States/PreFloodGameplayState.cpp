@@ -7,8 +7,10 @@
 #include "Bible/BibleVerses.h"
 #include "Collision/CollisionDetectionAlgorithms.h"
 #include "Debugging/DebugConsole.h"
+#include "ErrorHandling/Asserts.h"
 #include "ErrorHandling/NullChecking.h"
 #include "Gameplay/RandomAnimalGenerationAlgorithm.h"
+#include "Resources/FoodGraphics.h"
 #include "States/PreFloodGameplayState.h"
 
 namespace STATES
@@ -147,7 +149,53 @@ namespace STATES
 
         // UPDATE THE HUD.
         // As of now, the HUD is capable of altering the gameplay state.
-        GameState next_game_state = Hud.Update(current_game_data, gaming_hardware);
+        auto [next_game_state, dropped_food_type] = Hud.Update(current_game_data, gaming_hardware);
+
+        // CHECK IF A TYPE OF FOOD WAS SELECTED FOR DROPPING.
+        bool food_selected_for_dropping = (OBJECTS::Food::NONE != dropped_food_type);
+        if (food_selected_for_dropping)
+        {
+            // CLOSE THE INVENTORY SINCE THE PLAYER HAS SELECTED TO DROP SOME FOOD.
+            Hud.InventoryOpened = false;
+
+            // DROP THE FOOD IN FRONT OF THE PLAYER'S POSITION.
+            // Dropping in front is important to ensure that the player does not automatically pick it up.
+            std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(dropped_food_type);
+            food_sprite->WorldPosition = world.NoahPlayer->GetWorldPosition();
+
+            MATH::FloatRectangle noah_bounding_box = world.NoahPlayer->GetWorldBoundingBox();
+            switch (world.NoahPlayer->FacingDirection)
+            {
+                case GAMEPLAY::Direction::UP:
+                    food_sprite->WorldPosition.Y -= noah_bounding_box.Height();
+                    break;
+                case GAMEPLAY::Direction::DOWN:
+                    food_sprite->WorldPosition.Y += noah_bounding_box.Height();
+                    break;
+                case GAMEPLAY::Direction::LEFT:
+                    food_sprite->WorldPosition.X -= noah_bounding_box.Width();
+                    break;
+                case GAMEPLAY::Direction::RIGHT:
+                    food_sprite->WorldPosition.X += noah_bounding_box.Width();
+                    break;
+            }
+
+            OBJECTS::Food food =
+            {
+                .Type = dropped_food_type,
+                // Only a single item of food is dropped at a time.
+                .Count = 1,
+                .Sprite = *food_sprite
+            };
+            MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(food_sprite->WorldPosition.X, food_sprite->WorldPosition.Y);
+            ASSERT_THEN_IF(current_tile_map)
+            {
+                current_tile_map->FoodOnGround.push_back(food);
+            }
+
+            // REMOVE THE FOOD FROM THE PLAYER'S INVENTORY SINCE IT IS NOW ON THE GROUND.
+            --world.NoahPlayer->Inventory.FoodCounts[dropped_food_type];
+        }
 
         // CHECK IF A MODAL HUD COMPONENT IS DISPLAYED.
         // If a modal GUI component is displayed, then the regular controls for the player

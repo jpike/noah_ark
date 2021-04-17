@@ -24,11 +24,13 @@ namespace GRAPHICS::GUI
     /// Updates the HUD.
     /// @param[in]  current_game_data - The game data to display in the HUD.
     /// @param[in]  gaming_hardware - The gaming hardware supplying input.
-    /// @return The state the game should be in after updating the HUD.
-    STATES::GameState PreFloodHeadsUpDisplay::Update(
+    /// @return The state the game should be in after updating the HUD and any food type that should be dropped.
+    std::tuple<STATES::GameState, OBJECTS::Food::TypeId> PreFloodHeadsUpDisplay::Update(
         const STATES::SavedGameData& current_game_data,
         const HARDWARE::GamingHardware& gaming_hardware)
     {
+        OBJECTS::Food::TypeId selected_food_type_to_drop = OBJECTS::Food::NONE;
+
         // CHECK IF THE PAUSE MENU IS OPEN.
         // If so, it should take precedence over other parts of the HUD.
         // After that, the main text box should take precedence over the inventory.
@@ -46,7 +48,7 @@ namespace GRAPHICS::GUI
             else if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::T))
             {
                 // RETURN TO THE TITLE SCREEN.
-                return STATES::GameState::TITLE_SCREEN;
+                return std::make_tuple(STATES::GameState::TITLE_SCREEN, selected_food_type_to_drop);
             }
             else if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Escape))
             {
@@ -88,7 +90,7 @@ namespace GRAPHICS::GUI
             }
             else if (InventoryOpened)
             {
-                InventoryGui.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
+                selected_food_type_to_drop = InventoryGui.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame, gaming_hardware.InputController);
             }
             else
             {
@@ -102,7 +104,7 @@ namespace GRAPHICS::GUI
         }
 
         // STAY ON THE CURRENT STATE.
-        return current_game_data.CurrentGameState;
+        return std::make_tuple(current_game_data.CurrentGameState, selected_food_type_to_drop);
     }
 
     /// Renders the HUD to the provided target.

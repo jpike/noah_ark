@@ -1,8 +1,10 @@
 #pragma once
 
+#include <tuple>
 #include "Graphics/Renderer.h"
 #include "Hardware/GamingHardware.h"
 #include "Inventory/InventoryGui.h"
+#include "Objects/Food.h"
 #include "States/GameState.h"
 #include "States/SavedGameData.h"
 
@@ -13,7 +15,7 @@ namespace GRAPHICS::GUI
     {
     public:
         // PUBLIC METHODS.
-        STATES::GameState Update(
+        std::tuple<STATES::GameState, OBJECTS::Food::TypeId> Update(
             const STATES::SavedGameData& current_game_data,
             const HARDWARE::GamingHardware& gaming_hardware);
 

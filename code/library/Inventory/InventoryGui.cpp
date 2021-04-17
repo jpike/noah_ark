@@ -6,8 +6,11 @@ namespace INVENTORY
     /// Updates the inventory GUI.
     /// @param[in]  elapsed_time - The elapsed time since the last frame.
     /// @param[in]  input_controller - The controller on which to check user input.
-    void InventoryGui::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
+    /// @return The type of food selected for dropping (if a type was selected).
+    OBJECTS::Food::TypeId InventoryGui::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
     {
+        OBJECTS::Food::TypeId selected_food_type = OBJECTS::Food::NONE;
+
         // CHECK WHICH TAB IS OPENED.
         switch (CurrentTab)
         {
@@ -130,7 +133,7 @@ namespace INVENTORY
             case TabType::FOOD:
             {
                 // UPDATE THE FOOD PAGE.
-                FoodPage.Update(elapsed_time, input_controller);
+                selected_food_type = FoodPage.Update(elapsed_time, input_controller);
 
                 // SWITCH TABS IF NO FOOD SELECTION IS IN-PROGRESS AND AN APPROPRIATE BUTTON IS PRESSED.
                 // The selected indices need to be checked rather than the food type itself since some boxes
@@ -153,6 +156,8 @@ namespace INVENTORY
                 // Nothing to do.
                 break;
         }
+
+        return selected_food_type;
     }
 
     /// Renders the inventory GUI to the provided screen.

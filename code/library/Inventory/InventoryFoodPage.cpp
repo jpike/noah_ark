@@ -10,7 +10,8 @@ namespace INVENTORY
     /// Updates the food page.
     /// @param[in]  elapsed_time - The elapsed time since the last frame.
     /// @param[in]  input_controller - The controller on which to check user input.
-    void InventoryFoodPage::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
+    /// @return The type of food selected for dropping (if a type was selected).
+    OBJECTS::Food::TypeId InventoryFoodPage::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
     {
         /// @todo
         elapsed_time;
@@ -46,10 +47,6 @@ namespace INVENTORY
                 CurrentlySelectedColumnIndex = MIN_SELECTED_COLUMN_INDEX;
             }
         }
-        else if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
-        {
-            /// @todo   Place food if appropriate!
-        }
 
         // KEEP THE SELECTED INDICES WITHIN RANGE.
         constexpr int MAX_ROW_INDEX = 4;
@@ -65,6 +62,16 @@ namespace INVENTORY
         if (!food_selected)
         {
             SelectedFoodType = OBJECTS::Food::NONE;
+        }
+
+        /// RETURN THE SELECTED FOOD TYPE IF IT IS CHOSEN FOR DROPPING.
+        if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+        {
+            return SelectedFoodType;
+        }
+        else
+        {
+            return OBJECTS::Food::NONE;
         }
     }
 
@@ -88,6 +95,12 @@ namespace INVENTORY
         renderer.RenderScreenRectangle(
             background_rectangle,
             BACKGROUND_COLOR);
+
+        // RENDER SOME HELP TEXT FOR THIS PAGE.
+        renderer.RenderText(
+            " Z to drop 1 of selected food        Arrow keys to move",
+            RESOURCES::AssetId::FONT_TEXTURE,
+            background_rectangle.LeftTop);
 
         // CALCULATE HOW MANY FOOD BOXES CAN APPEAR PER ROW AND COLUMN.
         // Some padding is added around the boxes in order to space them out.

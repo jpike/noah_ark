@@ -26,7 +26,7 @@ namespace INVENTORY
         static constexpr int UNSELECTED_COLUMN_INDEX = -1;
 
         // UPDATING.
-        void Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
+        OBJECTS::Food::TypeId Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller);
 
         // RENDERING.
         void Render(const Inventory& inventory, GRAPHICS::Renderer& renderer);

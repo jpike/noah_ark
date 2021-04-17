@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <tuple>
 #include <SFML/System.hpp>
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/TextBox.h"
@@ -9,6 +10,7 @@
 #include "Input/InputController.h"
 #include "Inventory/InventoryGui.h"
 #include "Maps/World.h"
+#include "Objects/Food.h"
 #include "Objects/Noah.h"
 #include "States/GameState.h"
 #include "States/SavedGameData.h"
@@ -29,7 +31,7 @@ namespace GRAPHICS::GUI
             const unsigned int main_text_box_height_in_pixels);
 
         // UPDATE.
-        STATES::GameState Update(
+        std::tuple<STATES::GameState, OBJECTS::Food::TypeId> Update(
             const STATES::SavedGameData& current_game_data,
             const HARDWARE::GamingHardware& gaming_hardware);
 

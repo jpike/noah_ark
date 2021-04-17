@@ -28,7 +28,8 @@ namespace MAPS
         // CLEAR ANY PREVIOUSLY BUILT ARK PIECES.
         // This prevents ark pieces left over from different saved games from still appearing as built
         // when playing a different saved game.
-        SetArkPiecesToUnbuilt();
+        constexpr bool UNBUILT = true;
+        SetArkPiecesBuiltStatus(UNBUILT);
 
         // The rest of the code below effectively re-creates the game world, ensuring that
         // leftover entities in each tile map aren't preserved between saved games.
@@ -226,6 +227,7 @@ namespace MAPS
                                             // CREATE THE FOOD.
                                             food = OBJECTS::Food();
                                             food->Type = food_type;
+                                            food->Count = OBJECTS::Food::COUNT_PER_INSTANCE_FROM_TREES;
                                             food->Sprite = GRAPHICS::Sprite(*food_sprite);
 
                                             // The food should be positioned on the tree.
@@ -253,10 +255,11 @@ namespace MAPS
         DEBUGGING::DebugConsole::WriteLine("Ark piece count: ", ark_piece_count);
     }
 
-    /// Sets all ark pieces in the world to be unbuilt.
-    void Overworld::SetArkPiecesToUnbuilt()
+    /// Sets the built status of all ark pieces in the world.
+    /// @param[in]  built - True if ark pieces should be considered built; false if not.
+    void Overworld::SetArkPiecesBuiltStatus(const bool built)
     {
-        // UNBUILD ARK PIECES IN EACH TILE MAP.
+        // SET THE BUILD STATUS OF ALL ARK PIECES IN EACH TILE MAP.
         unsigned int tile_map_row_count = MapGrid.TileMaps.GetHeight();
         unsigned int tile_map_column_count = MapGrid.TileMaps.GetWidth();
         for (unsigned int tile_map_row_index = 0; tile_map_row_index < tile_map_row_count; ++tile_map_row_index)
@@ -270,10 +273,10 @@ namespace MAPS
                     continue;
                 }
 
-                // UNBUILD EACH ARK PIECE IN THE CURRENT TILE MAP.
+                // SET THE BUILT STATUS EACH ARK PIECE IN THE CURRENT TILE MAP.
                 for (OBJECTS::ArkPiece& ark_piece : current_tile_map->ArkPieces)
                 {
-                    ark_piece.Built = false;
+                    ark_piece.Built = built;
                 }
             }
         }

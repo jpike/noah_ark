@@ -29,7 +29,7 @@ namespace MAPS
 
         // OTHER PUBLIC METHODS.
         void ResetToInitialState();
-        void SetArkPiecesToUnbuilt();
+        void SetArkPiecesBuiltStatus(const bool built);
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The tile map grid for the overworld.

@@ -22,6 +22,13 @@
 
 namespace GRAPHICS
 {
+    /// Different types of shapes that can be rendered.
+    enum class ShapeType
+    {
+        RECTANGLE = 0,
+        CIRCLE
+    };
+
     /// The main renderer for the game.
     class Renderer
     {
@@ -39,7 +46,11 @@ namespace GRAPHICS
             const GRAPHICS::Color& color);
         void RenderKeyIcon(
             const char key,
-            const MATH::Vector2ui& left_top_screen_position_in_pixels);
+            const MATH::Vector2ui& left_top_screen_position_in_pixels,
+            const ShapeType shape_type = ShapeType::RECTANGLE,
+            const GRAPHICS::Color& border_color = GRAPHICS::Color::GRAY,
+            const GRAPHICS::Color& background_color = GRAPHICS::Color::LIGHT_GRAY,
+            const GRAPHICS::Color& text_color = GRAPHICS::Color::BLACK);
         void RenderGuiIcon(
             const RESOURCES::AssetId texture_id,
             const MATH::FloatRectangle& texture_sub_rectangle,

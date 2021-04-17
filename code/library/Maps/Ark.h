@@ -24,6 +24,8 @@ namespace MAPS
         static constexpr unsigned int INTERIOR_HEIGHT_IN_TILE_MAPS = 1;
         /// The index of the lowest map layer.
         static constexpr unsigned int LOWEST_LAYER_INDEX = 0;
+        /// The index of the highest map layer.
+        static constexpr unsigned int HIGHEST_LAYER_INDEX = 2;
         /// The number of layers in the ark.
         static constexpr unsigned int LAYER_COUNT = 3;
 

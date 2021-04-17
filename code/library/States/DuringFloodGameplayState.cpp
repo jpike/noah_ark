@@ -1,11 +1,226 @@
 #include "Collision/CollisionDetectionAlgorithms.h"
+#include "Debugging/DebugConsole.h"
+#include "ErrorHandling/Asserts.h"
 #include "Gameplay/FloodElapsedTime.h"
 #include "Graphics/TimeOfDayLighting.h"
+#include "Maps/Tileset.h"
+#include "Resources/FoodGraphics.h"
 #include "States/DuringFloodGameplayState.h"
 
 namespace STATES
 {
-    /// @todo   Add load function that positions food on 3rd floor!
+    /// Loads the game state into its initial state.
+    void DuringFloodGameplayState::Load(
+        MAPS::World& world,
+        GRAPHICS::Renderer& renderer,
+        HARDWARE::GamingHardware& gaming_hardware)
+    {
+        // TRACK THE CURRENT MAP GRID.
+        CurrentMapGrid = &world.Ark.Interior.LayersFromBottomToTop[MAPS::Ark::LOWEST_LAYER_INDEX];
+
+        // HAVE THE FAMILY MEMBERS RANDOMLY POSITIONED WITHIN THE ARK.
+        world.FamilyMembers.clear();
+        for (std::size_t family_member_index = 0; family_member_index < OBJECTS::FamilyMember::COUNT; ++family_member_index)
+        {
+            // RANDOMLY PLACE THE FAMILY MEMBER IN THE ARK.
+            // The dimensions of the family members are taken into account to ensure they'll be completely on-screen.
+            float min_family_member_world_x_position = OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+            float max_family_member_world_x_position = (
+                MAPS::Ark::INTERIOR_WIDTH_IN_TILE_MAPS * MAPS::TileMap::WIDTH_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<float>)
+                - OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+            float min_family_member_world_y_position = OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+            float max_family_member_world_y_position = (
+                MAPS::Ark::INTERIOR_HEIGHT_IN_TILE_MAPS * MAPS::TileMap::HEIGHT_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<float>)
+                - OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+            // This may have to be repeated multiple times in case the first picked tile isn't walkable.
+            // But this isn't expected to result in an infinite or even long-running loop.
+            bool family_member_placed_in_world = false;
+            while (!family_member_placed_in_world)
+            {
+                // COMPUTE A RANDOM POSITION FOR THE FAMILY MEMBER.
+                unsigned int ark_layer_index = gaming_hardware.RandomNumberGenerator.RandomNumberLessThan<unsigned int>(
+                    MAPS::Ark::LAYER_COUNT);
+                float family_member_x_position = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(
+                    min_family_member_world_x_position,
+                    max_family_member_world_x_position);
+                float family_member_y_position = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(
+                    min_family_member_world_y_position,
+                    max_family_member_world_y_position);
+                        
+                // CHECK IF A WALKABLE TILE EXISTS AT THAT RANDOM LOCATION.
+                // If a walkable tile doesn't exist, we'll just continue trying a different location.
+                MAPS::MultiTileMapGrid& ark_layer = world.Ark.Interior.LayersFromBottomToTop[ark_layer_index];
+                std::shared_ptr<MAPS::Tile> tile = ark_layer.GetTileAtWorldPosition(
+                    family_member_x_position,
+                    family_member_y_position);
+                bool tile_is_walkable = (tile && tile->IsWalkable());
+                if (tile_is_walkable)
+                {
+                    // PLACE THE FAMILY MEMBER AT THAT WORLD POSITION.
+                    family_member_placed_in_world = true;
+                    MATH::Vector2f family_member_world_position(family_member_x_position, family_member_y_position);
+                    DEBUGGING::DebugConsole::WriteLine("Placing family member at: ", family_member_world_position);
+                    world.FamilyMembers.emplace_back(
+                        static_cast<OBJECTS::FamilyMember::Type>(family_member_index),
+                        family_member_world_position,
+                        &ark_layer);
+                }
+            }
+        }
+
+        // POSITION FOOD ON THE THIRD FLOOR OF THE ARK.
+        // This floor is empty due to all animals being on the first two floors,
+        // so it is useful to add visual variety and place food on this third floor.
+        //
+        // To avoid any leftover food, the relevant tile maps must be cleared of previous food items.
+        // The foods are placed in fixed locations based on the type of the food for simplicity.
+        // The foods are approximately evenly distributed across the left-most and right-most
+        // tile maps on the top floor in order to leave room for the middle tile map to be
+        // used for other things (i.e. "personal space").
+        constexpr unsigned int SINGLE_ARK_TILE_MAP_ROW_INDEX = 0;
+        constexpr unsigned int ARK_LEFT_TILE_MAP_COLUMN_INDEX = 0;
+        MAPS::TileMap* left_tile_map_for_food = world.Ark.Interior.LayersFromBottomToTop[MAPS::Ark::HIGHEST_LAYER_INDEX].GetTileMap(SINGLE_ARK_TILE_MAP_ROW_INDEX, ARK_LEFT_TILE_MAP_COLUMN_INDEX);
+        left_tile_map_for_food->FoodOnGround.clear();
+        constexpr unsigned int ARK_RIGHT_TILE_MAP_COLUMN_INDEX = 2;
+        MAPS::TileMap* right_tile_map_for_food = world.Ark.Interior.LayersFromBottomToTop[MAPS::Ark::HIGHEST_LAYER_INDEX].GetTileMap(SINGLE_ARK_TILE_MAP_ROW_INDEX, ARK_RIGHT_TILE_MAP_COLUMN_INDEX);
+        right_tile_map_for_food->FoodOnGround.clear();
+
+        constexpr unsigned int FIRST_VALID_FOOD_ID = OBJECTS::Food::TypeId::NONE + 1;
+        for (unsigned int food_id = FIRST_VALID_FOOD_ID; food_id < OBJECTS::Food::COUNT; ++food_id)
+        {
+            // CHECK IF THE CURRENT FOOD HAS BEEN COLLECTED AT ALL.
+            unsigned int current_food_collected_count = world.NoahPlayer->Inventory.FoodCounts[food_id];
+            bool current_food_collected = (current_food_collected_count > 0);
+            if (!current_food_collected)
+            {
+                continue;
+            }
+
+            // DETERMINE THE TILE MAP THE FOOD SHOULD BE PLACED WITHIN.
+            MAPS::TileMap* tile_map_for_food = nullptr;
+            constexpr unsigned int FOOD_COUNT_PER_TILE_MAP = OBJECTS::Food::COUNT / 2;
+            bool on_left_tile_map = (food_id <= FOOD_COUNT_PER_TILE_MAP);
+            if (on_left_tile_map)
+            {
+                // GET THE LEFT TILE MAP OF THE ARK'S THIRD FLOOR.
+                tile_map_for_food = left_tile_map_for_food;
+            }
+            else
+            {
+                // GET THE RIGHT TILE MAP OF THE ARK'S THIRD FLOOR.
+                tile_map_for_food = right_tile_map_for_food;
+            }
+
+            // PLACE FOOD WITHIN THE TILE MAP.
+            ASSERT_THEN_IF(tile_map_for_food)
+            {
+                // DETERMINE THE BOUNDARIES IN WHICH TO POSITION FOOD WITHIN THE TILE MAP.
+                // An apron of 3 tiles from the edges of the map is used to avoid having the food appear
+                // outside of the actual map (on black tiles) or on top of things like stairs.
+                constexpr float FOOD_TILE_OFFSET_FROM_BORDERS = 3.0f;
+                constexpr float FOOD_PIXEL_OFFSET_FROM_BORDERS = FOOD_TILE_OFFSET_FROM_BORDERS * MAPS::Tile::DIMENSION_IN_PIXELS<float>;
+                MATH::FloatRectangle tile_map_world_boundaries = tile_map_for_food->GetWorldBoundingBox();
+                MATH::FloatRectangle all_food_boundaries = tile_map_world_boundaries.Shrink(FOOD_PIXEL_OFFSET_FROM_BORDERS);
+
+                // The spacing here is chosen to try and make the most of space on each tile map
+                // and result in a nice even distribution in a rectangular pattern.
+                constexpr float SPACE_FOR_FOOD_ITEM_IN_PIXELS = 80.0f;
+                constexpr float FOOD_HALF_WIDTH_IN_PIXELS = SPACE_FOR_FOOD_ITEM_IN_PIXELS / 2.0f;
+                float starting_food_center_x_position = all_food_boundaries.LeftTop.X + FOOD_HALF_WIDTH_IN_PIXELS;
+                float starting_food_center_y_position = all_food_boundaries.LeftTop.Y + FOOD_HALF_WIDTH_IN_PIXELS;
+
+                // CALCULATE HOW MANY FOOD BOXES CAN APPEAR PER ROW AND COLUMN.
+                float food_space_total_width_in_pixels = all_food_boundaries.Width();
+                unsigned int boxes_per_row = static_cast<unsigned int>(food_space_total_width_in_pixels / SPACE_FOR_FOOD_ITEM_IN_PIXELS);
+
+                // DETERMINE THE POSITION FOR THIS CURRENT FOOD ITEM.
+                // Since the first food enum isn't valid, the ID must be adjusted to
+                // make things zero-based for calculating the box indices.
+                unsigned int zero_based_food_id = food_id - 1;
+                unsigned int normalized_food_index_within_tile_map = zero_based_food_id % FOOD_COUNT_PER_TILE_MAP;
+                unsigned int box_row_index = normalized_food_index_within_tile_map / boxes_per_row;
+                unsigned int box_column_index = normalized_food_index_within_tile_map % boxes_per_row;
+
+                float current_box_x_offset = static_cast<float>(box_column_index * SPACE_FOR_FOOD_ITEM_IN_PIXELS);
+                float current_food_center_x_position = starting_food_center_x_position + current_box_x_offset;
+
+                float current_box_y_offset = static_cast<float>(box_row_index * SPACE_FOR_FOOD_ITEM_IN_PIXELS);
+                float current_food_center_y_position = starting_food_center_y_position + current_box_y_offset;
+
+                // PLACE THIS FOOD ITEM AT THE APPROPRIATE SPOT.
+                OBJECTS::Food::TypeId food_type = static_cast<OBJECTS::Food::TypeId>(food_id);
+                std::shared_ptr<GRAPHICS::Sprite> food_sprite = RESOURCES::FoodGraphics::GetSprite(food_type);
+                food_sprite->WorldPosition.X = current_food_center_x_position;
+                food_sprite->WorldPosition.Y = current_food_center_y_position;
+                OBJECTS::Food food =
+                {
+                    .Type = food_type,
+                    .Count = current_food_collected_count,
+                    .Sprite = *food_sprite
+                };
+                tile_map_for_food->FoodOnGround.push_back(food);
+
+                // REMOVE THE FOOD FROM THE PLAYER'S INVENTORY SINCE IT IS NOW ON THE GROUND.
+                world.NoahPlayer->Inventory.FoodCounts[food_id] = 0;
+
+                /// @todo   How to store this information in saved game data?
+            }
+        }
+
+        // MOVE THE PLAYER INTO THE ENTRANCE.
+        std::shared_ptr<MAPS::TileMap> entrance_map = world.Ark.GetEntranceMap();
+        MATH::Vector2f entrance_map_center_position = entrance_map->GetCenterWorldPosition();
+        world.NoahPlayer->SetWorldPosition(entrance_map_center_position);
+        renderer.Camera.SetCenter(entrance_map_center_position);
+
+        // CLOSE THE EXITWAY FROM THE ARK.                        
+        // The tileset is needed for switching tiles.
+        MAPS::Tileset tileset;
+        for (unsigned int tile_row = 0; tile_row < MAPS::TileMap::HEIGHT_IN_TILES; ++tile_row)
+        {
+            for (unsigned int tile_column = 0; tile_column < MAPS::TileMap::WIDTH_IN_TILES; ++tile_column)
+            {
+                // GET THE CURRENT TILE.
+                std::shared_ptr<MAPS::Tile> current_tile = entrance_map->Ground.Tiles(tile_column, tile_row);
+                if (!current_tile)
+                {
+                    continue;
+                }
+
+                // CHANGE THE TILE IF IT IS FOR AN ARK EXIT DOOR.
+                switch (current_tile->Type)
+                {
+                    case MAPS::TileType::ARK_INTERIOR_CENTER_EXIT:
+                    {
+                        std::shared_ptr<MAPS::Tile> center_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_CENTER_EXIT_CLOSED);
+                        if (center_closed_tile)
+                        {
+                            entrance_map->Ground.SetTile(tile_column, tile_row, center_closed_tile);
+                        }
+                        break;
+                    }
+                    case MAPS::TileType::ARK_INTERIOR_LEFT_EXIT:
+                    {
+                        std::shared_ptr<MAPS::Tile> left_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_LEFT_EXIT_CLOSED);
+                        if (left_closed_tile)
+                        {
+                            entrance_map->Ground.SetTile(tile_column, tile_row, left_closed_tile);
+                        }
+                        break;
+                    }
+                    case MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT:
+                    {
+                        std::shared_ptr<MAPS::Tile> right_closed_tile = tileset.CreateTile(MAPS::TileType::ARK_INTERIOR_RIGHT_EXIT_CLOSED);
+                        if (right_closed_tile)
+                        {
+                            entrance_map->Ground.SetTile(tile_column, tile_row, right_closed_tile);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     /// Updates the state of the gameplay based on elapsed time and player input.
     /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output for the update.
@@ -96,6 +311,56 @@ namespace STATES
         // RENDER THE PLAYER.
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
+        // RENDER A TOOLTIP FOR COLLECTING FOOD IF THE PLAYER IS ON TOP OF IT.
+        MATH::FloatRectangle camera_bounds = renderer.Camera.ViewBounds;
+        MATH::Vector2f camera_view_center = camera_bounds.Center();
+        MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(camera_view_center.X, camera_view_center.Y);
+        ASSERT_THEN_IF(current_tile_map)
+        {
+            for (auto food = current_tile_map->FoodOnGround.cbegin();
+                food != current_tile_map->FoodOnGround.cend();
+                ++food)
+            {
+                // CHECK IF THE CURRENT FOOD ITEM INTERSECTS WITH THE PLAYER.
+                MATH::FloatRectangle food_bounding_box = food->Sprite.GetWorldBoundingBox();
+                MATH::FloatRectangle noah_bounding_box = world.NoahPlayer->GetWorldBoundingBox();
+                bool food_intersects_with_noah = food_bounding_box.Intersects(noah_bounding_box);
+                if (food_intersects_with_noah)
+                {
+                    // RENDER A TOOLTIP ICON FOR COLLECTING THE FOOD.
+                    MATH::Vector2f food_center_position = food_bounding_box.Center();
+                    MATH::Vector2ui collect_food_icon_top_left_position(
+                        static_cast<unsigned int>(food_center_position.X),
+                        static_cast<unsigned int>(food_center_position.Y));
+                    // The colors are adjusted to be light text on a dark background since that seems easier to see.
+                    const GRAPHICS::Color& BORDER_COLOR = GRAPHICS::Color::WHITE;
+                    const GRAPHICS::Color& BACKGROUND_COLOR = GRAPHICS::Color::BLACK;
+                    const GRAPHICS::Color& TEXT_COLOR = GRAPHICS::Color::WHITE;
+                    renderer.RenderKeyIcon(
+                        INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY_TEXT, 
+                        collect_food_icon_top_left_position,
+                        GRAPHICS::ShapeType::CIRCLE,
+                        BORDER_COLOR,
+                        BACKGROUND_COLOR,
+                        TEXT_COLOR);
+
+                    MATH::Vector2f tooltip_text_top_left_screen_position(
+                        food_bounding_box.RightBottom.X,
+                        food_center_position.Y);
+                    tooltip_text_top_left_screen_position.X += GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS;
+                    renderer.RenderText(
+                        // Short text is used to have it more easily fit on screen.
+                        "Pick Up",
+                        RESOURCES::AssetId::FONT_TEXTURE,
+                        tooltip_text_top_left_screen_position,
+                        TEXT_COLOR);
+                    
+                    // There is no need to continue looping if the player is already on top of a food item.
+                    break;
+                }
+            }
+        }
+
         // RENDER THE HUD.
         Hud.Render(current_game_data, renderer);
 
@@ -185,6 +450,40 @@ namespace STATES
                 if (family_member_in_view)
                 {
                     family_member.MoveWithin(*current_tile_map, gaming_hardware);
+                }
+            }
+
+            // HAVE THE PLAYER COLLECT FOOD IF APPROPRIATE.
+            // Food only needs to be collected if the player is pressing the appropriate button,
+            // so there is no need to check for this otherwise.
+            bool collect_food_button_pressed = gaming_hardware.InputController.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY);
+            if (collect_food_button_pressed)
+            {
+                for (auto food = current_tile_map->FoodOnGround.cbegin();
+                    food != current_tile_map->FoodOnGround.cend();)
+                {
+                    // CHECK IF THE CURRENT FOOD ITEM INTERSECTS WITH THE PLAYER.
+                    MATH::FloatRectangle food_bounding_box = food->Sprite.GetWorldBoundingBox();
+                    MATH::FloatRectangle noah_bounding_box = world.NoahPlayer->GetWorldBoundingBox();
+                    bool food_intersects_with_noah = food_bounding_box.Intersects(noah_bounding_box);
+                    if (food_intersects_with_noah)
+                    {
+                        // PLAY THE SOUND EFFECT FOR COLLECTING FOOD.
+                        gaming_hardware.Speakers->PlaySoundEffect(RESOURCES::AssetId::FOOD_PICKUP_SOUND);
+
+                        // ADD THE FOOD TO THE PLAYER'S INVENTORY.
+                        DEBUGGING::DebugConsole::WriteLine("Collected food: ", static_cast<int>(food->Type));
+                        world.NoahPlayer->Inventory.AddFood(*food);
+
+                        // REMOVE THE FOOD ITEM FROM THOSE IN THE CURRENT TILE MAP.
+                        // This should move to the next food ITEM.
+                        food = current_tile_map->FoodOnGround.erase(food);
+                    }
+                    else
+                    {
+                        // MOVE TO CHECKING COLLISIONS FOR THE NEXT FOOD ITEM.
+                        ++food;
+                    }
                 }
             }
         }

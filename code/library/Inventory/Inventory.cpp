@@ -13,7 +13,7 @@ namespace INVENTORY
     /// @param[in]  food - The food to add.
     void Inventory::AddFood(const OBJECTS::Food& food)
     {
-        FoodCounts[food.Type] += OBJECTS::Food::COUNT_PER_INSTANCE;
+        FoodCounts[food.Type] += food.Count;
     }
 
     /// Adds an animal to the inventory.

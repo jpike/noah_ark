@@ -37,9 +37,11 @@ namespace MATH
             const CoordinateType width,
             const CoordinateType height);
         explicit Rectangle() = default;
+        //explicit Rectangle(const Rectangle& other) = default;
         explicit Rectangle(const sf::Rect<CoordinateType>& sfml_rectangle);
 
         // OPERATORS.
+        //Rectangle& operator= (const Rectangle& rhs) = default;
         bool operator== (const Rectangle& rhs_rectangle) const;
 
         // POSITIONING.
@@ -51,6 +53,9 @@ namespace MATH
 
         // MOVEMENT.
         void Move(const MATH::Vector2<CoordinateType>& movement);
+
+        // SHRINKING.
+        Rectangle Shrink(const CoordinateType amount_to_shrink_in_all_dimensions) const;
 
         // DIMENSIONS.
         CoordinateType Width() const;
@@ -204,6 +209,20 @@ namespace MATH
     {
         LeftTop += movement;
         RightBottom += movement;
+    }
+
+    /// Shrinks the rectangle in all dimensions, returning the shrunken copy.
+    /// @param[in]  amount_to_shrink_in_all_dimensions - The amount to shrink in all dimensions.
+    /// @return A copy of the rectangle but shrunken in all dimensions.
+    template <typename CoordinateType>
+    Rectangle<CoordinateType> Rectangle<CoordinateType>::Shrink(const CoordinateType amount_to_shrink_in_all_dimensions) const
+    {
+        Rectangle<CoordinateType> shrunken_rectangle(*this);
+        shrunken_rectangle.LeftTop.X += amount_to_shrink_in_all_dimensions;
+        shrunken_rectangle.LeftTop.Y += amount_to_shrink_in_all_dimensions;
+        shrunken_rectangle.RightBottom.X -= amount_to_shrink_in_all_dimensions;
+        shrunken_rectangle.RightBottom.Y -= amount_to_shrink_in_all_dimensions;
+        return shrunken_rectangle;
     }
 
     /// Gets the width of the rectangle.

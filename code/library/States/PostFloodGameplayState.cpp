@@ -47,15 +47,11 @@ namespace STATES
             MATH::Vector2f noah_world_position = ark_entrance_tile_map_center + MATH::Vector2f(0.0f, 64.0f);
             world.NoahPlayer->SetWorldPosition(noah_world_position);
             world.NoahPlayer->Sprite.CurrentFrameSprite.IsVisible = true;
-
-            // ENSURE ALL ARK PIECES ARE BUILT.
-            // Only the entrace map has ark pieces built since it's the only map in view.
-            /// @todo   Need to do this for all appropriate tile maps for this state!
-            for (OBJECTS::ArkPiece& ark_piece : ark_entrace_tile_map->ArkPieces)
-            {
-                ark_piece.Built = true;
-            }
         }
+
+        // ENSURE ALL ARK PIECES ARE BUILT.
+        constexpr bool BUILT = true;
+        world.Overworld.SetArkPiecesBuiltStatus(BUILT);
 
         /// @todo   Randomly position family & animals!
         /// @todo   Destroy all trees?

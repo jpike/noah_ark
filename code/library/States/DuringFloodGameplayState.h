@@ -16,6 +16,12 @@ namespace STATES
     class DuringFloodGameplayState
     {
     public:
+        // LOADING.
+        void Load(
+            MAPS::World& world,
+            GRAPHICS::Renderer& renderer,
+            HARDWARE::GamingHardware& gaming_hardware);
+
         // UPDATING.
         GameState Update(
             HARDWARE::GamingHardware& gaming_hardware,

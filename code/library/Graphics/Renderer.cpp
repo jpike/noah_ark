@@ -103,11 +103,18 @@ namespace GRAPHICS
     /// Renders an icon on the screen that indicates that a specific key
     /// should be pressed for something.
     /// @param[in]  key - The character of the key for the icon.
-    /// @param[in]  left_top_screen_position_in_pixels - The left-top screen position
-    ///     of the key icon.
+    /// @param[in]  left_top_screen_position_in_pixels - The left-top screen position of the key icon.
+    /// @param[in]  shape_type - The type of shape to render for the icon.
+    /// @param[in]  border_color - The color of the border for the icon.
+    /// @param[in]  background_color - The color for the background of the icon.
+    /// @param[in]  text_color - The color of the text for the icon.
     void Renderer::RenderKeyIcon(
         const char key,
-        const MATH::Vector2ui& left_top_screen_position_in_pixels)
+        const MATH::Vector2ui& left_top_screen_position_in_pixels,
+        const ShapeType shape_type,
+        const GRAPHICS::Color& border_color,
+        const GRAPHICS::Color& background_color,
+        const GRAPHICS::Color& text_color)
     {
         // CONVERT THE SCREEN POSITION TO A WORLD POSITION.
         // This is necessary so that the key icon can be rendered
@@ -118,19 +125,37 @@ namespace GRAPHICS
             left_top_screen_position_in_pixels.Y));
 
         // CREATE A RECTANGLE TO RESEMBLE A KEY ON A KEYBOARD.
-        const sf::Color DARK_GRAY(128, 128, 128);
-        const sf::Color LIGHT_GRAY(176, 176, 176);
-        sf::RectangleShape key_background_icon;
-        key_background_icon.setFillColor(LIGHT_GRAY);
-        key_background_icon.setOutlineColor(DARK_GRAY);
-        key_background_icon.setOutlineThickness(2.0f);
-        key_background_icon.setSize(sf::Vector2f(
-            static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS),
-            static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS)));
-        key_background_icon.setPosition(left_top_world_position);
+        switch (shape_type)
+        {
+            case ShapeType::RECTANGLE:
+            {
+                sf::RectangleShape key_background_icon;
+                key_background_icon.setFillColor(sf::Color(background_color.Red, background_color.Green, background_color.Blue, background_color.Alpha));
+                key_background_icon.setOutlineColor(sf::Color(border_color.Red, border_color.Green, border_color.Blue, border_color.Alpha));
+                key_background_icon.setOutlineThickness(2.0f);
+                key_background_icon.setSize(sf::Vector2f(
+                    static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS),
+                    static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS)));
+                key_background_icon.setPosition(left_top_world_position);
 
-        // RENDER THE BACKGROUND RECTANGLE FOR THE KEY.
-        Screen->RenderTarget.draw(key_background_icon);
+                // RENDER THE BACKGROUND RECTANGLE FOR THE KEY.
+                Screen->RenderTarget.draw(key_background_icon);
+                break;
+            }
+            case ShapeType::CIRCLE:
+            {
+                sf::CircleShape key_background_icon;
+                key_background_icon.setFillColor(sf::Color(background_color.Red, background_color.Green, background_color.Blue, background_color.Alpha));
+                key_background_icon.setOutlineColor(sf::Color(border_color.Red, border_color.Green, border_color.Blue, border_color.Alpha));
+                key_background_icon.setOutlineThickness(2.0f);
+                key_background_icon.setRadius(static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS / 2));
+                key_background_icon.setPosition(left_top_world_position);
+
+                // RENDER THE BACKGROUND RECTANGLE FOR THE KEY.
+                Screen->RenderTarget.draw(key_background_icon);
+                break;
+            }
+        }
 
         // GET THE DEFAULT FONT.
         auto id_with_font = Fonts.find(RESOURCES::AssetId::FONT_TEXTURE);
@@ -170,7 +195,7 @@ namespace GRAPHICS
         std::shared_ptr<sf::Shader> colored_text_shader = GraphicsDevice->GetShader(RESOURCES::AssetId::COLORED_TEXTURE_SHADER);
         if (colored_text_shader)
         {
-            render_states = ConfigureColoredTextShader(Color::BLACK, *colored_text_shader);
+            render_states = ConfigureColoredTextShader(text_color, *colored_text_shader);
         }
         Screen->RenderTarget.draw(key_character_sprite, render_states);
     }

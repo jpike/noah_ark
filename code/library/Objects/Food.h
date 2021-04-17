@@ -10,9 +10,10 @@ namespace OBJECTS
     struct Food
     {
         // STATIC CONSTANTS.
-        /// The amount of food in a given food item.
+        /// The amount of food in a given food item when coming from trees.
         /// Should match the visual representation of all food sprites.
-        static constexpr unsigned int COUNT_PER_INSTANCE = 3;
+        /// When food is obtained through other means, the counts may vary.
+        static constexpr unsigned int COUNT_PER_INSTANCE_FROM_TREES = 3;
 
         // ENUMERATIONS.
         /// Enumerates all the different types of food.
@@ -70,6 +71,8 @@ namespace OBJECTS
         // MEMBER VARIABLES.
         /// The type of the food.
         TypeId Type = TypeId::NONE;
+        /// The amount of food items within this given food.
+        unsigned int Count = 0;
         /// The graphical sprite for the food.
         GRAPHICS::Sprite Sprite = GRAPHICS::Sprite();
     };

@@ -235,7 +235,7 @@ namespace STATES
                 break;
             }
             case GameState::DURING_FLOOD_GAMEPLAY:
-                DuringFloodGameplayState.Load(world, renderer, gaming_hardware);
+                DuringFloodGameplayState.Load(CurrentSavedGame, world, renderer, gaming_hardware);
                 break;
             case GameState::POST_FLOOD_GAMEPLAY:
             {

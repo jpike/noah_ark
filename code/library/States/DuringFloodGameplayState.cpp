@@ -10,11 +10,23 @@
 namespace STATES
 {
     /// Loads the game state into its initial state.
+    /// @param[in]  saved_game_data - The saved game data to use to initialize the gameplay state.
+    /// @param[in,out]  world - The world for the gameplay state.
+    /// @param[in,out]  renderer - The renderer used for some initialization.
+    /// @param[in,out]  gaming_hardware - The hardware used to run the game.
     void DuringFloodGameplayState::Load(
+        const SavedGameData& saved_game_data,
         MAPS::World& world,
         GRAPHICS::Renderer& renderer,
         HARDWARE::GamingHardware& gaming_hardware)
     {
+        // RESET THE WORLD.
+        // Many items in the world need to be reset.
+        world.ResetToInitialState();
+
+        // Animal pens need to be initialized.
+        world.Ark.InitializeAnimalPens(saved_game_data.CollectedAnimalsBySpeciesThenGender);
+
         // TRACK THE CURRENT MAP GRID.
         CurrentMapGrid = &world.Ark.Interior.LayersFromBottomToTop[MAPS::Ark::LOWEST_LAYER_INDEX];
 
@@ -499,17 +511,17 @@ namespace STATES
                 }
             }
 
-            // HAVE THE PLAYER COLLECT FOOD IF APPROPRIATE.
-            // Food only needs to be collected if the player is pressing the appropriate button,
-            // so there is no need to check for this otherwise.
-            bool collect_food_button_pressed = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY);
-            if (collect_food_button_pressed)
+            // CHECK FOR COLLISIONS WITH FOOD.
+            for (auto food = current_tile_map->FoodOnGround.begin();
+                food != current_tile_map->FoodOnGround.end();)
             {
-                for (auto food = current_tile_map->FoodOnGround.begin();
-                    food != current_tile_map->FoodOnGround.end();)
+                // CHECK IF THE CURRENT FOOD ITEM INTERSECTS WITH THE PLAYER.
+                MATH::FloatRectangle food_bounding_box = food->Sprite.GetWorldBoundingBox();
+                // Food for the player only needs to be collected if the player is pressing the appropriate button,
+                // so there is no need to check for this otherwise.
+                bool collect_food_button_pressed = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY);
+                if (collect_food_button_pressed)
                 {
-                    // CHECK IF THE CURRENT FOOD ITEM INTERSECTS WITH THE PLAYER.
-                    MATH::FloatRectangle food_bounding_box = food->Sprite.GetWorldBoundingBox();
                     MATH::FloatRectangle noah_bounding_box = world.NoahPlayer->GetWorldBoundingBox();
                     bool food_intersects_with_noah = food_bounding_box.Intersects(noah_bounding_box);
                     if (food_intersects_with_noah)
@@ -529,18 +541,74 @@ namespace STATES
                         if (food_completely_collected)
                         {
                             food = current_tile_map->FoodOnGround.erase(food);
+                            continue;
                         }
                         else
                         {
                             // MOVE TO CHECKING COLLISIONS FOR THE NEXT FOOD ITEM.
                             ++food;
+                            continue;
                         }
                     }
                     else
                     {
                         // MOVE TO CHECKING COLLISIONS FOR THE NEXT FOOD ITEM.
                         ++food;
+                        continue;
                     }
+                }
+
+                // CHECK FOR COLLISIONS OF FOOD WITH ANIMALS.
+                bool current_food_eaten_by_animal = false;
+                for (const MAPS::AnimalPen& animal_pen : current_tile_map->AnimalPens)
+                {
+                    // CHECK IF THE CURRENT FOOD IS WITHIN THE ANIMAL PEN.
+                    bool food_in_animal_pen = food_bounding_box.Intersects(animal_pen.InteriorBoundingBox);
+                    if (!food_in_animal_pen)
+                    {
+                        // CONTINUE CHECKING OTHER ANIMAL PENS.
+                        continue;
+                    }
+
+                    // CHECK IF THE FOOD INTERSECTS WITH ANY ANIMAL.
+                    for (const auto& animal : animal_pen.Animals)
+                    {
+                        MATH::FloatRectangle animal_bounding_box = animal->Sprite.GetWorldBoundingBox();
+                        /// @todo   More complex logic for animals sometimes eating food?
+                        bool food_intersects_animal = food_bounding_box.Intersects(animal_bounding_box);
+                        if (food_intersects_animal)
+                        {
+                            /// @todo   Play eating sound?
+                            current_food_eaten_by_animal = true;
+
+                            /// @todo   Add a present in place of food!
+                            ///     Needs to be somewhat random and contain Bible verse!
+
+                            // No need to continue looping if food was eaten.
+                            break;
+                        }
+                    }
+
+                    // CHECK IF THE FOOD WAS EATEN WITHIN THE CURRENT ANIMAL PEN.
+                    if (current_food_eaten_by_animal)
+                    {
+                        // If the current food was eaten, no need to continue checking other animal pens.
+                        break;
+                    }
+                }
+
+                // CHECK IF THE CURRENT FOOD WAS EATEN BY AN ANIMAL.
+                if (current_food_eaten_by_animal)
+                {
+                    // ERASE THE CURRENT FOOD FROM THE GROUND.
+                    food = current_tile_map->FoodOnGround.erase(food);
+                    continue;
+                }
+                else
+                {
+                    // MOVE TO CHECKING COLLISIONS FOR THE NEXT FOOD ITEM.
+                    ++food;
+                    continue;
                 }
             }
         }

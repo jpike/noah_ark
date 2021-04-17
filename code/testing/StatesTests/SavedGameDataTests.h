@@ -221,11 +221,11 @@ namespace SAVED_GAME_DATA_TESTS
             constexpr unsigned int MAX_ANIMAL_PENS_PER_TILE_MAP = MAX_ANIMAL_PENS_PER_ROW_PER_TILE_MAP * MAX_ANIMAL_PENS_PER_COLUMN_PER_TILE_MAP;
             animal_pen_tile_map_pen_index = (animal_pen_tile_map_pen_index + 1) % MAX_ANIMAL_PENS_PER_TILE_MAP;
 
-            constexpr unsigned int MAX_ARK_LAYERS = 3;
+            constexpr unsigned int MAX_ARK_LAYERS_FOR_ANIMALS = 2;
             constexpr unsigned int MAX_TILE_MAPS_PER_ROW_PER_LAYER = 3;
             constexpr unsigned int MAX_ANIMAL_PENS_PER_LAYER = MAX_ANIMAL_PENS_PER_TILE_MAP * MAX_TILE_MAPS_PER_ROW_PER_LAYER;
             unsigned int next_animal_species_id = animal_species_id + 1;
-            animal_pen_tile_map_layer_index = (next_animal_species_id / MAX_ANIMAL_PENS_PER_LAYER) % MAX_ARK_LAYERS;
+            animal_pen_tile_map_layer_index = (next_animal_species_id / MAX_ANIMAL_PENS_PER_LAYER) % MAX_ARK_LAYERS_FOR_ANIMALS;
 
             constexpr unsigned int MAX_TILE_MAPS_PER_COLUMN_PER_LAYER = 1;
             animal_pen_tile_map_row_index = next_animal_species_id % MAX_TILE_MAPS_PER_COLUMN_PER_LAYER;
@@ -366,11 +366,11 @@ namespace SAVED_GAME_DATA_TESTS
                 constexpr unsigned int MAX_ANIMAL_PENS_PER_TILE_MAP = MAX_ANIMAL_PENS_PER_ROW_PER_TILE_MAP * MAX_ANIMAL_PENS_PER_COLUMN_PER_TILE_MAP;
                 animal_pen_tile_map_pen_index = (animal_pen_tile_map_pen_index + 1) % MAX_ANIMAL_PENS_PER_TILE_MAP;
 
-                constexpr unsigned int MAX_ARK_LAYERS = 3;
+                constexpr unsigned int MAX_ARK_LAYERS_FOR_ANIMALS = 2;
                 constexpr unsigned int MAX_TILE_MAPS_PER_ROW_PER_LAYER = 3;
                 constexpr unsigned int MAX_ANIMAL_PENS_PER_LAYER = MAX_ANIMAL_PENS_PER_TILE_MAP * MAX_TILE_MAPS_PER_ROW_PER_LAYER;
                 unsigned int next_animal_species_id = animal_species_id + 1;
-                animal_pen_tile_map_layer_index = (next_animal_species_id / MAX_ANIMAL_PENS_PER_LAYER) % MAX_ARK_LAYERS;
+                animal_pen_tile_map_layer_index = (next_animal_species_id / MAX_ANIMAL_PENS_PER_LAYER) % MAX_ARK_LAYERS_FOR_ANIMALS;
 
                 constexpr unsigned int MAX_TILE_MAPS_PER_COLUMN_PER_LAYER = 1;
                 animal_pen_tile_map_row_index = next_animal_species_id % MAX_TILE_MAPS_PER_COLUMN_PER_LAYER;

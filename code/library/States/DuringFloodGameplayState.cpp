@@ -328,6 +328,62 @@ namespace STATES
         /// 311 - 40 = 271 for raven/dove sending
         /// Could possibly be as early as about day 223 (assuming 30 day months)...so maybe we should provide a range?
         /// Also should probably look at Hebrew calendar.
+        /// @todo   Double-check some of the above calculations!
+        /// Also see:
+        /// - https://www.esv.org/resources/esv-global-study-bible/chart-01-03/
+        /// - https://www.understandchristianity.com/timelines/chronology-flood/
+        /// - https://answersingenesis.org/bible-timeline/biblical-overview-of-the-flood-timeline/
+        /// - https://answersingenesis.org/bible-timeline/avian-flood-chronology-noah-window/
+
+        // CHECK FOR SPECIAL DAY-BASED EVENTS.
+        // 30 month day is simple approximation for this game.
+        constexpr unsigned int DAYS_PER_MONTH = 30;
+        // 2nd month, 17th day - Flood starts (Genesis 7:11)
+        // +150 days (Genesis 7:24, Genesis 8:3)
+        // = 
+        // 7th month, 17th day (5 months later) - Ark comes to rest on mountains of Ararat (Genesis 8:4)
+        constexpr unsigned int DAY_COUNT_FOR_FLOODS_PREVAILING_ON_EARTH = 150;
+        // 10th month, 1st day - Waters recede to point where mountaintops seen (Genesis 8:5)
+        constexpr unsigned int MONTH_COUNT_BETWEEN_FLOODS_PREVAILING_AND_RECEDING = 2;
+        // 30 days per month - 17 days from 7th month = 13 remaining days in 7th month.
+        constexpr unsigned int DAY_COUNT_IN_7TH_MONTH_FOR_FLOOD_RECEDING = 13;
+        constexpr unsigned int DAY_COUNT_FOR_FLOODS_PREVAILING_AND_RECEDING = (
+            DAY_COUNT_FOR_FLOODS_PREVAILING_ON_EARTH + 
+            DAY_COUNT_IN_7TH_MONTH_FOR_FLOOD_RECEDING +
+            (DAYS_PER_MONTH * MONTH_COUNT_BETWEEN_FLOODS_PREVAILING_AND_RECEDING));
+        // Genesis 8:6-8.
+        constexpr unsigned int DAY_COUNT_AFTER_INITIAL_FLOOD_RECEDING_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING = 40;
+        constexpr unsigned int FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING = (
+            DAY_COUNT_FOR_FLOODS_PREVAILING_AND_RECEDING + DAY_COUNT_AFTER_INITIAL_FLOOD_RECEDING_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING);
+        // Genesis 8:10.
+        constexpr unsigned int DAY_COUNT_BETWEEN_FIRST_AND_SECOND_DOVE_SENDINGS = 7;
+        constexpr unsigned int FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING = FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING + DAY_COUNT_BETWEEN_FIRST_AND_SECOND_DOVE_SENDINGS;
+        // Genesis 8:12.
+        constexpr unsigned int DAY_COUNT_BETWEEN_SECOND_AND_FINAL_DOVE_SENDINGS = 7;
+        constexpr unsigned int FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING = FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING + DAY_COUNT_BETWEEN_SECOND_AND_FINAL_DOVE_SENDINGS;
+        
+        unsigned int current_day_of_flood = 0;
+        unsigned int current_hour_of_day = 0;
+        GAMEPLAY::FloodElapsedTime::GetCurrentDayAndHour(current_game_data.FloodElapsedGameplayTime, current_day_of_flood, current_hour_of_day);
+
+        switch (current_day_of_flood)
+        {
+            case FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING:
+            {
+                DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING = ", FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING);
+                break;
+            }
+            case FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING:
+            {
+                DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING = ", FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING);
+                break;
+            }
+            case FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING:
+            {
+                DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING = ", FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING);
+                break;
+            }
+        }
 
         // START PLAYING THE BACKGROUND MUSIC IF ITS NOT ALREADY PLAYING.
         /// @todo   Background music?

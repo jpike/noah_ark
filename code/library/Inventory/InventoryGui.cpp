@@ -129,11 +129,23 @@ namespace INVENTORY
             }
             case TabType::FOOD:
             {
-                // CHECK WHICH BUTTON WAS PRESSED.
-                if (input_controller.ButtonWasPressed(sf::Keyboard::Left))
+                // UPDATE THE FOOD PAGE.
+                FoodPage.Update(elapsed_time, input_controller);
+
+                // SWITCH TABS IF NO FOOD SELECTION IS IN-PROGRESS AND AN APPROPRIATE BUTTON IS PRESSED.
+                // The selected indices need to be checked rather than the food type itself since some boxes
+                // may not have any food in them.
+                bool food_selection_in_progress = (
+                    (InventoryFoodPage::UNSELECTED_ROW_INDEX != FoodPage.CurrentlySelectedRowIndex) &&
+                    (InventoryFoodPage::UNSELECTED_COLUMN_INDEX != FoodPage.CurrentlySelectedColumnIndex));
+                if (!food_selection_in_progress)
                 {
-                    // SWITCH TO THE ANIMALS TAB ON THE LEFT.
-                    CurrentTab = TabType::ANIMALS;
+                    // CHECK WHICH BUTTON WAS PRESSED.
+                    if (input_controller.ButtonWasPressed(sf::Keyboard::Left))
+                    {
+                        // SWITCH TO THE ANIMALS TAB ON THE LEFT.
+                        CurrentTab = TabType::ANIMALS;
+                    }
                 }
                 break;
             }
@@ -145,7 +157,7 @@ namespace INVENTORY
 
     /// Renders the inventory GUI to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryGui::Render(const STATES::SavedGameData& saved_game_data, GRAPHICS::Renderer& renderer) const
+    void InventoryGui::Render(const STATES::SavedGameData& saved_game_data, GRAPHICS::Renderer& renderer)
     {
         // RENDER A RECTANGLE FOR THE BACKGROUND.
         // It is offset from the top of the screen by the amount of the

@@ -350,7 +350,7 @@ namespace STATES
                     tooltip_text_top_left_screen_position.X += GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS;
                     renderer.RenderText(
                         // Short text is used to have it more easily fit on screen.
-                        "Pick Up",
+                        "Pick Up 1",
                         RESOURCES::AssetId::FONT_TEXTURE,
                         tooltip_text_top_left_screen_position,
                         TEXT_COLOR);
@@ -459,8 +459,8 @@ namespace STATES
             bool collect_food_button_pressed = gaming_hardware.InputController.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY);
             if (collect_food_button_pressed)
             {
-                for (auto food = current_tile_map->FoodOnGround.cbegin();
-                    food != current_tile_map->FoodOnGround.cend();)
+                for (auto food = current_tile_map->FoodOnGround.begin();
+                    food != current_tile_map->FoodOnGround.end();)
                 {
                     // CHECK IF THE CURRENT FOOD ITEM INTERSECTS WITH THE PLAYER.
                     MATH::FloatRectangle food_bounding_box = food->Sprite.GetWorldBoundingBox();
@@ -471,13 +471,24 @@ namespace STATES
                         // PLAY THE SOUND EFFECT FOR COLLECTING FOOD.
                         gaming_hardware.Speakers->PlaySoundEffect(RESOURCES::AssetId::FOOD_PICKUP_SOUND);
 
-                        // ADD THE FOOD TO THE PLAYER'S INVENTORY.
-                        DEBUGGING::DebugConsole::WriteLine("Collected food: ", static_cast<int>(food->Type));
-                        world.NoahPlayer->Inventory.AddFood(*food);
+                        // ADD ONE ITEM OF FOOD TO THE PLAYER'S INVENTORY.
+                        // This is done one at a time for a more interesting experience
+                        DEBUGGING::DebugConsole::WriteLine("Collected 1 food: ", static_cast<int>(food->Type));
+                        ++world.NoahPlayer->Inventory.FoodCounts[food->Type];
+                        --food->Count;
 
-                        // REMOVE THE FOOD ITEM FROM THOSE IN THE CURRENT TILE MAP.
-                        // This should move to the next food ITEM.
-                        food = current_tile_map->FoodOnGround.erase(food);
+                        // REMOVE THE FOOD ITEM FROM THOSE IN THE CURRENT TILE MAP IF IT HAS BEEN COMPLETELY COLLECTED.
+                        // This should move to the next food item.
+                        bool food_completely_collected = (food->Count <= 0);
+                        if (food_completely_collected)
+                        {
+                            food = current_tile_map->FoodOnGround.erase(food);
+                        }
+                        else
+                        {
+                            // MOVE TO CHECKING COLLISIONS FOR THE NEXT FOOD ITEM.
+                            ++food;
+                        }
                     }
                     else
                     {

@@ -37,7 +37,7 @@ namespace GRAPHICS::GUI
         void Render(
             const STATES::SavedGameData& current_game_data,
             const GRAPHICS::Color& main_text_color,
-            GRAPHICS::Renderer& renderer) const;
+            GRAPHICS::Renderer& renderer);
 
         // OTHER METHODS.
         bool ModalComponentDisplayed() const;

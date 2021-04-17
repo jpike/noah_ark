@@ -19,7 +19,7 @@ namespace GRAPHICS::GUI
 
         void Render(
             const STATES::SavedGameData& current_game_data,
-            GRAPHICS::Renderer& renderer) const;
+            GRAPHICS::Renderer& renderer);
 
         bool ModalComponentDisplayed() const;
 

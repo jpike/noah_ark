@@ -72,7 +72,7 @@ namespace GRAPHICS::GUI
     /// @param[in,out]  renderer - The renderer to use for rendering.
     void DuringFloodHeadsUpDisplay::Render(
         const STATES::SavedGameData& current_game_data,
-        GRAPHICS::Renderer& renderer) const
+        GRAPHICS::Renderer& renderer)
     {
         // RENDER TEXT INDICATING THE CURRENT DAY/TIME.
         unsigned int flood_day_count = 0;

@@ -1,4 +1,5 @@
 #include "Inventory/InventoryFoodPage.h"
+#include "Math/Number.h"
 #include "Resources/FoodGraphics.h"
 
 namespace INVENTORY
@@ -6,9 +7,70 @@ namespace INVENTORY
     // The exact color is currently arbitrary.
     const GRAPHICS::Color InventoryFoodPage::BACKGROUND_COLOR = GRAPHICS::Color::GREEN;
 
+    /// Updates the food page.
+    /// @param[in]  elapsed_time - The elapsed time since the last frame.
+    /// @param[in]  input_controller - The controller on which to check user input.
+    void InventoryFoodPage::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
+    {
+        /// @todo
+        elapsed_time;
+
+        // CHECK WHICH BUTTONS WERE PRESSED.
+        if (input_controller.ButtonWasPressed(sf::Keyboard::Left))
+        {
+            --CurrentlySelectedColumnIndex;
+        }
+        else if (input_controller.ButtonWasPressed(sf::Keyboard::Right))
+        {
+            ++CurrentlySelectedColumnIndex;
+        }
+        else if (input_controller.ButtonWasPressed(sf::Keyboard::Up))
+        {
+            --CurrentlySelectedRowIndex;
+        }
+        else if (input_controller.ButtonWasPressed(sf::Keyboard::Down))
+        {
+            ++CurrentlySelectedRowIndex;
+
+            // CHECK IF THIS IS THE FIRST TIME A USER IS MOVING TO SELECT A FOOD.
+            constexpr int MIN_SELECTED_ROW_INDEX = 0;
+            bool user_first_initiating_food_selection = (
+                (MIN_SELECTED_ROW_INDEX == CurrentlySelectedRowIndex) &&
+                (UNSELECTED_COLUMN_INDEX == CurrentlySelectedColumnIndex));
+            if (user_first_initiating_food_selection)
+            {
+                // MOVE TO THE FIRST VALID FOOD FOR SELECTION.
+                // This provides an easy way for users to move from normal switching between
+                // inventory pages to selecting food.
+                constexpr int MIN_SELECTED_COLUMN_INDEX = 0;
+                CurrentlySelectedColumnIndex = MIN_SELECTED_COLUMN_INDEX;
+            }
+        }
+        else if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+        {
+            /// @todo   Place food if appropriate!
+        }
+
+        // KEEP THE SELECTED INDICES WITHIN RANGE.
+        constexpr int MAX_ROW_INDEX = 4;
+        CurrentlySelectedRowIndex = MATH::Number::Clamp(CurrentlySelectedRowIndex, UNSELECTED_ROW_INDEX, MAX_ROW_INDEX);
+
+        constexpr int MAX_COLUMN_INDEX = 7;
+        CurrentlySelectedColumnIndex = MATH::Number::Clamp(CurrentlySelectedColumnIndex, UNSELECTED_COLUMN_INDEX, MAX_COLUMN_INDEX);
+
+        // DESELECT THE FOOD IF NO SELECTION CURRENTLY EXISTS.
+        // Updating the selected food type is done during rendering for simplicity.
+        // However, that code does not handle unselecting any food type, so that must be done here instead.
+        bool food_selected = (CurrentlySelectedRowIndex != UNSELECTED_ROW_INDEX) && (CurrentlySelectedColumnIndex != UNSELECTED_COLUMN_INDEX);
+        if (!food_selected)
+        {
+            SelectedFoodType = OBJECTS::Food::NONE;
+        }
+    }
+
     /// Renders the inventory GUI food page to the provided screen.
     /// @param[in,out]  renderer - The renderer to use for rendering.
-    void InventoryFoodPage::Render(const Inventory& inventory, GRAPHICS::Renderer& renderer) const
+    void InventoryFoodPage::Render(const Inventory& inventory, GRAPHICS::Renderer& renderer)
     {
         // RENDER A RECTANGLE FOR THE PAGE'S BACKGROUND.
         // It is offset from the top of the screen by the amount of the
@@ -68,10 +130,30 @@ namespace INVENTORY
                 BOX_DIMENSION_IN_PIXELS,
                 BOX_DIMENSION_IN_PIXELS);
 
+            // UPDATE THE SELECTED FOOD.
+            // This is done here rather than in "update" for simplicity.
+            bool current_food_box_is_selected = (
+                (CurrentlySelectedRowIndex == static_cast<int>(box_row_index)) &&
+                (CurrentlySelectedColumnIndex == static_cast<int>(box_column_index)));
+            if (current_food_box_is_selected)
+            {
+                bool food_exists = (food_collected_count > 0);
+                if (food_exists)
+                {
+                    SelectedFoodType = food_type;
+                }
+                else
+                {
+                    // The current box is selected, but no food exists within it.
+                    SelectedFoodType = OBJECTS::Food::NONE;
+                }
+            }
+
             // RENDER A BOX FOR THE FOOD TYPE.
             RenderFoodBox(
                 food_type,
                 food_collected_count,
+                current_food_box_is_selected,
                 box_screen_rectangle,
                 renderer);
         }
@@ -80,18 +162,31 @@ namespace INVENTORY
     /// Renders a box for a type of food on the page.
     /// @param[in]  food_type - The type of food to render.
     /// @param[in]  food_type_collected_count - The count of food items collected of this type.
+    /// @param[in]  is_selected - True if the food is selected; false otherwise.
     /// @param[in]  box_screen_rectangle - The placement/dimensions of the box to render, in screen coordinates.
     /// @param[in,out]  renderer - The renderer to use.
     void InventoryFoodPage::RenderFoodBox(
         const OBJECTS::Food::TypeId food_type,
         const unsigned int food_type_collected_count,
+        const bool is_selected,
         const MATH::FloatRectangle& box_screen_rectangle,
         GRAPHICS::Renderer& renderer) const
     {
         // RENDER A SLIGHTLY DARKER RECTANGLE FOR THE BACKGROUND.
-        const uint8_t ARBITRARY_BACKGROUND_COLOR_SCALE_FACTOR = 2;
         GRAPHICS::Color food_box_background_color = BACKGROUND_COLOR;
-        food_box_background_color.ScaleRgbDown(ARBITRARY_BACKGROUND_COLOR_SCALE_FACTOR);
+
+        // The exact scale factor will depend on if the food is selected or not.
+        if (is_selected)
+        {
+            const uint8_t SELECTED_BACKGROUND_COLOR_SCALE_FACTOR = 3;
+            food_box_background_color.ScaleRgbDown(SELECTED_BACKGROUND_COLOR_SCALE_FACTOR);
+        }
+        else
+        {
+            const uint8_t UNSELECTED_BACKGROUND_COLOR_SCALE_FACTOR = 2;
+            food_box_background_color.ScaleRgbDown(UNSELECTED_BACKGROUND_COLOR_SCALE_FACTOR);
+        }
+
         renderer.RenderScreenRectangle(box_screen_rectangle, food_box_background_color);
 
         // RENDER INFORMATION ABOUT ANY COLLECTED FOOD OF THE TYPE.

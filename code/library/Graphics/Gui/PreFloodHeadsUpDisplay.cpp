@@ -114,7 +114,7 @@ namespace GRAPHICS::GUI
     void PreFloodHeadsUpDisplay::Render(
         const STATES::SavedGameData& current_game_data,
         const GRAPHICS::Color& main_text_color,
-        GRAPHICS::Renderer& renderer) const
+        GRAPHICS::Renderer& renderer)
     {
         // RENDER COMPONENTS INDICATING HOW TO SWING THE AXE.
         // An icon is rendered to help players know which key to press.

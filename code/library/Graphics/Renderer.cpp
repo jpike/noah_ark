@@ -872,6 +872,12 @@ namespace GRAPHICS
             Render(present.Sprite);
         }
 
+        // RENDER ANY ALTAR.
+        if (tile_map.Altar)
+        {
+            Render(tile_map.Altar->Sprite);
+        }
+
         // RENDER THE CURRENT TILE MAP'S ROAMING ANIMALS.
         for (const auto& animal : tile_map.RoamingAnimals)
         {

@@ -12,6 +12,7 @@
 #include "Math/Vector2.h"
 #include "Memory/Pointers.h"
 #include "Objects/Animal.h"
+#include "Objects/Altar.h"
 #include "Objects/ArkPiece.h"
 #include "Objects/DustCloud.h"
 #include "Objects/FlamingSword.h"
@@ -79,7 +80,7 @@ namespace MAPS
         /// Food that is falling off a plant toward the ground.
         /// After food falls off of a plant, it should be transferred here.
         std::vector<OBJECTS::FallingFood> FallingFood;
-        /// Food in the tile map that has fallen to the groun.
+        /// Food in the tile map that has fallen to the ground.
         /// After food has finished falling, it should be transferred here.
         std::vector<OBJECTS::Food> FoodOnGround;
         /// Dust clouds within the tile map.
@@ -90,6 +91,8 @@ namespace MAPS
         std::vector<OBJECTS::Present> Presents;
         /// Any flaming sword in the map.  Randomly appears/disappears.
         std::optional<OBJECTS::FlamingSword> FlamingSword;
+        /// The altar that Noah can build.
+        std::optional<OBJECTS::Altar> Altar;
         /// Pieces of the ark that may exist on this tile map.
         /// Stored in a vector currently for simplicitly at the moment,
         /// but a different data structure may be needed later for performance.

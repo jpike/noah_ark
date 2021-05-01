@@ -57,6 +57,7 @@ namespace STATES
         static constexpr float FADING_MAX_TIME_IN_SECONDS = 2.0f;
 
         // UPDATING HELPER FUNCTIONS.
+        MATH::Vector2f GetAltarBuildPosition(const OBJECTS::Noah& noah_player) const;
         void UpdateMapGrid(
             HARDWARE::GamingHardware& gaming_hardware,
             MAPS::World& world,
@@ -66,6 +67,7 @@ namespace STATES
         void UpdatePlayerBasedOnInput(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
+            MATH::RandomNumberGenerator& random_number_generator,
             MAPS::World& world,
             MAPS::TileMap& current_tile_map,
             MAPS::MultiTileMapGrid& map_grid,

@@ -228,6 +228,42 @@ namespace STATES
                 }
                 break;
             }
+            case Substate::JUST_EXITED_ARK:
+            {
+                // RENDER INSTRUCTIONS FOR BUILDING AN ALTAR IF IT HAS NOT BEEN BUILT YET.
+                MATH::FloatRectangle camera_bounds = renderer.Camera.ViewBounds;
+                MATH::Vector2f camera_view_center = camera_bounds.Center();
+                MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(camera_view_center.X, camera_view_center.Y);
+                ASSERT_THEN_IF(current_tile_map)
+                {
+                    bool altar_built = current_tile_map->Altar.has_value();
+                    if (!altar_built)
+                    {
+                        // CHECK IF AN ALTAR CAN BE BUILT AT THE CURRENT LOCATION.
+                        MATH::Vector2f altar_center_world_position = GetAltarBuildPosition(*world.NoahPlayer);
+                        std::shared_ptr<MAPS::Tile> tile_where_altar_would_be_built = current_tile_map->GetTileAtWorldPosition(altar_center_world_position.X, altar_center_world_position.Y);
+                        ASSERT_THEN_IF(tile_where_altar_would_be_built)
+                        {
+                            bool ark_can_be_built_on_tile = tile_where_altar_would_be_built->IsWalkable() && !MAPS::TileType::IsForArk(tile_where_altar_would_be_built->Type);
+                            if (ark_can_be_built_on_tile)
+                            {
+                                // RENDER AN ICON WITH INFORMATION FOR BUILDING THE ALTAR.
+                                constexpr char BUILD_ALTAR_KEY_TEXT = INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY_TEXT;
+                                const MATH::Vector2ui TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0, 0);
+                                renderer.RenderKeyIcon(BUILD_ALTAR_KEY_TEXT, TOP_LEFT_SCREEN_POSITION_IN_PIXELS);
+
+                                constexpr float KEY_ICON_WIDTH_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS);
+                                MATH::Vector2f build_altar_text_left_top_screen_position_in_pixels(KEY_ICON_WIDTH_IN_PIXELS, 0.0f);
+                                renderer.RenderText(
+                                    "Build Altar",
+                                    RESOURCES::AssetId::FONT_TEXTURE,
+                                    build_altar_text_left_top_screen_position_in_pixels);
+                            }
+                        }
+                    }
+                }
+                break;
+            }
             case Substate::GOD_SPEAKING_DURING_RAINBOW:
             {
                 // ADD A RAINBOW EFFECT.
@@ -274,6 +310,36 @@ namespace STATES
         return screen;
     }
 
+    /// Gets the center world position in which the altar would be built.
+    /// @param[in]  noah_player - The Noah player in front of which the altar would be built.
+    /// @return The center world position for building the altar.
+    MATH::Vector2f PostFloodGameplayState::GetAltarBuildPosition(const OBJECTS::Noah& noah_player) const
+    {
+        MATH::Vector2f altar_center_world_position = noah_player.GetWorldPosition();
+
+        // The altar is a little wider than Noah, rather than being a square,
+        // so some addiitional horizontal adjustments are needed.
+        constexpr float ALTAR_HALF_WIDTH_IN_PIXELS = 16.0f;
+        MATH::FloatRectangle noah_bounding_box = noah_player.GetWorldBoundingBox();
+        switch (noah_player.FacingDirection)
+        {
+            case GAMEPLAY::Direction::UP:
+                altar_center_world_position.Y -= noah_bounding_box.Height();
+                break;
+            case GAMEPLAY::Direction::DOWN:
+                altar_center_world_position.Y += noah_bounding_box.Height();
+                break;
+            case GAMEPLAY::Direction::LEFT:
+                altar_center_world_position.X -= (noah_bounding_box.Width() - ALTAR_HALF_WIDTH_IN_PIXELS);
+                break;
+            case GAMEPLAY::Direction::RIGHT:
+                altar_center_world_position.X += (noah_bounding_box.Width() + ALTAR_HALF_WIDTH_IN_PIXELS);
+                break;
+        }
+
+        return altar_center_world_position;
+    }
+
     /// Updates a map grid based on elapsed time and player input.
     /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output.
     /// @param[in,out]  world - The world being updated.
@@ -298,9 +364,11 @@ namespace STATES
         }
 
         // UPDATE THE PLAYER BASED ON INPUT.
+        /// @todo   Just pass entire gaming hardware here!
         UpdatePlayerBasedOnInput(
             gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
             gaming_hardware.InputController,
+            gaming_hardware.RandomNumberGenerator,
             world,
             *current_tile_map,
             map_grid,
@@ -326,6 +394,7 @@ namespace STATES
     /// Updates the player and related items in the tile map based on input and elapsed time.
     /// @param[in]  elapsed_time - The elapsed time for which to update things.
     /// @param[in,out]  input_controller - The controller supplying player input.
+    /// @param[in,out]  random_number_generator - The random number generator.
     /// @param[in,out]  world - The world in which the player is being updated.
     /// @param[in,out]  current_tile_map - The tile map the player is currently located in.
     /// @param[in,out]  map_grid - The map grid containing the current tile map.
@@ -334,6 +403,7 @@ namespace STATES
     void PostFloodGameplayState::UpdatePlayerBasedOnInput(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
+        MATH::RandomNumberGenerator& random_number_generator,
         MAPS::World& world,
         MAPS::TileMap& current_tile_map,
         MAPS::MultiTileMapGrid& map_grid,
@@ -343,10 +413,52 @@ namespace STATES
         /// @todo
         speakers;
 
-        /// @todo   Check for building the altar!
-        /// @todo   Check for offering sacrifices!
-
+        // ALLOW NOAH TO BUILD AN ALTAR OR OFFER SACRIFICES.
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
+        bool altar_built = current_tile_map.Altar.has_value();
+        if (!altar_built)
+        {
+            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+            {
+                // BUILD AN ALTAR IN FRONT OF NOAH IN THE DIRECTION HE IS FACING IF POSSIBLE.
+                MATH::Vector2f altar_center_world_position = GetAltarBuildPosition(*world.NoahPlayer);
+                std::shared_ptr<MAPS::Tile> tile_where_altar_would_be_built = current_tile_map.GetTileAtWorldPosition(altar_center_world_position.X, altar_center_world_position.Y);
+                ASSERT_THEN_IF(tile_where_altar_would_be_built)
+                {
+                    bool ark_can_be_built_on_tile = tile_where_altar_would_be_built->IsWalkable() && !MAPS::TileType::IsForArk(tile_where_altar_would_be_built->Type);
+                    if (ark_can_be_built_on_tile)
+                    {
+                        // BUILD THE ALTAR.
+                        /// @todo   Handle collisions of player with altar!  Generic "immovable object" collision method?
+                        current_tile_map.Altar = OBJECTS::Altar(altar_center_world_position);
+
+                        // ADD SOME DUST CLOUDS FOR THE ALTAR BEING BUILT.
+                        constexpr unsigned int DUST_CLOUD_COUNT = 3;
+                        for (unsigned int dust_cloud_index = 0; dust_cloud_index < DUST_CLOUD_COUNT; ++dust_cloud_index)
+                        {
+                            // RANDOMLY ADD THE DUST CLOUD NEAR THE ALTAR.
+                            OBJECTS::DustCloud dust_cloud(RESOURCES::AssetId::DUST_CLOUD_TEXTURE);
+
+                            constexpr float DUST_CLOUD_POSITION_MAX_OFFSET = 16.0f;
+                            float dust_cloud_x_offset = random_number_generator.RandomInRange<float>(-DUST_CLOUD_POSITION_MAX_OFFSET, DUST_CLOUD_POSITION_MAX_OFFSET);
+                            float dust_cloud_y_offset = random_number_generator.RandomInRange<float>(-DUST_CLOUD_POSITION_MAX_OFFSET, DUST_CLOUD_POSITION_MAX_OFFSET);
+
+                            MATH::Vector2f dust_cloud_world_position = altar_center_world_position;
+                            dust_cloud_world_position.X += dust_cloud_x_offset;
+                            dust_cloud_world_position.Y += dust_cloud_y_offset;
+                            dust_cloud.Sprite.SetWorldPosition(dust_cloud_world_position);
+
+                            // The dust cloud should start animating immediately.
+                            dust_cloud.Sprite.Play();
+
+                            current_tile_map.DustClouds.push_back(dust_cloud);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// @todo   Check for offering sacrifices!
 
         // GET THE TILE UNDER NOAH.
         // This is needed to help track if Noah moves onto a different type of tile.

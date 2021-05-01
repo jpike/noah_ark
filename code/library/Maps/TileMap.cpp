@@ -38,6 +38,7 @@ namespace MAPS
     WoodLogs(),
     Presents(),
     FlamingSword(),
+    Altar(),
     ArkPieces(),
     RoamingAnimals(),
     AnimalPens(),

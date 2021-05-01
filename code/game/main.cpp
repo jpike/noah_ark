@@ -273,6 +273,11 @@ int main()
                 {
                     game_states.CurrentSavedGame.Player->Inventory.WoodCount += 1;
                 }
+                if (gaming_hardware.InputController.ButtonDown(sf::Keyboard::D))
+                {
+                    // Add approximately 1 day to flood gameplay time to speed up testing.
+                    game_states.CurrentSavedGame.FloodElapsedGameplayTime += sf::seconds(24.0f);
+                }
 
                 // SWITCH THE GAME STATE IF NEEDED.
                 game_states.SwitchStatesIfChanged(next_game_state, world, renderer, gaming_hardware);

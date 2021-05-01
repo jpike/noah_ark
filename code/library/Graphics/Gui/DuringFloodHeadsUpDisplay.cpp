@@ -128,6 +128,45 @@ namespace GRAPHICS::GUI
             TOP_LEFT_SCREEN_POSITION_IN_PIXELS,
             MAIN_TEXT_COLOR);
 
+        // RENDER ANY SPECIAL ACTION TEXT.
+        bool special_action_available = (SpecialDayAction::NONE != CurrentSpecialDayAction) && (SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED != CurrentSpecialDayAction);
+        if (special_action_available)
+        {
+            // RENDER A BUTTON ICON FOR THE SPECIAL ACTION.
+            constexpr char SPECIAL_ACTION_KEY_TEXT = INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY_TEXT;;
+            // Screen position is somewhat hardcoded for simplicity.
+            MATH::Vector2ui key_icon_top_left_screen_position(
+                static_cast<unsigned int>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.X),
+                static_cast<unsigned int>(TOP_LEFT_SCREEN_POSITION_IN_PIXELS.Y));
+            key_icon_top_left_screen_position.X += 12 * Glyph::DEFAULT_HEIGHT_IN_PIXELS;
+            renderer.RenderKeyIcon(SPECIAL_ACTION_KEY_TEXT, key_icon_top_left_screen_position);
+
+            // GET THE TEXT FOR THE SPECIAL ACTION.
+            std::string special_day_action_text;
+            switch (CurrentSpecialDayAction)
+            {
+                case SpecialDayAction::SEND_OUT_RAVEN_FIRST_TIME:
+                    special_day_action_text = "Send Raven";
+                    break;
+                case SpecialDayAction::SEND_OUT_DOVE_FIRST_TIME:
+                case SpecialDayAction::SEND_OUT_DOVE_SECOND_TIME:
+                case SpecialDayAction::SEND_OUT_DOVE_FINAL_TIME:
+                    special_day_action_text = "Send Dove";
+                    break;
+            }
+
+            // RENDER TEXT FOR THE SPECIAL ACTION.
+            constexpr float KEY_ICON_WIDTH_IN_PIXELS = 16.0f;
+            MATH::Vector2f special_action_text_left_top_position(
+                static_cast<float>(key_icon_top_left_screen_position.X) + KEY_ICON_WIDTH_IN_PIXELS,
+                static_cast<float>(key_icon_top_left_screen_position.Y));
+            renderer.RenderText(
+                special_day_action_text,
+                RESOURCES::AssetId::FONT_TEXTURE,
+                special_action_text_left_top_position,
+                MAIN_TEXT_COLOR);
+        }
+
         // RENDER COMPONENTS INDICATING HOW TO OPEN THE INVENTORY.
         // This text is rendered to the far-right of the screen so that its position isn't changed
         // if the space for other GUI elements (like the count of collected wood) changes such

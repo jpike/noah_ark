@@ -380,16 +380,39 @@ namespace STATES
             case FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING:
             {
                 DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING = ", FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING);
+                // This should only be set the first time since 2 separate actions can occur on this day,
+                // and if the player has moved on to sending the dove, we do not want to overwrite that
+                // action with sending out the raven.
+                bool current_special_day_action_being_set_first_time = (GRAPHICS::GUI::SpecialDayAction::NONE == Hud.CurrentSpecialDayAction);
+                if (current_special_day_action_being_set_first_time)
+                {
+                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_RAVEN_FIRST_TIME;
+                }
                 break;
             }
             case FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING:
             {
                 DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING = ", FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING);
+                bool current_special_day_action_being_set_first_time = (GRAPHICS::GUI::SpecialDayAction::NONE == Hud.CurrentSpecialDayAction);
+                if (current_special_day_action_being_set_first_time)
+                {
+                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_SECOND_TIME;
+                }
                 break;
             }
             case FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING:
             {
                 DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING = ", FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING);
+                bool current_special_day_action_being_set_first_time = (GRAPHICS::GUI::SpecialDayAction::NONE == Hud.CurrentSpecialDayAction);
+                if (current_special_day_action_being_set_first_time)
+                {
+                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FINAL_TIME;
+                }
+                break;
+            }
+            default:
+            {
+                Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::NONE;
                 break;
             }
         }
@@ -702,6 +725,48 @@ namespace STATES
                     // MOVE TO CHECKING COLLISIONS FOR THE NEXT FOOD ITEM.
                     ++food;
                     continue;
+                }
+            }
+        }
+
+        // HANDLE SPECIAL ACTIONS FOR SPECIFIC DAYS.
+        bool special_action_button_pressed = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY);
+        if (special_action_button_pressed)
+        {
+            switch (Hud.CurrentSpecialDayAction)
+            {
+                /// @todo   Implement actual special actions!
+                case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_RAVEN_FIRST_TIME:
+                {
+                    DEBUGGING::DebugConsole::WriteLine("Sending out raven first time!");
+
+                    // MOVE TO THE NEXT SPECIAL ACTION.
+                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FIRST_TIME;
+                    break;
+                }
+                case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FIRST_TIME:
+                {
+                    DEBUGGING::DebugConsole::WriteLine("Sending out dove first time!");
+
+                    // CLEAR THE SPECIAL ACTION UNTIL THE NEXT DAY.
+                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
+                    break;
+                }
+                case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_SECOND_TIME:
+                {
+                    DEBUGGING::DebugConsole::WriteLine("Sending out dove second time!");
+
+                    // CLEAR THE SPECIAL ACTION UNTIL THE NEXT DAY.
+                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
+                    break;
+                }
+                case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FINAL_TIME:
+                {
+                    DEBUGGING::DebugConsole::WriteLine("Sending out dove final time!");
+
+                    // CLEAR THE SPECIAL ACTION SINCE ALL SPECIAL ACTIONS HAVE BEEN COMPLETED.
+                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
+                    break;
                 }
             }
         }

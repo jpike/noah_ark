@@ -1,6 +1,9 @@
 #pragma once
 
+#include <memory>
 #include <tuple>
+#include "Graphics/Gui/Font.h"
+#include "Graphics/Gui/TextBox.h"
 #include "Graphics/Renderer.h"
 #include "Hardware/GamingHardware.h"
 #include "Inventory/InventoryGui.h"
@@ -14,7 +17,14 @@ namespace GRAPHICS::GUI
     class DuringFloodHeadsUpDisplay
     {
     public:
-        // PUBLIC METHODS.
+        // CONSTRUCTION.
+        explicit DuringFloodHeadsUpDisplay() = default;
+        DuringFloodHeadsUpDisplay(
+            const std::shared_ptr<GRAPHICS::GUI::Font>& font,
+            const unsigned int main_text_box_width_in_pixels,
+            const unsigned int main_text_box_height_in_pixels);
+
+        // OTHER PUBLIC METHODS.
         std::tuple<STATES::GameState, OBJECTS::Food::TypeId> Update(
             const STATES::SavedGameData& current_game_data,
             const HARDWARE::GamingHardware& gaming_hardware);
@@ -26,6 +36,8 @@ namespace GRAPHICS::GUI
         bool ModalComponentDisplayed() const;
 
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
+        /// The main text box for displaying messages to the player.
+        GRAPHICS::GUI::TextBox MainTextBox = TextBox();
         /// True if the pause menu box is visible; false otherwise.
         bool PauseMenuVisible = false;
         /// True if the full inventory GUI is displayed; false otherwise.

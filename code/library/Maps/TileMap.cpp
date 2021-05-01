@@ -36,6 +36,7 @@ namespace MAPS
     FoodOnGround(),
     DustClouds(),
     WoodLogs(),
+    Presents(),
     FlamingSword(),
     ArkPieces(),
     RoamingAnimals(),

@@ -4,6 +4,20 @@
 
 namespace GRAPHICS::GUI
 {
+    /// Constructor.
+    /// @param[in]  font - The font to use in the HUD.
+    /// @param[in]  main_text_box_width_in_pixels - The width of the main text box, in pixels.
+    /// @param[in]  main_text_box_height_in_pixels - The height of the main text box, in pixels.
+    DuringFloodHeadsUpDisplay::DuringFloodHeadsUpDisplay(
+        const std::shared_ptr<GRAPHICS::GUI::Font>& font,
+        const unsigned int main_text_box_width_in_pixels,
+        const unsigned int main_text_box_height_in_pixels) :
+    MainTextBox(main_text_box_width_in_pixels, main_text_box_height_in_pixels, font),
+    PauseMenuVisible(false),
+    InventoryOpened(false),
+    InventoryGui()
+    {}
+
     /// Updates the HUD.
     /// @param[in]  current_game_data - The game data to display in the HUD.
     /// @param[in]  gaming_hardware - The gaming hardware supplying input.
@@ -38,6 +52,27 @@ namespace GRAPHICS::GUI
                 // CLOSE THE PAUSE MENU.
                 PauseMenuVisible = false;
             }
+        }
+        else if (MainTextBox.IsVisible)
+        {
+            // HAVE THE MAIN TEXT BOX RESPOND TO USER INPUT.
+            if (gaming_hardware.InputController.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+            {
+                // CHECK IF THE TEXT BOX IS FINISHED DISPLAYING ITS CURRENT PAGE OF TEXT.
+                // If the current page of text has not yet all been displayed, the next
+                // page of text should not be moved to so that the user can finish
+                // seeing the complete message.
+                bool current_text_finished_being_displayed = MainTextBox.CurrentPageOfTextFinishedBeingDisplayed();
+                if (current_text_finished_being_displayed)
+                {
+                    // MOVE THE TEXT BOX TO THE NEXT PAGE OF TEXT.
+                    MainTextBox.MoveToNextPage();
+                }
+            }
+
+            // UPDATE THE TEXT BOX IF IT IS VISIBLE.
+            // If the text box is currently being displayed, then it should capture any user input.
+            MainTextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
         }
         else
         {
@@ -128,6 +163,12 @@ namespace GRAPHICS::GUI
         if (InventoryOpened)
         {
             InventoryGui.Render(current_game_data, renderer);
+        }
+
+        // RENDER THE TEXT BOX IF IT IS VISIBLE.
+        if (MainTextBox.IsVisible)
+        {
+            MainTextBox.Render(renderer);
         }
 
         // RENDER THE PAUSE MENUIF IT IS VISIBLE.

@@ -16,6 +16,7 @@
 #include "Objects/DustCloud.h"
 #include "Objects/FlamingSword.h"
 #include "Objects/Food.h"
+#include "Objects/Present.h"
 #include "Objects/Tree.h"
 #include "Objects/WoodLogs.h"
 #include "States/SavedGameData.h"
@@ -85,6 +86,8 @@ namespace MAPS
         std::vector<OBJECTS::DustCloud> DustClouds;
         /// Wooden logs that have appeared in the map from chopped down trees.
         std::vector<OBJECTS::WoodLogs> WoodLogs;
+        /// Presents on the ground (left by animals and containing Bible verses).
+        std::vector<OBJECTS::Present> Presents;
         /// Any flaming sword in the map.  Randomly appears/disappears.
         std::optional<OBJECTS::FlamingSword> FlamingSword;
         /// Pieces of the ark that may exist on this tile map.

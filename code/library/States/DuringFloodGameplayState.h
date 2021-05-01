@@ -55,7 +55,8 @@ namespace STATES
             MAPS::TileMap& current_tile_map,
             MAPS::MultiTileMapGrid& map_grid,
             GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers);
+            AUDIO::Speakers& speakers,
+            std::string& message_for_text_box);
         void UpdateCameraWorldView(
             const sf::Time& elapsed_time,
             MAPS::World& world,
@@ -67,6 +68,6 @@ namespace STATES
 
         // PRIVATE MEMBER VARIABLES.
         /// The HUD for this game state.
-        GRAPHICS::GUI::DuringFloodHeadsUpDisplay Hud = {};
+        GRAPHICS::GUI::DuringFloodHeadsUpDisplay Hud = GRAPHICS::GUI::DuringFloodHeadsUpDisplay();
     };
 }

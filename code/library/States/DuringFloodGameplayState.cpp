@@ -232,6 +232,15 @@ namespace STATES
                 }
             }
         }
+
+        // INITIALIZE THE HUD.
+        unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
+        const unsigned int LINE_COUNT = 2;
+        unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
+        Hud = GRAPHICS::GUI::DuringFloodHeadsUpDisplay(
+            renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE],
+            main_text_box_width_in_pixels,
+            main_text_box_height_in_pixels);
     }
 
     /// Updates the state of the gameplay based on elapsed time and player input.
@@ -442,10 +451,12 @@ namespace STATES
                 if (food_intersects_with_noah)
                 {
                     // RENDER A TOOLTIP ICON FOR COLLECTING THE FOOD.
+                    MATH::FloatRectangle current_tile_map_world_bounding_box = current_tile_map->GetWorldBoundingBox();
+
                     MATH::Vector2f food_center_position = food_bounding_box.Center();
                     MATH::Vector2ui collect_food_icon_top_left_position(
-                        static_cast<unsigned int>(food_center_position.X),
-                        static_cast<unsigned int>(food_center_position.Y));
+                        static_cast<unsigned int>(food_center_position.X - current_tile_map_world_bounding_box.LeftTop.X),
+                        static_cast<unsigned int>(food_center_position.Y - current_tile_map_world_bounding_box.LeftTop.Y));
                     // The colors are adjusted to be light text on a dark background since that seems easier to see.
                     const GRAPHICS::Color& BORDER_COLOR = GRAPHICS::Color::WHITE;
                     const GRAPHICS::Color& BACKGROUND_COLOR = GRAPHICS::Color::BLACK;
@@ -459,8 +470,8 @@ namespace STATES
                         TEXT_COLOR);
 
                     MATH::Vector2f tooltip_text_top_left_screen_position(
-                        food_bounding_box.RightBottom.X,
-                        food_center_position.Y);
+                        food_bounding_box.RightBottom.X - current_tile_map_world_bounding_box.LeftTop.X,
+                        food_center_position.Y - current_tile_map_world_bounding_box.LeftTop.Y);
                     tooltip_text_top_left_screen_position.X += GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS;
                     renderer.RenderText(
                         // Short text is used to have it more easily fit on screen.
@@ -521,10 +532,13 @@ namespace STATES
 
         // MOVE OBJECTS IF POSSIBLE.
         // If the HUD is displaying a modal component, then objects shouldn't move.
-        bool objects_can_move = !Hud.ModalComponentDisplayed();
+        // If the main text box is displaying text, then no objects should move
+        // to avoid having the player's gameplay hindered.
+        bool objects_can_move = (!Hud.ModalComponentDisplayed() && !Hud.MainTextBox.IsVisible);
         if (objects_can_move)
         {
             // UPDATE THE PLAYER BASED ON INPUT.
+            std::string message_for_text_box;
             MAPS::ExitPoint* map_exit_point = UpdatePlayerBasedOnInput(
                 gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
                 gaming_hardware.InputController,
@@ -532,7 +546,8 @@ namespace STATES
                 *current_tile_map,
                 map_grid,
                 camera,
-                *gaming_hardware.Speakers);
+                *gaming_hardware.Speakers,
+                message_for_text_box);
             if (map_exit_point)
             {
                 // SWITCH OVER TO THE NEW MAP GRID.
@@ -547,6 +562,13 @@ namespace STATES
 
                 // EXIT THIS UPDATE IF THE PLAYER HAS CHANGED MAPS.
                 return;
+            }
+
+            // START DISPLAYING A NEW MESSAGE IN THE MAIN TEXT BOX IF ONE EXISTS.
+            bool text_box_message_exists = !message_for_text_box.empty();
+            if (text_box_message_exists)
+            {
+                Hud.MainTextBox.StartDisplayingText(message_for_text_box);
             }
 
             // MOVE EACH FAMILY MEMBER IN VIEW.
@@ -637,8 +659,23 @@ namespace STATES
                             /// @todo   Play eating sound?
                             current_food_eaten_by_animal = true;
 
-                            /// @todo   Add a present in place of food!
-                            ///     Needs to be somewhat random and contain Bible verse!
+                            // ADD A PRESENT WITH A BIBLE VERSE IF SOME BIBLE VERSES STILL NEED TO BE COLLECTED.
+                            /// @todo   Only add presents sometimes? (randomly)
+                            /// @todo   Should we have a delay for the presents appearing?  Some kind of timer?
+                            bool all_bible_verses_collected = current_game_data.BibleVersesLeftToFind.empty();
+                            if (!all_bible_verses_collected)
+                            {
+                                size_t remaining_bible_verse_count = current_game_data.BibleVersesLeftToFind.size();
+                                size_t random_bible_verse_index = gaming_hardware.RandomNumberGenerator.RandomNumberLessThan(remaining_bible_verse_count);
+                                auto random_bible_verse = current_game_data.BibleVersesLeftToFind.begin() + random_bible_verse_index;
+
+                                MATH::Vector2f present_center_position = food_bounding_box.Center();
+                                current_tile_map->Presents.emplace_back(present_center_position, *random_bible_verse);
+
+                                // The Bible verse is pre-emptively removed so that it does not have to be refound for removing later.
+                                /// @todo   How to handle this with saving game data?  Saving presents should save verse for reloading?
+                                current_game_data.BibleVersesLeftToFind.erase(random_bible_verse);
+                            }
 
                             // No need to continue looping if food was eaten.
                             break;
@@ -691,6 +728,8 @@ namespace STATES
     /// @param[in,out]  map_grid - The map grid containing the current tile map.
     /// @param[in,out]  camera - The camera defining the viewable region of the map grid.
     /// @param[in,out]  speakers - The speakers from which to play any audio.
+    /// @param[out] message_for_text_box - A message for the HUD's main text box, if
+    ///     a Bible verse was collected.
     /// @return The map exit point, if the player stepped on such a point.
     MAPS::ExitPoint* DuringFloodGameplayState::UpdatePlayerBasedOnInput(
         const sf::Time& elapsed_time,
@@ -699,15 +738,13 @@ namespace STATES
         MAPS::TileMap& current_tile_map,
         MAPS::MultiTileMapGrid& map_grid,
         GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers)
+        AUDIO::Speakers& speakers,
+        std::string& message_for_text_box)
     {
-        /// @todo
-        speakers;
+        // INDICATE THAT NO MESSAGE EXISTS FOR THE TEXT BOX YET.
+        message_for_text_box.clear();
 
-        /// @todo   Check for picking up food!
-        /// @todo   Check for feeding animals!
-        /// @todo   Check for picking up presents!
-
+        // GET THE CAMERA'S VIEWING BOUNDS.
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
 
         // GET THE TILE UNDER NOAH.
@@ -974,6 +1011,35 @@ namespace STATES
         {
             // UPDATE NOAH'S ANIMATION.
             world.NoahPlayer->Sprite.Update(elapsed_time);
+
+            // CHECK IF THE PLAYER STEPPED ON A PRESENT.
+            MATH::FloatRectangle noah_bounding_box = world.NoahPlayer->GetWorldBoundingBox();
+            for (auto present = current_tile_map.Presents.begin();
+                present != current_tile_map.Presents.end();)
+            {
+                // CHECK IF THE PLAYER STEPPED ON THE CURRENT PRESENT.
+                MATH::FloatRectangle present_bounding_box = present->Sprite.GetWorldBoundingBox();
+                bool noah_stepped_on_present = noah_bounding_box.Intersects(present_bounding_box);
+                if (noah_stepped_on_present)
+                {
+                    // PLAY THE SOUND EFFECT FOR COLLECTING A BIBLE VERSE.
+                    speakers.PlaySoundEffect(RESOURCES::AssetId::COLLECT_BIBLE_VERSE_SOUND);
+
+                    // ADD THE BIBLE VERSE TO THE PLAYER'S INVENTORY.
+                    world.NoahPlayer->Inventory.BibleVerses.insert(present->BibleVerse);
+
+                    // POPULATE THE MESSAGE TO DISPLAY IN THE MAIN TEXT BOX.
+                    message_for_text_box = "You got a Bible verse!\n" + present->BibleVerse.ToString();
+
+                    // REMOVE THE PRESENT FROM THE TILE MAP.
+                    present = current_tile_map.Presents.erase(present);
+                }
+                else
+                {
+                    // MOVE TO THE NEXT PRESENT.
+                    ++present;
+                }
+            }
 
             // CHECK IF THE PLAYER STEPPED ON AN EXIT POINT.
             // This should only occur if the player has changed to a different tile.

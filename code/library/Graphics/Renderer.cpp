@@ -866,6 +866,12 @@ namespace GRAPHICS
             Render(food.Sprite);
         }
 
+        // RENDER ANY PRESENTS.
+        for (const auto& present : tile_map.Presents)
+        {
+            Render(present.Sprite);
+        }
+
         // RENDER THE CURRENT TILE MAP'S ROAMING ANIMALS.
         for (const auto& animal : tile_map.RoamingAnimals)
         {

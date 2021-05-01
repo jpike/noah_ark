@@ -239,6 +239,15 @@ namespace MAPS
             }
         }
 
+        // UPDATE ANY SMOKE ON THE ALTAR.
+        if (Altar)
+        {
+            if (Altar->OfferingSmoke.Sprite.CurrentFrameSprite.IsVisible)
+            {
+                Altar->OfferingSmoke.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+            }
+        }
+
         // UPDATE ANY FLAMING SWORD.
         if (FlamingSword)
         {

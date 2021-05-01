@@ -876,6 +876,12 @@ namespace GRAPHICS
         if (tile_map.Altar)
         {
             Render(tile_map.Altar->Sprite);
+
+            // Any smoke should also be rendered.
+            if (tile_map.Altar->OfferingSmoke.Sprite.CurrentFrameSprite.IsVisible)
+            {
+                Render(tile_map.Altar->OfferingSmoke.Sprite.CurrentFrameSprite);
+            }
         }
 
         // RENDER THE CURRENT TILE MAP'S ROAMING ANIMALS.
@@ -896,7 +902,11 @@ namespace GRAPHICS
         // RENDER THE CURRENT TILE MAP'S DUST CLOUDS.
         for (const auto& dust_cloud : tile_map.DustClouds)
         {
-            Render(dust_cloud.Sprite.CurrentFrameSprite);
+            bool dust_cloud_visible = !dust_cloud.HasDisappeared();
+            if (dust_cloud_visible)
+            {
+                Render(dust_cloud.Sprite.CurrentFrameSprite);
+            }
         }
 
         // RENDER ANY FLAMING SWORD.

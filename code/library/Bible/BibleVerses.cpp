@@ -228,7 +228,7 @@ namespace BIBLE
         BibleVerse(BibleBook::GENESIS, 9, 7, "And you, be ye fruitful, and multiply; bring forth abundantly in the earth, and multiply therein."),
         BibleVerse(BibleBook::GENESIS, 9, 8, "And God spake unto Noah, and to his sons with him, saying,"),
         BibleVerse(BibleBook::GENESIS, 9, 9, "And I, behold, I establish my covenant with you, and with your seed after you;"),
-        BibleVerse(BibleBook::GENESIS, 9, 10, "And I, behold, I establish my covenant with you, and with your seed after you;"),
+        BibleVerse(BibleBook::GENESIS, 9, 10, "And with every living creature that is with you, of the fowl, of the cattle, and of every beast of the earth with you; from all that go out of the ark, to every beast of the earth."),
         BibleVerse(BibleBook::GENESIS, 9, 11, "And I will establish my covenant with you, neither shall all flesh be cut off any more by the waters of a flood; neither shall there any more be a flood to destroy the earth."),
         BibleVerse(BibleBook::GENESIS, 9, 12, "And God said, This is the token of the covenant which I make between me and you and every living creature that is with you, for perpetual generations:"),
         BibleVerse(BibleBook::GENESIS, 9, 13, "I do set my bow in the cloud, and it shall be for a token of a covenant between me and the earth."),

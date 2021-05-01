@@ -102,10 +102,60 @@ namespace STATES
                     *CurrentMapGrid,
                     camera,
                     current_game_data);
+
+                // CHECK IF THE PLAYER HAS FINISHED OFFERING SACRIFICES.
+                MATH::FloatRectangle camera_bounds = camera.ViewBounds;
+                MATH::Vector2f camera_view_center = camera_bounds.Center();
+                MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(camera_view_center.X, camera_view_center.Y);
+                ASSERT_THEN_IF(current_tile_map)
+                {
+                    bool offerings_made = current_tile_map->Altar->OfferingSmoke.Sprite.CurrentFrameSprite.IsVisible;
+                    if (offerings_made)
+                    {
+                        // MOVE TO THE NEXT SUBSTATE.
+                        ElapsedTimeForCurrentSubstate = sf::Time::Zero;
+                        CurrentSubstate = Substate::GOD_SPEAKING_BEFORE_RAINBOW;
+
+                        // The text below is based on Genesis 8:21-9:11 but hardcoded here for simplicity.
+                        // The multiple lines of text are automatically joined.
+                        TextBox.StartDisplayingText(
+                            "I will not again curse the ground any more for man's sake; for the imagination of man's heart is evil from his youth; neither will I again smite any more every thing living, as I have done.  "
+                            "While the earth remaineth, seedtime and harvest, and cold and heat, and summer and winter, and day and night shall not cease.  "
+                            "Be fruitful, and multiply, and replenish the earth.  "
+                            "And the fear of you and the dread of you shall be upon every beast of the earth, and upon every fowl of the air, upon all that moveth upon the earth, and upon all the fishes of the sea; into your hand are they delivered.  "
+                            "Every moving thing that liveth shall be meat for you; even as the green herb have I given you all things.  "
+                            "But flesh with the life thereof, which is the blood thereof, shall ye not eat.  "
+                            "And surely your blood of your lives will I require; at the hand of every beast will I require it, and at the hand of man; at the hand of every man's brother will I require the life of man.  "
+                            "Whoso sheddeth man's blood, by man shall his blood be shed: for in the image of God made he man.  "
+                            "And you, be ye fruitful, and multiply; bring forth abundantly in the earth, and multiply therein.  "
+                            "And I, behold, I establish my covenant with you, and with your seed after you; "
+                            "And with every living creature that is with you, of the fowl, of the cattle, and of every beast of the earth with you; from all that go out of the ark, to every beast of the earth.  "
+                            "And I will establish my covenant with you, neither shall all flesh be cut off any more by the waters of a flood; neither shall there any more be a flood to destroy the earth.");
+                    }
+                }
+
                 break;
             }
             case Substate::GOD_SPEAKING_BEFORE_RAINBOW:
             {
+                // ANIMATE THE OFFERING SMOKE IF APPLICABLE.
+                MATH::FloatRectangle camera_bounds = camera.ViewBounds;
+                MATH::Vector2f camera_view_center = camera_bounds.Center();
+                MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(camera_view_center.X, camera_view_center.Y);
+                ASSERT_THEN_IF(current_tile_map)
+                {
+                    ASSERT_THEN_IF(current_tile_map->Altar)
+                    {
+                        current_tile_map->Altar->OfferingSmoke.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+                    }
+
+                    // Dust clouds should be animated too.
+                    for (auto& dust_cloud : current_tile_map->DustClouds)
+                    {
+                        dust_cloud.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+                    }
+                }
+
                 // DISPLAY GOD'S WORDS, ALLOWING THE USER TO MOVE TO DIFFERENT PAGES OF TEXT.
                 TextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
                 bool current_page_of_text_finished = TextBox.CurrentPageOfTextFinishedBeingDisplayed();
@@ -140,6 +190,24 @@ namespace STATES
             }
             case Substate::GOD_SPEAKING_DURING_RAINBOW:
             {
+                // ANIMATE THE OFFERING SMOKE IF APPLICABLE.
+                MATH::FloatRectangle camera_bounds = camera.ViewBounds;
+                MATH::Vector2f camera_view_center = camera_bounds.Center();
+                MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(camera_view_center.X, camera_view_center.Y);
+                ASSERT_THEN_IF(current_tile_map)
+                {
+                    ASSERT_THEN_IF(current_tile_map->Altar)
+                    {
+                        current_tile_map->Altar->OfferingSmoke.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+                    }
+
+                    // Dust clouds should be animated too.
+                    for (auto& dust_cloud : current_tile_map->DustClouds)
+                    {
+                        dust_cloud.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+                    }
+                }
+
                 // DISPLAY GOD'S WORDS, ALLOWING THE USER TO MOVE TO DIFFERENT PAGES OF TEXT.
                 TextBox.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
                 bool current_page_of_text_finished = TextBox.CurrentPageOfTextFinishedBeingDisplayed();
@@ -201,6 +269,40 @@ namespace STATES
         // RENDER THE PLAYER.
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
+        // RE-RENDER SMOKE CLOUDS TO ENSURE THEY APPEAR ON TOP OF NOAH.
+        // This is a hack, but it is not yet worth re-writing other things for proper z-ordering.
+        MATH::FloatRectangle camera_bounds = renderer.Camera.ViewBounds;
+        MATH::Vector2f camera_view_center = camera_bounds.Center();
+        MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(camera_view_center.X, camera_view_center.Y);
+        // Only needed if Noah is facing down.
+        bool noah_facing_down = (GAMEPLAY::Direction::DOWN == world.NoahPlayer->FacingDirection);
+        if (noah_facing_down)
+        {
+            ASSERT_THEN_IF(current_tile_map)
+            {
+                if (current_tile_map->Altar)
+                {
+                    renderer.Render(current_tile_map->Altar->Sprite);
+
+                    // Any smoke should also be rendered.
+                    if (current_tile_map->Altar->OfferingSmoke.Sprite.CurrentFrameSprite.IsVisible)
+                    {
+                        renderer.Render(current_tile_map->Altar->OfferingSmoke.Sprite.CurrentFrameSprite);
+                    }
+                }
+
+                // RENDER THE CURRENT TILE MAP'S DUST CLOUDS.
+                for (auto& dust_cloud : current_tile_map->DustClouds)
+                {
+                    bool dust_cloud_visible = !dust_cloud.HasDisappeared();
+                    if (dust_cloud_visible)
+                    {
+                        renderer.Render(dust_cloud.Sprite.CurrentFrameSprite);
+                    }
+                }
+            }
+        }
+
         // RENDER THE TEXT BOX IF IT'S VISIBLE.
         /// @todo   Have this appear on top of rainbow?
         if (TextBox.IsVisible)
@@ -231,9 +333,6 @@ namespace STATES
             case Substate::JUST_EXITED_ARK:
             {
                 // RENDER INSTRUCTIONS FOR BUILDING AN ALTAR IF IT HAS NOT BEEN BUILT YET.
-                MATH::FloatRectangle camera_bounds = renderer.Camera.ViewBounds;
-                MATH::Vector2f camera_view_center = camera_bounds.Center();
-                MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(camera_view_center.X, camera_view_center.Y);
                 ASSERT_THEN_IF(current_tile_map)
                 {
                     bool altar_built = current_tile_map->Altar.has_value();
@@ -261,12 +360,34 @@ namespace STATES
                             }
                         }
                     }
+                    else if (altar_built)
+                    {
+                        // CHECK IF THE PLAYER IS FACING THE ALTAR.
+                        MATH::Vector2f place_in_front_of_player = GetAltarBuildPosition(*world.NoahPlayer);
+                        MATH::FloatRectangle altar_bounding_box = current_tile_map->Altar->Sprite.GetWorldBoundingBox();
+                        bool player_facing_altar = altar_bounding_box.Contains(place_in_front_of_player.X, place_in_front_of_player.Y);
+                        if (player_facing_altar)
+                        {
+                            // RENDER AN ICON WITH INFORMATION FOR OFFERING SACRIFICES.
+                            constexpr char MAKE_OFFERINGS_KEY_TEXT = INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY_TEXT;
+                            const MATH::Vector2ui TOP_LEFT_SCREEN_POSITION_IN_PIXELS(0, 0);
+                            renderer.RenderKeyIcon(MAKE_OFFERINGS_KEY_TEXT, TOP_LEFT_SCREEN_POSITION_IN_PIXELS);
+
+                            constexpr float KEY_ICON_WIDTH_IN_PIXELS = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS);
+                            MATH::Vector2f make_offerings_text_left_top_screen_position_in_pixels(KEY_ICON_WIDTH_IN_PIXELS, 0.0f);
+                            renderer.RenderText(
+                                "Make Offerings",
+                                RESOURCES::AssetId::FONT_TEXTURE,
+                                make_offerings_text_left_top_screen_position_in_pixels);
+                        }
+                    }
                 }
                 break;
             }
             case Substate::GOD_SPEAKING_DURING_RAINBOW:
             {
                 // ADD A RAINBOW EFFECT.
+                /// @todo   How to have text box on top of rainbow?
                 std::shared_ptr<sf::Shader> rainbow_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::RAINBOW_SHADER);
                 ASSERT_THEN_IF(rainbow_shader)
                 {
@@ -330,7 +451,7 @@ namespace STATES
                 altar_center_world_position.Y += noah_bounding_box.Height();
                 break;
             case GAMEPLAY::Direction::LEFT:
-                altar_center_world_position.X -= (noah_bounding_box.Width() - ALTAR_HALF_WIDTH_IN_PIXELS);
+                altar_center_world_position.X -= (noah_bounding_box.Width() + ALTAR_HALF_WIDTH_IN_PIXELS);
                 break;
             case GAMEPLAY::Direction::RIGHT:
                 altar_center_world_position.X += (noah_bounding_box.Width() + ALTAR_HALF_WIDTH_IN_PIXELS);
@@ -418,7 +539,7 @@ namespace STATES
         bool altar_built = current_tile_map.Altar.has_value();
         if (!altar_built)
         {
-            if (input_controller.ButtonDown(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+            if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
             {
                 // BUILD AN ALTAR IN FRONT OF NOAH IN THE DIRECTION HE IS FACING IF POSSIBLE.
                 MATH::Vector2f altar_center_world_position = GetAltarBuildPosition(*world.NoahPlayer);
@@ -454,6 +575,22 @@ namespace STATES
                             current_tile_map.DustClouds.push_back(dust_cloud);
                         }
                     }
+                }
+            }
+        }
+        else if (altar_built)
+        {
+            if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+            {
+                // CHECK IF THE PLAYER IS FACING THE ALTAR.
+                MATH::Vector2f place_in_front_of_player = GetAltarBuildPosition(*world.NoahPlayer);
+                MATH::FloatRectangle altar_bounding_box = current_tile_map.Altar->Sprite.GetWorldBoundingBox();
+                bool player_facing_altar = altar_bounding_box.Contains(place_in_front_of_player.X, place_in_front_of_player.Y);
+                if (player_facing_altar)
+                {
+                    // MAKE OFFERINGS.
+                    current_tile_map.Altar->OfferingSmoke.Sprite.CurrentFrameSprite.IsVisible = true;
+                    current_tile_map.Altar->OfferingSmoke.Sprite.Play();
                 }
             }
         }

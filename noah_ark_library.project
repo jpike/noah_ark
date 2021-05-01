@@ -65,6 +65,7 @@
 #include "Objects/FlamingSword.cpp"
 #include "Objects/Food.cpp"
 #include "Objects/Noah.cpp"
+#include "Objects/OfferingSmoke.cpp"
 #include "Objects/Present.cpp"
 #include "Objects/Tree.cpp"
 #include "Objects/WoodLogs.cpp"

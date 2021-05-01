@@ -2,6 +2,7 @@
 
 #include "Graphics/Sprite.h"
 #include "Math/Vector2.h"
+#include "Objects/OfferingSmoke.h"
 
 namespace OBJECTS
 {
@@ -15,5 +16,7 @@ namespace OBJECTS
         // PUBLIC MEMBER VARIABLES FOR EASY ACCESS.
         /// The graphical sprite for the altar.
         GRAPHICS::Sprite Sprite = GRAPHICS::Sprite();
+        /// The smoke from offerings that can be made on the altar.
+        OBJECTS::OfferingSmoke OfferingSmoke;
     };
 }

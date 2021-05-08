@@ -54,6 +54,120 @@ namespace OBJECTS
         "Wolf"
     };
 
+    /// Gets the movement speed for a given animal species.
+    /// For now, this speed is only intended to vary per species.
+    /// @param[in]  species - The species of animal to get the movement speed for.
+    /// @return The movement speed to the animal species (in pixels per second).
+    float AnimalType::GetMoveSpeedInPixelsPerSecond(const AnimalSpecies::Value species)
+    {
+        // The movement speeds are somewhat arbitrarily chosen based on
+        // what feels best, but the speeds are also somewhat intended
+        // to be realistic (relative to each other) based on actual species.
+        // However, no real research has been done regarding this.
+        switch (species)
+        {
+            case AnimalSpecies::ALLIGATOR:
+                return 32.0f;
+            case AnimalSpecies::BABOON:
+                return 16.0f;
+            case AnimalSpecies::BAT:
+                return 32.0f;
+            case AnimalSpecies::BEAR:
+                return 16.0f;
+            case AnimalSpecies::BEE:
+                return 16.0f;
+            case AnimalSpecies::BOBCAT:
+                return 32.0f;
+            case AnimalSpecies::BUTTERFLY:
+                return 16.0f;
+            case AnimalSpecies::CAMEL:
+                return 32.0f;
+            case AnimalSpecies::CAT:
+                return 16.0f;
+            case AnimalSpecies::CATTLE:
+                return 16.0f;
+            case AnimalSpecies::CHEETAH:
+                return 32.0f;
+            case AnimalSpecies::CHICKEN:
+                return 16.0f;
+            case AnimalSpecies::CHIPMUNK:
+                return 16.0f;
+            case AnimalSpecies::CRICKET:
+                return 16.0f;
+            case AnimalSpecies::DEER:
+                return 32.0f;
+            case AnimalSpecies::DOG:
+                return 16.0f;
+            case AnimalSpecies::DOVE:
+                return 32.0f;
+            case AnimalSpecies::DUCK:
+                return 16.0f;
+            case AnimalSpecies::EAGLE:
+                return 32.0f;
+            case AnimalSpecies::ELEPHANT:
+                return 32.0f;
+            case AnimalSpecies::FOX:
+                return 16.0f;
+            case AnimalSpecies::FROG:
+                return 16.0f;
+            case AnimalSpecies::GOAT:
+                return 16.0f;
+            case AnimalSpecies::GOOSE:
+                return 16.0f;
+            case AnimalSpecies::GORILLA:
+                return 16.0f;
+            case AnimalSpecies::GUINEA_PIG:
+                return 16.0f;
+            case AnimalSpecies::HAWK:
+                return 32.0f;
+            case AnimalSpecies::HIPPO:
+                return 16.0f;
+            case AnimalSpecies::HORSE:
+                return 32.0f;
+            case AnimalSpecies::HYENA:
+                return 16.0f;
+            case AnimalSpecies::KOALA:
+                return 16.0f;
+            case AnimalSpecies::LEOPARD:
+                return 32.0f;
+            case AnimalSpecies::LION:
+                return 32.0f;
+            case AnimalSpecies::LOCUST:
+                return 16.0f;
+            case AnimalSpecies::MONKEY:
+                return 16.0f;
+            case AnimalSpecies::OSPREY:
+                return 32.0f;
+            case AnimalSpecies::OWL:
+                return 32.0f;
+            case AnimalSpecies::PEACOCK:
+                return 16.0f;
+            case AnimalSpecies::PELICAN:
+                return 32.0f;
+            case AnimalSpecies::PIG:
+                return 16.0f;
+            case AnimalSpecies::POLAR_BEAR:
+                return 16.0f;
+            case AnimalSpecies::RACCOON:
+                return 16.0f;
+            case AnimalSpecies::RAVEN:
+                return 32.0f;
+            case AnimalSpecies::SHEEP:
+                return 16.0f;
+            case AnimalSpecies::SNAKE:
+                return 16.0f;
+            case AnimalSpecies::SQUIRREL:
+                return 16.0f;
+            case AnimalSpecies::TURKEY:
+                return 16.0f;
+            case AnimalSpecies::WOLF:
+                return 16.0f;
+            default:
+                // Don't let invalid animal species move.
+                return 0.0f;
+        }
+    }
+
     /// Constructor.
     /// @param[in]  species - The species of the animal.
     /// @param[in]  gender - The gender of the animal.
@@ -248,120 +362,6 @@ namespace OBJECTS
             case AnimalSpecies::WOLF:
             default:
                 return false;
-        }
-    }
-
-    /// Gets the movement speed for a given animal species.
-    /// For now, this speed is only intended to vary per species.
-    /// @param[in]  species - The species of animal to get the movement speed for.
-    /// @return The movement speed to the animal species (in pixels per second).
-    float AnimalType::GetMoveSpeedInPixelsPerSecond(const AnimalSpecies::Value species)
-    {
-        // The movement speeds are somewhat arbitrarily chosen based on
-        // what feels best, but the speeds are also somewhat intended
-        // to be realistic (relative to each other) based on actual species.
-        // However, no real research has been done regarding this.
-        switch (species)
-        {
-            case AnimalSpecies::ALLIGATOR:
-                return 32.0f;
-            case AnimalSpecies::BABOON:
-                return 16.0f;
-            case AnimalSpecies::BAT:
-                return 32.0f;
-            case AnimalSpecies::BEAR:
-                return 16.0f;
-            case AnimalSpecies::BEE:
-                return 16.0f;
-            case AnimalSpecies::BOBCAT:
-                return 32.0f;
-            case AnimalSpecies::BUTTERFLY:
-                return 16.0f;
-            case AnimalSpecies::CAMEL:
-                return 32.0f;
-            case AnimalSpecies::CAT:
-                return 16.0f;
-            case AnimalSpecies::CATTLE:
-                return 16.0f;
-            case AnimalSpecies::CHEETAH:
-                return 32.0f;
-            case AnimalSpecies::CHICKEN:
-                return 16.0f;
-            case AnimalSpecies::CHIPMUNK:
-                return 16.0f;
-            case AnimalSpecies::CRICKET:
-                return 16.0f;
-            case AnimalSpecies::DEER:
-                return 32.0f;
-            case AnimalSpecies::DOG:
-                return 16.0f;
-            case AnimalSpecies::DOVE:
-                return 32.0f;
-            case AnimalSpecies::DUCK:
-                return 16.0f;
-            case AnimalSpecies::EAGLE:
-                return 32.0f;
-            case AnimalSpecies::ELEPHANT:
-                return 32.0f;
-            case AnimalSpecies::FOX:
-                return 16.0f;
-            case AnimalSpecies::FROG:
-                return 16.0f;
-            case AnimalSpecies::GOAT:
-                return 16.0f;
-            case AnimalSpecies::GOOSE:
-                return 16.0f;
-            case AnimalSpecies::GORILLA:
-                return 16.0f;
-            case AnimalSpecies::GUINEA_PIG:
-                return 16.0f;
-            case AnimalSpecies::HAWK:
-                return 32.0f;
-            case AnimalSpecies::HIPPO:
-                return 16.0f;
-            case AnimalSpecies::HORSE:
-                return 32.0f;
-            case AnimalSpecies::HYENA:
-                return 16.0f;
-            case AnimalSpecies::KOALA:
-                return 16.0f;
-            case AnimalSpecies::LEOPARD:
-                return 32.0f;
-            case AnimalSpecies::LION:
-                return 32.0f;
-            case AnimalSpecies::LOCUST:
-                return 16.0f;
-            case AnimalSpecies::MONKEY:
-                return 16.0f;
-            case AnimalSpecies::OSPREY:
-                return 32.0f;
-            case AnimalSpecies::OWL:
-                return 32.0f;
-            case AnimalSpecies::PEACOCK:
-                return 16.0f;
-            case AnimalSpecies::PELICAN:
-                return 32.0f;
-            case AnimalSpecies::PIG:
-                return 16.0f;
-            case AnimalSpecies::POLAR_BEAR:
-                return 16.0f;
-            case AnimalSpecies::RACCOON:
-                return 16.0f;
-            case AnimalSpecies::RAVEN:
-                return 32.0f;
-            case AnimalSpecies::SHEEP:
-                return 16.0f;
-            case AnimalSpecies::SNAKE:
-                return 16.0f;
-            case AnimalSpecies::SQUIRREL:
-                return 16.0f;
-            case AnimalSpecies::TURKEY:
-                return 16.0f;
-            case AnimalSpecies::WOLF:
-                return 16.0f;
-            default:
-                // Don't let invalid animal species move.
-                return 0.0f;
         }
     }
 

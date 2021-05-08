@@ -388,6 +388,14 @@ namespace STATES
                 {
                     Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_RAVEN_FIRST_TIME;
                 }
+                else if (GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED == Hud.CurrentSpecialDayAction)
+                {
+                    // WAIT UNTIL THE RAVEN HAS DISAPPEARED TO ALLOW SENDING OF THE DOVE.
+                    if (!BirdSentFromArk)
+                    {
+                        Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FIRST_TIME;
+                    }
+                }
                 break;
             }
             case FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING:
@@ -456,6 +464,12 @@ namespace STATES
 
         // RENDER THE PLAYER.
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
+
+        // RENDER ANY BIRD SENT OUT FROM THE ARK.
+        if (BirdSentFromArk)
+        {
+            renderer.Render(BirdSentFromArk->Sprite.CurrentFrameSprite);
+        }
 
         // RENDER A TOOLTIP FOR COLLECTING FOOD IF THE PLAYER IS ON TOP OF IT.
         MATH::FloatRectangle camera_bounds = renderer.Camera.ViewBounds;
@@ -740,21 +754,43 @@ namespace STATES
                 {
                     DEBUGGING::DebugConsole::WriteLine("Sending out raven first time!");
 
+                    // CREATE THE RAVEN AT NOAH'S POSITION.
+                    BirdSentFromArk = OBJECTS::BirdSentFromArk(Hud.CurrentSpecialDayAction, OBJECTS::AnimalSpecies::RAVEN);
+                    BirdSentFromArk->Sprite.SetWorldPosition(world.NoahPlayer->GetWorldPosition());
+                    BirdSentFromArk->Sprite.Play();
+                    gaming_hardware.Speakers->PlaySoundEffect(BirdSentFromArk->SoundId);
+
                     // MOVE TO THE NEXT SPECIAL ACTION.
-                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FIRST_TIME;
+                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
                     break;
                 }
                 case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FIRST_TIME:
                 {
-                    DEBUGGING::DebugConsole::WriteLine("Sending out dove first time!");
+                    // WAIT UNTIL THE RAVEN HAS DISAPPEARED TO ALLOW SENDING OF THE DOVE.
+                    if (!BirdSentFromArk)
+                    {
+                        DEBUGGING::DebugConsole::WriteLine("Sending out dove first time!");
 
-                    // CLEAR THE SPECIAL ACTION UNTIL THE NEXT DAY.
-                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
+                        // CREATE THE DOVE AT NOAH'S POSITION.
+                        BirdSentFromArk = OBJECTS::BirdSentFromArk(Hud.CurrentSpecialDayAction, OBJECTS::AnimalSpecies::DOVE);
+                        BirdSentFromArk->Sprite.SetWorldPosition(world.NoahPlayer->GetWorldPosition());
+                        BirdSentFromArk->Sprite.Play();
+                        gaming_hardware.Speakers->PlaySoundEffect(BirdSentFromArk->SoundId);
+
+                        // CLEAR THE SPECIAL ACTION UNTIL THE NEXT DAY.
+                        Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
+                    }
                     break;
                 }
                 case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_SECOND_TIME:
                 {
                     DEBUGGING::DebugConsole::WriteLine("Sending out dove second time!");
+
+                    // CREATE THE DOVE AT NOAH'S POSITION.
+                    BirdSentFromArk = OBJECTS::BirdSentFromArk(Hud.CurrentSpecialDayAction, OBJECTS::AnimalSpecies::DOVE);
+                    BirdSentFromArk->Sprite.SetWorldPosition(world.NoahPlayer->GetWorldPosition());
+                    BirdSentFromArk->Sprite.Play();
+                    gaming_hardware.Speakers->PlaySoundEffect(BirdSentFromArk->SoundId);
 
                     // CLEAR THE SPECIAL ACTION UNTIL THE NEXT DAY.
                     Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
@@ -763,6 +799,12 @@ namespace STATES
                 case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FINAL_TIME:
                 {
                     DEBUGGING::DebugConsole::WriteLine("Sending out dove final time!");
+
+                    // CREATE THE DOVE AT NOAH'S POSITION.
+                    BirdSentFromArk = OBJECTS::BirdSentFromArk(Hud.CurrentSpecialDayAction, OBJECTS::AnimalSpecies::DOVE);
+                    BirdSentFromArk->Sprite.SetWorldPosition(world.NoahPlayer->GetWorldPosition());
+                    BirdSentFromArk->Sprite.Play();
+                    gaming_hardware.Speakers->PlaySoundEffect(BirdSentFromArk->SoundId);
 
                     // CLEAR THE SPECIAL ACTION SINCE ALL SPECIAL ACTIONS HAVE BEEN COMPLETED.
                     Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
@@ -773,6 +815,75 @@ namespace STATES
 
         // UPDATE THE REST OF THE WORLD WITHIN CURRENT TILE MAP.
         current_tile_map->Update(objects_can_move, current_game_data, gaming_hardware);
+
+        // UPDATE ANY BIRD SENT OUT FROM THE ARK.
+        if (BirdSentFromArk)
+        {
+            // ANIMATE AND MOVE THE BIRD.
+            BirdSentFromArk->Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
+
+            // ALTER STATE OF THE BIRD BASED ON PARTICULAR CONDITIONS.
+            MATH::FloatRectangle bird_bounding_box = BirdSentFromArk->Sprite.GetWorldBoundingBox();
+            bool bird_in_view = camera_bounds.Intersects(bird_bounding_box);
+            switch (BirdSentFromArk->Species)
+            {
+                case OBJECTS::AnimalSpecies::RAVEN:
+                {
+                    // The raven should be cleared if it has moved out-of-view.
+                    if (!bird_in_view)
+                    {
+                        BirdSentFromArk.reset();
+                    }
+                    break;
+                }
+                case OBJECTS::AnimalSpecies::DOVE:
+                {
+                    // The dove should switch directions if it has moved out-of-view and not the last time it was sent out.
+                    if (!bird_in_view)
+                    {
+                        bool is_last_time_dove_sent_out = (GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FINAL_TIME == BirdSentFromArk->ActionThatSentOutBird);
+                        if (is_last_time_dove_sent_out)
+                        {
+                            // The bird should disapper.
+                            BirdSentFromArk.reset();
+                        }
+                        else
+                        {
+                            // The bird should return.
+                            BirdSentFromArk->MoveDirection = MATH::Vector2f::Scale(-1.0f, BirdSentFromArk->MoveDirection);
+                            BirdSentFromArk->MovingOut = false;
+                        }
+                    }
+                    else if (!BirdSentFromArk->MovingOut)
+                    {
+                        // If the bird is returning, it's movement direction should always be back to Noah.
+                        MATH::Vector2f noah_world_position = world.NoahPlayer->GetWorldPosition();
+                        MATH::Vector2f bird_world_position = BirdSentFromArk->Sprite.GetWorldPosition();
+                        MATH::Vector2f vector_from_bird_to_noah = noah_world_position - bird_world_position;
+                        BirdSentFromArk->MoveDirection = MATH::Vector2f::Normalize(vector_from_bird_to_noah);
+
+                        // The bird should disappear if it intersects Noah.
+                        MATH::FloatRectangle noah_bounding_box = world.NoahPlayer->GetWorldBoundingBox();
+                        bool bird_intersects_noah = bird_bounding_box.Intersects(noah_bounding_box);
+                        if (bird_intersects_noah)
+                        {
+                            // The bird's sound effect is replayed first.
+                            gaming_hardware.Speakers->PlaySoundEffect(BirdSentFromArk->SoundId);
+
+                            // If this is the 2nd time the dove was sent out, an olive leaf should be placed underneath Noah.
+                            bool bird_returned_with_olive_leaf = (GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_SECOND_TIME == BirdSentFromArk->ActionThatSentOutBird);
+                            if (bird_returned_with_olive_leaf)
+                            {
+                                current_tile_map->OliveLeaf = OBJECTS::OliveLeaf(noah_world_position);
+                            }
+
+                            BirdSentFromArk.reset();
+                        }
+                    }
+                    break;
+                }
+            }
+        }
 
         // UPDATE THE CAMERA'S WORLD VIEW.
         UpdateCameraWorldView(

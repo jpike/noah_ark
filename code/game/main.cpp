@@ -1,5 +1,4 @@
 // TODO LIST BEFORE BETA 1:
-// - Add in ark raven/dove actions
 // - Add in any missing music
 // - Have some Bible verses only obtainable during certain sections of game
 // - Take a pass at TODOs

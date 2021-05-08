@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <SFML/Graphics.hpp>
 #include "Graphics/Camera.h"
 #include "Graphics/Gui/DuringFloodHeadsUpDisplay.h"
@@ -7,6 +8,7 @@
 #include "Hardware/GamingHardware.h"
 #include "Maps/MultiTileMapGrid.h"
 #include "Maps/World.h"
+#include "Objects/BirdSentFromArk.h"
 #include "States/GameState.h"
 #include "States/SavedGameData.h"
 
@@ -69,5 +71,9 @@ namespace STATES
         // PRIVATE MEMBER VARIABLES.
         /// The HUD for this game state.
         GRAPHICS::GUI::DuringFloodHeadsUpDisplay Hud = GRAPHICS::GUI::DuringFloodHeadsUpDisplay();
+        /// The bird sent from the ark at certain points.
+        /// Stored in this state rather than within the world since there is not a needed for it
+        /// to be within the world and it is simpler to keep here.
+        std::optional<OBJECTS::BirdSentFromArk> BirdSentFromArk = std::nullopt;
     };
 }

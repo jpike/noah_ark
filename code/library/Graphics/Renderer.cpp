@@ -823,6 +823,12 @@ namespace GRAPHICS
                 Render(tile->Sprite.CurrentFrameSprite);
             }
         }
+
+        // RENDER ANY OLIVE LEAF.
+        if (tile_map.OliveLeaf)
+        {
+            Render(tile_map.OliveLeaf->Sprite);
+        }
         
         // RENDER THE CURRENT TILE MAP'S ARK PIECES.
         for (const auto& ark_piece : tile_map.ArkPieces)
@@ -832,7 +838,6 @@ namespace GRAPHICS
             {
                 Render(ark_piece.Sprite);
             }
-
         }
 
         // RENDER THE CURRENT TILE MAP'S WOOD LOGS.

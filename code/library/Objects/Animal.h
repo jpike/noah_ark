@@ -96,7 +96,10 @@ namespace OBJECTS
     class AnimalType
     {
     public:
-        /// CONSTRUCTION.
+        // STATIC METHODS.
+        static float GetMoveSpeedInPixelsPerSecond(const AnimalSpecies::Value species);
+
+        // CONSTRUCTION.
         explicit AnimalType(
             const AnimalSpecies::Value species, 
             const AnimalGender::Value gender);
@@ -116,10 +119,6 @@ namespace OBJECTS
         AnimalGender::Value Gender = AnimalGender::COUNT;
         /// How fast the animal moves in the world (in pixels per second).
         float MoveSpeedInPixelsPerSecond = 0.0f;
-
-    private:
-        /// HELPER METHODS.
-        static float GetMoveSpeedInPixelsPerSecond(const AnimalSpecies::Value species);
     };
 
     /// An animal in the game.  A single animal class exists that is parameterized

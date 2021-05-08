@@ -18,6 +18,7 @@
 #include "Objects/FlamingSword.h"
 #include "Objects/Food.h"
 #include "Objects/Present.h"
+#include "Objects/OliveLeaf.h"
 #include "Objects/Tree.h"
 #include "Objects/WoodLogs.h"
 #include "States/SavedGameData.h"
@@ -91,6 +92,8 @@ namespace MAPS
         std::vector<OBJECTS::Present> Presents;
         /// Any flaming sword in the map.  Randomly appears/disappears.
         std::optional<OBJECTS::FlamingSword> FlamingSword;
+        /// An olive leaf that is broke back by the dove.
+        std::optional<OBJECTS::OliveLeaf> OliveLeaf;
         /// The altar that Noah can build.
         std::optional<OBJECTS::Altar> Altar;
         /// Pieces of the ark that may exist on this tile map.

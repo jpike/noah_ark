@@ -10,6 +10,18 @@ namespace STATES
     const sf::Time NewGameIntroSequence::MAX_TIME_PER_FRAME = sf::seconds(9);
 #endif
 
+    /// Loads the sequence to its initial state.
+    /// @param[in,out]  world - The world in which the intro sequence will take place.
+    void NewGameIntroSequence::Load(MAPS::World& world)
+    {
+        // RESET THE CURRENT FRAME TO THE BEGINNING.
+        CurrentFrameIndex = 0;
+        ElapsedTimeForCurrentFrame = sf::Time::Zero;
+
+        // RESET THE PLAYER'S POSITION.
+        world.NoahPlayer->SetWorldPosition(OBJECTS::Noah::DEFAULT_START_WORLD_POSITION);
+    }
+
     /// Update the intro sequence based on an elapsed amount of time.
     /// @param[in,out]  gaming_hardware - The gaming hardware supplying input and output.
     /// @return The state that the game should be in after the update.

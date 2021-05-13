@@ -20,8 +20,7 @@ namespace STATES
     /// @param[in,out]  world - The world for the gameplay state.
     /// @param[in,out]  renderer - The renderer used for some initialization.
     /// @param[in,out]  random_number_generator - The random number generator to use for random initialization.
-    /// @return True if initialization succeeded; false otherwise.
-    bool PreFloodGameplayState::Initialize(
+    void PreFloodGameplayState::Load(
         const SavedGameData& saved_game_data,
         MAPS::World& world,
         GRAPHICS::Renderer& renderer,
@@ -107,9 +106,6 @@ namespace STATES
             renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE],
             main_text_box_width_in_pixels,
             main_text_box_height_in_pixels);
-
-        // INDICATE THAT INITIALIZATION SUCCEEDED.
-        return true;
     }
 
     /// Updates the state of the gameplay based on elapsed time and player input.

@@ -4,7 +4,7 @@
 namespace STATES
 {
     /// Sets the flood cutscene to its initial state.
-    FloodCutscene::FloodCutscene()
+    void FloodCutscene::Load()
     {
         // RESET THE ELAPSED TIME FOR THE CUTSCENE.
         ElapsedTime = sf::Time::Zero;

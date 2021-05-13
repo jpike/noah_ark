@@ -180,73 +180,45 @@ namespace STATES
         switch (CurrentSavedGame.CurrentGameState)
         {
             case GameState::INTRO_SEQUENCE:
-                IntroSequence.Start(*gaming_hardware.Speakers);
+                IntroSequence.Load(*gaming_hardware.Speakers);
                 break;
             case GameState::CREDITS_SCREEN:
-                // RESET THE ELAPSED TIME FOR THE CREDITS SCREEN.
-                CreditsScreen.ElapsedTime = sf::Time::Zero;
+                CreditsScreen.Load();
                 break;
             case GameState::NOTICE_SCREEN:
                 // Nothing needs to be done when switching to this state.
                 break;
             case GameState::GAME_SELECTION_SCREEN:
-                GameSelectionScreen.LoadSavedGames();
-                GameSelectionScreen.CurrentSubState = GameSelectionScreen::SubState::LISTING_GAMES;
+                GameSelectionScreen.Load();
                 break;
             case GameState::NEW_GAME_INTRO_SEQUENCE:
-                // RESET THE INTRO SEQUENCE TO THE BEGINNING.
-                NewGameIntroSequence = {};
-                world.NoahPlayer->SetWorldPosition(OBJECTS::Noah::DEFAULT_START_WORLD_POSITION);
+                NewGameIntroSequence.Load(world);
                 break;
             case GameState::NEW_GAME_INSTRUCTION_SEQUENCE:
-            {
-                unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
-                const unsigned int LINE_COUNT = 2;
-                unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
-                /// @todo   Rethink this text box initialization...It has to be done before the rest of initialization.
-                NewGameInstructionSequence.InstructionTextBox = GRAPHICS::GUI::TextBox(
-                    main_text_box_width_in_pixels,
-                    main_text_box_height_in_pixels,
-                    renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE]);
-                NewGameInstructionSequence.Initialize(world);
-                renderer.Camera.SetCenter(world.NoahPlayer->GetWorldPosition());
+                NewGameInstructionSequence.Load(world, renderer);
                 break;
-            }
             case GameState::ENTER_ARK_CUTSCENE:
                 EnteringArkCutscene.Load(world, renderer, gaming_hardware);
                 break;
             case GameState::FLOOD_CUTSCENE:
-                FloodCutscene = STATES::FloodCutscene();
+                FloodCutscene.Load();
                 break;
             case GameState::PRE_FLOOD_GAMEPLAY:
-            {
-                // INITIALIZE THE GAMEPLAY STATE.
-                bool gameplay_state_initialized = PreFloodGameplayState.Initialize(
+                PreFloodGameplayState.Load(
                     CurrentSavedGame,
                     world,
                     renderer,
                     gaming_hardware.RandomNumberGenerator);
-                if (!gameplay_state_initialized)
-                {
-                    /// @todo   Error-handling!
-                    return;
-                }
-
                 break;
-            }
             case GameState::DURING_FLOOD_GAMEPLAY:
                 DuringFloodGameplayState.Load(CurrentSavedGame, world, renderer, gaming_hardware);
                 break;
             case GameState::POST_FLOOD_GAMEPLAY:
-            {
                 PostFloodGameplayState.Load(world, renderer, gaming_hardware);
                 break;
-            }
             case GameState::ENDING_CREDITS_SCREEN:
-            {
-                EndingCreditsScreen = {};
+                EndingCreditsScreen.Load();
                 break;
-            }
         }
     }
 }

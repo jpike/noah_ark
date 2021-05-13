@@ -162,7 +162,7 @@ int main()
 
         // INITIALIZE THE INTRO SEQUENCE.
         STATES::GameStates game_states;
-        game_states.IntroSequence.Start(*gaming_hardware.Speakers);
+        game_states.IntroSequence.Load(*gaming_hardware.Speakers);
 
         // CREATE THE WORLD.
         MAPS::World world;

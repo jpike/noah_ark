@@ -36,6 +36,7 @@ namespace STATES
         /// The path to the saved games folder.
         static const std::filesystem::path SAVED_GAMES_FOLDER_PATH;
 
+        void Load();
         void LoadSavedGames();
 
         GameState Update(const HARDWARE::GamingHardware& gaming_hardware);

@@ -28,7 +28,7 @@ namespace STATES
     {
     public:
         // INITIALIZATION.
-        bool Initialize(
+        void Load(
             const SavedGameData& saved_game_data,
             MAPS::World& world,
             GRAPHICS::Renderer& renderer,

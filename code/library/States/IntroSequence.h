@@ -28,7 +28,7 @@ namespace STATES
         static const std::vector<BIBLE::BibleVerse>& IntroBibleVerses();
 
         // INITIALIZATION.
-        void Start(AUDIO::Speakers& speakers);
+        void Load(AUDIO::Speakers& speakers);
 
         // OTHER METHODS.
         bool Completed() const;

@@ -48,9 +48,9 @@ namespace STATES
         return intro_bible_verses;
     }
 
-    /// Starts the intro sequence from the beginning.
+    /// Loads and starts the intro sequence from the beginning.
     /// @param[in,out]  speakers - The speakers to use for playing audio.
-    void IntroSequence::Start(AUDIO::Speakers& speakers)
+    void IntroSequence::Load(AUDIO::Speakers& speakers)
     {
         // RESET THE INTRO SEQUENCE TO THE BEGINNING.
         CurrentFrameIndex = 0;

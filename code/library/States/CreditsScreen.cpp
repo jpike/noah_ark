@@ -3,6 +3,13 @@
 
 namespace STATES
 {
+    /// Loads the credits screen to its initial state.
+    void CreditsScreen::Load()
+    {
+        // RESET THE ELAPSED TIME FOR THE CREDITS SCREEN.
+        ElapsedTime = sf::Time::Zero;
+    }
+
     /// Updates the credits screen based on elapsed time and user input.
     /// @param[in]  gaming_hardware - The hardware supplying input for the update.
     /// @return The state the game should be in based on the user's input.

@@ -6,6 +6,7 @@
 #include "Bible/BibleVerse.h"
 #include "Graphics/Renderer.h"
 #include "Hardware/GamingHardware.h"
+#include "Maps/World.h"
 #include "States/GameState.h"
 
 namespace STATES
@@ -16,6 +17,7 @@ namespace STATES
     {
     public:
         // METHODS.
+        void Load(MAPS::World& world);
         GameState Update(HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(GRAPHICS::Renderer& renderer) const;
 

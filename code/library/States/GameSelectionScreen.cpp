@@ -12,6 +12,13 @@ namespace STATES
 {
     const std::filesystem::path GameSelectionScreen::SAVED_GAMES_FOLDER_PATH = "SavedGames";
 
+    /// Loads the game selection screen to its initial state.
+    void GameSelectionScreen::Load()
+    {
+        LoadSavedGames();
+        CurrentSubState = GameSelectionScreen::SubState::LISTING_GAMES;
+    }
+
     /// Loads any available saved games into the current state.
     void GameSelectionScreen::LoadSavedGames()
     {

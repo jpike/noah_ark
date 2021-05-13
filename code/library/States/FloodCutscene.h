@@ -15,10 +15,8 @@ namespace STATES
     class FloodCutscene
     {
     public:
-        // CONSTRUCTION.
-        explicit FloodCutscene();
-
         // PUBLIC METHODS.
+        void Load();
         GameState Update(const HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(GRAPHICS::Renderer& renderer, HARDWARE::GamingHardware& gaming_hardware);
 

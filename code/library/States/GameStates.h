@@ -57,13 +57,13 @@ namespace STATES
         /// The new game intro sequence.
         NewGameIntroSequence NewGameIntroSequence = {};
         /// The new game instruction sequence.
-        NewGameInstructionSequence NewGameInstructionSequence = STATES::NewGameInstructionSequence();
+        NewGameInstructionSequence NewGameInstructionSequence = {};
         /// The main gameplay state.
         PreFloodGameplayState PreFloodGameplayState = {};
         /// A short cutscene showing Noah and family entering the ark.
         EnteringArkCutscene EnteringArkCutscene = {};
         /// The flood cutscene in-between the first and second halves of gameplay.
-        FloodCutscene FloodCutscene = STATES::FloodCutscene();
+        FloodCutscene FloodCutscene = {};
         /// The gameplay state during the flood.
         DuringFloodGameplayState DuringFloodGameplayState = {};
         /// The gameplay state after the flood.

@@ -16,7 +16,7 @@ namespace STATES
     class NewGameInstructionSequence
     {
     public:
-        void Initialize(MAPS::World& world);
+        void Load(MAPS::World& world, GRAPHICS::Renderer& renderer);
         GameState Update(const HARDWARE::GamingHardware& gaming_hardware);
         sf::Sprite Render(
             MAPS::World& world,
@@ -27,6 +27,6 @@ namespace STATES
         /// The instructional text to be displayed for a new game.
         std::string NewGameInstructionText = "";
         /// The text box displaying the instructions.
-        GRAPHICS::GUI::TextBox InstructionTextBox;
+        GRAPHICS::GUI::TextBox InstructionTextBox = GRAPHICS::GUI::TextBox();
     };
 }

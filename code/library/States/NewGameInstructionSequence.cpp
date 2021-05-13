@@ -5,8 +5,19 @@
 namespace STATES
 {
     /// Sets the new game instruction sequence to its initial state.
-    void NewGameInstructionSequence::Initialize(MAPS::World& world)
+    /// @param[in,out]  world - The game world.
+    /// @param[in,out]  renderer - The renderer.
+    void NewGameInstructionSequence::Load(MAPS::World& world, GRAPHICS::Renderer& renderer)
     {
+        // INITIALIZE THE TEXT BOX.
+        unsigned int main_text_box_width_in_pixels = renderer.Screen->WidthInPixels<unsigned int>();
+        const unsigned int LINE_COUNT = 2;
+        unsigned int main_text_box_height_in_pixels = GRAPHICS::GUI::Glyph::DEFAULT_HEIGHT_IN_PIXELS * LINE_COUNT;
+        InstructionTextBox = GRAPHICS::GUI::TextBox(
+            main_text_box_width_in_pixels,
+            main_text_box_height_in_pixels,
+            renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE]);
+
         // INITIALIZE THE NEW GAME INSTRUCTION TEXT.
         NewGameInstructionText = "";
         constexpr unsigned int MIN_GENESIS_6_VERSE_NUMBER = 13;
@@ -53,6 +64,7 @@ namespace STATES
 
         // RESET THE PLAYER'S POSITION.
         world.NoahPlayer->SetWorldPosition(OBJECTS::Noah::DEFAULT_START_WORLD_POSITION);
+        renderer.Camera.SetCenter(OBJECTS::Noah::DEFAULT_START_WORLD_POSITION);
     }
 
     /// Updates the instruction sequence for a frame.

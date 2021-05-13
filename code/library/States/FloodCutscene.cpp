@@ -28,6 +28,9 @@ namespace STATES
     /// @return The state that the game should be in after the update.
     GameState FloodCutscene::Update(const HARDWARE::GamingHardware& gaming_hardware)
     {
+        // PLAY BACKGROUND MUSIC IF NOT ALREADY PLAYING.
+        gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::BASIC_RAIN_BACKGROUND_SOUNDS);
+
         // UPDATE THE ELAPSED TIME.
         ElapsedTime += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
 

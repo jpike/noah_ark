@@ -95,6 +95,9 @@ namespace RESOURCES
         // MUSIC.
         AssetDefinition(AssetType::MUSIC, AssetId::NEW_GAME_INTRO_MUSIC, "res/sounds/Intro1.wav"),
         AssetDefinition(AssetType::MUSIC, AssetId::OVERWORLD_BACKGROUND_MUSIC, "res/sounds/overworld_music.wav"),
+        AssetDefinition(AssetType::MUSIC, AssetId::BASIC_RAIN_BACKGROUND_SOUNDS, "res/sounds/Rain Ending-SoundBible.com-1043019515.wav"),
+        AssetDefinition(AssetType::MUSIC, AssetId::THUNDERSTORM_BACKGROUND_SOUNDS, "res/sounds/2_Minute_Thunderstorm-Mike_Koenig-574654058.wav"),
+        AssetDefinition(AssetType::MUSIC, AssetId::AFTER_RAIN_BACKGROUND_SOUNDS, "res/sounds/rainforest_ambience-GlorySunz-1938133500.wav"),
         AssetDefinition(AssetType::MUSIC, AssetId::FINAL_CREDITS_MUSIC, "res/sounds/NoahsArkIntro1_PaulstretchPlusMore.wav"),
 
         // SHADERS.

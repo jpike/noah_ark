@@ -71,8 +71,7 @@ namespace STATES
         STATES::SavedGameData& current_game_data)
     {
         // START PLAYING THE BACKGROUND MUSIC IF ITS NOT ALREADY PLAYING.
-        /// @todo   Different background music?
-        gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
+        gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::AFTER_RAIN_BACKGROUND_SOUNDS);
 
         // UPDATE THE CURRENT SUBSTATE.
         // By default, we should remain on the current state unless specific conditions are met.

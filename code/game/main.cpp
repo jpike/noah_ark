@@ -59,6 +59,29 @@ void LoadRemainingAssets(HARDWARE::GamingHardware& gaming_hardware)
                     overworld_music->Sfml.setLoop(true);
                 }
 
+                auto flood_start_background_music = gaming_hardware.Speakers->GetMusic(RESOURCES::AssetId::BASIC_RAIN_BACKGROUND_SOUNDS);
+                if (flood_start_background_music)
+                {
+                    // Slower pitch to better match the duration of the cutscene.
+                    flood_start_background_music->Sfml.setPitch(0.4f);
+                }
+
+                auto flood_rain_background_music = gaming_hardware.Speakers->GetMusic(RESOURCES::AssetId::THUNDERSTORM_BACKGROUND_SOUNDS);
+                if (flood_rain_background_music)
+                {
+                    // Lowered volume for greater subtleness.
+                    flood_rain_background_music->Sfml.setVolume(60.0f);
+                    flood_rain_background_music->Sfml.setLoop(true);
+                }
+
+                auto after_flood_background_music = gaming_hardware.Speakers->GetMusic(RESOURCES::AssetId::AFTER_RAIN_BACKGROUND_SOUNDS);
+                if (after_flood_background_music)
+                {
+                    // Lowered volume for greater subtleness.
+                    after_flood_background_music->Sfml.setVolume(40.0f);
+                    after_flood_background_music->Sfml.setLoop(true);
+                }
+
                 auto final_credits_music = gaming_hardware.Speakers->GetMusic(RESOURCES::AssetId::FINAL_CREDITS_MUSIC);
                 if (final_credits_music)
                 {
@@ -205,6 +228,7 @@ int main()
                 window.draw(screen_sprite);
                 window.display();
 
+#if _DEBUG
                 // OVERRIDE GAME STATE SWITCHES WITH DEBUG KEY PRESSES.
                 if (gaming_hardware.InputController.ButtonWasPressed(sf::Keyboard::Num1))
                 {
@@ -277,6 +301,7 @@ int main()
                     // Add approximately 1 day to flood gameplay time to speed up testing.
                     game_states.CurrentSavedGame.FloodElapsedGameplayTime += sf::seconds(24.0f);
                 }
+#endif
 
                 // SWITCH THE GAME STATE IF NEEDED.
                 game_states.SwitchStatesIfChanged(next_game_state, world, renderer, gaming_hardware);

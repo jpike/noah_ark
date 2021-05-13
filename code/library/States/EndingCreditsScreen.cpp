@@ -128,7 +128,7 @@ namespace STATES
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
-            "ANIMAL SOUNDS",
+            "ADDITIONAL SOUNDS",
             RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);
@@ -150,6 +150,13 @@ namespace STATES
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
             "Mike Koenig",
+            RESOURCES::AssetId::FONT_TEXTURE,
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
+            "GlorySunz",
             RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,
             CREDITS_TEXT_COLOR);

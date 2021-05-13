@@ -254,6 +254,9 @@ namespace STATES
         GRAPHICS::Camera& camera,
         STATES::SavedGameData& current_game_data)
     {
+        // PLAY BACKGROUND MUSIC IF NOT ALREADY PLAYING.
+        gaming_hardware.Speakers->PlayMusicIfNotAlready(RESOURCES::AssetId::THUNDERSTORM_BACKGROUND_SOUNDS);
+
         // UPDATE THE ELAPSED TIME FOR THE FLOOD.
         // This is done even if the game is paused since it can take a while to go through the full flood day count anyway,
         // so it's fine if this is sped up a bit.

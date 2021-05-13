@@ -2,7 +2,7 @@ With the exception of certain third-party items (with individual licenses in the
 including source code, documentation, assets (graphics, sound, etc.), and built game, is released into the public domain.
 Further elaboration on the public domain nature of this project is below.  The main third-party items that are under their
 own licenses (NOT THIS ONE) are:
-- Animal sounds
+- Animal sounds/rainy background sounds
 - SFML (and dependency libraries - namely some OpenAL stuff used by SFML is also directly used in this project)
 - GSL
 - Catch

@@ -140,6 +140,12 @@ namespace RESOURCES
         NEW_GAME_INTRO_MUSIC,
         /// The overworld background music.
         OVERWORLD_BACKGROUND_MUSIC,
+        /// A basic rainy background transition.
+        BASIC_RAIN_BACKGROUND_SOUNDS,
+        /// A stronger thunderstorm.
+        THUNDERSTORM_BACKGROUND_SOUNDS,
+        /// Brightness after rain background sounds.
+        AFTER_RAIN_BACKGROUND_SOUNDS,
         /// The music for the final credits.
         FINAL_CREDITS_MUSIC
     };

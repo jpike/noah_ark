@@ -2,6 +2,7 @@
 #include "Debugging/DebugConsole.h"
 #include "ErrorHandling/Asserts.h"
 #include "Gameplay/FloodElapsedTime.h"
+#include "Gameplay/FloodSpecialDayAction.h"
 #include "Graphics/TimeOfDayLighting.h"
 #include "Maps/Tileset.h"
 #include "Resources/FoodGraphics.h"
@@ -328,108 +329,68 @@ namespace STATES
             world,
             *CurrentMapGrid,
             camera,
-            current_game_data);
+            current_game_data);        
 
-        /// @todo   Check for days when sending out raven/dove!
-        /// - +40 days - Noah sends raven + dove out (Genesis 8:6-7)
-        /// - +7 days - Noah sends dove out again (Genesis 8:10)
-        /// - +7 days - Noah sends dove out again; it doesn't return (Genesis 8:12)
-        ///
-        /// 375 total days - 27 days for 2nd month - 30 days for 1st month? = 318 for final dove sending
-        /// 318 - 7 = 311 for first dove-only sending
-        /// 311 - 40 = 271 for raven/dove sending
-        /// Could possibly be as early as about day 223 (assuming 30 day months)...so maybe we should provide a range?
-        /// Also should probably look at Hebrew calendar.
-        /// @todo   Double-check some of the above calculations!
-        /// Also see:
-        /// - https://www.esv.org/resources/esv-global-study-bible/chart-01-03/
-        /// - https://www.understandchristianity.com/timelines/chronology-flood/
-        /// - https://answersingenesis.org/bible-timeline/biblical-overview-of-the-flood-timeline/
-        /// - https://answersingenesis.org/bible-timeline/avian-flood-chronology-noah-window/
-
-        // CHECK FOR SPECIAL DAY-BASED EVENTS.
-        // 30 month day is simple approximation for this game.
-        constexpr unsigned int DAYS_PER_MONTH = 30;
-        // 2nd month, 17th day - Flood starts (Genesis 7:11)
-        // +150 days (Genesis 7:24, Genesis 8:3)
-        // = 
-        // 7th month, 17th day (5 months later) - Ark comes to rest on mountains of Ararat (Genesis 8:4)
-        constexpr unsigned int DAY_COUNT_FOR_FLOODS_PREVAILING_ON_EARTH = 150;
-        // 10th month, 1st day - Waters recede to point where mountaintops seen (Genesis 8:5)
-        constexpr unsigned int MONTH_COUNT_BETWEEN_FLOODS_PREVAILING_AND_RECEDING = 2;
-        // 30 days per month - 17 days from 7th month = 13 remaining days in 7th month.
-        constexpr unsigned int DAY_COUNT_IN_7TH_MONTH_FOR_FLOOD_RECEDING = 13;
-        constexpr unsigned int DAY_COUNT_FOR_FLOODS_PREVAILING_AND_RECEDING = (
-            DAY_COUNT_FOR_FLOODS_PREVAILING_ON_EARTH + 
-            DAY_COUNT_IN_7TH_MONTH_FOR_FLOOD_RECEDING +
-            (DAYS_PER_MONTH * MONTH_COUNT_BETWEEN_FLOODS_PREVAILING_AND_RECEDING));
-        // Genesis 8:6-8.
-        constexpr unsigned int DAY_COUNT_AFTER_INITIAL_FLOOD_RECEDING_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING = 40;
-        constexpr unsigned int FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING = (
-            DAY_COUNT_FOR_FLOODS_PREVAILING_AND_RECEDING + DAY_COUNT_AFTER_INITIAL_FLOOD_RECEDING_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING);
-        // Genesis 8:10.
-        constexpr unsigned int DAY_COUNT_BETWEEN_FIRST_AND_SECOND_DOVE_SENDINGS = 7;
-        constexpr unsigned int FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING = FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING + DAY_COUNT_BETWEEN_FIRST_AND_SECOND_DOVE_SENDINGS;
-        // Genesis 8:12.
-        constexpr unsigned int DAY_COUNT_BETWEEN_SECOND_AND_FINAL_DOVE_SENDINGS = 7;
-        constexpr unsigned int FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING = FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING + DAY_COUNT_BETWEEN_SECOND_AND_FINAL_DOVE_SENDINGS;
-        
+        // CHECK FOR SPECIAL DAY-BASED EVENTS.        
         unsigned int current_day_of_flood = 0;
         unsigned int current_hour_of_day = 0;
         GAMEPLAY::FloodElapsedTime::GetCurrentDayAndHour(current_game_data.FloodElapsedGameplayTime, current_day_of_flood, current_hour_of_day);
 
         switch (current_day_of_flood)
         {
-            case FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING:
+            case GAMEPLAY::FloodElapsedTime::FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING:
             {
-                DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING = ", FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING);
+                DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING = ", GAMEPLAY::FloodElapsedTime::FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING);
                 // This should only be set the first time since 2 separate actions can occur on this day,
                 // and if the player has moved on to sending the dove, we do not want to overwrite that
                 // action with sending out the raven.
-                bool current_special_day_action_being_set_first_time = (GRAPHICS::GUI::SpecialDayAction::NONE == Hud.CurrentSpecialDayAction);
+                bool current_special_day_action_being_set_first_time = (GAMEPLAY::FloodSpecialDayAction::NONE == Hud.CurrentSpecialDayAction);
                 if (current_special_day_action_being_set_first_time)
                 {
-                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_RAVEN_FIRST_TIME;
+                    Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::SEND_OUT_RAVEN_FIRST_TIME;
                 }
-                else if (GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED == Hud.CurrentSpecialDayAction)
+                else if (GAMEPLAY::FloodSpecialDayAction::CURRENT_DAY_ACTION_COMPLETED == Hud.CurrentSpecialDayAction)
                 {
                     // WAIT UNTIL THE RAVEN HAS DISAPPEARED TO ALLOW SENDING OF THE DOVE.
                     if (!BirdSentFromArk)
                     {
-                        Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FIRST_TIME;
+                        Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_FIRST_TIME;
                     }
                 }
                 break;
             }
-            case FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING:
+            case GAMEPLAY::FloodElapsedTime::FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING:
             {
-                DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING = ", FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING);
-                bool current_special_day_action_being_set_first_time = (GRAPHICS::GUI::SpecialDayAction::NONE == Hud.CurrentSpecialDayAction);
+                DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING = ", GAMEPLAY::FloodElapsedTime::FLOOD_DAY_COUNT_UNTIL_SECOND_DOVE_SENDING);
+                bool current_special_day_action_being_set_first_time = (GAMEPLAY::FloodSpecialDayAction::NONE == Hud.CurrentSpecialDayAction);
                 if (current_special_day_action_being_set_first_time)
                 {
-                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_SECOND_TIME;
+                    Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_SECOND_TIME;
                 }
                 break;
             }
-            case FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING:
+            case GAMEPLAY::FloodElapsedTime::FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING:
             {
-                DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING = ", FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING);
-                bool current_special_day_action_being_set_first_time = (GRAPHICS::GUI::SpecialDayAction::NONE == Hud.CurrentSpecialDayAction);
+                DEBUGGING::DebugConsole::WriteLine("FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING = ", GAMEPLAY::FloodElapsedTime::FLOOD_DAY_COUNT_UNTIL_FINAL_DOVE_SENDING);
+                bool current_special_day_action_being_set_first_time = (GAMEPLAY::FloodSpecialDayAction::NONE == Hud.CurrentSpecialDayAction);
                 if (current_special_day_action_being_set_first_time)
                 {
-                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FINAL_TIME;
+                    Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_FINAL_TIME;
                 }
+                break;
+            }
+            case GAMEPLAY::FloodElapsedTime::FLOOD_FINAL_DAY_COUNT:
+            {
+                // The player should move to the next state.
+                next_game_state = GameState::POST_FLOOD_GAMEPLAY;
                 break;
             }
             default:
             {
-                Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::NONE;
+                Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::NONE;
                 break;
             }
         }
-
-        // START PLAYING THE BACKGROUND MUSIC IF ITS NOT ALREADY PLAYING.
-        /// @todo   Background music?
 
         // RETURN THE NEXT GAME STATE.
         return next_game_state;
@@ -692,16 +653,12 @@ namespace STATES
                     for (const auto& animal : animal_pen.Animals)
                     {
                         MATH::FloatRectangle animal_bounding_box = animal->Sprite.GetWorldBoundingBox();
-                        /// @todo   More complex logic for animals sometimes eating food?
                         bool food_intersects_animal = food_bounding_box.Intersects(animal_bounding_box);
                         if (food_intersects_animal)
                         {
-                            /// @todo   Play eating sound?
                             current_food_eaten_by_animal = true;
 
                             // ADD A PRESENT WITH A BIBLE VERSE IF SOME BIBLE VERSES STILL NEED TO BE COLLECTED.
-                            /// @todo   Only add presents sometimes? (randomly)
-                            /// @todo   Should we have a delay for the presents appearing?  Some kind of timer?
                             bool all_bible_verses_collected = current_game_data.BibleVersesLeftToFind.empty();
                             if (!all_bible_verses_collected)
                             {
@@ -752,8 +709,7 @@ namespace STATES
         {
             switch (Hud.CurrentSpecialDayAction)
             {
-                /// @todo   Implement actual special actions!
-                case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_RAVEN_FIRST_TIME:
+                case GAMEPLAY::FloodSpecialDayAction::SEND_OUT_RAVEN_FIRST_TIME:
                 {
                     DEBUGGING::DebugConsole::WriteLine("Sending out raven first time!");
 
@@ -764,10 +720,10 @@ namespace STATES
                     gaming_hardware.Speakers->PlaySoundEffect(BirdSentFromArk->SoundId);
 
                     // MOVE TO THE NEXT SPECIAL ACTION.
-                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
+                    Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
                     break;
                 }
-                case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FIRST_TIME:
+                case GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_FIRST_TIME:
                 {
                     // WAIT UNTIL THE RAVEN HAS DISAPPEARED TO ALLOW SENDING OF THE DOVE.
                     if (!BirdSentFromArk)
@@ -781,11 +737,11 @@ namespace STATES
                         gaming_hardware.Speakers->PlaySoundEffect(BirdSentFromArk->SoundId);
 
                         // CLEAR THE SPECIAL ACTION UNTIL THE NEXT DAY.
-                        Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
+                        Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
                     }
                     break;
                 }
-                case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_SECOND_TIME:
+                case GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_SECOND_TIME:
                 {
                     DEBUGGING::DebugConsole::WriteLine("Sending out dove second time!");
 
@@ -796,10 +752,10 @@ namespace STATES
                     gaming_hardware.Speakers->PlaySoundEffect(BirdSentFromArk->SoundId);
 
                     // CLEAR THE SPECIAL ACTION UNTIL THE NEXT DAY.
-                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
+                    Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
                     break;
                 }
-                case GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FINAL_TIME:
+                case GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_FINAL_TIME:
                 {
                     DEBUGGING::DebugConsole::WriteLine("Sending out dove final time!");
 
@@ -810,7 +766,7 @@ namespace STATES
                     gaming_hardware.Speakers->PlaySoundEffect(BirdSentFromArk->SoundId);
 
                     // CLEAR THE SPECIAL ACTION SINCE ALL SPECIAL ACTIONS HAVE BEEN COMPLETED.
-                    Hud.CurrentSpecialDayAction = GRAPHICS::GUI::SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
+                    Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::CURRENT_DAY_ACTION_COMPLETED;
                     break;
                 }
             }
@@ -844,7 +800,7 @@ namespace STATES
                     // The dove should switch directions if it has moved out-of-view and not the last time it was sent out.
                     if (!bird_in_view)
                     {
-                        bool is_last_time_dove_sent_out = (GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_FINAL_TIME == BirdSentFromArk->ActionThatSentOutBird);
+                        bool is_last_time_dove_sent_out = (GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_FINAL_TIME == BirdSentFromArk->ActionThatSentOutBird);
                         if (is_last_time_dove_sent_out)
                         {
                             // The bird should disapper.
@@ -874,7 +830,7 @@ namespace STATES
                             gaming_hardware.Speakers->PlaySoundEffect(BirdSentFromArk->SoundId);
 
                             // If this is the 2nd time the dove was sent out, an olive leaf should be placed underneath Noah.
-                            bool bird_returned_with_olive_leaf = (GRAPHICS::GUI::SpecialDayAction::SEND_OUT_DOVE_SECOND_TIME == BirdSentFromArk->ActionThatSentOutBird);
+                            bool bird_returned_with_olive_leaf = (GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_SECOND_TIME == BirdSentFromArk->ActionThatSentOutBird);
                             if (bird_returned_with_olive_leaf)
                             {
                                 current_tile_map->OliveLeaf = OBJECTS::OliveLeaf(noah_world_position);
@@ -891,12 +847,9 @@ namespace STATES
         // UPDATE THE CAMERA'S WORLD VIEW.
         UpdateCameraWorldView(
             gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
-            world,
             camera,
-            *gaming_hardware.Speakers,
             gaming_hardware.InputController,
-            *current_tile_map,
-            current_game_data);
+            *current_tile_map);
     }
 
     /// Updates the player and related items in the tile map based on input and elapsed time.
@@ -1251,26 +1204,15 @@ namespace STATES
     /// Updates the camera, along with the world based on any major changes
     /// in what the camera is viewing.
     /// @param[in]  elapsed_time - The elapsed time by which to update the camera.
-    /// @param[in,out]  world - The world being viewed.
     /// @param[in,out]  camera - The camera to update.
-    /// @param[in,out]  speakers - The speakers from which to play any audio.
-    /// @param[in,out]  input_controller - The input controller that might
-    ///     be tweaked based on camera movement.
+    /// @param[in,out]  input_controller - The input controller that might be tweaked based on camera movement.
     /// @param[in,out]  current_tile_map - The current tile map in view by the camera.
     void DuringFloodGameplayState::UpdateCameraWorldView(
         const sf::Time& elapsed_time,
-        MAPS::World& world,
         GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers,
         INPUT_CONTROL::InputController& input_controller,
-        MAPS::TileMap& current_tile_map,
-        STATES::SavedGameData& current_game_data)
+        MAPS::TileMap& current_tile_map)
     {
-        /// @todo
-        world;
-        speakers;
-        current_game_data;
-
         if (camera.IsScrolling)
         {
             // SCROLL BASED ON THE ELAPSED FRAME TIME.

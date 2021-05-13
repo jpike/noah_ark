@@ -13,7 +13,7 @@ namespace OBJECTS
     Sprite(),
     MapGrid(map_grid)
     {
-        /// @todo CREATE THE SPRITE BASED ON THE TYPE OF FAMILY MEMBER.
+        // CREATE THE SPRITE BASED ON THE TYPE OF FAMILY MEMBER.
         RESOURCES::AssetId texture_id = RESOURCES::AssetId::NOAH_TEXTURE;
         switch (Identity)
         {
@@ -134,7 +134,6 @@ namespace OBJECTS
         bool movement_should_occur = (random_number_for_movement <= MAX_PERCENTAGE_FOR_MOVEMENT);
         if (!movement_should_occur)
         {
-            /// @todo Sprite.ResetAnimation();
             return;
         }
 

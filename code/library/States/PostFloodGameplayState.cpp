@@ -7,12 +7,8 @@ namespace STATES
     /// Loads the cutscene into its initial state.
     /// @param[in,out]  world - The world to configure for this state.
     /// @param[in,out]  renderer - The renderer from which to load some initial data.
-    /// @param[in,out]  gaming_hardware - The gaming hardware to use for loading the cutscene.
-    void PostFloodGameplayState::Load(MAPS::World& world, GRAPHICS::Renderer& renderer, HARDWARE::GamingHardware& gaming_hardware)
+    void PostFloodGameplayState::Load(MAPS::World& world, GRAPHICS::Renderer& renderer)
     {
-        /// @todo
-        gaming_hardware;
-
         // RESET BASIC MEMBER VARIABLES TO THE BEGINNING OF THE CUTSCENE.
         CurrentSubstate = Substate::FADING_IN;
         ElapsedTimeForCurrentSubstate = sf::Time::Zero;
@@ -55,7 +51,6 @@ namespace STATES
 
         /// @todo   Randomly position family & animals!
         /// @todo   Destroy all trees?
-        /// @todo   Randomly position altar materials?
         /// @todo   Alter tile maps to be different from pre-flood?  Or smaller world?
     }
 
@@ -255,13 +250,9 @@ namespace STATES
     /// @return The rendered gameplay state.
     sf::Sprite PostFloodGameplayState::Render(
         MAPS::World& world,
-        STATES::SavedGameData& current_game_data,
         GRAPHICS::Renderer& renderer,
         HARDWARE::GamingHardware& gaming_hardware)
     {
-        /// @todo
-        current_game_data;
-
         // RENDER CONTENT SPECIFIC TO THE CURRENT MAP.
         renderer.Render(*CurrentMapGrid);
 
@@ -484,61 +475,44 @@ namespace STATES
         }
 
         // UPDATE THE PLAYER BASED ON INPUT.
-        /// @todo   Just pass entire gaming hardware here!
         UpdatePlayerBasedOnInput(
-            gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
-            gaming_hardware.InputController,
-            gaming_hardware.RandomNumberGenerator,
             world,
             *current_tile_map,
             map_grid,
             camera,
-            *gaming_hardware.Speakers);
+            gaming_hardware);
 
         // UPDATE THE REST OF THE WORLD WITHIN CURRENT TILE MAP.
-        /// @todo   Handle text box!
         constexpr bool OBJECTS_CAN_MOVE = true;
         current_tile_map->Update(OBJECTS_CAN_MOVE, current_game_data, gaming_hardware);
 
         // UPDATE THE CAMERA'S WORLD VIEW.
         UpdateCameraWorldView(
             gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
-            world,
             camera,
-            *gaming_hardware.Speakers,
             gaming_hardware.InputController,
-            *current_tile_map,
-            current_game_data);
+            *current_tile_map);
     }
 
     /// Updates the player and related items in the tile map based on input and elapsed time.
-    /// @param[in]  elapsed_time - The elapsed time for which to update things.
-    /// @param[in,out]  input_controller - The controller supplying player input.
-    /// @param[in,out]  random_number_generator - The random number generator.
     /// @param[in,out]  world - The world in which the player is being updated.
     /// @param[in,out]  current_tile_map - The tile map the player is currently located in.
     /// @param[in,out]  map_grid - The map grid containing the current tile map.
     /// @param[in,out]  camera - The camera defining the viewable region of the map grid.
-    /// @param[in,out]  speakers - The speakers from which to play any audio.
+    /// @param[in,out]  gaming_hardware - The gaming hardware.
     void PostFloodGameplayState::UpdatePlayerBasedOnInput(
-        const sf::Time& elapsed_time,
-        INPUT_CONTROL::InputController& input_controller,
-        MATH::RandomNumberGenerator& random_number_generator,
         MAPS::World& world,
         MAPS::TileMap& current_tile_map,
         MAPS::MultiTileMapGrid& map_grid,
         GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers)
+        HARDWARE::GamingHardware& gaming_hardware)
     {
-        /// @todo
-        speakers;
-
         // ALLOW NOAH TO BUILD AN ALTAR OR OFFER SACRIFICES.
         MATH::FloatRectangle camera_bounds = camera.ViewBounds;
         bool altar_built = current_tile_map.Altar.has_value();
         if (!altar_built)
         {
-            if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+            if (gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
             {
                 // BUILD AN ALTAR IN FRONT OF NOAH IN THE DIRECTION HE IS FACING IF POSSIBLE.
                 MATH::Vector2f altar_center_world_position = GetAltarBuildPosition(*world.NoahPlayer);
@@ -560,8 +534,8 @@ namespace STATES
                             OBJECTS::DustCloud dust_cloud(RESOURCES::AssetId::DUST_CLOUD_TEXTURE);
 
                             constexpr float DUST_CLOUD_POSITION_MAX_OFFSET = 16.0f;
-                            float dust_cloud_x_offset = random_number_generator.RandomInRange<float>(-DUST_CLOUD_POSITION_MAX_OFFSET, DUST_CLOUD_POSITION_MAX_OFFSET);
-                            float dust_cloud_y_offset = random_number_generator.RandomInRange<float>(-DUST_CLOUD_POSITION_MAX_OFFSET, DUST_CLOUD_POSITION_MAX_OFFSET);
+                            float dust_cloud_x_offset = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(-DUST_CLOUD_POSITION_MAX_OFFSET, DUST_CLOUD_POSITION_MAX_OFFSET);
+                            float dust_cloud_y_offset = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(-DUST_CLOUD_POSITION_MAX_OFFSET, DUST_CLOUD_POSITION_MAX_OFFSET);
 
                             MATH::Vector2f dust_cloud_world_position = altar_center_world_position;
                             dust_cloud_world_position.X += dust_cloud_x_offset;
@@ -579,7 +553,7 @@ namespace STATES
         }
         else if (altar_built)
         {
-            if (input_controller.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
+            if (gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::PRIMARY_ACTION_KEY))
             {
                 // CHECK IF THE PLAYER IS FACING THE ALTAR.
                 MATH::Vector2f place_in_front_of_player = GetAltarBuildPosition(*world.NoahPlayer);
@@ -594,8 +568,6 @@ namespace STATES
             }
         }
 
-        /// @todo   Check for offering sacrifices!
-
         // GET THE TILE UNDER NOAH.
         // This is needed to help track if Noah moves onto a different type of tile.
         MATH::Vector2f old_noah_position = world.NoahPlayer->GetWorldPosition();
@@ -606,7 +578,7 @@ namespace STATES
         // MOVE NOAH IN RESPONSE TO USER INPUT.
         bool noah_moved_this_frame = false;
         const float PLAYER_POSITION_ADJUSTMENT_FOR_SCROLLING_IN_PIXELS = 8.0f;
-        if (input_controller.ButtonDown(sf::Keyboard::Up))
+        if (gaming_hardware.InputController.ButtonDown(sf::Keyboard::Up))
         {
             // TRACK NOAH AS MOVING THIS FRAME.
             noah_moved_this_frame = true;
@@ -619,7 +591,7 @@ namespace STATES
                 world.NoahPlayer->GetWorldBoundingBox(),
                 GAMEPLAY::Direction::UP,
                 OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
-                elapsed_time,
+                gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
                 map_grid);
             world.NoahPlayer->SetWorldPosition(new_position);
 
@@ -649,7 +621,7 @@ namespace STATES
                     camera.StartScrolling(scroll_start_position, scroll_end_position);
 
                     // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
-                    input_controller.DisableInput();
+                    gaming_hardware.InputController.DisableInput();
                 }
                 else
                 {
@@ -668,7 +640,7 @@ namespace STATES
                 }
             }
         }
-        if (input_controller.ButtonDown(sf::Keyboard::Down))
+        if (gaming_hardware.InputController.ButtonDown(sf::Keyboard::Down))
         {
             // TRACK NOAH AS MOVING THIS FRAME.
             noah_moved_this_frame = true;
@@ -681,7 +653,7 @@ namespace STATES
                 world.NoahPlayer->GetWorldBoundingBox(),
                 GAMEPLAY::Direction::DOWN,
                 OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
-                elapsed_time,
+                gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
                 map_grid);
             world.NoahPlayer->SetWorldPosition(new_position);
 
@@ -711,7 +683,7 @@ namespace STATES
                     camera.StartScrolling(scroll_start_position, scroll_end_position);
 
                     // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
-                    input_controller.DisableInput();
+                    gaming_hardware.InputController.DisableInput();
                 }
                 else
                 {
@@ -730,7 +702,7 @@ namespace STATES
                 }
             }
         }
-        if (input_controller.ButtonDown(sf::Keyboard::Left))
+        if (gaming_hardware.InputController.ButtonDown(sf::Keyboard::Left))
         {
             // TRACK NOAH AS MOVING THIS FRAME.
             noah_moved_this_frame = true;
@@ -743,7 +715,7 @@ namespace STATES
                 world.NoahPlayer->GetWorldBoundingBox(),
                 GAMEPLAY::Direction::LEFT,
                 OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
-                elapsed_time,
+                gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
                 map_grid);
             world.NoahPlayer->SetWorldPosition(new_position);
 
@@ -773,7 +745,7 @@ namespace STATES
                     camera.StartScrolling(scroll_start_position, scroll_end_position);
 
                     // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
-                    input_controller.DisableInput();
+                    gaming_hardware.InputController.DisableInput();
                 }
                 else
                 {
@@ -792,7 +764,7 @@ namespace STATES
                 }
             }
         }
-        if (input_controller.ButtonDown(sf::Keyboard::Right))
+        if (gaming_hardware.InputController.ButtonDown(sf::Keyboard::Right))
         {
             // TRACK NOAH AS MOVING THIS FRAME.
             noah_moved_this_frame = true;
@@ -805,7 +777,7 @@ namespace STATES
                 world.NoahPlayer->GetWorldBoundingBox(),
                 GAMEPLAY::Direction::RIGHT,
                 OBJECTS::Noah::MOVE_SPEED_IN_PIXELS_PER_SECOND,
-                elapsed_time,
+                gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
                 map_grid);
             world.NoahPlayer->SetWorldPosition(new_position);
 
@@ -835,7 +807,7 @@ namespace STATES
                     camera.StartScrolling(scroll_start_position, scroll_end_position);
 
                     // DISABLE PLAYER MOVEMENT WHILE SCROLLING IS OCCURRING.
-                    input_controller.DisableInput();
+                    gaming_hardware.InputController.DisableInput();
                 }
                 else
                 {
@@ -859,7 +831,7 @@ namespace STATES
         if (noah_moved_this_frame)
         {
             // UPDATE NOAH'S ANIMATION.
-            world.NoahPlayer->Sprite.Update(elapsed_time);
+            world.NoahPlayer->Sprite.Update(gaming_hardware.Clock.ElapsedTimeSinceLastFrame);
         }
         else
         {
@@ -871,26 +843,15 @@ namespace STATES
     /// Updates the camera, along with the world based on any major changes
     /// in what the camera is viewing.
     /// @param[in]  elapsed_time - The elapsed time by which to update the camera.
-    /// @param[in,out]  world - The world being viewed.
     /// @param[in,out]  camera - The camera to update.
-    /// @param[in,out]  speakers - The speakers from which to play any audio.
-    /// @param[in,out]  input_controller - The input controller that might
-    ///     be tweaked based on camera movement.
+    /// @param[in,out]  input_controller - The input controller that might be tweaked based on camera movement.
     /// @param[in,out]  current_tile_map - The current tile map in view by the camera.
     void PostFloodGameplayState::UpdateCameraWorldView(
         const sf::Time& elapsed_time,
-        MAPS::World& world,
         GRAPHICS::Camera& camera,
-        AUDIO::Speakers& speakers,
         INPUT_CONTROL::InputController& input_controller,
-        MAPS::TileMap& current_tile_map,
-        STATES::SavedGameData& current_game_data)
+        MAPS::TileMap& current_tile_map)
     {
-        /// @todo
-        world;
-        speakers;
-        current_game_data;
-
         if (camera.IsScrolling)
         {
             // SCROLL BASED ON THE ELAPSED FRAME TIME.

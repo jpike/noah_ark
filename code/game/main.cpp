@@ -1,7 +1,7 @@
 // TODO LIST BEFORE BETA 1:
-// - Add in any missing music
 // - Have some Bible verses only obtainable during certain sections of game
 // - Take a pass at TODOs
+// - Take a pass at asserts
 
 // To avoid annoyances with Windows min/max #defines.
 #define NOMINMAX
@@ -48,7 +48,7 @@ void LoadRemainingAssets(HARDWARE::GamingHardware& gaming_hardware)
             {
                 gaming_hardware.Speakers->LoadMusic(asset.Id, asset.BinaryData);
 
-                /// @todo Make this particular adjustment be in the actual file?
+                // Adjustments to certain music items are done in code for simplicity to avoid complicating the asset file format.
                 auto overworld_music = gaming_hardware.Speakers->GetMusic(RESOURCES::AssetId::OVERWORLD_BACKGROUND_MUSIC);
                 if (overworld_music)
                 {

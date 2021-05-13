@@ -127,7 +127,7 @@ namespace STATES
                 screen_sprite = DuringFloodGameplayState.Render(world, CurrentSavedGame, renderer);
                 break;
             case GameState::POST_FLOOD_GAMEPLAY:
-                screen_sprite = PostFloodGameplayState.Render(world, CurrentSavedGame, renderer, gaming_hardware);
+                screen_sprite = PostFloodGameplayState.Render(world, renderer, gaming_hardware);
                 break;
             case GameState::ENDING_CREDITS_SCREEN:
                 screen_sprite = EndingCreditsScreen.Render(renderer);
@@ -214,7 +214,7 @@ namespace STATES
                 DuringFloodGameplayState.Load(CurrentSavedGame, world, renderer, gaming_hardware);
                 break;
             case GameState::POST_FLOOD_GAMEPLAY:
-                PostFloodGameplayState.Load(world, renderer, gaming_hardware);
+                PostFloodGameplayState.Load(world, renderer);
                 break;
             case GameState::ENDING_CREDITS_SCREEN:
                 EndingCreditsScreen.Load();

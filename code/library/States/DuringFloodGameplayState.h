@@ -61,12 +61,9 @@ namespace STATES
             std::string& message_for_text_box);
         void UpdateCameraWorldView(
             const sf::Time& elapsed_time,
-            MAPS::World& world,
             GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers,
             INPUT_CONTROL::InputController& input_controller,
-            MAPS::TileMap& current_tile_map,
-            STATES::SavedGameData& current_game_data);
+            MAPS::TileMap& current_tile_map);
 
         // PRIVATE MEMBER VARIABLES.
         /// The HUD for this game state.

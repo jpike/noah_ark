@@ -459,7 +459,6 @@ namespace STATES
                     family_member->MoveWithin(*current_tile_map, gaming_hardware);
 
                     // GATHER THE FAMILY MEMBER IF THE NOAH AND THE FAMILY MEMBER INTERSECT.
-                    /// @todo   Add some talking requirement first?
                     MATH::FloatRectangle family_member_world_bounding_box = family_member->Sprite.GetWorldBoundingBox();
                     bool family_member_intersected_noah = family_member_world_bounding_box.Intersects(noah_world_bounding_box);
                     if (family_member_intersected_noah)

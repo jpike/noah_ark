@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <tuple>
+#include "Gameplay/FloodSpecialDayAction.h"
 #include "Graphics/Gui/Font.h"
 #include "Graphics/Gui/TextBox.h"
 #include "Graphics/Renderer.h"
@@ -13,18 +14,6 @@
 
 namespace GRAPHICS::GUI
 {
-    /// Special actions that can be performed on specific days of the flood.
-    /// @todo   Factor out to separate file?
-    enum class SpecialDayAction
-    {
-        NONE = 0,
-        CURRENT_DAY_ACTION_COMPLETED, // Similar to "none" but indicates one of the other actions has been completed.
-        SEND_OUT_RAVEN_FIRST_TIME,
-        SEND_OUT_DOVE_FIRST_TIME,
-        SEND_OUT_DOVE_SECOND_TIME,
-        SEND_OUT_DOVE_FINAL_TIME
-    };
-
     /// The heads-up-display (HUD) for the game during the flood.
     class DuringFloodHeadsUpDisplay
     {
@@ -51,7 +40,7 @@ namespace GRAPHICS::GUI
         /// The main text box for displaying messages to the player.
         GRAPHICS::GUI::TextBox MainTextBox = TextBox();
         /// The curreny action to take place on a specific day (such as sending the raven/dove out).
-        SpecialDayAction CurrentSpecialDayAction = SpecialDayAction::NONE;
+        GAMEPLAY::FloodSpecialDayAction CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::NONE;
         /// True if the pause menu box is visible; false otherwise.
         bool PauseMenuVisible = false;
         /// True if the full inventory GUI is displayed; false otherwise.

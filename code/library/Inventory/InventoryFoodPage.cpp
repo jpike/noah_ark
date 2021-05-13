@@ -8,14 +8,10 @@ namespace INVENTORY
     const GRAPHICS::Color InventoryFoodPage::BACKGROUND_COLOR = GRAPHICS::Color::GREEN;
 
     /// Updates the food page.
-    /// @param[in]  elapsed_time - The elapsed time since the last frame.
     /// @param[in]  input_controller - The controller on which to check user input.
     /// @return The type of food selected for dropping (if a type was selected).
-    OBJECTS::Food::TypeId InventoryFoodPage::Update(const sf::Time& elapsed_time, const INPUT_CONTROL::InputController& input_controller)
+    OBJECTS::Food::TypeId InventoryFoodPage::Update(const INPUT_CONTROL::InputController& input_controller)
     {
-        /// @todo
-        elapsed_time;
-
         // CHECK WHICH BUTTONS WERE PRESSED.
         if (input_controller.ButtonWasPressed(sf::Keyboard::Left))
         {

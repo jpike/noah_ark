@@ -133,7 +133,7 @@ namespace INVENTORY
             case TabType::FOOD:
             {
                 // UPDATE THE FOOD PAGE.
-                selected_food_type = FoodPage.Update(elapsed_time, input_controller);
+                selected_food_type = FoodPage.Update(input_controller);
 
                 // SWITCH TABS IF NO FOOD SELECTION IS IN-PROGRESS AND AN APPROPRIATE BUTTON IS PRESSED.
                 // The selected indices need to be checked rather than the food type itself since some boxes

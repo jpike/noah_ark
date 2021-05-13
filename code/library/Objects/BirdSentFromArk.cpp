@@ -8,7 +8,7 @@ namespace OBJECTS
     /// Constructor.
     /// @param[in]  action_that_sent_out_bird - The action that sent the bird out.
     /// @param[in]  species - The species for the bird (should be raven or dove).
-    BirdSentFromArk::BirdSentFromArk(const GRAPHICS::GUI::SpecialDayAction action_that_sent_out_bird, const AnimalSpecies::Value species) :
+    BirdSentFromArk::BirdSentFromArk(const GAMEPLAY::FloodSpecialDayAction action_that_sent_out_bird, const AnimalSpecies::Value species) :
         MovingOut(true),
         ActionThatSentOutBird(action_that_sent_out_bird),
         Species(species),

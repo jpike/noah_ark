@@ -133,7 +133,6 @@ namespace STATES
         // RENDER A PULSING LIGHT EFFECT.
         // If the player is beginning a new game with God speaking to Noah, then the pulsing light
         // shader should be used to help communicate that God is speaking to the player.
-        /// @todo   Might be better to have a fancier "spinning light" style-effect.
         sf::RenderStates lighting = sf::RenderStates::Default;
 
         // It should pulse based on elapsed time.

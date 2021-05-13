@@ -35,7 +35,7 @@ namespace STATES
         };
 
         // INITIALIZATION METHODS.
-        void Load(MAPS::World& world, GRAPHICS::Renderer& renderer, HARDWARE::GamingHardware& gaming_hardware);
+        void Load(MAPS::World& world, GRAPHICS::Renderer& renderer);
 
         // UPDATING.
         GameState Update(
@@ -47,7 +47,6 @@ namespace STATES
         // RENDERING.
         sf::Sprite Render(
             MAPS::World& world, 
-            STATES::SavedGameData& current_game_data,
             GRAPHICS::Renderer& renderer,
             HARDWARE::GamingHardware& gaming_hardware);
 
@@ -65,22 +64,16 @@ namespace STATES
             GRAPHICS::Camera& camera,
             STATES::SavedGameData& current_game_data);
         void UpdatePlayerBasedOnInput(
-            const sf::Time& elapsed_time,
-            INPUT_CONTROL::InputController& input_controller,
-            MATH::RandomNumberGenerator& random_number_generator,
             MAPS::World& world,
             MAPS::TileMap& current_tile_map,
             MAPS::MultiTileMapGrid& map_grid,
             GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers);
+            HARDWARE::GamingHardware& gaming_hardware);
         void UpdateCameraWorldView(
             const sf::Time& elapsed_time,
-            MAPS::World& world,
             GRAPHICS::Camera& camera,
-            AUDIO::Speakers& speakers,
             INPUT_CONTROL::InputController& input_controller,
-            MAPS::TileMap& current_tile_map,
-            STATES::SavedGameData& current_game_data);
+            MAPS::TileMap& current_tile_map);
 
         // PRIVATE MEMBER VARIABLES.
         /// The current substate.

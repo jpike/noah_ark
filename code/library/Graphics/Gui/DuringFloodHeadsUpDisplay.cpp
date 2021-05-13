@@ -129,7 +129,7 @@ namespace GRAPHICS::GUI
             MAIN_TEXT_COLOR);
 
         // RENDER ANY SPECIAL ACTION TEXT.
-        bool special_action_available = (SpecialDayAction::NONE != CurrentSpecialDayAction) && (SpecialDayAction::CURRENT_DAY_ACTION_COMPLETED != CurrentSpecialDayAction);
+        bool special_action_available = (GAMEPLAY::FloodSpecialDayAction::NONE != CurrentSpecialDayAction) && (GAMEPLAY::FloodSpecialDayAction::CURRENT_DAY_ACTION_COMPLETED != CurrentSpecialDayAction);
         if (special_action_available)
         {
             // RENDER A BUTTON ICON FOR THE SPECIAL ACTION.
@@ -145,12 +145,12 @@ namespace GRAPHICS::GUI
             std::string special_day_action_text;
             switch (CurrentSpecialDayAction)
             {
-                case SpecialDayAction::SEND_OUT_RAVEN_FIRST_TIME:
+                case GAMEPLAY::FloodSpecialDayAction::SEND_OUT_RAVEN_FIRST_TIME:
                     special_day_action_text = "Send Raven";
                     break;
-                case SpecialDayAction::SEND_OUT_DOVE_FIRST_TIME:
-                case SpecialDayAction::SEND_OUT_DOVE_SECOND_TIME:
-                case SpecialDayAction::SEND_OUT_DOVE_FINAL_TIME:
+                case GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_FIRST_TIME:
+                case GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_SECOND_TIME:
+                case GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_FINAL_TIME:
                     special_day_action_text = "Send Dove";
                     break;
             }

@@ -1,9 +1,8 @@
 #pragma once
 
 #include <SFML/System.hpp>
+#include "Gameplay/FloodSpecialDayAction.h"
 #include "Graphics/AnimatedSprite.h"
-/// @todo   Decouple this action from GUI code!
-#include "Graphics/Gui/DuringFloodHeadsUpDisplay.h"
 #include "Math/Vector2.h"
 #include "Objects/Animal.h"
 #include "Resources/AssetId.h"
@@ -18,7 +17,7 @@ namespace OBJECTS
     {
     public:
         // CONSTRUCTION.
-        explicit BirdSentFromArk(const GRAPHICS::GUI::SpecialDayAction action_that_sent_out_bird, const AnimalSpecies::Value species);
+        explicit BirdSentFromArk(const GAMEPLAY::FloodSpecialDayAction action_that_sent_out_bird, const AnimalSpecies::Value species);
         
         // OTHER METHODS.
         void Update(const sf::Time& elapsed_time);
@@ -27,7 +26,7 @@ namespace OBJECTS
         /// True if the bird is moving out of the ark versus returning.
         bool MovingOut = true;
         /// The action that sent the bird out.
-        GRAPHICS::GUI::SpecialDayAction ActionThatSentOutBird = GRAPHICS::GUI::SpecialDayAction::NONE;
+        GAMEPLAY::FloodSpecialDayAction ActionThatSentOutBird = GAMEPLAY::FloodSpecialDayAction::NONE;
         /// The type of bird (raven or dove).  Arbitrarily set to one of the bird types.
         AnimalSpecies::Value Species = AnimalSpecies::RAVEN;
         /// The sprite for the bird.

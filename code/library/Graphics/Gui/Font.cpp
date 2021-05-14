@@ -1,4 +1,6 @@
 #include <Windows.h>
+#include "Debugging/DebugConsole.h"
+#include "ErrorHandling/ErrorMessageBox.h"
 #include "Graphics/Gui/Font.h"
 
 namespace GRAPHICS::GUI
@@ -6,14 +8,22 @@ namespace GRAPHICS::GUI
     /// Loads the a default font from the system.
     /// @param[in]  font_id - The ID of the font to load; see https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-getstockobject
     ///     for valid values.
-    /// @return The requested font, if successfully loaded; std::nullopt otherwise.
+    /// @return The requested font, if successfully loaded; null otherwise.
     std::shared_ptr<Font> Font::LoadSystemDefaultFont(const int font_id)
     {
-        /// @todo   Error handling for return values?  Thus far, hasn't been too important...
-
         // GET A DEVICE CONTEXT IN WHICH TO LOAD THE FONT.
         HDC entire_screen_device_context = GetDC(NULL);
+        if (!entire_screen_device_context)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - GetDC() failed.");
+            return nullptr;
+        }
         HDC font_device_context = CreateCompatibleDC(entire_screen_device_context);
+        if (!font_device_context)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - CreateCompatibleDC() failed.");
+            return nullptr;
+        }
 
         // CREATE A BITMAP FOR RENDERING THE FONT.
         // This is necessary to be able to successfully write and retrieve pixels.
@@ -46,23 +56,57 @@ namespace GRAPHICS::GUI
             &font_bits_unused,
             ALLOCATE_MEMORY_RATHER_THAN_USE_FILE_MAPPING,
             NO_FILE_MAPPING_OFFSET);
-        SelectObject(font_device_context, font_bitmap);
+        if (!font_bitmap)
+        {
+            // Note that there is some uncertainly about the error handling in this function (so it might be better to remove).
+            // This is the only place where getting the last error is documented as being used,
+            // which is why the error message box is only displayed here, though it may work in other places.
+            ERROR_HANDLING::ErrorMessageBox::DisplayLastErrorMessage();
+            return nullptr;
+        }
+        HGDIOBJ bitmap_object_being_replaced = SelectObject(font_device_context, font_bitmap);
+        if (!bitmap_object_being_replaced)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - SelectObject() for font bitmap failed.");
+            return nullptr;
+        }
 
         // SET A BACKGROUND COLOR FOR THE BITMAP.
         // Black is arbitrarily chosen for now.
         const COLORREF BACKGROUND_COLOR = RGB(0, 0, 0);
-        SetBkColor(font_device_context, BACKGROUND_COLOR);
+        COLORREF replaced_background_color = SetBkColor(font_device_context, BACKGROUND_COLOR);
+        bool background_color_set = (CLR_INVALID != replaced_background_color);
+        if (!background_color_set)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - SetBkColor() failed.");
+            return nullptr;
+        }
 
         // GET A HANDLE TO THE SYSTEM FIXED FONT.
         std::shared_ptr<Font> font = std::make_shared<Font>();
         HGDIOBJ font_handle = GetStockObject(font_id);
+        if (!font_handle)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - GetStockObject() failed.");
+            return nullptr;
+        }
 
         // ENABLE USING THE FONT.
-        SelectObject(font_device_context, font_handle);
+        HGDIOBJ font_object_being_replaced = SelectObject(font_device_context, font_handle);
+        if (!font_object_being_replaced)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - SelectObject() for font failed.");
+            return nullptr;
+        }
 
         // GET THE BASIC TEXT METRICS FOR THE FONT.
         TEXTMETRIC text_metrics;
-        GetTextMetrics(font_device_context, &text_metrics);
+        BOOL text_metrics_retrieved = GetTextMetrics(font_device_context, &text_metrics);
+        if (!text_metrics_retrieved)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - GetTextMetrics() for font failed.");
+            return nullptr;
+        }
         long glyph_width = text_metrics.tmMaxCharWidth;
         long glyph_height = text_metrics.tmHeight;
 
@@ -78,7 +122,13 @@ namespace GRAPHICS::GUI
         // RENDER ALL GLYPHS FOR THE FONT.
         // White is used as a contrast that allows easily altering colors.
         const COLORREF FONT_COLOR = RGB(255, 255, 255);
-        SetTextColor(font_device_context, FONT_COLOR);
+        COLORREF replaced_text_color = SetTextColor(font_device_context, FONT_COLOR);
+        bool text_color_set = (CLR_INVALID != replaced_text_color);
+        if (!text_color_set)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - SetTextColor() failed.");
+            return nullptr;
+        }
         RECT current_glyph_rectangle =
         {
             .left = 0,
@@ -92,7 +142,12 @@ namespace GRAPHICS::GUI
             // DRAW THE CURRENT CHARACTER.
             constexpr int SINGLE_CHARACTER_COUNT = 1;
             char character = static_cast<char>(character_value);
-            DrawText(font_device_context, &character, SINGLE_CHARACTER_COUNT, &current_glyph_rectangle, DT_CENTER);
+            int drawn_text_height = DrawText(font_device_context, &character, SINGLE_CHARACTER_COUNT, &current_glyph_rectangle, DT_CENTER);
+            if (!drawn_text_height)
+            {
+                DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - DrawText() failed.");
+                return nullptr;
+            }
 
             // GET ALL PIXELS FOR THE CURRENT GLYPH.
             for (int y = current_glyph_rectangle.top; y <= current_glyph_rectangle.bottom; ++y)
@@ -150,11 +205,25 @@ namespace GRAPHICS::GUI
         }
 
         // FREE ALLOCATED RESOURCES.
-        DeleteObject(font_bitmap);
-        DeleteDC(font_device_context);
+        // Not much we can do if these fail other than debug logging.
+        int font_bitmap_freed = DeleteObject(font_bitmap);
+        if (!font_bitmap_freed)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - DeleteObject() failed.");
+        }
+        BOOL font_device_context_freed = DeleteDC(font_device_context);
+        if (!font_device_context_freed)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - DeleteDC() failed.");
+        }
 
         // RETURN THE FONT.
-        font->Texture->TextureResource.loadFromImage(font_image);
+        bool font_loaded_from_texture = font->Texture->TextureResource.loadFromImage(font_image);
+        if (!font_loaded_from_texture)
+        {
+            DEBUGGING::DebugConsole::WriteErrorLine("Font::LoadSystemDefaultFont() - loadFromImage() failed.");
+            return nullptr;
+        }
         return font;
     }
 }

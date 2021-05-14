@@ -7,6 +7,7 @@
 #include "Collision/CollisionDetectionAlgorithms.cpp"
 #include "Collision/Movement.cpp"
 #include "Debugging/DebugConsole.cpp"
+#include "ErrorHandling/ErrorMessageBox.cpp"
 #include "Filesystem/File.cpp"
 #include "Gameplay/AxeSwingEvent.cpp"
 #include "Gameplay/FloodElapsedTime.cpp"

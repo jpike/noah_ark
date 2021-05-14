@@ -1139,12 +1139,18 @@ namespace STATES
                     }
                 }
 
-                // RANDOMLY ADD A FLAMING SWORD.
-                /// @todo   Add randomness!
-                MATH::FloatRectangle new_map_bounding_box = current_tile_map.GetWorldBoundingBox();
-                float flaming_sword_x_position = RandomNumberGenerator.RandomInRange(new_map_bounding_box.LeftTop.X, new_map_bounding_box.RightBottom.X);
-                float flaming_sword_y_position = RandomNumberGenerator.RandomInRange(new_map_bounding_box.LeftTop.Y, new_map_bounding_box.RightBottom.Y);
-                current_tile_map.FlamingSword = OBJECTS::FlamingSword(flaming_sword_x_position, flaming_sword_y_position);
+                // RANDOMLY ADD A FLAMING SWORD SOMETIMES.
+                constexpr unsigned int MAX_PERCENTAGE = 100;
+                constexpr unsigned int PERCENT_CHANGE_FOR_FLAMING_SWORD = 10;
+                unsigned int random_number_for_flaming_sword_generation = RandomNumberGenerator.RandomNumberLessThan<unsigned int>(MAX_PERCENTAGE);
+                bool flaming_sword_should_be_visible = (random_number_for_flaming_sword_generation <= PERCENT_CHANGE_FOR_FLAMING_SWORD);
+                if (flaming_sword_should_be_visible)
+                {
+                    MATH::FloatRectangle new_map_bounding_box = current_tile_map.GetWorldBoundingBox();
+                    float flaming_sword_x_position = RandomNumberGenerator.RandomInRange(new_map_bounding_box.LeftTop.X, new_map_bounding_box.RightBottom.X);
+                    float flaming_sword_y_position = RandomNumberGenerator.RandomInRange(new_map_bounding_box.LeftTop.Y, new_map_bounding_box.RightBottom.Y);
+                    current_tile_map.FlamingSword = OBJECTS::FlamingSword(flaming_sword_x_position, flaming_sword_y_position);
+                }
             }
         }
         else

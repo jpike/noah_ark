@@ -120,8 +120,7 @@ namespace STATES
                 RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(animal_type.Species);
 
                 std::shared_ptr<GRAPHICS::AnimatedSprite> animal_sprite = RESOURCES::AnimalGraphics::GetSprite(animal_type);
-                assert(animal_sprite);
-                if (animal_sprite)
+                ASSERT_THEN_IF(animal_sprite)
                 {
                     auto animal = MEMORY::NonNullSharedPointer<OBJECTS::Animal>(std::make_shared<OBJECTS::Animal>(
                         animal_type,

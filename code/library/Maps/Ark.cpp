@@ -1,4 +1,4 @@
-#include <cassert>
+#include "ErrorHandling/Asserts.h"
 #include "Maps/Ark.h"
 #include "Maps/Tileset.h"
 #include "Maps/Data/ArkInteriorTileMapData.h"
@@ -252,30 +252,34 @@ namespace MAPS
                 // GET THE APPROPRIATE ANIMAL PEN.
                 MAPS::MultiTileMapGrid& map_layer = Interior.LayersFromBottomToTop[animal_collection_statistics.AnimalPenTileMapLayerIndex];
                 MAPS::TileMap* tile_map = map_layer.GetTileMap(animal_collection_statistics.AnimalPenTileMapRowIndex, animal_collection_statistics.AnimalPenTileMapColumnIndex);
-                assert(tile_map);
-                MAPS::AnimalPen& animal_pen = tile_map->AnimalPens[animal_collection_statistics.AnimalPenTileMapPenIndex];
-
-                OBJECTS::AnimalSpecies::Value animal_species = static_cast<OBJECTS::AnimalSpecies::Value>(animal_species_id);
-                animal_pen.Species = animal_species;
-
-                // ADD THE APPROPRIATE NUMBER OF ANIMALS.
-                OBJECTS::AnimalGender::Value animal_gender = static_cast<OBJECTS::AnimalGender::Value>(animal_gender_id);
-                OBJECTS::AnimalType animal_type(animal_species, animal_gender);
-                std::shared_ptr<GRAPHICS::AnimatedSprite> animal_sprite = RESOURCES::AnimalGraphics::GetSprite(animal_type);
-                assert(animal_sprite);
-                RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(animal_type.Species);
-                for (unsigned int animal_index = 0; animal_index < animal_collection_statistics.InArkCount; ++animal_index)
+                ASSERT_THEN_IF(tile_map)
                 {
-                    // CREATE THE APPROPRIATE ANIMAL.
-                    auto animal = MEMORY::NonNullSharedPointer<OBJECTS::Animal>(std::make_shared<OBJECTS::Animal>(
-                        animal_type,
-                        *animal_sprite,
-                        animal_sound_id));
+                    MAPS::AnimalPen& animal_pen = tile_map->AnimalPens[animal_collection_statistics.AnimalPenTileMapPenIndex];
 
-                    // ADD THE ANIMAL TO THE ANIMAL PEN.
-                    MATH::Vector2f animal_pen_center = animal_pen.InteriorBoundingBox.Center();
-                    animal->Sprite.SetWorldPosition(animal_pen_center);
-                    animal_pen.Animals.emplace_back(animal);
+                    OBJECTS::AnimalSpecies::Value animal_species = static_cast<OBJECTS::AnimalSpecies::Value>(animal_species_id);
+                    animal_pen.Species = animal_species;
+
+                    // ADD THE APPROPRIATE NUMBER OF ANIMALS.
+                    OBJECTS::AnimalGender::Value animal_gender = static_cast<OBJECTS::AnimalGender::Value>(animal_gender_id);
+                    OBJECTS::AnimalType animal_type(animal_species, animal_gender);
+                    std::shared_ptr<GRAPHICS::AnimatedSprite> animal_sprite = RESOURCES::AnimalGraphics::GetSprite(animal_type);
+                    ASSERT_THEN_IF(animal_sprite)
+                    {
+                        RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(animal_type.Species);
+                        for (unsigned int animal_index = 0; animal_index < animal_collection_statistics.InArkCount; ++animal_index)
+                        {
+                            // CREATE THE APPROPRIATE ANIMAL.
+                            auto animal = MEMORY::NonNullSharedPointer<OBJECTS::Animal>(std::make_shared<OBJECTS::Animal>(
+                                animal_type,
+                                *animal_sprite,
+                                animal_sound_id));
+
+                            // ADD THE ANIMAL TO THE ANIMAL PEN.
+                            MATH::Vector2f animal_pen_center = animal_pen.InteriorBoundingBox.Center();
+                            animal->Sprite.SetWorldPosition(animal_pen_center);
+                            animal_pen.Animals.emplace_back(animal);
+                        }
+                    }
                 }
             }
         }

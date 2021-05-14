@@ -1,7 +1,6 @@
 // TODO LIST BEFORE BETA 1:
 // - Have some Bible verses only obtainable during certain sections of game
-// - Take a pass at TODOs
-// - Take a pass at asserts
+// - Fix saved game data
 
 // To avoid annoyances with Windows min/max #defines.
 #define NOMINMAX
@@ -10,6 +9,7 @@
 #include <chrono>
 #include <exception>
 #include <future>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <Windows.h>
@@ -23,8 +23,8 @@
 #include "Resources/AssetPackage.h"
 #include "Resources/FoodGraphics.h"
 #include "Resources/PredefinedAssetPackages.h"
-#include "States/GameStates.h"
 #include "States/GameState.h"
+#include "States/GameStates.h"
 
 void LoadRemainingAssets(HARDWARE::GamingHardware& gaming_hardware)
 {
@@ -153,11 +153,19 @@ int main()
             renderer.Screen->RenderTarget.getView().getSize().y));
 
         std::shared_ptr<GRAPHICS::GUI::Font> default_sans_serif_font = GRAPHICS::GUI::Font::LoadSystemDefaultFont(SYSTEM_FIXED_FONT);
-        assert(default_sans_serif_font);
+        if (!default_sans_serif_font)
+        {
+            std::cerr << "Failed to load default sans-serif font." << std::endl;
+            return EXIT_FAILURE;
+        }
         renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE] = default_sans_serif_font;
 
         std::shared_ptr<GRAPHICS::GUI::Font> default_serif_font = GRAPHICS::GUI::Font::LoadSystemDefaultFont(ANSI_FIXED_FONT);
-        assert(default_serif_font);
+        if (!default_serif_font)
+        {
+            std::cerr << "Failed to load default serif font." << std::endl;
+            return EXIT_FAILURE;
+        }
         renderer.Fonts[RESOURCES::AssetId::SERIF_FONT_TEXTURE] = default_serif_font;
 
         // INITIALIZE THE INTRO SEQUENCE.

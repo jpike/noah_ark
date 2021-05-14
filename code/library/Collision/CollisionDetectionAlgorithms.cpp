@@ -65,111 +65,111 @@ namespace COLLISION
             // CHECK IF MOVEMENT IS ALLOWED OVER SOLID OBJECTS IN THE WORLD.
             if (!allow_movement_over_solid_objects)
             {
-                // CHECK IF THE OBJECT COLLIDED WITH A TREE.
-                MATH::FloatRectangle tree_rectangle;
-                bool collides_with_tree = CollidesWithTree(object_current_bounding_box, tile_map_grid, tree_rectangle);
-                if (collides_with_tree)
+                // CHECK IF THE OBJECT COLLIDED WITH A SOLID OBJECT.
+                MATH::FloatRectangle solid_object_rectangle;
+                bool collides_with_solid_object = CollidesWithSolidObject(object_current_bounding_box, tile_map_grid, solid_object_rectangle);
+                if (collides_with_solid_object)
                 {
-                    // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
+                    // CHECK IF THE SOLID OBJECT IS IN THE PATH OF MOVEMENT.
                     // A collision could have occurred with a tree that isn't being moved toward,
                     // in which case movement should not be stopped.
                     // If the object is closer to the tree, then the object was moving toward the tree.
                     // Otherwise, the object was moving away and should be allowed to move.
-                    MATH::Vector2f tree_center_world_position = tree_rectangle.Center();
-                    MATH::Vector2f original_tree_to_object_vector = tree_center_world_position - object_original_center_world_position;
-                    float original_tree_to_object_distance = original_tree_to_object_vector.Length();
-                    MATH::Vector2f new_tree_to_object_vector = tree_center_world_position - object_center_world_position;
-                    float new_tree_to_object_distance = new_tree_to_object_vector.Length();
-                    bool object_moved_toward_tree = (new_tree_to_object_distance < original_tree_to_object_distance);
-                    if (object_moved_toward_tree)
+                    MATH::Vector2f solid_object_center_world_position = solid_object_rectangle.Center();
+                    MATH::Vector2f collided_object_to_object_vector = solid_object_center_world_position - object_original_center_world_position;
+                    float original_collided_object_to_object_distance = collided_object_to_object_vector.Length();
+                    MATH::Vector2f new_collided_object_to_object_vector = solid_object_center_world_position - object_center_world_position;
+                    float new_collided_object_to_object_distance = new_collided_object_to_object_vector.Length();
+                    bool object_moved_toward_solid_object = (new_collided_object_to_object_distance < original_collided_object_to_object_distance);
+                    if (object_moved_toward_solid_object)
                     {
                         // DETERMINE IF THE OBJECT CAN MOVE SOME ALONG ONE AXIS.
-                        // The object may have primarily collided with one side of the tree.
+                        // The object may have primarily collided with one side of the solid object.
                         // If not moving completely horizontally or vertically, the object may be able
                         // to move a little bit alongside the tree.  Doing this kind of check here
                         // helps prevent objects from getting stuck.
-                        float tree_top_y_world_position = tree_rectangle.LeftTop.Y;
-                        float tree_bottom_y_world_position = tree_rectangle.RightBottom.Y;
-                        float tree_left_x_world_position = tree_rectangle.LeftTop.X;
-                        float tree_right_x_world_position = tree_rectangle.RightBottom.X;
+                        float collided_object_top_y_world_position = solid_object_rectangle.LeftTop.Y;
+                        float collided_object_bottom_y_world_position = solid_object_rectangle.RightBottom.Y;
+                        float collided_object_left_x_world_position = solid_object_rectangle.LeftTop.X;
+                        float collided_object_right_x_world_position = solid_object_rectangle.RightBottom.X;
                         float object_new_top_y_world_position = object_new_bounding_box.LeftTop.Y;
                         float object_new_bottom_y_world_position = object_new_bounding_box.RightBottom.Y;
                         float object_new_left_x_world_position = object_new_bounding_box.LeftTop.X;
                         float object_new_right_x_world_position = object_new_bounding_box.RightBottom.X;
-                        // 5 cases for the object colliding with the left or right side of the tree:
-                        // - Object center y completely within tree bounds.
-                        // - Object top y is above tree, object bottom y is below top of tree, and object center right of tree.
-                        // - Object top y is above tree, object bottom y is below top of tree, and object center left of tree.
-                        // - Object bottom y is below tree, object top y is above bottom of tree, and object center right of tree.
-                        // - Object bottom y is below tree, object top y is above bottom of tree, and object center left of tree.
-                        bool object_center_y_within_tree_bounds = (
-                            (tree_top_y_world_position < object_center_world_position.Y) &&
-                            (object_center_world_position.Y < tree_bottom_y_world_position));
-                        bool object_bottom_hit_tree_from_right = (
-                            (object_new_top_y_world_position < tree_top_y_world_position) &&
-                            (object_new_bottom_y_world_position > tree_top_y_world_position) &&
-                            (object_center_world_position.X > tree_right_x_world_position));
-                        bool object_bottom_hit_tree_from_left = (
-                            (object_new_top_y_world_position < tree_top_y_world_position) &&
-                            (object_new_bottom_y_world_position > tree_top_y_world_position) &&
-                            (object_center_world_position.X < tree_left_x_world_position));
-                        bool object_top_hit_tree_from_right = (
-                            (object_new_bottom_y_world_position > tree_bottom_y_world_position) &&
-                            (object_new_top_y_world_position > tree_bottom_y_world_position) &&
-                            (object_center_world_position.X > tree_right_x_world_position));
-                        bool object_top_hit_tree_from_left = (
-                            (object_new_bottom_y_world_position > tree_bottom_y_world_position) &&
-                            (object_new_top_y_world_position > tree_bottom_y_world_position) &&
-                            (object_center_world_position.X < tree_left_x_world_position));
-                        bool object_collided_horizontally_with_tree = (
-                            object_center_y_within_tree_bounds ||
-                            object_bottom_hit_tree_from_right ||
-                            object_bottom_hit_tree_from_left ||
-                            object_top_hit_tree_from_right ||
-                            object_top_hit_tree_from_left);
-                        // 5 cases for the object colliding with the top or bottom side of the tree
-                        // - Object center x is completely within tree bounds.
-                        // - Object left x is left of tree, object right x is right of left of tree, and object center above tree.
-                        // - Object left x is left of tree, object right x is right of left of tree, and object center below tree.
-                        // - Object right x is right of tree, object left x is left of right of tree, and object center above tree.
-                        // - Object right x is right of tree, object left x is left of right of tree, and object center below tree.
-                        bool object_center_x_within_tree_bounds = (
-                            (tree_left_x_world_position < object_center_world_position.X) &&
-                            (object_center_world_position.X < tree_right_x_world_position));
-                        bool object_right_hit_tree_from_top = (
-                            (object_new_left_x_world_position < tree_left_x_world_position) &&
-                            (object_new_right_x_world_position > tree_left_x_world_position) &&
-                            (object_center_world_position.Y < tree_top_y_world_position));
-                        bool object_right_hit_tree_from_bottom = (
-                            (object_new_left_x_world_position < tree_left_x_world_position) &&
-                            (object_new_right_x_world_position > tree_left_x_world_position) &&
-                            (object_center_world_position.Y > tree_bottom_y_world_position));
-                        bool object_left_hit_tree_from_top = (
-                            (object_new_right_x_world_position > tree_right_x_world_position) &&
-                            (object_new_left_x_world_position < tree_right_x_world_position) &&
-                            (object_center_world_position.Y < tree_top_y_world_position));
-                        bool object_left_hit_tree_from_bottom = (
-                            (object_new_right_x_world_position > tree_right_x_world_position) &&
-                            (object_new_left_x_world_position < tree_right_x_world_position) &&
-                            (object_center_world_position.Y > tree_bottom_y_world_position));
-                        bool object_collided_vertically_with_tree = (
-                            object_center_x_within_tree_bounds ||
-                            object_right_hit_tree_from_top ||
-                            object_right_hit_tree_from_bottom ||
-                            object_left_hit_tree_from_top ||
-                            object_left_hit_tree_from_bottom);
+                        // 5 cases for the object colliding with the left or right side of the collided object:
+                        // - Object center y completely within collided object's bounds.
+                        // - Object top y is above collided object, object bottom y is below top of collided object, and object center right of collided object.
+                        // - Object top y is above collided object, object bottom y is below top of collided object, and object center left of collided object.
+                        // - Object bottom y is below collided object, object top y is above bottom of collided object, and object center right of collided object.
+                        // - Object bottom y is below collided object, object top y is above bottom of collided object, and object center left of collided object.
+                        bool object_center_y_within_collided_object_bounds = (
+                            (collided_object_top_y_world_position < object_center_world_position.Y) &&
+                            (object_center_world_position.Y < collided_object_bottom_y_world_position));
+                        bool object_bottom_hit_collided_object_from_right = (
+                            (object_new_top_y_world_position < collided_object_top_y_world_position) &&
+                            (object_new_bottom_y_world_position > collided_object_top_y_world_position) &&
+                            (object_center_world_position.X > collided_object_right_x_world_position));
+                        bool object_bottom_hit_collided_object_from_left = (
+                            (object_new_top_y_world_position < collided_object_top_y_world_position) &&
+                            (object_new_bottom_y_world_position > collided_object_top_y_world_position) &&
+                            (object_center_world_position.X < collided_object_left_x_world_position));
+                        bool object_top_hit_collided_object_from_right = (
+                            (object_new_bottom_y_world_position > collided_object_bottom_y_world_position) &&
+                            (object_new_top_y_world_position > collided_object_bottom_y_world_position) &&
+                            (object_center_world_position.X > collided_object_right_x_world_position));
+                        bool object_top_hit_collided_object_from_left = (
+                            (object_new_bottom_y_world_position > collided_object_bottom_y_world_position) &&
+                            (object_new_top_y_world_position > collided_object_bottom_y_world_position) &&
+                            (object_center_world_position.X < collided_object_left_x_world_position));
+                        bool object_collided_horizontally_with_collided_object = (
+                            object_center_y_within_collided_object_bounds ||
+                            object_bottom_hit_collided_object_from_right ||
+                            object_bottom_hit_collided_object_from_left ||
+                            object_top_hit_collided_object_from_right ||
+                            object_top_hit_collided_object_from_left);
+                        // 5 cases for the object colliding with the top or bottom side of the collided object
+                        // - Object center x is completely within collided object bounds.
+                        // - Object left x is left of collided object, object right x is right of left of collided object, and object center above collided object.
+                        // - Object left x is left of collided object, object right x is right of left of collided object, and object center below collided object.
+                        // - Object right x is right of collided object, object left x is left of right of collided object, and object center above collided object.
+                        // - Object right x is right of collided object, object left x is left of right of collided object, and object center below collided object.
+                        bool object_center_x_within_collided_object_bounds = (
+                            (collided_object_left_x_world_position < object_center_world_position.X) &&
+                            (object_center_world_position.X < collided_object_right_x_world_position));
+                        bool object_right_hit_collided_object_from_top = (
+                            (object_new_left_x_world_position < collided_object_left_x_world_position) &&
+                            (object_new_right_x_world_position > collided_object_left_x_world_position) &&
+                            (object_center_world_position.Y < collided_object_top_y_world_position));
+                        bool object_right_hit_collided_object_from_bottom = (
+                            (object_new_left_x_world_position < collided_object_left_x_world_position) &&
+                            (object_new_right_x_world_position > collided_object_left_x_world_position) &&
+                            (object_center_world_position.Y > collided_object_bottom_y_world_position));
+                        bool object_left_hit_collided_object_from_top = (
+                            (object_new_right_x_world_position > collided_object_right_x_world_position) &&
+                            (object_new_left_x_world_position < collided_object_right_x_world_position) &&
+                            (object_center_world_position.Y < collided_object_top_y_world_position));
+                        bool object_left_hit_collided_object_from_bottom = (
+                            (object_new_right_x_world_position > collided_object_right_x_world_position) &&
+                            (object_new_left_x_world_position < collided_object_right_x_world_position) &&
+                            (object_center_world_position.Y > collided_object_bottom_y_world_position));
+                        bool object_collided_vertically_with_collided_object = (
+                            object_center_x_within_collided_object_bounds ||
+                            object_right_hit_collided_object_from_top ||
+                            object_right_hit_collided_object_from_bottom ||
+                            object_left_hit_collided_object_from_top ||
+                            object_left_hit_collided_object_from_bottom);
 
                         // PERFORM ANY PARTIAL MOVEMENT BASED ON THE COLLISION.
                         // If there's both a horizontal and vertical collision, one is arbitrarily chosen
                         // first to keep the object moving.
-                        if (object_collided_horizontally_with_tree)
+                        if (object_collided_horizontally_with_collided_object)
                         {
                             // ONLY MOVE THE OBJECT VERTICALLY.
                             MATH::Vector2f new_center_world_position = object_current_bounding_box.Center();
                             new_center_world_position.Y = object_center_world_position.Y;
                             return new_center_world_position;
                         }
-                        else if (object_collided_vertically_with_tree)
+                        else if (object_collided_vertically_with_collided_object)
                         {
                             // ONLY MOVE THE OBJECT HORIZONTALLY.
                             MATH::Vector2f new_center_world_position = object_current_bounding_box.Center();
@@ -358,37 +358,37 @@ namespace COLLISION
                 break;
             }
 
-            // CHECK IF THE OBJECT COLLIDES WITH A TREE.
-            MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, tile_map_grid, tree_rectangle);
-            if (collides_with_tree)
+            // CHECK IF THE OBJECT COLLIDES WITH A SOLID OBJECT.
+            MATH::FloatRectangle collided_object_rectangle;
+            bool collides_with_solid_object = CollidesWithSolidObject(object_current_bounding_box, tile_map_grid, collided_object_rectangle);
+            if (collides_with_solid_object)
             {
-                // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
-                // A collision could have occurred with a tree that isn't being moved toward,
+                // CHECK IF THE SOLID OBJECT IS IN THE PATH OF MOVEMENT.
+                // A collision could have occurred with an object that isn't being moved toward,
                 // in which case movement should not be stopped.
                 // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
                 const float MIN_UP_MOVEMENT = -1.0f;
                 float old_collision_box_bottom = object_current_bounding_box.RightBottom.Y;
                 float old_collision_box_top = object_current_bounding_box.LeftTop.Y;
                 float new_collision_box_top = old_collision_box_top + MIN_UP_MOVEMENT;
-                float tree_bottom = tree_rectangle.RightBottom.Y;
+                float collided_object_bottom = collided_object_rectangle.RightBottom.Y;
 
-                // A minimum distance between the collision box's center and the tree's
+                // A minimum distance between the collision box's center and the other object's
                 // center is enforced so that moving objects don't get stuck on
                 // parts of trees not directly related to their current movement.
-                float min_object_tree_distance = tree_rectangle.Width() / 2.0f;
+                float min_object_collided_object_distance = collided_object_rectangle.Width() / 2.0f;
                 float object_center_x = object_current_bounding_box.CenterX();
-                float tree_center_x = tree_rectangle.CenterX();
-                float object_to_tree_distance = fabs(object_center_x - tree_center_x);
-                bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
+                float collided_object_center_x = collided_object_rectangle.CenterX();
+                float object_to_collided_object_distance = fabs(object_center_x - collided_object_center_x);
+                bool collision_distance_met = (object_to_collided_object_distance <= min_object_collided_object_distance);
 
-                bool moving_up_collides_with_tree = (
+                bool moving_up_collides_with_solid_object = (
                     collision_distance_met &&
-                    (old_collision_box_bottom >= tree_bottom) &&
-                    (new_collision_box_top <= tree_bottom));
-                if (moving_up_collides_with_tree)
+                    (old_collision_box_bottom >= collided_object_bottom) &&
+                    (new_collision_box_top <= collided_object_bottom));
+                if (moving_up_collides_with_solid_object)
                 {
-                    // A tree is blocking further movement.
+                    // A solid object is blocking further movement.
                     break;
                 }
             }
@@ -497,37 +497,37 @@ namespace COLLISION
                 break;
             }
 
-            // CHECK IF THE OBJECT COLLIDES WITH A TREE.
-            MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, tile_map_grid, tree_rectangle);
-            if (collides_with_tree)
+            // CHECK IF THE OBJECT COLLIDES WITH A SOLID OBJECT.
+            MATH::FloatRectangle collided_object_rectangle;
+            bool collides_with_solid_object = CollidesWithSolidObject(object_current_bounding_box, tile_map_grid, collided_object_rectangle);
+            if (collides_with_solid_object)
             {
-                // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
-                // A collision could have occurred with a tree that isn't being moved toward,
+                // CHECK IF THE SOLID OBJECT IS IN THE PATH OF MOVEMENT.
+                // A collision could have occurred with an object that isn't being moved toward,
                 // in which case movement should not be stopped.
                 // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
                 const float MIN_DOWN_MOVEMENT = 1.0f;
                 float old_collision_box_top = object_current_bounding_box.LeftTop.Y;
                 float old_collision_box_bottom = object_current_bounding_box.RightBottom.Y;
                 float new_collision_box_bottom = old_collision_box_bottom + MIN_DOWN_MOVEMENT;
-                float tree_top = tree_rectangle.LeftTop.Y;
+                float collided_object_top = collided_object_rectangle.LeftTop.Y;
 
-                // A minimum distance between the collision box's center and the tree's
+                // A minimum distance between the collision box's center and the other object's
                 // center is enforced so that moving objects don't get stuck on
                 // parts of trees not directly related to their current movement.
-                float min_object_tree_distance = tree_rectangle.Width() / 2.0f;
+                float min_object_collided_object_distance = collided_object_rectangle.Width() / 2.0f;
                 float object_center_x = object_current_bounding_box.CenterX();
-                float tree_center_x = tree_rectangle.CenterX();
-                float object_to_tree_distance = fabs(object_center_x - tree_center_x);
-                bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
+                float collided_object_center_x = collided_object_rectangle.CenterX();
+                float object_to_collided_object_distance = fabs(object_center_x - collided_object_center_x);
+                bool collision_distance_met = (object_to_collided_object_distance <= min_object_collided_object_distance);
 
-                bool moving_down_collides_with_tree = (
+                bool moving_down_collides_with_solid_object = (
                     collision_distance_met &&
-                    (old_collision_box_top <= tree_top) &&
-                    (new_collision_box_bottom >= tree_top));
-                if (moving_down_collides_with_tree)
+                    (old_collision_box_top <= collided_object_top) &&
+                    (new_collision_box_bottom >= collided_object_top));
+                if (moving_down_collides_with_solid_object)
                 {
-                    // A tree is blocking further movement.
+                    // An object is blocking further movement.
                     break;
                 }
             }
@@ -636,37 +636,37 @@ namespace COLLISION
                 break;
             }
 
-            // CHECK IF THE OBJECT COLLIDES WITH A TREE.
-            MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, tile_map_grid, tree_rectangle);
-            if (collides_with_tree)
+            // CHECK IF THE OBJECT COLLIDES WITH A SOLID OBJECT.
+            MATH::FloatRectangle collided_object_rectangle;
+            bool collides_with_solid_object = CollidesWithSolidObject(object_current_bounding_box, tile_map_grid, collided_object_rectangle);
+            if (collides_with_solid_object)
             {
-                // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
-                // A collision could have occurred with a tree that isn't being moved toward,
+                // CHECK IF THE OBJECT IS IN THE PATH OF MOVEMENT.
+                // A collision could have occurred with an object  that isn't being moved toward,
                 // in which case movement should not be stopped.
                 // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
                 const float MIN_LEFT_MOVEMENT = -1.0f;
                 float old_collision_box_right = object_current_bounding_box.RightBottom.X;
                 float old_collision_box_left = object_current_bounding_box.LeftTop.X;
                 float new_collision_box_left = old_collision_box_left + MIN_LEFT_MOVEMENT;
-                float tree_right = tree_rectangle.RightBottom.X;
+                float collided_object_right = collided_object_rectangle.RightBottom.X;
 
-                // A minimum distance between the collision box's center and the tree's
+                // A minimum distance between the collision box's center and the other object's
                 // center is enforced so that moving objects don't get stuck on
                 // parts of trees not directly related to their current movement.
-                float min_object_tree_distance = tree_rectangle.Height() / 2.0f;
+                float min_object_collided_object_distance = collided_object_rectangle.Height() / 2.0f;
                 float object_center_y = object_current_bounding_box.CenterY();
-                float tree_center_y = tree_rectangle.CenterY();
-                float object_to_tree_distance = fabs(object_center_y - tree_center_y);
-                bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
+                float collided_object_center_y = collided_object_rectangle.CenterY();
+                float object_to_collided_object_distance = fabs(object_center_y - collided_object_center_y);
+                bool collision_distance_met = (object_to_collided_object_distance <= min_object_collided_object_distance);
 
-                bool moving_left_collides_with_tree = (
+                bool moving_left_collides_with_solid_object = (
                     collision_distance_met &&
-                    (old_collision_box_right >= tree_right) &&
-                    (new_collision_box_left <= tree_right));
-                if (moving_left_collides_with_tree)
+                    (old_collision_box_right >= collided_object_right) &&
+                    (new_collision_box_left <= collided_object_right));
+                if (moving_left_collides_with_solid_object)
                 {
-                    // A tree is blocking further movement.
+                    // An object is blocking further movement.
                     break;
                 }
             }
@@ -773,37 +773,37 @@ namespace COLLISION
                 break;
             }
 
-            // CHECK IF THE OBJECT COLLIDES WITH A TREE.
-            MATH::FloatRectangle tree_rectangle;
-            bool collides_with_tree = CollidesWithTree(object_current_bounding_box, tile_map_grid, tree_rectangle);
-            if (collides_with_tree)
+            // CHECK IF THE OBJECT COLLIDES WITH A SOLID OBJECT.
+            MATH::FloatRectangle collided_object_rectangle;
+            bool collides_with_solid_object = CollidesWithSolidObject(object_current_bounding_box, tile_map_grid, collided_object_rectangle);
+            if (collides_with_solid_object)
             {
-                // CHECK IF THE TREE IS IN THE PATH OF MOVEMENT.
-                // A collision could have occurred with a tree that isn't being moved toward,
+                // CHECK IF THE SOLID OBJECT IS IN THE PATH OF MOVEMENT.
+                // A collision could have occurred with an object that isn't being moved toward,
                 // in which case movement should not be stopped.
                 // Since pixels correspond to world coordinates, movement must occur by at least 1 pixel.
                 const float MIN_RIGHT_MOVEMENT = 1.0f;
                 float old_collision_box_left = object_current_bounding_box.LeftTop.X;
                 float old_collision_box_right = object_current_bounding_box.RightBottom.X;
                 float new_collision_box_right = old_collision_box_right + MIN_RIGHT_MOVEMENT;
-                float tree_left = tree_rectangle.LeftTop.X;
+                float collided_object_left = collided_object_rectangle.LeftTop.X;
 
-                // A minimum distance between the collision box's center and the tree's
+                // A minimum distance between the collision box's center and the other object's
                 // center is enforced so that moving objects don't get stuck on
                 // parts of trees not directly related to their current movement.
-                float min_object_tree_distance = tree_rectangle.Height() / 2.0f;
+                float min_object_collided_object_distance = collided_object_rectangle.Height() / 2.0f;
                 float object_center_y = object_current_bounding_box.CenterY();
-                float tree_center_y = tree_rectangle.CenterY();
-                float object_to_tree_distance = fabs(object_center_y - tree_center_y);
-                bool collision_distance_met = (object_to_tree_distance <= min_object_tree_distance);
+                float collided_object_center_y = collided_object_rectangle.CenterY();
+                float object_to_collided_object_distance = fabs(object_center_y - collided_object_center_y);
+                bool collision_distance_met = (object_to_collided_object_distance <= min_object_collided_object_distance);
 
-                bool moving_right_collides_with_tree = (
+                bool moving_right_collides_with_solid_object = (
                     collision_distance_met &&
-                    (old_collision_box_left <= tree_left) &&
-                    (new_collision_box_right >= tree_left));
-                if (moving_right_collides_with_tree)
+                    (old_collision_box_left <= collided_object_left) &&
+                    (new_collision_box_right >= collided_object_left));
+                if (moving_right_collides_with_solid_object)
                 {
-                    // A tree is blocking further movement.
+                    // An object is blocking further movement.
                     break;
                 }
             }
@@ -944,18 +944,18 @@ namespace COLLISION
         }
     }
 
-    /// Determines if an object collides with a tree in the map grid.
+    /// Determines if an object collides with a solid object in the map grid.
     /// @param[in]  rectangle - The bounding world rectangle of the object.
     /// @param[in,out]  tile_map_grid - The map grid in which the object and trees exist.
-    /// @param[out] tree_rectangle - The bounding world rectangle of the tree, if a collision occurred.
-    /// @return True if the object collided with a tree; false otherwise.
-    bool CollisionDetectionAlgorithms::CollidesWithTree(
+    /// @param[out] collided_object_rectangle - The bounding world rectangle of the other solid object, if a collision occurred.
+    /// @return True if the object collided with a solid object; false otherwise.
+    bool CollisionDetectionAlgorithms::CollidesWithSolidObject(
         const MATH::FloatRectangle& rectangle, 
         MAPS::MultiTileMapGrid& tile_map_grid,
-        MATH::FloatRectangle& tree_rectangle)
+        MATH::FloatRectangle& collided_object_rectangle)
     {
         // CLEAR THE OUT PARAMETER.
-        tree_rectangle = MATH::FloatRectangle();
+        collided_object_rectangle = MATH::FloatRectangle();
 
         // GET THE TREES NEAR THE RECTANGLE.
         MATH::Vector2f object_center_position = rectangle.Center();
@@ -986,12 +986,30 @@ namespace COLLISION
             if (collides_with_tree)
             {
                 // RETURN THAT A COLLISION OCCURRED WITH THE CURRENT TREE.
-                tree_rectangle = new_tree_bounds;
+                collided_object_rectangle = new_tree_bounds;
                 return true;
             }
         }
 
-        // No trees were found to collide with the rectangle.
+        // CHECK IF THE OBJECT COLLIDES WITH AN ALTAR.
+        if (current_tile_map->Altar)
+        {
+            // SHRINK THE ALTAR'S BOUNDS SO THAT OBJECTS DON'T GET CAUGHT ON EDGES.
+            MATH::FloatRectangle altar_bounds = current_tile_map->Altar->Sprite.GetWorldBoundingBox();
+            const float OBJECT_DIMENSION_SHRINK_AMOUNT = 2.0f;
+            MATH::FloatRectangle new_altar_bounds = altar_bounds.Shrink(OBJECT_DIMENSION_SHRINK_AMOUNT);
+
+            // CHECK IF A COLLISION OCCURS WITH THE ALTAR.
+            bool collides_with_altar = rectangle.Intersects(altar_bounds);
+            if (collides_with_altar)
+            {
+                // RETURN THAT A COLLISION OCCURRED WITH THE CURRENT ALTAR.
+                collided_object_rectangle = new_altar_bounds;
+                return true;
+            }
+        }
+
+        // No objects were found to collide with the rectangle.
         return false;
     }
 }

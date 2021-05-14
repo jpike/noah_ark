@@ -66,6 +66,6 @@ namespace COLLISION
             AUDIO::Speakers& speakers);
 
         // OBJECT-SPECIFIC COLLISION DETECTION.
-        static bool CollidesWithTree(const MATH::FloatRectangle& rectangle, MAPS::MultiTileMapGrid& tile_map_grid, MATH::FloatRectangle& tree_rectangle);
+        static bool CollidesWithSolidObject(const MATH::FloatRectangle& rectangle, MAPS::MultiTileMapGrid& tile_map_grid, MATH::FloatRectangle& collided_object_rectangle);
     };
 }

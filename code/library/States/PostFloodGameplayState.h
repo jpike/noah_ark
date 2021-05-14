@@ -35,7 +35,7 @@ namespace STATES
         };
 
         // INITIALIZATION METHODS.
-        void Load(MAPS::World& world, GRAPHICS::Renderer& renderer);
+        void Load(const STATES::SavedGameData& saved_game_data, MAPS::World& world, GRAPHICS::Renderer& renderer, HARDWARE::GamingHardware& gaming_hardware);
 
         // UPDATING.
         GameState Update(

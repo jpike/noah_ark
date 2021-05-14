@@ -1,13 +1,17 @@
 #include "Collision/CollisionDetectionAlgorithms.h"
 #include "ErrorHandling/Asserts.h"
+#include "Resources/AnimalGraphics.h"
+#include "Resources/AnimalSounds.h"
 #include "States/PostFloodGameplayState.h"
 
 namespace STATES
 {
     /// Loads the cutscene into its initial state.
+    /// @param[in]  saved_game_data - The saved game data.
     /// @param[in,out]  world - The world to configure for this state.
     /// @param[in,out]  renderer - The renderer from which to load some initial data.
-    void PostFloodGameplayState::Load(MAPS::World& world, GRAPHICS::Renderer& renderer)
+    /// @param[in,out]  gaming_hardware - The gaming hardware.
+    void PostFloodGameplayState::Load(const STATES::SavedGameData& saved_game_data, MAPS::World& world, GRAPHICS::Renderer& renderer, HARDWARE::GamingHardware& gaming_hardware)
     {
         // RESET BASIC MEMBER VARIABLES TO THE BEGINNING OF THE CUTSCENE.
         CurrentSubstate = Substate::FADING_IN;
@@ -43,13 +47,120 @@ namespace STATES
             MATH::Vector2f noah_world_position = ark_entrance_tile_map_center + MATH::Vector2f(0.0f, 64.0f);
             world.NoahPlayer->SetWorldPosition(noah_world_position);
             world.NoahPlayer->Sprite.CurrentFrameSprite.IsVisible = true;
+
+            // RANDOMLY POSITION FAMILY MEMBERS.
+            world.FamilyMembers.clear();
+            for (std::size_t family_member_index = 0; family_member_index < OBJECTS::FamilyMember::COUNT; ++family_member_index)
+            {
+                // RANDOMLY PLACE THE FAMILY MEMBER IN THE CURRENT TILE MAP.
+                // The dimensions of the family members are taken into account to ensure they'll be completely on-screen.
+                MATH::FloatRectangle current_map_bounds = ark_entrace_tile_map->GetWorldBoundingBox();
+                float min_family_member_world_x_position = current_map_bounds.LeftTop.X + OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+                float max_family_member_world_x_position = current_map_bounds.RightBottom.X - OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+                float min_family_member_world_y_position = current_map_bounds.LeftTop.Y + OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+                float max_family_member_world_y_position = current_map_bounds.RightBottom.Y - OBJECTS::FamilyMember::HALF_SIZE_IN_PIXELS;
+                // This may have to be repeated multiple times in case the first picked tile isn't walkable.
+                // But this isn't expected to result in an infinite or even long-running loop.
+                bool family_member_placed_in_world = false;
+                while (!family_member_placed_in_world)
+                {
+                    // COMPUTE A RANDOM POSITION FOR THE FAMILY MEMBER.
+                    float family_member_x_position = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(
+                        min_family_member_world_x_position,
+                        max_family_member_world_x_position);
+                    float family_member_y_position = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(
+                        min_family_member_world_y_position,
+                        max_family_member_world_y_position);
+                        
+                    // CHECK IF A WALKABLE TILE EXISTS AT THAT RANDOM LOCATION.
+                    // If a walkable tile doesn't exist, we'll just continue trying a different location.
+                    std::shared_ptr<MAPS::Tile> tile = ark_entrace_tile_map->GetTileAtWorldPosition(family_member_x_position, family_member_y_position);
+                    bool tile_is_walkable = (tile && tile->IsWalkable());
+                    if (tile_is_walkable)
+                    {
+                        // PLACE THE FAMILY MEMBER AT THAT WORLD POSITION.
+                        family_member_placed_in_world = true;
+                        MATH::Vector2f family_member_world_position(family_member_x_position, family_member_y_position);
+                        world.FamilyMembers.emplace_back(
+                            static_cast<OBJECTS::FamilyMember::Type>(family_member_index),
+                            family_member_world_position,
+                            CurrentMapGrid);
+                    }
+                }
+            }
+
+            // RANDOMLY POSITION ANIMALS.
+            constexpr float ANIMAL_HALF_SIZE_IN_PIXELS = 16.0f;
+            float min_animal_world_x_position = ANIMAL_HALF_SIZE_IN_PIXELS;
+            float max_animal_world_x_position = (
+                MAPS::Overworld::WIDTH_IN_TILE_MAPS * MAPS::TileMap::WIDTH_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<float>)
+                - ANIMAL_HALF_SIZE_IN_PIXELS;
+            float min_animal_world_y_position = ANIMAL_HALF_SIZE_IN_PIXELS;
+            float max_animal_world_y_position = (
+                MAPS::Overworld::HEIGHT_IN_TILE_MAPS * MAPS::TileMap::HEIGHT_IN_TILES * MAPS::Tile::DIMENSION_IN_PIXELS<float>)
+                - ANIMAL_HALF_SIZE_IN_PIXELS;
+            for (unsigned int animal_species_id = 0; animal_species_id < OBJECTS::AnimalSpecies::COUNT; ++animal_species_id)
+            {
+                // ADD APPROPRIATE ANIMALS FOR EACH GENDER.
+                for (unsigned int animal_gender_id = 0; animal_gender_id < OBJECTS::AnimalGender::COUNT; ++animal_gender_id)
+                {
+                    // CHECK IF THE ANIMAL HAS BEEN COLLECTED AT ALL IN THE ARK.
+                    const INVENTORY::AnimalCollectionStatistics& animal_collection_statistics = saved_game_data.CollectedAnimalsBySpeciesThenGender[animal_species_id][animal_gender_id];
+                    unsigned int collected_animal_count = animal_collection_statistics.CollectedTotalCount();
+                    bool animal_collected_in_ark = (collected_animal_count > 0);
+                    if (!animal_collected_in_ark)
+                    {
+                        // No animals for this species/gender need to be placed in the ark.
+                        continue;
+                    }
+               
+                    // ADD THE APPROPRIATE NUMBER OF ANIMALS.
+                    OBJECTS::AnimalSpecies::Value animal_species = static_cast<OBJECTS::AnimalSpecies::Value>(animal_species_id);
+                    OBJECTS::AnimalGender::Value animal_gender = static_cast<OBJECTS::AnimalGender::Value>(animal_gender_id);
+                    OBJECTS::AnimalType animal_type(animal_species, animal_gender);
+                    std::shared_ptr<GRAPHICS::AnimatedSprite> animal_sprite = RESOURCES::AnimalGraphics::GetSprite(animal_type);
+                    ASSERT_THEN_IF(animal_sprite)
+                    {
+                        RESOURCES::AssetId animal_sound_id = RESOURCES::AnimalSounds::GetSound(animal_type.Species);
+                        for (unsigned int animal_index = 0; animal_index < collected_animal_count; ++animal_index)
+                        {
+                            // CREATE THE APPROPRIATE ANIMAL.
+                            auto animal = MEMORY::NonNullSharedPointer<OBJECTS::Animal>(std::make_shared<OBJECTS::Animal>(
+                                animal_type,
+                                *animal_sprite,
+                                animal_sound_id));
+
+                            // RANDOMLY POSITION THE ANIMAL.
+                            float random_animal_x_position = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(min_animal_world_x_position, max_animal_world_x_position);
+                            float random_animal_y_position = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(min_animal_world_y_position, max_animal_world_y_position);
+                            std::shared_ptr<MAPS::Tile> tile = world.Overworld.MapGrid.GetTileAtWorldPosition(
+                                random_animal_x_position,
+                                random_animal_y_position);
+                            // If the tile is not walkable, then the animal just won't be placed.
+                            // This should be fine since it the placement of animals here in the post-flood state is to just
+                            // give the appearance of animals, rather than having the player count them in detail.
+                            bool tile_is_walkable = (tile && tile->IsWalkable());
+                            if (tile_is_walkable)
+                            {
+                                animal->Sprite.SetWorldPosition(random_animal_x_position, random_animal_y_position);
+                                animal->Sprite.Play();
+
+                                MAPS::TileMap* current_tile_map = CurrentMapGrid->GetTileMap(random_animal_x_position, random_animal_y_position);
+                                ASSERT_THEN_IF(current_tile_map)
+                                {
+                                    ark_entrace_tile_map->RoamingAnimals.emplace_back(animal);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // ENSURE ALL ARK PIECES ARE BUILT.
         constexpr bool BUILT = true;
         world.Overworld.SetArkPiecesBuiltStatus(BUILT);
 
-        /// @todo   Randomly position family & animals!
         /// @todo   Destroy all trees?
         /// @todo   Alter tile maps to be different from pre-flood?  Or smaller world?
     }
@@ -256,6 +367,24 @@ namespace STATES
         // RENDER CONTENT SPECIFIC TO THE CURRENT MAP.
         renderer.Render(*CurrentMapGrid);
 
+        // RENDER EACH FAMILY MEMBER IF IN VIEW.
+        for (const OBJECTS::FamilyMember& family_member : world.FamilyMembers)
+        {
+            // ONLY RENDER THE FAMILY MEMBER IF THEY'RE IN VIEW.
+            bool family_member_in_current_map_grid = (CurrentMapGrid == family_member.MapGrid);
+
+            MATH::Vector2f family_member_world_position = family_member.Sprite.GetWorldPosition();
+            bool family_member_in_view_of_camera = renderer.Camera.ViewBounds.Contains(
+                family_member_world_position.X, 
+                family_member_world_position.Y);
+
+            bool family_member_in_view = (family_member_in_current_map_grid && family_member_in_view_of_camera);
+            if (family_member_in_view)
+            {
+                renderer.Render(family_member.Sprite.CurrentFrameSprite);
+            }
+        }
+
         // RENDER THE PLAYER.
         renderer.Render(world.NoahPlayer->Sprite.CurrentFrameSprite);
 
@@ -293,13 +422,6 @@ namespace STATES
             }
         }
 
-        // RENDER THE TEXT BOX IF IT'S VISIBLE.
-        /// @todo   Have this appear on top of rainbow?
-        if (TextBox.IsVisible)
-        {
-            TextBox.Render(renderer);
-        }
-
         // RENDER APPROPRIATE SHADING EFFECTS FOR CERTAIN SUBSTATES.
         sf::RenderStates shading_effect = sf::RenderStates::Default;
 
@@ -331,7 +453,8 @@ namespace STATES
                         // CHECK IF AN ALTAR CAN BE BUILT AT THE CURRENT LOCATION.
                         MATH::Vector2f altar_center_world_position = GetAltarBuildPosition(*world.NoahPlayer);
                         std::shared_ptr<MAPS::Tile> tile_where_altar_would_be_built = current_tile_map->GetTileAtWorldPosition(altar_center_world_position.X, altar_center_world_position.Y);
-                        ASSERT_THEN_IF(tile_where_altar_would_be_built)
+                        // The tile map not exist if on the very edge of the map.
+                        if (tile_where_altar_would_be_built)
                         {
                             bool ark_can_be_built_on_tile = tile_where_altar_would_be_built->IsWalkable() && !MAPS::TileType::IsForArk(tile_where_altar_would_be_built->Type);
                             if (ark_can_be_built_on_tile)
@@ -377,7 +500,6 @@ namespace STATES
             case Substate::GOD_SPEAKING_DURING_RAINBOW:
             {
                 // ADD A RAINBOW EFFECT.
-                /// @todo   How to have text box on top of rainbow?
                 std::shared_ptr<sf::Shader> rainbow_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::RAINBOW_SHADER);
                 ASSERT_THEN_IF(rainbow_shader)
                 {
@@ -401,6 +523,32 @@ namespace STATES
             }
             case Substate::FADING_OUT:
             {
+                // ADD A RAINBOW EFFECT.
+                // This should still persist even during fading out.
+                std::shared_ptr<sf::Shader> rainbow_shader = renderer.GraphicsDevice->GetShader(RESOURCES::AssetId::RAINBOW_SHADER);
+                ASSERT_THEN_IF(rainbow_shader)
+                {
+                    // COMPUTE THE LIGHTING FOR THE SHADER.
+                    // The rainbow's intensity should pulse based on elapsed time.
+                    float elapsed_time_in_seconds = gaming_hardware.Clock.TotalElapsedTime.asSeconds();
+                    // The range of sin() is [-1, 1].  We want the alpha to be in the range of [0.4, 0.8]
+                    // (a very subtle pulse).
+                    // The initial multiplication brings the range to [-0.2, 0.2].
+                    constexpr float ADDITIONAL_ALPHA_RANGE = 0.2f;
+                    float alpha_for_rainbow = ADDITIONAL_ALPHA_RANGE * std::sinf(elapsed_time_in_seconds);
+                    // An addition shifts it into the appropriate range.
+                    constexpr float ADDITIONAL_ALPHA_SHIFT_AMOUNT = 0.6f;
+                    alpha_for_rainbow += ADDITIONAL_ALPHA_SHIFT_AMOUNT;
+
+                    rainbow_shader->setUniform("alpha_for_rainbow", alpha_for_rainbow);
+                    rainbow_shader->setUniform("texture", sf::Shader::CurrentTexture);
+                    shading_effect.shader = rainbow_shader.get();
+
+                    // The screen needs to be rendered with this effect before applying the next.
+                    renderer.RenderFinalScreen(shading_effect);
+                }
+
+                // FADE THE SCENE OUT.
                 constexpr float MAX_RATIO = 1.0f;
                 float current_ratio_remaining_for_fade = MAX_RATIO - current_ratio_through_current_fade;
                 GRAPHICS::Color current_tint_for_fading = GRAPHICS::Color::WHITE;
@@ -416,8 +564,15 @@ namespace STATES
             }
         }
 
-        // RENDER THE FINAL SCREEN.
+        // RENDER THE SCREEN WITH ANY SPECIAL EFFECTS.
         sf::Sprite screen = renderer.RenderFinalScreen(shading_effect);
+
+        // RENDER THE TEXT BOX ON TOP IF IT'S VISIBLE.
+        if (TextBox.IsVisible)
+        {
+            TextBox.Render(renderer);
+        }
+
         return screen;
     }
 
@@ -474,6 +629,24 @@ namespace STATES
             return;
         }
 
+        // MOVE EACH FAMILY MEMBER IN VIEW.
+        for (OBJECTS::FamilyMember& family_member : world.FamilyMembers)
+        {
+            // MOVE THE FAMILY MEMBER IF IN VIEW.
+            bool family_member_in_current_map_grid = (CurrentMapGrid == family_member.MapGrid);
+
+            MATH::Vector2f family_member_world_position = family_member.Sprite.GetWorldPosition();
+            bool family_member_in_view_of_camera = camera.ViewBounds.Contains(
+                family_member_world_position.X, 
+                family_member_world_position.Y);
+
+            bool family_member_in_view = (family_member_in_current_map_grid && family_member_in_view_of_camera);
+            if (family_member_in_view)
+            {
+                family_member.MoveWithin(*current_tile_map, gaming_hardware);
+            }
+        }
+
         // UPDATE THE PLAYER BASED ON INPUT.
         UpdatePlayerBasedOnInput(
             world,
@@ -483,8 +656,9 @@ namespace STATES
             gaming_hardware);
 
         // UPDATE THE REST OF THE WORLD WITHIN CURRENT TILE MAP.
-        constexpr bool OBJECTS_CAN_MOVE = true;
-        current_tile_map->Update(OBJECTS_CAN_MOVE, current_game_data, gaming_hardware);
+        // Movement is disallowed to prevent animals from moving around.
+        constexpr bool OBJECTS_CANNOT_MOVE = false;
+        current_tile_map->Update(OBJECTS_CANNOT_MOVE, current_game_data, gaming_hardware);
 
         // UPDATE THE CAMERA'S WORLD VIEW.
         UpdateCameraWorldView(
@@ -523,7 +697,6 @@ namespace STATES
                     if (ark_can_be_built_on_tile)
                     {
                         // BUILD THE ALTAR.
-                        /// @todo   Handle collisions of player with altar!  Generic "immovable object" collision method?
                         current_tile_map.Altar = OBJECTS::Altar(altar_center_world_position);
 
                         // ADD SOME DUST CLOUDS FOR THE ALTAR BEING BUILT.

@@ -1,3 +1,5 @@
+#include <cmath>
+#include "Math/Number.h"
 #include "Objects/OfferingSmoke.h"
 #include "Resources/AssetId.h"
 
@@ -48,48 +50,23 @@ namespace OBJECTS
         float elapsed_time_in_seconds = elapsed_time.asSeconds();
         TotalElapsedTimeInSeconds += elapsed_time_in_seconds;
 
-        // ADD ADDITIONAL EFFECTS BASED ON THE CURRENT ANIMATION SEQUENCE.
-        // Effects are changed to make things more visually appealing.
-        std::shared_ptr<GRAPHICS::AnimationSequence> animation = Sprite.GetCurrentAnimationSequence();
-        bool animation_exists = (nullptr != animation);
-        if (animation_exists)
-        {
-            // DETERMINE HOW FAR THE ANIMATION HAS PROGRESSED.
-            // This is needed to scale certain effects to the appropriate range based on elapsed time.
-            float animation_duration_in_seconds = animation->TotalDuration.asSeconds();
-            float animation_progress_ratio = (TotalElapsedTimeInSeconds / animation_duration_in_seconds);
+        // DETERMINE HOW FAR THE ANIMATION HAS PROGRESSED.
+        // This is needed to scale certain effects to the appropriate range based on elapsed time.
+        constexpr float MAX_SCALE = 1.5f;
+        float signed_magnitude_of_sine_wave_through_animation = MAX_SCALE * std::sinf(TotalElapsedTimeInSeconds);
+        float unsigned_magnitude_of_sine_wave_through_animation = std::fabsf(signed_magnitude_of_sine_wave_through_animation);
+        float scale = unsigned_magnitude_of_sine_wave_through_animation;
 
-            // SCALE THE SPRITE BASED ON HOW FAR THE ANIMATION HAS PROGRESSED.
-            // It should get smaller over time.
-            const float MAX_SCALE = 1.5f;
-            const float MIN_SCALE = 0.5f;
-            float scale = MAX_SCALE - animation_progress_ratio;
-            bool scale_too_low = (scale < MIN_SCALE);
-            if (scale_too_low)
-            {
-                scale = MIN_SCALE;
-            }
-            Sprite.SetScale(scale);
+        // SCALE THE SPRITE'S SIZE.
+        Sprite.SetScale(scale);
 
-            // FADE THE SPRITE OUT AS THE ANIMATION PROGRESSES.
-            GRAPHICS::Color color = Sprite.GetColor();
-            color.Alpha = GRAPHICS::Color::MAX_COLOR_COMPONENT - static_cast<uint8_t>(animation_progress_ratio * GRAPHICS::Color::MAX_COLOR_COMPONENT);
-            constexpr uint8_t MIN_ALPHA = 128;
-            bool alpha_too_low = (color.Alpha < MIN_ALPHA);
-            if (alpha_too_low)
-            {
-                color.Alpha = MIN_ALPHA;
-            }
-            Sprite.SetColor(color);
-
-            // RESET THE ELAPSED TIME IF THE MAX TIME HAS BEEN EXCEEDED.
-            // This animation should be looping.
-            /// @todo   Smoother sine wave instead?
-            bool one_cycle_of_animation_complete = (TotalElapsedTimeInSeconds > animation_duration_in_seconds);
-            if (one_cycle_of_animation_complete)
-            {
-                TotalElapsedTimeInSeconds = 0.0f;
-            }
-        }
+        // SCALE THE SPRITE'S ALPHA FOR TRANSPARENCY.
+        // Some manual clamping is needed to avoid integer truncation issues.
+        GRAPHICS::Color color = Sprite.GetColor();
+        color.Alpha = static_cast<uint8_t>(MATH::Number::Clamp<float>(
+            (static_cast<float>(GRAPHICS::Color::MAX_COLOR_COMPONENT) * scale),
+            static_cast<float>(GRAPHICS::Color::MIN_COLOR_COMPONENT),
+            static_cast<float>(GRAPHICS::Color::MAX_COLOR_COMPONENT)));
+        Sprite.SetColor(color);
     }
 }

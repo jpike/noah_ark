@@ -214,7 +214,7 @@ namespace STATES
                 DuringFloodGameplayState.Load(CurrentSavedGame, world, renderer, gaming_hardware);
                 break;
             case GameState::POST_FLOOD_GAMEPLAY:
-                PostFloodGameplayState.Load(world, renderer);
+                PostFloodGameplayState.Load(CurrentSavedGame, world, renderer, gaming_hardware);
                 break;
             case GameState::ENDING_CREDITS_SCREEN:
                 EndingCreditsScreen.Load();

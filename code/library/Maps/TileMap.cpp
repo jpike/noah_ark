@@ -1,6 +1,6 @@
-#include <cassert>
 #include <unordered_set>
 #include "Collision/CollisionDetectionAlgorithms.h"
+#include "ErrorHandling/Asserts.h"
 #include "Maps/TileMap.h"
 #include "Maps/World.h"
 
@@ -361,12 +361,10 @@ namespace MAPS
 
                     // ADD THE ANIMAL INTO THE APPROPRIATE TILE MAP OF THE ARK.
                     // This check is a precaution.  There should always be an entry point into the ark for the doorway.
-                    assert(entry_point_into_ark);
-                    if (entry_point_into_ark)
+                    ASSERT_THEN_IF(entry_point_into_ark)
                     {
                         MAPS::TileMap* entry_room_inside_ark = entry_point_into_ark->NewTileMap;
-                        assert(entry_room_inside_ark);
-                        if (entry_room_inside_ark)
+                        ASSERT_THEN_IF(entry_room_inside_ark)
                         {
                             entry_room_inside_ark->MapGrid->World->Ark.AddAnimalToPen(*animal, current_game_data);
                         }

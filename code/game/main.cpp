@@ -1,7 +1,3 @@
-// TODO LIST BEFORE BETA 1:
-// - Have some Bible verses only obtainable during certain sections of game
-// - Fix saved game data
-
 // To avoid annoyances with Windows min/max #defines.
 #define NOMINMAX
 

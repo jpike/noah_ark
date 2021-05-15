@@ -236,6 +236,44 @@ namespace STATES
                             "And I, behold, I establish my covenant with you, and with your seed after you; "
                             "And with every living creature that is with you, of the fowl, of the cattle, and of every beast of the earth with you; from all that go out of the ark, to every beast of the earth.  "
                             "And I will establish my covenant with you, neither shall all flesh be cut off any more by the waters of a flood; neither shall there any more be a flood to destroy the earth.");
+
+                        // The verses referenced above should be added to the player's inventory if necessary.
+                        std::vector<std::pair<unsigned int, unsigned int>> chapter_and_verse_numbers =
+                        {
+                            { 8, 21 },
+                            { 8, 22 },
+                            { 9, 1 },
+                            { 9, 2 },
+                            { 9, 3 },
+                            { 9, 4 },
+                            { 9, 5 },
+                            { 9, 6 },
+                            { 9, 7 },
+                            { 9, 8 },
+                            { 9, 9 },
+                            { 9, 10 },
+                            { 9, 11 },
+                        };
+                        for (const auto& [chapter_number, verse_number] : chapter_and_verse_numbers)
+                        {
+                            auto covenant_verse = std::find_if(
+                                current_game_data.BibleVersesLeftToFind.begin(),
+                                current_game_data.BibleVersesLeftToFind.end(),
+                                [=](const BIBLE::BibleVerse& verse) -> bool
+                                {
+                                    bool correct_verse_found = (
+                                        BIBLE::BibleBook::GENESIS == verse.Book &&
+                                        chapter_number == verse.Chapter &&
+                                        verse_number == verse.Verse);
+                                    return correct_verse_found;
+                                });
+                            bool verse_found = (current_game_data.BibleVersesLeftToFind.end() != covenant_verse);
+                            if (verse_found)
+                            {
+                                current_game_data.Player->Inventory.BibleVerses.insert(*covenant_verse);
+                                current_game_data.BibleVersesLeftToFind.erase(covenant_verse);
+                            }
+                        }
                     }
                 }
 
@@ -290,6 +328,37 @@ namespace STATES
                         "And I will remember my covenant, which is between me and you and every living creature of all flesh; and the waters shall no more become a flood to destroy all flesh.  "
                         "And the bow shall be in the cloud; and I will look upon it, that I may remember the everlasting covenant between God and every living creature of all flesh that is upon the earth.  "
                         "This is the token of the covenant, which I have established between me and all flesh that is upon the earth.");
+
+                    // The verses referenced above should be added to the player's inventory if necessary.
+                    std::vector<std::pair<unsigned int, unsigned int>> chapter_and_verse_numbers =
+                    {
+                        { 9, 12 },
+                        { 9, 13 },
+                        { 9, 14 },
+                        { 9, 15 },
+                        { 9, 16 },
+                        { 9, 17 },
+                    };
+                    for (const auto& [chapter_number, verse_number] : chapter_and_verse_numbers)
+                    {
+                        auto covenant_verse = std::find_if(
+                            current_game_data.BibleVersesLeftToFind.begin(),
+                            current_game_data.BibleVersesLeftToFind.end(),
+                            [=](const BIBLE::BibleVerse& verse) -> bool
+                            {
+                                bool correct_verse_found = (
+                                    BIBLE::BibleBook::GENESIS == verse.Book &&
+                                    chapter_number == verse.Chapter &&
+                                    verse_number == verse.Verse);
+                                return correct_verse_found;
+                            });
+                        bool verse_found = (current_game_data.BibleVersesLeftToFind.end() != covenant_verse);
+                        if (verse_found)
+                        {
+                            current_game_data.Player->Inventory.BibleVerses.insert(*covenant_verse);
+                            current_game_data.BibleVersesLeftToFind.erase(covenant_verse);
+                        }
+                    }
                 }
                 break;
             }

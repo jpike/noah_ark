@@ -8,5 +8,6 @@ namespace ERROR_HANDLING
     {
     public:
         static void DisplayLastErrorMessage();
+        static void Display(const char* const error_message);
     };
 }

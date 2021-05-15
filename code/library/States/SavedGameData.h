@@ -65,6 +65,8 @@ namespace STATES
         /// Whether or not certain family members have been gathered so far.
         /// Index matches enum values for family member types.
         std::array<bool, OBJECTS::FamilyMember::COUNT> FamilyMembersGathered = {};
+        /// Counts of food stored on the ark indexed by type.
+        std::array<unsigned int, OBJECTS::Food::TypeId::COUNT> FoodCountsOnArk = {};
         /// The amount of time that's elapsed during the flood, in terms of gameplay time.
         /// 1 year + 10 days are required for the flood to subside, though gameplay time is "sped up".
         sf::Time FloodElapsedGameplayTime = sf::Time::Zero;

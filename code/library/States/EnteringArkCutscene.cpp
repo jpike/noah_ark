@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Collision/CollisionDetectionAlgorithms.h"
 #include "ErrorHandling/Asserts.h"
 #include "Resources/AssetId.h"
@@ -75,8 +76,9 @@ namespace STATES
     /// Updates the state.
     /// @param[in,out]  gaming_hardware - The gaming hardware to use for some updates.
     /// @param[in,out]  world - The game world to update.
+    /// @param[in,out]  current_game_data - The current saved data of the player.
     /// @return The state the game should be in after the update.
-    GameState EnteringArkCutscene::Update(HARDWARE::GamingHardware& gaming_hardware, MAPS::World& world)
+    GameState EnteringArkCutscene::Update(HARDWARE::GamingHardware& gaming_hardware, MAPS::World& world, STATES::SavedGameData& current_game_data)
     {
         // UPDATE BASED ON THE SUBSTATE.
         // The game should remain on the current state until this cutscene is completed.
@@ -96,6 +98,25 @@ namespace STATES
                     CurrentSubstate = Substate::DISPLAYING_INSTRUCTIONS;
                     // The instruction text is based on Genesis 7:1 but hardcoded here for simplicity.
                     TextBox.StartDisplayingText("GOD: Come thou and all thy house into the ark; for thee have I seen righteous before me in this generation.");
+
+                    // The verse referenced above should be added to the player's inventory if necessary.
+                    auto enter_ark_command_verse = std::find_if(
+                        current_game_data.BibleVersesLeftToFind.begin(),
+                        current_game_data.BibleVersesLeftToFind.end(),
+                        [](const BIBLE::BibleVerse& verse) -> bool
+                        {
+                            bool correct_verse_found = (
+                                BIBLE::BibleBook::GENESIS == verse.Book &&
+                                7 == verse.Chapter &&
+                                1 == verse.Verse);
+                            return correct_verse_found;
+                        });
+                    bool enter_ark_verse_found = (current_game_data.BibleVersesLeftToFind.end() != enter_ark_command_verse);
+                    if (enter_ark_verse_found)
+                    {
+                        current_game_data.Player->Inventory.BibleVerses.insert(*enter_ark_command_verse);
+                        current_game_data.BibleVersesLeftToFind.erase(enter_ark_command_verse);
+                    }
                 }
                 break;
             }

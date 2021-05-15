@@ -41,7 +41,7 @@ namespace STATES
                 next_game_state = NewGameInstructionSequence.Update(gaming_hardware);
                 break;
             case GameState::ENTER_ARK_CUTSCENE:
-                next_game_state = EnteringArkCutscene.Update(gaming_hardware, world);
+                next_game_state = EnteringArkCutscene.Update(gaming_hardware, world, CurrentSavedGame);
                 break;
             case GameState::FLOOD_CUTSCENE:
                 next_game_state = FloodCutscene.Update(gaming_hardware);

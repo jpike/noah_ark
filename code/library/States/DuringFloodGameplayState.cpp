@@ -102,7 +102,7 @@ namespace STATES
         for (unsigned int food_id = FIRST_VALID_FOOD_ID; food_id < OBJECTS::Food::COUNT; ++food_id)
         {
             // CHECK IF THE CURRENT FOOD HAS BEEN COLLECTED AT ALL.
-            unsigned int current_food_collected_count = world.NoahPlayer->Inventory.FoodCounts[food_id];
+            unsigned int current_food_collected_count = (world.NoahPlayer->Inventory.FoodCounts[food_id] + saved_game_data.FoodCountsOnArk[food_id]);
             bool current_food_collected = (current_food_collected_count > 0);
             if (!current_food_collected)
             {
@@ -175,8 +175,6 @@ namespace STATES
 
                 // REMOVE THE FOOD FROM THE PLAYER'S INVENTORY SINCE IT IS NOW ON THE GROUND.
                 world.NoahPlayer->Inventory.FoodCounts[food_id] = 0;
-
-                /// @todo   How to store this information in saved game data?
             }
         }
 
@@ -612,6 +610,7 @@ namespace STATES
                         // This is done one at a time for a more interesting experience
                         DEBUGGING::DebugConsole::WriteLine("Collected 1 food: ", static_cast<int>(food->Type));
                         ++world.NoahPlayer->Inventory.FoodCounts[food->Type];
+                        --current_game_data.FoodCountsOnArk[food->Type];
                         --food->Count;
 
                         // REMOVE THE FOOD ITEM FROM THOSE IN THE CURRENT TILE MAP IF IT HAS BEEN COMPLETELY COLLECTED.
@@ -670,7 +669,6 @@ namespace STATES
                                 current_tile_map->Presents.emplace_back(present_center_position, *random_bible_verse);
 
                                 // The Bible verse is pre-emptively removed so that it does not have to be refound for removing later.
-                                /// @todo   How to handle this with saving game data?  Saving presents should save verse for reloading?
                                 current_game_data.BibleVersesLeftToFind.erase(random_bible_verse);
                             }
 
@@ -691,6 +689,7 @@ namespace STATES
                 if (current_food_eaten_by_animal)
                 {
                     // ERASE THE CURRENT FOOD FROM THE GROUND.
+                    current_game_data.FoodCountsOnArk[food->Type] -= food->Count;
                     food = current_tile_map->FoodOnGround.erase(food);
                     continue;
                 }

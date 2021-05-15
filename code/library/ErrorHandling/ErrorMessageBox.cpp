@@ -81,4 +81,16 @@ namespace ERROR_HANDLING
         LocalFree(message_box_text_buffer);
         LocalFree(system_error_message);
     }
+
+    /// Displays the provided error message in an error box.
+    /// @param[in] error_message - The error message to display.
+    void ErrorMessageBox::Display(const char* const error_message)
+    {
+        constexpr HWND NO_OWNER_WINDOW = NULL;
+        MessageBox(
+            NO_OWNER_WINDOW,
+            error_message,
+            TEXT("Error - Please report to developers"),
+            MB_ICONERROR | MB_OK);
+    }
 }

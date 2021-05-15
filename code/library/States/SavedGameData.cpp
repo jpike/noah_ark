@@ -1,6 +1,8 @@
 #include <cassert>
 #include <fstream>
 #include <sstream>
+#include "ErrorHandling/Asserts.h"
+#include "ErrorHandling/ErrorMessageBox.h"
 #include "Resources/AnimalGraphics.h"
 #include "Resources/AnimalSounds.h"
 #include "States/IntroSequence.h"
@@ -165,19 +167,28 @@ namespace STATES
             std::size_t family_member_statistics_total_size_in_bytes = sizeof(bool) * saved_game_data->FamilyMembersGathered.size();
             saved_game_data_file.read(reinterpret_cast<char*>(&saved_game_data->FamilyMembersGathered), family_member_statistics_total_size_in_bytes);
 
+            // READ IN FOOD COUNTS ON THE ARK.
+            saved_game_data_file.read(reinterpret_cast<char*>(saved_game_data->FoodCountsOnArk.data()), food_counts_total_size_in_bytes);
+
             // READ IN THE FLOOD DAY/TIME INFORMATION.
             float flood_elapsed_time_in_seconds = 0.0f;
             saved_game_data_file.read(reinterpret_cast<char*>(&flood_elapsed_time_in_seconds), sizeof(flood_elapsed_time_in_seconds));
             saved_game_data->FloodElapsedGameplayTime = sf::seconds(flood_elapsed_time_in_seconds);
 
-            /// @todo   More error handling?
+            // PROVIDE VISIBILITY INTO ANY ERRORS.
+            bool error_reading_data = saved_game_data_file.bad() || saved_game_data_file.fail();
+            if (error_reading_data)
+            {
+                ERROR_HANDLING::ErrorMessageBox::Display("Error reading saved game data file.");
+            }
 
             // RETURN THE LOADED SAVED GAME DATA.
             return saved_game_data;
         }
-        catch (const std::exception&)
+        catch (const std::exception& exception)
         {
             // INDICATE THAT THE DATA COULD NOT BE SUCCESSFULLY READ.
+            ERROR_HANDLING::ErrorMessageBox::Display(exception.what());
             return nullptr;
         }
     }
@@ -264,11 +275,19 @@ namespace STATES
         std::size_t family_member_statistics_total_size_in_bytes = sizeof(bool) * FamilyMembersGathered.size();
         saved_game_data_file.write(reinterpret_cast<const char*>(&FamilyMembersGathered), family_member_statistics_total_size_in_bytes);
 
+        // WRITE OUT FOOD COUNTS ON THE ARK.
+        saved_game_data_file.write(reinterpret_cast<const char*>(FoodCountsOnArk.data()), food_counts_total_size_in_bytes);
+
         // WRITE OUT THE FLOOD DAY/TIME INFORMATION.
         float flood_elapsed_time_in_seconds = FloodElapsedGameplayTime.asSeconds();
         saved_game_data_file.write(reinterpret_cast<const char*>(&flood_elapsed_time_in_seconds), sizeof(flood_elapsed_time_in_seconds));
 
-        /// @todo   More error handling?
+        // PROVIDE VISIBILITY INTO ANY ERRORS.
+        bool error_writing_data = saved_game_data_file.bad() || saved_game_data_file.fail();
+        if (error_writing_data)
+        {
+            ERROR_HANDLING::ErrorMessageBox::Display("Error writing saved game data file.");
+        }
     }
 
     /// Gets the total number of animals collected for the given species.

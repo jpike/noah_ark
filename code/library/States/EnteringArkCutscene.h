@@ -34,7 +34,7 @@ namespace STATES
         void Load(MAPS::World& world, GRAPHICS::Renderer& renderer, HARDWARE::GamingHardware& gaming_hardware);
 
         // FRAME UPDATING METHODS.
-        GameState Update(HARDWARE::GamingHardware& gaming_hardware, MAPS::World& world);
+        GameState Update(HARDWARE::GamingHardware& gaming_hardware, MAPS::World& world, STATES::SavedGameData& current_game_data);
         sf::Sprite Render(const MAPS::World& world, GRAPHICS::Renderer& renderer);
 
     private:

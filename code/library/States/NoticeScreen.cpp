@@ -31,6 +31,7 @@ namespace STATES
         const GRAPHICS::Color TEXT_COLOR = GRAPHICS::Color::WHITE;
         MATH::FloatRectangle screen_rectangle = renderer.Screen->GetBoundingRectangle<float>();
         std::string notice_text =
+            "This game is not rated by the ESRB or any other ratings board."
             "This game uses text directly from the public domain King James Version (KJV) English translation of the Bible.  "
             "While the entire Bible is not included in this game, the verses that are included aim to be authentic to the "
             "truth of Scripture, not shying away from what the text says.";

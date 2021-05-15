@@ -179,7 +179,7 @@ namespace STATES
                     menu_option_text += "CREDITS";
                     break;
                 case GameState::NOTICE_SCREEN:
-                    menu_option_text += "NOTICE";
+                    menu_option_text += "RATING";
                     break;
             }
 

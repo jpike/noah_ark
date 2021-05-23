@@ -105,11 +105,31 @@ void LoadRemainingAssets(HARDWARE::GamingHardware& gaming_hardware)
     DEBUGGING::DebugConsole::WriteLine("Remaining asset load time (s): ", std::chrono::duration_cast<std::chrono::seconds>(load_time_diff).count());
 }
 
+#if _DEBUG
 /// The main entry point for the game.
 /// Runs the Noah's Ark game until the user chooses to exit or an error occurs.
 /// @return 0 for success; 1 upon failure.
 int main()
 {
+#else
+/// The entry point to the application.
+/// @param[in]  application_instance - A handle to the current instance of the application.
+/// @param[in]  previous_application_instance - Always NULL.
+/// @param[in]  command_line_string - The command line parameters for the application.
+/// @param[in]  window_show_code - Controls how the window is to be shown.
+/// @return     An exit code.  0 for success.
+int CALLBACK WinMain(
+    HINSTANCE application_instance,
+    HINSTANCE previous_application_instance,
+    LPSTR command_line_string,
+    int window_show_code)
+{
+    // To avoid compiler warnings about unreferenced parameters.
+    application_instance;
+    previous_application_instance;
+    command_line_string;
+    window_show_code;
+#endif
     try
     {
         // CREATE THE WINDOW.

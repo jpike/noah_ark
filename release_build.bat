@@ -28,7 +28,7 @@ IF %ERRORLEVEL% EQU 0 (
     PUSHD build\release
     REM a - Add files to archive.
     REM t - Archive type.
-    P:\file_compression\7-Zip\7z.exe a -tzip ..\..\releases\noah_ark_game_%release_version%.zip noah_ark_game.exe openal32.dll IntroAssets.package MainAssets.package CREDITS.txt LICENSE.txt ThirdPartyLicenses
+    P:\file_compression\7-Zip\7z.exe a -tzip ..\..\releases\noah_ark_game_%release_version%.zip noah_ark_game.exe openal32.dll IntroAssets.package MainAssets.package CREDITS.txt LICENSE.txt README.txt ThirdPartyLicenses
 
     POPD
 )

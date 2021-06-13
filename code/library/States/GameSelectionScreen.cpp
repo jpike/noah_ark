@@ -2,6 +2,7 @@
 #include <cmath>
 #include <filesystem>
 #include "Debugging/DebugConsole.h"
+#include "ErrorHandling/Asserts.h"
 #include "Graphics/Gui/Text.h"
 #include "Math/Number.h"
 #include "Math/Rectangle.h"
@@ -511,22 +512,32 @@ namespace STATES
             bool next_character_placeholder_visible = (sine_of_elapsed_time < 0.0f);
             if (next_character_placeholder_visible)
             {
-                // RENDER AN UNDERSCORE FOR THE NEXT CHARACTER.
-                // The x position of the placeholder should be after the currently typed text within the box.
-                float current_new_game_filename_text_width_in_pixels = static_cast<float>(GRAPHICS::GUI::Glyph::DEFAULT_WIDTH_IN_PIXELS * CurrentNewGameFilenameText.length());
-                float next_character_placeholder_left_x_position = (
-                    game_selection_option_bounding_screen_rectangle.LeftTop.X +
-                    TEXT_OFFSET_FROM_BORDER_IN_PIXELS.X +
-                    current_new_game_filename_text_width_in_pixels);
-                // The center Y is chosen since that should generally line up with where typed characters appear.
-                float next_character_placeholder_top_y_position = game_selection_option_bounding_screen_rectangle.CenterY();
-                GRAPHICS::GUI::Text next_character_placeholder_text =
+                // GET THE FONT FOR COMPUTING TEXT WIDTH.
+                std::shared_ptr<GRAPHICS::GUI::Font> font = renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE];
+                ASSERT_THEN_IF(font)
                 {
-                    .String = "_",
-                    .LeftTopPosition = MATH::Vector2f(next_character_placeholder_left_x_position, next_character_placeholder_top_y_position),
-                    .Color = GRAPHICS::Color::WHITE
-                };
-                renderer.Render(next_character_placeholder_text);
+                    // RENDER AN UNDERSCORE FOR THE NEXT CHARACTER.
+                    // The x position of the placeholder should be after the currently typed text within the box.
+                    GRAPHICS::GUI::Text new_game_filename_text =
+                    {
+                        .String = CurrentNewGameFilenameText
+                    };
+                    
+                    float current_new_game_filename_text_width_in_pixels = new_game_filename_text.Width<float>(*font);
+                    float next_character_placeholder_left_x_position = (
+                        game_selection_option_bounding_screen_rectangle.LeftTop.X +
+                        TEXT_OFFSET_FROM_BORDER_IN_PIXELS.X +
+                        current_new_game_filename_text_width_in_pixels);
+                    // The center Y is chosen since that should generally line up with where typed characters appear.
+                    float next_character_placeholder_top_y_position = game_selection_option_bounding_screen_rectangle.CenterY();
+                    GRAPHICS::GUI::Text next_character_placeholder_text =
+                    {
+                        .String = "_",
+                        .LeftTopPosition = MATH::Vector2f(next_character_placeholder_left_x_position, next_character_placeholder_top_y_position),
+                        .Color = GRAPHICS::Color::WHITE
+                    };
+                    renderer.Render(next_character_placeholder_text);
+                }
             }
         }
 

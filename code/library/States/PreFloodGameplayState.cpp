@@ -1100,42 +1100,52 @@ namespace STATES
                 // RE-ENABLE PLAYER INPUT.
                 input_controller.EnableInput();
 
-                // SEE IF AN ANIMAL SHOULD RANDOMLY APPEAR IN THE NEW TILE MAP.
-                // This is always set to "true" for debug builds to help speed up collection process.
-#if _DEBUG
-                bool random_animal_should_be_generated = true;
-#else
-                constexpr unsigned int EVENLY_DIVISIBLE = 0;
-                constexpr unsigned int GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS = 2;
-                unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>();
-                bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
-#endif
-                if (random_animal_should_be_generated)
+                // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP IF OUTSIDE.
+                bool outside = (MAPS::TileMapType::OVERWORLD == current_tile_map.Type);
+                if (outside)
                 {
-                    DEBUGGING::DebugConsole::WriteLine("Generating random animal...");
-                    DEBUGGING::DebugConsole::WriteLine("Tile map column, row: ", MATH::Vector2ui(current_tile_map.GridColumnIndex, current_tile_map.GridRowIndex));
-                    auto tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
-                    DEBUGGING::DebugConsole::WriteLine("Tile map LTRB: ", tile_map_bounding_box);
-
-                    // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
-                    std::shared_ptr<OBJECTS::Animal> animal = GAMEPLAY::RandomAnimalGenerationAlgorithm::GenerateAnimal(
-                        current_game_data,
-                        *world.NoahPlayer,
-                        current_tile_map,
-                        RandomNumberGenerator);
-                    bool animal_generated = (nullptr != animal);
-                    if (animal_generated)
+                    // SEE IF AN ANIMAL SHOULD RANDOMLY APPEAR IN THE NEW TILE MAP.
+                    // This is always set to "true" for debug builds to help speed up collection process.
+#if _DEBUG
+                    bool random_animal_should_be_generated = true;
+#elif OLD_RANDOM_ANIMAL_GENERATION
+                    constexpr unsigned int EVENLY_DIVISIBLE = 0;
+                    constexpr unsigned int GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS = 2;
+                    unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>();
+                    bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
+#else
+                    constexpr unsigned int MAX_PERCENTAGE = 100;
+                    constexpr unsigned int MAX_PERCENTAGE_FOR_ANIMAL_GENERATION = 70;
+                    unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>() % MAX_PERCENTAGE;
+                    bool random_animal_should_be_generated = (random_number_for_animal_generation <= MAX_PERCENTAGE_FOR_ANIMAL_GENERATION);
+#endif
+                    if (random_animal_should_be_generated)
                     {
-                        DEBUGGING::DebugConsole::WriteLine("Random animal generated: ", static_cast<unsigned int>(animal->Type.Species));
+                        // GENERATE A RANDOM ANIMAL IN THE CURRENT TILE MAP.
+                        DEBUGGING::DebugConsole::WriteLine("Generating random animal...");
+                        DEBUGGING::DebugConsole::WriteLine("Tile map column, row: ", MATH::Vector2ui(current_tile_map.GridColumnIndex, current_tile_map.GridRowIndex));
+                        auto tile_map_bounding_box = current_tile_map.GetWorldBoundingBox();
+                        DEBUGGING::DebugConsole::WriteLine("Tile map LTRB: ", tile_map_bounding_box);
 
-                        // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
-                        speakers.PlaySoundEffect(animal->SoundId);
+                        std::shared_ptr<OBJECTS::Animal> animal = GAMEPLAY::RandomAnimalGenerationAlgorithm::GenerateAnimal(
+                            current_game_data,
+                            *world.NoahPlayer,
+                            current_tile_map,
+                            RandomNumberGenerator);
+                        bool animal_generated = (nullptr != animal);
+                        if (animal_generated)
+                        {
+                            DEBUGGING::DebugConsole::WriteLine("Random animal generated: ", static_cast<unsigned int>(animal->Type.Species));
 
-                        // START ANIMATING THE ANIMAL.
-                        animal->Sprite.Play();
+                            // PLAY THE ANIMAL'S SOUND EFFECT, IF ONE EXISTS.
+                            speakers.PlaySoundEffect(animal->SoundId);
 
-                        // STORE THE ANIMAL IN THE CURRENT TILE MAP.
-                        current_tile_map.RoamingAnimals.emplace_back(animal);
+                            // START ANIMATING THE ANIMAL.
+                            animal->Sprite.Play();
+
+                            // STORE THE ANIMAL IN THE CURRENT TILE MAP.
+                            current_tile_map.RoamingAnimals.emplace_back(animal);
+                        }
                     }
                 }
 

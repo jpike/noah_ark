@@ -304,6 +304,13 @@ namespace STATES
 
         current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
         renderer.RenderCenteredText(
+            "GSL",
+            RESOURCES::AssetId::FONT_TEXTURE,
+            current_credit_text_screen_rectangle,
+            CREDITS_TEXT_COLOR);
+
+        current_credit_text_screen_rectangle.Move(MOVE_DOWN_SINGLE_LINE);
+        renderer.RenderCenteredText(
             "Catch",
             RESOURCES::AssetId::FONT_TEXTURE,
             current_credit_text_screen_rectangle,

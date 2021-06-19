@@ -26,8 +26,8 @@ namespace GAMEPLAY
 #if _DEBUG
         constexpr float GAMEPLAY_MINUTES_PER_REAL_DAY = 0.5f;
 #else
-        // For simplicity, 3 minutes is set for a day (1 minute of game time per 8 hours of real time) for non-fast debug builds.
-        constexpr float GAMEPLAY_MINUTES_PER_REAL_DAY = 3.0f;
+        // For simplicity, 2 minutes is set for a day (1 minute of game time per 12 hours of real time) for non-fast debug builds.
+        constexpr float GAMEPLAY_MINUTES_PER_REAL_DAY = 2.0f;
 #endif
         float flood_day_and_hour_count = flood_elapsed_gameplay_time_in_minutes / GAMEPLAY_MINUTES_PER_REAL_DAY;
 

@@ -16,7 +16,7 @@ namespace STATES
     /// @param[in,out]  renderer - The renderer used for some initialization.
     /// @param[in,out]  gaming_hardware - The hardware used to run the game.
     void DuringFloodGameplayState::Load(
-        const SavedGameData& saved_game_data,
+        SavedGameData& saved_game_data,
         MAPS::World& world,
         GRAPHICS::Renderer& renderer,
         HARDWARE::GamingHardware& gaming_hardware)
@@ -173,8 +173,9 @@ namespace STATES
                 };
                 tile_map_for_food->FoodOnGround.push_back(food);
 
-                // REMOVE THE FOOD FROM THE PLAYER'S INVENTORY SINCE IT IS NOW ON THE GROUND.
+                // REMOVE THE FOOD FROM THE PLAYER'S INVENTORY SINCE IT IS NOW ON THE GROUND IN THE ARK.
                 world.NoahPlayer->Inventory.FoodCounts[food_id] = 0;
+                saved_game_data.FoodCountsOnArk[food_id] = current_food_collected_count;
             }
         }
 

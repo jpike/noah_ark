@@ -32,11 +32,70 @@ namespace GAMEPLAY
         bool animal_type_fully_collected = current_game_data.AnimalTypeFullyCollected(animal_type);
         if (animal_type_fully_collected)
         {
-            DEBUGGING::DebugConsole::WriteLine("Animal type fully collected.");
-            // DON'T GENERATE A RANDOM ANIMAL.
-            // Since the randomly chosen animal type has already been fully collected,
-            // there's no need to generate another instance of it.
-            return nullptr;
+            DEBUGGING::DebugConsole::WriteLine("Initial animal type fully collected.");
+
+            // CHECK IF THE ANIMAL WITH THE OPPOSITE GENDER CAN BE COLLECTED.
+            OBJECTS::AnimalGender::Value opposite_gender = static_cast<OBJECTS::AnimalGender::Value>((random_gender + 1) % OBJECTS::AnimalGender::COUNT);
+            OBJECTS::AnimalType opposite_gender_animal_type = OBJECTS::AnimalType(random_species, opposite_gender);
+            animal_type_fully_collected = current_game_data.AnimalTypeFullyCollected(opposite_gender_animal_type);
+            if (animal_type_fully_collected)
+            {
+                // SEARCH FOR THE NEXT AVAILABLE RANDOM SPECIES.
+                // Pure random generation isn't enough to collect all animals within a reasonable
+                // amount of time, so continuing to search for the next available animal type
+                // if a way to allow an animal to likely still be generated.
+                for (OBJECTS::AnimalSpecies::Value next_species = static_cast<OBJECTS::AnimalSpecies::Value>(random_species + 1);
+                    next_species != random_species;
+                    next_species = static_cast<OBJECTS::AnimalSpecies::Value>((next_species + 1) % OBJECTS::AnimalSpecies::COUNT))
+                {
+                    DEBUGGING::DebugConsole::WriteLine("Checking species: ", next_species);
+
+                    OBJECTS::AnimalType next_male_animal_type(next_species, OBJECTS::AnimalGender::MALE);
+                    bool next_male_animal_type_fully_collected = current_game_data.AnimalTypeFullyCollected(next_male_animal_type);
+                    if (next_male_animal_type_fully_collected)
+                    {
+                        DEBUGGING::DebugConsole::WriteLine("Male animal fully collected.");
+
+                        OBJECTS::AnimalType next_female_animal_type(next_species, OBJECTS::AnimalGender::FEMALE);
+                        bool next_female_animal_type_fully_collected = current_game_data.AnimalTypeFullyCollected(next_female_animal_type);
+                        if (!next_female_animal_type_fully_collected)
+                        {
+                            // USE THE ANIMAL TYPE.
+                            DEBUGGING::DebugConsole::WriteLine("Using female animal type.");
+                            animal_type = next_female_animal_type;
+                            break;
+                        }
+                        else
+                        {
+                            DEBUGGING::DebugConsole::WriteLine("Female animal type fully collected.");
+                        }
+                    }
+                    else
+                    {
+                        // USE THE ANIMAL TYPE.
+                        DEBUGGING::DebugConsole::WriteLine("Using male animal type.");
+                        animal_type = next_male_animal_type;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // USE THE ANIMAL TYPE.
+                DEBUGGING::DebugConsole::WriteLine("Using opposite gender animal type.");
+                animal_type = opposite_gender_animal_type;
+            }
+
+            // CHECK IF ANOTHER ANIMAL TYPE COULD BE FOUND FOR COLLECTION.
+            bool different_animal_type_found = (animal_type.Species != random_species) || (animal_type.Gender != random_gender);
+            if (!different_animal_type_found)
+            {
+                // DON'T GENERATE A RANDOM ANIMAL.
+                // Since the randomly chosen animal type has already been fully collected,
+                // there's no need to generate another instance of it.
+                DEBUGGING::DebugConsole::WriteLine("Different animal type not found.");
+                return nullptr;
+            }
         }
 
         // DETERMINE THE LOCATION OF THE TILE MAP AT WHICH THE ANIMAL SHOULD BE PLACED.

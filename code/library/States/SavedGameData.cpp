@@ -380,7 +380,7 @@ namespace STATES
     bool SavedGameData::FoodsFullyCollected() const
     {
         // CHECK IF EACH TYPE OF FOOD HAS BEEN COLLECTED.
-        for (unsigned int food_id = 0; food_id < OBJECTS::Food::COUNT; ++food_id)
+        for (unsigned int food_id = OBJECTS::Food::NONE + 1; food_id < OBJECTS::Food::COUNT; ++food_id)
         {
             // As long as a good has been collected at least once, that should be sufficient.
             unsigned int current_food_type_collected_count = Player->Inventory.FoodCounts[food_id];

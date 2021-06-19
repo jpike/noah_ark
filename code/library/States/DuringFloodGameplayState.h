@@ -20,7 +20,7 @@ namespace STATES
     public:
         // LOADING.
         void Load(
-            const SavedGameData& saved_game_data,
+            SavedGameData& saved_game_data,
             MAPS::World& world,
             GRAPHICS::Renderer& renderer,
             HARDWARE::GamingHardware& gaming_hardware);

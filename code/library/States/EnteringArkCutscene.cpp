@@ -52,8 +52,9 @@ namespace STATES
             for (std::size_t family_member_index = 0; family_member_index < OBJECTS::FamilyMember::COUNT; ++family_member_index)
             {
                 // A bit of randomness in positioning is more visually appealing.
-                constexpr float MIN_FAMILY_MEMBER_OFFSET = -16.0f;
-                constexpr float MAX_FAMILY_MEMBER_OFFSET = 16.0f;
+                // If these numbers are too large, the family members might miss the ark entryway, leaving the game stuck in this game state.
+                constexpr float MIN_FAMILY_MEMBER_OFFSET = -8.0f;
+                constexpr float MAX_FAMILY_MEMBER_OFFSET = 8.0f;
                 float family_member_x_offset = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(MIN_FAMILY_MEMBER_OFFSET, MAX_FAMILY_MEMBER_OFFSET);
                 float family_member_y_offset = gaming_hardware.RandomNumberGenerator.RandomInRange<float>(MIN_FAMILY_MEMBER_OFFSET, MAX_FAMILY_MEMBER_OFFSET);
                 MATH::Vector2f current_family_member_position = base_family_member_world_position + MATH::Vector2f(family_member_x_offset, family_member_y_offset);

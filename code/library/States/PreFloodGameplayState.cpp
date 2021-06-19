@@ -221,7 +221,8 @@ namespace STATES
 
         // TRANSITION TO THE ARK ENTRY SCENE IF THE PLAYER HAS COLLECTED ALL ITEMS.
 #ifdef _DEBUG
-        bool player_collected_all_items = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_CLOSE_ARK_DOORS_KEY);
+        //bool player_collected_all_items = gaming_hardware.InputController.ButtonWasPressed(INPUT_CONTROL::InputController::DEBUG_CLOSE_ARK_DOORS_KEY);
+        bool player_collected_all_items = current_game_data.CollectedAllItemsRequiredBeforeFlood();
 #else
         bool player_collected_all_items = current_game_data.CollectedAllItemsRequiredBeforeFlood();
 #endif
@@ -1115,12 +1116,12 @@ namespace STATES
                     unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>();
                     bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
 #else
-                    constexpr unsigned int MAX_PERCENTAGE_FOR_ANIMAL_GENERATION = 95;
+                    constexpr unsigned int MAX_PERCENTAGE_FOR_ANIMAL_GENERATION = 70;
                     unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>() % MAX_PERCENTAGE;
                     bool random_animal_should_be_generated = (random_number_for_animal_generation <= MAX_PERCENTAGE_FOR_ANIMAL_GENERATION);
                     // Setting this to always happen ever for the release game because the random animal generation algorithm below
                     // will not always generate an animal, so it is enough to prevent too-frequent collection of animals.
-                    random_animal_should_be_generated = true;
+                    /// @todo random_animal_should_be_generated = true;
 #endif
                     if (random_animal_should_be_generated)
                     {
@@ -1152,7 +1153,7 @@ namespace STATES
                     }
 
                     // RANDOMLY ADD A FLAMING SWORD SOMETIMES.
-                    constexpr unsigned int PERCENT_CHANGE_FOR_FLAMING_SWORD = 10;
+                    constexpr unsigned int PERCENT_CHANGE_FOR_FLAMING_SWORD = 6;
                     unsigned int random_number_for_flaming_sword_generation = RandomNumberGenerator.RandomNumberLessThan<unsigned int>(MAX_PERCENTAGE);
                     bool flaming_sword_should_be_visible = (random_number_for_flaming_sword_generation <= PERCENT_CHANGE_FOR_FLAMING_SWORD);
                     if (flaming_sword_should_be_visible)

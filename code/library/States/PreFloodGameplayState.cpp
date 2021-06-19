@@ -1106,6 +1106,7 @@ namespace STATES
                 {
                     // SEE IF AN ANIMAL SHOULD RANDOMLY APPEAR IN THE NEW TILE MAP.
                     // This is always set to "true" for debug builds to help speed up collection process.
+                    constexpr unsigned int MAX_PERCENTAGE = 100;
 #if _DEBUG
                     bool random_animal_should_be_generated = true;
 #elif OLD_RANDOM_ANIMAL_GENERATION
@@ -1114,7 +1115,6 @@ namespace STATES
                     unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>();
                     bool random_animal_should_be_generated = (random_number_for_animal_generation % GENERATE_RANDOM_ANIMAL_IF_DIVISIBLE_BY_THIS) == EVENLY_DIVISIBLE;
 #else
-                    constexpr unsigned int MAX_PERCENTAGE = 100;
                     constexpr unsigned int MAX_PERCENTAGE_FOR_ANIMAL_GENERATION = 95;
                     unsigned int random_number_for_animal_generation = RandomNumberGenerator.RandomNumber<unsigned int>() % MAX_PERCENTAGE;
                     bool random_animal_should_be_generated = (random_number_for_animal_generation <= MAX_PERCENTAGE_FOR_ANIMAL_GENERATION);
@@ -1152,7 +1152,6 @@ namespace STATES
                     }
 
                     // RANDOMLY ADD A FLAMING SWORD SOMETIMES.
-                    constexpr unsigned int MAX_PERCENTAGE = 100;
                     constexpr unsigned int PERCENT_CHANGE_FOR_FLAMING_SWORD = 10;
                     unsigned int random_number_for_flaming_sword_generation = RandomNumberGenerator.RandomNumberLessThan<unsigned int>(MAX_PERCENTAGE);
                     bool flaming_sword_should_be_visible = (random_number_for_flaming_sword_generation <= PERCENT_CHANGE_FOR_FLAMING_SWORD);

@@ -72,5 +72,7 @@ namespace STATES
         /// Stored in this state rather than within the world since there is not a needed for it
         /// to be within the world and it is simpler to keep here.
         std::optional<OBJECTS::BirdSentFromArk> BirdSentFromArk = std::nullopt;
+        /// Tracking whether the dove has been sent out the first time to prevent duplicate dove sending.
+        bool DoveSentFirstTime = false;
     };
 }

@@ -241,6 +241,10 @@ namespace STATES
             renderer.Fonts[RESOURCES::AssetId::FONT_TEXTURE],
             main_text_box_width_in_pixels,
             main_text_box_height_in_pixels);
+
+        // INDICATE THE DOVE HAS NOT BEEN SENT THE FIRST TIME.
+        // This may not technically be accurate, but if not, the player can just quickly send the dove out again.
+        DoveSentFirstTime = false;
     }
 
     /// Updates the state of the gameplay based on elapsed time and player input.
@@ -353,7 +357,11 @@ namespace STATES
                     // WAIT UNTIL THE RAVEN HAS DISAPPEARED TO ALLOW SENDING OF THE DOVE.
                     if (!BirdSentFromArk)
                     {
-                        Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_FIRST_TIME;
+                        // Checking is needed to prevent the dove from being sent out multiple times on this day.
+                        if (!DoveSentFirstTime)
+                        {
+                            Hud.CurrentSpecialDayAction = GAMEPLAY::FloodSpecialDayAction::SEND_OUT_DOVE_FIRST_TIME;
+                        }
                     }
                 }
                 break;
@@ -729,6 +737,7 @@ namespace STATES
                     if (!BirdSentFromArk)
                     {
                         DEBUGGING::DebugConsole::WriteLine("Sending out dove first time!");
+                        DoveSentFirstTime = true;
 
                         // CREATE THE DOVE AT NOAH'S POSITION.
                         BirdSentFromArk = OBJECTS::BirdSentFromArk(Hud.CurrentSpecialDayAction, OBJECTS::AnimalSpecies::DOVE);

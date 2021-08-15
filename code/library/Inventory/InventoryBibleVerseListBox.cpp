@@ -49,6 +49,24 @@ namespace INVENTORY
         size_t last_valid_verse_index = BIBLE::BIBLE_VERSES.size() - 1;
         last_verse_to_render_index = std::min(last_verse_to_render_index, last_valid_verse_index);
 
+        // RENDER A SMALL SCROLLBAR INDICATOR ON THE RIGHT.
+        // This will provide some notion of progress scrolling through the verses.
+        float ratio_through_verses = (static_cast<float>(SelectedVerseIndex) / static_cast<float>(last_valid_verse_index));
+        float current_scroll_y_position = static_cast<float>(bounding_rectangle.LeftTop.Y + (ratio_through_verses * box_height_in_pixels));
+        MATH::FloatRectangle bounding_screen_rectangle = renderer.Screen->GetBoundingRectangle<float>();
+        float distance_between_verse_list_box_and_screen_right = (bounding_screen_rectangle.RightBottom.X - bounding_rectangle.RightBottom.X);
+        float half_distance_between_verse_list_box_and_screen_right = distance_between_verse_list_box_and_screen_right / 2.0f;
+        float scrollbar_center_x_position = bounding_rectangle.RightBottom.X + half_distance_between_verse_list_box_and_screen_right;
+        constexpr float PADDING_IN_PIXELS_AROUND_EACH_SIDE_OF_SCROLLBAR = 2.0f;
+        float scrollbar_width_in_pixels = distance_between_verse_list_box_and_screen_right - PADDING_IN_PIXELS_AROUND_EACH_SIDE_OF_SCROLLBAR;
+        MATH::FloatRectangle scrollbar_box = MATH::FloatRectangle::FromCenterAndDimensions(
+            scrollbar_center_x_position,
+            current_scroll_y_position,
+            scrollbar_width_in_pixels,
+            scrollbar_width_in_pixels);
+        GRAPHICS::Color scrollbar_color = background_color;
+        renderer.RenderScreenRectangle(scrollbar_box, scrollbar_color);
+            
         // RENDER THE LIST OF VERSES.
         MATH::Vector2f current_verse_screen_top_left_position_in_pixels = bounding_rectangle.LeftTop;
         for (unsigned int verse_index = first_verse_to_render_index;

@@ -50,6 +50,7 @@ Some smaller "cutscenes" exist to transition between the main gameplay states.
 
 Controls come exclusively from the keyboard, with the following being the primary controls:
 - Arrow keys - Movement in the game world, moving through menu options, moving through the inventory.
+- Enter - Selecting an option from the main menu on the title screen.
 - Z - The primary "action" key (used for things like swinging the axe).
 - X - Opens/closes the inventory.
 - ESC (Escape) - Pause the game, allowing saving or returning to the title screen (it is important to use this to save your game).

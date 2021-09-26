@@ -133,6 +133,7 @@ namespace MAPS
         tile_is_walkable[TileType::ANIMAL_PEN_FENCE] = false;
         tile_is_walkable[TileType::ANIMAL_PEN_GROUND] = true;
         tile_is_walkable[TileType::ANIMAL_PEN_ENTRANCE] = true;
+        tile_is_walkable[TileType::BIBLE_FOR_MINI_GAME] = true;
 
         // CHECK IF THIS TILE'S ID IS VALID.
         bool tile_id_valid = (Id < TileType::COUNT);

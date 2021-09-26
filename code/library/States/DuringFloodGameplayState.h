@@ -9,6 +9,7 @@
 #include "Maps/MultiTileMapGrid.h"
 #include "Maps/World.h"
 #include "Objects/BirdSentFromArk.h"
+#include "States/BibleVerseMiniGame.h"
 #include "States/GameState.h"
 #include "States/SavedGameData.h"
 
@@ -53,6 +54,7 @@ namespace STATES
         MAPS::ExitPoint* UpdatePlayerBasedOnInput(
             const sf::Time& elapsed_time,
             INPUT_CONTROL::InputController& input_controller,
+            MATH::RandomNumberGenerator& random_number_generator,
             MAPS::World& world,
             MAPS::TileMap& current_tile_map,
             MAPS::MultiTileMapGrid& map_grid,
@@ -74,5 +76,7 @@ namespace STATES
         std::optional<OBJECTS::BirdSentFromArk> BirdSentFromArk = std::nullopt;
         /// Tracking whether the dove has been sent out the first time to prevent duplicate dove sending.
         bool DoveSentFirstTime = false;
+        /// A mini-game a player can play with Bible verses.
+        BibleVerseMiniGame BibleVerseMiniGame = {};
     };
 }

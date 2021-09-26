@@ -23,6 +23,8 @@ namespace GRAPHICS
         static const Color BLUE;
         /// The color brown.
         static const Color BROWN;
+        /// A dark gray color.
+        static const Color DARK_GRAY;
         /// A gray color.
         static const Color GRAY;
         /// The color green.

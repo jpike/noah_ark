@@ -6,6 +6,7 @@ namespace GRAPHICS
     const Color Color::BLACK(0, 0, 0);
     const Color Color::BLUE(0, 0, 255);
     const Color Color::BROWN(128, 64, 0);
+    const Color Color::DARK_GRAY(64, 64, 64);
     const Color Color::GRAY(128, 128, 128);
     const Color Color::GREEN(0, 255, 0);
     const Color Color::LIGHT_GRAY(176, 176, 176);

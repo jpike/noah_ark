@@ -81,6 +81,7 @@
 #include "Resources/AssetPackageDefinition.cpp"
 #include "Resources/FoodGraphics.cpp"
 #include "Resources/PredefinedAssetPackages.cpp"
+#include "States/BibleVerseMiniGame.cpp"
 #include "States/CreditsScreen.cpp"
 #include "States/DuringFloodGameplayState.cpp"
 #include "States/EndingCreditsScreen.cpp"

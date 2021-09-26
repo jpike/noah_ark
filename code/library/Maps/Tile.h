@@ -65,6 +65,8 @@ namespace MAPS
             ANIMAL_PEN_GROUND = 21,
             /// The entryway for an animal pen in the ark.
             ANIMAL_PEN_ENTRANCE = 22,
+            /// A tile with a Bible that can trigger the Bible verse mini-game.
+            BIBLE_FOR_MINI_GAME = 23,
             /// An extra enum value to define count of different tile types.
             COUNT
         };

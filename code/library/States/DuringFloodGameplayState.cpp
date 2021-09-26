@@ -245,6 +245,9 @@ namespace STATES
         // INDICATE THE DOVE HAS NOT BEEN SENT THE FIRST TIME.
         // This may not technically be accurate, but if not, the player can just quickly send the dove out again.
         DoveSentFirstTime = false;
+
+        // RESET THE BIBLE VERSE MINI-GAME TO ITS INITIAL STATE.
+        BibleVerseMiniGame = {};
     }
 
     /// Updates the state of the gameplay based on elapsed time and player input.
@@ -265,6 +268,14 @@ namespace STATES
         // This is done even if the game is paused since it can take a while to go through the full flood day count anyway,
         // so it's fine if this is sped up a bit.
         current_game_data.FloodElapsedGameplayTime += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
+
+        // UPDATE THE BIBLE VERSE ORDERING MINI-GAME IF IT IS OPEN.
+        if (BibleVerseMiniGame.IsOpen)
+        {
+            BibleVerseMiniGame.Update(gaming_hardware);
+            // No other updates are needed as long as the mini-game is open.
+            return GameState::DURING_FLOOD_GAMEPLAY;
+        }
 
         // UPDATE THE HUD.
         // As of now, the HUD is capable of altering the gameplay state.
@@ -497,6 +508,12 @@ namespace STATES
         // RENDER THE HUD.
         Hud.Render(current_game_data, renderer);
 
+        // RENDER THE BIBLE VERSE MINI-GAME IF OPEN.
+        if (BibleVerseMiniGame.IsOpen)
+        {
+            BibleVerseMiniGame.Render(renderer);
+        }
+
         // RENDER THE FINAL SCREEN WITH TIME-OF-DAY LIGHTING.
         // It is tinted based on the current hour.
         sf::RenderStates lighting = sf::RenderStates::Default;
@@ -550,6 +567,7 @@ namespace STATES
             MAPS::ExitPoint* map_exit_point = UpdatePlayerBasedOnInput(
                 gaming_hardware.Clock.ElapsedTimeSinceLastFrame,
                 gaming_hardware.InputController,
+                gaming_hardware.RandomNumberGenerator,
                 world,
                 *current_tile_map,
                 map_grid,
@@ -864,6 +882,7 @@ namespace STATES
     /// Updates the player and related items in the tile map based on input and elapsed time.
     /// @param[in]  elapsed_time - The elapsed time for which to update things.
     /// @param[in,out]  input_controller - The controller supplying player input.
+    /// @param[in,out]  random_number_generator - The random number generator to use.
     /// @param[in,out]  world - The world in which the player is being updated.
     /// @param[in,out]  current_tile_map - The tile map the player is currently located in.
     /// @param[in,out]  map_grid - The map grid containing the current tile map.
@@ -875,6 +894,7 @@ namespace STATES
     MAPS::ExitPoint* DuringFloodGameplayState::UpdatePlayerBasedOnInput(
         const sf::Time& elapsed_time,
         INPUT_CONTROL::InputController& input_controller,
+        MATH::RandomNumberGenerator& random_number_generator,
         MAPS::World& world,
         MAPS::TileMap& current_tile_map,
         MAPS::MultiTileMapGrid& map_grid,
@@ -1182,9 +1202,9 @@ namespace STATES
                 }
             }
 
-            // CHECK IF THE PLAYER STEPPED ON AN EXIT POINT.
+            // CHECK IF THE PLAYER STEPPED ON AN SPECIAL TILE.
             // This should only occur if the player has changed to a different tile.
-            // Otherwise, the game might quickly flip back and forth between maps.
+            // Otherwise, the game might quickly flip back and forth between maps or screens.
             MATH::Vector2f noah_world_position = world.NoahPlayer->GetWorldPosition();
             MAPS::TileMap* tile_map_underneath_noah = map_grid.GetTileMap(noah_world_position.X, noah_world_position.Y);
             std::shared_ptr<MAPS::Tile> tile_under_noah = tile_map_underneath_noah->GetTileAtWorldPosition(
@@ -1196,8 +1216,20 @@ namespace STATES
             bool noah_stepped_onto_new_tile = ground_tile_changed;
             if (noah_stepped_onto_new_tile)
             {
+                // RETURN AN EXIT POINT IF NOAH STEPPED ON ONE.
                 MAPS::ExitPoint* exit_point = tile_map_underneath_noah->GetExitPointAtWorldPosition(noah_world_position);
-                return exit_point;
+                if (exit_point)
+                {
+                    return exit_point;
+                }
+
+                // OPEN THE BIBLE VERSE MINI-GAME IF NOAH STEPPED ON A BIBLE MINI-GAME TILE.
+                bool noah_stepped_onto_bible_verse_mini_game_tile = (MAPS::TileType::BIBLE_FOR_MINI_GAME == tile_under_noah->Type);
+                if (noah_stepped_onto_bible_verse_mini_game_tile)
+                {
+                    BibleVerseMiniGame.IsOpen = true;
+                    BibleVerseMiniGame.PopulateVersesFrom(&world.NoahPlayer->Inventory.BibleVerses, random_number_generator);
+                }
             }
         }
         else

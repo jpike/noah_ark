@@ -25,9 +25,6 @@ and other programs running on your computer, at least 2-4 GB of RAM is recommend
 
 BUGS
 ------------------------------
-The game is currently in a BETA phase, so the game is not necessarily feature-complete, 
-and it is expected for there to be a lot of bugs.
-
 You can report bugs (or any other feedback) to the primary developer (Jacob Pike) via
 any means.  Email (jacob@jacobpike.com) or reporting issues on the GitHub issues page
 (https://github.com/jpike/noah_ark/issues) are two such ways of reporting bugs/feedback.

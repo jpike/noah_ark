@@ -1,16 +1,17 @@
 # BIBLE GAMES - NOAH'S ARK
 
-This in-development game is based on the Biblical story of Noah's Ark.  The goal is to provide a fun way to become more familiar with and learn more about the story of Noah's Ark.
+This game is based on the Biblical story of Noah's Ark.  The goal is to provide a fun way to become more familiar with and learn more about the story of Noah's Ark.
 
-The game will be a native Windows game, running at least on Windows 8 (x64).  Currently, the game is still in the early stages of development.
+The game is a native Windows game, running at least on Windows 8 (x64).
+Currently, the game is has its first full version available.  Additional enhancements may come in the future.
 
 ## Gameplay
 
-Gameplay details are still being fleshed out, but some preliminary details are provided in a PowerPoint presentation in the [documentation/design folder](noah_ark/documentation/design).  Overall, the game will feature a 2D overhead view with a tile map and involve collecting things.
+Basic gameplay details are provided in a PowerPoint presentation in the [documentation/design folder](noah_ark/documentation/design).  Overall, the game features a 2D overhead view with a tile map and involves collecting things.
 
 ## Programming
 
-The game is being programmed using C++ within a Visual Studio 2019 environment.  Doxygen is used to document the code.
+The game is programmed using C++ within a Visual Studio 2019 environment.  Doxygen is used to document the code.
 
 The game is designed for command line builds using various .bat files and also opening as a folder in Visual Studio.
 
@@ -26,7 +27,7 @@ The dependencies described above are included in the ThirdParty folder.
 
 ## Graphics
 
-The graphics plan to use a "Game Boy Color" style for the overall shape of sprites, but a wider color palette may be used.
+The graphics use a "Game Boy Color" style for the overall shape of sprites, but a wider color palette may be used.
 
 ## Bugs/Want to Help?
 

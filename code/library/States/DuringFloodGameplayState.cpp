@@ -269,12 +269,27 @@ namespace STATES
         // so it's fine if this is sped up a bit.
         current_game_data.FloodElapsedGameplayTime += gaming_hardware.Clock.ElapsedTimeSinceLastFrame;
 
+        unsigned int current_day_of_flood = 0;
+        unsigned int current_hour_of_day = 0;
+        GAMEPLAY::FloodElapsedTime::GetCurrentDayAndHour(current_game_data.FloodElapsedGameplayTime, current_day_of_flood, current_hour_of_day);
+
         // UPDATE THE BIBLE VERSE ORDERING MINI-GAME IF IT IS OPEN.
         if (BibleVerseMiniGame.IsOpen)
         {
             BibleVerseMiniGame.Update(gaming_hardware);
-            // No other updates are needed as long as the mini-game is open.
-            return GameState::DURING_FLOOD_GAMEPLAY;
+
+            // CHECK IF THE END OF THE FLOOD HAS BEEN REACHED.
+            bool end_of_flood_reached = (current_day_of_flood >= GAMEPLAY::FloodElapsedTime::FLOOD_FINAL_DAY_COUNT);
+            if (end_of_flood_reached)
+            {
+                // The player should move to the next state.
+                return GameState::POST_FLOOD_GAMEPLAY;
+            }
+            else
+            {
+                // The player should stay in the current state.
+                return GameState::DURING_FLOOD_GAMEPLAY;
+            }
         }
 
         // UPDATE THE HUD.
@@ -345,11 +360,7 @@ namespace STATES
             camera,
             current_game_data);        
 
-        // CHECK FOR SPECIAL DAY-BASED EVENTS.        
-        unsigned int current_day_of_flood = 0;
-        unsigned int current_hour_of_day = 0;
-        GAMEPLAY::FloodElapsedTime::GetCurrentDayAndHour(current_game_data.FloodElapsedGameplayTime, current_day_of_flood, current_hour_of_day);
-
+        // CHECK FOR SPECIAL DAY-BASED EVENTS.
         switch (current_day_of_flood)
         {
             case GAMEPLAY::FloodElapsedTime::FLOOD_DAY_COUNT_UNTIL_FIRST_RAVEN_AND_DOVE_SENDING:

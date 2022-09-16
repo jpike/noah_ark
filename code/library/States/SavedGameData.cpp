@@ -327,19 +327,20 @@ namespace STATES
         {
             // 7 pairs of each clean animal are required (1 male + 1 female per pair).
             // See Genesis 7:2.
-            const unsigned int CLEAN_ANIMAL_COUNT_PER_GENDER = 7;
+            constexpr unsigned int CLEAN_ANIMAL_COUNT_PER_GENDER = 7;
             expected_animal_count = CLEAN_ANIMAL_COUNT_PER_GENDER;
         }
         else
         {
             // 1 pair of each unclean animal are required (1 male + 1 female per pair).
             // See Genesis 7:2.
-            const unsigned int UNCLEAN_ANIMAL_COUNT_PER_GENDER = 1;
+            constexpr unsigned int UNCLEAN_ANIMAL_COUNT_PER_GENDER = 1;
             expected_animal_count = UNCLEAN_ANIMAL_COUNT_PER_GENDER;
         }
 
         // DETERMINE IF THE APPROPRIATE NUMBER OF ANIMALS HAVE BEEN COLLECTED.
-        unsigned int actual_animal_count = GetCollectedAnimalCount(animal_type.Species);
+        const INVENTORY::AnimalCollectionStatistics& gender_collection_statistics = CollectedAnimalsBySpeciesThenGender[animal_type.Species][animal_type.Gender];
+        unsigned int actual_animal_count = gender_collection_statistics.CollectedTotalCount();
         bool animal_type_fully_collected = (actual_animal_count >= expected_animal_count);
         return animal_type_fully_collected;
     }

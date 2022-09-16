@@ -8,6 +8,8 @@ PRIMARY DEVELOPERS
 Jacob Pike - Programming, Art, Other
 Chad Pike - Background Music
 
+SPECIAL THANKS to all testers!
+
 ANIMAL SOUND EFFECTS
 Animal sound effects from http://soundbible.com/ are either in the public domain, 
 licensed under the Creative Commons Attribution 3.0 license (https://creativecommons.org/licenses/by/3.0/),

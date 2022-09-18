@@ -939,11 +939,10 @@ namespace STATES
             if (noah_collided_with_wood_logs)
             {
                 // ADD THE WOOD TO NOAH'S INVENTORY.
-                // The logs can have a random amount of wood.
-                unsigned int MIN_WOOD_COUNT = 1;
-                unsigned int MAX_WOOD_COUNT = 3;
-                unsigned int random_wood_count = RandomNumberGenerator.RandomInRange<unsigned int>(MIN_WOOD_COUNT, MAX_WOOD_COUNT);
-                world.NoahPlayer->Inventory.AddWood(random_wood_count);
+                // The amount of wood per set of logs is chosen so that someone could get all the
+                // wood for the ark within a single playthrough without reloading the game.
+                constexpr unsigned int WOOD_COUNT = 3;
+                world.NoahPlayer->Inventory.AddWood(WOOD_COUNT);
 
                 // REMOVE THE WOOD LOGS SINCE THEY'VE BEEN COLLECTED BY NOAH.
                 wood_logs = tile_map.WoodLogs.erase(wood_logs);
